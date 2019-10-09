@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Crypgraphy: PRNG",
+    "id": "AI055020",
+    "description": "Crypgraphy: PRNG",
+    "tags": [
+      "Cryptography.Randomness.PRNG"
+    ],
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "DUAL_EC_DRBG",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "pseudoRandomBytes",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Crypgraphy: PRNG",
+    "id": "AI055030",
+    "description": "Crypgraphy: PRNG",
+    "tags": [
+      "Cryptography.Randomness.PRNG"
+    ],
+    "applies_to": [
+      "javascript"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "(pseudo)?randombytes",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Crypgraphy: PRNG",
+    "id": "AI055040",
+    "description": "Crypgraphy: PRNG",
+    "tags": [
+      "Cryptography.Randomness.PRNG"
+    ],
+    "applies_to": [
+      "java"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "SecureRandom",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

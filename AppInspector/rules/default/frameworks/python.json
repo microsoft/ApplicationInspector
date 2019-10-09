@@ -1,0 +1,266 @@
+[
+  {
+    "name": "Development Framework: Django",
+    "id": "AI062210",
+    "description": "Development Framework: Django",
+    "applies_to": [ "python" ],
+    "tags": [
+      "Development.Framework.Django"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "django",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Pryamid",
+    "id": "AI062211",
+    "description": "Development Framework: Pryamid",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.Pryamid" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pyramid",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Web2Py",
+    "id": "AI062212",
+    "description": "Development Framework: Web2Py",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.Web2Py" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "web2py",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: CubicWeb",
+    "id": "AI062213",
+    "description": "Development Framework: CubicWeb",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.CubicWeb" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "cubicweb",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: OWL",
+    "id": "AI062214",
+    "description": "Development Framework: OWL",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.OWL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "owlready",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: RDF",
+    "id": "AI062215",
+    "description": "Development Framework: RDF",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.RDF" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "rdflib",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: RQL",
+    "id": "AI062216",
+    "description": "Development Framework: RQL",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.RQL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "rql",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Flask",
+    "id": "AI062217",
+    "description": "Development Framework: Flask",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.Flask" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "flask",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Bottle",
+    "id": "AI062218",
+    "description": "Development Framework: Bottle",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.Bottle" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "bottle",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: CherryPy",
+    "id": "AI062219",
+    "description": "Development Framework: CherryPy",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.CherryPy" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "cherrypy",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Sanic",
+    "id": "AI062220",
+    "description": "Development Framework: Sanic",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.Sanic" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sanic",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Tornado",
+    "id": "AI062221",
+    "description": "Development Framework: Tornado",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.Tornado" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "tornado",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: TurboGears",
+    "id": "AI062222",
+    "description": "Development Framework: TurboGears",
+    "applies_to": [
+      "python",
+      "requirements.txt"
+    ],
+    "tags": [ "Development.Framework.TurboGears" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "TGController|TurboGears2",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Giotto",
+    "id": "AI062223",
+    "description": "Development Framework: Giotto",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [ "Development.Framework.Giotto" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "giotto",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Pylons",
+    "id": "AI062224",
+    "description": "Development Framework: Pylons",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [ "Development.Framework.Pylons" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pylons",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

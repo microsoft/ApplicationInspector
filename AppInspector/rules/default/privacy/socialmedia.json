@@ -1,0 +1,99 @@
+[
+  {
+    "name": "Social Media (Facebook)",
+    "id": "AI091010",
+    "description": "Social Media (Facebook)",
+    "tags": [
+      "Reference.SocialMedia.Facebook"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "facebook",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Social Media (Twitter)",
+    "id": "AI091020",
+    "description": "Social Media (Twitter)",
+    "tags": [
+      "Reference.SocialMedia.Twitter"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "twitter",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Social Media (YouTube)",
+    "id": "AI091030",
+    "description": "Social Media (YouTube)",
+    "tags": [
+      "Reference.SocialMedia.YouTube"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "youtube",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Social Media (Instagram)",
+    "id": "AI091030",
+    "description": "Social Media (Instagram)",
+    "tags": [
+      "Reference.SocialMedia.Instagram"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "instagram",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Social Media (Misc)",
+    "id": "AI091040",
+    "description": "Social Media (Misc)",
+    "tags": [
+      "Reference.SocialMedia.Misc"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "reddit|snapchat|whatsapp|tumblr|qzone|weibo|pinterest|ask\\.fm|flickr|linkedin|odnoklassniki|meetup",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "discord|diaspora|sociall\\.io|mastodon",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

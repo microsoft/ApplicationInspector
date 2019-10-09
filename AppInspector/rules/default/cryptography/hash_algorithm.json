@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Cryptography: Hash Algorithm Usage",
+    "id": "AI052000",
+    "description": "Cryptography: Hash Algorithm Usage",
+    "tags": [
+      "Cryptography.HashAlgorithm"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "HashAlgorithm|MessageDigest|DigestUtils",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm Usage (SHA-256)",
+    "id": "AI052010",
+    "description": "Cryptography: Hash Algorithm Usage (SHA-256)",
+    "tags": [
+      "Cryptography.HashAlgorithm.SHA2"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SHA-?(2|224|256|384|512)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm Usage (Legacy)",
+    "id": "AI052020",
+    "description": "Cryptography: Hash Algorithm Usage (Legacy)",
+    "tags": [
+      "Cryptography.HashAlgorithm.Legacy"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "MD2|MD4|MD5|SHA-?0",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm Usage (SHA-3)",
+    "id": "AI052030",
+    "description": "Cryptography: Hash Algorithm Usage (SHA-3)",
+    "tags": [
+      "Cryptography.HashAlgorithm.SHA3"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SHA-?3|Keccak",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm Usage (Misc)",
+    "id": "AI052040",
+    "description": "Cryptography: Hash Algorithm Usage (Misc)",
+    "tags": [
+      "Cryptography.HashAlgorithm.Misc"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RIPEMD|Blowfish|Twofish|Threefish|Serpent",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

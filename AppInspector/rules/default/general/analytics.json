@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Miscellaneous: Analytics Service",
+    "id": "AI010400",
+    "description": "Miscellaneous: Analytics Service",
+    "tags": [
+      "Miscellaneous.Analytics.Facebook"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "analytics|tracker|tracking|tracking cookie|pixel url|tracking script",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "low"
+      }
+    ]
+  },
+  {
+    "name": "Miscellaneous: Analytics Service (Facebook)",
+    "id": "AI010410",
+    "description": "Miscellaneous: Analytics Service (Facebook)",
+    "tags": [
+      "Miscellaneous.Analytics.Facebook"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "connect.facebook.net",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": []
+      }
+    ]
+  },
+  {
+    "name": "Miscellaneous: Analytics Service (Google GTag)",
+    "id": "AI010411",
+    "description": "Miscellaneous: Analytics Service (Google GTag)",
+    "tags": [
+      "Miscellaneous.Analytics.Google.GTag"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "googletagmanager.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": []
+      }
+    ]
+  },
+  {
+    "name": "Miscellaneous: Analytics Service (Bing)",
+    "id": "AI010412",
+    "description": "Miscellaneous: Analytics Service (Bing)",
+    "tags": [
+      "Miscellaneous.Analytics.Microsoft.Bing"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "bat.bing.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": []
+      }
+    ]
+  },
+  {
+    "name": "Miscellaneous: Analytics Service (Twitter)",
+    "id": "AI010413",
+    "description": "Miscellaneous: Analytics Service (Twitter)",
+    "tags": [
+      "Miscellaneous.Analytics.Twitter"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "static.ads-twitter.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": []
+      }
+    ]
+  },
+  {
+    "name": "Miscellaneous: Analytics Service (Outbrain)",
+    "id": "AI010414",
+    "description": "Miscellaneous: Analytics Service (Outbrain)",
+    "tags": [
+      "Miscellaneous.Analytics.Outbrain"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "amplify.outbrain.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": []
+      }
+    ]
+  },
+  {
+    "name": "Miscellaneous: Analytics Service (Pinterest)",
+    "id": "AI010415",
+    "description": "Miscellaneous: Analytics Service (Pinterest)",
+    "tags": [
+      "Miscellaneous.Analytics.Pinterest"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "s.pinimg.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": []
+      }
+    ]
+  }
+]

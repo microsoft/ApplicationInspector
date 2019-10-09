@@ -1,0 +1,204 @@
+[
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI037510",
+    "description": "OS: Multiprocessing / Multithreading",
+    "tags": [
+      "OS.Process.Multiprocessing"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mutex|semaphore|thread|lock|fork",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI037511",
+    "description": "OS: Multiprocessing / Multithreading",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "OS.Process.Multiprocessing"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "WaitForSingleObject|WaitForMultipleObjects",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI037512",
+    "description": "OS: Multiprocessing / Multithreading",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Process.Multiprocessing"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "BackgroundWorker|Task\\.Run|Async",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "(new System\\.Diagnostics.Process\\(\\)| new Process\\(\\))",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI037513",
+    "description": "OS: Multiprocessing / Multithreading",
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "OS.Process.Multiprocessing"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Runnable",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI037514",
+    "description": "OS: Multiprocessing / Multithreading",
+    "applies_to": [
+      "go"
+    ],
+    "tags": [
+      "OS.Process.Multiprocessing"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<-",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Process Access (Read)",
+    "id": "AI037515",
+    "description": "OS: Process Access (Read)",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp",
+      "python"
+    ],
+    "tags": [
+      "OS.Process.Access.Read"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Process.GetProcesses()",
+        "type": "string",
+        "scopes": [
+          "code"
+        ]
+      },
+      {
+        "pattern": "ReadProcessMemory|OpenProcess|VirtualQueryEx",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ]
+      },
+      {
+        "pattern": "system32\\tasklist.exe",
+        "type": "string",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "OS: Process Access (Read)",
+    "id": "AI037516",
+    "description": "OS: Process Access (Read)",
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "OS.Process.Access.Read"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "get-Process ",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Process Access (Read)",
+    "id": "AI037517",
+    "description": "OS: Process Access (Read)",
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "OS.Process.Access.Read"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "exec.*['\\\"]ps ",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  }
+]

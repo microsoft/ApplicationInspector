@@ -1,0 +1,114 @@
+[
+  {
+    "name": "OS: Environment Variable (Write)",
+    "id": "AI034010",
+    "description": "OS: Environment Variable (Write)",
+    "applies_to": [
+    ],
+    "tags": [
+      "OS.Environment.Write"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "setenv|putenv",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable",
+    "id": "AI034020",
+    "description": "OS: Environment Variable",
+    "applies_to": [
+    ],
+    "tags": [
+      "OS.Environment"
+    ],
+    "severity": "moderate",
+    "_comment": "Windows Registry location for environment variables",
+    "patterns": [
+      {
+        "pattern": "System\\CurrentControlSet\\Control\\Session Manager\\Environment",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Write)",
+    "id": "AI034030",
+    "description": "OS: Environment Variable (Write)",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "OS.Environment.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\bos\\.environ.+=",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Write)",
+    "id": "AI034040",
+    "description": "OS: Environment Variable (Write)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Environment.Write"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "SetEnvironmentVariable",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Write)",
+    "id": "AI034050",
+    "description": "OS: Environment Variable (Write)",
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "OS.Environment.Write"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "\\$env:.+=",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "_comment": ""
+      }
+    ]
+  }
+]

@@ -1,0 +1,161 @@
+﻿[
+  {
+    "name": "Crypographic Library: BouncyCastle",
+    "id": "AI051000",
+    "description": "Crypographic Library: BouncyCastle",
+    "applies_to": [
+      "csharp",
+      "java",
+      "kotlin",
+      "scala"
+    ],
+    "tags": [
+      "Cryptography.Library.BouncyCastle"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "bouncycastle|spongycastle",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Crypographic Library: mbed TLS",
+    "id": "AI051010",
+    "description": "Crypographic Library: mbed TLS",
+    "applies_to": [
+    ],
+    "tags": [
+      "Cryptography.Library.mbedTLS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mbedtls",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Crypographic Library: OpenSSL",
+    "id": "AI051020",
+    "description": "Crypographic Library: OpenSSL",
+    "applies_to": [
+    ],
+    "tags": [
+      "Cryptography.Library.OpenSSL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "openssl",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Crypographic Library: BoringSSL",
+    "id": "AI051030",
+    "description": "Crypographic Library: BoringSSL",
+    "applies_to": [
+    ],
+    "tags": [
+      "Cryptography.Library.BoringSSL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "boringssl",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Crypographic Library: LibreSSL",
+    "id": "AI051040",
+    "description": "Crypographic Library: LibreSSL",
+    "applies_to": [
+    ],
+    "tags": [
+      "Cryptography.Library.LibreSSL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "libressl",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Crypographic Library: Win32",
+    "id": "AI051100",
+    "description": "Crypographic Library: Win32",
+    "applies_to": [
+    ],
+    "tags": [
+      "Cryptography.Library.Win32"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\b(wincrypt|cryptxml|wintrust|dpapi|bcrypt|cryptdlg|ncrypt|cryptxml|ncryptprotect)\\.h",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Crypographic Library: .NET",
+    "id": "AI051110",
+    "description": "Crypographic Library: .NET",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp"
+    ],
+    "tags": [
+      "Cryptography.Library.NET"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ProtectedData",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "modified": [ "i" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "DPAPI",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "modified": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

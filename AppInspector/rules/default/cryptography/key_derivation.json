@@ -1,0 +1,49 @@
+[
+  {
+    "name": "Cryptography: Key Derivation",
+    "id": "AI056010",
+    "description": "Cryptography: Key Derivation",
+    "tags": [
+      "Cryptography.KeyDerivation"
+    ],
+    "severity": "moderate",
+    "patterns": [
+    ]
+  },
+  {
+    "name": "Cryptography: Key Derivation (PBKDF1)",
+    "id": "AI056020",
+    "description": "Cryptography: Key Derivation (PBKDF1)",
+    "tags": [
+      "Cryptography.KeyDerivation.PBKDF1"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pbkdf1|PasswordDeriveBytes",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Key Derivation (PBKDF2)",
+    "id": "AI056030",
+    "description": "Cryptography: Key Derivation (PBKDF2)",
+    "tags": [
+      "Cryptography.KeyDerivation.PBKDF2"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pbkdf2",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

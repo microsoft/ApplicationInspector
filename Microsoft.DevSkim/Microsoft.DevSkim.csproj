@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>    
+    <PackageId>Microsoft.DevSkim</PackageId>
+    <PackageVersion>0.3.8</PackageVersion>
+    <Authors>Microsoft</Authors>
+    <PackageTags>Security Linter</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageLicenseUrl>https://github.com/Microsoft/DevSkim/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
+    <Description>DevSkim is a framework and Language analyzer that provide inline security analysis</Description>
+    <PackageIconUrl>https://raw.githubusercontent.com/Microsoft/DevSkim/master/media/64x64.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/Microsoft/DevSkim</PackageProjectUrl>
+    <RepositoryUrl></RepositoryUrl>
+    <PackageReleaseNotes>First public release</PackageReleaseNotes>
+    <HighEntropyVA>true</HighEntropyVA>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="linux\**" />
+    <EmbeddedResource Remove="linux\**" />
+    <None Remove="linux\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="NLog" Version="4.6.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Resources\comments.json" />
+    <Content Remove="Resources\languages.json" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\comments.json" />
+    <EmbeddedResource Include="Resources\languages.json" />
+  </ItemGroup>
+</Project>

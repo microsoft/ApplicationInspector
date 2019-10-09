@@ -1,0 +1,152 @@
+[
+  {
+    "name": "OS Operation: Windows Registry (Write)",
+    "id": "AI037010",
+    "description": "OS Operation: Windows Registry (Write)",
+    "tags": [
+      "OS.SystemRegistry.Write"
+    ],
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RegSetValueEx|RegOpenKeyEx|RegCreateKeyEx",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Windows Registry (Write)",
+    "id": "AI037020",
+    "description": "OS Operation: Windows Registry (Write)",
+    "tags": [
+      "OS.SystemRegistry.Write"
+    ],
+    "applies_to": [
+      "csharp"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Registry(.CurrentUser)?.(Write|CreateSubKey|Delete)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Windows Registry (Write)",
+    "id": "AI037030",
+    "description": "OS Operation: Windows Registry (Write)",
+    "tags": [
+      "OS.SystemRegistry.Write"
+    ],
+    "applies_to": [
+      "python"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "_?winreg\\.(Set|Delete|Create)(Key|Value)(Ex)?",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "_winreg and winreg built-in modules"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Windows Registry (ACL)",
+    "id": "AI037100",
+    "description": "OS Operation: Windows Registry (ACL)",
+    "tags": [
+      "OS.SystemRegistry.ACL"
+    ],
+    "applies_to": [ "csharp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RegistryAccessRule|RegistrySecurity",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Windows Registry (Read)",
+    "id": "AI037210",
+    "description": "OS Operation: Windows Registry (Read)",
+    "tags": [
+      "OS.SystemRegistry.Read"
+    ],
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RegGetValue|RegGetDWord|RegGetString|CRegKey|RegOpenKey|RegQueryKeyEx",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Windows Registry (Read)",
+    "id": "AI037220",
+    "description": "OS Operation: Windows Registry (Read)",
+    "tags": [
+      "OS.SystemRegistry.Read"
+    ],
+    "applies_to": [
+      "powershell"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RegistryKey",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "(HKLM|HKCU):",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Windows Registry (Read)",
+    "id": "AI037230",
+    "description": "OS Operation: Windows Registry (Read)",
+    "tags": [
+      "OS.SystemRegistry.Read"
+    ],
+    "applies_to": [
+      "csharp"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Registry(.CurrentUser)?.(Read|OpenSubKey)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

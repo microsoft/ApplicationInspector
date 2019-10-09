@@ -1,0 +1,254 @@
+[
+  {
+    "name": "Data: Serialization",
+    "id": "AI068210",
+    "description": "Data: Serialization",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "Data.Serialization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(de)?serialize",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Data: Serialization",
+    "id": "AI068211",
+    "description": "Data: Serialization",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "Data.Serialization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "import .*c?pickle",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Serialization",
+    "id": "AI068212",
+    "description": "Data: Serialization",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "Data.Serialization.Serialization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "c?pickle\\.dump",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Deserialization",
+    "id": "AI068213",
+    "description": "Data: Deserialization",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "Data.Serialization.Deserialization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "c?pickle\\.load",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Deserialization",
+    "id": "AI068214",
+    "description": "Data: Deserialization",
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "Data.Serialization.Deserialization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".readObject",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Deserialization",
+    "id": "AI068215",
+    "description": "Data: Deserialization",
+    "applies_to": [
+      "php"
+    ],
+    "tags": [
+      "Data.Serialization.Deserialization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "unserialize(",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Deserialization",
+    "id": "AI068216",
+    "description": "Data: Deserialization",
+    "applies_to": [
+      "ruby"
+    ],
+    "tags": [
+      "Data.Serialization.Deserialization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(YAML|Syck|Marshal)\\.load",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Serialization",
+    "id": "AI068217",
+    "description": "Data: Serialization",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Data.Serialization.Serialization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SerializeObject",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Deserialization",
+    "id": "AI068218",
+    "description": "Data: Deserialization",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Data.Serialization.Deserialization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "DeserializeObject",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "PopulateObject",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "TypeNameHandling",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Deserialization",
+    "id": "AI068219",
+    "description": "Data: Deserialization",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Data.Serialization.Deserialization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "System.Runtime.Serialization",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "BinaryFormatter",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "TypeNameHandling",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

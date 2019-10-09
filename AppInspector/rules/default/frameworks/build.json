@@ -1,0 +1,190 @@
+[
+  {
+    "name": "Development: Build Tool (Maven)",
+    "id": "AI063010",
+    "description": "Development: Build Tool (Maven)",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Build.Maven" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Maven",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development: Build Tool (Ant)",
+    "id": "AI063011",
+    "description": "Development: Build Tool (Ant)",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Build.Ant" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Ant",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development: Build Tool (Gradle)",
+    "id": "AI063012",
+    "description": "Development: Build Tool (Gradle)",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Build.Gradle" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Gradle",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development: Build Tool (Jenkins)",
+    "id": "AI063013",
+    "description": "Development: Build Tool (Jenkins)",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Build.Jenkins" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "jenkins",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development: Build Tool (SBT)",
+    "id": "AI063014",
+    "description": "Development: Build Tool (SBT)",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Build.SBT" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sbt",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development: Build Tool (Bamboo)",
+    "id": "AI063015",
+    "description": "Development: Build Tool (Bamboo)",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Build.Bamboo" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "atlassian bamboo",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development: Build Tool (TeamCity)",
+    "id": "AI063016",
+    "description": "Development: Build Tool (TeamCity)",
+    "recommendation": "",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Build.TeamCity" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "teamcity",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development: Build Tool (Grape)",
+    "id": "AI063017",
+    "description": "Development: Build Tool (Grape)",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Build.Grape" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "grape",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development: Build Tool (Ivy)",
+    "id": "AI063018",
+    "description": "Development: Build Tool (Ivy)",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Build.Ivy" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ivy",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development: Build Tool (Leiningen)",
+    "id": "AI063019",
+    "description": "Development: Build Tool (Leiningen)",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Build.Leiningen" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "leiningen",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development: Build Tool (Visual Studio)",
+    "id": "AI063020",
+    "description": "Development: Build Tool (Studio)",
+    "applies_to": [ "VSSolution", "VSProject" ],
+    "tags": [ "Development.Build.VisualStudio" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "VisualStudio|Visual Studio",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  }
+]

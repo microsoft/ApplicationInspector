@@ -1,0 +1,336 @@
+[
+  {
+    "name": "Metric: Classes Defined",
+    "id": "AI010200",
+    "description": "Metric: Classes Defined",
+    "tags": [
+      "Metric.Classes.Defined"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "class (.*)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metric: Functions Defined",
+    "id": "AI010300",
+    "description": "Metric: Functions Defined",
+    "tags": [
+      "Metric.Functions.Defined"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(def|function|fun) (.*)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metric: HTML Forms Defined",
+    "id": "AI010400",
+    "description": "Metric: HTML Forms Defined",
+    "tags": [
+      "Metric.HTMLForm.Defined"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "<form",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metric: Exceptions Caught",
+    "id": "AI010500",
+    "description": "Metric: Exceptions Caught",
+    "tags": [
+      "Metric.Exception.Caught"
+    ],
+    "severity": "moderate",
+    "_comment": "may need to divide results by 2 to get more accurate counts i.e. pairs=single handling",
+    "patterns": [
+      {
+        "pattern": "catch|except|exception",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Dependency: Included Source",
+    "id": "AI010600",
+    "description": "Dependency: Included Source",
+    "tags": [
+      "Dependency.SourceInclude"
+    ],
+    "applies_to": [ "c", "cpp" ],
+    "severity": "moderate",
+    "confidence": "high",
+    "patterns": [
+      {
+        "pattern": "#include ?[\\\"<](.*)[\\\">]",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Dependency: Included Source",
+    "id": "AI010601",
+    "description": "Dependency: Included Source",
+    "tags": [
+      "Dependency.SourceInclude"
+    ],
+    "applies_to": [ "php" ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "(include|require) .*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Dependency: Included Source",
+    "id": "AI010602",
+    "description": "Dependency: Included Source",
+    "tags": [
+      "Dependency.SourceInclude"
+    ],
+    "applies_to": [ "objective-c" ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "import .*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Dependency: Included Source",
+    "id": "AI010603",
+    "description": "Dependency: Included Source",
+    "tags": [
+      "Dependency.SourceInclude"
+    ],
+    "applies_to": [ "groovy" ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "import .*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "loadScriptByName.*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "evaluate ?\\(.*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "shell\\.parse ?\\(*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Dependency: Included Source",
+    "id": "AI010604",
+    "description": "Dependency: Included Source",
+    "tags": [
+      "Dependency.SourceInclude"
+    ],
+    "applies_to": [ "python", "java", "swift", "go" ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "import .*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "package .*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Dependency: Included Source",
+    "id": "AI010605",
+    "description": "Dependency: Included Source",
+    "tags": [
+      "Dependency.SourceInclude"
+    ],
+    "applies_to": [ "perl" ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "use .*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "package. *",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Dependency: Included Source",
+    "id": "AI010606",
+    "description": "Dependency: Included Source",
+    "tags": [
+      "Dependency.SourceInclude"
+    ],
+    "applies_to": [ "ruby" ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "load .*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "require .*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Dependency: Included Source",
+    "id": "AI010607",
+    "description": "Dependency: Included Source",
+    "tags": [
+      "Dependency.SourceInclude"
+    ],
+    "applies_to": [ "csharp" ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "using (.*);",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Dependency: Included Source",
+    "id": "AI010608",
+    "description": "Dependency: Included Source",
+    "tags": [
+      "Dependency.SourceInclude"
+    ],
+    "applies_to": [ "javascript" ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "import .*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "fetchInject ?\\(.*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "require ?\\(['\\\"]([^'\\\"]+)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "\\$\\.getScript\\(.*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Logging Call",
+    "id": "AI010100",
+    "description": "Logging Call",
+    "tags": [
+      "Metric.Logging.Call"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "log|logger",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

@@ -1,0 +1,54 @@
+[
+  {
+    "name": "Cryptography: x.509 Certificate",
+    "id": "AI057510",
+    "description": "Cryptography: x.509 Certificate",
+    "tags": [
+      "Cryptography.x509"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "x509|\\.(crt|pem|cer|pfx|csr)|certificate",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "genrsa|-keyout|-x509toreq|signkey",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ ],
+        "confidence": "high",
+        "_comment": "Common OpenSSL commands"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: x.509 Certificate",
+    "id": "AI057520",
+    "description": "Cryptography: x.509 Certificate",
+    "tags": [
+      "Cryptography.x509"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "x509|\\.(crt|pem|cer)",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

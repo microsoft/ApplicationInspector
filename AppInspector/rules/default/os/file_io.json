@@ -1,0 +1,275 @@
+[
+  {
+    "name": "File Operation",
+    "id": "AI035000",
+    "description": "File Operation",
+    "applies_to": [
+    ],
+    "tags": [
+      "OS.FileOperation"
+    ],
+    "severity": "moderate",
+    "patterns": [
+    ]
+  },
+  {
+    "name": "File Operation (Read)",
+    "id": "AI035010",
+    "description": "File Operation (Read)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.FileOperation.Read"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\bFile\\.Read.*\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "_comment": ""
+      },
+      {
+        "pattern": "StreamReader\\($?\\\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Read)",
+    "id": "AI035011",
+    "description": "File Operation (Read)",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "OS.FileOperation.Read"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\bopen\\([\"']",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Read)",
+    "id": "AI035012",
+    "description": "File Operation (Read)",
+    "applies_to": [
+      "javascript"
+    ],
+    "tags": [
+      "OS.FileOperation.Read"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\bfs.read.*\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Delete)",
+    "id": "AI035110",
+    "description": "File Operation (Delete)",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\b(std::)?remove\\(.+\\)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "include <(fstream|stdio|iostream)",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+        },
+        "search_in": "finding-region(-200,1)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Delete)",
+    "id": "AI035111",
+    "description": "File Operation (Delete)",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "os.remove(",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Delete)",
+    "id": "AI035112",
+    "description": "File Operation (Delete)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "File.Delete",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Delete)",
+    "id": "AI035113",
+    "description": "File Operation (Delete)",
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".deleteDirectory(",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Delete)",
+    "id": "AI035114",
+    "description": "File Operation (Delete)",
+    "applies_to": [
+      "javascript"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".unlink(Sync)?\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Write)",
+    "id": "AI035210",
+    "description": "File Operation (Write)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".WriteAllText",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Write)",
+    "id": "AI035211",
+    "description": "File Operation (Write)",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "fputc|fputs|fprintf",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "ofstream",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

@@ -1,0 +1,239 @@
+﻿<!doctype html>
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>AppInpector-Home</title>
+
+    <link rel="stylesheet" href="bootstrap.css">
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <img src="Microsoft_logo_-_2012_(vertical).svg.png" />&nbsp;
+        <a class="navbar-brand" href="index.html">AppInspector</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="projecthome.html">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="profile.html">Profile</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Inspect</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="composition.html">Composition</a>
+                        <a class="dropdown-item" href="rankedtags.html">Ranked Tags</a>
+                        <a class="dropdown-item" href="alltags.html">All Tags</a>
+                        <a class="dropdown-item" href="allmatches.html">All Matches</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/Microsoft/AppInspector" target="_blank" rel="noopener">About</a>
+                </li>
+            </ul>
+
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+
+    <main role="main" class="container" style="max-width: 100%">
+    <div><img src="bar1.png" style="width:100%;height:30px;" /></div>
+    <div style="height:3px;"></div>
+
+        <div class="card-columns">
+
+            <div class="card text-white" style="border: 1px solid gray;scrollbar-face-color:darkseagreen;height:400px;max-height:400px;overflow-y:scroll; background-color: cornflowerblue">
+                <div class="card-body">
+                    <h5 class="card-title"><strong>Project Info</strong></h5>
+                    <div class="card-text">
+                        <table class="table table-condensed" style="table-layout: fixed; width: 100%">
+                            <tr><td style="width:123px;">Name</td><td>{{ app.MetaData.ApplicationName }}&nbsp;{{ app.MetaData.SourceVersion }}</td></tr>
+                            <tr><td style="width:123px;">Description</td><td style="word-wrap: break-word">{{ app.MetaData.Description }}</td></tr>
+                            <tr><td style="width:123px;">Directory</td><td style="word-wrap: break-word">{{ app.SourcePath }}</td></tr>
+                            <tr><td style="width:123px;">Author(s)</td><td>{{ app.MetaData.Authors }}</td></tr>
+                            <tr><td style="width:123px;">Last Modified</td><td>{{ app.MetaData.LastUpdated }}</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="height:400px;border: 1px solid #6c757d;">
+                <div class="card-body">
+                    <h5 class="card-title">Source Info</h5>
+                    <div class="card-text">
+                        <table class="table table-condensed">
+                            <tr>
+                                <td style="width:123px;">Programming Language(s)</td>
+                                <td>
+                                    {{ #each app.MetaData.Languages }}
+                                    {{ this }}
+                                    {{#unless @last}}, {{/unless}}
+                                    {{ /each }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:123px;">Type(s)</td>
+                                <td>
+                                    {{ #each app.MetaData.Outputs }}
+                                    {{ this }}
+                                    {{#unless @last}}, {{/unless}}
+                                    {{ /each }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:123px;">Extensions</td>
+                                <td>
+                                    {{ #each app.MetaData.FileExtensions }}
+                                    <a href="http://fileinfo.com/extension/{{ this }}" target="_blank" rel="noopener">{{ this }}</a>
+                                    {{#unless @last}}, {{/unless}}
+                                    {{ /each }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:123px;">Package Types</td>
+                                <td>
+                                    {{ #each strGrpPackageTypes }}
+                                    {{ this }}
+                                    {{#unless @last}}, {{/unless}}
+                                    {{ /each }}
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card" style="height:400px;border: 1px solid #6c757d;">
+                <div class="card-body">
+                    <h5 class="card-title">Stats</h5>
+                    <div class="card-text">
+                        <table class="table table-condensed">
+                            <tr><td>Files Analyzed</td><td style="text-align:right">{{ app.MetaData.FilesAnalyzed }}</td></tr>
+                            <tr><td>Files Skipped</td><td style="text-align:right">{{ app.MetaData.FilesSkipped }}</td></tr>
+                            <tr><td>Total Files</td><td style="text-align:right">{{ app.MetaData.TotalFiles }}</td></tr>
+                            <tr><td>Total Pattern Matches</td><td style="text-align:right">{{ app.MetaData.TotalMatchesCount }}</td></tr>
+                            <tr><td>Unique Pattern Matches</td><td style="text-align:right">{{ app.MetaData.UniqueTags.Count }}</td></tr>
+                            <tr><td>Dependencies</td><td style="text-align:right">{{ app.MetaData.UniqueDependencies.Count }}</td></tr>                           
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="height:400px;border: 1px solid #6c757d;">
+                <div class="card-body">
+                    <h5 class="card-title">Detected Targets</h5>
+                    <div class="card-text">
+                        <table class="table table-condensed">
+                            <tr>
+                                <td>Cloud Platform</td>
+                                <td style="text-align:right">
+                                    {{ #each app.MetaData.CloudTargets }}
+                                    {{ this }}
+                                    {{#unless @last}}, {{/unless}}
+                                    {{ /each }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Operating System</td>
+                                <td style="text-align:right">
+                                    {{ #each app.MetaData.OSTargets }}
+                                    {{ this }}
+                                    {{#unless @last}}, {{/unless}}
+                                    {{ /each }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>CPU Targets</td>
+                                <td style="text-align:right">
+                                    {{ #each app.MetaData.CPUTargets }}
+                                    {{ this }}
+                                    {{#unless @last}}, {{/unless}}
+                                    {{ /each }}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="height:400px;border: 1px solid #6c757d;">
+                <div class="card-body">
+                    <h5 class="card-title">Scan Settings</h5>
+                    <div class="card-text">
+                        <table class="table table-condensed" style="table-layout: fixed; width: 100%">
+                            <tr><td style="width:123px;">AppInspector</td><td>{{ app.Version }}</td></tr>
+                            <tr>
+                                <td style="width:123px;">Rules Path</td>
+                                <td style="max-width:200px;">
+                                    {{ #each strGrpRulePaths }}
+                                    {{ this }}
+                                    {{#unless @last}}, {{/unless}}
+                                    {{ /each }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:123px;">Scan Arguments</td>
+                                <td style="word-wrap: break-word">{{ app.Args }}</td>
+                            </tr>
+                            <tr><td style="width:123px;">Date Scanned</td><td>{{ app.DateScanned }}</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="height:400px;border: 1px solid #6c757d;">
+                <div class="card-body">
+                    <h5 class="card-title">Build Info</h5>
+                    <div class="card-text">
+                        <table class="table table-condensed">
+                            <tr>
+                                <td>Build Tools</td>
+                                <td style="text-align:right">
+                                    {{ #each tagGrpBuildTools }}
+                                    {{ this.shortTag }}
+                                    {{#unless @last}}, {{/unless}}
+                                    {{ /each }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Testing Tools</td>
+                                <td style="text-align:right">
+                                    {{ #each tagGrpTstFrm }}
+                                    {{ this.shortTag }}
+                                    {{#unless @last}}, {{/unless}}
+                                    {{ /each }}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align:right">
+                <button type="button" style="background-color:dodgerblue;color:white" onclick="window.location='profile.html'">Continue to Profile</button>
+            </div>
+            
+        </div>
+
+    </main><!-- /.container -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+</html>

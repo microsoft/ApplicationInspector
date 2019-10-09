@@ -1,0 +1,127 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
+    <RepositoryType></RepositoryType>
+    <PackageTags>Static Linter</PackageTags>
+    <PackageReleaseNotes>Pre-release version</PackageReleaseNotes>
+    <Description>Characterizes software content</Description>
+    <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
+    <HighEntropyVA>true</HighEntropyVA>
+    <PackageId>ApplicationInspector</PackageId>
+    <Product>ApplicationInspector</Product>
+    <Authors>ApplicationInspector</Authors>
+    <Version>1.0.0</Version>
+    <AssemblyName>ApplicationInspector</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="htmlreport\**" />
+    <Compile Remove="linux\**" />
+    <EmbeddedResource Remove="htmlreport\**" />
+    <EmbeddedResource Remove="linux\**" />
+    <None Remove="htmlreport\**" />
+    <None Remove="linux\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="html\partials\_file_listing.liquid" />
+    <None Remove="html\partials\_report_overview.liquid" />
+    <None Remove="html\partials\_report_profile.liquid" />
+    <None Remove="html\partials\_report_summary.liquid" />
+    <None Remove="log.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="html\partials\_file_listing.liquid" />
+    <EmbeddedResource Include="html\partials\_report_overview.liquid">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="html\partials\_report_profile.liquid" />
+    <EmbeddedResource Include="html\partials\_report_summary.liquid" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.6.0" />
+    <PackageReference Include="DotLiquid" Version="2.0.314" />
+    <PackageReference Include="Handlebars.Net" Version="1.10.1" />
+    <PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NLog" Version="4.6.7" />
+    <PackageReference Include="SharpZipLib" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.DevSkim\Microsoft.DevSkim.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="htmltemplates\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="preferences\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+<ItemGroup>
+    <None Update="rules\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="html\index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="html\resources\appinspector.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="html\resources\appinspector.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\temp\authorization.json" Link="authorization.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="preferences\" />
+  </ItemGroup>
+
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
+</Project>

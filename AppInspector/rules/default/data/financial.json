@@ -1,0 +1,109 @@
+[
+  {
+    "name": "Data: Commerce",
+    "id": "AI068510",
+    "description": "Data: Commerce",
+    "tags": [
+      "Data.Finance"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pci|wallet|fips-140",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium"
+      },
+      {
+        "pattern": "paypal|google pay|ebay|google\\.com/pay/api",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "price|shopping chart|payment",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ]
+      },
+      {
+        "pattern": "bigcommerce|shopify|bigcartel|woocommerce|wc_api_client|weebly|3dcart|squarespace|connect\\.squareup\\.com",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "demandware|yocart|opencart|magento|magentohost/api|volusion|vtex|x-vtex-api-appkey|alibaba",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Financial",
+    "id": "AI068511",
+    "description": "Data: Financial",
+    "tags": [
+      "Data.Finance"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "bank\\s*(acct|account)",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "(checking|savings|chk)\\s*(account|acct)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "income|salary|salaries|financial",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "currency|usd|money|dollar|euro|peso",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": "Currencies"
+      }
+    ]
+  },
+  {
+    "name": "Data: Financial (Credit Card)",
+    "id": "AI068512",
+    "description": "Data: Financial (Credit Card)",
+    "tags": [
+      "Data.Finance.CreditCard"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "visa|americanexpress|amex|(master|discover|credit|debit)\\s*card",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

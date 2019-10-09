@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Development Framework: Standard C Library",
+    "id": "AI061010",
+    "description": "Development Framework: Standard C Library",
+    "recommendation": "",
+    "applies_to": [ "c" ],
+    "tags": [ "Development.Framework.StandardCLibrary" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "std::",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Boost",
+    "id": "AI061020",
+    "description": "Development Framework: Boost",
+    "recommendation": "",
+    "applies_to": [ "c" ],
+    "tags": [ "Development.Framework.StandardCLibrary" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "boost::",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      },
+      {
+        "pattern": "#include <boost/.*>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  }
+]

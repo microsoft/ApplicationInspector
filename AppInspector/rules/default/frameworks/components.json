@@ -1,0 +1,120 @@
+[
+  {
+    "name": "Component: Adobe Flash",
+    "id": "AI066010",
+    "description": "Component: Adobe Flash",
+    "applies_to": [
+      "actionscript"
+    ],
+    "tags": [
+      "Development.Framework.Component.AdobeFlash"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "import flash",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: Adobe Flash",
+    "id": "AI066011",
+    "description": "Component: Adobe Flash",
+    "applies_to": [
+    ],
+    "tags": [
+      "Development.Framework.Component.AdobeFlash"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".swf",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: Active-X",
+    "id": "AI066012",
+    "description": "Component: Active-X",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp",
+      "html"
+    ],
+    "tags": [
+      "Development.Framework.Component.ActiveX"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "active-?x",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: COM",
+    "id": "AI066013",
+    "description": "Component: COM",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp"
+    ],
+    "tags": [
+      "Development.Framework.Component.ActiveX"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER|CoCreateInstance",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: PDF",
+    "id": "AI066014",
+    "description": "Component: PDF",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp"
+    ],
+    "tags": [
+      "Development.Framework.Component.PDF"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pdf",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

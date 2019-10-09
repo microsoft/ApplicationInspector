@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "AppInspect..CLI": {
+      "commandName": "Project"
+    }
+  }
+}

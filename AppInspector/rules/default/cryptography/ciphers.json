@@ -1,0 +1,115 @@
+[
+  {
+    "name": "Cryptography: Encryption",
+    "id": "AI555500",
+    "description": "Cryptography: Encryption",
+    "tags": [
+      "Cryptography.Encryption"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "encrypt|decrypt|cipher|crypt",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (AES)",
+    "id": "AI555510",
+    "description": "Cryptography: Encryption (AES)",
+    "tags": [
+      "Cryptography.Encryption.AES"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "AES",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "AES-?(128|192|256)",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (3DES)",
+    "id": "AI555520",
+    "description": "Cryptography: Encryption (3DES)",
+    "tags": [
+      "Cryptography.Encryption.3DES"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "3DES|TripleDES",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (RC)",
+    "id": "AI555530",
+    "description": "Cryptography: Encryption (RC)",
+    "tags": [
+      "Cryptography.Encryption.RC"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RC([2456])",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "arc4random",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Encryption: Cipher Mode",
+    "id": "AP003100",
+    "description": "Encryption: Cipher Mode",
+    "tags": [
+      "Cryptography.Encryption.CipherMode"
+    ],
+    "severity": "critical",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "CBC|CTR|ECB|OFB|CFB|CTS|PCBC|GMAC|XCBC|IACBC|IAPM|EAX|OCB|CWC|AEAD|LRW|XEX|XTS|CMC|EME|CBCMAC|OMAC|PMAC",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+] 

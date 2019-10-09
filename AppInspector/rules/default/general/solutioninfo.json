@@ -1,0 +1,266 @@
+[
+  {
+    "name": "Metadata: Target Processor",
+    "id": "AI010220",
+    "description": "Metadata: Target Processor",
+    "tags": [
+      "Metadata.Hardware.Processor"
+    ],
+    "applies_to": [ "VSsolution", "cpp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Win32|Any CPU|Win64|x64|x86|Arm|Arm64",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Name",
+    "id": "AI010221",
+    "description": "Metadata: Application Name",
+    "tags": [
+      "Metadata.Application.Name"
+    ],
+    "applies_to": [ "VSProject" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Project.*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Build Output Category",
+    "id": "AI010222",
+    "description": "Metadata: Build Output Category",
+    "tags": [
+      "Metadata.Application.BuildOutput.Category"
+    ],
+    "applies_to": [ "VSProject" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<OutputType>.*</OutputType>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+
+      },
+      {
+        "pattern": "<ConfigurationType>.*</ConfigurationType>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Type (Windows Forms)",
+    "id": "AI010223",
+    "description": "Metadata: Application Type (Windows Forms)",
+    "tags": [
+      "Metadata.Application.Type.Winforms"
+    ],
+    "applies_to": [ "csharp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "winforms",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Type (Service)",
+    "id": "AI010224",
+    "description": "Metadata: Application Type (Service)",
+    "tags": [
+      "Metadata.Application.Type.Service"
+    ],
+    "applies_to": [ "csharp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ServiceStatus|ServiceController|InstallService",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high"
+
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Type (Service)",
+    "id": "AI010225",
+    "description": "Metadata: Application Type (Service)",
+    "tags": [
+      "Metadata.Application.Type.Service"
+    ],
+    "applies_to": [ "c", "cpp", "shellscript" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(/etc/rc\\.d/service|/etc/systemd/system)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Name",
+    "id": "AI010226",
+    "description": "Metadata: Application Name",
+    "tags": [
+      "Metadata.Application.Name"
+    ],
+    "applies_to": [ "pom.xml", "build.gradle", "build.make.xml" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<artifactId>(.*)</artifactId>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Name",
+    "id": "AI010227",
+    "description": "Metadata: Application Name",
+    "tags": [
+      "Metadata.Application.Name"
+    ],
+    "applies_to": [ "package.json" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\\"name\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Description",
+    "id": "AI010228",
+    "description": "Metadata: Application Description",
+    "tags": [
+      "Metadata.Application.Description"
+    ],
+    "applies_to": [ "package.json" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\\"description\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Version",
+    "id": "AI010229",
+    "description": "Metadata: Application Version",
+    "tags": [
+      "Metadata.Application.Version"
+    ],
+    "applies_to": [ "package.json" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\\"version\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Version",
+    "id": "AI010230",
+    "description": "Metadata: Application Version",
+    "tags": [
+      "Metadata.Application.Version"
+    ],
+    "applies_to": [
+      "plaintext",
+      "markdown"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "version [^\\b]+",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Author",
+    "id": "AI010231",
+    "description": "Metadata: Application Author",
+    "tags": [
+      "Metadata.Application.Author"
+    ],
+    "applies_to": [ "package.json" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\\"author\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Author",
+    "id": "AI010232",
+    "description": "Metadata: Application Author",
+    "tags": [
+      "Metadata.Application.Author"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "author[=: ](.*)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  }
+]

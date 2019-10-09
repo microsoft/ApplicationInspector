@@ -1,0 +1,238 @@
+[
+  {
+    "name": "Development Framework: Angular.JS",
+    "id": "AI061510",
+    "description": "Development Framework: Angular.JS",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.AngularJS" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Angular",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Vue",
+    "id": "AI061511",
+    "description": "Development Framework: Vue",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.Vue" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Vue",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: EmberJS",
+    "id": "AI061512",
+    "description": "Development Framework: EmberJS",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.EmberJS" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Ember",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Backbone",
+    "id": "AI061513",
+    "description": "Development Framework: Backbone",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.Backbone" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "backbone",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: jQuery",
+    "id": "AI061514",
+    "description": "Development Framework: jQuery",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.jQuery" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "jquery",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Redux",
+    "id": "AI061515",
+    "description": "Development Framework: Redux",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.Redux" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "redux",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Redux-Saga",
+    "id": "AI061516",
+    "description": "Development Framework: Redux-Saga",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.Redux-Saga" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "redux-saga",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: React",
+    "id": "AI061517",
+    "description": "Development Framework: React",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.React" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "react",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: RITEWay",
+    "id": "AI061518",
+    "description": "Development Framework: RITEWay",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.RITEWay" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "riteway",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Meteor",
+    "id": "AI061519",
+    "description": "Development Framework: Meteor",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.Meteor" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "meteor",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Mithril",
+    "id": "AI061520",
+    "description": "Development Framework: Mithril",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.Mithril" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mithril",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Polymer",
+    "id": "AI061521",
+    "description": "Development Framework: Polymer",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.Polymer" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "polymer",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Aurelia",
+    "id": "AI061522",
+    "description": "Development Framework: Aurelia",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.Aurelia" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "aurelia",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Content Management Framework: Wordpress",
+    "id": "AI061522",
+    "description": "Development Framework: Wordpress",
+    "applies_to": [ "javascript", "html"],
+    "tags": [ "Development.Framework.CMS.Wordpress" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "wordpress",
+        "type": "string",
+        "scopes": [ "code", "comment"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

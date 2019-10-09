@@ -1,0 +1,437 @@
+[
+  {
+    "name": "Cloud Service: Amazon Web Services",
+    "id": "AI031010",
+    "description": "Cloud Service: Amazon Web Services",
+    "tags": [
+      "Platform.CloudService.Amazon.AWS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".amazonaws.com",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Apple iCloud",
+    "id": "AI031020",
+    "description": "Cloud Service: Accessing Apple iCloud",
+    "tags": [
+      "Platform.CloudService.Apple.iCloud"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "icloud",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "NSUbiquitousKeyValueStore",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Microsoft Azure",
+    "id": "AI031100",
+    "description": "Cloud Service: Microsoft Azure",
+    "tags": [
+      "Platform.CloudService.Microsoft.Azure"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "azure",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "cloudapp",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": ".core.windows.net",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Microsoft Office Graph",
+    "id": "AI031150",
+    "description": "Cloud Service: Microsoft Office Graph",
+    "tags": [
+      "Platform.CloudService.Microsoft.Office.Graph"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "graph.microsoft.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      },
+      {
+        "pattern": ".core.windows.net",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      },
+      {
+        "pattern": "office365|office\\.com",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Microsoft Online",
+    "id": "AI031160",
+    "description": "Cloud Service: Microsoft Online",
+    "tags": [
+      "Platform.CloudService.Microsoft.MicrosoftOnline"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "microsoftonline.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Google Cloud",
+    "id": "AI031030",
+    "description": "Cloud Service: Google Cloud",
+    "tags": [
+      "Platform.CloudService.Google.Cloud"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "cloud.google.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "googleapis.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: DigitalOcean Cloud",
+    "id": "AI031040",
+    "description": "Accessing DigitalOcean",
+    "tags": [
+      "Platform.CloudService.DigitalOcean.Cloud"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "rule_info": "",
+    "patterns": [
+      {
+        "pattern": "api.digitalocean.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: SendGrid",
+    "id": "AI031050",
+    "description": "Cloud Service: SendGrid",
+    "tags": [
+      "Platform.CloudService.SendGrid",
+      "Platform.CloudService.Generic.Mail"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sendgrid.net",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: DataBricks",
+    "id": "AI031060",
+    "description": "Cloud Service: DataBricks",
+    "tags": [
+      "Platform.CloudService.DataBricks",
+      "Platform.CloudService.Microsoft.Azure"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".cloud.databricks.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: GitHub",
+    "id": "AI031510",
+    "description": "Cloud Service: GitHub",
+    "tags": [
+      "Platform.CloudService.Repository.GitHub"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "github",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: GitLab",
+    "id": "AI031520",
+    "description": "Cloud Service: GitLab",
+    "tags": [
+      "Platform.CloudService.Repository.GitLab"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "gitlab",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: BitBucket",
+    "id": "AI031530",
+    "description": "Cloud Service: BitBucket",
+    "tags": [
+      "Platform.CloudService.Repository.BitBucket"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "bitbucket",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: SourceForge",
+    "id": "AI031540",
+    "description": "Cloud Service: SourceForge",
+    "tags": [
+      "Platform.CloudService.Repository.SourceForge"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sourceforge",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Savannah",
+    "id": "AI031550",
+    "description": "Cloud Service: Savannah",
+    "tags": [
+      "Platform.CloudService.Repository.Savannah"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "savannah\\.(non)?gnu\\.org",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: NuGet",
+    "id": "AI031710",
+    "description": "Cloud Service: NuGet",
+    "tags": [
+      "Platform.CloudService.PackageManager.NuGet"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "nuget",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: NPM",
+    "id": "AI031720",
+    "description": "Cloud Service: NPM",
+    "tags": [
+      "Platform.CloudService.PackageManager.NPM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "npm",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: PyPI",
+    "id": "AI031730",
+    "description": "Cloud Service: PyPI",
+    "tags": [
+      "Platform.CloudService.PackageManager.PyPI"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pypi",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: LaunchPad",
+    "id": "AI031740",
+    "description": "Cloud Service: LaunchPad",
+    "tags": [
+      "Platform.CloudService.PackageManager.LaunchPad"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "launchpad.net",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Travis.CI",
+    "id": "AI031810",
+    "description": "Cloud Service: Travis.CI",
+    "applies_to": [
+      ".travis.yml"
+    ],
+    "tags": [
+      "Platform.CloudService.CI.TravisCI"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(language|dist|matrix):",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Circle CI",
+    "id": "AI031811",
+    "description": "Cloud Service: Circle CI",
+    "applies_to": [
+      "config.yml"
+    ],
+    "tags": [
+      "Platform.CloudService.CI.CircleCI"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "circleci",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Azure Pipelines",
+    "id": "AI031812",
+    "description": "Cloud Service: Azure Pipelines",
+    "applies_to": [
+      "azure-pipelines.yml"
+    ],
+    "tags": [
+      "Platform.CloudService.CI.AzurePipelines"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "steps:",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      }
+    ]
+  }
+]

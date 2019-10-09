@@ -1,0 +1,90 @@
+﻿<div class="section">
+    <h2>Report Summary</h2>
+
+    <div class="small font-weight-bold">
+        View as
+        &nbsp; &nbsp;
+        <a class="btn-link disabled font-weight-bold" href="#">HTML</a>
+        |
+        <a href="output.json">JSON</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-2">
+            <ul class="nav flex-column">
+				<li class="nav-item">
+					<a class="nav-link active" href="#project_info" role="tab" data-toggle="tab">Project Info</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#scan_metadata" role="tab" data-toggle="tab">Scan Metadata</a>
+				</li>
+			 </ul>
+        </div>
+        <div class="col">
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active show" id="project_info">
+                  <div class="container">
+                      <div class="row">
+                          <div class="col">
+                              <div id="s_pi_analysis_chart"></div>
+                          </div>
+                          <div class="col">
+                              <div id="s_pi_patterns_chart"></div>
+                          </div>
+                        <div class="col">
+                          <div id="s_pi_languages_chart"></div>
+                        </div>
+                      </div>
+                  </div>
+
+                  <table class="table table-sm">
+                      <tr>
+                          <td class="font-weight-bold">Name</td>
+                          <td id="s_pi_application_name"></td>
+                      </tr>
+                      <tr>
+                          <td class="font-weight-bold">Version</td>
+                          <td id="s_pi_version"></td>
+                      </tr>
+                      <tr>
+                          <td class="font-weight-bold">Description</td>
+                          <td id="s_pi_description"></td>
+                      </tr>
+                      <tr>
+                          <td class="font-weight-bold">Folder</td>
+                          <td id="s_pi_source_path"></td>
+                      </tr>
+                      <tr>
+                          <td class="font-weight-bold">Author(s)</td>
+                          <td id="s_pi_author"></td>
+                      </tr>
+                      <tr>
+                          <td class="font-weight-bold">Analyzed</td>
+                          <td id="s_pi_date_scanned"></td>
+                      </tr>                   
+                  </table>
+              </div>
+              
+                <div role="tabpanel" class="tab-pane" id="scan_metadata">
+				<table class="table table-sm">
+					<tr>
+						<td class="font-weight-bold">Total Files</td>
+						<td id="s_mt_total_files"></td>
+					</tr>
+          <tr>
+						<td class="font-weight-bold">Files Analyzed</td>
+						<td id="s_mt_analyzed_files"></td>
+					</tr>
+          <tr>
+            <td class="font-weight-bold">Files Skipped</td>
+            <td id="s_mt_skipped_files"></td>
+          </tr>
+				</table>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="profile">ccc</div>
+            </div>
+        </div>
+    </div>
+</div>

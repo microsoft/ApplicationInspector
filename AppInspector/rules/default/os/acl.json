@@ -1,0 +1,304 @@
+[
+  {
+    "name": "OS Operation: ACL",
+    "id": "AI038010",
+    "description": "OS Operation: ACL",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.ACL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "FileSecurity|DirectorySecurity",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL (Write)",
+    "id": "AI038020",
+    "description": "OS Operation: ACL (Write)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.ACL.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SetNamedSecurityInfo|SetEntriesInAcl",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL (Write)",
+    "id": "AI038110",
+    "description": "OS Operation: ACL (Write)",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "OS.ACL.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SetNamedSecurityInfo|SetEntriesInAcl|AddAccessAllowed|AceAddAccessAllowedObjectAce|AddAce|SetFileSecurity|DeleteAce",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "AuthzModifyClaims|AuthzModifySids|BuildExplicitAccessWithName|SetUserObjectSecurity|DestroyPrivateObjectSecurity|SetKernelObjectSecurity|SetSecurityDescriptorSacl|SetSecurityDescriptorOwner|SetSecurityDescriptorGroup|SetPrivateObjectSecurity|SetNamedSecurityInfo|SetServiceObjectSecurity",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL Audit (Write)",
+    "id": "AI038120",
+    "description": "OS Operation: ACL Audit (Write)",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "OS.ACL.Audit.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "AuditSetPerUserPolicy|AuditSetSecurity",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "DestroyPrivateObjectSecurity|SetKernelObjectSecurity|SetSecurityDescriptorSacl|SetSecurityDescriptorOwner|SetSecurityDescriptorGroup|SetPrivateObjectSecurity|SetNamedSecurityInfo|SetServiceObjectSecurity",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL Token Impersonation",
+    "id": "AI038510",
+    "description": "OS Operation: ACL Token Impersonation",
+    "tags": [
+      "OS.ACL.TokenImpersonation"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "impersonate",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "low",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL Token Impersonation",
+    "id": "AI038520",
+    "description": "OS Operation: ACL Token Impersonation",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "OS.ACL.TokenImpersonation"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ImpersonateAnonymousToken|ImpersonateLoggedOnUser",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL Token Impersonation",
+    "id": "AI038530",
+    "description": "OS Operation: ACL Token Impersonation",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.ACL.TokenImpersonation"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "WindowsImpersonationContext|WindowsIdentity\\.Impersonate|WindowsIdentity\\.RunImpersonated",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL Impersonation (App Container)",
+    "id": "AI038600",
+    "description": "OS Operation: ACL Impersonation (App Container)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.ACL.AppContainer.TokenImpersonation"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "WindowsImpersonationContext|WindowsIdentity\\.Impersonate|WindowsIdentity\\.RunImpersonated",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL Impersonation (App Container)",
+    "id": "AI038610",
+    "description": "OS Operation: ACL Impersonation (App Container)",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "OS.ACL.AppContainer.TokenImpersonation"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "AuthzSetAppContainerInformation",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL System Token (Write)",
+    "id": "AI038700",
+    "description": "OS Operation: ACL System Token (Write)",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "OS.ACL.SystemToken.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "AdjustTokenPrivileges|SetTokenInformation",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL (Write)",
+    "id": "AI038800",
+    "description": "OS Operation: ACL (Write)",
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "OS.ACL.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Set-Acl",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: ACL (Write)",
+    "id": "AI038810",
+    "description": "OS Operation: ACL (Write)",
+    "tags": [
+      "OS.ACL.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "chmod|chgrp|chown|setfacl",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Elevated Permissions",
+    "id": "AI038820",
+    "description": "OS Operation: Elevated Permissions",
+    "applies_to": [
+      "package.json"
+    ],
+    "tags": [
+      "OS.ACL.Permission.Elevated"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\"unsafe-perm\"\\s*:\\s*true",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  }
+]

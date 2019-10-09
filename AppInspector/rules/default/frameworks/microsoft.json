@@ -1,0 +1,140 @@
+[
+  {
+    "name": "Development Framework: .NET Core",
+    "id": "AI061211",
+    "description": "Development Framework: .NET Core",
+    "applies_to": [ "csharp" ],
+    "tags": [ "Development.Framework.Microsoft.NETCore" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "netcore",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Microsoft MVC",
+    "id": "AI061212",
+    "description": "Development Framework: Microsoft MVC",
+    "applies_to": [ "csharp" ],
+    "tags": [ "Development.Framework.Microsoft.MVC" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mvc",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      },
+      {
+        "pattern": "aspnetcore",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Microsoft WCF",
+    "id": "AI061213",
+    "description": "Development Framework: Microsoft WCF",
+    "applies_to": [ "csharp" ],
+    "tags": [ "Development.Framework.Microsoft.WCF" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "wcf",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Microsoft MFC",
+    "id": "AI061214",
+    "description": "Development Framework: Microsoft MFC",
+    "applies_to": [ "c", "cpp", "csharp" ],
+    "tags": [ "Development.Framework.Microsoft.MFC" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mfc",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Microsoft ADO",
+    "id": "AI061215",
+    "description": "Development Framework: Microsoft ADO",
+    "applies_to": [ "csharp" ],
+    "tags": [ "Development.Framework.Microsoft.ADO" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ado",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Microsoft Linq",
+    "id": "AI061216",
+    "description": "Development Framework: Microsoft Linq",
+    "applies_to": [ "csharp" ],
+    "tags": [ "Development.Framework.Microsoft.Linq" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "linq",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Windows SDK",
+    "id": "AI061217",
+    "description": "Development Framework: Windows SDK",
+    "applies_to": [ "c", "cpp", "csharp" ],
+    "tags": [ "Development.Framework.Microsoft.WindowsSDK" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "winsdk",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Microsoft Active Directory (ADAL)",
+    "id": "AI061218",
+    "description": "Development Framework: Microsoft Active Directory (ADAL)",
+    "tags": [
+      "Development.Framework.Authentication.Microsoft.ADAL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ADAL",
+        "type": "string",
+        "scopes": [ "code" ],
+        "_comment": ""
+      }
+    ]
+  }
+]

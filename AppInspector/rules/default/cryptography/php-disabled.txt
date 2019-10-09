@@ -1,0 +1,1299 @@
+[
+  {
+    "name": "Detect Cryptography",
+    "id": "AP004400",
+    "description": "Detect use of cryptography",
+    "recommendation": "",
+    "applies_to": [
+      "php"
+    ],
+    "tags": [
+      "Inspect.Threatmodel.Cryptography.PHP"
+    ],
+    "severity": "critical",
+    "_comment": "",
+    "rule_info": "",
+    "patterns": [
+      {
+        "pattern": "hash(",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash ",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_algos",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_copy",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_equals",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_file",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_final",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_hmac",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "HASH_HMAC",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_hmac_file",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_init",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_pbkdf2",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_update",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_update_file",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "hash_update_stream",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_BLOWFISH",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_CAST_128",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_CAST_256",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_cbc",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_cfb",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_create_iv",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_CRYPT",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_DECRYPT",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_decrypt",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_ecb",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_enc_get_algorithms_name",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_enc_get_block_size",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_enc_get_iv_size",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_enc_get_key_size",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_enc_get_modes_name",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_enc_get_supported_key_sizes",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_enc_is_block_algorithm",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_enc_is_block_algorithm_mode",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_enc_is_block_mode",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_enc_self_test",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_ENCRYPT",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_encrypt",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_ENIGMA",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_generic",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_generic_deinit",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_generic_end",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_generic_init",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_get_block_size",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_get_cipher_name",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_get_iv_size",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_get_key_size",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_GOST",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_IDEA",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_list_algorithms",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_list_modes",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_LOKI97",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_MARS",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_MODE_CBC",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_MODE_CFB",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_MODE_ECB",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_MODE_NOFB",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_MODE_OFB",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_MODE_STREAM",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_module_close",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_module_get_algo_block_size",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_module_get_algo_key_size",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_module_get_supported_key_sizes",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_module_is_block_algorithm",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_module_is_block_algorithm_mode",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_module_is_block_mode",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_module_open",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_module_self_test",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mcrypt_ofb",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_PANAMA",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_RAND",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_RC2",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_RC4",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_RC6",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_RC6_128",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_RC6_192",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_RC6_256",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_SAFER128",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_SAFER64",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_SAFERPLUS",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_SERPENT(libmcrypt",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_SERPENT_128",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_SERPENT_192",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_SERPENT_256",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_SKIPJACK",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_TEAN",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_THREEWAY",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_TWOFISH",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_TWOFISH128",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_TWOFISH192",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_TWOFISH256",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_WAKE",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MCRYPT_XTEA",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mdecrypt_generic",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mhash",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_ADLER32",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mhash_count",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_CRC32",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_CRC32B",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mhash_get_block_size",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mhash_get_hash_name",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_GOST",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_HAVAL128",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_HAVAL160",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_HAVAL192",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_HAVAL224",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_HAVAL256",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "mhash_keygen_s2k",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_MD2",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_MD4",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_MD5",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_RIPEMD128",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_RIPEMD256",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_RIPEMD320",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_SHA1",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_SHA192",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_SHA224",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_SHA256",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_SHA384",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_SHA512",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_SNEFRU128",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_SNEFRU256",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_TIGER",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_TIGER128",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_TIGER160",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MHASH_WHIRLPOOL",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_ALGO_DSS1",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_ALGO_RMD160",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_CIPHER_RC2_128",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_CIPHER_RC2_40",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_CIPHER_RC2_64",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_KEYTYPE_DH",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_KEYTYPE_DSA",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_KEYTYPE_EC",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_KEYTYPE_RSA",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_NO_PADDING",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_PKCS1_OAEP_PADDING",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_PKCS1_PADDING",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_SSLV23_PADDING",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_TLSEXT_SERVER_NAME",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_VERSION_NUMBER",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OPENSSL_VERSION_TEXT",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "PKCS7_BINARY",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "PKCS7_DETACHED",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "PKCS7_NOATTR",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "PKCS7_NOCERTS",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "PKCS7_NOCHAIN",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "PKCS7_NOINTERN",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "PKCS7_NOSIGS",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "PKCS7_NOVERIFY",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "PKCS7_TEXT",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "X509_PURPOSE_ANY",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "X509_PURPOSE_CRL_SIGN",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "X509_PURPOSE_NS_SSL_SERVER",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "X509_PURPOSE_SMIME_ENCRYPT",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "X509_PURPOSE_SMIME_SIGN",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "X509_PURPOSE_SSL_CLIENT",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "X509_PURPOSE_SSL_SERVER",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "crc32[(]",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "crypt",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "password_hash",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      }
+    ]
+  }
+]

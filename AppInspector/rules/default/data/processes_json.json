@@ -1,0 +1,39 @@
+[
+  {
+    "name": "Data: JSON",
+    "id": "AI068010",
+    "description": "Data: JSON",
+    "tags": [
+      "Data.JSON"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "json",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Data: JSON",
+    "id": "AI068020",
+    "description": "Data: JSON",
+    "tags": [
+      "Data.JSON"
+    ],
+    "applies_to": [ "csharp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "JavaScriptSerializer",
+        "type": "string",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  }
+] 

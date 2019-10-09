@@ -1,0 +1,203 @@
+[
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI034510",
+    "description": "OS: Dynamic Execution",
+    "applies_to": [
+      "objective-c",
+      "swift"
+    ],
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "stringByEvaluatingJavaScriptFromString",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "https://developer.apple.com/documentation/uikit/uiwebview/1617963-stringbyevaluatingjavascriptfrom?language=objc"
+      },
+      {
+        "pattern": "evaluateJavaScript",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "https://developer.apple.com/documentation/webkit/wkwebview/1415017-evaluatejavascript?language=objc"
+      }
+
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI034511",
+    "description": "OS: Dynamic Execution",
+    "applies_to": [
+      "javascript",
+      "ruby",
+      "javascriptreact"
+    ],
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\beval\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "exec(Sync)?\\(",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "\\bspawn\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "\\bsystem\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      },
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI034512",
+    "description": "OS: Dynamic Execution",
+    "recommendation": "",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "process.start",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "xp_cmdshell",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI034513",
+    "description": "OS: Dynamic Execution",
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(iex|invoke-expression).*[.]*webclient",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "(iex|invoke-expression).*[.]*downloadstring",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI034513",
+    "description": "OS: Dynamic Execution",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ksh|bash|csh|sh",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "system(",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "createprocess|execl|execlp|execlp|execv|execve|execvp|execvpe|execle|fork",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI034514",
+    "description": "OS: Dynamic Execution",
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Runtime.getRuntime().exec",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

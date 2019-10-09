@@ -1,0 +1,105 @@
+[
+  {
+    "name": "Platform: Google Android",
+    "id": "AI030010",
+    "description": "Platform: Google Android",
+    "tags": [
+      "Platform.OS.Google.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "android",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "kitkat|jellybean|lollipop|marshmallow|nougat|oreo|pie",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Platform: Apple iOS",
+    "id": "AI030020",
+    "description": "Platform: Apple iOS",
+    "tags": [
+      "Platform.OS.Apple.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "UIKit|ios",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Platform: Apple MacOS",
+    "id": "AI0300030",
+    "description": "Platform: Apple MacOS",
+    "tags": [
+      "Platform.OS.Apple.MacOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(os x)|osx|macos|macosx",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Platform: Microft Windows",
+    "id": "AI0300040",
+    "description": "Platform: Microsoft Windows",
+    "tags": [
+      "Platform.OS.Microsoft.Windows"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "windows",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Platform: Linux",
+    "id": "AI0300050",
+    "description": "Platform: Linux",
+    "tags": [
+      "Platform.OS.Linux.Distro"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "linux|xubuntu|ubuntu|coreos|manjaro|archlinux|debian|mint|gentoo|opensuse|redhat|mandrake|mandriva|slackware",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

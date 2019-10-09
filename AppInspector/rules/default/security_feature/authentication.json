@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Feature: Authentication",
+    "id": "AI021000",
+    "description": "Feature: Authentication",
+    "tags": [
+      "Feature.Authentication"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "identity|auth|authenticated|authentication|log(in|on)|log(off|out)|signin|sign-?in|signout|sign-?out",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifications": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "(username|password|credentials|acct)s?",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "oauth2?|totp|adal|(auth|access)_?token",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Feature: Authentication (JWT)",
+    "id": "AI021010",
+    "description": "Feature: Authentication (JWT)",
+    "tags": [
+      "Feature.Authentication.JWT"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "jwt",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "modifications": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Feature: Authentication (HTML Form)",
+    "id": "AI021020",
+    "description": "Feature: Authentication (HTML Form)",
+    "tags": [
+      "Feature.Authentication.HTMLForm"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": " type=['\\\"]password['\\\"] ",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifications": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+
+]

@@ -1,0 +1,284 @@
+// Copyright (C) Microsoft. All rights reserved.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+[
+  {
+    "categoryName": "profile",
+    "type": "uniqueTags",
+    "groups": [
+      {
+        "title": "Security Basics",
+        "dataRef": "SDLBasic",
+        "patterns": [
+          {
+            "searchPattern": "Authentication",
+            "displayName": "Authentication",
+            "detectedIcon": "authN-d.png",
+            "notDetectedIcon": "authN-n.png"
+          },
+          {
+            "searchPattern": "Authorization",
+            "displayName": "Authorization",
+            "detectedIcon": "authZ-d.png",
+            "notDetectedIcon": "authZ-n.png"
+          },
+          {
+            "searchPattern": "Cryptography",
+            "displayName": "Cryptography",
+            "detectedIcon": "crypto-d.png",
+            "notDetectedIcon": "crypto-n.png"
+          },
+          {
+            "searchPattern": "Data.Serialization.Deserialization",
+            "displayName": "ObjectDeserialization",
+            "detectedIcon": "desz-d.png",
+            "notDetectedIcon": "desz-n.png"
+          },
+          {
+            "searchPattern": "Data.Media",
+            "displayName": "MediaParsing",
+            "detectedIcon": "medparse-d.png",
+            "notDetectedIcon": "medparse-n.png"
+          }
+        ]
+      },
+      {
+        "title": "Extended Security",
+        "dataRef": "ExtendedSDL",
+        "patterns": [
+          {
+
+            "searchPattern": "Network.Connect",
+            "displayName": "ExternalNetComms"
+          },
+          {
+            "searchPattern": "FileOperation.Write",
+            "displayName": "FileWrite"
+          },
+          {
+            "searchPattern": "FileOperation.Delete",
+            "displayName": "FileDelete"
+          },
+          {
+            "searchPattern": "DynamicExecution",
+            "displayName": "DynamicExecution"
+          },
+          {
+            "searchPattern": "Data.SensitiveAccount",
+            "displayName": "Accounts"
+          },
+          {
+            "searchPattern": "Data.Sensitive.Personal",
+            "displayName": "Personal Data"
+          },
+          {
+            "searchPattern": "OS.ACL.Write",
+            "displayName": "OSACLWrite"
+          }
+        ]
+      },
+      {
+        "title": "Features",
+        "dataRef": "Features",
+        "patterns": [
+          {
+            "searchPattern": "Data.Finance",
+            "displayName": "FinancialData"
+          },
+          {
+            "searchPattern": "SystemRegistry.Write",
+            "displayName": "WindowsRegistryWrite"
+          },
+          {
+            "searchPattern": "DataAccess",
+            "displayName": "DataAccess"
+          },
+          {
+            "searchPattern": "Multiprocessing",
+            "displayName": "Multi-Threading"
+          }
+        ]
+      },
+      {
+        "title": "Misc",
+        "dataRef": "Misc",
+        "patterns": [
+          {
+            "searchPattern": "OSS",
+            "displayName": "OSS"
+          },
+          {
+            "searchPattern": "SocialMedia",
+            "displayName": "SocialMediaUse"
+          },
+          {
+            "searchPattern": "Process.Access.Read",
+            "displayName": "OS Process Scan"
+          }
+        ]
+      },
+
+      {
+        "title": "System Access Changes",
+        "dataRef": "SysAccess",
+        "patterns": [
+          {
+            "searchPattern": "ACL.AppContainer",
+            "displayName": "ACLImpersonationAppContainer"
+          },
+          {
+            "searchPattern": "ACL.Write",
+            "displayName": "ACLWrite"
+          },
+          {
+            "searchPattern": "OS.ACL.Permission.Elevated",
+            "displayName": "ACLElevatedPermission"
+          },
+          {
+            "searchPattern": "Windows.Registry.Security",
+            "displayName": "WindowsRegistrySecurity"
+          },
+          {
+            "searchPattern": "TokenImpersonation",
+            "displayName": "ACLImpersonationToken"
+          },
+          {
+            "searchPattern": "System.Userorname.Add",
+            "displayName": "SystemUserAdded"
+          },
+          {
+            "searchPattern": "Environment.Write",
+            "displayName": "EnvironmentVarsWrite"
+          },
+          {
+            "searchPattern": "SecurityEventSource",
+            "displayName": "SecurityEventSource"
+          },
+          {
+            "searchPattern": "Audit.Write",
+            "displayName": "AuditPermissionsWrite"
+          },
+          {
+            "searchPattern": "System.Token.Write",
+            "displayName": "SystemTokenWrite"
+          }       
+        ]
+      }
+    ]
+  },
+  {
+    "categoryName": "composition",
+    "type": "allTags",
+    "groups": [
+      {
+        "title": "Cryptography",
+        "dataRef": "Cryptography",
+        "patterns": [
+          {
+            "searchPattern": "Cryptography",
+            "displayName": "Cryptography"
+          }
+        ]
+      },
+      {
+        "title": "Content",
+        "dataRef": "Content",
+        "patterns": [
+          {
+            "searchPattern": "Data.XML",
+            "displayName": "ProcessesXML"
+          },
+          {
+            "searchPattern": "Data.JSON",
+            "displayName": "ProcessesJSON"
+          },
+          {
+            "searchPattern": "Data.Media",
+            "displayName": "ProcessesMedia"
+          }
+        ]
+      },
+      {
+        "title": "Binary Objects",
+        "dataRef": "Objects",
+        "patterns": [
+          {
+            "searchPattern": "Component.Adobe.Flash",
+            "displayName": "FlashObjectUse"
+          },
+          {
+            "searchPattern": "Component.ActiveX",
+            "displayName": "ActiveXUse"
+          },
+          {
+            "searchPattern": "Component.PDF",
+            "displayName": "PDFObjectUse"
+          },
+          {
+            "searchPattern": "ObjectType.Media",
+            "displayName": "MediaObjectUse"
+          }
+        ]
+      },
+      {
+        "title": "Development Frameworks",
+        "dataRef": "DevFrameWrks",
+        "patterns": [
+          {
+            "searchPattern": "Development.Framework",
+            "displayName": "DevelopmentFramework"
+          }
+        ]
+      },
+      {
+        "title": "Testing Frameworks",
+        "dataRef": "TestFrameWrks",
+        "patterns": [
+          {
+            "searchPattern": "Testing.Framework",
+            "displayName": "TestFramework"
+          }
+        ]
+      },    
+      {
+        "title": "Personal Data",
+        "dataRef": "PII",
+        "patterns": [
+          {
+            "searchPattern": "Data.Sensitive.Personal",
+            "displayName": "Personal Data"
+          }
+        ]
+      },
+      {
+        "title": "Social Media",
+        "dataRef": "SocMedia",
+        "patterns": [
+          {
+            "searchPattern": "SocialMedia",
+            "displayName": "SocialMedia"
+          }
+        ]
+      },      
+      {
+        "title": "Data Access",
+        "dataRef": "DataAccess",
+        "patterns": [
+          {
+            "searchPattern": "DataAccess",
+            "displayName": "DataAccess"
+          }
+        ]
+      },
+      {
+        "title": "OSS License Types",
+        "dataRef": "DataAccess",
+        "patterns": [
+          {
+            "searchPattern": "OpenSourceLicense",
+            "displayName": "OSSLicenseTypes"
+          }
+        ]
+      }
+    ]
+  }
+]

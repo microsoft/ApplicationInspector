@@ -1,0 +1,712 @@
+[
+  {
+    "name": "Detect Cryptography",
+    "id": "AP003900",
+    "description": "Detect use of cryptography",
+    "recommendation": "",
+    "tags": [
+      "Inspect.Threatmodel.Cryptography.Infrastructure"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "rule_info": "",
+    "patterns": [
+      {
+        "pattern": "SSLCACertificateFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCACertificatePath",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCADNRequestFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCADNRequestPath",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCARevocationCheck",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCARevocationFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCARevocationPath",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCertificateChainFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCertificateFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCertificateKeyFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCipherSuite",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCompression",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLCryptoDevice",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLEngine",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLFIPS",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLHonorCipherOrder",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLInsecureRenegotiation",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOCSPDefaultResponder",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOCSPEnable",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOCSPOverrideResponder",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOCSPProxyURL",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOCSPResponderTimeout",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOCSPResponseMaxAge",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOCSPResponseTimeSkew",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOCSPUseRequestNonce",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOpenSSLConfCmd",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOptions",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLPassPhraseDialog",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProtocol",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyCACertificateFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyCACertificatePath",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyCARevocationCheck",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyCARevocationFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyCARevocationPath",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyCheckPeerCN",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyCheckPeerExpire",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyCheckPeerName",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyCipherSuite",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyEngine",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyMachineCertificateChainFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyMachineCertificateFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyMachineCertificatePath",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyProtocol",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyVerify",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLProxyVerifyDepth",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLRandomSeed",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLRenegBufferSize",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLRequire",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLRequireSSL",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLSessionCache",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLSessionCacheTimeout",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLSessionTicketKeyFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLSessionTickets",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLSRPUnknownUserSeed",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLSRPVerifierFile",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStaplingCache",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStaplingErrorCacheTimeout",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStaplingFakeTryLater",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStaplingForceURL",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStaplingResponderTimeout",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStaplingResponseMaxAge",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStaplingResponseTimeSkew",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStaplingReturnResponderErrors",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStaplingStandardCacheTimeout",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStrictSNIVHostCheck",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLUserName",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLUseStapling",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLVerifyClient",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLVerifyDepth",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_buffer_size",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_crl",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_dhparam",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_ecdh_curve",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_password_file",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_prefer_server_ciphers",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_protocols",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_session_cache",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_session_ticket_key",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_session_tickets",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_session_timeout",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_stapling",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_stapling_file",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_stapling_responder",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_stapling_verify",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_trusted_certificate",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_verify_client",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ssl_verify_depth",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      }
+    ]
+  }
+]

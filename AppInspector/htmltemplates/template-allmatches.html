@@ -1,0 +1,124 @@
+﻿<!doctype html>
+<!-- Copyright (c) Microsoft Corporation.
+     Licensed under the MIT License. -->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>AppInpector</title>
+
+    <link rel="stylesheet" href="bootstrap.css">
+
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <img src="Microsoft_logo_-_2012_(vertical).svg.png" />&nbsp;
+        <a class="navbar-brand" href="index.html">AppInspector</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="projecthome.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="profile.html">Profile</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Inspect</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="composition.html">Composition</a>
+                        <a class="dropdown-item" href="rankedtags.html">Ranked Tags</a>
+                        <a class="dropdown-item" href="alltags.html">All Tags</a>
+                        <a class="dropdown-item" href="allmatches.html">All Matches</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/Microsoft/AppInspector" target="_blank" rel="noopener">About</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+
+    <main role="main" class="container" style="max-width: 100%">
+
+
+        <!-- All features -->
+        <h4>All Match Details</h4>
+        count={{ app.matchList.Count }} &nbsp; <a href="jsonreport.json">Json Report</a>
+        <div class="card-columns">
+            {{ #each app.matchList }}
+
+            <div class="card" style="height:400px;overflow-y:scroll;border: 1px solid #6c757d;">
+                <div class="card-body">
+                    <h5 class="card-title">Match</h5>
+                    <div class="card-text">
+                        <table class="table table-condensed">
+                            <tr>
+                                <td>Rule ID:</td>
+                                <td>{{ this.Issue.Rule.Id }}</td>
+                            </tr>
+                            <tr>
+                                <td>Rule name:</td>
+                                <td>{{ this.Issue.Rule.Name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Rule description:</td>
+                                <td>{{ this.Issue.Rule.Description }}</td>
+                            </tr>
+                            <tr>
+                                <td>File</td>
+                                <td><a href="file:///{{ this.Filename }}" rel="noopener" target="_blank">{{ this.Filename }}</a></td>
+                            </tr>
+                            <tr>
+                                <td>Source type</td>
+                                <td>{{ this.Language }}</td>
+                            </tr>
+                            <tr>
+                                <td>Line number</td>
+                                <td>{{ this.Issue.StartLocation.Line }}</td>
+                            </tr>
+                            <tr>
+                                <td>Tags</td>
+                                <td>{{ this.Issue.Rule.Tags.[0] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Confidence</td>
+                                <td>{{ this.Issue.PatternMatch.Confidence }}</td>
+                            </tr>
+                            <tr>
+                                <td>Pattern Type</td>
+                                <td>{{ this.Issue.PatternMatch.PatternType }}</td>
+                            </tr>
+                            <tr>
+                                <td>Pattern</td>
+                                <td>{{ this.Issue.PatternMatch.Pattern }}</td>
+                            </tr>
+                            <tr>
+                                <td>Text sample</td>
+                                <td>{{ this.TextSample }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {{#unless @last}} {{/unless}}
+            {{ /each }}
+        </div>
+    </main><!-- /.container -->
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    
+</body>
+</html>

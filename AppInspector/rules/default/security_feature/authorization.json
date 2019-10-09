@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Feature: Authorization",
+    "id": "AI022000",
+    "description": "Feature: Authorization",
+    "applies_to": [
+      "common_source_code"
+    ],
+    "tags": [
+      "Feature.Authorization"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "authorize|permission|role|sharedAccessPolicy|storageAccessKey|sharedAccessAccountPolicy|storageAccountOrConnectionString",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifications": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "SASToken",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifications": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]
