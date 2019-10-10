@@ -23,7 +23,7 @@ ApplicationInspector 1.0.0
 ERROR(S):
   No verb selected.
 
-  analyze        Inspect source directory/file against defined characteristics
+  analyze        Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics
   tagdiff        Compares unique tag values between two source paths
   tagtest        Test presence of smaller set or custom tags in source (compare or verify modes)
   exporttags     Export unique rule tags
