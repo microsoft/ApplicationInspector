@@ -3,17 +3,17 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha256-YLGeXaapI0/5IgZopewRJcFXomhRMlYYjugPLSyNjTY=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css" integrity="sha256-zmfNZmXoNWBMemUOo1XUGFfc0ihGGLYdgtJS3KCr/l0=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.8/c3.min.css" integrity="sha256-loJlaQZlNV5TexzLFHJ6fGO6PCjUQk4isWOG/7YffC4=" crossorigin="anonymous" />
-    <link rel="stylesheet" type="text/css" href="html/resources/appinspector.css" />
+    <link rel="stylesheet" href="html/resources/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="html/resources/css/all.css" />
+    <link rel="stylesheet" href="html/resources/css/c3.min.css" />
+    <link rel="stylesheet" type="text/css" href="html/resources/css/appinspector.css" />
 
     <title>{{ application_version }}</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-light navbar-lg">
         <span class="navbar-brand">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" width="32" height="32" class="d-inline-block align-top" alt="">
+            <img src="html/Microsoft_logo.svg" width="32" height="32" class="d-inline-block align-top" alt="">
             Application Inspector
         </span>
         <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -21,7 +21,7 @@
                 <li><a class="nav-button" href="#" data-target="#page__report_overview">Overview</a></li>
                 <li><a class="nav-button" href="#" data-target="#page__report_summary">Summary</a></li>
                 <li><a class="nav-button" href="#" data-target="#page__report_profile">Profile</a></li>
-                <li><a class="nav-button" href="https://github.com/microsoft/AppInspector/wiki" data-target="#page__report_profile" target="_blank" rel="noopener">About</a></li>           
+                <li><a class="nav-button" href="https://github.com/microsoft/AppInspector/wiki" data-target="#page__report_profile" target="_blank" rel="noopener">About</a></li>
             </ul>
             <ul class="navbar-nav ml-auto" style="margin-right: 80px">
                 <li>
@@ -51,16 +51,16 @@
 
     {% include "file_listing" %}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.0/umd/popper.min.js" integrity="sha256-fTuUgtT7O2rqoImwjrhDgbXTKUwyxxujIMRIK7TbuNU=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha256-CjSoeELFOcH0/uxWu6mC/Vlrc1AARqbm/jiiImDGV3s=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ace.js" integrity="sha256-CVkji/u32aj2TeC+D13f7scFSIfphw2pmu4LaKWMSY8=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ext-settings_menu.js" integrity="sha256-SL34Lgdp8DbjL/8WzrKeQVoEgfsYV05j2LulsDyWEpI=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ext-modelist.js" integrity="sha256-Eq83mfVraqpouXYtwjYSEvTt6JM7k1VrhsebwRs06AM=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.6/ext-beautify.js" integrity="sha256-XURxU9F6YJl7wYVNfD4/aztOdXJyQ9vZ/03hyUknaOU=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.12.0/d3.min.js" integrity="sha256-+9Mf3cAVmxxudDsr1XwXUeRZFtvdWVYdq5/vcgiYyNU=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.8/c3.min.js" integrity="sha256-N10MWEM8r2dC0bw4GafCShV+f23skko9fL5mIGcGd4A=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="html/resources/appinspector.js"></script>
+    <script src="html/resources/js/jquery.min.js"></script>
+    <script src="html/resources/js/popper.min.js"></script>
+    <script src="html/resources/js/bootstrap.min.js"></script>
+    <script src="html/resources/js/ace.js"></script>
+    <script src="html/resources/js/ext-settings_menu.js"></script>
+    <script src="html/resources/js/ext-modelist.js"></script>
+    <script src="html/resources/js/ext-beautify.js"></script>
+    <script src="html/resources/js/d3.min.js"></script>
+    <script src="html/resources/js/c3.min.js"></script>
+    <script type="text/javascript" src="html/resources/js/appinspector.js"></script>
     <script type="text/javascript">
         let data = {{ json }};
     </script>

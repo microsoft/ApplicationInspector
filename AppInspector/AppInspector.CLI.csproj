@@ -30,11 +30,9 @@
 
   <ItemGroup>
     <Compile Remove="htmlreport\**" />
-    <Compile Remove="linux\**" />
     <EmbeddedResource Remove="htmlreport\**" />
     <EmbeddedResource Remove="linux\**" />
     <None Remove="htmlreport\**" />
-    <None Remove="linux\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,7 +40,6 @@
     <None Remove="html\partials\_report_overview.liquid" />
     <None Remove="html\partials\_report_profile.liquid" />
     <None Remove="html\partials\_report_summary.liquid" />
-    <None Remove="log.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -105,16 +102,18 @@
     <None Update="html\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="html\resources\appinspector.css">
+    <None Update="html\Microsoft_logo.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>    
+   <None Update="html\resources\css\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="html\resources\appinspector.js">
+    <None Update="html\resources\js\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="C:\temp\authorization.json" Link="authorization.json" />
+    <None Update="html\resources\webfonts\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
