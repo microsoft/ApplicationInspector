@@ -261,8 +261,9 @@ jobs:
   - task: PublishPipelineArtifact@1
     displayName: Publish Semmle Result
     inputs:
-      targetPath: '$(Pipeline.Workspace)\_sdt\logs\Semmle\csharp\microsoft.AppInspector-csharp-1.sarif'
+      targetPath: '$(Pipeline.Workspace)\_sdt\logs\Semmle\csharp\microsoft.ApplicationInspector-csharp-1.sarif'
       artifact: 'Semmle.sarif'
+    continueOnError: true
   - task: SdtReport@1
     displayName: Generate SDT Report
     inputs:
