@@ -193,6 +193,7 @@ jobs:
 - job: sdl
   displayName: SDL Tools
   dependsOn: publish_win
+  condition: and(succeeded(), eq(variables['RunSDL'], 'TRUE'))
   pool:
     vmImage: 'windows-latest'
   steps:
