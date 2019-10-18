@@ -77,7 +77,7 @@
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "_comment": ""
-      },
+      }
     ]
   },
   {
@@ -192,6 +192,28 @@
     "patterns": [
       {
         "pattern": "Runtime.getRuntime().exec",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI034515",
+    "description": "OS: Dynamic Execution",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "subprocess.Popen",
         "type": "substring",
         "scopes": [
           "code"
