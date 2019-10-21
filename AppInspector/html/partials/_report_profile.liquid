@@ -17,7 +17,7 @@
             {% for group in groups -%}
             <tr style="vertical-align:center">
               <td style="vertical-align:top;width:200px;">
-                <img id="{{group.title}}-toggleBtn" src="c:\\temp\\toggleBtn-none.png" height="20" width="20" onclick="toggleSelectFeatures('{{group.title}}');">&nbsp;{{group.title}}
+                <img id="{{group.title}}-toggleBtn" src="html/toggleBtn-none.png" height="20" width="20" onclick="toggleSelectFeatures('{{group.title}}');">&nbsp;{{group.title}}
               </td>
               <td>
                 <div id="{{group.title}}-summary" style="display:block">
@@ -89,12 +89,12 @@
   <script type="text/javascript">
     function toggleSelectFeatures(divname)
     {
-        var toggleValue1 = document.getElementById(divname+'-summary').style.display;
-        var toggleValue2 = document.getElementById(divname+'-detailed').style.display;
+    var toggleValue1 = document.getElementById(divname+'-summary').style.display;
+    var toggleValue2 = document.getElementById(divname+'-detailed').style.display;
 
-        document.getElementById(divname+'-summary').style.display = toggleValue2;
-        document.getElementById(divname+'-detailed').style.display = toggleValue1;
-        document.getElementById(divname+'-toggleBtn').src = "c:\\temp\\toggleBtn-"+toggleValue1+".png";
+    document.getElementById(divname+'-summary').style.display = toggleValue2;
+    document.getElementById(divname+'-detailed').style.display = toggleValue1;
+    document.getElementById(divname+'-toggleBtn').src = "html/toggleBtn-"+toggleValue1+".png";
 
     }
   </script>
