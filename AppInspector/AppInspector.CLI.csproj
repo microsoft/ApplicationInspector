@@ -104,7 +104,13 @@
     </None>
     <None Update="html\Microsoft_logo.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>    
+    </None>  
+   <None Update="html\toggleBtn-block.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>  
+   <None Update="html\toggleBtn-none.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>   
    <None Update="html\resources\css\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
