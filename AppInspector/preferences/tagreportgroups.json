@@ -6,194 +6,116 @@
     "type": "uniqueTags",
     "groups": [
       {
-        "title": "Security Basics",
-        "dataRef": "SDLBasic",
+        "title": "Select Features",
+        "dataRef": "SelectFeatures",
         "patterns": [
           {
             "searchPattern": "Authentication",
             "displayName": "Authentication",
-            "detectedIcon": "authN-d.png",
-            "notDetectedIcon": "authN-n.png"
+            "detectedIcon": "fas fa-sign-in-alt"
           },
           {
             "searchPattern": "Authorization",
             "displayName": "Authorization",
-            "detectedIcon": "authZ-d.png",
-            "notDetectedIcon": "authZ-n.png"
+            "detectedIcon": "fas fa-passport"
           },
           {
             "searchPattern": "Cryptography",
             "displayName": "Cryptography",
-            "detectedIcon": "crypto-d.png",
-            "notDetectedIcon": "crypto-n.png"
+            "detectedIcon": "fas fa-key"
           },
           {
             "searchPattern": "Data.Serialization.Deserialization",
             "displayName": "ObjectDeserialization",
-            "detectedIcon": "desz-d.png",
-            "notDetectedIcon": "desz-n.png"
+            "detectedIcon": "far fa-object-ungroup"
           },
           {
             "searchPattern": "Data.Media",
-            "displayName": "MediaParsing",
-            "detectedIcon": "medparse-d.png",
-            "notDetectedIcon": "medparse-n.png"
-          }
-        ]
-      },
-      {
-        "title": "Extended Security",
-        "dataRef": "ExtendedSDL",
-        "patterns": [
-          {
-
-            "searchPattern": "Network.Connect",
-            "displayName": "ExternalNetComms"
-          },
-          {
-            "searchPattern": "FileOperation.Write",
-            "displayName": "FileWrite"
-          },
-          {
-            "searchPattern": "FileOperation.Delete",
-            "displayName": "FileDelete"
+            "displayName": "Parses Media Files",
+            "detectedIcon": "fas fa-photo-video"
           },
           {
             "searchPattern": "DynamicExecution",
-            "displayName": "DynamicExecution"
-          },
-          {
-            "searchPattern": "Data.SensitiveAccount",
-            "displayName": "Accounts"
-          },
-          {
-            "searchPattern": "Data.Sensitive.Personal",
-            "displayName": "Personal Data"
-          },
-          {
-            "searchPattern": "OS.ACL.Write",
-            "displayName": "OSACLWrite"
+            "displayName": "DynamicExecution",
+            "detectedIcon": "fab fa-audible"
           }
         ]
       },
       {
-        "title": "Features",
-        "dataRef": "Features",
+        "title": "General Features",
+        "dataRef": "GeneralFeatures",
         "patterns": [
           {
-            "searchPattern": "Data.Finance",
-            "displayName": "FinancialData"
+
+            "searchPattern": ".Network",
+            "displayName": "Network Communications",
+            "detectedIcon": "fas fa-network-wired"
           },
           {
-            "searchPattern": "SystemRegistry.Write",
-            "displayName": "WindowsRegistryWrite"
+            "searchPattern": "FileOperation.Write",
+            "displayName": "File Write",
+            "detectedIcon": "far fa-edit"
           },
           {
-            "searchPattern": "DataAccess",
-            "displayName": "DataAccess"
+            "searchPattern": "FileOperation.Delete",
+            "displayName": "File Delete",
+            "detectedIcon": "fas fa-trash"
           },
           {
             "searchPattern": "Multiprocessing",
-            "displayName": "Multi-Threading"
+            "displayName": "Multi-Threading",
+            "detectedIcon": "fas fa-atom"
+          },
+          {
+            "searchPattern": "Logging",
+            "displayName": "Logging",
+            "detectedIcon": "fas fa-file"
+          },
+          {
+            "searchPattern": "HTMLForm.Defined",
+            "displayName": "HTML Forms",
+            "detectedIcon": "far fa-address-card"
           }
         ]
       },
       {
-        "title": "Misc",
-        "dataRef": "Misc",
+        "title": "Composition",
+        "dataRef": "Composition",
         "patterns": [
           {
-            "searchPattern": "OSS",
-            "displayName": "OSS"
+            "searchPattern": "Development.Build",
+            "displayName": "Build",
+            "detectedIcon": "fas fa-building"
           },
           {
-            "searchPattern": "SocialMedia",
-            "displayName": "SocialMediaUse"
+            "searchPattern": "Development.Framework",
+            "displayName": "Development Framework",
+            "detectedIcon": "fab fa-dev"
           },
           {
-            "searchPattern": "Process.Access.Read",
-            "displayName": "OS Process Scan"
-          }
-        ]
-      },
-
-      {
-        "title": "System Access Changes",
-        "dataRef": "SysAccess",
-        "patterns": [
-          {
-            "searchPattern": "ACL.AppContainer",
-            "displayName": "ACLImpersonationAppContainer"
+            "searchPattern": "Testing.Framework",
+            "displayName": "Testing Framework",
+            "detectedIcon": "fas fa-vial"
           },
           {
-            "searchPattern": "ACL.Write",
-            "displayName": "ACLWrite"
+            "searchPattern": "Framework.CMS",
+            "displayName": "Content Management System",
+            "detectedIcon": "fab fa-wpforms"
           },
           {
-            "searchPattern": "OS.ACL.Permission.Elevated",
-            "displayName": "ACLElevatedPermission"
+            "searchPattern": "Reference.SocialMedia",
+            "displayName": "Social Media",
+            "detectedIcon": "fab fa-facebook-square"
           },
           {
-            "searchPattern": "Windows.Registry.Security",
-            "displayName": "WindowsRegistrySecurity"
+            "searchPattern": "OpenSourceLicense",
+            "displayName": "Open Source License",
+            "detectedIcon": "fas fa-file-contract"
           },
           {
-            "searchPattern": "TokenImpersonation",
-            "displayName": "ACLImpersonationToken"
-          },
-          {
-            "searchPattern": "System.Userorname.Add",
-            "displayName": "SystemUserAdded"
-          },
-          {
-            "searchPattern": "Environment.Write",
-            "displayName": "EnvironmentVarsWrite"
-          },
-          {
-            "searchPattern": "SecurityEventSource",
-            "displayName": "SecurityEventSource"
-          },
-          {
-            "searchPattern": "Audit.Write",
-            "displayName": "AuditPermissionsWrite"
-          },
-          {
-            "searchPattern": "System.Token.Write",
-            "displayName": "SystemTokenWrite"
-          }       
-        ]
-      }
-    ]
-  },
-  {
-    "categoryName": "composition",
-    "type": "allTags",
-    "groups": [
-      {
-        "title": "Cryptography",
-        "dataRef": "Cryptography",
-        "patterns": [
-          {
-            "searchPattern": "Cryptography",
-            "displayName": "Cryptography"
-          }
-        ]
-      },
-      {
-        "title": "Content",
-        "dataRef": "Content",
-        "patterns": [
-          {
-            "searchPattern": "Data.XML",
-            "displayName": "ProcessesXML"
-          },
-          {
-            "searchPattern": "Data.JSON",
-            "displayName": "ProcessesJSON"
-          },
-          {
-            "searchPattern": "Data.Media",
-            "displayName": "ProcessesMedia"
+            "searchPattern": "Dependency.SourceInclude",
+            "displayName": "Source Include",
+            "detectedIcon": "far fa-plus-square"
           }
         ]
       },
@@ -203,79 +125,261 @@
         "patterns": [
           {
             "searchPattern": "Component.Adobe.Flash",
-            "displayName": "FlashObjectUse"
+            "displayName": "Flash",
+            "detectedIcon": "fab fa-adobe"
           },
           {
             "searchPattern": "Component.ActiveX",
-            "displayName": "ActiveXUse"
+            "displayName": "ActiveX",
+            "detectedIcon": "fas fa-cubes"
           },
           {
             "searchPattern": "Component.PDF",
-            "displayName": "PDFObjectUse"
+            "displayName": "PDF",
+            "detectedIcon": "far fa-file-pdf"
           },
           {
             "searchPattern": "ObjectType.Media",
-            "displayName": "MediaObjectUse"
+            "displayName": "Media",
+            "detectedIcon": "far fa-file-image"
           }
         ]
       },
       {
-        "title": "Development Frameworks",
-        "dataRef": "DevFrameWrks",
+        "title": "Data",
+        "dataRef": "Data",
         "patterns": [
           {
-            "searchPattern": "Development.Framework",
-            "displayName": "DevelopmentFramework"
+            "searchPattern": "DataAccess.SQL",
+            "displayName": "SQL Commands",
+            "detectedIcon": "fas fa-table"
+          },
+          {
+            "searchPattern": "DataAccess.ORM",
+            "displayName": "Object Relational Model",
+            "detectedIcon": "fab fa-connectdevelop"
+          },
+          {
+            "searchPattern": "DataAccess.ODBC",
+            "displayName": "Database Connection",
+            "detectedIcon": "fas fa-plug"
+          },
+          {
+            "searchPattern": "DataAccess.Microsoft.Azure",
+            "displayName": "Azure Data Services",
+            "detectedIcon": "fab fa-microsoft"
+          },
+          {
+            "searchPattern": "Data.XML",
+            "displayName": "Processes XML",
+            "detectedIcon": "far fa-file-code"
+          },
+          {
+            "searchPattern": "Data.JSON",
+            "displayName": "Processes JSON",
+            "detectedIcon": "far fa-file-code"
+          }         
+        ]
+      },
+      {
+        "title": "Sensitive Data",
+        "dataRef": "Sensitive Data",
+        "patterns": [
+          {
+            "searchPattern": "Sensitive.Personal",
+            "displayName": "Personal Data",
+            "detectedIcon": "fas fa-user-shield"
+          },
+          {
+            "searchPattern": "Sensitive.Medical",
+            "displayName": "Medical Data",
+            "detectedIcon": "fas fa-stethoscope"
+          },
+          {
+            "searchPattern": "Sensitive.SensitiveKey",
+            "displayName": "Sensitive Key",
+            "detectedIcon": "fab fa-keycdn"
+          },
+          {
+            "searchPattern": "Sensitive.Account",
+            "displayName": "Account Data",
+            "detectedIcon": "fas fa-user-circle"
+          },
+          {
+            "searchPattern": "Data.Finance",
+            "displayName": "Financial Data",
+            "detectedIcon": "fas fa-money-bill"
           }
         ]
       },
       {
-        "title": "Testing Frameworks",
-        "dataRef": "TestFrameWrks",
+        "title": "Cloud Services",
+        "dataRef": "CloudServices",
         "patterns": [
           {
-            "searchPattern": "Testing.Framework",
-            "displayName": "TestFramework"
+            "searchPattern": "CloudService.Microsoft.Azure",
+            "displayName": "Microsoft Azure",
+            "detectedIcon": "fab fa-microsoft"
+          },
+          {
+            "searchPattern": "CloudService.Amazon.AWS",
+            "displayName": "Amazon AWS",
+            "detectedIcon": "fab fa-aws"
+          },
+          {
+            "searchPattern": "CloudService.Google",
+            "displayName": "Google Cloud Platform",
+            "detectedIcon": "fab fa-google"
+          },
+          {
+            "searchPattern": "Microsoft.Office",
+            "displayName": "Microsoft Office",
+            "detectedIcon": "far fa-file-word"
+          },
+          {
+            "searchPattern": "CloudService.Repository",
+            "displayName": "CloudService Repository",
+            "detectedIcon": "fab fa-github"
+          },
+          {
+            "searchPattern": "CloudService.PackageManager",
+            "displayName": "Package Manager",
+            "detectedIcon": "fas fa-box-open"
+          },
+          {
+            "searchPattern": "CloudService.CI",
+            "displayName": "Continuous Integration",
+            "detectedIcon": "fas fa-vials"
           }
         ]
-      },    
+      },
+
       {
-        "title": "Personal Data",
-        "dataRef": "PII",
+        "title": "OS Integration",
+        "dataRef": "OSIntegration",
         "patterns": [
           {
-            "searchPattern": "Data.Sensitive.Personal",
-            "displayName": "Personal Data"
+            "searchPattern": "Platform.OS",
+            "displayName": "OS Identification",
+            "detectedIcon": "fab fa-linux"
+          },
+          {
+            "searchPattern": "OS.ACL",
+            "displayName": "Access Control",
+            "detectedIcon": "fas fa-user-alt-slash"
+          },
+          {
+            "searchPattern": "ACL.AppContainer",
+            "displayName": "ACL AppContainer",
+            "detectedIcon": "fas fa-box"
+          },
+          {
+            "searchPattern": "OS.Environment",
+            "displayName": "Environment Variables",
+            "detectedIcon": "fas fa-times"
+          },
+          {
+            "searchPattern": "OS.Process",
+            "displayName": "Process Management",
+            "detectedIcon": "fas fa-stream"
+          },
+          {
+            "searchPattern": "OS.SystemRegistry",
+            "displayName": "Windows Registry",
+            "detectedIcon": "fas fa-tree"
+          },
+          {
+            "searchPattern": "OS.UserAccount",
+            "displayName": "User Account",
+            "detectedIcon": "fas fa-running"
           }
         ]
       },
       {
-        "title": "Social Media",
-        "dataRef": "SocMedia",
+        "title": "OS System Changes",
+        "dataRef": "OSSystemChanges",
         "patterns": [
           {
-            "searchPattern": "SocialMedia",
-            "displayName": "SocialMedia"
-          }
-        ]
-      },      
-      {
-        "title": "Data Access",
-        "dataRef": "DataAccess",
-        "patterns": [
+            "searchPattern": "OS.ACL.Permission.Elevated",
+            "displayName": "ACL Elevated Permission",
+            "detectedIcon": "fas fa-location-arrow"
+          },
           {
-            "searchPattern": "DataAccess",
-            "displayName": "DataAccess"
-          }
+            "searchPattern": "TokenImpersonation",
+            "displayName": "Token Impersonation",
+            "detectedIcon": "fas fa-door-closed"
+          },
+          {
+            "searchPattern": "System.Userorname.Add",
+            "displayName": "System User Added",
+            "detectedIcon": "fas fa-user-plus"
+          },
+          {
+            "searchPattern": "Audit.Write",
+            "displayName": "Audit Permissions Write",
+            "detectedIcon": "fas fa-file-signature"
+          },
+          {
+            "searchPattern": "System.Token.Write",
+            "displayName": "System Token Write",
+            "detectedIcon": "fab fa-bandcamp"
+          },
+          {
+            "searchPattern": "Environment.Write",
+            "displayName": "Environment Variable Write",
+            "detectedIcon": "fab fa-typo3"
+          },
+          {
+            "searchPattern": "SystemRegistry.Write",
+            "displayName": "Windows Registry Write",
+            "detectedIcon": "fab fa-sourcetree"
+          },
+          {
+            "searchPattern": "Windows.Registry.Security",
+            "displayName": "Windows Registry Security",
+            "detectedIcon": "fas fa-drum-steelpan"
+          },
+          
         ]
       },
       {
-        "title": "OSS License Types",
-        "dataRef": "DataAccess",
+        "title": "Other",
+        "dataRef": "Other",
         "patterns": [
           {
-            "searchPattern": "OpenSourceLicense",
-            "displayName": "OSSLicenseTypes"
+            "searchPattern": "Miscellaneous.Analytics",
+            "displayName": "Analytics",
+            "detectedIcon": "fas fa-diagnoses"
+          },
+          {
+            "searchPattern": "Miscellaneous.AdvertisingNetwork",
+            "displayName": "Advertising Network",
+            "detectedIcon": "fas fa-ad"
+          },
+          {
+            "searchPattern": "Process.Access.Read",
+            "displayName": "OS Process Scan",
+            "detectedIcon": "fab fa-centercode"
+          },
+          {
+            "searchPattern": "ObfuscatedCode",
+            "displayName": "Obfuscated Code",
+            "detectedIcon": "far fa-eye-slash"
+          },
+          {
+            "searchPattern": "Exception.Caught",
+            "displayName": "Exception Caught",
+            "detectedIcon": "fas fa-meteor"
+          },
+          {
+            "searchPattern": "Comment.Todo",
+            "displayName": "Commment",
+            "detectedIcon": "far fa-clock"
+          },
+          {
+            "searchPattern": "Comment.Suspicious",
+            "displayName": "Suspicious Comment",
+            "detectedIcon": "fas fa-burn"
           }
         ]
       }

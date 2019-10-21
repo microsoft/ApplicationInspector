@@ -171,6 +171,11 @@ namespace Microsoft.AppInspector.CLI.Writers
                 }
             }
 
+            foreach (TagGroup group in result)
+            {
+                GetUniqueMatchingTagInfoList(group);
+            }
+
             return result;
         }
 
@@ -227,6 +232,9 @@ namespace Microsoft.AppInspector.CLI.Writers
                                     }) ;
 
                                     hashSet.Add(pattern.SearchPattern);
+
+                                    pattern.Confidence = match.Issue.Confidence.ToString();
+
                                 }
                                 else //already have in results but...
                                 {//ensure we have highest confidence, severity as there are likly multiple matches for this tag pattern
@@ -239,6 +247,7 @@ namespace Microsoft.AppInspector.CLI.Writers
                                             if (match.Issue.Confidence > oldConfidence)
                                             {
                                                 updateItem.Confidence = match.Issue.Confidence.ToString();
+                                                pattern.Confidence = match.Issue.Confidence.ToString();
                                             }
 
                                             DevSkim.Severity oldSeverity;
@@ -267,6 +276,8 @@ namespace Microsoft.AppInspector.CLI.Writers
                         Confidence = "",
                         Severity = ""
                     };
+
+                    pattern.Confidence = "";
                     result.Add(tagInfo);
                     hashSet.Add(tagInfo.Tag);
                 }
@@ -591,7 +602,7 @@ namespace Microsoft.AppInspector.CLI.Writers
         public int UniqueMatchesCount { get { return UniqueTags.Count; } }
         [JsonIgnore]
         public Dictionary<string, TagCounter> KeyedPropertyCounters { get; }
-        [JsonProperty("selectTagCounters")]
+        [JsonProperty("tagCounters")]
         public List<TagCounter> TagCounters { get; }
         //predefined lists in KeyedPropertyLists for easy retrieval and loose coupling
         [JsonProperty(PropertyName = "packageTypes")]

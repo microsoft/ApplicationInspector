@@ -28,6 +28,8 @@ namespace Microsoft.AppInspector.CLI.Writers
         }
     }
 
+
+
     public class LiquidWriter : Writer
     {
         /**
@@ -41,6 +43,11 @@ namespace Microsoft.AppInspector.CLI.Writers
 
             RegisterSafeType(typeof(AppProfile));
             RegisterSafeType(typeof(AppMetaData));
+            /*RegisterSafeType(typeof(TagGroup));
+            RegisterSafeType(typeof(TagSearchPattern));
+            RegisterSafeType(typeof(TagInfo));
+            RegisterSafeType(typeof(HashSet<string>));
+            //RegisterSafeType(typeof(Task));*/
 
             var htmlTemplate = Template.Parse(htmlTemplateText);
 
@@ -62,6 +69,11 @@ namespace Microsoft.AppInspector.CLI.Writers
             hashData["json"] = JsonConvert.SerializeObject(data, Formatting.Indented);
             hashData["application_version"] = Program.GetVersionString();
 
+            List<TagGroup> tagGroupList = app.GetCategoryTagGroups("profile");
+            //htmlTemplateText = GetTemplate(htmlTemplateText, tagGroupList, app);
+            //data["groups"] = tagGroupList;
+            hashData["groups"] = tagGroupList;
+
             var htmlResult = htmlTemplate.Render(hashData);
             File.WriteAllText("output.html", htmlResult);
             //this.TextWriter.Write(htmlResult);
@@ -76,6 +88,7 @@ namespace Microsoft.AppInspector.CLI.Writers
             Helper.OpenBrowser("output.html");
         }
 
+       
         public override void FlushAndClose()
         {
             TextWriter.Flush();
