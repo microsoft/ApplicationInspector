@@ -2,18 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using Microsoft.DevSkim;
-using System.IO;
-using System.Linq;
-using System.Dynamic;
-
+using DotLiquid;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Microsoft.AppInspector.CLI.Writers
 {
@@ -41,7 +33,7 @@ namespace Microsoft.AppInspector.CLI.Writers
     /// Used to read customizable preference for Profile page e.g. rules\profile\profile.json
     /// </summary>
     [Serializable]
-    public class TagGroup
+    public class TagGroup : Drop
     {
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
@@ -60,7 +52,7 @@ namespace Microsoft.AppInspector.CLI.Writers
 
 
     [Serializable]
-    public class TagSearchPattern
+    public class TagSearchPattern : Drop
     {
         [JsonProperty(PropertyName = "searchPattern")]
         public string SearchPattern { get; set; }
@@ -72,12 +64,21 @@ namespace Microsoft.AppInspector.CLI.Writers
         public string NotDetectedIcon { get; set; }
         [JsonProperty(PropertyName = "detected")]
         public bool Detected { get; set; }
+        [JsonProperty(PropertyName = "details")]
+        public string Details { get 
+            {
+                string result = Detected == true ? "Select" : "N/A";
+                return result;
+            }
+        }
+        [JsonProperty(PropertyName = "confidence")]
+        public string Confidence { get; set; }
     }
 
     /// <summary>
     /// Primary use is development of lists of tags with specific group or pattern properties in reporting
     /// </summary>
-    public class TagInfo
+    public class TagInfo : Drop
     {
         public string Tag { get; set; }
         public string ShortTag { get; set; }
@@ -112,7 +113,7 @@ namespace Microsoft.AppInspector.CLI.Writers
 
 
     [Serializable]
-    public class TagCounter
+    public class TagCounter : Drop
     {
         [JsonProperty(PropertyName = "tag")]
         public string Tag { get; set; }

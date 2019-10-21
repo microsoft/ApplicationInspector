@@ -123,7 +123,6 @@ class TemplateInsertion {
         $('#s_pi_author').html(this.mt.authors || 'No author found.');
         $('#s_pi_date_scanned').html(this.ap.dateScanned);
        
-       
     }
 
     combineConfidence(a, b) {
