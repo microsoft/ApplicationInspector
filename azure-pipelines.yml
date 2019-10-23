@@ -94,7 +94,7 @@ jobs:
     inputs:
       ConnectedServiceName: 'AppInspector_CodeSign'
       FolderPath: '$(Build.BinariesDirectory)\windows\ApplicationInspector_$(ReleaseVersion)'
-      Pattern: 'ApplicationInspector.dll, ApplicationInspector.exe, Microsoft.DevSkim.dll'
+      Pattern: 'ApplicationInspector.dll, ApplicationInspector.exe, RulesEngine.dll'
       signConfigType: 'inlineSignParams'
       inlineOperation: |
         [
