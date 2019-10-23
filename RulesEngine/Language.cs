@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Microsoft.DevSkim
+namespace RulesEngine
 {
     /// <summary>
     /// Helper class for language based commenting
@@ -20,14 +20,14 @@ namespace Microsoft.DevSkim
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             // Load comments
-            Stream resource = assembly.GetManifestResourceStream("Microsoft.DevSkim.Resources.comments.json");
+            Stream resource = assembly.GetManifestResourceStream("RulesEngine.Resources.comments.json");
             using (StreamReader file = new StreamReader(resource))
             {
                 Comments = JsonConvert.DeserializeObject<List<Comment>>(file.ReadToEnd());
             }
 
             // Load languages
-            resource = assembly.GetManifestResourceStream("Microsoft.DevSkim.Resources.languages.json");
+            resource = assembly.GetManifestResourceStream("RulesEngine.Resources.languages.json");
             using (StreamReader file = new StreamReader(resource))
             {
                 Languages = JsonConvert.DeserializeObject<List<LanguageInfo>>(file.ReadToEnd());

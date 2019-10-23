@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.AppInspector.CLI.Writers
+namespace Microsoft.AppInspector.Writers
 {
     public class WriterFactory
     {

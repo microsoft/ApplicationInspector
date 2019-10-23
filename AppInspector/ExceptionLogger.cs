@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Globalization;
 
-namespace Microsoft.AppInspector.CLI
+namespace Microsoft.AppInspector
 {
     public class ExceptionLogger
     {

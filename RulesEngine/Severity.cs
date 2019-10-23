@@ -4,7 +4,7 @@
 using Newtonsoft.Json;
 using System;
 
-namespace Microsoft.DevSkim
+namespace RulesEngine
 {
     /// <summary>
     /// Issue severity

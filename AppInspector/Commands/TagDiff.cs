@@ -8,7 +8,7 @@ using System.Linq;
 using System.IO;
 
 
-namespace Microsoft.AppInspector.CLI.Commands
+namespace Microsoft.AppInspector.Commands
 {
     [Serializable]
     public class TagsFile

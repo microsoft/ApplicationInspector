@@ -15,7 +15,7 @@ using DotLiquid.FileSystems;
 using Newtonsoft.Json;
 using System.Linq;
 
-namespace Microsoft.AppInspector.CLI.Writers
+namespace Microsoft.AppInspector.Writers
 {
     public class Random : DotLiquid.Tag
     {
@@ -38,7 +38,8 @@ namespace Microsoft.AppInspector.CLI.Writers
         public override void WriteApp(AppProfile app)
         {
             var htmlTemplateText = File.ReadAllText("html/index.html");
-            Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(), "AppInspector.CLI.html.partials");
+            Assembly test = Assembly.GetEntryAssembly();
+            Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(), "ApplicationInspector.html.partials");
             Template.RegisterTag<Random>("random");
 
             RegisterSafeType(typeof(AppProfile));

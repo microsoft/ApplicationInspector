@@ -3,7 +3,7 @@
 
 using System.IO;
 
-namespace Microsoft.AppInspector.CLI.Writers
+namespace Microsoft.AppInspector.Writers
 {
     public abstract class Writer
     {

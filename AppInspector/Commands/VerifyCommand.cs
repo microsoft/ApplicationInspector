@@ -4,17 +4,14 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Reflection;
-using Microsoft.AppInspector.CLI.Writers;
-using Microsoft.DevSkim;
+using RulesEngine;
 using Microsoft.AppInspector;
 
-namespace Microsoft.AppInspector.CLI.Commands
+namespace Microsoft.AppInspector.Commands
 {
     /// <summary>
-    /// Wraps DevSkim verify for ruleset
+    /// Wraps rulesengine verify for ruleset
     /// </summary>
     public class VerifyRulesCommand : ICommand
    {

@@ -4,10 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.DevSkim;
+using RulesEngine;
 
 
-namespace Microsoft.AppInspector.CLI.Commands
+namespace Microsoft.AppInspector.Commands
 {
     public class ExportTagsCommand : ICommand
    {
