@@ -1,16 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.645
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.CLI", "AppInspector\AppInspector.CLI.csproj", "{C6D58D43-481F-456F-90E8-FAC3779E6CC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector", "AppInspector\AppInspector.csproj", "{C6D58D43-481F-456F-90E8-FAC3779E6CC6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{876245F3-D7C5-4AA3-A288-2CE94BF63B8E}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.DevSkim", "Microsoft.DevSkim\Microsoft.DevSkim.csproj", "{C19A98D2-629D-4F4D-87E4-3154416970BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RulesEngine", "RulesEngine\RulesEngine.csproj", "{C19A98D2-629D-4F4D-87E4-3154416970BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

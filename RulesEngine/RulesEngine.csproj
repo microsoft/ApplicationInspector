@@ -1,20 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>    
-    <PackageId>Microsoft.DevSkim</PackageId>
-    <PackageVersion>0.3.8</PackageVersion>
+    <TargetFramework>netcoreapp3.0</TargetFramework>    
+    <PackageId>RulesEngine</PackageId>
+    <PackageVersion>1.0.2</PackageVersion>
     <Authors>Microsoft</Authors>
     <PackageTags>Security Linter</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageLicenseUrl>https://github.com/Microsoft/DevSkim/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/Microsoft/ApplicationInspector</PackageLicenseUrl>
     <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
-    <Description>DevSkim is a framework and Language analyzer that provide inline security analysis</Description>
-    <PackageIconUrl>https://raw.githubusercontent.com/Microsoft/DevSkim/master/media/64x64.png</PackageIconUrl>
-    <PackageProjectUrl>https://github.com/Microsoft/DevSkim</PackageProjectUrl>
+    <Description>RulesEngine is used by ApplicationInspector exclusively as a derivitive and no longer supported .NET version of Microsoft.DevSkim</Description>
+    <PackageIconUrl></PackageIconUrl>
+    <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl></RepositoryUrl>
     <PackageReleaseNotes>First public release</PackageReleaseNotes>
     <HighEntropyVA>true</HighEntropyVA>
+    <AssemblyName>RulesEngine</AssemblyName>
+    <RootNamespace>RulesEngine</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

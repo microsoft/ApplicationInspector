@@ -2,14 +2,14 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using System;
-using Microsoft.DevSkim;
+using RulesEngine;
 using System.Collections;
 using System.IO;
 using System.Text;
 using System.Security.Cryptography;
 using System.Linq;
 
-namespace Microsoft.AppInspector.CLI.Writers
+namespace Microsoft.AppInspector.Writers
 {
     public class MatchRecord
     {

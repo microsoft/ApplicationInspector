@@ -4,10 +4,10 @@
 using System;
 using System.IO;
 using System.Linq;
-using Microsoft.DevSkim;
+using RulesEngine;
 using Newtonsoft.Json;
 
-namespace Microsoft.AppInspector.CLI.Commands
+namespace Microsoft.AppInspector.Commands
 {
 
     /// <summary>

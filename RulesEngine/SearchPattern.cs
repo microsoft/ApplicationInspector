@@ -3,7 +3,7 @@
 
 using Newtonsoft.Json;
 
-namespace Microsoft.DevSkim
+namespace RulesEngine
 {
     /// <summary>
     /// Class to hold search pattern

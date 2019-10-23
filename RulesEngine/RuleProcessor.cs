@@ -8,10 +8,10 @@ using System.Text.RegularExpressions;
 using NLog;
 
 [assembly: CLSCompliant(true)]
-namespace Microsoft.DevSkim
+namespace RulesEngine
 {
     /// <summary>
-    /// Heart of DevSkim. Parses code applies rules
+    /// Heart of RulesEngine. Parses code applies rules
     /// </summary>
     public class RuleProcessor
     {

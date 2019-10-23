@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 static public class Helper
 {
     static string _basePath;
-    public enum AppPath { basePath, defaultRules, defaultLog, htmlTemplates, htmlReport, tagGroupPref, tagCounterPref };
+    public enum AppPath { basePath, defaultRules, defaultLog, tagGroupPref, tagCounterPref };
 
     static public string GetPath(AppPath pathType)
     {
@@ -26,12 +26,6 @@ static public class Helper
                 break;
             case AppPath.defaultRules:
                 result = Path.Combine(GetBaseAppPath(), "rules", "default");
-                break;
-            case AppPath.htmlTemplates:
-                result = Path.Combine(GetBaseAppPath(), "htmltemplates");
-                break;
-            case AppPath.htmlReport:
-                result = Path.Combine(GetBaseAppPath(), "htmlreport");
                 break;
             case AppPath.tagGroupPref:
                 result = Path.Combine(GetBaseAppPath(), "preferences", "tagreportgroups.json");
@@ -76,11 +70,11 @@ static public class Helper
         }
         else if (tag.Contains("Microsoft.MVC"))
         {
-            result = "WebApplication";
+            result = "webapplication";
         }
         else if (tag.Contains("Microsoft.MFC") || tag.Contains(".WinSDK"))
         {
-            result = "WinClient";
+            result = "winclient";
         }
         else
         {
@@ -88,18 +82,18 @@ static public class Helper
             switch (fileName)
             {
                 case "web.config":
-                    result = "WebApplication";
+                    result = "webapplication";
                     break;
                 case "app.config":
-                    result = ".NETClient";
+                    result = ".netclient";
                     break;
                 case "pom.xml":
                 case "build.make.xml":
                 case "build.gradle":
-                    result = "Java";
+                    result = "java";
                     break;
                 case "package.json":
-                    result = "Node";
+                    result = "node";
                     break;
             }
 
@@ -114,16 +108,12 @@ static public class Helper
                     case ".htm":
                     case ".html":
                     case ".js":
-                        result = "WebApplication";
+                        result = "webapplication";
                         break;
                     case "powershell":
-                        result = "Script";
-                        break;
                     case "shellscript":
-                        result = "Script";
-                        break;
                     case "wincmdscript":
-                        result = "Script";
+                        result = "script";
                         break;
                 }
             }
@@ -136,7 +126,7 @@ static public class Helper
                     case "ruby":
                     case "perl":
                     case "php":
-                        result = "WebApplication";
+                        result = "webapplication";
                         break;
                 }
             }

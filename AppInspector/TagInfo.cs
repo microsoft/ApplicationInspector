@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using DotLiquid;
 using System.Reflection.Metadata.Ecma335;
 
-namespace Microsoft.AppInspector.CLI.Writers
+namespace Microsoft.AppInspector.Writers
 {
     /// <summary>
     /// Root parent for tag group preferences file
@@ -95,7 +95,7 @@ namespace Microsoft.AppInspector.CLI.Writers
             get { return _confidence; }
             set
             {
-                DevSkim.Confidence test;
+                RulesEngine.Confidence test;
                 try
                 {
                     if (Enum.TryParse(value, true, out test))

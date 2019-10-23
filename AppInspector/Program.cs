@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using CommandLine;
 using System.Reflection;
-using Microsoft.AppInspector.CLI.Commands;
+using Microsoft.AppInspector.Commands;
 using NLog;
 using NLog.Targets;
 using NLog.Config;
@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Runtime.InteropServices.ComTypes;
 
-namespace Microsoft.AppInspector.CLI
+namespace Microsoft.AppInspector
 {
     #region CommandLineArgOptions
 

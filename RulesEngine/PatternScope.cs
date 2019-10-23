@@ -4,35 +4,27 @@
 using Newtonsoft.Json;
 using System;
 
-namespace Microsoft.DevSkim
+namespace RulesEngine
 {
-    /// <summary>
-    /// Pattern Type for search pattern
-    /// </summary>
-    public enum PatternType
+    [JsonConverter(typeof(PatternScopeConverter))]
+    public enum PatternScope
     {
-        Regex,
-        RegexWord,
-        String,
-        Substring
+        All,
+        Code,
+        Comment,
+        Html
     }
 
     /// <summary>
     /// Json converter for Pattern Type
     /// </summary>
-    class PatternTypeConverter : JsonConverter
+    class PatternScopeConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            PatternType svr = (PatternType)value;
+            PatternScope svr = (PatternScope)value;
             string svrstr = svr.ToString().ToLower();
 
-            switch (svr)
-            {
-                case PatternType.RegexWord:
-                    svrstr = "regex-word";
-                    break;
-            }
             writer.WriteValue(svrstr);
             writer.WriteValue(svr.ToString().ToLower());
         }
@@ -41,7 +33,7 @@ namespace Microsoft.DevSkim
         {
             var enumString = (string)reader.Value;
             enumString = enumString.Replace("-", "");
-            return Enum.Parse(typeof(PatternType), enumString, true);
+            return Enum.Parse(typeof(PatternScope), enumString, true);
         }
 
         public override bool CanConvert(Type objectType)

@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.AppInspector.CLI.Writers
+namespace Microsoft.AppInspector.Writers
 {
     public class SimpleTextWriter : Writer
     {

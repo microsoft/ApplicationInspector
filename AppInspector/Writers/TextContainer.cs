@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.DevSkim;
+using RulesEngine;
 
 namespace Microsoft.AppInspector
 {

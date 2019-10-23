@@ -5,13 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using Microsoft.DevSkim;
+using RulesEngine;
 using System.IO;
 using System.Linq;
-using System.Dynamic;
-using System.Runtime.Serialization.Json;
 
-namespace Microsoft.AppInspector.CLI.Writers
+
+namespace Microsoft.AppInspector.Writers
 {
     /// <summary>
     /// Parent wrapper class for representing source characterization parts
@@ -242,7 +241,7 @@ namespace Microsoft.AppInspector.CLI.Writers
                                     {
                                         if (updateItem.Tag == tagItem)
                                         {
-                                            DevSkim.Confidence oldConfidence;
+                                            RulesEngine.Confidence oldConfidence;
                                             Enum.TryParse(updateItem.Confidence, out oldConfidence);
                                             if (match.Issue.Confidence > oldConfidence)
                                             {
@@ -250,7 +249,7 @@ namespace Microsoft.AppInspector.CLI.Writers
                                                 pattern.Confidence = match.Issue.Confidence.ToString();
                                             }
 
-                                            DevSkim.Severity oldSeverity;
+                                            RulesEngine.Severity oldSeverity;
                                             Enum.TryParse(updateItem.Severity, out oldSeverity);
                                             if (match.Issue.Rule.Severity > oldSeverity)
                                             {
@@ -333,14 +332,14 @@ namespace Microsoft.AppInspector.CLI.Writers
                                     {
                                         if (updateItem.Tag == tagItem)
                                         {
-                                            DevSkim.Confidence oldConfidence;
+                                            RulesEngine.Confidence oldConfidence;
                                             Enum.TryParse(updateItem.Confidence, out oldConfidence);
                                             if (match.Issue.PatternMatch.Confidence > oldConfidence)
                                             {
                                                 updateItem.Confidence = match.Issue.PatternMatch.Confidence.ToString();
                                             }
 
-                                            DevSkim.Severity oldSeverity;
+                                            RulesEngine.Severity oldSeverity;
                                             Enum.TryParse(updateItem.Severity, out oldSeverity);
                                             if (match.Issue.Rule.Severity > oldSeverity)
                                             {
@@ -415,7 +414,7 @@ namespace Microsoft.AppInspector.CLI.Writers
         {
             List<TagInfo> result = new List<TagInfo>();
             HashSet<string> dupCheck = new HashSet<string>();
-            DevSkim.Confidence[] confidences = { Confidence.High, Confidence.Medium, Confidence.Low };
+            RulesEngine.Confidence[] confidences = { Confidence.High, Confidence.Medium, Confidence.Low };
 
             foreach (Confidence test in confidences)
             {
@@ -456,7 +455,7 @@ namespace Microsoft.AppInspector.CLI.Writers
         {
             List<TagInfo> result = new List<TagInfo>();
             HashSet<string> dupCheck = new HashSet<string>();
-            DevSkim.Severity[] severities = { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview };
+            RulesEngine.Severity[] severities = { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview };
 
             foreach (Severity test in severities)
             {
@@ -654,12 +653,11 @@ namespace Microsoft.AppInspector.CLI.Writers
                 value = value.Replace("\"", "");
                 value = value.Trim();
                 return value;
-            } catch(Exception)
+            } 
+            catch(Exception)
             {
                 return s;
             }
-
-            
         }
 
         /// <summary>
@@ -683,7 +681,6 @@ namespace Microsoft.AppInspector.CLI.Writers
             }
 
             //update counts for default or user specified tags
-
             foreach (TagCounter counter in TagCounters)
             {
                 if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains(counter.Tag)))
@@ -693,7 +690,7 @@ namespace Microsoft.AppInspector.CLI.Writers
                 }
             }
 
-            // Author
+            // Author etc.
             if (matchRecord.Issue.Rule.Tags.Contains("Metadata.Application.Author"))
                 this.Authors = ExtractJSONValue(matchRecord.TextSample);
             if (matchRecord.Issue.Rule.Tags.Contains("Metadata.Application.Description"))
@@ -703,58 +700,12 @@ namespace Microsoft.AppInspector.CLI.Writers
             if (matchRecord.Issue.Rule.Tags.Contains("Metadata.Application.Version"))
                 this.SourceVersion = ExtractJSONValue(matchRecord.TextSample);
 
-            //special handling; attempt to detect app types...review for multiple tag limiation
+            //special handling; attempt to detect app types...review for multiple pattern rule limitation
             String solutionType = Helper.DetectSolutionType(matchRecord.Filename, matchRecord.Language, matchRecord.Issue.Rule.Tags[0], matchRecord.TextSample);
             if (!string.IsNullOrEmpty(solutionType) && !AppTypes.Contains(solutionType))
                 AppTypes.Add(solutionType);
 
-            #region wip
-            //special handling solution name; for efficency (?) use separate tests; note Tags is not an ienumerable
-            //TODO this needs work as the text sample of PY projects is not compatible; check Rule accuracy
-            /*
-            foreach (string tag in matchRecord.Issue.Rule.Tags)
-            {
-                if (tag.Contains("Solution.Name"))
-                {
-                    int index = matchRecord.TextSample.IndexOf("\"");
-                    if (-1 != index)
-                    {
-                        ApplicationName = matchRecord.TextSample.Substring(index + 1);
-                        ApplicationName = ApplicationName.Replace("\"", "");
-                        ApplicationName = ApplicationName.Trim();
-                    }
-                    else
-                        ApplicationName = matchRecord.TextSample;
-
-                    break;
-                }
-            }
-            
-
-            //special handling for version possible format of textMatch i.e. <version="1.0"...       
-            foreach (string tag in matchRecord.Issue.Rule.Tags)
-            {
-                if (tag.Contains("Solution.Version"))
-                {
-                    int index = matchRecord.TextSample.IndexOf("\"");
-                    if (-1 != index)
-                    {
-                        SourceVersion = matchRecord.TextSample.Substring(index + 1);
-                        index = SourceVersion.IndexOf("\"");
-                        if (-1 != index)
-                            SourceVersion = SourceVersion.Substring(0, index);
-
-                        SourceVersion = SourceVersion.Trim();
-                    }
-                    else
-                        SourceVersion = System.Net.WebUtility.HtmlEncode(matchRecord.TextSample);
-                    break;
-                }
-            }*/
-            #endregion
-
             return includeAsMatch;
-
         }
 
     }

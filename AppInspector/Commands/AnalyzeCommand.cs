@@ -10,15 +10,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ICSharpCode.SharpZipLib.Core;
-using Microsoft.AppInspector.CLI.Writers;
-using Microsoft.DevSkim;
+using Microsoft.AppInspector.Writers;
+using RulesEngine;
 using System.Text.RegularExpressions; 
 using System.Text;
 using Newtonsoft.Json;
 using System.Diagnostics;
 
 
-namespace Microsoft.AppInspector.CLI.Commands
+namespace Microsoft.AppInspector.Commands
 {
     public class AnalyzeCommand : ICommand
     {
@@ -388,7 +388,7 @@ namespace Microsoft.AppInspector.CLI.Commands
             }
             catch (Exception)
             {
-                //control the error description and continue; error in devskim possible
+                //control the error description and continue; error in rules engine possible
                 Program.Logger.Error("Unexpected indexing issue in ExtractTextSample");
             }
 

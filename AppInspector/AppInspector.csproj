@@ -13,9 +13,13 @@
     <HighEntropyVA>true</HighEntropyVA>
     <PackageId>ApplicationInspector</PackageId>
     <Product>ApplicationInspector</Product>
-    <Authors>ApplicationInspector</Authors>
-    <Version>1.0.0</Version>
+    <Authors>Microsoft</Authors>
+    <Version>1.0.2</Version>
     <AssemblyName>ApplicationInspector</AssemblyName>
+    <RootNamespace>ApplicationInspector</RootNamespace>
+    <StartupObject>Microsoft.AppInspector.Program</StartupObject>
+    <Company>Microsoft</Company>
+    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -44,7 +48,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="html\partials\_file_listing.liquid" />
-    <EmbeddedResource Include="html\partials\_report_overview.liquid"/>
+    <EmbeddedResource Include="html\partials\_report_overview.liquid" />
     <EmbeddedResource Include="html\partials\_report_profile.liquid" />
     <EmbeddedResource Include="html\partials\_report_summary.liquid" />
   </ItemGroup>
@@ -52,15 +56,10 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
     <PackageReference Include="DotLiquid" Version="2.0.314" />
-    <PackageReference Include="Handlebars.Net" Version="1.10.1" />
     <PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NLog" Version="4.6.7" />
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.DevSkim\Microsoft.DevSkim.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -113,6 +112,10 @@
 
   <ItemGroup>
     <Folder Include="preferences\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RulesEngine\RulesEngine.csproj" />
   </ItemGroup>
 
 

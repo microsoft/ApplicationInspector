@@ -10,9 +10,9 @@ using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
-using Microsoft.DevSkim;
+using RulesEngine;
 
-namespace Microsoft.AppInspector.CLI.Writers
+namespace Microsoft.AppInspector.Writers
 {
     /// <summary>
     /// Subset of MatchRecord and Issue properties for json output

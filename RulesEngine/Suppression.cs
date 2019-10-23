@@ -6,14 +6,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Microsoft.DevSkim
+namespace RulesEngine
 {
     /// <summary>
     /// Processor for rule suppressions
     /// </summary>
     public class Suppression
     {
-        const string KeywordPrefix = "DevSkim:";
+        const string KeywordPrefix = "RulesEngine:";
         const string KeywordIgnore = "ignore";        
         const string KeywordAll = "all";
         const string KeywordUntil = "until";
