@@ -93,6 +93,10 @@ div.section {
     font-size: 1.4rem;
 }
 
+#page__report_profile div.grid-2 {
+    font-size: 1.4rem;
+}
+
 #page__report_profile table td:nth-child(1) {
     font-weight:  normal;
     font-size: 0.9rem;

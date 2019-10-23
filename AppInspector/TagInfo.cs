@@ -67,12 +67,17 @@ namespace Microsoft.AppInspector.CLI.Writers
         [JsonProperty(PropertyName = "details")]
         public string Details { get 
             {
-                string result = Detected == true ? "Select" : "N/A";
+                string result = Detected == true ? "View" : "N/A";
                 return result;
             }
         }
         [JsonProperty(PropertyName = "confidence")]
         public string Confidence { get; set; }
+
+        public TagSearchPattern()
+        {
+            DetectedIcon = "fas fa-cat";//default
+        }
     }
 
     /// <summary>
@@ -111,8 +116,6 @@ namespace Microsoft.AppInspector.CLI.Writers
         }
     }
 
-
-    [Serializable]
     public class TagCounter : Drop
     {
         [JsonProperty(PropertyName = "tag")]

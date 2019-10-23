@@ -31,7 +31,7 @@
           },
           {
             "searchPattern": "Data.Media",
-            "displayName": "Parses Media Files",
+            "displayName": "ParsesMediaFiles",
             "detectedIcon": "fas fa-photo-video"
           },
           {
@@ -151,12 +151,12 @@
         "patterns": [
           {
             "searchPattern": "DataAccess.SQL",
-            "displayName": "SQL Commands",
+            "displayName": "SQLCommands",
             "detectedIcon": "fas fa-table"
           },
           {
             "searchPattern": "DataAccess.ORM",
-            "displayName": "Object Relational Model",
+            "displayName": "ObjectRelational Model",
             "detectedIcon": "fab fa-connectdevelop"
           },
           {

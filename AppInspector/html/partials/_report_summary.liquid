@@ -4,8 +4,7 @@
     <div class="small font-weight-bold">
         View as
         &nbsp; &nbsp;
-        <a class="btn-link disabled font-weight-bold" href="#">HTML</a>
-        |
+        <a class="btn-link disabled font-weight-bold" href="#">HTML</a>|
         <a href="output.json">JSON</a>
     </div>
 </div>
@@ -14,17 +13,24 @@
     <div class="row">
         <div class="col-2">
             <ul class="nav flex-column">
-				<li class="nav-item">
-					<a class="nav-link active" href="#project_info" role="tab" data-toggle="tab">Project Info</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="#scan_metadata" role="tab" data-toggle="tab">Scan Metadata</a>
-				</li>
-			 </ul>
+				      <li class="nav-item">
+					      <a class="nav-link active" href="#project_info" role="tab" data-toggle="tab">Project Info</a>
+				      </li>
+				      <li class="nav-item">
+					      <a class="nav-link" href="#scan_metadata" role="tab" data-toggle="tab">Metadata</a>
+				      </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#sorted_uniquetags" role="tab" data-toggle="tab">Unique Tags</a>
+              </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#select_tagcounters" role="tab" data-toggle="tab">Counted Tags</a>
+             </li>
+			      </ul>
         </div>
         <div class="col">
             <div class="tab-content">
               <div role="tabpanel" class="tab-pane active show" id="project_info">
+                <h4>Project Info</h4>
                   <div class="container">
                       <div class="row">
                           <div class="col">
@@ -67,42 +73,164 @@
                   </table>
               </div>
               
-                <div role="tabpanel" class="tab-pane" id="scan_metadata">
-				<table class="table table-sm">
-					<tr>
-						<td class="font-weight-bold">Application Types</td>
-						<td id="s_mt_total_files">{% for item in mt.AppTypes -%}item,{% endfor -%}</td>
-					</tr>
-          <tr>
-						<td class="font-weight-bold">Package Types</td>
-						<td id="s_mt_analyzed_files">{% for item in mt.PackageTypes -%}item,{% endfor -%}</td>
-					</tr>
-          <tr>
-            <td class="font-weight-bold">Outpute Types</td>
-            <td id="s_mt_analyzed_files">{% for item in mt.Outputs -%}item,{% endfor -%}</td>
-          </tr>
-          <tr>
-            <td class="font-weight-bold">Target Types</td>
-            <td id="s_mt_analyzed_files">{% for item in mt.Targets -%}item,{% endfor -%}</td>
-          </tr>
-          <tr>
-            <td class="font-weight-bold">CPU Targets</td>
-            <td id="s_mt_analyzed_files">{% for item in mt.CPUTargets -%}item,{% endfor -%}</td>
-          </tr>
-          <tr>
-            <td class="font-weight-bold">Tag Counters</td>
-            <td id="s_mt_skipped_files">
-              <ul>
-                {% for item in mt.TagCounters -%}
-                <li>{{item.short_tag}} - {{item.count}}</li>
-                {% endfor -%}
-              </ul>
-            </td>
-          </tr>
-				</table>
+              <div role="tabpanel" class="tab-pane" id="scan_metadata">
+                <h4>Metadata</h4>
+ 			        <table class="table table-condensed" style="width:600px;">
+                <tr>
+                    <td class="font-weight-bold" style="width:300px;">Type</td>
+                    <td class="font-weight-bold" style="">Value</td>
+                </tr>
+                <tr>
+						        <td style="width:300px;">Application Types</td>
+                    <td style="">{% for item in apptypes -%}{{item}} {% endfor -%}</td>
+					        </tr>
+                  <tr>
+                    <td style="width:300px;">Package Types</td>
+                    <td style="">{% for item in packagetypes -%}{{item}} {% endfor -%}</td>
+					        </tr>
+                  <tr>
+                    <td style="width:300px;">Outpute Types</td>
+                    <td style="">{% for item in outputs -%}{{item}} {% endfor -%}</td>
+                  </tr>
+                  <tr>
+                    <td style="width:300px;">OS Types</td>
+                    <td style="">{% for item in ostargets -%}{{item}} {% endfor -%}</td>
+                  </tr>
+                  <tr>
+                    <td cstyle="width:300px;">CPU Targets</td>
+                    <td style="">{% for item in cputargets -%}{{item}} {% endfor -%}</td>
+                  </tr>
+   		        </table>
               </div>
-              <div role="tabpanel" class="tab-pane" id="profile">ccc</div>
-            </div>
+              
+              <div role="tabpanel" class="tab-pane" id="sorted_uniquetags">
+                <h4>Unique Tags Detected</h4><span style="font-size:14px;">count={{tagGrpAllTagsByName.size}}&nbsp(sortable)</span>
+                <div id="divtag" style="border:none;display:normal">
+                    <div>
+                      <div>
+                        <table class="table table-condensed" style="border:none; width:400px;">
+                          <tr>
+                            <td>
+                              <a href="#" onclick="SortbyTags();">
+                                <strong>Tag</strong>
+                              </a>
+                            </td>
+                            <td>
+                              <a href="#" onclick="SortbyConfidence();">
+                                <strong>Confidence</strong>
+                              </a>
+                            </td>
+                            <td>
+                              <a href="#" onclick="SortbySeverity();">
+                                <strong>Severity</strong>
+                              </a>
+                            </td>
+                          </tr>
+                          <tr></tr>
+                          {% for tag in tagGrpAllTagsByName -%}
+                          <tr>
+                            <td style="width:300px;">
+                              <a href="#" data-action="popup" data-tag="{{ tag.tag }}">{{ tag.tag }}</a>
+                            </td>
+                            <td style="width:100px;text-align:center">{{ tag.confidence }}</td>
+                            <td>{{ tag.severity }}</td>
+                          </tr>
+                          {% endfor -%}
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="divconf" style="border:none;display:none">
+                    <div>
+                      <div>
+                        <table class="table table-condensed" style="border:none; width:400px;">
+                          <tr>
+                            <td>
+                              <a href="#" onclick="SortbyTags();">
+                                <strong>Tag</strong>
+                              </a>
+                            </td>
+                            <td>
+                              <a href="#" onclick="SortbyConfidence();">
+                                <strong>Confidence</strong>
+                              </a>
+                            </td>
+                            <td>
+                              <a href="#" onclick="SortbySeverity();">
+                                <strong>Severity</strong>
+                              </a>
+                            </td>
+                          </tr>
+                          {% for tag in tagGrpAllTagsByConfidence -%}
+                          <tr>
+                            <td style="width:300px;">
+                              <a href="#" data-action="popup" data-tag="{{ tag.tag }}">{{ tag.tag }}</a>
+                            </td>
+                            <td style="width:100px;text-align:center">{{ tag.confidence }}</td>
+                            <td>{{ tag.severity }}</td>
+                          </tr>
+                          {% endfor -%}
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="divsev" style="border:none;display:none">
+                    <div>
+                      <div>
+                        <table class="table table-condensed" style="border:none; width:400px;">
+                          <tr>
+                            <td>
+                              <a href="#" onclick="SortbyTags();">
+                                <strong>Tag</strong>
+                              </a>
+                            </td>
+                            <td>
+                              <a href="#" onclick="SortbyConfidence();">
+                                <strong>Confidence</strong>
+                              </a>
+                            </td>
+                            <td>
+                              <a href="#" onclick="SortbySeverity();">
+                                <strong>Severity</strong>
+                              </a>
+                            </td>
+                          </tr>
+                          {% for tag in tagGrpAllTagsBySeverity -%}
+                          <tr>
+                            <td style="width:300px;">
+                              <a href="#" data-action="popup" data-tag="{{ tag.tag }}">{{ tag.tag }}</a>
+                            </td>
+                            <td style="width:100px;text-align:center">{{ tag.confidence }}</td>
+                            <td>{{ tag.severity }}</td>
+                          </tr>
+                          {% endfor -%}
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              
+              <div role="tabpanel" class="tab-pane" id="select_tagcounters">
+                <h4>Select Tag Counters</h4>
+                <span style="font-size:14px;">&nbsp(as specified in preferences)</span>
+                    <table class="table table-condensed" style="width:600px;">
+                      <tr>
+                        <td class="font-weight-bold" style="font-size:16px;text-align:left;">Tag</td>
+                        <td class="font-weight-bold" style="font-size:16px;text-align:center;">Count</td>
+                      </tr>
+                      {% for counter in tagcounters -%}
+                      <tr>
+                        <td style="font-size:16px;text-align:left;">{{counter.tag}}</td>
+                        <td style="font-size:16px;text-align:center;">{{counter.count}}</td>
+                      </tr>
+                      {% endfor -%}
+                    </table>
+              </div>
+              
         </div>
     </div>
+  </div>
 </div>
+
+
+
