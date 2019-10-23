@@ -49,6 +49,8 @@
     templateInsertion.processProfilePage();
 });
 
+
+
 class TemplateInsertion {
     constructor(data) {
         this.ap = data.AppProfile;
@@ -187,6 +189,7 @@ class TemplateInsertion {
                 $(elt).addClass('disabled');        // Disable icon if no target exists
                 return;
             }
+
             let foundTag = false;
             const targetRegex = new RegExp(targetRegexValue, 'i');
 
@@ -206,6 +209,23 @@ class TemplateInsertion {
                 $(elt).addClass('disabled');
             }
         });
+
+       
+        // Process each icon with the 'feature_icon' class.
+        $('a.confidence_image').each((idx, elt) => {
+            const confidenceValue = $(elt).data('target');
+
+            var src;
+            if (confidenceValue == "High")
+                src = "html/conf-high.png";
+            else if (confidenceValue == "Medium")
+                src = "html/conf-medium.png";
+            else
+                src = "html/conf-low.png";
+
+            $(elt).src = src;
+        })
+
 
         // Event handler for visible icons
         $('a.feature_icon').on('click', (e) => {
@@ -265,4 +285,23 @@ class TemplateInsertion {
             }
         });
     }
+}
+
+
+function SortbyConfidence() {
+    $('#divconf').attr('style', 'display:normal;border:none');
+    $('#divsev').attr('style', 'display:none');
+    $('#divtag').attr('style', 'display:none');
+}
+
+function SortbySeverity() {
+    $('#divsev').attr('style', 'display:normal;border:none');
+    $('#divconf').attr('style', 'display:none');
+    $('#divtag').attr('style', 'display:none');
+}
+
+function SortbyTags() {
+    $('#divtag').attr('style', 'display:normal;border:none');
+    $('#divsev').attr('style', 'display:none');
+    $('#divconf').attr('style', 'display:none');
 }

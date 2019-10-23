@@ -44,9 +44,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="html\partials\_file_listing.liquid" />
-    <EmbeddedResource Include="html\partials\_report_overview.liquid">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="html\partials\_report_overview.liquid"/>
     <EmbeddedResource Include="html\partials\_report_profile.liquid" />
     <EmbeddedResource Include="html\partials\_report_summary.liquid" />
   </ItemGroup>
@@ -81,18 +79,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="htmltemplates\**">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="preferences\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
-<ItemGroup>
+ <ItemGroup>
     <None Update="rules\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -102,15 +94,12 @@
     <None Update="html\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="html\Microsoft_logo.svg">
+    <None Update="html\partials\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="html\resources\images\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>  
-   <None Update="html\toggleBtn-block.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>  
-   <None Update="html\toggleBtn-none.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>   
    <None Update="html\resources\css\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -602,7 +602,7 @@ namespace Microsoft.AppInspector.CLI.Writers
         public int UniqueMatchesCount { get { return UniqueTags.Count; } }
         [JsonIgnore]
         public Dictionary<string, TagCounter> KeyedPropertyCounters { get; }
-        [JsonProperty("tagCounters")]
+        [JsonIgnore]
         public List<TagCounter> TagCounters { get; }
         //predefined lists in KeyedPropertyLists for easy retrieval and loose coupling
         [JsonProperty(PropertyName = "packageTypes")]

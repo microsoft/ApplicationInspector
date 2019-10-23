@@ -43,12 +43,7 @@ namespace Microsoft.AppInspector.CLI.Writers
 
             RegisterSafeType(typeof(AppProfile));
             RegisterSafeType(typeof(AppMetaData));
-            /*RegisterSafeType(typeof(TagGroup));
-            RegisterSafeType(typeof(TagSearchPattern));
-            RegisterSafeType(typeof(TagInfo));
-            RegisterSafeType(typeof(HashSet<string>));
-            //RegisterSafeType(typeof(Task));*/
-
+           
             var htmlTemplate = Template.Parse(htmlTemplateText);
 
             var data = new Dictionary<string, object>();
@@ -70,14 +65,23 @@ namespace Microsoft.AppInspector.CLI.Writers
             hashData["application_version"] = Program.GetVersionString();
 
             List<TagGroup> tagGroupList = app.GetCategoryTagGroups("profile");
-            //htmlTemplateText = GetTemplate(htmlTemplateText, tagGroupList, app);
-            //data["groups"] = tagGroupList;
             hashData["groups"] = tagGroupList;
+
+            foreach (string outerKey in app.KeyedSortedTagInfoLists.Keys)
+                hashData.Add(outerKey, app.KeyedSortedTagInfoLists[outerKey]);
+
+            hashData.Add("cputargets", app.MetaData.CPUTargets);
+            hashData.Add("apptypes", app.MetaData.AppTypes);
+            hashData.Add("packagetypes", app.MetaData.PackageTypes);
+            hashData.Add("ostargets", app.MetaData.OSTargets);
+
+            hashData["tagcounters"] = app.MetaData.TagCounters;
+            //foreach (TagCounter counter in app.MetaData.TagCounters)
+              //  hashData.Add(counter.Tag, counter.Count);
 
             var htmlResult = htmlTemplate.Render(hashData);
             File.WriteAllText("output.html", htmlResult);
-            //this.TextWriter.Write(htmlResult);
-
+           
             //writes out json report for convenience and linking to from report page(s)
             String jsonReportPath = Path.Combine("output.json");
             Writer jsonWriter = WriterFactory.GetWriter("json", jsonReportPath);
