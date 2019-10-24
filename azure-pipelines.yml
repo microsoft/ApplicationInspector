@@ -54,7 +54,6 @@ jobs:
       publishLocation: 'Container'
 
 - job: publish_win
-  dependsOn: publish_nix
   displayName: Dotnet Publish Windows & NetCore
   pool:
     vmImage: 'windows-latest'
@@ -140,6 +139,21 @@ jobs:
       archiveType: 'zip'
       archiveFile: '$(Build.StagingDirectory)\ApplicationInspector_netcoreapp3.0_$(ReleaseVersion).zip'
       replaceExistingArchive: true
+  - task: PublishBuildArtifacts@1
+    displayName: Store Windows & NetCoreApp Archives
+    inputs:
+      PathtoPublish: '$(Build.StagingDirectory)'
+      ArtifactName: 'WinCoreArchives'
+      publishLocation: 'Container'
+  
+- job: hashes
+  displayName: Generate Hashes
+  dependsOn:
+  - publish_nix
+  - publish_win
+  pool:
+    vmImage: 'windows-latest'
+  steps:
   - task: DownloadBuildArtifacts@0
     displayName: Retrieve Linux & Mac Archives
     inputs:
@@ -147,11 +161,23 @@ jobs:
       downloadType: 'specific'
       itemPattern: 'NixArchives/*.zip'
       downloadPath: '$(Build.BinariesDirectory)'
+  - task: DownloadBuildArtifacts@0
+    displayName: Retrieve Windows & NetCoreApp Archives
+    inputs:
+      buildType: 'current'
+      downloadType: 'specific'
+      itemPattern: 'WinCoreArchives/*.zip'
+      downloadPath: '$(Build.BinariesDirectory)'
   - task: PowerShell@2
     displayName: Move Linux & Mac Archives
     inputs:
       targetType: 'inline'
       script: 'mv $env:BUILD_BINARIESDIRECTORY/NixArchives/*.zip $env:BUILD_STAGINGDIRECTORY'
+  - task: PowerShell@2
+    displayName: Move Windows & NetCoreApp Archives
+    inputs:
+      targetType: 'inline'
+      script: 'mv $env:BUILD_BINARIESDIRECTORY/WinCoreArchives/*.zip $env:BUILD_STAGINGDIRECTORY'
   - task: PowerShell@2
     displayName: Generate Archive Hashes
     inputs:
