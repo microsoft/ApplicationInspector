@@ -76,7 +76,7 @@ namespace Microsoft.AppInspector.Writers
             hashData.Add("packagetypes", app.MetaData.PackageTypes);
             hashData.Add("ostargets", app.MetaData.OSTargets);
 
-            hashData["tagcounters"] = app.MetaData.TagCounters;
+            hashData["tagcounters"] = app.MetaData.TagCountersUI;
             //foreach (TagCounter counter in app.MetaData.TagCounters)
               //  hashData.Add(counter.Tag, counter.Count);
 

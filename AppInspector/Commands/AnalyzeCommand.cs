@@ -144,8 +144,13 @@ namespace Microsoft.AppInspector.Commands
             {
                 if (Directory.Exists(rulePath))
                     rulesSet.AddDirectory(rulePath);
-                else
+                else if (File.Exists(rulePath))
                     rulesSet.AddFile(rulePath);
+                else
+                {
+                    WriteOnce.Error(String.Format("Not a valid rule file or directory {0}", rulePath));
+                    throw new Exception(String.Format("Not a valid rule file or directory {0}", rulePath));
+                }
             }
 
             //error check based on ruleset not path enumeration

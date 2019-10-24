@@ -372,13 +372,13 @@
             "detectedIcon": "fas fa-meteor"
           },
           {
-            "searchPattern": "Comment.Todo",
-            "displayName": "Commment",
+            "searchPattern": "Comment.Fix",
+            "displayName": "Fix Comments",
             "detectedIcon": "far fa-clock"
           },
           {
             "searchPattern": "Comment.Suspicious",
-            "displayName": "Suspicious Comment",
+            "displayName": "Suspicious Comments",
             "detectedIcon": "fas fa-burn"
           }
         ]
