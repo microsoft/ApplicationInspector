@@ -14,7 +14,7 @@
   {
     "tag": "Metric.Exception.Caught",
     "displayName": "Exceptions",
-    "includeAsMatch": true
+    "includeAsMatch": false
   },
   {
     "tag": "Metric.HTMLForm.Defined",
@@ -24,16 +24,26 @@
   {
     "tag": "Dependency.SourceInclude",
     "displayName": "Dependencies",
+    "includeAsMatch": false
+  },
+  {
+    "tag": "Miscellaneous.CodeHygiene.Comment.Todo",
+    "displayName": "Comments",
+    "includeAsMatch": false
+  },
+  {
+    "tag": "Miscellaneous.CodeHygiene.Comment.Fix",
+    "displayName": "Fix-comments",
     "includeAsMatch": true
   },
   {
-    "tag": "Miscellaneous.CodeHygiene.Comment",
-    "displayName": "Comments",
+    "tag": "Miscellaneous.CodeHygiene.Comment.Suspicious",
+    "displayName": "Suspicious-comments",
     "includeAsMatch": true
   },
   {
     "tag": "Metric.Logging.Call",
     "displayName": "Logging Calls",
-    "includeAsMatch": true
+    "includeAsMatch": false
   }
 ]

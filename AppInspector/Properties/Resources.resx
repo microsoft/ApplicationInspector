@@ -117,11 +117,95 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="analyzecmd-nopatternmatches" xml:space="preserve">
+    <value>No pattern matches were detected for files in source path</value>
+  </data>
+  <data name="analyzecmd-norules" xml:space="preserve">
+    <value>No rules specified</value>
+  </data>
+  <data name="analyzecmd-nosupportedfiles" xml:space="preserve">
+    <value>No file types found in source path that are supported</value>
+  </data>
+  <data name="analyzecmd-notzipped" xml:space="preserve">
+    <value>uncompressed</value>
+  </data>
+  <data name="analyzecmd-preparingrpt" xml:space="preserve">
+    <value>Preparing report</value>
+  </data>
+  <data name="analyzecmd-processedpcnt" xml:space="preserve">
+    <value>{0}% source files processed</value>
+  </data>
+  <data name="analyzecmd-running" xml:space="preserve">
+    <value>Analyze command running</value>
+  </data>
+  <data name="analyzecmd-zipped" xml:space="preserve">
+    <value>compressed</value>
+  </data>
+  <data name="analyzecmd-zippednospprt" xml:space="preserve">
+    <value>unsupported</value>
+  </data>
+  <data name="cmd-invalidarg" xml:space="preserve">
+    <value>Invalid {0} argument value</value>
+  </data>
+  <data name="cmd-invalidfileordir" xml:space="preserve">
+    <value>Invalid file or directory{0}</value>
+  </data>
+  <data name="cmd-report" xml:space="preserve">
+    <value>{0} report completed</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="comments" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\RulesEngine\Resources\comments.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="exportcmd-invalidrule" xml:space="preserve">
+    <value>Not a valid rule file or directory</value>
+  </data>
+  <data name="exportcmd-report" xml:space="preserve">
+    <value>Export rule tags completed</value>
+  </data>
+  <data name="exportcmd-running" xml:space="preserve">
+    <value>Export unique tags command running</value>
+  </data>
   <data name="languages" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\RulesEngine\Resources\languages.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="tagdiffcmd-fileprocesserr" xml:space="preserve">
+    <value>Critical error processing file {0}</value>
+  </data>
+  <data name="tagdiffcmd-notagfound" xml:space="preserve">
+    <value>No tags found in one or both source paths</value>
+  </data>
+  <data name="tagdiffcmd-requiredfile" xml:space="preserve">
+    <value>Required [path1] or [path2] argument missing</value>
+  </data>
+  <data name="tagdiffcmd-running" xml:space="preserve">
+    <value>TagDiff command running</value>
+  </data>
+  <data name="tagdiffcmd-samefile" xml:space="preserve">
+    <value>Same file passed in for both sources. Test terminated</value>
+  </data>
+  <data name="tagdiffcmd-tagdiffstatus" xml:space="preserve">
+    <value>Files were {0} to contain differences</value>
+  </data>
+  <data name="tagdiffcmd-tagsnotfound" xml:space="preserve">
+    <value>Tags in {0} not detected in {1}</value>
+  </data>
+  <data name="tagdiffcmd-testtype" xml:space="preserve">
+    <value>Test for all [{0}] in source</value>
+  </data>
+  <data name="tagtestcmd-found" xml:space="preserve">
+    <value>Found {0} in source</value>
+  </data>
+  <data name="tagtestcmd-missing" xml:space="preserve">
+    <value>Missing {0} in source</value>
+  </data>
+  <data name="tagtestcmd-none" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="tagtestcmd-testtype" xml:space="preserve">
+    <value>Tagtest for [{0}] in source: {1}</value>
+  </data>
+  <data name="verifycmd-rulefail" xml:space="preserve">
+    <value>Rule parsing failed for file {0}</value>
   </data>
 </root>

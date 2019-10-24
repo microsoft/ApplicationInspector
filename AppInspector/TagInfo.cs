@@ -116,7 +116,19 @@ namespace Microsoft.AppInspector.Writers
         }
     }
 
-    public class TagCounter : Drop
+    public class TagCounterUI : Drop
+    {
+        [JsonProperty(PropertyName = "tag")]
+        public string Tag { get; set; }
+        [JsonProperty(PropertyName = "displayName")]
+        public string ShortTag { get; set; }
+        [JsonProperty(PropertyName = "count")]
+        public int Count { get; set; }
+        [JsonProperty(PropertyName = "includeAsMatch")]
+        public bool IncludeAsMatch { get; set; }
+    }
+
+    public class TagCounter 
     {
         [JsonProperty(PropertyName = "tag")]
         public string Tag { get; set; }

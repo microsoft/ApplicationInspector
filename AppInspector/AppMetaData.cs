@@ -119,15 +119,8 @@ namespace Microsoft.AppInspector.Writers
                 }
             }
 
-
-            //TBD: Alternative to use here instead of AnalyzeCommand
-            //What is missed if called here instead of Analyze which may not add duplicates?
-            //allow each record to be tested for presence of customizable preferred tags
-            /*foreach (MatchRecord matchRecord in MatchList)
-            {
-                MetaData.AddStandardProperties(matchRecord);
-            }*/
-
+            MetaData.PrepareReport();
+            
         }
 
 
@@ -600,10 +593,9 @@ namespace Microsoft.AppInspector.Writers
         [JsonProperty(PropertyName = "uniqueMatchesCount")]
         public int UniqueMatchesCount { get { return UniqueTags.Count; } }
         [JsonIgnore]
-        public Dictionary<string, TagCounter> KeyedPropertyCounters { get; }
-        [JsonIgnore]
+        public List<TagCounterUI> TagCountersUI { get; set; }
+        [JsonProperty(PropertyName = "TagCounters")]
         public List<TagCounter> TagCounters { get; }
-        //predefined lists in KeyedPropertyLists for easy retrieval and loose coupling
         [JsonProperty(PropertyName = "packageTypes")]
         public HashSet<string> PackageTypes { get { return KeyedPropertyLists["strGrpPackageTypes"]; } }
         [JsonProperty(PropertyName = "appTypes")]
@@ -706,6 +698,25 @@ namespace Microsoft.AppInspector.Writers
                 AppTypes.Add(solutionType);
 
             return includeAsMatch;
+        }
+
+
+        /// <summary>
+        /// Opportunity for any final data prep before report gen
+        /// </summary>
+        public void PrepareReport()
+        {
+            //TagCountersUI is liquid compatible while TagCounters is not to support json serialization; the split prevents exception
+            //not fixable via json iteration disabling
+            TagCountersUI = new List<TagCounterUI>();
+            foreach (TagCounter counter in TagCounters)
+                TagCountersUI.Add(new TagCounterUI
+                {
+                    Tag = counter.Tag,
+                    ShortTag = counter.ShortTag,
+                    Count = counter.Count
+                });
+
         }
 
     }

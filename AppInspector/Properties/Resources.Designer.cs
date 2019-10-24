@@ -61,6 +61,114 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No pattern matches were detected for files in source path.
+        /// </summary>
+        internal static string analyzecmd_nopatternmatches {
+            get {
+                return ResourceManager.GetString("analyzecmd-nopatternmatches", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No rules specified.
+        /// </summary>
+        internal static string analyzecmd_norules {
+            get {
+                return ResourceManager.GetString("analyzecmd-norules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No file types found in source path that are supported.
+        /// </summary>
+        internal static string analyzecmd_nosupportedfiles {
+            get {
+                return ResourceManager.GetString("analyzecmd-nosupportedfiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to uncompressed.
+        /// </summary>
+        internal static string analyzecmd_notzipped {
+            get {
+                return ResourceManager.GetString("analyzecmd-notzipped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing report.
+        /// </summary>
+        internal static string analyzecmd_preparingrpt {
+            get {
+                return ResourceManager.GetString("analyzecmd-preparingrpt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}% source files processed.
+        /// </summary>
+        internal static string analyzecmd_processedpcnt {
+            get {
+                return ResourceManager.GetString("analyzecmd-processedpcnt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Analyze command running.
+        /// </summary>
+        internal static string analyzecmd_running {
+            get {
+                return ResourceManager.GetString("analyzecmd-running", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to compressed.
+        /// </summary>
+        internal static string analyzecmd_zipped {
+            get {
+                return ResourceManager.GetString("analyzecmd-zipped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to unsupported.
+        /// </summary>
+        internal static string analyzecmd_zippednospprt {
+            get {
+                return ResourceManager.GetString("analyzecmd-zippednospprt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid {0} argument value.
+        /// </summary>
+        internal static string cmd_invalidarg {
+            get {
+                return ResourceManager.GetString("cmd-invalidarg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid file or directory{0}.
+        /// </summary>
+        internal static string cmd_invalidfileordir {
+            get {
+                return ResourceManager.GetString("cmd-invalidfileordir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} report completed.
+        /// </summary>
+        internal static string cmd_report {
+            get {
+                return ResourceManager.GetString("cmd-report", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] comments {
@@ -71,12 +179,156 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not a valid rule file or directory.
+        /// </summary>
+        internal static string exportcmd_invalidrule {
+            get {
+                return ResourceManager.GetString("exportcmd-invalidrule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export rule tags completed.
+        /// </summary>
+        internal static string exportcmd_report {
+            get {
+                return ResourceManager.GetString("exportcmd-report", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export unique tags command running.
+        /// </summary>
+        internal static string exportcmd_running {
+            get {
+                return ResourceManager.GetString("exportcmd-running", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] languages {
             get {
                 object obj = ResourceManager.GetObject("languages", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Critical error processing file {0}.
+        /// </summary>
+        internal static string tagdiffcmd_fileprocesserr {
+            get {
+                return ResourceManager.GetString("tagdiffcmd-fileprocesserr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No tags found in one or both source paths.
+        /// </summary>
+        internal static string tagdiffcmd_notagfound {
+            get {
+                return ResourceManager.GetString("tagdiffcmd-notagfound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Required [path1] or [path2] argument missing.
+        /// </summary>
+        internal static string tagdiffcmd_requiredfile {
+            get {
+                return ResourceManager.GetString("tagdiffcmd-requiredfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TagDiff command running.
+        /// </summary>
+        internal static string tagdiffcmd_running {
+            get {
+                return ResourceManager.GetString("tagdiffcmd-running", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Same file passed in for both sources. Test terminated.
+        /// </summary>
+        internal static string tagdiffcmd_samefile {
+            get {
+                return ResourceManager.GetString("tagdiffcmd-samefile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Files were {0} to contain differences.
+        /// </summary>
+        internal static string tagdiffcmd_tagdiffstatus {
+            get {
+                return ResourceManager.GetString("tagdiffcmd-tagdiffstatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tags in {0} not detected in {1}.
+        /// </summary>
+        internal static string tagdiffcmd_tagsnotfound {
+            get {
+                return ResourceManager.GetString("tagdiffcmd-tagsnotfound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test for all [{0}] in source.
+        /// </summary>
+        internal static string tagdiffcmd_testtype {
+            get {
+                return ResourceManager.GetString("tagdiffcmd-testtype", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Found {0} in source.
+        /// </summary>
+        internal static string tagtestcmd_found {
+            get {
+                return ResourceManager.GetString("tagtestcmd-found", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing {0} in source.
+        /// </summary>
+        internal static string tagtestcmd_missing {
+            get {
+                return ResourceManager.GetString("tagtestcmd-missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        internal static string tagtestcmd_none {
+            get {
+                return ResourceManager.GetString("tagtestcmd-none", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tagtest for [{0}] in source: {1}.
+        /// </summary>
+        internal static string tagtestcmd_testtype {
+            get {
+                return ResourceManager.GetString("tagtestcmd-testtype", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rule parsing failed for file {0}.
+        /// </summary>
+        internal static string verifycmd_rulefail {
+            get {
+                return ResourceManager.GetString("verifycmd-rulefail", resourceCulture);
             }
         }
     }
