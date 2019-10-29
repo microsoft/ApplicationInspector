@@ -90,7 +90,7 @@ namespace Microsoft.AppInspector.Writers
             jsonWriter.WriteApp(app);
             jsonWriter.FlushAndClose();
 
-            Helper.OpenBrowser("output.html");
+            Utils.OpenBrowser("output.html");
         }
 
        

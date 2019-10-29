@@ -50,13 +50,13 @@ namespace Microsoft.AppInspector.Commands
             if (string.IsNullOrEmpty(opt.TestType))
                 _arg_tagTestType = TagTestType.RulesPresent;
             else if (!Enum.TryParse(opt.TestType, true, out _arg_tagTestType))
-                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
 
             _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
             _rulesSet = new RuleSet(Program.Logger);
 
             if (string.IsNullOrEmpty(opt.CustomRulesPath) && _arg_ignoreDefaultRules)
-                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.CMD_NORULES_SPECIFIED));
+                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
 
             ConfigureRules();
             ConfigureOutput();
@@ -67,7 +67,7 @@ namespace Microsoft.AppInspector.Commands
         {
             List<string> rulePaths = new List<string>();
             if (!_arg_ignoreDefaultRules)
-                rulePaths.Add(Helper.GetPath(Helper.AppPath.defaultRules));
+                rulePaths.Add(Utils.GetPath(Utils.AppPath.defaultRules));
 
             if (!string.IsNullOrEmpty(_arg_customRulesPath))
                 rulePaths.Add(_arg_customRulesPath);
@@ -80,14 +80,14 @@ namespace Microsoft.AppInspector.Commands
                     _rulesSet.AddFile(rulePath);
                 else
                 {
-                    throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_RULE_PATH, rulePath));
+                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, rulePath));
                 }
             }
 
             //error check based on ruleset not path enumeration
             if (_rulesSet.Count() == 0)
             {
-                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.CMD_NORULES_SPECIFIED));
+                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
             }
 
         }
@@ -108,7 +108,7 @@ namespace Microsoft.AppInspector.Commands
 
         public int Run()
         {
-            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_RUNNING, "tagtest"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "tagtest"));
             
             //init based on true or false present argument value
             bool testSuccess = true;
@@ -149,16 +149,16 @@ namespace Microsoft.AppInspector.Commands
 
             if (result == AnalyzeCommand.ExitCode.CriticalError)
             {
-                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.CMD_CRITICAL_FILE_ERR));
+                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_CRITICAL_FILE_ERR));
             }
             else if (result == AnalyzeCommand.ExitCode.NoMatches)
             {
                 //results
-                WriteOnce.General(Helper.FormatResourceString(ResourceMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
-                WriteOnce.Any(Helper.GetResourceString(ResourceMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+                WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
+                WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
 
                 WriteOnce.FlushAll();
-                WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_COMPLETED, "Tagtest"));
+                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagtest"));
 
                 return (int)ExitCode.CriticalError;
             }
@@ -183,24 +183,24 @@ namespace Microsoft.AppInspector.Commands
                 foreach (string t in testList2)
                 {
                     if (TagTest(testList1, t))
-                        WriteOnce.Result(Helper.FormatResourceString(ResourceMsg.ID.TAGTEST_RESULTS_TAGS_FOUND, t), true, WriteOnce.ConsoleVerbosity.High);
+                        WriteOnce.Result(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TAGS_FOUND, t), true, WriteOnce.ConsoleVerbosity.High);
                     else
                     {
                         testSuccess = false;
-                        WriteOnce.Result(Helper.FormatResourceString(ResourceMsg.ID.TAGTEST_RESULTS_TAGS_MISSING, t), true, WriteOnce.ConsoleVerbosity.High);
+                        WriteOnce.Result(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TAGS_MISSING, t), true, WriteOnce.ConsoleVerbosity.High);
                     }
                 }
             }
         
             //results
-            WriteOnce.General(Helper.FormatResourceString(ResourceMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
+            WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
             if (testSuccess)
-                WriteOnce.Any(Helper.GetResourceString(ResourceMsg.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
+                WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
             else
-                WriteOnce.Any(Helper.GetResourceString(ResourceMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+                WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
             
             WriteOnce.FlushAll();
-            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_COMPLETED, "Tagtest"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagtest"));
 
             return testSuccess ? (int)ExitCode.NoDiff : (int)ExitCode.DiffFound;
         }
