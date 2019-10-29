@@ -68,7 +68,7 @@ namespace Microsoft.AppInspector.Writers
             KeyedSortedTagInfoLists = new Dictionary<string, List<TagInfo>>();
             
             //read default/user preferences on what tags to report presence on and groupings
-            TagGroupPreferences = JsonConvert.DeserializeObject<List<TagCategory>>(File.ReadAllText(Helper.GetPath(Helper.AppPath.tagGroupPref)));
+            TagGroupPreferences = JsonConvert.DeserializeObject<List<TagCategory>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagGroupPref)));
 
             ExcludeRollup = excludeRollup;
             SimpleTagsOnly = simpleTagsOnly;
@@ -545,7 +545,7 @@ namespace Microsoft.AppInspector.Writers
             _propertyTagSearchPatterns.Add("strGrpCPUTargets", ".CPU");
 
             //read default/user preferences on what tags to count
-            TagCounters = JsonConvert.DeserializeObject<List<TagCounter>>(File.ReadAllText(Helper.GetPath(Helper.AppPath.tagCounterPref)));
+            TagCounters = JsonConvert.DeserializeObject<List<TagCounter>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagCounterPref)));
             HashSet<string> dupCountersCheck = new HashSet<string>();
             foreach (TagCounter counter in TagCounters)
                 dupCountersCheck.Add(counter.Tag);
@@ -692,7 +692,7 @@ namespace Microsoft.AppInspector.Writers
                 this.SourceVersion = ExtractJSONValue(matchRecord.TextSample);
 
             //special handling; attempt to detect app types...review for multiple pattern rule limitation
-            String solutionType = Helper.DetectSolutionType(matchRecord.Filename, matchRecord.Language, matchRecord.Issue.Rule.Tags[0], matchRecord.TextSample);
+            String solutionType = Utils.DetectSolutionType(matchRecord.Filename, matchRecord.Language, matchRecord.Issue.Rule.Tags[0], matchRecord.TextSample);
             if (!string.IsNullOrEmpty(solutionType) && !AppTypes.Contains(solutionType))
                 AppTypes.Add(solutionType);
 

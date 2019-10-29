@@ -252,7 +252,7 @@ namespace Microsoft.AppInspector
             }
             catch (OpException e)
             {
-                WriteOnce.Error(Helper.FormatResourceString(ResourceMsg.ID.RUNTIME_ERROR_NAMED, e.Message));
+                WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_NAMED, e.Message));
 #if DEBUG
                 WriteOnce.Error($"Runtime error: {e.Message}\n{e.StackTrace}");//save time debugging else keep console clean
 #else
@@ -261,7 +261,7 @@ namespace Microsoft.AppInspector
             }
             catch (Exception e)
             {
-                WriteOnce.Error(Helper.FormatResourceString(ResourceMsg.ID.RUNTIME_ERROR_UNNAMED));
+                WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_UNNAMED));
 #if DEBUG
                 WriteOnce.Error($"Runtime error: {e.Message}\n{e.StackTrace}");//save time debugging else keep console clean
 #else
@@ -311,7 +311,7 @@ namespace Microsoft.AppInspector
 
             if (String.IsNullOrEmpty(logFilePath))
             {
-                logFilePath = Helper.GetPath(Helper.AppPath.defaultLog);
+                logFilePath = Utils.GetPath(Utils.AppPath.defaultLog);
                 //if using default app log path clean up previous for convenience in reading
                 if (File.Exists(logFilePath))
                     File.Delete(logFilePath);

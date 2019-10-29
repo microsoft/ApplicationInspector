@@ -29,15 +29,15 @@ namespace Microsoft.AppInspector.Commands
 
         public int Run()
         {
-            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_RUNNING, "Exporttags"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Exporttags"));
             
             if (String.IsNullOrEmpty(_arg_RulesPath))
             {
-                _arg_RulesPath = Helper.GetPath(Helper.AppPath.defaultRules);
+                _arg_RulesPath = Utils.GetPath(Utils.AppPath.defaultRules);
             }
             else if (!Directory.Exists(_arg_RulesPath) && !File.Exists(_arg_RulesPath))
             {
-                WriteOnce.Error(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_RULE_PATH, _arg_RulesPath));
+                WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _arg_RulesPath));
 
                 return (int)ExitCode.CriticalError;
             }
@@ -81,7 +81,7 @@ namespace Microsoft.AppInspector.Commands
             foreach (string s in uniqueTags.Values)
                 WriteOnce.Result(s, true, WriteOnce.ConsoleVerbosity.High);
 
-            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_COMPLETED, "Exporttags"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Exporttags"));
             WriteOnce.FlushAll();
 
             return (int)ExitCode.Success;

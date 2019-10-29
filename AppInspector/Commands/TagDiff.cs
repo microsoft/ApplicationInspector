@@ -49,7 +49,7 @@ namespace Microsoft.AppInspector.Commands
             WriteOnce.Verbosity = arg_consoleVerbosityLevel;
 
             if (!Enum.TryParse(opt.TestType, true, out _arg_tagTestType))
-                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
 
             _arg_ignoreDefault = opt.IgnoreDefaultRules;
 
@@ -57,7 +57,7 @@ namespace Microsoft.AppInspector.Commands
 
         public int Run()
         {
-            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_RUNNING, "Tagdiff"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Tagdiff"));
             
             //setup output                       
             TextWriter outputWriter;
@@ -70,11 +70,11 @@ namespace Microsoft.AppInspector.Commands
 
             if (_arg_src1 == _arg_src2)
             {
-                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.TAGDIFF_SAME_FILE_ARG));
+                throw new OpException(ErrMsg.GetString(ErrMsg.ID.TAGDIFF_SAME_FILE_ARG));
             }
             else if (string.IsNullOrEmpty(_arg_src1) || string.IsNullOrEmpty(_arg_src2))
             {
-                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.CMD_INVALID_ARG_VALUE));
+                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_INVALID_ARG_VALUE));
             }
 
             #region setup analyze calls
@@ -136,15 +136,15 @@ namespace Microsoft.AppInspector.Commands
             //process results for each analyze call before comparing results
             if (result1 == AnalyzeCommand.ExitCode.CriticalError)
             {
-                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_CRITICAL_FILE_ERR, _arg_src1));
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_CRITICAL_FILE_ERR, _arg_src1));
             }
             else if (result2 == AnalyzeCommand.ExitCode.CriticalError)
             {
-                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_CRITICAL_FILE_ERR, _arg_src2));
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_CRITICAL_FILE_ERR, _arg_src2));
             }
             else if (result1 == AnalyzeCommand.ExitCode.NoMatches || result2 == AnalyzeCommand.ExitCode.NoMatches)
             {
-                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.TAGDIFF_NO_TAGS_FOUND));
+                throw new OpException(ErrMsg.GetString(ErrMsg.ID.TAGDIFF_NO_TAGS_FOUND));
             }
             else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.MatchesFound)
             {
@@ -156,12 +156,12 @@ namespace Microsoft.AppInspector.Commands
 
                 //can't simply compare counts as content may differ; must compare both in directions in two passes a->b; b->a
                 //first pass
-                WriteOnce.General(Helper.FormatResourceString(ResourceMsg.ID.TAGDIFF_RESULTS_GAP, Path.GetFileName(_arg_src1), Path.GetFileName(_arg_src2)),
+                WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGDIFF_RESULTS_GAP, Path.GetFileName(_arg_src1), Path.GetFileName(_arg_src2)),
                         true, WriteOnce.ConsoleVerbosity.High);
                 equal1 = CompareTags(file1Tags.Tags, file2Tags.Tags);
 
                 //reverse order for second pass
-                WriteOnce.General(Helper.FormatResourceString(ResourceMsg.ID.TAGDIFF_RESULTS_GAP, Path.GetFileName(_arg_src2), Path.GetFileName(_arg_src1)),
+                WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGDIFF_RESULTS_GAP, Path.GetFileName(_arg_src2), Path.GetFileName(_arg_src1)),
                         true, WriteOnce.ConsoleVerbosity.High);
                 equal2 = CompareTags(file2Tags.Tags, file1Tags.Tags);
 
@@ -174,7 +174,7 @@ namespace Microsoft.AppInspector.Commands
                 else
                     successResult = false;
 
-                WriteOnce.General(Helper.GetResourceString(ResourceMsg.ID.TAGDIFF_RESULTS_DIFFER), false);
+                WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.TAGDIFF_RESULTS_DIFFER), false);
                 WriteOnce.Result(resultsDiffer.ToString());
             }
 
@@ -190,7 +190,7 @@ namespace Microsoft.AppInspector.Commands
             }
 
             WriteOnce.FlushAll();
-            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_COMPLETED, "Tagdiff"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagdiff"));
 
             return successResult ? (int)ExitCode.TestPassed : (int)ExitCode.TestFailed;
         }
@@ -212,7 +212,7 @@ namespace Microsoft.AppInspector.Commands
 
             //none missing
             if (found)
-                WriteOnce.Result(Helper.GetResourceString(ResourceMsg.ID.TAGTEST_RESULTS_NONE), true, WriteOnce.ConsoleVerbosity.High);
+                WriteOnce.Result(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_NONE), true, WriteOnce.ConsoleVerbosity.High);
 
             return found;
         }

@@ -36,13 +36,13 @@ namespace Microsoft.AppInspector.Commands
         {
             _rulePaths = new List<string>();
             if (!_arg_ignoreDefaultRules)
-                _rulePaths.Add(Helper.GetPath(Helper.AppPath.defaultRules));
+                _rulePaths.Add(Utils.GetPath(Utils.AppPath.defaultRules));
 
             if (!string.IsNullOrEmpty(_arg_customRulesPath))
                 _rulePaths.Add(_arg_customRulesPath);
 
             if (_rulePaths.Count == 0)
-                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.CMD_NORULES_SPECIFIED));
+                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
         }
 
 
@@ -50,7 +50,7 @@ namespace Microsoft.AppInspector.Commands
         {
             bool issues = false;
 
-            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_RUNNING, "Verifyrules"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Verifyrules"));
             
             //load [each] rules file separately to report out where a failure is happening 
             IEnumerable<string> fileListing = new List<string>();
@@ -70,7 +70,7 @@ namespace Microsoft.AppInspector.Commands
                     }
                     catch (Exception e)
                     {
-                        WriteOnce.Log.Error(Helper.FormatResourceString(ResourceMsg.ID.VERIFY_RULE_FAILED, filename));
+                        WriteOnce.Log.Error(ErrMsg.FormatString(ErrMsg.ID.VERIFY_RULE_FAILED, filename));
                         WriteOnce.Log.Error(e.Message + "\n" + e.StackTrace);
                         issues = true;
                     }
@@ -79,11 +79,11 @@ namespace Microsoft.AppInspector.Commands
 
             //final report
             if (issues)
-                WriteOnce.Any(Helper.GetResourceString(ResourceMsg.ID.VERIFY_RULES_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+                WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.VERIFY_RULES_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
             else
-                WriteOnce.Any(Helper.GetResourceString(ResourceMsg.ID.VERIFY_RULES_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
+                WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.VERIFY_RULES_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
 
-            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_COMPLETED, "Verifyrules"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Verifyrules"));
 
             return issues ? (int)ExitCode.NotVerified : (int)ExitCode.Verified;
         }

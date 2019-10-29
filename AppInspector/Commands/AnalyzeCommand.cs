@@ -110,7 +110,7 @@ namespace Microsoft.AppInspector.Commands
                     if (Enum.TryParse(confidence, true, out single))
                         _arg_confidence |= single;
                     else
-                        throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_ARG_VALUE, "x"));
+                        throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "x"));
                 }
             }
         }
@@ -127,7 +127,7 @@ namespace Microsoft.AppInspector.Commands
             RuleSet rulesSet = new RuleSet(Program.Logger);
             List<string> rulePaths = new List<string>();
             if (!_arg_ignoreDefaultRules)
-                rulePaths.Add(Helper.GetPath(Helper.AppPath.defaultRules));
+                rulePaths.Add(Utils.GetPath(Utils.AppPath.defaultRules));
 
             if (!string.IsNullOrEmpty(_arg_customRulesPath))
                 rulePaths.Add(_arg_customRulesPath);
@@ -140,14 +140,14 @@ namespace Microsoft.AppInspector.Commands
                     rulesSet.AddFile(rulePath);
                 else
                 {
-                    throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_RULE_PATH, rulePath));
+                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, rulePath));
                 }
             }
 
             //error check based on ruleset not path enumeration
             if (rulesSet.Count() == 0)
             {
-                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.CMD_NORULES_SPECIFIED));
+                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
             }
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
@@ -155,7 +155,7 @@ namespace Microsoft.AppInspector.Commands
             
             if (_arg_outputUniqueTagsOnly)
             {
-                List<TagException> tagExceptions = JsonConvert.DeserializeObject<List<TagException>>(File.ReadAllText(Helper.GetPath(Helper.AppPath.tagCounterPref)));
+                List<TagException> tagExceptions = JsonConvert.DeserializeObject<List<TagException>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagCounterPref)));
                 string[] exceptions = new string[tagExceptions.Count];
                 for (int i=0;i<tagExceptions.Count;i++)
                     exceptions[i] = tagExceptions[i].Tag;
@@ -194,7 +194,7 @@ namespace Microsoft.AppInspector.Commands
         {
             DateTime start = DateTime.Now;
             
-            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_RUNNING, "Analyze"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Analyze"));
             
             //if it's a file, make an IEnumerable out of it.
             IEnumerable<string> fileList;
@@ -204,7 +204,7 @@ namespace Microsoft.AppInspector.Commands
                 fileList = Directory.EnumerateFiles(_arg_sourcePath, "*.*", SearchOption.AllDirectories);
             else
             {
-                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
             }
 
 
@@ -222,12 +222,12 @@ namespace Microsoft.AppInspector.Commands
                 //progress report
                 int totalFilesReviewed = _appProfile.MetaData.FilesAnalyzed + _appProfile.MetaData.FilesSkipped;
                 int percentCompleted = (int)((float)totalFilesReviewed / (float)_appProfile.MetaData.TotalFiles * 100);
-                WriteOnce.General("\r"+Helper.FormatResourceString(ResourceMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted),false);
+                WriteOnce.General("\r"+ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted),false);
             }
 
             //prepare summary report
-            WriteOnce.General("\r"+Helper.FormatResourceString(ResourceMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
-            WriteOnce.Operation(Helper.GetResourceString(ResourceMsg.ID.CMD_PREPARING_REPORT));
+            WriteOnce.General("\r"+ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
+            WriteOnce.Operation(ErrMsg.GetString(ErrMsg.ID.CMD_PREPARING_REPORT));
 
             _appProfile.MetaData.LastUpdated = LastUpdated.ToString();
             _appProfile.DateScanned = DateScanned.ToString();
@@ -236,11 +236,11 @@ namespace Microsoft.AppInspector.Commands
             FlushAll();
 
             if (_appProfile.MetaData.TotalFiles == _appProfile.MetaData.FilesSkipped)
-                WriteOnce.Error(Helper.GetResourceString(ResourceMsg.ID.ANALYZE_NOSUPPORTED_FILETYPES));
+                WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOSUPPORTED_FILETYPES));
             else if (_appProfile.MatchList.Count == 0)
-                WriteOnce.Error(Helper.GetResourceString(ResourceMsg.ID.ANALYZE_NOPATTERNS));
+                WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOPATTERNS));
             else
-                WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_COMPLETED, "Analyze"));
+                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Analyze"));
 
             TimeSpan timeSpan = start - DateTime.Now;
             WriteOnce.Log.Trace(String.Format("Processing time: seconds:{0}", timeSpan.TotalSeconds*-1));
@@ -260,11 +260,11 @@ namespace Microsoft.AppInspector.Commands
             if (File.Exists(filename))
             {
                 _appProfile.MetaData.FileNames.Add(filename);
-                _appProfile.MetaData.PackageTypes.Add(Helper.GetResourceString(ResourceMsg.ID.ANALYZE_UNCOMPRESSED_FILETYPE));
+                _appProfile.MetaData.PackageTypes.Add(ErrMsg.GetString(ErrMsg.ID.ANALYZE_UNCOMPRESSED_FILETYPE));
 
                 if (new System.IO.FileInfo(filename).Length > MAX_FILESIZE)
                 {
-                    WriteOnce.Log.Error(Helper.FormatResourceString(ResourceMsg.ID.ANALYZE_FILESIZE_SKIPPED, filename));
+                    WriteOnce.Log.Error(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filename));
                     _appProfile.MetaData.FilesSkipped++;
                     return;
                 }
@@ -274,7 +274,7 @@ namespace Microsoft.AppInspector.Commands
             }
             else
             {
-                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_FILE_OR_DIR, filename));
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, filename));
             }
         }
 
@@ -288,7 +288,7 @@ namespace Microsoft.AppInspector.Commands
         {
             if (fileText.Length > MAX_FILESIZE)
             {
-                WriteOnce.Log.Error(Helper.FormatResourceString(ResourceMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath));
+                WriteOnce.Log.Error(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath));
                 _appProfile.MetaData.FilesSkipped++;
                 return;
             }
@@ -517,7 +517,7 @@ namespace Microsoft.AppInspector.Commands
                     _outputWriter.FlushAndClose();//not required for html formal i.e. multiple files already closed
                     _outputWriter = null;
                     if (!String.IsNullOrEmpty(_arg_outputFile))
-                        WriteOnce.Any(Helper.FormatResourceString(ResourceMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile));
+                        WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile));
                     else
                         WriteOnce.NewLine();
                 }
@@ -533,7 +533,7 @@ namespace Microsoft.AppInspector.Commands
         {
             if (!File.Exists(filename))
             {
-                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_FILE_OR_DIR, filename));
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, filename));
             }
 
             // Ignore images and other junk like that
