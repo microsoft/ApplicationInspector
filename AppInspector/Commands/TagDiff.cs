@@ -3,7 +3,6 @@
 
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 
@@ -32,8 +31,8 @@ namespace Microsoft.AppInspector.Commands
 
         public enum ExitCode
         {
-            NoDiff = 0,
-            DiffFound = 1,
+            TestPassed = 0,
+            TestFailed = 1,
             CriticalError = 2
         }
 
@@ -45,12 +44,12 @@ namespace Microsoft.AppInspector.Commands
             _arg_src2 = opt.SourcePath2;
             _arg_rulesPath = opt.CustomRulesPath;
             _arg_outputFile = opt.OutputFilePath;
-            WriteOnce.ConsoleVerbosityLevel arg_consoleVerbosityLevel;
+            WriteOnce.ConsoleVerbosity arg_consoleVerbosityLevel;
             Enum.TryParse(opt.ConsoleVerbosityLevel, true, out arg_consoleVerbosityLevel);
             WriteOnce.Verbosity = arg_consoleVerbosityLevel;
 
             if (!Enum.TryParse(opt.TestType, true, out _arg_tagTestType))
-                throw new ArgumentException("Invalid -t argument value", opt.TestType);
+                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
 
             _arg_ignoreDefault = opt.IgnoreDefaultRules;
 
@@ -58,9 +57,8 @@ namespace Microsoft.AppInspector.Commands
 
         public int Run()
         {
-            WriteOnce.Write("TagDiff command running\n", ConsoleColor.Cyan, WriteOnce.ConsoleVerbosityLevel.Low);
-
-
+            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_RUNNING, "Tagdiff"));
+            
             //setup output                       
             TextWriter outputWriter;
             if (!string.IsNullOrEmpty(_arg_outputFile))
@@ -72,68 +70,83 @@ namespace Microsoft.AppInspector.Commands
 
             if (_arg_src1 == _arg_src2)
             {
-                WriteOnce.Error("Same file passed in for both sources. Test terminated.");
-                return (int)ExitCode.CriticalError;
+                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.TAGDIFF_SAME_FILE_ARG));
             }
             else if (string.IsNullOrEmpty(_arg_src1) || string.IsNullOrEmpty(_arg_src2))
             {
-                WriteOnce.Error("Required [path1] or [path2] argument missing.");
-                return (int)ExitCode.CriticalError;
+                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.CMD_INVALID_ARG_VALUE));
             }
 
+            #region setup analyze calls
+
             //save to quiet analyze cmd
-            WriteOnce.ConsoleVerbosityLevel saveVerbosity = WriteOnce.Verbosity;
+            WriteOnce.ConsoleVerbosity saveVerbosity = WriteOnce.Verbosity;
 
             string tmp1 = Path.GetTempFileName();
             string tmp2 = Path.GetTempFileName();
-            AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeCommandOptions { SourcePath = _arg_src1,
-                OutputFilePath = tmp1,
-                OutputFileFormat = "json",
-                CustomRulesPath = _arg_rulesPath,
-                IgnoreDefaultRules = _arg_ignoreDefault,
-                SimpleTagsOnly = true,
-                UniqueTagsOnly = true,
-                ConsoleVerbosityLevel = "Low" });
-            AnalyzeCommand cmd2 = new AnalyzeCommand(new AnalyzeCommandOptions
-            {
-                SourcePath = _arg_src2,
-                OutputFilePath = tmp2,
-                OutputFileFormat = "json",
-                CustomRulesPath = _arg_rulesPath,
-                IgnoreDefaultRules = _arg_ignoreDefault,
-                SimpleTagsOnly = true,
-                UniqueTagsOnly = true,
-                ConsoleVerbosityLevel = "Low"
-            });
 
-            //quiet analysis commands
-            WriteOnce.Verbosity = WriteOnce.ConsoleVerbosityLevel.Low;
             AnalyzeCommand.ExitCode result1 = AnalyzeCommand.ExitCode.CriticalError;
             AnalyzeCommand.ExitCode result2 = AnalyzeCommand.ExitCode.CriticalError;
-            result1 = (AnalyzeCommand.ExitCode)cmd1.Run();
-            result2 = (AnalyzeCommand.ExitCode)cmd2.Run();
+
+            try
+            {
+                AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeCommandOptions
+                {
+                    SourcePath = _arg_src1,
+                    OutputFilePath = tmp1,
+                    OutputFileFormat = "json",
+                    CustomRulesPath = _arg_rulesPath,
+                    IgnoreDefaultRules = _arg_ignoreDefault,
+                    SimpleTagsOnly = true,
+                    UniqueTagsOnly = true,
+                    ConsoleVerbosityLevel = "None"
+                });
+                AnalyzeCommand cmd2 = new AnalyzeCommand(new AnalyzeCommandOptions
+                {
+                    SourcePath = _arg_src2,
+                    OutputFilePath = tmp2,
+                    OutputFileFormat = "json",
+                    CustomRulesPath = _arg_rulesPath,
+                    IgnoreDefaultRules = _arg_ignoreDefault,
+                    SimpleTagsOnly = true,
+                    UniqueTagsOnly = true,
+                    ConsoleVerbosityLevel = "None"
+                });
+
+
+                result1 = (AnalyzeCommand.ExitCode)cmd1.Run();
+                result2 = (AnalyzeCommand.ExitCode)cmd2.Run();
+            }
+            catch (Exception e)
+            {
+                //restore
+                WriteOnce.Verbosity = saveVerbosity;
+                throw e;
+            }
+
+            //restore
             WriteOnce.Verbosity = saveVerbosity;
 
+            #endregion
 
+            bool successResult;
             bool equal1 = true;
             bool equal2 = true;
 
+            //process results for each analyze call before comparing results
             if (result1 == AnalyzeCommand.ExitCode.CriticalError)
             {
-                WriteOnce.Error("Critical error processing file " + _arg_src1 + ".  Check path.");
-                return (int)ExitCode.CriticalError;
+                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_CRITICAL_FILE_ERR, _arg_src1));
             }
             else if (result2 == AnalyzeCommand.ExitCode.CriticalError)
             {
-                WriteOnce.Error("Critical error processing file " + _arg_src2 + ".  Check path.");
-                return (int)ExitCode.CriticalError;
+                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_CRITICAL_FILE_ERR, _arg_src2));
             }
             else if (result1 == AnalyzeCommand.ExitCode.NoMatches || result2 == AnalyzeCommand.ExitCode.NoMatches)
             {
-                WriteOnce.Error("No tags found in one or both source paths");
-                return (int)ExitCode.CriticalError;
+                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.TAGDIFF_NO_TAGS_FOUND));
             }
-            else //assumed (result1&2 == AnalyzeCommand.ExitCode.MatchesFound)
+            else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.MatchesFound)
             {
                 string file1TagsJson = File.ReadAllText(tmp1);
                 string file2TagsJson = File.ReadAllText(tmp2);
@@ -141,41 +154,31 @@ namespace Microsoft.AppInspector.Commands
                 var file1Tags = JsonConvert.DeserializeObject<TagsFile[]>(file1TagsJson).First();
                 var file2Tags = JsonConvert.DeserializeObject<TagsFile[]>(file2TagsJson).First();
 
-                WriteOnce.Info("TagDiff Report");
-
-                //can't simply compare counts as content may differ; must compare both in directions
-
+                //can't simply compare counts as content may differ; must compare both in directions in two passes a->b; b->a
                 //first pass
-                WriteOnce.Any("[Tags in " + Path.GetFileName(_arg_src1) + " not detected in " + Path.GetFileName(_arg_src2) + "]",
-                        ConsoleColor.White, WriteOnce.ConsoleVerbosityLevel.High);
+                WriteOnce.General(Helper.FormatResourceString(ResourceMsg.ID.TAGDIFF_RESULTS_GAP, Path.GetFileName(_arg_src1), Path.GetFileName(_arg_src2)),
+                        true, WriteOnce.ConsoleVerbosity.High);
                 equal1 = CompareTags(file1Tags.Tags, file2Tags.Tags);
-                
+
                 //reverse order for second pass
-                WriteOnce.Any("[Tags in " + Path.GetFileName(_arg_src2) + " not detected in " + Path.GetFileName(_arg_src1) + "]",
-                        ConsoleColor.White, WriteOnce.ConsoleVerbosityLevel.High);
+                WriteOnce.General(Helper.FormatResourceString(ResourceMsg.ID.TAGDIFF_RESULTS_GAP, Path.GetFileName(_arg_src2), Path.GetFileName(_arg_src1)),
+                        true, WriteOnce.ConsoleVerbosity.High);
                 equal2 = CompareTags(file2Tags.Tags, file1Tags.Tags);
 
-                //final
-                WriteOnce.Any(string.Format("Files were {0} to contain differences.",
-                       equal1 && equal2 ? "not found" : "found"), ConsoleColor.Cyan, WriteOnce.ConsoleVerbosityLevel.Low);
-
-                if (_arg_tagTestType == TagTestType.Inequality)
-                {
-                    WriteOnce.Any(string.Format("Test for all [{0}] in source: {1}", _arg_tagTestType.ToString(),
-                        equal1 && equal2 ? "failed" : "passed"), (equal1 && equal2) ? ConsoleColor.Red : ConsoleColor.Green);
-                }
+                //final results
+                bool resultsDiffer = !(equal1 && equal2);
+                if (_arg_tagTestType == TagTestType.Inequality && resultsDiffer)
+                    successResult = true;
+                else if (_arg_tagTestType == TagTestType.Equality && !resultsDiffer)
+                    successResult = true;
                 else
-                {
-                    WriteOnce.Any(string.Format("Test for all [{0}] in source: {1}", _arg_tagTestType.ToString(),
-                        equal1 && equal2 ? "passed" : "failed"), (equal1 && equal2) ? ConsoleColor.Green : ConsoleColor.Red);
-                }
+                    successResult = false;
 
-                WriteOnce.Info("Report completed");
-
+                WriteOnce.General(Helper.GetResourceString(ResourceMsg.ID.TAGDIFF_RESULTS_DIFFER), false);
+                WriteOnce.Result(resultsDiffer.ToString());
             }
 
             //cleanup
-
             try 
             {
                 File.Delete(tmp1);
@@ -187,8 +190,9 @@ namespace Microsoft.AppInspector.Commands
             }
 
             WriteOnce.FlushAll();
+            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_COMPLETED, "Tagdiff"));
 
-            return equal1 && equal2 ? (int)ExitCode.NoDiff : (int)ExitCode.DiffFound;
+            return successResult ? (int)ExitCode.TestPassed : (int)ExitCode.TestFailed;
         }
 
 
@@ -202,13 +206,13 @@ namespace Microsoft.AppInspector.Commands
                 if (!fileTags2.Contains(s1))
                 {
                     found = false;
-                    WriteOnce.Any(s1, ConsoleColor.Yellow, WriteOnce.ConsoleVerbosityLevel.High);
+                    WriteOnce.Result(s1, true, WriteOnce.ConsoleVerbosity.High);
                 }
             }
 
             //none missing
             if (found)
-                WriteOnce.Any("None", ConsoleColor.Yellow, WriteOnce.ConsoleVerbosityLevel.High);
+                WriteOnce.Result(Helper.GetResourceString(ResourceMsg.ID.TAGTEST_RESULTS_NONE), true, WriteOnce.ConsoleVerbosity.High);
 
             return found;
         }

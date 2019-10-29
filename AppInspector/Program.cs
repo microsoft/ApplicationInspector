@@ -60,7 +60,7 @@ namespace Microsoft.AppInspector
         [Option('c', "confidence-filters", Required = false, HelpText = "Outout only if matching confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; }
 
-        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low]", Default = "medium")]
+        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
         public string ConsoleVerbosityLevel { get; set; }
 
         #region logoptions
@@ -94,7 +94,7 @@ namespace Microsoft.AppInspector
         [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
         public string OutputFilePath { get; set; }
 
-        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low", Default = "medium")]
+        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
         public string ConsoleVerbosityLevel { get; set; }
 
 
@@ -127,7 +127,7 @@ namespace Microsoft.AppInspector
         [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
         public string OutputFilePath { get; set; }
 
-        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low", Default = "medium")]
+        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
         public string ConsoleVerbosityLevel { get; set; }
 
 
@@ -214,9 +214,11 @@ namespace Microsoft.AppInspector
         /// Program entry point which defines command verbs and options to running
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            WriteOnce.Verbosity = WriteOnce.ConsoleVerbosityLevel.Medium;
+            int finalResult = -1;
+            
+            WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Medium;
             //TODO had to add work around for very strange behavior from cmdlineparser that will not accept a false from
             //the command line; several attempts to force, rename etc. to no avail.  This works for now.
             if (args.Length > 0 && args[0] == "analyze")
@@ -245,12 +247,29 @@ namespace Microsoft.AppInspector
                     errs => 1
                   );
 
+                finalResult = argsResult;
+
+            }
+            catch (OpException e)
+            {
+                WriteOnce.Error(Helper.FormatResourceString(ResourceMsg.ID.RUNTIME_ERROR_NAMED, e.Message));
+#if DEBUG
+                WriteOnce.Error($"Runtime error: {e.Message}\n{e.StackTrace}");//save time debugging else keep console clean
+#else
+                Logger.Error($"Runtime error: {e.StackTrace}");//no sensitive data expected in output
+#endif
             }
             catch (Exception e)
             {
-                WriteOnce.Error("Runtime error encountered.  Check log or log filtering options for more.");
-                WriteOnce.Error($"Runtime error: {e.Message}\n{e.StackTrace}");//no sensitive data expected in output
+                WriteOnce.Error(Helper.FormatResourceString(ResourceMsg.ID.RUNTIME_ERROR_UNNAMED));
+#if DEBUG
+                WriteOnce.Error($"Runtime error: {e.Message}\n{e.StackTrace}");//save time debugging else keep console clean
+#else
+                Logger.Error($"Runtime error: {e.StackTrace}");//no sensitive data expected in output
+#endif
             }
+
+            return finalResult;
         }
 
 

@@ -58,13 +58,13 @@ namespace Microsoft.AppInspector.Commands
         private string _arg_outputFile;
         private string _arg_fileFormat;
         private string _arg_outputTextFormat;
-        private string _arg_customRulePath;
+        private string _arg_customRulesPath;
         private bool _arg_ignoreDefaultRules;
         private bool _arg_outputUniqueTagsOnly;
         private string _arg_confidenceFilters;
         private bool _arg_simpleTagsOnly;
         private Confidence _arg_confidence;
-        private WriteOnce.ConsoleVerbosityLevel _arg_consoleVerbosityLevel;
+        private WriteOnce.ConsoleVerbosity _arg_consoleVerbosityLevel;
         
         public AnalyzeCommand(AnalyzeCommandOptions opts)
         {
@@ -73,7 +73,7 @@ namespace Microsoft.AppInspector.Commands
             _arg_fileFormat = opts.OutputFileFormat;
             _arg_outputTextFormat = opts.TextOutputFormat;
             _arg_outputUniqueTagsOnly = opts.UniqueTagsOnly;
-            _arg_customRulePath = opts.CustomRulesPath;
+            _arg_customRulesPath = opts.CustomRulesPath;
             _arg_confidenceFilters = opts.ConfidenceFilters;
             _arg_ignoreDefaultRules = opts.IgnoreDefaultRules;
             _arg_simpleTagsOnly = opts.SimpleTagsOnly;
@@ -81,14 +81,6 @@ namespace Microsoft.AppInspector.Commands
             WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
 
             IgnoreMimeRegex = new Regex(@"^(audio|video)/.*$");
-
-            //quick validations and setup
-            if (!Directory.Exists(_arg_sourcePath) && !File.Exists(_arg_sourcePath))
-            {
-                string errorMsg = string.Format("Invalid source file or directory{0}", _arg_sourcePath);
-                WriteOnce.Error(errorMsg);
-                throw new Exception(errorMsg);
-            }
 
             LastUpdated = DateTime.MinValue;
             DateScanned = DateTime.Now;
@@ -118,7 +110,7 @@ namespace Microsoft.AppInspector.Commands
                     if (Enum.TryParse(confidence, true, out single))
                         _arg_confidence |= single;
                     else
-                        throw new Exception("Invalid run argument value for -x");
+                        throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_ARG_VALUE, "x"));
                 }
             }
         }
@@ -137,8 +129,8 @@ namespace Microsoft.AppInspector.Commands
             if (!_arg_ignoreDefaultRules)
                 rulePaths.Add(Helper.GetPath(Helper.AppPath.defaultRules));
 
-            if (!string.IsNullOrEmpty(_arg_customRulePath))
-                rulePaths.Add(_arg_customRulePath);
+            if (!string.IsNullOrEmpty(_arg_customRulesPath))
+                rulePaths.Add(_arg_customRulesPath);
 
             foreach (string rulePath in rulePaths)
             {
@@ -148,16 +140,14 @@ namespace Microsoft.AppInspector.Commands
                     rulesSet.AddFile(rulePath);
                 else
                 {
-                    WriteOnce.Error(String.Format("Not a valid rule file or directory {0}", rulePath));
-                    throw new Exception(String.Format("Not a valid rule file or directory {0}", rulePath));
+                    throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_RULE_PATH, rulePath));
                 }
             }
 
             //error check based on ruleset not path enumeration
             if (rulesSet.Count() == 0)
             {
-                WriteOnce.Error("No rules specified");
-                throw new Exception("No rules specified");
+                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.CMD_NORULES_SPECIFIED));
             }
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
@@ -204,14 +194,19 @@ namespace Microsoft.AppInspector.Commands
         {
             DateTime start = DateTime.Now;
             
-            WriteOnce.Write("Analyze command running\n", ConsoleColor.Cyan, WriteOnce.ConsoleVerbosityLevel.Low);
-
+            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_RUNNING, "Analyze"));
+            
             //if it's a file, make an IEnumerable out of it.
             IEnumerable<string> fileList;
             if (!Directory.Exists(_arg_sourcePath))
                 fileList = new List<string>() { _arg_sourcePath };
-            else
+            else if (File.Exists(_arg_sourcePath))
                 fileList = Directory.EnumerateFiles(_arg_sourcePath, "*.*", SearchOption.AllDirectories);
+            else
+            {
+                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
+            }
+
 
             _appProfile.MetaData.TotalFiles = fileList.Count();
 
@@ -227,13 +222,12 @@ namespace Microsoft.AppInspector.Commands
                 //progress report
                 int totalFilesReviewed = _appProfile.MetaData.FilesAnalyzed + _appProfile.MetaData.FilesSkipped;
                 int percentCompleted = (int)((float)totalFilesReviewed / (float)_appProfile.MetaData.TotalFiles * 100);
-                WriteOnce.Write(string.Format("\r{0}% source files processed", percentCompleted), ConsoleColor.Gray, WriteOnce.ConsoleVerbosityLevel.Medium);
+                WriteOnce.General("\r"+Helper.FormatResourceString(ResourceMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted),false);
             }
 
             //prepare summary report
-            WriteOnce.Write(string.Format("\r100% applicable files processed\t\t\t\t"), ConsoleColor.Gray, WriteOnce.ConsoleVerbosityLevel.Medium);
-            WriteOnce.NewLine();
-            WriteOnce.Info("Preparing report...");
+            WriteOnce.General("\r"+Helper.FormatResourceString(ResourceMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
+            WriteOnce.Operation(Helper.GetResourceString(ResourceMsg.ID.CMD_PREPARING_REPORT));
 
             _appProfile.MetaData.LastUpdated = LastUpdated.ToString();
             _appProfile.DateScanned = DateScanned.ToString();
@@ -242,14 +236,14 @@ namespace Microsoft.AppInspector.Commands
             FlushAll();
 
             if (_appProfile.MetaData.TotalFiles == _appProfile.MetaData.FilesSkipped)
-                WriteOnce.Error("No file types found in source path that are supported.");
+                WriteOnce.Error(Helper.GetResourceString(ResourceMsg.ID.ANALYZE_NOSUPPORTED_FILETYPES));
             else if (_appProfile.MatchList.Count == 0)
-                WriteOnce.Error("No pattern matches were detected for files in source path.");
-            else          
-                WriteOnce.Any("Report complete.", ConsoleColor.Cyan);
+                WriteOnce.Error(Helper.GetResourceString(ResourceMsg.ID.ANALYZE_NOPATTERNS));
+            else
+                WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_COMPLETED, "Analyze"));
 
             TimeSpan timeSpan = start - DateTime.Now;
-            Program.Logger.Trace(String.Format("Processing time: seconds:{0}", timeSpan.TotalSeconds*-1));
+            WriteOnce.Log.Trace(String.Format("Processing time: seconds:{0}", timeSpan.TotalSeconds*-1));
 
             return _appProfile.MatchList.Count() == 0 ? (int)ExitCode.NoMatches : 
                 (int)ExitCode.MatchesFound;
@@ -263,18 +257,25 @@ namespace Microsoft.AppInspector.Commands
         /// <param name="filename"></param>
         void ProcessAsFile(string filename)
         {
-            _appProfile.MetaData.FileNames.Add(filename);
-            _appProfile.MetaData.PackageTypes.Add("uncompressed");
-
-            if (new System.IO.FileInfo(filename).Length > MAX_FILESIZE)
+            if (File.Exists(filename))
             {
-                Program.Logger.Error(filename + " is too large.  File skipped");
-                _appProfile.MetaData.FilesSkipped++;
-                return;
-            }
+                _appProfile.MetaData.FileNames.Add(filename);
+                _appProfile.MetaData.PackageTypes.Add(Helper.GetResourceString(ResourceMsg.ID.ANALYZE_UNCOMPRESSED_FILETYPE));
 
-            string fileText = File.ReadAllText(filename);
-            ProcessInMemory(filename, fileText);
+                if (new System.IO.FileInfo(filename).Length > MAX_FILESIZE)
+                {
+                    WriteOnce.Log.Error(Helper.FormatResourceString(ResourceMsg.ID.ANALYZE_FILESIZE_SKIPPED, filename));
+                    _appProfile.MetaData.FilesSkipped++;
+                    return;
+                }
+
+                string fileText = File.ReadAllText(filename);
+                ProcessInMemory(filename, fileText);
+            }
+            else
+            {
+                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_FILE_OR_DIR, filename));
+            }
         }
 
 
@@ -287,7 +288,7 @@ namespace Microsoft.AppInspector.Commands
         {
             if (fileText.Length > MAX_FILESIZE)
             {
-                Program.Logger.Error(filePath + " is too large.  File skipped");
+                WriteOnce.Log.Error(Helper.FormatResourceString(ResourceMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath));
                 _appProfile.MetaData.FilesSkipped++;
                 return;
             }
@@ -298,15 +299,14 @@ namespace Microsoft.AppInspector.Commands
             // Skip files written in unknown language
             if (string.IsNullOrEmpty(language))
             {
-                Program.Logger.Trace("Language not found for file: " + filePath);
-                Program.Logger.Trace("But processing anyway: " + filePath);
+                WriteOnce.Log.Trace("Language not found for file: " + filePath);
                 language = Path.GetFileName(filePath);
                 _appProfile.MetaData.FilesSkipped++;
                 return;
             }
             else
             {
-                Program.Logger.Trace("Preparing to process file: " + filePath);
+                WriteOnce.Log.Trace("Preparing to process file: " + filePath);
             }
 
             #region minorRollupTracking
@@ -332,7 +332,7 @@ namespace Microsoft.AppInspector.Commands
                 // Iterate through each match issue 
                 foreach (Issue match in matches)
                 {
-                    Program.Logger.Trace("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", match.Rule.Id, match.Rule.Name, filePath);
+                    WriteOnce.Log.Trace("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", match.Rule.Id, match.Rule.Name, filePath);
 
                     //maintain a list of unique tags; multi-purpose but primarily for filtering -u option
                     bool dupTagFound = false;
@@ -370,7 +370,7 @@ namespace Microsoft.AppInspector.Commands
             }
             else
             {
-                Program.Logger.Trace("No pattern matches detected for file: " + filePath);
+                WriteOnce.Log.Trace("No pattern matches detected for file: " + filePath);
             }
 
         }
@@ -394,7 +394,7 @@ namespace Microsoft.AppInspector.Commands
             catch (Exception)
             {
                 //control the error description and continue; error in rules engine possible
-                Program.Logger.Error("Unexpected indexing issue in ExtractTextSample");
+                WriteOnce.Log.Error("Unexpected indexing issue in ExtractTextSample.  Process continued");
             }
 
             return result;
@@ -517,9 +517,9 @@ namespace Microsoft.AppInspector.Commands
                     _outputWriter.FlushAndClose();//not required for html formal i.e. multiple files already closed
                     _outputWriter = null;
                     if (!String.IsNullOrEmpty(_arg_outputFile))
-                        WriteOnce.WriteLine(String.Format("See {0}.", _arg_outputFile));
+                        WriteOnce.Any(Helper.FormatResourceString(ResourceMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile));
                     else
-                        WriteOnce.WriteLine("\n");
+                        WriteOnce.NewLine();
                 }
             }
         }
@@ -531,6 +531,11 @@ namespace Microsoft.AppInspector.Commands
 
         void ExpandAndProcess(string filename)
         {
+            if (!File.Exists(filename))
+            {
+                throw new OpException(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_FILE_OR_DIR, filename));
+            }
+
             // Ignore images and other junk like that
             var fileExtension = new FileInfo(filename).Extension;
             var mimeType = MimeTypeMap.GetMimeType(fileExtension);
@@ -566,10 +571,10 @@ namespace Microsoft.AppInspector.Commands
                         case ".gem":
                         case ".tar":
                         case ".nupkg":
-                            Program.Logger.Warn($"Processing of {fileExtension} not implemented yet.");
+                            WriteOnce.Log.Warn($"Processing of {fileExtension} not implemented yet.");
                             break;
                         default:
-                            Program.Logger.Warn("no support for compressed type: " + fileExtension);
+                            WriteOnce.Log.Warn("no support for compressed type: " + fileExtension);
                             break;
                     }
 
@@ -585,7 +590,7 @@ namespace Microsoft.AppInspector.Commands
 
         void ProcessZipFile(string filename)
         {
-            Program.Logger.Trace("Analyzing .zip file: [{0}])", filename);
+            WriteOnce.Log.Trace("Analyzing .zip file: [{0}])", filename);
 
             ZipFile zipFile;
             int filesCount = 0;
@@ -606,7 +611,7 @@ namespace Microsoft.AppInspector.Commands
                     if (zipEntry.Size > MAX_FILESIZE)
                     {
                         _appProfile.MetaData.FilesSkipped++;
-                        Program.Logger.Error(string.Format("{0} in {1} is too large.  File skipped", zipEntry.Name, filename));
+                        WriteOnce.Log.Error(string.Format("{0} in {1} is too large.  File skipped", zipEntry.Name, filename));
                         zipFile.Close();
                         continue;
                     }
@@ -616,7 +621,7 @@ namespace Microsoft.AppInspector.Commands
                     if (IgnoreMimeRegex.IsMatch(mimeType) && new FileInfo(filename).Extension != "ts")
                     {
                         _appProfile.MetaData.FilesSkipped++;
-                        Program.Logger.Error("Ignoring zip entry [{0}]", zipEntry.Name);
+                        WriteOnce.Log.Error("Ignoring zip entry [{0}]", zipEntry.Name);
                     }
                     else
                     {
@@ -634,7 +639,7 @@ namespace Microsoft.AppInspector.Commands
 
         void ProcessTarGzFile(string filename)
         {
-            Program.Logger.Trace("Analyzing .tar.gz file: [{0}])", filename);
+            WriteOnce.Log.Trace("Analyzing .tar.gz file: [{0}])", filename);
 
             using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
             using (var gzipStream = new GZipInputStream(fileStream))
@@ -654,7 +659,7 @@ namespace Microsoft.AppInspector.Commands
                     if (tarEntry.Size > MAX_FILESIZE)
                     {
                         _appProfile.MetaData.FilesSkipped++;
-                        Program.Logger.Error(string.Format("{0} in {1} is too large.  File skipped", tarEntry.Name, filename));
+                        WriteOnce.Log.Error(string.Format("{0} in {1} is too large.  File skipped", tarEntry.Name, filename));
                         tarStream.Close();
                         continue;
                     }
@@ -663,7 +668,7 @@ namespace Microsoft.AppInspector.Commands
                     if (IgnoreMimeRegex.IsMatch(mimeType) && new FileInfo(filename).Extension != "ts")
                     {
                         _appProfile.MetaData.FilesSkipped++;
-                        Program.Logger.Error("Ignoring tar entry [{0}]", tarEntry.Name);
+                        WriteOnce.Log.Error("Ignoring tar entry [{0}]", tarEntry.Name);
                     }
                     else
                     {
