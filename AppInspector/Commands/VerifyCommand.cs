@@ -25,55 +25,72 @@ namespace Microsoft.AppInspector.Commands
 
         public VerifyRulesCommand(VerifyRulesCommandOptions opt)
         {
-            _arg_RulesPath = opt.CustomRulesPath;
-            _ignoreDefault = opt.IgnoreDefaultRules;
+            _arg_customRulesPath = opt.CustomRulesPath;
+            _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
+
+            ConfigRules();
         }
+
+
+        void ConfigRules()
+        {
+            _rulePaths = new List<string>();
+            if (!_arg_ignoreDefaultRules)
+                _rulePaths.Add(Helper.GetPath(Helper.AppPath.defaultRules));
+
+            if (!string.IsNullOrEmpty(_arg_customRulesPath))
+                _rulePaths.Add(_arg_customRulesPath);
+
+            if (_rulePaths.Count == 0)
+                throw new OpException(Helper.GetResourceString(ResourceMsg.ID.CMD_NORULES_SPECIFIED));
+        }
+
 
         public int Run()
         {
-            WriteOnce.Write("Verify rules command running\n", ConsoleColor.Cyan, WriteOnce.ConsoleVerbosityLevel.Low);
+            bool issues = false;
 
-
-            if (String.IsNullOrEmpty(_arg_RulesPath) && !_ignoreDefault)
-                _arg_RulesPath = Helper.GetPath(Helper.AppPath.defaultRules);
-            else if (!Directory.Exists(_arg_RulesPath) && !File.Exists(_arg_RulesPath))
-            {
-                WriteOnce.Error(string.Format("Error: Not a valid file or directory {0}", _arg_RulesPath));
-                return (int)ExitCode.CriticalError;
-            }
-
+            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_RUNNING, "Verifyrules"));
+            
             //load [each] rules file separately to report out where a failure is happening 
-            IEnumerable<string> fileListing;
-            fileListing = Directory.EnumerateFiles(_arg_RulesPath, "*.json", SearchOption.AllDirectories);
-
-            bool bIssues = false;
-            foreach (string filename in fileListing)
+            IEnumerable<string> fileListing = new List<string>();
+            foreach (string rulePath in _rulePaths)
             {
-                if (Path.GetExtension(filename) == ".json")
+                if (Directory.Exists(rulePath))
+                    fileListing = Directory.EnumerateFiles(rulePath, "*.json", SearchOption.AllDirectories);
+                else if (File.Exists(rulePath) && Path.GetExtension(rulePath) == ".json")
+                    fileListing = new List<string>() { new string(rulePath) };
+            
+                RuleSet rules = new RuleSet();
+                foreach (string filename in fileListing)
                 {
-                    RuleSet rules = new RuleSet(Program.Logger);
-                   
                     try
                     {
                         rules.AddFile(filename);
-                        RuleProcessor processor = new RuleProcessor(false, false, Program.Logger);
                     }
                     catch (Exception e)
                     {
-                        WriteOnce.Any("Rule parsing failed for file: " + filename);
-                        Program.Logger.Debug(e.Message);
-                        bIssues = true;
+                        WriteOnce.Log.Error(Helper.FormatResourceString(ResourceMsg.ID.VERIFY_RULE_FAILED, filename));
+                        WriteOnce.Log.Error(e.Message + "\n" + e.StackTrace);
+                        issues = true;
                     }
                 }
             }
 
-            WriteOnce.Any(string.Format("Verify rules completed {0}", !bIssues ? "successfully" : "with errors."),
-                ConsoleColor.Cyan);
+            //final report
+            if (issues)
+                WriteOnce.Any(Helper.GetResourceString(ResourceMsg.ID.VERIFY_RULES_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+            else
+                WriteOnce.Any(Helper.GetResourceString(ResourceMsg.ID.VERIFY_RULES_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
 
-            return bIssues ? (int)ExitCode.NotVerified : (int)ExitCode.Verified;
+            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_COMPLETED, "Verifyrules"));
+
+            return issues ? (int)ExitCode.NotVerified : (int)ExitCode.Verified;
         }
 
-        private string _arg_RulesPath;
-        private bool _ignoreDefault;
+
+        List<string> _rulePaths = new List<string>();
+        private string _arg_customRulesPath;
+        private bool _arg_ignoreDefaultRules;
     }
 }

@@ -19,95 +19,103 @@ using NLog;
 /// </summary>
 public class WriteOnce
 {
-    public enum ConsoleVerbosityLevel { High, Medium, Low, None }
+    public enum ConsoleVerbosity { High, Medium, Low, None }
 
-    private static ConsoleColor _infoForeColor = ConsoleColor.Magenta;
-    private static ConsoleColor _errorForeColor = ConsoleColor.Red;
-    private static ConsoleColor _generalForeColor = ConsoleColor.Gray;
-    public static ConsoleVerbosityLevel Verbosity { get; set; }
+    public static ConsoleVerbosity Verbosity{ get; set; }
 
     public static Logger Log {get; set;}
+
     public static TextWriter Writer { get; set; }
-    public ConsoleColor InfoForeColor { set { _infoForeColor = value; } }
-    public ConsoleColor ErrorForeColor { set { _errorForeColor = value; } }
-    
-    public static void Info(string s, ConsoleVerbosityLevel verbosityLevel=ConsoleVerbosityLevel.Medium)
+    private static ConsoleColor _infoColor = ConsoleColor.Magenta;
+    private static ConsoleColor _errorColor = ConsoleColor.Red;
+    private static ConsoleColor _generalColor = ConsoleColor.Gray;
+    private static ConsoleColor _resultColor = ConsoleColor.Yellow;
+    private static ConsoleColor _opColor = ConsoleColor.Cyan;
+    private static ConsoleColor _sysColor = ConsoleColor.Magenta;
+
+    public ConsoleColor InfoForeColor { set { _infoColor = value; } }
+    public ConsoleColor ErrorForeColor { set { _errorColor = value; } }
+    public ConsoleColor OperationForeColor { set { _opColor = value; } }
+    public ConsoleColor ResultForeColor { set { _resultColor = value; } }
+    public ConsoleColor GeneralForeColor { set { _generalColor = value; } }
+
+
+    public static void Operation(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Low)
+    {
+        Any(msg, writeLine, _opColor, verbosity);
+    }
+
+
+    public static void System(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Low)
+    {
+        Any(msg, writeLine, _sysColor, verbosity);
+    }
+
+
+    public static void General(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
+    {
+        Any(msg, writeLine, _generalColor, verbosity);
+    }
+
+    public static void Result(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
+    {
+        Any(msg, writeLine, _resultColor, verbosity);
+    }
+
+
+    public static void Info(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
+    {
+        if (Writer != null && Writer != Console.Out)
+            Writer.WriteLine(msg);
+
+        SafeConsoleWrite(msg, writeLine, _infoColor, verbosity);
+    }
+
+
+    public static void Any(string msg, bool writeLine = true, ConsoleColor foreColor = ConsoleColor.Gray, ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
+    {
+        if (Writer != null && Writer != Console.Out)
+            Writer.WriteLine(msg);
+
+        SafeConsoleWrite(msg, writeLine, foreColor, verbosity);
+    }
+
+
+    public static void Error(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Low)
     {
         if (Log != null && Log.Name != "Console")
-            Log.Info(s);
+            Log.Error(msg);
 
         if (Writer != null && Writer != Console.Out)
-            Writer.WriteLine(s);
+            Writer.WriteLine(msg);
 
-        WriteLine(s, _infoForeColor, verbosityLevel);
+        SafeConsoleWrite(msg, writeLine, _errorColor, verbosity);
     }
 
 
-    public static void Any(string s, ConsoleVerbosityLevel verbosityLevel = ConsoleVerbosityLevel.Medium)
+    public static void NewLine(ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
     {
-        Any(s, _generalForeColor, verbosityLevel);
-    }
-
-
-    public static void Any(string s, ConsoleColor foreColor, ConsoleVerbosityLevel verbosityLevel = ConsoleVerbosityLevel.Medium)
-    {
-        if (Log != null && Log.Name != "Console")
-            Log.Info(s);
-
-        if (Writer != null && Writer != Console.Out)
-            Writer.WriteLine(s);
-
-        WriteLine(s, foreColor, verbosityLevel);
-    }
-
-    public static void Error(string s, ConsoleVerbosityLevel verbosityLevel = ConsoleVerbosityLevel.Medium)
-    {
-        if (Log != null && Log.Name != "Console")
-            Log.Error(s);
-
-        WriteLine(s, _errorForeColor, verbosityLevel);
-    }
-
-
-    public static void NewLine(ConsoleVerbosityLevel verbosityLevel = ConsoleVerbosityLevel.Medium)
-    {
-        if (verbosityLevel >= Verbosity)
+        if (verbosity >= Verbosity)
             Console.WriteLine();
     }
 
-    public static void Write(string s, ConsoleVerbosityLevel verbosityLevel = ConsoleVerbosityLevel.Medium)
+   
+    static void SafeConsoleWrite(string msg, bool writeLine, ConsoleColor foreground, ConsoleVerbosity verbosity)
     {
-        Write(s, _infoForeColor,verbosityLevel);
-    }
-
-
-    public static void WriteLine(string s, ConsoleVerbosityLevel verbosityLevel = ConsoleVerbosityLevel.Medium)
-    {
-        WriteLine(s, _infoForeColor, verbosityLevel);
-    }
-
-
-    public static void Write(string s, ConsoleColor foreground, ConsoleVerbosityLevel verbosityLevel = ConsoleVerbosityLevel.Medium)
-    {
-        if (verbosityLevel >= Verbosity)
+        if (verbosity >= Verbosity)
         {
             ConsoleColor lastForecolor = Console.ForegroundColor;
             Console.ForegroundColor = foreground;
-            Console.Write(s);
+
+            if (writeLine) 
+                Console.WriteLine(msg);
+            else
+                Console.Write(msg);
+
             Console.ForegroundColor = lastForecolor;
         }
     }
 
-    public static void WriteLine(string s, ConsoleColor foreground, ConsoleVerbosityLevel verbosityLevel = ConsoleVerbosityLevel.Medium)
-    {
-        if (verbosityLevel >= Verbosity)
-        {
-            ConsoleColor lastForecolor = Console.ForegroundColor;
-            Console.ForegroundColor = foreground;
-            Console.WriteLine(s);
-            Console.ForegroundColor = lastForecolor;
-        }
-    }
 
 
     public static void FlushAll()
@@ -118,8 +126,6 @@ public class WriteOnce
             Writer.Flush();
             Writer.Close();
             Writer = null;
-
-            WriteOnce.WriteLine("See output file if specified.  For HTML format option, please see the HTMLOutput folder created.");
         }
     }
 

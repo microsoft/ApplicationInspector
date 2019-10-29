@@ -1,12 +1,60 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using ApplicationInspector.Properties;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
+static public class ResourceMsg
+{
+    /// <summary>
+    /// Maps enum values to resource strings for ensuring values exists at compile time
+    /// </summary>
+    public enum ID
+    {
+        ANALYZE_COMPRESSED_FILETYPE,
+        ANALYZE_FILES_PROCESSED_PCNT,
+        ANALYZE_NOPATTERNS,
+        ANALYZE_NOSUPPORTED_FILETYPES,
+        ANALYZE_UNCOMPRESSED_FILETYPE,
+        ANALYZE_UNSUPPORTED_COMPR_TYPE,
+        ANALYZE_FILESIZE_SKIPPED,
+        ANALYZE_OUTPUT_FILE,
+        CMD_PREPARING_REPORT,
+        CMD_COMPLETED,
+        CMD_CRITICAL_FILE_ERR,
+        CMD_INVALID_ARG_VALUE,
+        CMD_INVALID_FILE_OR_DIR,
+        CMD_REPORT_DONE,
+        CMD_REQUIRED_ARG_MISSING,
+        CMD_RUNNING,
+        CMD_INVALID_RULE_PATH,
+        CMD_NORULES_SPECIFIED,
+        TAGDIFF_NO_TAGS_FOUND,
+        TAGDIFF_RESULTS_DIFFER,
+        TAGDIFF_RESULTS_GAP,
+        TAGDIFF_RESULTS_TEST_TYPE,
+        TAGDIFF_SAME_FILE_ARG,
+        TAGDIFF_RESULTS_SUCCESSS,
+        TAGDIFF_RESULTS_FAIL,
+        TAGTEST_RESULTS_NONE,
+        TAGTEST_RESULTS_TAGS_FOUND,
+        TAGTEST_RESULTS_TAGS_MISSING,
+        TAGTEST_RESULTS_TEST_TYPE,
+        TAGTEST_RESULTS_SUCCESS,
+        TAGTEST_RESULTS_FAIL,
+        VERIFY_RULE_FAILED,
+        VERIFY_RULES_RESULTS_FAIL,
+        VERIFY_RULES_RESULTS_SUCCESS,
+        RUNTIME_ERROR_NAMED,
+        RUNTIME_ERROR_UNNAMED
+    };
 
+
+}
 
 static public class Helper
 {
@@ -163,5 +211,34 @@ static public class Helper
         {
             Process.Start("open", url);
         }
+    }
+
+
+    public static string GetResourceString(ResourceMsg.ID id)
+    {
+        string result="";
+        try
+        {
+            result = Resources.ResourceManager.GetString(id.ToString());
+        }
+        catch (Exception e)
+        {
+            string error = string.Format("Unable to locate requested string resource {0}", id);
+            error += e.Message + "\n" + e.StackTrace;
+            throw new Exception(error);
+        }
+
+        return result;
+
+    }
+
+    public static string FormatResourceString(ResourceMsg.ID id, params object[] parameters)
+    {
+        return String.Format(GetResourceString(id), parameters);
+    }
+
+    public static string FormatResourceString(ResourceMsg.ID id, int value)
+    {
+        return String.Format(GetResourceString(id), value);
     }
 }

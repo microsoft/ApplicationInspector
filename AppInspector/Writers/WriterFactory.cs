@@ -25,10 +25,8 @@ namespace Microsoft.AppInspector.Writers
                     return new SimpleTextWriter(format);
                 case "html":
                     return new LiquidWriter();
-                //case "sarif":
-                //    return new SarifWriter();
                 default:
-                    throw new Exception("wrong output");
+                    throw new Exception("unsupported output writer");
             }
         }
     }

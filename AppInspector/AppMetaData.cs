@@ -548,9 +548,8 @@ namespace Microsoft.AppInspector.Writers
             TagCounters = JsonConvert.DeserializeObject<List<TagCounter>>(File.ReadAllText(Helper.GetPath(Helper.AppPath.tagCounterPref)));
             HashSet<string> dupCountersCheck = new HashSet<string>();
             foreach (TagCounter counter in TagCounters)
-                if (!dupCountersCheck.Add(counter.Tag))
-                    throw new Exception("Duplicate tagCounter found in TagCounters.json preferences file");
-
+                dupCountersCheck.Add(counter.Tag);
+                    
             Languages = new Dictionary<string, int>();
 
         }

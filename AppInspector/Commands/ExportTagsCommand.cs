@@ -29,16 +29,15 @@ namespace Microsoft.AppInspector.Commands
 
         public int Run()
         {
-            WriteOnce.Write("Export unique tags command running\n", ConsoleColor.Cyan, WriteOnce.ConsoleVerbosityLevel.Low);
-
-
+            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_RUNNING, "Exporttags"));
+            
             if (String.IsNullOrEmpty(_arg_RulesPath))
             {
                 _arg_RulesPath = Helper.GetPath(Helper.AppPath.defaultRules);
             }
             else if (!Directory.Exists(_arg_RulesPath) && !File.Exists(_arg_RulesPath))
             {
-                WriteOnce.Error(String.Format("Not a valid rule file or directory {0}", _arg_RulesPath));
+                WriteOnce.Error(Helper.FormatResourceString(ResourceMsg.ID.CMD_INVALID_RULE_PATH, _arg_RulesPath));
 
                 return (int)ExitCode.CriticalError;
             }
@@ -57,7 +56,7 @@ namespace Microsoft.AppInspector.Commands
             else
             {
                 //override user if no output file so output to console appears
-                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosityLevel.High;
+                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.High;
             }
 
             //initialize rules
@@ -80,9 +79,9 @@ namespace Microsoft.AppInspector.Commands
 
              //separate loop so results are sorted (Sorted type)
             foreach (string s in uniqueTags.Values)
-                WriteOnce.Any(s, WriteOnce.ConsoleVerbosityLevel.High);
+                WriteOnce.Result(s, true, WriteOnce.ConsoleVerbosity.High);
 
-            WriteOnce.Any("Export rule tags completed.", ConsoleColor.Cyan);
+            WriteOnce.Operation(Helper.FormatResourceString(ResourceMsg.ID.CMD_COMPLETED, "Exporttags"));
             WriteOnce.FlushAll();
 
             return (int)ExitCode.Success;
