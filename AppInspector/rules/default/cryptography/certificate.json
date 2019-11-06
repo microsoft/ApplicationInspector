@@ -4,7 +4,7 @@
     "id": "AI057510",
     "description": "Cryptography: x.509 Certificate",
     "tags": [
-      "Cryptography.x509"
+      "Cryptography.x509.Use"
     ],
     "severity": "moderate",
     "patterns": [
@@ -17,14 +17,25 @@
         "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
-      },
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: x.509 Certificate",
+    "id": "AI057511",
+    "description": "Cryptography: x.509 Certificate",
+    "tags": [
+      "Cryptography.x509.Create"
+    ],
+    "severity": "moderate",
+    "patterns": [
       {
-        "pattern": "genrsa|-keyout|-x509toreq|signkey",
+        "pattern": "genrsa|-keyout|-x509toreq",
         "type": "regex-word",
         "scopes": [
           "code"
         ],
-        "modifiers": [ ],
+        "modifiers": [],
         "confidence": "high",
         "_comment": "Common OpenSSL commands"
       }
@@ -47,6 +58,37 @@
         ],
         "modifiers": [ "i" ],
         "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: x.509 Certificate",
+    "id": "AI057521",
+    "description": "Cryptography: x.509 Certificate",
+    "tags": [
+      "Cryptography.x509.CodeSign"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "signkey|codesign",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "sign",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
         "_comment": ""
       }
     ]

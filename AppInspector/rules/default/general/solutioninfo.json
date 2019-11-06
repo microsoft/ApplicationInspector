@@ -6,7 +6,7 @@
     "tags": [
       "Metadata.Hardware.Processor"
     ],
-    "applies_to": [ "VSsolution", "cpp" ],
+    "applies_to": [ "VSsolution", "VSProject", "cpp" ],
     "severity": "moderate",
     "patterns": [
       {

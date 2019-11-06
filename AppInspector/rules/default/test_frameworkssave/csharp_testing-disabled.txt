@@ -1,0 +1,886 @@
+[
+  {
+    "name": "Testing Framework: ",
+    "id": "AP036400",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Atata"
+    ],
+    "patterns": [
+      {
+        "pattern": "Atata",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP036500",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.csUnit"
+    ],
+    "patterns": [
+      {
+        "pattern": "csUnit",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP036600",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.DbUnit.NET"
+    ],
+    "patterns": [
+      {
+        "pattern": "DbUnit.NET",
+        "type": "substring",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP036700",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.ErrorUnit"
+    ],
+    "patterns": [
+      {
+        "pattern": "ErrorUnit",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP036800",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Fixie"
+    ],
+    "patterns": [
+      {
+        "pattern": "Fixie",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP036900",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.FluentAssertions"
+    ],
+    "patterns": [
+      {
+        "pattern": "FluentAssertions",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP037000",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Foq"
+    ],
+    "patterns": [
+      {
+        "pattern": "Foq",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP037100",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Gallio"
+    ],
+    "patterns": [
+      {
+        "pattern": "Gallio",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP037200",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.LightBDD"
+    ],
+    "patterns": [
+      {
+        "pattern": "LightBDD",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP037300",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.MbUnit"
+    ],
+    "patterns": [
+      {
+        "pattern": "MbUnit",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP037400",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Moq"
+    ],
+    "patterns": [
+      {
+        "pattern": "Moq",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP037500",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.MSTest"
+    ],
+    "patterns": [
+      {
+        "pattern": "MSTest",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP037600",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.NaturalSpec"
+    ],
+    "patterns": [
+      {
+        "pattern": "NaturalSpec",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP037700",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.NBi"
+    ],
+    "patterns": [
+      {
+        "pattern": "NBi",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP037800",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.NFluent"
+    ],
+    "patterns": [
+      {
+        "pattern": "NFluent",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP037900",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.NMate"
+    ],
+    "patterns": [
+      {
+        "pattern": "NMate",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP038000",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.NUnit"
+    ],
+    "patterns": [
+      {
+        "pattern": "NUnit",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP038100",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.NUnitAsp"
+    ],
+    "patterns": [
+      {
+        "pattern": "NUnitAsp",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP038200",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Pex"
+    ],
+    "patterns": [
+      {
+        "pattern": "Pex",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP038300",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Quality Gate One Studio"
+    ],
+    "patterns": [
+      {
+        "pattern": "Quality Gate One Studio",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP038400",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.QuickUnit.net"
+    ],
+    "patterns": [
+      {
+        "pattern": "QuickUnit.net",
+        "type": "substring",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP038500",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Randoop.NET"
+    ],
+    "patterns": [
+      {
+        "pattern": "Randoop.NET",
+        "type": "substring",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP038600",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Rhino Mocks"
+    ],
+    "patterns": [
+      {
+        "pattern": "Rhino Mocks",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP038700",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Roaster"
+    ],
+    "patterns": [
+      {
+        "pattern": "Roaster",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP038800",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.SpecFlow"
+    ],
+    "patterns": [
+      {
+        "pattern": "SpecFlow",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP038900",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Specter"
+    ],
+    "patterns": [
+      {
+        "pattern": "Specter",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP039000",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.TestDriven.NET"
+    ],
+    "patterns": [
+      {
+        "pattern": "TestDriven.NET",
+        "type": "substring",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP039100",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.TEST"
+    ],
+    "patterns": [
+      {
+        "pattern": ".TEST",
+        "type": "substring",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP039200",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.TickSpec"
+    ],
+    "patterns": [
+      {
+        "pattern": "TickSpec",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP039300",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.TPT"
+    ],
+    "patterns": [
+      {
+        "pattern": "TPT",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP039400",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Typemock Isolator"
+    ],
+    "patterns": [
+      {
+        "pattern": "Typemock Isolator",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP039500",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Visual Studio"
+    ],
+    "patterns": [
+      {
+        "pattern": "Visual Studio",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP039600",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.Visual T#"
+    ],
+    "patterns": [
+      {
+        "pattern": "Visual T#",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ",
+    "id": "AP039700",
+    "description": "Testing Framework: ",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Testing.Framework.xUnit.net"
+    ],
+    "patterns": [
+      {
+        "pattern": "xUnit.net",
+        "type": "substring",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "comment": ""
+      }
+    ]
+  }
+]

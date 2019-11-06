@@ -23,7 +23,7 @@
     "id": "AI555510",
     "description": "Cryptography: Encryption (AES)",
     "tags": [
-      "Cryptography.Encryption.AES"
+      "Cryptography.Cipher.AES"
     ],
     "severity": "moderate",
     "patterns": [
@@ -50,7 +50,7 @@
     "id": "AI555520",
     "description": "Cryptography: Encryption (3DES)",
     "tags": [
-      "Cryptography.Encryption.3DES"
+      "Cryptography.Cipher.3DES"
     ],
     "severity": "moderate",
     "patterns": [
@@ -69,7 +69,7 @@
     "id": "AI555530",
     "description": "Cryptography: Encryption (RC)",
     "tags": [
-      "Cryptography.Encryption.RC"
+      "Cryptography.Cipher.RC"
     ],
     "severity": "moderate",
     "patterns": [
@@ -96,7 +96,7 @@
     "id": "AP003100",
     "description": "Encryption: Cipher Mode",
     "tags": [
-      "Cryptography.Encryption.CipherMode"
+      "Cryptography.Cipher.CipherMode"
     ],
     "severity": "critical",
     "_comment": "",
@@ -111,5 +111,24 @@
         "_comment": ""
       }
     ]
+  },
+  {
+    "name": "Cryptography: Encryption",
+    "id": "AI555540",
+    "description": "Cryptography: Encryption",
+    "tags": [
+      "Cryptography.Cipher.RSA"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "rsa",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
   }
-] 
+]

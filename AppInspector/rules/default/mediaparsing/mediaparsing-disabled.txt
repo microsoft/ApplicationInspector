@@ -4,7 +4,7 @@
     "id": "AP023500",
     "description": "Media Parsing",
     "tags": [
-      "Inspect.Threatmodel.Parsing.DocType.Media"
+      "Data.Serialization.Deserialization.Media"
     ],
     "severity": "moderate",
     "_comment": "",

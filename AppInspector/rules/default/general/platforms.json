@@ -1,5 +1,53 @@
 [
   {
+    "name": "Platform: Microsoft .NET Core",
+    "id": "AI0300056",
+    "description": "Platform: .NET Core",
+    "applies_to": [ "VSProject", "csharp" ],
+    "tags": [ "Platform.Microsoft.NETCore" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "netcore",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Platform: Microsoft .NET Standard",
+    "id": "AI0300057",
+    "description": "Platform: Microsoft .NET Standard",
+    "applies_to": [ "VSProject", "csharp" ],
+    "tags": [ "Platform.Microsoft.NETStandard" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Microsoft.NET.Sdk",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Platform: Microsoft Mono",
+    "id": "AI0300058",
+    "description": "Platform: Microsoft Mono",
+    "applies_to": [ "VSProject", "csharp" ],
+    "tags": [ "Platform.Microsoft.Mono" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "using (gtk|Glade)",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
     "name": "Platform: Google Android",
     "id": "AI030010",
     "description": "Platform: Google Android",
@@ -84,6 +132,43 @@
     ]
   },
   {
+    "name": "Platform: Microft Windows",
+    "id": "AI0300041",
+    "description": "Platform: Microsoft Windows",
+    "tags": [
+      "Platform.OS.Microsoft.WindowsCE"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "PlatformID.WinCE|IsWindowsMobile|IsWindowsCE|Windows Mobile|Windows Embedded",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Windows Universal Platform",
+    "id": "AI061221",
+    "description": "Development Framework: Windows Universal Platform",
+    "tags": [
+      "Platform.Microsoft.OS.Windows.UniversalPlatform"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Windows universal platform|UWP",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
     "name": "Platform: Linux",
     "id": "AI0300050",
     "description": "Platform: Linux",
@@ -95,6 +180,101 @@
       {
         "pattern": "linux|xubuntu|ubuntu|coreos|manjaro|archlinux|debian|mint|gentoo|opensuse|redhat|mandrake|mandriva|slackware",
         "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Platform: Microsoft XBox",
+    "id": "AI0300051",
+    "description": "Platform: Microsoft XBox",
+    "tags": [
+      "Platform.OS.Microsoft.XBox"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "xbox",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Platform: Mobile Device",
+    "id": "AI0300053",
+    "description": "Platform: Mobile Device",
+    "tags": [
+      "Platform.Mobile"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mobile|tablet|phone",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Platform: IOT",
+    "id": "AI0300054",
+    "description": "Platform: IOT",
+    "tags": [
+      "Platform.IOT"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "IOT",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Hardware: Microsoft Kinex",
+    "id": "AI0300052",
+    "description": "Platform: Microsoft Kinex",
+    "tags": [
+      "Hardware.Accessory.Microsoft.Kinex"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "kinex",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Hardware: Reference Design",
+    "id": "AI0300055",
+    "description": "Hardware: Reference Design",
+    "tags": [
+      "Hardware.ReferenceDesign"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Reference Design",
+        "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high",

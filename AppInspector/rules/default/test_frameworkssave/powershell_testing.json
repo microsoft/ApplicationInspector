@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Testing Framework: Pester",
+    "id": "AI065080",
+    "description": "Testing Framework: Pester",
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "Testing.Framework.Pester"
+    ],
+    "patterns": [
+      {
+        "pattern": "ester",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  }
+]
