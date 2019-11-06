@@ -332,5 +332,24 @@
         "_comment": ""
       }
     ]
+  },
+  {
+    "name": "Sample Code",
+    "id": "AI010101",
+    "description": "Sample Code",
+    "tags": [
+      "Metric.SampleCode"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "(sample|example) code",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
   }
 ]

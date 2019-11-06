@@ -30,7 +30,7 @@
       "csharp"
     ],
     "tags": [
-      "OS.Network.Listener"
+      "OS.Network.Listener.Tcp"
     ],
     "severity": "moderate",
     "patterns": [
@@ -75,7 +75,7 @@
       "cpp"
     ],
     "tags": [
-      "OS.Network.Listener"
+      "OS.Network.Listener.Tcp"
     ],
     "severity": "moderate",
     "patterns": [
@@ -100,7 +100,7 @@
       "cpp"
     ],
     "tags": [
-      "OS.Network.Listener"
+      "OS.Network.Listener.Tcp"
     ],
     "severity": "moderate",
     "patterns": [
@@ -144,7 +144,7 @@
       "python"
     ],
     "tags": [
-      "OS.Network.Listener"
+      "OS.Network.Listener.Socket"
     ],
     "severity": "moderate",
     "patterns": [
@@ -168,12 +168,12 @@
       "csharp"
     ],
     "tags": [
-      "OS.Network.Connect"
+      "OS.Network.Connect.Http"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "WebClient|HttpClient|HttpRequest|HttpWebRequest|TcpClient|TcpChannel|TcpSocket|Socket|WebSocket",
+        "pattern": "WebClient|HttpClient|HttpRequest|HttpWebRequest",
         "type": "regex",
         "scopes": [
           "code"
@@ -192,7 +192,7 @@
       "html"
     ],
     "tags": [
-      "OS.Network.Connect"
+      "OS.Network.Connect.Http"
     ],
     "severity": "moderate",
     "patterns": [
@@ -235,7 +235,7 @@
       "javascript"
     ],
     "tags": [
-      "OS.Network.Connect"
+      "OS.Network.Connect.Http"
     ],
     "severity": "moderate",
     "patterns": [
@@ -259,7 +259,7 @@
       "python"
     ],
     "tags": [
-      "OS.Network.Connect"
+      "OS.Network.Connect.Http"
     ],
     "severity": "moderate",
     "patterns": [
@@ -282,7 +282,7 @@
     "applies_to": [
     ],
     "tags": [
-      "OS.Network.Connect"
+      "OS.Network.Connect.Http"
     ],
     "severity": "moderate",
     "patterns": [
@@ -302,15 +302,147 @@
     "name": "Network Connection: HTTP",
     "description": "Network Connection: HTTP",
     "id": "AI036551",
-    "applies_to": [ "ruby"],
+    "applies_to": [ "ruby" ],
     "tags": [
-      "OS.Network.Connect"
+      "OS.Network.Connect.Http"
     ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Net::HTTP",
         "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: RPC",
+    "description": "Network Connection: RPC",
+    "id": "AI036552",
+    "applies_to": [ "csharp" ],
+    "tags": [
+      "OS.Network.Connect.RPC"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RPC|RemotableTypeclass|System.Runtime.Remoting|RemotingConfiguration|TcpClient|TcpChannel|TcpSocket|Socket|WebSocket",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: RPC",
+    "description": "Network Connection: RPC",
+    "id": "AI036553",
+    "applies_to": [ "python" ],
+    "tags": [
+      "OS.Network.Connect.RPC"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "fastrpc|xmlrpc|SimpleXMLRPCServer|SocketServer|jsonrpc|rpc.server|client.rpc|socket",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: RPC",
+    "description": "Network Connection: RPC",
+    "id": "AI036554",
+    "applies_to": [ "c" ],
+    "tags": [
+      "OS.Network.Connect.RPC"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "capnp/ez-rpc.h|rpc/server.h",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: RPC",
+    "description": "Network Connection: RPC",
+    "id": "AI036555",
+    "applies_to": [ "java" ],
+    "tags": [
+      "OS.Network.Connect.RPC"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RmiServiceExporter|RmiProxyFactoryBean|remoting|jaxrpc|RemoteAccountService|io.grpc|RPCClient",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: RPC",
+    "description": "Network Connection: RPC",
+    "id": "AI036556",
+    "applies_to": [ "javascript" ],
+    "tags": [
+      "OS.Network.Connect.RPC"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RpcProvider|jayson|json-rpc",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: Modem",
+    "description": "Network Connection: Modem",
+    "id": "AI036556",
+    "applies_to": [ "c", "cplusplus", "csharp" ],
+    "tags": [
+      "OS.Network.Connect.Modem"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "modem|baud",
+        "type": "regex",
         "scopes": [
           "code"
         ],

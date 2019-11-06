@@ -196,16 +196,26 @@ namespace Microsoft.AppInspector.Commands
             
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Analyze"));
             
-            //if it's a file, make an IEnumerable out of it.
+            //if it's not a directory, make an IEnumerable out of it for same error handling
             IEnumerable<string> fileList;
-            if (!Directory.Exists(_arg_sourcePath))
-                fileList = new List<string>() { _arg_sourcePath };
-            else if (File.Exists(_arg_sourcePath))
-                fileList = Directory.EnumerateFiles(_arg_sourcePath, "*.*", SearchOption.AllDirectories);
-            else
+            if (Directory.Exists(_arg_sourcePath))
             {
-                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
+                try
+                {
+                    fileList = Directory.EnumerateFiles(_arg_sourcePath, "*.*", SearchOption.AllDirectories);
+                    if (fileList.Count() == 0)
+                        throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
+                    
+                }
+                catch (Exception e)
+                {
+                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
+                }
             }
+            else if (File.Exists(_arg_sourcePath))
+                fileList = new List<string>() { _arg_sourcePath };
+            else
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
 
 
             _appProfile.MetaData.TotalFiles = fileList.Count();

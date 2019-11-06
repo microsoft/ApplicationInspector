@@ -6,7 +6,7 @@
     "tags": [
       "Data.Finance"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "pci|wallet|fips-140",
@@ -51,7 +51,7 @@
     "tags": [
       "Data.Finance"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "bank\\s*(acct|account)",
@@ -94,7 +94,7 @@
     "tags": [
       "Data.Finance.CreditCard"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "visa|americanexpress|amex|(master|discover|credit|debit)\\s*card",

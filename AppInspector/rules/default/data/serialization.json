@@ -51,7 +51,7 @@
       "python"
     ],
     "tags": [
-      "Data.Serialization.Serialization"
+      "Data.Serialization"
     ],
     "severity": "moderate",
     "patterns": [
@@ -73,7 +73,7 @@
       "python"
     ],
     "tags": [
-      "Data.Serialization.Deserialization"
+      "Data.Deserialization"
     ],
     "severity": "moderate",
     "patterns": [
@@ -95,7 +95,7 @@
       "java"
     ],
     "tags": [
-      "Data.Serialization.Deserialization"
+      "Data.Deserialization"
     ],
     "severity": "moderate",
     "patterns": [
@@ -117,7 +117,7 @@
       "php"
     ],
     "tags": [
-      "Data.Serialization.Deserialization"
+      "Data.Deserialization"
     ],
     "severity": "moderate",
     "patterns": [
@@ -139,7 +139,7 @@
       "ruby"
     ],
     "tags": [
-      "Data.Serialization.Deserialization"
+      "Data.Deserialization"
     ],
     "severity": "moderate",
     "patterns": [
@@ -161,7 +161,7 @@
       "csharp"
     ],
     "tags": [
-      "Data.Serialization.Serialization"
+      "Data.Serialization"
     ],
     "severity": "moderate",
     "patterns": [
@@ -183,7 +183,7 @@
       "csharp"
     ],
     "tags": [
-      "Data.Serialization.Deserialization"
+      "Data.Deserialization"
     ],
     "severity": "moderate",
     "patterns": [
@@ -221,7 +221,7 @@
       "csharp"
     ],
     "tags": [
-      "Data.Serialization.Deserialization"
+      "Data.Deserialization"
     ],
     "severity": "moderate",
     "patterns": [
@@ -244,6 +244,106 @@
       {
         "pattern": "TypeNameHandling",
         "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Bluetooth Serialization",
+    "id": "AI068220",
+    "description": "Data: Bluetooth Serialization",
+    "tags": [
+      "Data.Deserialization.Signal.Bluetooth"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Bluetooth",
+        "type": "string",
+        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Cellular Serialization",
+    "id": "AI068230",
+    "description": "Data: Cellular Serialization",
+    "tags": [
+      "Data.Deserialization.Signal.Cellular"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Cellular",
+        "type": "string",
+        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: USB",
+    "id": "AI068240",
+    "description": "Data: USB Serialization",
+    "tags": [
+      "Data.Deserialization.Signal.USB"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "USB",
+        "type": "string",
+        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Ethernet",
+    "id": "AI068250",
+    "description": "Data: Ethernet Serialization",
+    "tags": [
+      "Data.Deserialization.Signal.Ethernet"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Ethernet",
+        "type": "string",
+        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Modem",
+    "id": "AI068260",
+    "description": "Data: Modem Serialization",
+    "tags": [
+      "Data.Deserialization.Signal.Modem"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Modem",
+        "type": "string",
+        "modifiers": [ "i" ],
         "scopes": [
           "code"
         ],

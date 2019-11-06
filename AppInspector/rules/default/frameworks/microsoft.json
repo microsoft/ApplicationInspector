@@ -16,6 +16,38 @@
     ]
   },
   {
+    "name": "Development Framework: .NET Standard",
+    "id": "AI061240",
+    "description": "Development Framework: .NET Standard",
+    "applies_to": [ "csharp" ],
+    "tags": [ "Development.Framework.Microsoft.NETStandard" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Microsoft.NET.Sdk",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Mono",
+    "id": "AI061241",
+    "description": "Development Framework: Mono",
+    "applies_to": [ "csharp" ],
+    "tags": [ "Development.Framework.Microsoft.Mono" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "using (gtk|Glade)",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
     "name": "Development Framework: Microsoft MVC",
     "id": "AI061212",
     "description": "Development Framework: Microsoft MVC",
@@ -132,6 +164,57 @@
       {
         "pattern": "ADAL",
         "type": "string",
+        "scopes": [ "code" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Microsoft Dynamics",
+    "id": "AI061219",
+    "description": "Development Framework: Microsoft Dynamics",
+    "tags": [
+      "Development.Framework.Microsoft.Server.Dynamics"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Dynamics",
+        "type": "string",
+        "scopes": [ "code" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Microsoft IIS",
+    "id": "AI061219",
+    "description": "Development Framework: Microsoft IIS",
+    "tags": [
+      "Development.Framework.Microsoft.Server.IIS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "IIS",
+        "type": "string",
+        "scopes": [ "code" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Microsoft ASP.NET",
+    "id": "AI061220",
+    "description": "Development Framework: Microsoft ASP.NET",
+    "tags": [
+      "Development.Framework.Microsoft.Server.ASP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ASP\\.NET|MVC",
+        "type": "regex",
         "scopes": [ "code" ],
         "_comment": ""
       }

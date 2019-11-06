@@ -79,7 +79,7 @@
       "csharp"
     ],
     "tags": [
-      "Development.Framework.Component.ActiveX"
+      "Development.Framework.Component.COM"
     ],
     "severity": "moderate",
     "patterns": [
@@ -109,6 +109,25 @@
     "patterns": [
       {
         "pattern": "pdf",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: Silverlight",
+    "id": "AI066015",
+    "description": "Component: Silverlight",
+    "tags": [
+      "Development.Framework.Component.Silverlight"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Silverlight",
         "type": "string",
         "scopes": [
           "code"

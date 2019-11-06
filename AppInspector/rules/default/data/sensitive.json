@@ -6,7 +6,7 @@
     "tags": [
       "Data.Sensitive.Personal"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "(first|last|sur)name",
@@ -30,7 +30,7 @@
         "confidence": "low"
       },
       {
-        "pattern": "ssnumber|socialsecurity|nationalid|passport|drvlic|studentID",
+        "pattern": "ssn|ssnumber|socialsecurity|nationalid|passport|drvlic|studentID",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -66,7 +66,7 @@
     "tags": [
       "Data.Sensitive.Personal"
     ],
-    "severity": "moderate",
+    "severity": "important",
     "patterns": [
       {
         "pattern": "mobile",
@@ -95,49 +95,15 @@
   },
   {
     "name": "Data: Sensitive (Medical Information)",
-    "id": "AI068402",
-    "description": "Data: Sensitive (Medical Information)",
-    "tags": [
-      "Data.Sensitive.Personal"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "ssn",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "confidence": "medium"
-      }
-    ],
-    "conditions": [
-      {
-        "pattern": {
-          "pattern": "user",
-          "type": "regex",
-          "scopes": [
-            "code"
-          ],
-          "modifiers": [ "i" ],
-          "_comment": ""
-        },
-        "search_in": "finding-region(-40,40)",
-        "negate_finding": false,
-        "_comment": ""
-      }
-    ]
-  },
-  {
-    "name": "Data: Sensitive (Medical Information)",
     "id": "AI068403",
     "description": "Data: Sensitive (Medical Information)",
     "tags": [
       "Data.Sensitive.Medical"
     ],
-    "severity": "moderate",
+    "severity": "important",
     "patterns": [
       {
-        "pattern": "medical|insurance|doctor",
+        "pattern": "medical|insurance|doctor|medicare|medicaid|physician|blood",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -152,7 +118,7 @@
     "tags": [
       "Data.Sensitive"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "(strictly|highly) confidential",
@@ -176,7 +142,7 @@
     "tags": [
       "Data.Sensitive.Account"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "account|registration|membership|acct|acctnum|accountnum|accountnumber",

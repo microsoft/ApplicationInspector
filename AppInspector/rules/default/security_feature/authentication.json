@@ -4,7 +4,7 @@
     "id": "AI021000",
     "description": "Feature: Authentication",
     "tags": [
-      "Feature.Authentication"
+      "Feature.Authentication.General"
     ],
     "severity": "moderate",
     "patterns": [
@@ -25,10 +25,59 @@
         "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
-      },
+      }
+    ]
+  },
+  {
+    "name": "Feature: Authentication",
+    "id": "AI021001",
+    "description": "Feature: Authentication",
+    "tags": [
+      "Feature.Authentication.Oauth"
+    ],
+    "severity": "moderate",
+    "patterns": [
       {
-        "pattern": "oauth2?|totp|adal|(auth|access)_?token",
+        "pattern": "oauth2",
         "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Feature: Authentication",
+    "id": "AI021002",
+    "description": "Feature: Authentication",
+    "tags": [
+      "Feature.Authentication.Microsoft"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "adal|SASToken|login.live.com|outlook.com|SAS Token|Shared Access Signature",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Feature: Authentication",
+    "id": "AI021003",
+    "description": "Feature: Authentication",
+    "tags": [
+      "Feature.Authentication.NTLM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "NTLM|WWW-Authenticate: NTLM|windowsAuthentication|CredentialCache.DefaultCredentials|HTTPNtlmAuthHandler|LogonUserA",
+        "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high",

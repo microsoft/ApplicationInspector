@@ -11,6 +11,7 @@
       {
         "pattern": "xml|dom|sax|xpath|xmldom|xelement|xmldocument",
         "type": "regex-word",
+        "confidence":  "high",
         "scopes": [
           "code"
         ]
@@ -30,6 +31,7 @@
       {
         "pattern": "lxml|etree|ElementTree|minidom|pulldom|xmlrpc",
         "type": "regex-word",
+        "confidence": "high",
         "scopes": [
           "code"
         ]
@@ -49,6 +51,104 @@
       {
         "pattern": "jdom2|SAXBuilder",
         "type": "regex-word",
+        "confidence": "high",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Data: XSLT Transformations",
+    "id": "AI068131",
+    "description": "Data: XSLT Transformations",
+    "applies_to": [ "csharp" ],
+    "tags": [
+      "Data.XSLT"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "XslTransform|System.Xml.Xsl|XslCompiledTransform|transformNode",
+        "type": "regex",
+        "confidence": "high",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Data: XSLT Transformations",
+    "id": "AI068133",
+    "description": "Data: XSLT Transformations",
+    "applies_to": [ "java" ],
+    "tags": [
+      "Data.XSLT"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "TransformerFactory|XSLDocument|javax.xml.transform",
+        "type": "regex",
+        "confidence": "high",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Data: XSLT Transformations",
+    "id": "AI068134",
+    "description": "Data: XSLT Transformations",
+    "applies_to": [ "javascript" ],
+    "tags": [
+      "Data.XSLT"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "XSLTProcessor",
+        "type": "regex",
+        "confidence": "high",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Data: XSLT Transformations",
+    "id": "AI068135",
+    "description": "Data: XSLT Transformations",
+    "tags": [
+      "Data.XSLT"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.xls",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Data: XSLT Transformations",
+    "id": "AI068136",
+    "description": "Data: XSLT Transformations",
+    "tags": [
+      "Data.XSLT"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "xslt",
+        "type": "regex",
+        "modifications":  ["i"],
         "scopes": [
           "code"
         ]
