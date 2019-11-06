@@ -1,7 +1,7 @@
 [
   {
     "name": "Component: Adobe Flash",
-    "id": "AI066010",
+    "id": "AI010600",
     "description": "Component: Adobe Flash",
     "applies_to": [
       "actionscript"
@@ -23,7 +23,7 @@
   },
   {
     "name": "Component: Adobe Flash",
-    "id": "AI066011",
+    "id": "AI010700",
     "description": "Component: Adobe Flash",
     "applies_to": [
     ],
@@ -44,7 +44,7 @@
   },
   {
     "name": "Component: Active-X",
-    "id": "AI066012",
+    "id": "AI010800",
     "description": "Component: Active-X",
     "applies_to": [
       "c",
@@ -71,7 +71,7 @@
   },
   {
     "name": "Component: COM",
-    "id": "AI066013",
+    "id": "AI010900",
     "description": "Component: COM",
     "applies_to": [
       "c",
@@ -95,7 +95,7 @@
   },
   {
     "name": "Component: PDF",
-    "id": "AI066014",
+    "id": "AI011000",
     "description": "Component: PDF",
     "applies_to": [
       "c",
@@ -119,7 +119,7 @@
   },
   {
     "name": "Component: Silverlight",
-    "id": "AI066015",
+    "id": "AI011100",
     "description": "Component: Silverlight",
     "tags": [
       "Development.Framework.Component.Silverlight"

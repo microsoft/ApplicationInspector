@@ -1,7 +1,7 @@
-﻿[
+[
   {
     "name": "Framework: Logging (Log4J)",
-    "id": "AI068010",
+    "id": "AI014200",
     "description": "Framework: Logging (Log4J)",
     "applies_to": [
       "java"
@@ -22,7 +22,7 @@
   },
   {
     "name": "Framework: Logging (NLog)",
-    "id": "AI068011",
+    "id": "AI014300",
     "description": "Framework: Logging (NLog)",
     "applies_to": [
       "csharp"
@@ -43,7 +43,7 @@
   },
   {
     "name": "Framework: Logging (Serilog)",
-    "id": "AI068012",
+    "id": "AI014400",
     "description": "Framework: Logging (Serilog)",
     "applies_to": [
       "csharp"
@@ -64,7 +64,7 @@
   },
   {
     "name": "Framework: Logging (log4net)",
-    "id": "AI068013",
+    "id": "AI014500",
     "description": "Framework: Logging (log4net)",
     "applies_to": [
       "csharp"
@@ -85,7 +85,7 @@
   },
   {
     "name": "Framework: Logging (ulog)",
-    "id": "AI068014",
+    "id": "AI014600",
     "description": "Framework: Logging (ulog)",
     "applies_to": [
       "csharp"
@@ -106,7 +106,7 @@
   },
   {
     "name": "Framework: Logging (Winston)",
-    "id": "AI068015",
+    "id": "AI014700",
     "description": "Framework: Logging (Winston)",
     "applies_to": [
       "csharp"

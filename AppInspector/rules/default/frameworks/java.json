@@ -1,7 +1,7 @@
 [
   {
     "name": "Development Framework: Spring",
-    "id": "AI062010",
+    "id": "AI011200",
     "description": "Development Framework: Spring",
     "applies_to": [ "java" ],
     "tags": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "Development Framework: Hibernate",
-    "id": "AI062020",
+    "id": "AI011300",
     "description": "Development Framework: Hibernate",
     "applies_to": [ "java" ],
     "tags": [
@@ -39,7 +39,7 @@
   },
   {
     "name": "Development Framework: Blade",
-    "id": "AI062030",
+    "id": "AI011400",
     "description": "Development Framework: Blade",
     "applies_to": [ "java" ],
     "tags": [
@@ -58,7 +58,7 @@
   },
   {
     "name": "Development Framework: DropWizard",
-    "id": "AI062040",
+    "id": "AI011500",
     "description": "Development Framework: DropWizard",
     "applies_to": [ "java" ],
     "tags": [
@@ -77,7 +77,7 @@
   },
   {
     "name": "Development Framework: GWT",
-    "id": "AI062050",
+    "id": "AI011600",
     "description": "Development Framework: GWT",
     "applies_to": [ "java" ],
     "tags": [
@@ -96,7 +96,7 @@
   },
   {
     "name": "Development Framework: JSF",
-    "id": "AI062060",
+    "id": "AI011700",
     "description": "Development Framework: JSF",
     "applies_to": [ "java" ],
     "tags": [
@@ -115,7 +115,7 @@
   },
   {
     "name": "Development Framework: JHipster",
-    "id": "AI062070",
+    "id": "AI011800",
     "description": "Development Framework: JHipster",
     "applies_to": [ "java" ],
     "tags": [
@@ -134,7 +134,7 @@
   },
   {
     "name": "Development Framework: MyBatis",
-    "id": "AI062080",
+    "id": "AI011900",
     "description": "Development Framework: MyBatis",
     "applies_to": [ "java" ],
     "tags": [
@@ -153,7 +153,7 @@
   },
   {
     "name": "Development Framework: Play Framework",
-    "id": "AI062090",
+    "id": "AI012000",
     "description": "Development Framework: Play Framework",
     "applies_to": [ "java" ],
     "tags": [
@@ -172,7 +172,7 @@
   },
   {
     "name": "Development Framework: PrimeFaces",
-    "id": "AI062100",
+    "id": "AI012100",
     "description": "Development Framework: PrimeFaces",
     "applies_to": [ "java" ],
     "tags": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "Development Framework: Spark",
-    "id": "AI062110",
+    "id": "AI012200",
     "description": "Development Framework: Spark",
     "applies_to": [ "java" ],
     "tags": [
@@ -210,7 +210,7 @@
   },
   {
     "name": "Development Framework: Apache Struts",
-    "id": "AI062120",
+    "id": "AI012300",
     "description": "Development Framework: Apache Struts",
     "applies_to": [ "java" ],
     "tags": [
@@ -229,7 +229,7 @@
   },
   {
     "name": "Development Framework: Apache Tapestry",
-    "id": "AI062130",
+    "id": "AI012400",
     "description": "Development Framework: Apache Tapestry",
     "applies_to": [ "java" ],
     "tags": [
@@ -248,7 +248,7 @@
   },
   {
     "name": "Development Framework: Vaadin",
-    "id": "AI062140",
+    "id": "AI012500",
     "description": "Development Framework: Vaadin",
     "applies_to": [ "java" ],
     "tags": [
@@ -267,7 +267,7 @@
   },
   {
     "name": "Development Framework: Vert.x",
-    "id": "AI062150",
+    "id": "AI012600",
     "description": "Development Framework: Vert.x",
     "applies_to": [ "java" ],
     "tags": [
@@ -286,7 +286,7 @@
   },
   {
     "name": "Development Framework: Wicket",
-    "id": "AI062160",
+    "id": "AI012700",
     "description": "Development Framework: Wicket",
     "applies_to": [ "java" ],
     "tags": [

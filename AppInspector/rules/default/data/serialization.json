@@ -1,7 +1,7 @@
 [
   {
     "name": "Data: Serialization",
-    "id": "AI068210",
+    "id": "AI007800",
     "description": "Data: Serialization",
     "applies_to": [
       "python"
@@ -23,7 +23,7 @@
   },
   {
     "name": "Data: Serialization",
-    "id": "AI068211",
+    "id": "AI007900",
     "description": "Data: Serialization",
     "applies_to": [
       "python"
@@ -45,7 +45,7 @@
   },
   {
     "name": "Data: Serialization",
-    "id": "AI068212",
+    "id": "AI008000",
     "description": "Data: Serialization",
     "applies_to": [
       "python"
@@ -67,7 +67,7 @@
   },
   {
     "name": "Data: Deserialization",
-    "id": "AI068213",
+    "id": "AI008100",
     "description": "Data: Deserialization",
     "applies_to": [
       "python"
@@ -89,7 +89,7 @@
   },
   {
     "name": "Data: Deserialization",
-    "id": "AI068214",
+    "id": "AI008200",
     "description": "Data: Deserialization",
     "applies_to": [
       "java"
@@ -111,7 +111,7 @@
   },
   {
     "name": "Data: Deserialization",
-    "id": "AI068215",
+    "id": "AI008300",
     "description": "Data: Deserialization",
     "applies_to": [
       "php"
@@ -133,7 +133,7 @@
   },
   {
     "name": "Data: Deserialization",
-    "id": "AI068216",
+    "id": "AI008400",
     "description": "Data: Deserialization",
     "applies_to": [
       "ruby"
@@ -155,7 +155,7 @@
   },
   {
     "name": "Data: Serialization",
-    "id": "AI068217",
+    "id": "AI008500",
     "description": "Data: Serialization",
     "applies_to": [
       "csharp"
@@ -177,7 +177,7 @@
   },
   {
     "name": "Data: Deserialization",
-    "id": "AI068218",
+    "id": "AI008600",
     "description": "Data: Deserialization",
     "applies_to": [
       "csharp"
@@ -215,7 +215,7 @@
   },
   {
     "name": "Data: Deserialization",
-    "id": "AI068219",
+    "id": "AI008700",
     "description": "Data: Deserialization",
     "applies_to": [
       "csharp"
@@ -253,7 +253,7 @@
   },
   {
     "name": "Data: Bluetooth Serialization",
-    "id": "AI068220",
+    "id": "AI008800",
     "description": "Data: Bluetooth Serialization",
     "tags": [
       "Data.Deserialization.Signal.Bluetooth"
@@ -273,7 +273,7 @@
   },
   {
     "name": "Data: Cellular Serialization",
-    "id": "AI068230",
+    "id": "AI008900",
     "description": "Data: Cellular Serialization",
     "tags": [
       "Data.Deserialization.Signal.Cellular"
@@ -293,7 +293,7 @@
   },
   {
     "name": "Data: USB",
-    "id": "AI068240",
+    "id": "AI009000",
     "description": "Data: USB Serialization",
     "tags": [
       "Data.Deserialization.Signal.USB"
@@ -313,7 +313,7 @@
   },
   {
     "name": "Data: Ethernet",
-    "id": "AI068250",
+    "id": "AI009100",
     "description": "Data: Ethernet Serialization",
     "tags": [
       "Data.Deserialization.Signal.Ethernet"
@@ -333,7 +333,7 @@
   },
   {
     "name": "Data: Modem",
-    "id": "AI068260",
+    "id": "AI009200",
     "description": "Data: Modem Serialization",
     "tags": [
       "Data.Deserialization.Signal.Modem"

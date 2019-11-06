@@ -1,7 +1,7 @@
 [
   {
     "name": "Cryptography: SSL/TLS Protocol",
-    "id": "AI057000",
+    "id": "AI004000",
     "description": "Cryptography: SSL/TLS Protocol",
     "applies_to": [
       "csharp"
@@ -24,7 +24,7 @@
   },
   {
     "name": "Cryptography: SSL/TLS Protocol",
-    "id": "AI057010",
+    "id": "AI004100",
     "description": "Cryptography: SSL/TLS Protocol",
     "applies_to": [
       "c",
@@ -58,7 +58,7 @@
   },
   {
     "name": "Cryptography: SSH Protocol",
-    "id": "AI057110",
+    "id": "AI004200",
     "description": "Cryptography: SSH Protocol",
     "tags": [
       "Cryptography.Protocol.SSH"

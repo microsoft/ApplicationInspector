@@ -1,7 +1,7 @@
 [
   {
     "name": "File Operation",
-    "id": "AI035000",
+    "id": "AI031100",
     "description": "File Operation",
     "applies_to": [
     ],
@@ -14,7 +14,7 @@
   },
   {
     "name": "File Operation (Read)",
-    "id": "AI035010",
+    "id": "AI031200",
     "description": "File Operation (Read)",
     "applies_to": [
       "csharp"
@@ -44,7 +44,7 @@
   },
   {
     "name": "File Operation (Read)",
-    "id": "AI035011",
+    "id": "AI031300",
     "description": "File Operation (Read)",
     "applies_to": [
       "python"
@@ -66,7 +66,7 @@
   },
   {
     "name": "File Operation (Read)",
-    "id": "AI035012",
+    "id": "AI031400",
     "description": "File Operation (Read)",
     "applies_to": [
       "javascript"
@@ -88,7 +88,7 @@
   },
   {
     "name": "File Operation (Delete)",
-    "id": "AI035110",
+    "id": "AI031500",
     "description": "File Operation (Delete)",
     "applies_to": [
       "c",
@@ -126,7 +126,7 @@
   },
   {
     "name": "File Operation (Delete)",
-    "id": "AI035111",
+    "id": "AI031600",
     "description": "File Operation (Delete)",
     "applies_to": [
       "python"
@@ -149,7 +149,7 @@
   },
   {
     "name": "File Operation (Delete)",
-    "id": "AI035112",
+    "id": "AI031700",
     "description": "File Operation (Delete)",
     "applies_to": [
       "csharp"
@@ -172,7 +172,7 @@
   },
   {
     "name": "File Operation (Delete)",
-    "id": "AI035113",
+    "id": "AI031800",
     "description": "File Operation (Delete)",
     "applies_to": [
       "java"
@@ -195,7 +195,7 @@
   },
   {
     "name": "File Operation (Delete)",
-    "id": "AI035114",
+    "id": "AI031900",
     "description": "File Operation (Delete)",
     "applies_to": [
       "javascript"
@@ -218,7 +218,7 @@
   },
   {
     "name": "File Operation (Write)",
-    "id": "AI035210",
+    "id": "AI032000",
     "description": "File Operation (Write)",
     "applies_to": [
       "csharp"
@@ -241,7 +241,7 @@
   },
   {
     "name": "File Operation (Write)",
-    "id": "AI035211",
+    "id": "AI032100",
     "description": "File Operation (Write)",
     "applies_to": [
       "c",

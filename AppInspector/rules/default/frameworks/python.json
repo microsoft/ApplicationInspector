@@ -1,7 +1,7 @@
 [
   {
     "name": "Development Framework: Django",
-    "id": "AI062210",
+    "id": "AI016200",
     "description": "Development Framework: Django",
     "applies_to": [ "python" ],
     "tags": [
@@ -20,7 +20,7 @@
   },
   {
     "name": "Development Framework: Pryamid",
-    "id": "AI062211",
+    "id": "AI016300",
     "description": "Development Framework: Pryamid",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.Pryamid" ],
@@ -37,7 +37,7 @@
   },
   {
     "name": "Development Framework: Web2Py",
-    "id": "AI062212",
+    "id": "AI016400",
     "description": "Development Framework: Web2Py",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.Web2Py" ],
@@ -54,7 +54,7 @@
   },
   {
     "name": "Development Framework: CubicWeb",
-    "id": "AI062213",
+    "id": "AI016500",
     "description": "Development Framework: CubicWeb",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.CubicWeb" ],
@@ -71,7 +71,7 @@
   },
   {
     "name": "Development Framework: OWL",
-    "id": "AI062214",
+    "id": "AI016600",
     "description": "Development Framework: OWL",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.OWL" ],
@@ -88,7 +88,7 @@
   },
   {
     "name": "Development Framework: RDF",
-    "id": "AI062215",
+    "id": "AI016700",
     "description": "Development Framework: RDF",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.RDF" ],
@@ -105,7 +105,7 @@
   },
   {
     "name": "Development Framework: RQL",
-    "id": "AI062216",
+    "id": "AI016800",
     "description": "Development Framework: RQL",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.RQL" ],
@@ -122,7 +122,7 @@
   },
   {
     "name": "Development Framework: Flask",
-    "id": "AI062217",
+    "id": "AI016900",
     "description": "Development Framework: Flask",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.Flask" ],
@@ -139,7 +139,7 @@
   },
   {
     "name": "Development Framework: Bottle",
-    "id": "AI062218",
+    "id": "AI017000",
     "description": "Development Framework: Bottle",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.Bottle" ],
@@ -156,7 +156,7 @@
   },
   {
     "name": "Development Framework: CherryPy",
-    "id": "AI062219",
+    "id": "AI017100",
     "description": "Development Framework: CherryPy",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.CherryPy" ],
@@ -173,7 +173,7 @@
   },
   {
     "name": "Development Framework: Sanic",
-    "id": "AI062220",
+    "id": "AI017200",
     "description": "Development Framework: Sanic",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.Sanic" ],
@@ -190,7 +190,7 @@
   },
   {
     "name": "Development Framework: Tornado",
-    "id": "AI062221",
+    "id": "AI017300",
     "description": "Development Framework: Tornado",
     "applies_to": [ "python" ],
     "tags": [ "Development.Framework.Tornado" ],
@@ -207,7 +207,7 @@
   },
   {
     "name": "Development Framework: TurboGears",
-    "id": "AI062222",
+    "id": "AI017400",
     "description": "Development Framework: TurboGears",
     "applies_to": [
       "python",
@@ -227,7 +227,7 @@
   },
   {
     "name": "Development Framework: Giotto",
-    "id": "AI062223",
+    "id": "AI017500",
     "description": "Development Framework: Giotto",
     "applies_to": [
       "python"
@@ -246,7 +246,7 @@
   },
   {
     "name": "Development Framework: Pylons",
-    "id": "AI062224",
+    "id": "AI017600",
     "description": "Development Framework: Pylons",
     "applies_to": [
       "python"

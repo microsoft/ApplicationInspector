@@ -1,7 +1,7 @@
 [
   {
     "name": "Testing Framework: TestUnit",
-    "id": "AI065100",
+    "id": "AI046000",
     "description": "Testing Framework: TestUnit",
     "applies_to": [
       "ruby"
@@ -25,7 +25,7 @@
   },
   {
     "name": "Testing Framework: RSpec",
-    "id": "AI065101",
+    "id": "AI046100",
     "description": "Testing Framework: RSpec",
     "applies_to": [
       "ruby"
@@ -50,7 +50,7 @@
   },
   {
     "name": "Testing Framework: Shoulda",
-    "id": "AI065102",
+    "id": "AI046200",
     "description": "Testing Framework: Shoulda",
     "applies_to": [
       "ruby"
@@ -75,7 +75,7 @@
   },
   {
     "name": "Testing Framework: MicroTest",
-    "id": "AI065103",
+    "id": "AI046300",
     "description": "Testing Framework: MicroTest",
     "applies_to": [
       "ruby"
@@ -100,7 +100,7 @@
   },
   {
     "name": "Testing Framework: Bacon",
-    "id": "AI065104",
+    "id": "AI046400",
     "description": "Testing Framework: Bacon",
     "applies_to": [
       "ruby"
@@ -125,7 +125,7 @@
   },
   {
     "name": "Testing Framework: MiniTest",
-    "id": "AI065105",
+    "id": "AI046500",
     "description": "Testing Framework: MiniTest",
     "applies_to": [
       "ruby"
@@ -150,7 +150,7 @@
   },
   {
     "name": "Testing Framework: TMF",
-    "id": "AI065106",
+    "id": "AI046600",
     "description": "Testing Framework: TMF",
     "applies_to": [
       "ruby"

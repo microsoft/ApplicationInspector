@@ -1,7 +1,7 @@
 [
   {
     "name": "Cryptography: Encryption",
-    "id": "AI555500",
+    "id": "AI001700",
     "description": "Cryptography: Encryption",
     "tags": [
       "Cryptography.Encryption"
@@ -20,7 +20,7 @@
   },
   {
     "name": "Cryptography: Encryption (AES)",
-    "id": "AI555510",
+    "id": "AI001800",
     "description": "Cryptography: Encryption (AES)",
     "tags": [
       "Cryptography.Cipher.AES"
@@ -47,7 +47,7 @@
   },
   {
     "name": "Cryptography: Encryption (3DES)",
-    "id": "AI555520",
+    "id": "AI001900",
     "description": "Cryptography: Encryption (3DES)",
     "tags": [
       "Cryptography.Cipher.3DES"
@@ -66,7 +66,7 @@
   },
   {
     "name": "Cryptography: Encryption (RC)",
-    "id": "AI555530",
+    "id": "AI002000",
     "description": "Cryptography: Encryption (RC)",
     "tags": [
       "Cryptography.Cipher.RC"
@@ -93,7 +93,7 @@
   },
   {
     "name": "Encryption: Cipher Mode",
-    "id": "AP003100",
+    "id": "AI002100",
     "description": "Encryption: Cipher Mode",
     "tags": [
       "Cryptography.Cipher.CipherMode"
@@ -114,7 +114,7 @@
   },
   {
     "name": "Cryptography: Encryption",
-    "id": "AI555540",
+    "id": "AI002200",
     "description": "Cryptography: Encryption",
     "tags": [
       "Cryptography.Cipher.RSA"

@@ -1,7 +1,7 @@
 [
   {
     "name": "Development: Build Tool (Maven)",
-    "id": "AI063010",
+    "id": "AI009300",
     "description": "Development: Build Tool (Maven)",
     "applies_to": [ "java" ],
     "tags": [ "Development.Build.Maven" ],
@@ -18,7 +18,7 @@
   },
   {
     "name": "Development: Build Tool (Ant)",
-    "id": "AI063011",
+    "id": "AI009400",
     "description": "Development: Build Tool (Ant)",
     "applies_to": [ "java" ],
     "tags": [ "Development.Build.Ant" ],
@@ -35,7 +35,7 @@
   },
   {
     "name": "Development: Build Tool (Gradle)",
-    "id": "AI063012",
+    "id": "AI009500",
     "description": "Development: Build Tool (Gradle)",
     "applies_to": [ "java" ],
     "tags": [ "Development.Build.Gradle" ],
@@ -52,7 +52,7 @@
   },
   {
     "name": "Development: Build Tool (Jenkins)",
-    "id": "AI063013",
+    "id": "AI009600",
     "description": "Development: Build Tool (Jenkins)",
     "applies_to": [ "java" ],
     "tags": [ "Development.Build.Jenkins" ],
@@ -69,7 +69,7 @@
   },
   {
     "name": "Development: Build Tool (SBT)",
-    "id": "AI063014",
+    "id": "AI009700",
     "description": "Development: Build Tool (SBT)",
     "applies_to": [ "java" ],
     "tags": [ "Development.Build.SBT" ],
@@ -86,7 +86,7 @@
   },
   {
     "name": "Development: Build Tool (Bamboo)",
-    "id": "AI063015",
+    "id": "AI009800",
     "description": "Development: Build Tool (Bamboo)",
     "applies_to": [ "java" ],
     "tags": [ "Development.Build.Bamboo" ],
@@ -103,7 +103,7 @@
   },
   {
     "name": "Development: Build Tool (TeamCity)",
-    "id": "AI063016",
+    "id": "AI009900",
     "description": "Development: Build Tool (TeamCity)",
     "recommendation": "",
     "applies_to": [ "java" ],
@@ -121,7 +121,7 @@
   },
   {
     "name": "Development: Build Tool (Grape)",
-    "id": "AI063017",
+    "id": "AI010000",
     "description": "Development: Build Tool (Grape)",
     "applies_to": [ "java" ],
     "tags": [ "Development.Build.Grape" ],
@@ -138,7 +138,7 @@
   },
   {
     "name": "Development: Build Tool (Ivy)",
-    "id": "AI063018",
+    "id": "AI010100",
     "description": "Development: Build Tool (Ivy)",
     "applies_to": [ "java" ],
     "tags": [ "Development.Build.Ivy" ],
@@ -155,7 +155,7 @@
   },
   {
     "name": "Development: Build Tool (Leiningen)",
-    "id": "AI063019",
+    "id": "AI010200",
     "description": "Development: Build Tool (Leiningen)",
     "applies_to": [ "java" ],
     "tags": [ "Development.Build.Leiningen" ],
@@ -172,7 +172,7 @@
   },
   {
     "name": "Development: Build Tool (Visual Studio)",
-    "id": "AI063020",
+    "id": "AI010300",
     "description": "Development: Build Tool (Studio)",
     "applies_to": [ "VSSolution", "VSProject" ],
     "tags": [ "Development.Build.VisualStudio" ],

@@ -1,7 +1,7 @@
 [
   {
     "name": "Metric: Classes Defined",
-    "id": "AI010200",
+    "id": "AI018900",
     "description": "Metric: Classes Defined",
     "tags": [
       "Metric.Classes.Defined"
@@ -19,7 +19,7 @@
   },
   {
     "name": "Metric: Functions Defined",
-    "id": "AI010300",
+    "id": "AI019000",
     "description": "Metric: Functions Defined",
     "tags": [
       "Metric.Functions.Defined"
@@ -37,7 +37,7 @@
   },
   {
     "name": "Metric: HTML Forms Defined",
-    "id": "AI010400",
+    "id": "AI019100",
     "description": "Metric: HTML Forms Defined",
     "tags": [
       "Metric.HTMLForm.Defined"
@@ -56,7 +56,7 @@
   },
   {
     "name": "Metric: Exceptions Caught",
-    "id": "AI010500",
+    "id": "AI019200",
     "description": "Metric: Exceptions Caught",
     "tags": [
       "Metric.Exception.Caught"
@@ -75,7 +75,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI010600",
+    "id": "AI019300",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -95,7 +95,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI010601",
+    "id": "AI019400",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -115,7 +115,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI010602",
+    "id": "AI019500",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -135,7 +135,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI010603",
+    "id": "AI019600",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -175,7 +175,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI010604",
+    "id": "AI019700",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -202,7 +202,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI010605",
+    "id": "AI019800",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -229,7 +229,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI010606",
+    "id": "AI019900",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -256,7 +256,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI010607",
+    "id": "AI020000",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -275,7 +275,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI010608",
+    "id": "AI020100",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -316,7 +316,7 @@
   },
   {
     "name": "Logging Call",
-    "id": "AI010100",
+    "id": "AI020200",
     "description": "Logging Call",
     "tags": [
       "Metric.Logging.Call"
@@ -335,7 +335,7 @@
   },
   {
     "name": "Sample Code",
-    "id": "AI010101",
+    "id": "AI020300",
     "description": "Sample Code",
     "tags": [
       "Metric.SampleCode"

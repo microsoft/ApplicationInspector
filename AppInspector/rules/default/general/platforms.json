@@ -1,7 +1,7 @@
 [
   {
     "name": "Platform: Microsoft .NET Core",
-    "id": "AI0300056",
+    "id": "AI023800",
     "description": "Platform: .NET Core",
     "applies_to": [ "VSProject", "csharp" ],
     "tags": [ "Platform.Microsoft.NETCore" ],
@@ -17,7 +17,7 @@
   },
   {
     "name": "Platform: Microsoft .NET Standard",
-    "id": "AI0300057",
+    "id": "AI023900",
     "description": "Platform: Microsoft .NET Standard",
     "applies_to": [ "VSProject", "csharp" ],
     "tags": [ "Platform.Microsoft.NETStandard" ],
@@ -33,7 +33,7 @@
   },
   {
     "name": "Platform: Microsoft Mono",
-    "id": "AI0300058",
+    "id": "AI024000",
     "description": "Platform: Microsoft Mono",
     "applies_to": [ "VSProject", "csharp" ],
     "tags": [ "Platform.Microsoft.Mono" ],
@@ -49,7 +49,7 @@
   },
   {
     "name": "Platform: Google Android",
-    "id": "AI030010",
+    "id": "AI024100",
     "description": "Platform: Google Android",
     "tags": [
       "Platform.OS.Google.Android"
@@ -76,7 +76,7 @@
   },
   {
     "name": "Platform: Apple iOS",
-    "id": "AI030020",
+    "id": "AI024200",
     "description": "Platform: Apple iOS",
     "tags": [
       "Platform.OS.Apple.iOS"
@@ -95,7 +95,7 @@
   },
   {
     "name": "Platform: Apple MacOS",
-    "id": "AI0300030",
+    "id": "AI024300",
     "description": "Platform: Apple MacOS",
     "tags": [
       "Platform.OS.Apple.MacOS"
@@ -114,7 +114,7 @@
   },
   {
     "name": "Platform: Microft Windows",
-    "id": "AI0300040",
+    "id": "AI024400",
     "description": "Platform: Microsoft Windows",
     "tags": [
       "Platform.OS.Microsoft.Windows"
@@ -133,7 +133,7 @@
   },
   {
     "name": "Platform: Microft Windows",
-    "id": "AI0300041",
+    "id": "AI024500",
     "description": "Platform: Microsoft Windows",
     "tags": [
       "Platform.OS.Microsoft.WindowsCE"
@@ -152,7 +152,7 @@
   },
   {
     "name": "Development Framework: Windows Universal Platform",
-    "id": "AI061221",
+    "id": "AI024600",
     "description": "Development Framework: Windows Universal Platform",
     "tags": [
       "Platform.Microsoft.OS.Windows.UniversalPlatform"
@@ -170,7 +170,7 @@
   },
   {
     "name": "Platform: Linux",
-    "id": "AI0300050",
+    "id": "AI024700",
     "description": "Platform: Linux",
     "tags": [
       "Platform.OS.Linux.Distro"
@@ -189,7 +189,7 @@
   },
   {
     "name": "Platform: Microsoft XBox",
-    "id": "AI0300051",
+    "id": "AI024800",
     "description": "Platform: Microsoft XBox",
     "tags": [
       "Platform.OS.Microsoft.XBox"
@@ -208,7 +208,7 @@
   },
   {
     "name": "Platform: Mobile Device",
-    "id": "AI0300053",
+    "id": "AI024900",
     "description": "Platform: Mobile Device",
     "tags": [
       "Platform.Mobile"
@@ -227,7 +227,7 @@
   },
   {
     "name": "Platform: IOT",
-    "id": "AI0300054",
+    "id": "AI025000",
     "description": "Platform: IOT",
     "tags": [
       "Platform.IOT"
@@ -246,7 +246,7 @@
   },
   {
     "name": "Hardware: Microsoft Kinex",
-    "id": "AI0300052",
+    "id": "AI025100",
     "description": "Platform: Microsoft Kinex",
     "tags": [
       "Hardware.Accessory.Microsoft.Kinex"
@@ -265,7 +265,7 @@
   },
   {
     "name": "Hardware: Reference Design",
-    "id": "AI0300055",
+    "id": "AI025200",
     "description": "Hardware: Reference Design",
     "tags": [
       "Hardware.ReferenceDesign"

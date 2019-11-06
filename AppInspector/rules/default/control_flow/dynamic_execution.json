@@ -1,7 +1,7 @@
 [
   {
     "name": "OS: Dynamic Execution",
-    "id": "AI034510",
+    "id": "AI000100",
     "description": "OS: Dynamic Execution",
     "applies_to": [
       "objective-c",
@@ -35,7 +35,7 @@
   },
   {
     "name": "OS: Dynamic Execution",
-    "id": "AI034511",
+    "id": "AI000200",
     "description": "OS: Dynamic Execution",
     "applies_to": [
       "javascript",
@@ -82,7 +82,7 @@
   },
   {
     "name": "OS: Dynamic Execution",
-    "id": "AI034512",
+    "id": "AI000300",
     "description": "OS: Dynamic Execution",
     "recommendation": "",
     "applies_to": [
@@ -112,7 +112,7 @@
   },
   {
     "name": "OS: Dynamic Execution",
-    "id": "AI034513",
+    "id": "AI000400",
     "description": "OS: Dynamic Execution",
     "applies_to": [
       "powershell"
@@ -140,7 +140,7 @@
   },
   {
     "name": "OS: Dynamic Execution",
-    "id": "AI034513",
+    "id": "AI000500",
     "description": "OS: Dynamic Execution",
     "applies_to": [
       "c",
@@ -180,7 +180,7 @@
   },
   {
     "name": "OS: Dynamic Execution",
-    "id": "AI034514",
+    "id": "AI000600",
     "description": "OS: Dynamic Execution",
     "applies_to": [
       "java"
@@ -202,7 +202,7 @@
   },
   {
     "name": "OS: Dynamic Execution",
-    "id": "AI034515",
+    "id": "AI000700",
     "description": "OS: Dynamic Execution",
     "applies_to": [
       "python"

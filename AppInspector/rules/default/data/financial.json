@@ -1,7 +1,7 @@
 [
   {
     "name": "Data: Commerce",
-    "id": "AI068510",
+    "id": "AI005800",
     "description": "Data: Commerce",
     "tags": [
       "Data.Finance"
@@ -46,7 +46,7 @@
   },
   {
     "name": "Data: Financial",
-    "id": "AI068511",
+    "id": "AI005900",
     "description": "Data: Financial",
     "tags": [
       "Data.Finance"
@@ -89,7 +89,7 @@
   },
   {
     "name": "Data: Financial (Credit Card)",
-    "id": "AI068512",
+    "id": "AI006000",
     "description": "Data: Financial (Credit Card)",
     "tags": [
       "Data.Finance.CreditCard"
