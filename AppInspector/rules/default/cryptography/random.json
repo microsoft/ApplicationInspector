@@ -1,7 +1,7 @@
 [
   {
     "name": "Crypgraphy: PRNG",
-    "id": "AI055020",
+    "id": "AI004300",
     "description": "Crypgraphy: PRNG",
     "tags": [
       "Cryptography.Randomness.PRNG"
@@ -34,7 +34,7 @@
   },
   {
     "name": "Crypgraphy: PRNG",
-    "id": "AI055030",
+    "id": "AI004400",
     "description": "Crypgraphy: PRNG",
     "tags": [
       "Cryptography.Randomness.PRNG"
@@ -57,7 +57,7 @@
   },
   {
     "name": "Crypgraphy: PRNG",
-    "id": "AI055040",
+    "id": "AI004500",
     "description": "Crypgraphy: PRNG",
     "tags": [
       "Cryptography.Randomness.PRNG"

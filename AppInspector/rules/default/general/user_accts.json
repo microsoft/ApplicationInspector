@@ -1,7 +1,7 @@
 [
   {
     "name": "OS: User Account (Write)",
-    "id": "AI039510",
+    "id": "AI027900",
     "description": "OS: User Account (Write)",
     "applies_to": [
       "csharp"
@@ -24,7 +24,7 @@
   },
   {
     "name": "OS: User Account (Write)",
-    "id": "AI039520",
+    "id": "AI028000",
     "description": "OS: User Account (Write)",
     "applies_to": [
       "csharp"

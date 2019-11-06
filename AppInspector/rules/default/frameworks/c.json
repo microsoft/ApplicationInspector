@@ -1,7 +1,7 @@
 [
   {
     "name": "Development Framework: Standard C Library",
-    "id": "AI061010",
+    "id": "AI010400",
     "description": "Development Framework: Standard C Library",
     "recommendation": "",
     "applies_to": [ "c" ],
@@ -18,7 +18,7 @@
   },
   {
     "name": "Development Framework: Boost",
-    "id": "AI061020",
+    "id": "AI010500",
     "description": "Development Framework: Boost",
     "recommendation": "",
     "applies_to": [ "c" ],

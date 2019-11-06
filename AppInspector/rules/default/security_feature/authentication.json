@@ -1,7 +1,7 @@
 [
   {
     "name": "Feature: Authentication",
-    "id": "AI021000",
+    "id": "AI033400",
     "description": "Feature: Authentication",
     "tags": [
       "Feature.Authentication.General"
@@ -30,7 +30,7 @@
   },
   {
     "name": "Feature: Authentication",
-    "id": "AI021001",
+    "id": "AI033500",
     "description": "Feature: Authentication",
     "tags": [
       "Feature.Authentication.Oauth"
@@ -49,7 +49,7 @@
   },
   {
     "name": "Feature: Authentication",
-    "id": "AI021002",
+    "id": "AI033600",
     "description": "Feature: Authentication",
     "tags": [
       "Feature.Authentication.Microsoft"
@@ -68,7 +68,7 @@
   },
   {
     "name": "Feature: Authentication",
-    "id": "AI021003",
+    "id": "AI033700",
     "description": "Feature: Authentication",
     "tags": [
       "Feature.Authentication.NTLM"
@@ -87,7 +87,7 @@
   },
   {
     "name": "Feature: Authentication (JWT)",
-    "id": "AI021010",
+    "id": "AI033800",
     "description": "Feature: Authentication (JWT)",
     "tags": [
       "Feature.Authentication.JWT"
@@ -108,7 +108,7 @@
   },
   {
     "name": "Feature: Authentication (HTML Form)",
-    "id": "AI021020",
+    "id": "AI033900",
     "description": "Feature: Authentication (HTML Form)",
     "tags": [
       "Feature.Authentication.HTMLForm"

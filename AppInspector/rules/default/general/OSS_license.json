@@ -1,7 +1,7 @@
 [
   {
     "name": "Open Source License: MIT",
-    "id": "AI010110",
+    "id": "AI022900",
     "description": "Open Source License: MIT",
     "tags": [
       "Miscellaneous.OpenSourceLicense.MIT"
@@ -19,7 +19,7 @@
   },
   {
     "name": "Open Source License: Apache",
-    "id": "AI010120",
+    "id": "AI023000",
     "description": "Open Source License: Apache",
     "tags": [
       "Miscellaneous.OpenSourceLicense.Apache"
@@ -37,7 +37,7 @@
   },
   {
     "name": "Open Source License: BSD",
-    "id": "AI010130",
+    "id": "AI023100",
     "description": "Open Source License: BSD",
     "tags": [
       "Miscellaneous.OpenSourceLicense.BSD"
@@ -55,7 +55,7 @@
   },
   {
     "name": "Open Source License: GPL",
-    "id": "AI010140",
+    "id": "AI023200",
     "description": "Open Source License: GPL",
     "tags": [
       "Miscellaneous.OpenSourceLicense.GPL"
@@ -73,7 +73,7 @@
   },
   {
     "name": "Open Source License: LGPL",
-    "id": "AI010150",
+    "id": "AI023300",
     "description": "Open Source License: LGPL",
     "tags": [
       "Miscellaneous.OpenSourceLicense.LGPL"
@@ -91,7 +91,7 @@
   },
   {
     "name": "Open Source License: Mozilla",
-    "id": "AI010160",
+    "id": "AI023400",
     "description": "Open Source License: Mozilla",
     "tags": [
       "Miscellaneous.OpenSourceLicense.Mozilla"
@@ -109,7 +109,7 @@
   },
   {
     "name": "Open Source License: Eclipse",
-    "id": "AI010170",
+    "id": "AI023500",
     "description": "Open Source License: Eclipse",
     "tags": [
       "Miscellaneous.OpenSourceLicense.Eclipse"
@@ -127,7 +127,7 @@
   },
   {
     "name": "Open Source License: Creative Commons",
-    "id": "AI010180",
+    "id": "AI023600",
     "description": "Open Source License: Creative Commons",
     "tags": [
       "Miscellaneous.OpenSourceLicense.CreativeCommons"
@@ -145,7 +145,7 @@
   },
   {
     "name": "Open Source License: Microsoft",
-    "id": "AI010190",
+    "id": "AI023700",
     "description": "Open Source License: Microsoft",
     "tags": [
       "Miscellaneous.OpenSourceLicense.Microsoft"

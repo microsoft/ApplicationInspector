@@ -1,7 +1,7 @@
 [
   {
     "name": "Cryptography: Hash Algorithm Usage",
-    "id": "AI052000",
+    "id": "AI003200",
     "description": "Cryptography: Hash Algorithm Usage",
     "tags": [
       "Cryptography.HashAlgorithm"
@@ -21,7 +21,7 @@
   },
   {
     "name": "Cryptography: Hash Algorithm Usage (SHA-256)",
-    "id": "AI052010",
+    "id": "AI003300",
     "description": "Cryptography: Hash Algorithm Usage (SHA-256)",
     "tags": [
       "Cryptography.HashAlgorithm.SHA2"
@@ -41,7 +41,7 @@
   },
   {
     "name": "Cryptography: Hash Algorithm Usage (Legacy)",
-    "id": "AI052020",
+    "id": "AI003400",
     "description": "Cryptography: Hash Algorithm Usage (Legacy)",
     "tags": [
       "Cryptography.HashAlgorithm.Legacy"
@@ -61,7 +61,7 @@
   },
   {
     "name": "Cryptography: Hash Algorithm Usage (SHA-3)",
-    "id": "AI052030",
+    "id": "AI003500",
     "description": "Cryptography: Hash Algorithm Usage (SHA-3)",
     "tags": [
       "Cryptography.HashAlgorithm.SHA3"
@@ -81,7 +81,7 @@
   },
   {
     "name": "Cryptography: Hash Algorithm Usage (Misc)",
-    "id": "AI052040",
+    "id": "AI003600",
     "description": "Cryptography: Hash Algorithm Usage (Misc)",
     "tags": [
       "Cryptography.HashAlgorithm.Misc"

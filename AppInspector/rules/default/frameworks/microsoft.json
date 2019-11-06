@@ -1,7 +1,7 @@
 [
   {
     "name": "Development Framework: .NET Core",
-    "id": "AI061211",
+    "id": "AI014800",
     "description": "Development Framework: .NET Core",
     "applies_to": [ "csharp" ],
     "tags": [ "Development.Framework.Microsoft.NETCore" ],
@@ -17,7 +17,7 @@
   },
   {
     "name": "Development Framework: .NET Standard",
-    "id": "AI061240",
+    "id": "AI014900",
     "description": "Development Framework: .NET Standard",
     "applies_to": [ "csharp" ],
     "tags": [ "Development.Framework.Microsoft.NETStandard" ],
@@ -33,7 +33,7 @@
   },
   {
     "name": "Development Framework: Mono",
-    "id": "AI061241",
+    "id": "AI015000",
     "description": "Development Framework: Mono",
     "applies_to": [ "csharp" ],
     "tags": [ "Development.Framework.Microsoft.Mono" ],
@@ -49,7 +49,7 @@
   },
   {
     "name": "Development Framework: Microsoft MVC",
-    "id": "AI061212",
+    "id": "AI015100",
     "description": "Development Framework: Microsoft MVC",
     "applies_to": [ "csharp" ],
     "tags": [ "Development.Framework.Microsoft.MVC" ],
@@ -72,7 +72,7 @@
   },
   {
     "name": "Development Framework: Microsoft WCF",
-    "id": "AI061213",
+    "id": "AI015200",
     "description": "Development Framework: Microsoft WCF",
     "applies_to": [ "csharp" ],
     "tags": [ "Development.Framework.Microsoft.WCF" ],
@@ -88,7 +88,7 @@
   },
   {
     "name": "Development Framework: Microsoft MFC",
-    "id": "AI061214",
+    "id": "AI015300",
     "description": "Development Framework: Microsoft MFC",
     "applies_to": [ "c", "cpp", "csharp" ],
     "tags": [ "Development.Framework.Microsoft.MFC" ],
@@ -104,7 +104,7 @@
   },
   {
     "name": "Development Framework: Microsoft ADO",
-    "id": "AI061215",
+    "id": "AI015400",
     "description": "Development Framework: Microsoft ADO",
     "applies_to": [ "csharp" ],
     "tags": [ "Development.Framework.Microsoft.ADO" ],
@@ -120,7 +120,7 @@
   },
   {
     "name": "Development Framework: Microsoft Linq",
-    "id": "AI061216",
+    "id": "AI015500",
     "description": "Development Framework: Microsoft Linq",
     "applies_to": [ "csharp" ],
     "tags": [ "Development.Framework.Microsoft.Linq" ],
@@ -137,7 +137,7 @@
   },
   {
     "name": "Development Framework: Windows SDK",
-    "id": "AI061217",
+    "id": "AI015600",
     "description": "Development Framework: Windows SDK",
     "applies_to": [ "c", "cpp", "csharp" ],
     "tags": [ "Development.Framework.Microsoft.WindowsSDK" ],
@@ -154,7 +154,7 @@
   },
   {
     "name": "Development Framework: Microsoft Active Directory (ADAL)",
-    "id": "AI061218",
+    "id": "AI015700",
     "description": "Development Framework: Microsoft Active Directory (ADAL)",
     "tags": [
       "Development.Framework.Authentication.Microsoft.ADAL"
@@ -171,7 +171,7 @@
   },
   {
     "name": "Development Framework: Microsoft Dynamics",
-    "id": "AI061219",
+    "id": "AI015800",
     "description": "Development Framework: Microsoft Dynamics",
     "tags": [
       "Development.Framework.Microsoft.Server.Dynamics"
@@ -188,7 +188,7 @@
   },
   {
     "name": "Development Framework: Microsoft IIS",
-    "id": "AI061219",
+    "id": "AI015900",
     "description": "Development Framework: Microsoft IIS",
     "tags": [
       "Development.Framework.Microsoft.Server.IIS"
@@ -205,7 +205,7 @@
   },
   {
     "name": "Development Framework: Microsoft ASP.NET",
-    "id": "AI061220",
+    "id": "AI016000",
     "description": "Development Framework: Microsoft ASP.NET",
     "tags": [
       "Development.Framework.Microsoft.Server.ASP"
