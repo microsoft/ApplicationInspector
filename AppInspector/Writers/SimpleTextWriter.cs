@@ -60,7 +60,18 @@ namespace Microsoft.AppInspector.Writers
         }
 
 
-        private string StringList(SortedDictionary<string,string> data)
+        private string StringList(Dictionary<string,int> data)
+        {
+            string results = "";
+
+            foreach (string s in data.Keys)
+                results += s + " ";
+
+            return results;
+        }
+
+
+        private string StringList(SortedDictionary<string, string> data)
         {
             string results = "";
 
@@ -78,7 +89,7 @@ namespace Microsoft.AppInspector.Writers
         /// <returns></returns>
         private string MakeHeading(string header)
         {
-            string result = header;
+            string result = string.Format("[{0}]", header);
             for (int i = header.Length; i < COLUMN_MAX; i++)
                 result += "-";
 
@@ -95,6 +106,7 @@ namespace Microsoft.AppInspector.Writers
             TextWriter.WriteLine("Source path: {0}", app.SourcePath);
             TextWriter.WriteLine("Authors: {0}", app.MetaData.Authors);
             TextWriter.WriteLine("Last Updated: {0}", app.MetaData.LastUpdated);
+            TextWriter.WriteLine("Languages: {0}", StringList(app.MetaData.Languages));
             TextWriter.WriteLine(MakeHeading("Scan Settings"));
             TextWriter.WriteLine("AppInspector version: {0}", app.Version);
             TextWriter.WriteLine("Rules path: {0}", StringList(app.MetaData.RulePaths));
@@ -115,6 +127,10 @@ namespace Microsoft.AppInspector.Writers
             TextWriter.WriteLine("Total files: {0}", app.MetaData.TotalFiles);
             TextWriter.WriteLine("Detections: {0} in {1} file(s)", app.MetaData.TotalMatchesCount, app.MetaData.FilesAffected);
             TextWriter.WriteLine("Unique detections: {0}", app.MetaData.UniqueMatchesCount);
+            TextWriter.WriteLine(MakeHeading("UniqueTags"));
+            foreach (string tag in app.MetaData.UniqueTags)
+                TextWriter.WriteLine(tag);
+
             TextWriter.WriteLine(MakeHeading("Select Counters"));
             foreach (TagCounter counter in app.MetaData.TagCounters)
                 TextWriter.WriteLine("{0} count: {1}", counter.ShortTag, counter.Count);
