@@ -1,24 +1,5 @@
 [
   {
-    "name": "Cryptography: Encryption",
-    "id": "AI001700",
-    "description": "Cryptography: Encryption",
-    "tags": [
-      "Cryptography.Encryption"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "encrypt|decrypt|cipher|crypt",
-        "type": "regex-word",
-        "scopes": [
-          "code"
-        ],
-        "confidence": "high"
-      }
-    ]
-  },
-  {
     "name": "Cryptography: Encryption (AES)",
     "id": "AI001800",
     "description": "Cryptography: Encryption (AES)",
@@ -122,7 +103,45 @@
     "severity": "moderate",
     "patterns": [
       {
+        "pattern": "RSACryptoServiceProvider|RSA *encrypt|RSA *decrypt|public *key|private *key",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption",
+    "id": "AI002210",
+    "description": "Cryptography: Encryption",
+    "tags": [
+      "Cryptography.Cipher.RSA"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
         "pattern": "rsa",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption",
+    "id": "AI001700",
+    "description": "Cryptography: Encryption",
+    "tags": [
+      "Cryptography.Encryption"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "encrypt|decrypt|cipher|crypt",
         "type": "regex-word",
         "scopes": [
           "code"

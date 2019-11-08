@@ -25,7 +25,7 @@
             "detectedIcon": "fas fa-key"
           },
           {
-            "searchPattern": "Data.Serialization.Deserialization",
+            "searchPattern": "Deserialization",
             "displayName": "ObjectDeserialization",
             "detectedIcon": "far fa-object-ungroup"
           },
@@ -186,8 +186,8 @@
         "dataRef": "Sensitive Data",
         "patterns": [
           {
-            "searchPattern": "Sensitive.Personal",
-            "displayName": "Personal Data",
+            "searchPattern": "Sensitive.Identification",
+            "displayName": "Personal Identifiable Data",
             "detectedIcon": "fas fa-user-shield"
           },
           {
@@ -196,7 +196,7 @@
             "detectedIcon": "fas fa-stethoscope"
           },
           {
-            "searchPattern": "Sensitive.SensitiveKey",
+            "searchPattern": "Sensitive.Secret",
             "displayName": "Sensitive Key",
             "detectedIcon": "fab fa-keycdn"
           },

@@ -50,7 +50,7 @@ namespace Microsoft.AppInspector.Commands
         {
             bool issues = false;
 
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Verifyrules"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Verify Rules"));
             
             //load [each] rules file separately to report out where a failure is happening 
             IEnumerable<string> fileListing = new List<string>();
@@ -83,7 +83,7 @@ namespace Microsoft.AppInspector.Commands
             else
                 WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.VERIFY_RULES_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
 
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Verifyrules"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Verify Rules"));
 
             return issues ? (int)ExitCode.NotVerified : (int)ExitCode.Verified;
         }
