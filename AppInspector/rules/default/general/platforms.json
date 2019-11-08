@@ -117,12 +117,31 @@
     "id": "AI024400",
     "description": "Platform: Microsoft Windows",
     "tags": [
-      "Platform.OS.Microsoft.Windows"
+      "Platform.OS.Microsoft.WindowsStandard"
     ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "windows",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Platform: Microft Windows",
+    "id": "AI024410",
+    "description": "Platform: Microsoft Windows Server",
+    "tags": [
+      "Platform.OS.Microsoft.WindowsServer"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "windows server",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],

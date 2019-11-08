@@ -1,6 +1,6 @@
 [
   {
-    "name": "c",
+    "name": "c-std",
     "extensions": [ ".c", ".h" ]
   },
   {

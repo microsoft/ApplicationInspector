@@ -4,7 +4,7 @@
     "id": "AI007300",
     "description": "Data: Sensitive (Personal Information)",
     "tags": [
-      "Data.Sensitive.Personal"
+      "Data.Sensitive.Identification"
     ],
     "severity": "critical",
     "patterns": [
@@ -37,7 +37,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "phone|mobilenumber|email|emailaddress|emailaddr",
+        "pattern": "phone|mobilenumber|cell|email|emailaddress|emailaddr",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -64,7 +64,7 @@
     "id": "AI007400",
     "description": "Data: Sensitive (Personal Information)",
     "tags": [
-      "Data.Sensitive.Personal"
+      "Data.Sensitive.Contact"
     ],
     "severity": "important",
     "patterns": [
@@ -116,7 +116,7 @@
     "id": "AI007600",
     "description": "Data: Sensitive",
     "tags": [
-      "Data.Sensitive"
+      "Data.Sensitive.Secret"
     ],
     "severity": "critical",
     "patterns": [

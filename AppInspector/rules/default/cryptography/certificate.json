@@ -9,7 +9,28 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "x509|\\.(crt|pem|cer|pfx|csr)|certificate",
+        "pattern": "x509|\\.(crt|cer|spc|p7b|p7s|p7r|ca-bundle)|certificate",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "do not include pfx or pem see rule below for x509 client auth"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: x.509 Certificate",
+    "id": "AI001500",
+    "description": "Cryptography: x.509 Certificate",
+    "tags": [
+      "Cryptography.x509.ClientAuth"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.(pem|pfx|key)",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -30,7 +51,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "genrsa|-keyout|-x509toreq",
+        "pattern": "genrsa|-keyout|-x509toreq|csr",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -38,20 +59,9 @@
         "modifiers": [],
         "confidence": "high",
         "_comment": "Common OpenSSL commands"
-      }
-    ]
-  },
-  {
-    "name": "Cryptography: x.509 Certificate",
-    "id": "AI001500",
-    "description": "Cryptography: x.509 Certificate",
-    "tags": [
-      "Cryptography.x509"
-    ],
-    "severity": "moderate",
-    "patterns": [
+      },
       {
-        "pattern": "x509|\\.(crt|pem|cer)",
+        "pattern": "---BEGIN CERTIFICATE---",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -59,6 +69,26 @@
         "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
+      },
+      {
+        "pattern": "---BEGIN PKCS7---",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "(create|generate) (cert|certificate)",
+        "type": "regex",
+        "scopes": [
+          "comment"
+        ],
+        "modifiers": [],
+        "confidence": "high",
+        "_comment": "Common OpenSSL commands or comments"
       }
     ]
   },
@@ -72,8 +102,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "signkey|codesign",
-        "type": "regex-word",
+        "pattern": "sign(ing)* *key|code *sign",
+        "type": "regex",
         "scopes": [
           "code"
         ],
