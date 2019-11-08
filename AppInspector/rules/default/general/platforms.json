@@ -113,7 +113,7 @@
     ]
   },
   {
-    "name": "Platform: Microft Windows",
+    "name": "Platform: Microsoft Windows",
     "id": "AI024400",
     "description": "Platform: Microsoft Windows",
     "tags": [
@@ -132,7 +132,7 @@
     ]
   },
   {
-    "name": "Platform: Microft Windows",
+    "name": "Platform: Microsoft Windows",
     "id": "AI024410",
     "description": "Platform: Microsoft Windows Server",
     "tags": [
@@ -151,7 +151,7 @@
     ]
   },
   {
-    "name": "Platform: Microft Windows",
+    "name": "Platform: Microsoft Windows",
     "id": "AI024500",
     "description": "Platform: Microsoft Windows",
     "tags": [
