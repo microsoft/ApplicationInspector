@@ -110,10 +110,7 @@ namespace Microsoft.AppInspector.Writers
         }
         public string Severity { get; set; }
         public bool Detected { get; set; }
-        [JsonIgnore]
-        public string Msg
-        { get { return Detected ? "Not found" : "Confidence"; }
-        }
+       
     }
 
     public class TagCounterUI : Drop

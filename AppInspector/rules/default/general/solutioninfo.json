@@ -23,13 +23,13 @@
     "id": "AI026700",
     "description": "Metadata: Application Name",
     "tags": [
-      "Metadata.Application.Name"
+      "Metadata.Project.Name"
     ],
     "applies_to": [ "VSProject" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "Project.*",
+        "pattern": "<ProductName>.*<\/ProductName>",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -48,14 +48,14 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "<OutputType>.*</OutputType>",
+        "pattern": "<OutputType>.*<\/OutputType>",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
 
       },
       {
-        "pattern": "<ConfigurationType>.*</ConfigurationType>",
+        "pattern": "<ConfigurationType>.*<\/ConfigurationType>",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -134,7 +134,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "<artifactId>(.*)</artifactId>",
+        "pattern": "<artifactId>(.*)<\/artifactId>",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
