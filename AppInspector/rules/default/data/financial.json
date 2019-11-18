@@ -1,10 +1,10 @@
 [
   {
-    "name": "Data: Commerce",
+    "name": "Data: Financial (eCommerce)",
     "id": "AI005800",
-    "description": "Data: Commerce",
+    "description": "Data: Financial (eCommerce)",
     "tags": [
-      "Data.Finance"
+      "Data.Finance.eCommerce"
     ],
     "severity": "critical",
     "patterns": [
@@ -45,11 +45,11 @@
     ]
   },
   {
-    "name": "Data: Financial",
+    "name": "Data: Financial (Account)",
     "id": "AI005900",
-    "description": "Data: Financial",
+    "description": "Data: Financial (Account)",
     "tags": [
-      "Data.Finance"
+      "Data.Finance.Account"
     ],
     "severity": "critical",
     "patterns": [

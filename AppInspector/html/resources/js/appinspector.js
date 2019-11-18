@@ -247,10 +247,10 @@ class TemplateInsertion {
 
             const $tbody = $('#features table tbody');
             $tbody.empty();
-
+            
             // Now we iterate through all of the rules that relate to this icon
-            for (let [rule, confidence] of Object.entries(identifiedRules)) {
-
+            for (let [rule, confidence] of Object.entries(identifiedRules))
+            {
                 // I'm sorry, this is pretty ugly. If you'd like to clean this up, I'd be
                 // happy to take a pull request.
 

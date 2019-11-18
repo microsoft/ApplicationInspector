@@ -651,6 +651,22 @@ namespace Microsoft.AppInspector.Writers
             }
         }
 
+
+        private string ExtractXMLValue(string s)
+        {
+            try
+            {
+                int firstTag = s.IndexOf(">");
+                int endTag = s.IndexOf("</", firstTag);
+                string value = s.Substring(firstTag+1, endTag - firstTag - 1);
+                return value;
+            }
+            catch (Exception)
+            {
+                return s;
+            }
+        }
+
         /// <summary>
         /// Part of post processing to test for matches against app defined properties
         /// defined in MetaData class
@@ -682,18 +698,24 @@ namespace Microsoft.AppInspector.Writers
             }
 
             // Author etc.
-            if (matchRecord.Issue.Rule.Tags.Contains("Metadata.Application.Author"))
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Author")))
                 this.Authors = ExtractJSONValue(matchRecord.TextSample);
-            if (matchRecord.Issue.Rule.Tags.Contains("Metadata.Application.Description"))
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Description")))
                 this.Description = ExtractJSONValue(matchRecord.TextSample);
-            if (matchRecord.Issue.Rule.Tags.Contains("Metadata.Application.Name"))
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Name")))
                 this.ApplicationName = ExtractJSONValue(matchRecord.TextSample);
-            if (matchRecord.Issue.Rule.Tags.Contains("Metadata.Application.Version"))
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Version")))
                 this.SourceVersion = ExtractJSONValue(matchRecord.TextSample);
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Hardware.Processor")))
+                this.CPUTargets.Add(ExtractJSONValue(matchRecord.TextSample));
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.BuildOutput.Category")))
+                this.Outputs.Add(ExtractXMLValue(matchRecord.TextSample));
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Platform.OS")))
+                this.OSTargets.Add(ExtractJSONValue(matchRecord.TextSample));
 
             //special handling; attempt to detect app types...review for multiple pattern rule limitation
             String solutionType = Utils.DetectSolutionType(matchRecord.Filename, matchRecord.Language, matchRecord.Issue.Rule.Tags[0], matchRecord.TextSample);
-            if (!string.IsNullOrEmpty(solutionType) && !AppTypes.Contains(solutionType))
+            if (!string.IsNullOrEmpty(solutionType))
                 AppTypes.Add(solutionType);
 
             return includeAsMatch;
@@ -715,9 +737,7 @@ namespace Microsoft.AppInspector.Writers
                     ShortTag = counter.ShortTag,
                     Count = counter.Count
                 });
-
         }
-
     }
 
 }

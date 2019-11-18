@@ -122,7 +122,7 @@
     "id": "AI011100",
     "description": "Component: Silverlight",
     "tags": [
-      "Development.Framework.Component.Silverlight"
+      "Development.Framework.Component.Microsoft.Silverlight"
     ],
     "severity": "moderate",
     "patterns": [
