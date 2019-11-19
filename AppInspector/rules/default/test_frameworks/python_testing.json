@@ -1,7 +1,7 @@
 [
   {
     "name": "Testing Framework: AutoTest",
-    "id": "AI045300",
+    "id": "AI046800",
     "description": "Testing Framework: AutoTest",
     "applies_to": [
       "python"
@@ -26,7 +26,7 @@
   },
   {
     "name": "Testing Framework: UnitTest",
-    "id": "AI045400",
+    "id": "AI046900",
     "description": "Testing Framework: UnitTest",
     "applies_to": [
       "python"
@@ -47,7 +47,7 @@
   },
   {
     "name": "Testing Framework: XPyUnit",
-    "id": "AI045500",
+    "id": "AI047000",
     "description": "Testing Framework: XPyUnit",
     "applies_to": [
       "python"
@@ -68,7 +68,7 @@
   },
   {
     "name": "Testing Framework: DocTest",
-    "id": "AI045600",
+    "id": "AI047100",
     "description": "Testing Framework: DocTest",
     "applies_to": [
       "python"
@@ -89,7 +89,7 @@
   },
   {
     "name": "Testing Framework: Nose",
-    "id": "AI045700",
+    "id": "AI047200",
     "description": "Testing Framework: Nose",
     "applies_to": [
       "python"
@@ -110,7 +110,7 @@
   },
   {
     "name": "Testing Framework: PyTest",
-    "id": "AI045800",
+    "id": "AI047300",
     "description": "Testing Framework: PyTest",
     "applies_to": [
       "python"
@@ -131,7 +131,7 @@
   },
   {
     "name": "Testing Framework: Should DSL",
-    "id": "AI045900",
+    "id": "AI047400",
     "description": "Testing Framework: Should DSL",
     "applies_to": [
       "python"

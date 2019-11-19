@@ -1,7 +1,7 @@
 [
   {
     "name": "Hygiene: Todo Comment",
-    "id": "AI022600",
+    "id": "AI023700",
     "description": "Hygiene: Todo Comment",
     "tags": [
       "Miscellaneous.CodeHygiene.Comment.Todo"
@@ -18,7 +18,7 @@
   },
   {
     "name": "Hygiene: Fix Comment",
-    "id": "AI022700",
+    "id": "AI023800",
     "description": "Hygiene: Fix Comment",
     "tags": [
       "Miscellaneous.CodeHygiene.Comment.Fix"
@@ -35,7 +35,7 @@
   },
   {
     "name": "Hygiene: Suspicious Comment",
-    "id": "AI022800",
+    "id": "AI023900",
     "description": "Hygiene: Suspicious Comment",
     "tags": [
       "Miscellaneous.CodeHygiene.Comment.Suspicious"

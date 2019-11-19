@@ -1,7 +1,7 @@
 [
   {
     "name": "OS: Environment Variable (Write)",
-    "id": "AI026100",
+    "id": "AI027300",
     "description": "OS: Environment Variable (Write)",
     "applies_to": [
     ],
@@ -23,7 +23,7 @@
   },
   {
     "name": "OS: Environment Variable",
-    "id": "AI026200",
+    "id": "AI027400",
     "description": "OS: Environment Variable",
     "applies_to": [
     ],
@@ -45,7 +45,7 @@
   },
   {
     "name": "OS: Environment Variable (Write)",
-    "id": "AI026300",
+    "id": "AI027500",
     "description": "OS: Environment Variable (Write)",
     "applies_to": [
       "python"
@@ -67,7 +67,7 @@
   },
   {
     "name": "OS: Environment Variable (Write)",
-    "id": "AI026400",
+    "id": "AI027600",
     "description": "OS: Environment Variable (Write)",
     "applies_to": [
       "csharp"
@@ -90,7 +90,7 @@
   },
   {
     "name": "OS: Environment Variable (Write)",
-    "id": "AI026500",
+    "id": "AI027700",
     "description": "OS: Environment Variable (Write)",
     "applies_to": [
       "powershell"

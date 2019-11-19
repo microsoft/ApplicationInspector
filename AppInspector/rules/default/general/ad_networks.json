@@ -1,7 +1,7 @@
 [
   {
     "name": "Miscellaneous: Advertising Network (Google Adsense)",
-    "id": "AI017900",
+    "id": "AI019000",
     "description": "Miscellaneous: Advertising Network (Google Adsense)",
     "tags": [
       "Miscellaneous.AdvertisingNetwork.GoogleAdsense"
@@ -18,7 +18,7 @@
   },
   {
     "name": "Miscellaneous: Advertising Network (Outbrain)",
-    "id": "AI018000",
+    "id": "AI019100",
     "description": "Miscellaneous: Advertising Network (Outbrain)",
     "tags": [
       "Miscellaneous.AdvertisingNetwork.Outbrain"
@@ -35,7 +35,7 @@
   },
   {
     "name": "Miscellaneous: Advertising Network (Bing Ads)",
-    "id": "AI018100",
+    "id": "AI019200",
     "description": "Miscellaneous: Advertising Network (Bing Ads)",
     "tags": [
       "Miscellaneous.AdvertisingNetwork.BingAds"

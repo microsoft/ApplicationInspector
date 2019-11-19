@@ -1,7 +1,7 @@
 [
   {
     "name": "Miscellaneous: Analytics Service",
-    "id": "AI018200",
+    "id": "AI019300",
     "description": "Miscellaneous: Analytics Service",
     "tags": [
       "Miscellaneous.Analytics.Facebook"
@@ -19,7 +19,7 @@
   },
   {
     "name": "Miscellaneous: Analytics Service (Facebook)",
-    "id": "AI018300",
+    "id": "AI019400",
     "description": "Miscellaneous: Analytics Service (Facebook)",
     "tags": [
       "Miscellaneous.Analytics.Facebook"
@@ -36,7 +36,7 @@
   },
   {
     "name": "Miscellaneous: Analytics Service (Google GTag)",
-    "id": "AI018400",
+    "id": "AI019500",
     "description": "Miscellaneous: Analytics Service (Google GTag)",
     "tags": [
       "Miscellaneous.Analytics.Google.GTag"
@@ -53,7 +53,7 @@
   },
   {
     "name": "Miscellaneous: Analytics Service (Bing)",
-    "id": "AI018500",
+    "id": "AI019600",
     "description": "Miscellaneous: Analytics Service (Bing)",
     "tags": [
       "Miscellaneous.Analytics.Microsoft.Bing"
@@ -70,7 +70,7 @@
   },
   {
     "name": "Miscellaneous: Analytics Service (Twitter)",
-    "id": "AI018600",
+    "id": "AI019700",
     "description": "Miscellaneous: Analytics Service (Twitter)",
     "tags": [
       "Miscellaneous.Analytics.Twitter"
@@ -87,7 +87,7 @@
   },
   {
     "name": "Miscellaneous: Analytics Service (Outbrain)",
-    "id": "AI018700",
+    "id": "AI019800",
     "description": "Miscellaneous: Analytics Service (Outbrain)",
     "tags": [
       "Miscellaneous.Analytics.Outbrain"
@@ -104,7 +104,7 @@
   },
   {
     "name": "Miscellaneous: Analytics Service (Pinterest)",
-    "id": "AI018800",
+    "id": "AI019900",
     "description": "Miscellaneous: Analytics Service (Pinterest)",
     "tags": [
       "Miscellaneous.Analytics.Pinterest"
