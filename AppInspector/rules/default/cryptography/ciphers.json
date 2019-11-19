@@ -97,18 +97,37 @@
     "name": "Cryptography: Encryption",
     "id": "AI002200",
     "description": "Cryptography: Encryption",
+    "applies_to": [
+      "csharp"
+    ],
     "tags": [
       "Cryptography.Cipher.RSA"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RSACryptoServiceProvider|RSA *encrypt|RSA *decrypt|public *key|private *key",
+        "pattern": "RSACng|RSACryptoServiceProvider|RSAEncryptionPadding|RSAOAEPKeyExchangeDeformatter",
         "type": "regex-word",
-        "scopes": [
-          "code"
-        ],
-        "confidence": "high"
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "RSAOAEPKeyExchangeFormatter|RSAPKCS1KeyExchangeDeformatter|RSAPKCS1",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "RSASignaturePadding|RsaProtectedConfigurationProvider|RSACertificateExtensions",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
       }
     ]
   },
@@ -122,6 +141,14 @@
     "severity": "moderate",
     "patterns": [
       {
+        "pattern": "RSA *encrypt|RSA *decrypt|public *key|private *key",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
         "pattern": "rsa",
         "type": "regex-word",
         "scopes": [
@@ -133,7 +160,27 @@
   },
   {
     "name": "Cryptography: Encryption",
-    "id": "AI001700",
+    "id": "AI002220",
+    "description": "Cryptography: Encryption",
+    "tags": [
+      "Cryptography.Cipher.RSA"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "asymmetric|rsa",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption",
+    "id": "AI002240",
     "description": "Cryptography: Encryption",
     "tags": [
       "Cryptography.Encryption"
@@ -141,12 +188,21 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "encrypt|decrypt|cipher|crypt",
-        "type": "regex-word",
+        "pattern": "encrypt|decrypt|cipher|crypt|symmmetric",
+        "type": "regex",
         "scopes": [
-          "code"
+          "code",
+          "comment"
         ],
         "confidence": "high"
+      },
+      {
+        "pattern": "DiffieHellman|Rijndael|ECDsa",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i", "comment" ],
+        "_comment": ""
       }
     ]
   }

@@ -29,6 +29,15 @@
         ],
         "confidence": "high",
         "_comment": ""
+      },
+      {
+        "pattern": "rand|srand",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "low",
+        "_comment": ""
       }
     ]
   },
@@ -74,6 +83,47 @@
           "code"
         ],
         "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Crypgraphy: PRNG",
+    "id": "AI004510",
+    "description": "Crypgraphy: PRNG",
+    "tags": [
+      "Cryptography.Randomness.PRNG"
+    ],
+    "applies_to": [
+      "csharp"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "RandomNumberGenerator",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Crypgraphy: PRNG",
+    "id": "AI004520",
+    "description": "Crypgraphy: PRNG",
+    "tags": [
+      "Cryptography.Randomness.PRNG"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "random",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "low"
       }
     ]
   }

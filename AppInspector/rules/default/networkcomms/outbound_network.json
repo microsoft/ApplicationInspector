@@ -1,36 +1,36 @@
 [
   {
-    "name": "Network Listener",
-    "description": "Network Listener",
+    "name": "Network Connection",
+    "description": "Network Connection",
     "id": "AI028100",
     "applies_to": [
     ],
     "tags": [
-      "OS.Network.Listener"
+      "OS.Network.Connection"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "tftp|ntp|imap|snmp|ldap|ldaps|ftps|sftp|ftp|nntp|smtp|telnet|ssh|pop3",
+        "pattern": "tftp|ntp|imap|snmp|ldap|ldaps|ftps|sftp|ftp|nntp|smtp|telnet|ssh|pop3|gopher",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "modifiers": [ "i" ],
-        "confidence": "low",
+        "confidence": "medium",
         "_comment": ""
       }
     ]
   },
   {
-    "name": "Network Listener",
-    "description": "Network Listener",
+    "name": "Network Connection: TCP",
+    "description": "Network Connection TCP",
     "id": "AI028200",
     "applies_to": [
       "csharp"
     ],
     "tags": [
-      "OS.Network.Listener.Tcp"
+      "OS.Network.Connection.Tcp"
     ],
     "severity": "moderate",
     "patterns": [
@@ -45,7 +45,7 @@
         "_comment": ""
       },
       {
-        "pattern": "TcpListener",
+        "pattern": "TcpConnection",
         "type": "string",
         "scopes": [
           "code"
@@ -67,15 +67,15 @@
     ]
   },
   {
-    "name": "Network Listener",
-    "description": "Network Listener",
+    "name": "Network Connection: TCP",
+    "description": "Network Connection",
     "id": "AI028300",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "OS.Network.Listener.Tcp"
+      "OS.Network.Connection.Tcp"
     ],
     "severity": "moderate",
     "patterns": [
@@ -92,15 +92,15 @@
     ]
   },
   {
-    "name": "Network Listener",
-    "description": "Network Listener",
+    "name": "Network Connection: TCP",
+    "description": "Network Connection TCP",
     "id": "AI028400",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "OS.Network.Listener.Tcp"
+      "OS.Network.Connection.Tcp"
     ],
     "severity": "moderate",
     "patterns": [
@@ -137,14 +137,14 @@
     ]
   },
   {
-    "name": "Network Listener",
-    "description": "Network Listener",
+    "name": "Network Connection: Socket",
+    "description": "Network Connection Socket",
     "id": "AI028500",
     "applies_to": [
       "python"
     ],
     "tags": [
-      "OS.Network.Listener.Socket"
+      "OS.Network.Connection.Socket"
     ],
     "severity": "moderate",
     "patterns": [
@@ -161,6 +161,28 @@
     ]
   },
   {
+    "name": "Network Connection: Socket",
+    "description": "Network Socket",
+    "id": "AI028510",
+    "tags": [
+      "OS.Network.Connection.Socket"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "socket",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "general"
+      }
+    ]
+  },
+
+  {
     "name": "Network Connection",
     "description": "Network Connection",
     "id": "AI028600",
@@ -168,7 +190,7 @@
       "csharp"
     ],
     "tags": [
-      "OS.Network.Connect.Http"
+      "OS.Network.Connection.Http"
     ],
     "severity": "moderate",
     "patterns": [
@@ -192,7 +214,7 @@
       "html"
     ],
     "tags": [
-      "OS.Network.Connect.Http"
+      "OS.Network.Connection.Http"
     ],
     "severity": "moderate",
     "patterns": [
@@ -235,7 +257,7 @@
       "javascript"
     ],
     "tags": [
-      "OS.Network.Connect.Http"
+      "OS.Network.Connection.Http"
     ],
     "severity": "moderate",
     "patterns": [
@@ -259,7 +281,7 @@
       "python"
     ],
     "tags": [
-      "OS.Network.Connect.Http"
+      "OS.Network.Connection.Http"
     ],
     "severity": "moderate",
     "patterns": [
@@ -282,7 +304,7 @@
     "applies_to": [
     ],
     "tags": [
-      "OS.Network.Connect.Http"
+      "OS.Network.Connection.Http"
     ],
     "severity": "moderate",
     "patterns": [
@@ -304,7 +326,7 @@
     "id": "AI029100",
     "applies_to": [ "ruby" ],
     "tags": [
-      "OS.Network.Connect.Http"
+      "OS.Network.Connection.Http"
     ],
     "severity": "moderate",
     "patterns": [
@@ -326,12 +348,12 @@
     "id": "AI029200",
     "applies_to": [ "csharp" ],
     "tags": [
-      "OS.Network.Connect.RPC"
+      "OS.Network.Connection.RPC"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RPC|RemotableTypeclass|System.Runtime.Remoting|RemotingConfiguration|TcpClient|TcpChannel|TcpSocket|Socket|WebSocket",
+        "pattern": "RPC|RemotableTypeclass|System.Runtime.Remoting|RemotingConfiguration|TcpClient|TcpChannel",
         "type": "regex",
         "scopes": [
           "code"
@@ -348,12 +370,12 @@
     "id": "AI029300",
     "applies_to": [ "python" ],
     "tags": [
-      "OS.Network.Connect.RPC"
+      "OS.Network.Connection.RPC"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "fastrpc|xmlrpc|SimpleXMLRPCServer|SocketServer|jsonrpc|rpc.server|client.rpc|socket",
+        "pattern": "fastrpc|xmlrpc|SimpleXMLRPCServer|jsonrpc|rpc.server|client.rpc",
         "type": "regex",
         "scopes": [
           "code"
@@ -370,7 +392,7 @@
     "id": "AI029400",
     "applies_to": [ "c" ],
     "tags": [
-      "OS.Network.Connect.RPC"
+      "OS.Network.Connecton.RPC"
     ],
     "severity": "moderate",
     "patterns": [
@@ -392,7 +414,7 @@
     "id": "AI029500",
     "applies_to": [ "java" ],
     "tags": [
-      "OS.Network.Connect.RPC"
+      "OS.Network.Connection.RPC"
     ],
     "severity": "moderate",
     "patterns": [
@@ -414,7 +436,7 @@
     "id": "AI029600",
     "applies_to": [ "javascript" ],
     "tags": [
-      "OS.Network.Connect.RPC"
+      "OS.Network.Connection.RPC"
     ],
     "severity": "moderate",
     "patterns": [
@@ -431,17 +453,39 @@
     ]
   },
   {
-    "name": "Network Connection: Modem",
-    "description": "Network Connection: Modem",
+    "name": "Network Connection: Cellular",
+    "description": "Network Connection: Cellular",
     "id": "AI029700",
-    "applies_to": [ "c", "cplusplus", "csharp" ],
+    "applies_to": [ "c", "cpp", "csharp" ],
     "tags": [
-      "OS.Network.Connect.Modem"
+      "OS.Network.Connection.Cellular"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "modem|baud",
+        "pattern": "NetworkInterfaceType.Wman|NetworkInterfaceType.Wwanpp|NetworkInterfaceType.Wwanpp2",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: Modem",
+    "description": "Network Connection: Modem",
+    "id": "AI029710",
+    "applies_to": [ "c", "cpp", "csharp" ],
+    "tags": [
+      "OS.Network.Connection.Modem"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "modem",
         "type": "regex",
         "scopes": [
           "code"
@@ -453,7 +497,3 @@
     ]
   }
 ]
-
-
-
-

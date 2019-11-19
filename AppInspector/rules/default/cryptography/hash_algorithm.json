@@ -50,7 +50,7 @@
     "patterns": [
       {
         "pattern": "MD2|MD4|MD5|SHA-?0",
-        "type": "regex-word",
+        "type": "regex",
         "scopes": [
           "code"
         ],
@@ -89,13 +89,35 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RIPEMD|Blowfish|Twofish|Threefish|Serpent",
+        "pattern": "RIPEMD|Blowfish|Twofish|Threefish|Serpent|HMAC|KeyedHashAlgorithm",
         "type": "regex",
         "scopes": [
-          "code"
+          "code",
+          "comment"
         ],
         "modifiers": [ "i" ],
         "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm Usage (Misc)",
+    "id": "AI003610",
+    "description": "Cryptography: Hash Algorithm Usage (Misc)",
+    "tags": [
+      "Cryptography.HashAlgorithm.Misc"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "hash",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "medium"
       }
     ]
   }
