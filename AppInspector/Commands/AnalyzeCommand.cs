@@ -573,6 +573,11 @@ namespace Microsoft.AppInspector.Commands
                             {
                                 ProcessTarGzFile(filename);
                             }
+                            else
+                            {
+                                WriteOnce.Log.Warn("no support for .gz unless .tar.gz: " + fileExtension);
+                                _appProfile.MetaData.PackageTypes.Add("compressed-unsupported");
+                            }
                             break;
                         case ".jar":
                         case ".zip":

@@ -25,7 +25,6 @@
     $('a.file_listing').on('click', (e) => {
         $('#editor-container').addClass('d-none');
         $('#file_listing_modal').modal();
-        alert(1);
     })
 
 	/*
