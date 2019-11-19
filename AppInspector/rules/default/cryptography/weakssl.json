@@ -1,7 +1,7 @@
 [
   {
     "name": "Detect Weak Cryptography",
-    "id": "AIFOOBAR",
+    "id": "AI005600",
     "description": "Detect use of cryptography",
     "recommendation": "",
     "applies_to": [

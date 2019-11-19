@@ -1,7 +1,7 @@
 [
   {
     "name": "Cloud Service: Amazon Web Services",
-    "id": "AI020400",
+    "id": "AI021500",
     "description": "Cloud Service: Amazon Web Services",
     "tags": [
       "Hosting.CloudService.Amazon.AWS"
@@ -19,7 +19,7 @@
   },
   {
     "name": "Cloud Service: Apple iCloud",
-    "id": "AI020500",
+    "id": "AI021600",
     "description": "Cloud Service: Accessing Apple iCloud",
     "tags": [
       "Hosting.CloudService.Apple.iCloud"
@@ -44,7 +44,7 @@
   },
   {
     "name": "Cloud Service: Microsoft Azure",
-    "id": "AI020600",
+    "id": "AI021700",
     "description": "Cloud Service: Microsoft Azure",
     "tags": [
       "Hosting.CloudService.Microsoft.Azure"
@@ -76,7 +76,7 @@
   },
   {
     "name": "Cloud Service: Microsoft Office Graph",
-    "id": "AI020700",
+    "id": "AI021800",
     "description": "Cloud Service: Microsoft Office Graph",
     "tags": [
       "Hosting.CloudService.Microsoft.Office.Graph"
@@ -108,7 +108,7 @@
   },
   {
     "name": "Cloud Service: Microsoft Online",
-    "id": "AI020800",
+    "id": "AI021900",
     "description": "Cloud Service: Microsoft Online",
     "tags": [
       "Hosting.CloudService.Microsoft.MicrosoftOnline"
@@ -125,7 +125,7 @@
   },
   {
     "name": "Cloud Service: Google Cloud",
-    "id": "AI020900",
+    "id": "AI022000",
     "description": "Cloud Service: Google Cloud",
     "tags": [
       "Hosting.CloudService.Google.Cloud"
@@ -150,7 +150,7 @@
   },
   {
     "name": "Cloud Service: DigitalOcean Cloud",
-    "id": "AI021000",
+    "id": "AI022100",
     "description": "Accessing DigitalOcean",
     "tags": [
       "Hosting.CloudService.DigitalOcean.Cloud"
@@ -171,7 +171,7 @@
   },
   {
     "name": "Cloud Service: SendGrid",
-    "id": "AI021100",
+    "id": "AI022200",
     "description": "Cloud Service: SendGrid",
     "tags": [
       "Hosting.CloudService.SendGrid",
@@ -191,7 +191,7 @@
   },
   {
     "name": "Cloud Service: DataBricks",
-    "id": "AI021200",
+    "id": "AI022300",
     "description": "Cloud Service: DataBricks",
     "tags": [
       "Hosting.CloudService.DataBricks",
@@ -211,7 +211,7 @@
   },
   {
     "name": "Cloud Service: GitHub",
-    "id": "AI021300",
+    "id": "AI022400",
     "description": "Cloud Service: GitHub",
     "tags": [
       "Hosting.CloudService.Repository.GitHub"
@@ -229,7 +229,7 @@
   },
   {
     "name": "Cloud Service: GitLab",
-    "id": "AI021400",
+    "id": "AI022500",
     "description": "Cloud Service: GitLab",
     "tags": [
       "Hosting.CloudService.Repository.GitLab"
@@ -247,7 +247,7 @@
   },
   {
     "name": "Cloud Service: BitBucket",
-    "id": "AI021500",
+    "id": "AI022600",
     "description": "Cloud Service: BitBucket",
     "tags": [
       "Hosting.CloudService.Repository.BitBucket"
@@ -265,7 +265,7 @@
   },
   {
     "name": "Cloud Service: SourceForge",
-    "id": "AI021600",
+    "id": "AI022700",
     "description": "Cloud Service: SourceForge",
     "tags": [
       "Hosting.CloudService.Repository.SourceForge"
@@ -283,7 +283,7 @@
   },
   {
     "name": "Cloud Service: Savannah",
-    "id": "AI021700",
+    "id": "AI022800",
     "description": "Cloud Service: Savannah",
     "tags": [
       "Hosting.CloudService.Repository.Savannah"
@@ -301,7 +301,7 @@
   },
   {
     "name": "Cloud Service: NuGet",
-    "id": "AI021800",
+    "id": "AI022900",
     "description": "Cloud Service: NuGet",
     "tags": [
       "Hosting.CloudService.PackageManager.NuGet"
@@ -319,7 +319,7 @@
   },
   {
     "name": "Cloud Service: NPM",
-    "id": "AI021900",
+    "id": "AI023000",
     "description": "Cloud Service: NPM",
     "tags": [
       "Hosting.CloudService.PackageManager.NPM"
@@ -337,7 +337,7 @@
   },
   {
     "name": "Cloud Service: PyPI",
-    "id": "AI022000",
+    "id": "AI023100",
     "description": "Cloud Service: PyPI",
     "tags": [
       "Hosting.CloudService.PackageManager.PyPI"
@@ -355,7 +355,7 @@
   },
   {
     "name": "Cloud Service: LaunchPad",
-    "id": "AI022100",
+    "id": "AI023200",
     "description": "Cloud Service: LaunchPad",
     "tags": [
       "Hosting.CloudService.PackageManager.LaunchPad"
@@ -373,7 +373,7 @@
   },
   {
     "name": "Cloud Service: Travis.CI",
-    "id": "AI022200",
+    "id": "AI023300",
     "description": "Cloud Service: Travis.CI",
     "applies_to": [
       ".travis.yml"
@@ -394,7 +394,7 @@
   },
   {
     "name": "Cloud Service: Circle CI",
-    "id": "AI022300",
+    "id": "AI023400",
     "description": "Cloud Service: Circle CI",
     "applies_to": [
       "config.yml"
@@ -415,7 +415,7 @@
   },
   {
     "name": "Cloud Service: Azure Pipelines",
-    "id": "AI022400",
+    "id": "AI023500",
     "description": "Cloud Service: Azure Pipelines",
     "applies_to": [
       "azure-pipelines.yml"
@@ -436,7 +436,7 @@
   },
   {
     "name": "Windows App Store",
-    "id": "AI022500",
+    "id": "AI023600",
     "description": "Windows App Store",
     "tags": [
       "Hosting.CloudService.Microsoft.WindowsAppStore"

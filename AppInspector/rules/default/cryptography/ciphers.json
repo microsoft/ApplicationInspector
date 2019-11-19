@@ -1,7 +1,7 @@
 [
   {
     "name": "Cryptography: Encryption (AES)",
-    "id": "AI001800",
+    "id": "AI002000",
     "description": "Cryptography: Encryption (AES)",
     "tags": [
       "Cryptography.Cipher.AES"
@@ -28,7 +28,7 @@
   },
   {
     "name": "Cryptography: Encryption (3DES)",
-    "id": "AI001900",
+    "id": "AI002100",
     "description": "Cryptography: Encryption (3DES)",
     "tags": [
       "Cryptography.Cipher.3DES"
@@ -47,7 +47,7 @@
   },
   {
     "name": "Cryptography: Encryption (RC)",
-    "id": "AI002000",
+    "id": "AI002200",
     "description": "Cryptography: Encryption (RC)",
     "tags": [
       "Cryptography.Cipher.RC"
@@ -74,7 +74,7 @@
   },
   {
     "name": "Encryption: Cipher Mode",
-    "id": "AI002100",
+    "id": "AI002300",
     "description": "Encryption: Cipher Mode",
     "tags": [
       "Cryptography.Cipher.CipherMode"
@@ -95,7 +95,7 @@
   },
   {
     "name": "Cryptography: Encryption",
-    "id": "AI002200",
+    "id": "AI002400",
     "description": "Cryptography: Encryption",
     "applies_to": [
       "csharp"
@@ -133,7 +133,7 @@
   },
   {
     "name": "Cryptography: Encryption",
-    "id": "AI002210",
+    "id": "AI002500",
     "description": "Cryptography: Encryption",
     "tags": [
       "Cryptography.Cipher.RSA"
@@ -160,7 +160,7 @@
   },
   {
     "name": "Cryptography: Encryption",
-    "id": "AI002220",
+    "id": "AI002600",
     "description": "Cryptography: Encryption",
     "tags": [
       "Cryptography.Cipher.RSA"
@@ -180,7 +180,7 @@
   },
   {
     "name": "Cryptography: Encryption",
-    "id": "AI002240",
+    "id": "AI002700",
     "description": "Cryptography: Encryption",
     "tags": [
       "Cryptography.Encryption"

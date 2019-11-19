@@ -1,7 +1,7 @@
 [
   {
     "name": "Testing Framework: Pester",
-    "id": "AI045200",
+    "id": "AI046700",
     "description": "Testing Framework: Pester",
     "applies_to": [
       "powershell"

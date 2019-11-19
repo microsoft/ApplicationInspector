@@ -1,7 +1,7 @@
 [
   {
     "name": "OS Operation: Windows Registry (Write)",
-    "id": "AI032200",
+    "id": "AI033700",
     "description": "OS Operation: Windows Registry (Write)",
     "tags": [
       "OS.SystemRegistry.Write"
@@ -23,7 +23,7 @@
   },
   {
     "name": "OS Operation: Windows Registry (Write)",
-    "id": "AI032300",
+    "id": "AI033800",
     "description": "OS Operation: Windows Registry (Write)",
     "tags": [
       "OS.SystemRegistry.Write"
@@ -44,7 +44,7 @@
   },
   {
     "name": "OS Operation: Windows Registry (Write)",
-    "id": "AI032400",
+    "id": "AI033900",
     "description": "OS Operation: Windows Registry (Write)",
     "tags": [
       "OS.SystemRegistry.Write"
@@ -65,7 +65,7 @@
   },
   {
     "name": "OS Operation: Windows Registry (ACL)",
-    "id": "AI032500",
+    "id": "AI034000",
     "description": "OS Operation: Windows Registry (ACL)",
     "tags": [
       "OS.SystemRegistry.ACL"
@@ -83,7 +83,7 @@
   },
   {
     "name": "OS Operation: Windows Registry (Read)",
-    "id": "AI032600",
+    "id": "AI034100",
     "description": "OS Operation: Windows Registry (Read)",
     "tags": [
       "OS.SystemRegistry.Read"
@@ -104,7 +104,7 @@
   },
   {
     "name": "OS Operation: Windows Registry (Read)",
-    "id": "AI032700",
+    "id": "AI034200",
     "description": "OS Operation: Windows Registry (Read)",
     "tags": [
       "OS.SystemRegistry.Read"
@@ -131,7 +131,7 @@
   },
   {
     "name": "OS Operation: Windows Registry (Read)",
-    "id": "AI032800",
+    "id": "AI034300",
     "description": "OS Operation: Windows Registry (Read)",
     "tags": [
       "OS.SystemRegistry.Read"

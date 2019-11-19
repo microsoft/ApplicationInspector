@@ -1,7 +1,7 @@
 [
   {
     "name": "Cryptography: Key Derivation",
-    "id": "AI003700",
+    "id": "AI004400",
     "description": "Cryptography: Key Derivation",
     "tags": [
       "Cryptography.KeyDerivation"
@@ -12,7 +12,7 @@
   },
   {
     "name": "Cryptography: Key Derivation (PBKDF1)",
-    "id": "AI003800",
+    "id": "AI004500",
     "description": "Cryptography: Key Derivation (PBKDF1)",
     "tags": [
       "Cryptography.KeyDerivation.PBKDF1"
@@ -30,7 +30,7 @@
   },
   {
     "name": "Cryptography: Key Derivation (PBKDF2)",
-    "id": "AI003900",
+    "id": "AI004600",
     "description": "Cryptography: Key Derivation (PBKDF2)",
     "tags": [
       "Cryptography.KeyDerivation.PBKDF2"

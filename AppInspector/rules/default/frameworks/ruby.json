@@ -1,7 +1,7 @@
 [
   {
     "name": "Development Framework: Grails",
-    "id": "AI017700",
+    "id": "AI018800",
     "description": "Development Framework: Grails",
     "applies_to": [ "groovy" ],
     "tags": [ "Development.Framework.Grails" ],
@@ -18,7 +18,7 @@
   },
   {
     "name": "Development Framework: Rails",
-    "id": "AI017800",
+    "id": "AI018900",
     "description": "Development Framework: Rails",
     "applies_to": [ "ruby" ],
     "tags": [ "Development.Framework.Rails" ],

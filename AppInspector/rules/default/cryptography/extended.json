@@ -1,7 +1,7 @@
 [
   {
     "name": "Detect Cryptography",
-    "id": "AI035000",
+    "id": "AI003000",
     "description": "Detect use of cryptography",
     "recommendation": "",
     "applies_to": [
