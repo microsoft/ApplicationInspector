@@ -55,8 +55,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "openssl",
-        "type": "string",
+        "pattern": "openssl|SSL_CTX_new",
+        "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
         "modifiers": [ "i" ]

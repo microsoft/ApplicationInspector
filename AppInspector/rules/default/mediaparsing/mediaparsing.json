@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Media Parsing",
+    "id": "AIFOOBAR2",
+    "description": "Media Parsing",
+    "tags": [
+      "Data.Deserialization.Media"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "ffmpeg|libraw|webp|mux",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "wma|mp3|mp4|tiff|wmv|asf|vp9|cr2",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

@@ -372,22 +372,24 @@ namespace Microsoft.AppInspector.Writers
 
             foreach (string tag in orderedTags)
             {
-                var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
                 foreach (var match in MatchList)
                 {
                     foreach (string testTag in match.Issue.Rule.Tags)
                     {
-                        if (searchPattern.IsMatch(tag) && dupCheck.Add(testTag))
+                        if (tag == testTag)
                         {
-                            result.Add(new TagInfo
+                            if (dupCheck.Add(testTag))
                             {
-                                Tag = testTag,
-                                Confidence = match.Issue.PatternMatch.Confidence.ToString(),
-                                Severity = match.Issue.Rule.Severity.ToString(),
-                                ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
-                            });
+                                result.Add(new TagInfo
+                                {
+                                    Tag = testTag,
+                                    Confidence = match.Issue.PatternMatch.Confidence.ToString(),
+                                    Severity = match.Issue.Rule.Severity.ToString(),
+                                    ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
+                                });
 
-                            break;
+                                break;
+                            }
                         }
                     }
                 }

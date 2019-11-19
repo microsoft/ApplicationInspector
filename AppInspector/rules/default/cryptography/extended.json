@@ -1,0 +1,291 @@
+[
+  {
+    "name": "Detect Cryptography",
+    "id": "AI035000",
+    "description": "Detect use of cryptography",
+    "recommendation": "",
+    "applies_to": [
+      "csharp",
+      "vb"
+    ],
+    "tags": [
+      "Cryptography.Encryption"
+    ],
+    "severity": "critical",
+    "_comment": "",
+    "rule_info": "",
+    "patterns": [
+      {
+        "pattern": "AsnEncodedData",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "Cng(Algorithm|Key|Property|Provider|UIPolicy)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "CspKeyContainerInfo",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "CspParameters",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "DataProtector",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "DeriveBytes",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": "e.g. Rfc2898DeriveBytes"
+      },
+      {
+        "pattern": "KeySizes",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MaskGenerationMethod",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "Oid",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OidCollection",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OidEnumerator",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ProtectedMemory",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "RIPEMD160",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "CngProperty|CngExportPolicies|CngKey|CngUI|CndProvider",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "DataProtectionScope",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ECKeyXmlFormat",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "MemoryProtectionScope",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OidGroup",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "KeyAgreeKeyChoice",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "AlgorithmIdentifier",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "CmsRecipient",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "CmsSigner",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "EnvelopedCms",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "KeyAgreeRecipientInfo|KeyTransRecipientInfo",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "X500DistinguishedName",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "OpenFlags",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "KeyInfo",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "TransformChain",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "XmlDsig",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "XmlLicenseTransform",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "IRelDecryptor",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ProtectionLevel.None",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "ProtectionLevel.Sign",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "TsCertCompareCertContext",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      }
+    ]
+  }
+]

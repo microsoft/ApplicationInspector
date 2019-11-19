@@ -1,8 +1,8 @@
 [
   {
-    "name": "Cryptography: x.509 Certificate",
+    "name": "Cryptography: x.509 Use",
     "id": "AI001300",
-    "description": "Cryptography: x.509 Certificate",
+    "description": "Cryptography: x.509 Certificate Use",
     "tags": [
       "Cryptography.x509.Use"
     ],
@@ -17,13 +17,52 @@
         "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": "do not include pfx or pem see rule below for x509 client auth"
+      },
+      {
+        "pattern": "PKCS|PaddingMode",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SubjectIdentifier|CERT_CHAIN_",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
       }
     ]
   },
   {
-    "name": "Cryptography: x.509 Certificate",
+    "name": "Cryptography: x.509 Use",
+    "id": "AI001400",
+    "description": "Cryptography: x.509 Certificate Use",
+    "applies_to": ["c", "cpp", "csharp"],
+    "tags": [
+      "Cryptography.x509.Use"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "WINHTTP.*CERT",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+
+  {
+    "name": "Cryptography: x.509 ClientAuth",
     "id": "AI001500",
-    "description": "Cryptography: x.509 Certificate",
+    "description": "Cryptography: x.509 Certificate ClientAuth",
     "tags": [
       "Cryptography.x509.ClientAuth"
     ],
@@ -42,9 +81,9 @@
     ]
   },
   {
-    "name": "Cryptography: x.509 Certificate",
-    "id": "AI001400",
-    "description": "Cryptography: x.509 Certificate",
+    "name": "Cryptography: x.509 Create",
+    "id": "AI001510",
+    "description": "Cryptography: x.509 Create Certificate",
     "tags": [
       "Cryptography.x509.Create"
     ],
@@ -71,14 +110,14 @@
         "_comment": ""
       },
       {
-        "pattern": "---BEGIN PKCS7---",
-        "type": "regex-word",
+        "pattern": "---BEGIN PKCS",
+        "type": "regex",
         "scopes": [
           "code"
         ],
         "modifiers": [ "i" ],
         "confidence": "high",
-        "_comment": ""
+        "_comment": "allow for PKCS7, other"
       },
       {
         "pattern": "(create|generate) (cert|certificate)",
@@ -93,32 +132,113 @@
     ]
   },
   {
-    "name": "Cryptography: x.509 Certificate",
+    "name": "Cryptography: DigitalSignature",
     "id": "AI001600",
-    "description": "Cryptography: x.509 Certificate",
+    "description": "Cryptography: DigitalSignature",
+    "applies_to": [
+      "csharp"
+    ],
     "tags": [
-      "Cryptography.x509.CodeSign"
+      "Cryptography.DigitalSignature"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "sign(ing)* *key|code *sign",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
-        "modifiers": [ "i" ],
+        "pattern": "DSA",
+        "type": "regex-word",
+        "scopes": [ "code" ],
         "confidence": "high",
+        "modifiers": [ "" ],
         "_comment": ""
       },
       {
-        "pattern": "sign",
+        "pattern": "DSACng",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "DSACryptoServiceProvider",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "DSASignatureDeformatter",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "DSASignatureFormatter",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "DSAKeyValue",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "DSAParameters",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: DigitalSignature",
+    "id": "AI001610",
+    "description": "Cryptography: DigitalSignature",
+    "tags": [
+      "Cryptography.DigitalSignature"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sign|signature|signer|signed",
         "type": "regex-word",
         "scopes": [
           "code"
         ],
         "modifiers": [ "i" ],
         "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: CodeSign",
+    "id": "AI001620",
+    "description": "Cryptography: CodeSign",
+    "tags": [
+      "Cryptography.CodeSign"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sign(ing)* *key|code *sign|authenticode",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
         "_comment": ""
       }
     ]
