@@ -69,7 +69,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "XslTransform|System.Xml.Xsl|XslCompiledTransform|transformNode",
+        "pattern": "XslTransform|System\\.Xml\\.Xsl|XslCompiledTransform|transformNode",
         "type": "regex",
         "confidence": "high",
         "scopes": [
@@ -89,7 +89,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "TransformerFactory|XSLDocument|javax.xml.transform",
+        "pattern": "TransformerFactory|XSLDocument|javax\\.xml\\.transform",
         "type": "regex",
         "confidence": "high",
         "scopes": [

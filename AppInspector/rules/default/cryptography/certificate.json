@@ -19,19 +19,11 @@
         "_comment": "do not include pfx or pem see rule below for x509 client auth"
       },
       {
-        "pattern": "PKCS|PaddingMode",
+        "pattern": "PKCS|PaddingMode|SubjectIdentifier",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
         "modifiers": [ "i" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "SubjectIdentifier|CERT_CHAIN_",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
         "_comment": ""
       }
     ]
@@ -47,7 +39,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "WINHTTP.*CERT",
+        "pattern": "_CERT|CERT_",
         "type": "regex",
         "scopes": [
           "code"
@@ -58,7 +50,6 @@
       }
     ]
   },
-
   {
     "name": "Cryptography: x.509 ClientAuth",
     "id": "AI001500",

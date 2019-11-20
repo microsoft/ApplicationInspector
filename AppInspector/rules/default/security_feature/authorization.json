@@ -12,7 +12,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "authorize|permission|role|sharedAccessPolicy|storageAccessKey|sharedAccessAccountPolicy|storageAccountOrConnectionString",
+        "pattern": "authorize|authorized|authorization|permission|claim|sharedAccessPolicy|storageAccessKey|sharedAccessAccountPolicy|storageAccountOrConnectionString",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -22,7 +22,16 @@
       },
       {
         "pattern": "SASToken",
-        "type": "regex",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "modifications": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "RBAC|role",
+        "type": "regex-word",
         "scopes": [
           "code"
         ],

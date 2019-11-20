@@ -99,8 +99,8 @@
     ],
     "patterns": [
       {
-        "pattern": "import .*nose",
-        "type": "string",
+        "pattern": "import .*nose|nosetests|nose\\.run()",
+        "type": "regex",
         "scopes": [
           "code"
         ],

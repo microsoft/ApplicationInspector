@@ -11,14 +11,14 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "tftp|ntp|imap|snmp|ldap|ldaps|ftps|sftp|ftp|nntp|smtp|telnet|ssh|pop3|gopher",
+        "pattern": "tftp|ntp|imap|snmp|ftps|sftp|ftp|nntp|smtp|telnet|ssh|pop3|gopher",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "modifiers": [ "i" ],
         "confidence": "medium",
-        "_comment": ""
+        "_comment": "don't include auth api's to avoid duplicate reporting"
       }
     ]
   },
@@ -353,7 +353,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RPC|RemotableTypeclass|System.Runtime.Remoting|RemotingConfiguration|TcpClient|TcpChannel",
+        "pattern": "RPC|RemotableTypeclass|System\\.Runtime\\.Remoting|RemotingConfiguration|TcpClient|TcpChannel",
         "type": "regex",
         "scopes": [
           "code"
@@ -375,7 +375,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "fastrpc|xmlrpc|SimpleXMLRPCServer|jsonrpc|rpc.server|client.rpc",
+        "pattern": "fastrpc|xmlrpc|SimpleXMLRPCServer|jsonrpc|rpc\\.server|client\\.rpc",
         "type": "regex",
         "scopes": [
           "code"
@@ -397,7 +397,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "capnp/ez-rpc.h|rpc/server.h",
+        "pattern": "capnp/ez-rpc\\.h|rpc/server\\.h",
         "type": "regex",
         "scopes": [
           "code"
@@ -419,7 +419,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RmiServiceExporter|RmiProxyFactoryBean|remoting|jaxrpc|RemoteAccountService|io.grpc|RPCClient",
+        "pattern": "RmiServiceExporter|RmiProxyFactoryBean|remoting|jaxrpc|RemoteAccountService|io\\.grpc|RPCClient",
         "type": "regex",
         "scopes": [
           "code"
@@ -463,7 +463,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "NetworkInterfaceType.Wman|NetworkInterfaceType.Wwanpp|NetworkInterfaceType.Wwanpp2",
+        "pattern": "NetworkInterfaceType\\.Wman|NetworkInterfaceType\\Wwanpp|NetworkInterfaceType\\.Wwanpp2",
         "type": "regex",
         "scopes": [
           "code"
