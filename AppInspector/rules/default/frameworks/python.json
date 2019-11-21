@@ -262,5 +262,22 @@
         "confidence": "high"
       }
     ]
+  },
+  {
+    "name": "Development Framework: Google API's",
+    "id": "AI018710",
+    "description": "Development Framework: Google API's",
+    "applies_to": [ "python" ],
+    "tags": [ "Development.Framework.Google.API" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "googleapis|googleapiclient",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
   }
 ]

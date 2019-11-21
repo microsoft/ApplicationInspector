@@ -302,5 +302,22 @@
         "confidence": "high"
       }
     ]
+  },
+  {
+    "name": "Development Framework: Google API's",
+    "id": "AI0138010",
+    "description": "Development Framework: Google API's",
+    "applies_to": [ "java" ],
+    "tags": [ "Development.Framework.Google.API" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "googleapis",
+        "type": "sub-string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
   }
 ]

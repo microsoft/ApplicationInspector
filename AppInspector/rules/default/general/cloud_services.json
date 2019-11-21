@@ -138,13 +138,6 @@
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
-      },
-      {
-        "pattern": "googleapis.com",
-        "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
       }
     ]
   },

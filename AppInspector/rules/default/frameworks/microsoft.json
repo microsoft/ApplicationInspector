@@ -153,23 +153,6 @@
     ]
   },
   {
-    "name": "Development Framework: Microsoft Active Directory (ADAL)",
-    "id": "AI016800",
-    "description": "Development Framework: Microsoft Active Directory (ADAL)",
-    "tags": [
-      "Development.Framework.Authentication.Microsoft.ADAL"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "ADAL",
-        "type": "string",
-        "scopes": [ "code" ],
-        "_comment": ""
-      }
-    ]
-  },
-  {
     "name": "Development Framework: Microsoft Dynamics",
     "id": "AI016900",
     "description": "Development Framework: Microsoft Dynamics",

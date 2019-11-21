@@ -222,14 +222,31 @@
     "name": "Content Management Framework: Wordpress",
     "id": "AI015200",
     "description": "Development Framework: Wordpress",
-    "applies_to": [ "javascript", "html"],
+    "applies_to": [ "javascript", "html" ],
     "tags": [ "Development.Framework.CMS.Wordpress" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "wordpress",
         "type": "string",
-        "scopes": [ "code", "comment"],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Google API's",
+    "id": "AI015210",
+    "description": "Development Framework: Google API's",
+    "applies_to": [ "javascript" ],
+    "tags": [ "Development.Framework.Google.API" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "apis\\.google\\.com/js/api\\.js",
+        "type": "regex",
+        "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
       }

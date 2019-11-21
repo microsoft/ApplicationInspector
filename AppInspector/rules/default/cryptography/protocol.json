@@ -101,6 +101,53 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
+      },
+      {
+        "pattern": "ssl",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "comment": "e.g. ssl_crl, ssl_ecdh_curve, others"
+      },
+      {
+        "pattern": "SSLCADNRequest|SSLCARevocation|SSLCompression|SSLEngine|SSLFIPS|SSLInsecureRenegotiation",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOCSP(DefaultResponder|Enable|OverrideResponder|ProxyURL|ResponderTimeout|ResponseMaxAge|ResponseTimeSkew|UseRequestNonce)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLOpenSSLConfCmd|SSLOptions|SSLPassPhraseDialog|SSLProtocol|SSLProxy",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLRandomSeed|SSLRenegBufferSize|SSLRequire|SSLSessionCache|SSLSRPUnknownUserSeed|SSLSRPVerifierFile|SSLStapling",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
+      },
+      {
+        "pattern": "SSLStrictSNIVHostCheck|SSLUserName|SSLUseStapling|SSLVerify",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "" ],
+        "_comment": ""
       }
     ]
   },

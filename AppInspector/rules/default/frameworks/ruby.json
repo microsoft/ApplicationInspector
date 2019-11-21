@@ -32,5 +32,22 @@
         "confidence": "high"
       }
     ]
+  },
+  {
+    "name": "Development Framework: Google API's",
+    "id": "AI018910",
+    "description": "Development Framework: Google API's",
+    "applies_to": [ "ruby" ],
+    "tags": [ "Development.Framework.Google.API" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "google/apis",
+        "type": "sub-string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
   }
 ]

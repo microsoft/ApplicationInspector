@@ -2,7 +2,7 @@
   {
     "name": "Feature: Authentication (MicrosoftOnline)",
     "id": "AI034900",
-    "description": "Feature: Authentication (MicrosoftOnline)",
+    "description": "Feature: Authentication (MicrosoftOnline) using Microsoft Identity Platform (ADAL/MSAL) or similar",
     "tags": [
       "Feature.Authentication.MicrosoftOnline"
     ],
@@ -17,9 +17,36 @@
         "_comment": ""
       },
       {
-        "pattern": "adal",
-        "type": "string",
+        "pattern": "adal|msal|System.IdentityModel.Tokens.Jwt|AzureADB2C|SingleAccountPublicClientApplication|MultipleAccountPublicClientApplication",
+        "type": "regex",
         "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Feature: Authentication (Google)",
+    "id": "AI034910",
+    "description": "Feature: Authentication (Google)",
+    "tags": [
+      "Feature.Authentication.Google"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "using Google\\.Apis\\.Auth|GoogleCredential|AppIdentityCredential|oauth2/google|apis\\.google\\.com/js/api\\.js",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "OIDAuthorizationRequest|accounts.google.com/o/oauth2|googleapis.com/oauth2|GTMAppAuth",
+        "type": "regex",
+        "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
@@ -29,7 +56,7 @@
   {
     "name": "Feature: Authentication (Oauth)",
     "id": "AI035000",
-    "description": "Feature: Authentication",
+    "description": "Feature: Authentication (Oauth)",
     "tags": [
       "Feature.Authentication.Oauth"
     ],
@@ -44,7 +71,7 @@
         "_comment": ""
       },
       {
-        "pattern": "auth_*token|access_*token|client_credentials|client_id|client_secret",
+        "pattern": "auth_*token|access_*token|client_credentials|client_*id|client_*secret|openid",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -70,6 +97,25 @@
     ]
   },
   {
+    "name": "Feature: Authentication (OpenIDConnect)",
+    "id": "AI035001",
+    "description": "Feature: Authentication (OpenIDConnect)",
+    "tags": [
+      "Feature.Authentication.OpenIDConnect"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "OpenID",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
     "name": "Feature: Authentication (Active Directory)",
     "id": "AI035100",
     "description": "Feature: Authentication",
@@ -87,12 +133,20 @@
         "_comment": ""
       },
       {
+        "pattern": "Microsoft\\.IdentityModel",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
         "pattern": "System.DirectoryServices",
         "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "medium",
-        "_comment": "potentially read only operations"
+        "_comment": ""
       }
     ]
   },
@@ -168,7 +222,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "jwt|RFC 7519",
+        "pattern": "jwt|RFC 7519|System.IdentityModel.Tokens.Jwt",
         "type": "regex-word",
         "scopes": [
           "code",
