@@ -1,64 +1,24 @@
 [
   {
-    "name": "Feature: Authentication",
+    "name": "Feature: Authentication (MicrosoftOnline)",
     "id": "AI034900",
-    "description": "Feature: Authentication",
+    "description": "Feature: Authentication (MicrosoftOnline)",
     "tags": [
-      "Feature.Authentication.General"
+      "Feature.Authentication.MicrosoftOnline"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "identity|auth|authenticated|authentication|log(in|on)|log(off|out)|signin|sign-?in|signout|sign-?out",
-        "type": "regex-word",
-        "scopes": [
-          "code"
-        ],
-        "modifications": [ "i" ],
+        "pattern": "login\\.microsoftonline\\.com|SASToken|login\\.live.com|outlook\\.com|SAS Token|Shared Access Signature|AAD",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },
       {
-        "pattern": "(username|password|credentials|acct)s?",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
-      }
-    ]
-  },
-  {
-    "name": "Feature: Authentication",
-    "id": "AI035000",
-    "description": "Feature: Authentication",
-    "tags": [
-      "Feature.Authentication.Oauth"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "oauth2",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
-      }
-    ]
-  },
-  {
-    "name": "Feature: Authentication",
-    "id": "AI035100",
-    "description": "Feature: Authentication",
-    "tags": [
-      "Feature.Authentication.Microsoft"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "adal|SASToken|login.live.com|outlook.com|SAS Token|Shared Access Signature",
-        "type": "regex",
+        "pattern": "adal",
+        "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high",
@@ -67,27 +27,140 @@
     ]
   },
   {
-    "name": "Feature: Authentication",
-    "id": "AI035200",
+    "name": "Feature: Authentication (Oauth)",
+    "id": "AI035000",
     "description": "Feature: Authentication",
     "tags": [
-      "Feature.Authentication.NTLM"
+      "Feature.Authentication.Oauth"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "NTLM|WWW-Authenticate: NTLM|windowsAuthentication|CredentialCache.DefaultCredentials|HTTPNtlmAuthHandler|LogonUserA",
+        "pattern": "oauth",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "auth_*token|access_*token|client_credentials|client_id|client_secret",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "Authorization: Bearer",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "bearer",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Feature: Authentication (Active Directory)",
+    "id": "AI035100",
+    "description": "Feature: Authentication",
+    "tags": [
+      "Feature.Authentication.Windows.AD"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "active-directory|Active *Directory|ADFS|PrincipleContext|ValidateCredentials",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "System.DirectoryServices",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": "potentially read only operations"
+      }
+    ]
+  },
+  {
+    "name": "Feature: Authentication (LDAP)",
+    "id": "AI035200",
+    "description": "Feature: Authentication (LDAP)",
+    "tags": [
+      "Feature.Authentication.LDAP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "LDAP|ldaps",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "LDAP",
+        "type": "sub-string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Feature: Authentication (NTML)",
+    "id": "AI035300",
+    "description": "Feature: Authentication (NTML)",
+    "tags": [
+      "Feature.Authentication.Windows.NTLM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "WWW-Authenticate: NTLM|windowsAuthentication|CredentialCache\\.DefaultCredentials|HTTPNtlmAuthHandler",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "LogonUserA|LogonUserEx|LogonUserW",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "NTLM",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
         "_comment": ""
       }
     ]
   },
   {
     "name": "Feature: Authentication (JWT)",
-    "id": "AI035300",
+    "id": "AI035400",
     "description": "Feature: Authentication (JWT)",
     "tags": [
       "Feature.Authentication.JWT"
@@ -95,10 +168,11 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "jwt",
-        "type": "string",
+        "pattern": "jwt|RFC 7519",
+        "type": "regex-word",
         "scopes": [
-          "code"
+          "code",
+          "comment"
         ],
         "modifications": [ "i" ],
         "confidence": "high",
@@ -108,7 +182,7 @@
   },
   {
     "name": "Feature: Authentication (HTML Form)",
-    "id": "AI035400",
+    "id": "AI035410",
     "description": "Feature: Authentication (HTML Form)",
     "tags": [
       "Feature.Authentication.HTMLForm"
@@ -126,6 +200,77 @@
         "_comment": ""
       }
     ]
+  },
+  {
+    "name": "Feature: Authentication (SAML)",
+    "id": "AI035420",
+    "description": "Feature: Authentication (SAML)",
+    "tags": [
+      "Feature.Authentication.SAML"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SAML|saml2",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Feature: Authentication (General)",
+    "id": "AI035430",
+    "description": "Feature: Authentication (General)",
+    "tags": [
+      "Feature.Authentication.General"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "identity|auth|authenticated|authentication|log(in|on)|log(off|out)|signin|sign-?in|signout|sign-?out",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifications": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "(username|userid|password|passphrase|multi-factor|credential|acct)s?",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "Authorization: Basic|WWW-Authenticate",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "connection_*string|conn_*string",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": ""
+      },
+      {
+        "pattern": "federation|sso|networkcredential",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
   }
-
 ]

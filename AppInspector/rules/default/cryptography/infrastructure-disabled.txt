@@ -12,22 +12,6 @@
     "rule_info": "",
     "patterns": [
       {
-        "pattern": "SSLCACertificateFile",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "SSLCACertificatePath",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
         "pattern": "SSLCADNRequestFile",
         "type": "regex",
         "scopes": [ "code" ],
@@ -68,38 +52,6 @@
         "_comment": ""
       },
       {
-        "pattern": "SSLCertificateChainFile",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "SSLCertificateFile",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "SSLCertificateKeyFile",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "SSLCipherSuite",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
         "pattern": "SSLCompression",
         "type": "regex",
         "scopes": [ "code" ],
@@ -107,14 +59,7 @@
         "modifiers": [ "" ],
         "_comment": ""
       },
-      {
-        "pattern": "SSLCryptoDevice",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
+  
       {
         "pattern": "SSLEngine",
         "type": "regex",
@@ -125,14 +70,6 @@
       },
       {
         "pattern": "SSLFIPS",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "SSLHonorCipherOrder",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
@@ -244,22 +181,6 @@
         "_comment": ""
       },
       {
-        "pattern": "SSLProxyCACertificateFile",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "SSLProxyCACertificatePath",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
         "pattern": "SSLProxyCARevocationCheck",
         "type": "regex",
         "scopes": [ "code" ],
@@ -317,30 +238,6 @@
       },
       {
         "pattern": "SSLProxyEngine",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "SSLProxyMachineCertificateChainFile",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "SSLProxyMachineCertificateFile",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "SSLProxyMachineCertificatePath",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
