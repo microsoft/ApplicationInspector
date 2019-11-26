@@ -1,7 +1,7 @@
 [
   {
     "name": "Feature: Authentication (MicrosoftOnline)",
-    "id": "AI034900",
+    "id": "AI037600",
     "description": "Feature: Authentication (MicrosoftOnline) using Microsoft Identity Platform (ADAL/MSAL) or similar",
     "tags": [
       "Feature.Authentication.MicrosoftOnline"
@@ -9,7 +9,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "login\\.microsoftonline\\.com|SASToken|login\\.live.com|outlook\\.com|SAS Token|Shared Access Signature|AAD",
+        "pattern": "login\\.microsoftonline\\.com|SASToken|login\\.live.com|outlook\\.com|SAS Token|Shared *Access *Signature",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -17,8 +17,16 @@
         "_comment": ""
       },
       {
-        "pattern": "adal|msal|System.IdentityModel.Tokens.Jwt|AzureADB2C|SingleAccountPublicClientApplication|MultipleAccountPublicClientApplication",
+        "pattern": "System.IdentityModel.Tokens.Jwt|AzureADB2C|SingleAccountPublicClientApplication|MultipleAccountPublicClientApplication",
         "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "adal|msal|AAD",
+        "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high",
@@ -28,7 +36,7 @@
   },
   {
     "name": "Feature: Authentication (Google)",
-    "id": "AI034910",
+    "id": "AI037700",
     "description": "Feature: Authentication (Google)",
     "tags": [
       "Feature.Authentication.Google"
@@ -55,7 +63,7 @@
   },
   {
     "name": "Feature: Authentication (Oauth)",
-    "id": "AI035000",
+    "id": "AI037800",
     "description": "Feature: Authentication (Oauth)",
     "tags": [
       "Feature.Authentication.Oauth"
@@ -98,7 +106,7 @@
   },
   {
     "name": "Feature: Authentication (OpenIDConnect)",
-    "id": "AI035001",
+    "id": "AI037900",
     "description": "Feature: Authentication (OpenIDConnect)",
     "tags": [
       "Feature.Authentication.OpenIDConnect"
@@ -117,7 +125,7 @@
   },
   {
     "name": "Feature: Authentication (Active Directory)",
-    "id": "AI035100",
+    "id": "AI038000",
     "description": "Feature: Authentication",
     "tags": [
       "Feature.Authentication.Windows.AD"
@@ -152,7 +160,7 @@
   },
   {
     "name": "Feature: Authentication (LDAP)",
-    "id": "AI035200",
+    "id": "AI038100",
     "description": "Feature: Authentication (LDAP)",
     "tags": [
       "Feature.Authentication.LDAP"
@@ -179,7 +187,7 @@
   },
   {
     "name": "Feature: Authentication (NTML)",
-    "id": "AI035300",
+    "id": "AI038200",
     "description": "Feature: Authentication (NTML)",
     "tags": [
       "Feature.Authentication.Windows.NTLM"
@@ -214,7 +222,7 @@
   },
   {
     "name": "Feature: Authentication (JWT)",
-    "id": "AI035400",
+    "id": "AI038300",
     "description": "Feature: Authentication (JWT)",
     "tags": [
       "Feature.Authentication.JWT"
@@ -236,7 +244,7 @@
   },
   {
     "name": "Feature: Authentication (HTML Form)",
-    "id": "AI035410",
+    "id": "AI038400",
     "description": "Feature: Authentication (HTML Form)",
     "tags": [
       "Feature.Authentication.HTMLForm"
@@ -257,7 +265,7 @@
   },
   {
     "name": "Feature: Authentication (SAML)",
-    "id": "AI035420",
+    "id": "AI038500",
     "description": "Feature: Authentication (SAML)",
     "tags": [
       "Feature.Authentication.SAML"
@@ -276,7 +284,7 @@
   },
   {
     "name": "Feature: Authentication (General)",
-    "id": "AI035430",
+    "id": "AI038600",
     "description": "Feature: Authentication (General)",
     "tags": [
       "Feature.Authentication.General"

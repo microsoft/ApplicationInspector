@@ -1,13 +1,13 @@
 [
   {
     "name": "Testing Framework: Pester",
-    "id": "AI046700",
+    "id": "AI049900",
     "description": "Testing Framework: Pester",
     "applies_to": [
       "powershell"
     ],
     "tags": [
-      "Testing.Framework.Pester"
+      "Framework.Testing.Pester"
     ],
     "patterns": [
       {

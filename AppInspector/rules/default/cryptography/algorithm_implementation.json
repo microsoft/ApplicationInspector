@@ -1,7 +1,7 @@
 [
   {
     "name": "Cryptography: Algorithm Implementation",
-    "id": "AI000800",
+    "id": "AI005400",
     "description": "Cryptography: Algorithm Implementation",
     "tags": [
       "Cryptography.Implementation"
@@ -20,7 +20,7 @@
   },
   {
     "name": "Cryptography: Algorithm Implementation (SHA1)",
-    "id": "AI000900",
+    "id": "AI005500",
     "description": "Cryptography: Algorithm Implementation (SHA1)",
     "tags": [
       "Cryptography.Implementation.SHA1"
@@ -38,7 +38,7 @@
   },
   {
     "name": "Cryptography: Algorithm Implementation (MD5)",
-    "id": "AI001000",
+    "id": "AI005600",
     "description": "Cryptography: Algorithm Implementation (MD5)",
     "tags": [
       "Cryptography.Implementation.MD5"
@@ -56,7 +56,7 @@
   },
   {
     "name": "Cryptography: Algorithm Implementation (SHA-256)",
-    "id": "AI001100",
+    "id": "AI005700",
     "description": "Cryptography: Algorithm Implementation (SHA-256)",
     "tags": [
       "Cryptography.Implementation.SHA256"
@@ -74,7 +74,7 @@
   },
   {
     "name": "Cryptography: Algorithm Implementation (Keccak)",
-    "id": "AI001200",
+    "id": "AI005800",
     "description": "Cryptography: Algorithm Implementation (Keccak)",
     "tags": [
       "Cryptography.Implementation.SHA256"

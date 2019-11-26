@@ -1,0 +1,114 @@
+[
+  {
+    "name": "Metric: Classes Defined",
+    "id": "AI024800",
+    "description": "Metric: Classes Defined",
+    "tags": [
+      "Metric.Code.Class.Defined"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "class (.*)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metric: Functions Defined",
+    "id": "AI024900",
+    "description": "Metric: Functions Defined",
+    "tags": [
+      "Metric.Code.Function.Defined"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(def|function|fun) (.*)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metric: HTML Forms Defined",
+    "id": "AI025000",
+    "description": "Metric: HTML Forms Defined",
+    "tags": [
+      "Metric.Code.HTMLForm.Defined"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "<form",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metric: Exceptions Caught",
+    "id": "AI025100",
+    "description": "Metric: Exceptions Caught",
+    "tags": [
+      "Metric.Code.Exception.Caught"
+    ],
+    "severity": "moderate",
+    "_comment": "may need to divide results by 2 to get more accurate counts i.e. pairs=single handling",
+    "patterns": [
+      {
+        "pattern": "catch|except|exception",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Logging Call",
+    "id": "AI025200",
+    "description": "Logging Call",
+    "tags": [
+      "Metric.Logging.Call"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "log|logger",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Sample Code",
+    "id": "AI025300",
+    "description": "Sample Code",
+    "tags": [
+      "Metric.SampleCode"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "(sample|example) code",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

@@ -154,6 +154,9 @@ namespace Microsoft.AppInspector
         [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
         public string OutputFilePath { get; set; }
 
+        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
+        public string ConsoleVerbosityLevel { get; set; }
+
         #region logoptions
 
         [Option('l', "log-file-path", Required = false, HelpText = "Log file path")]
@@ -174,6 +177,12 @@ namespace Microsoft.AppInspector
 
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Ignore default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
+
+        [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
+        public string OutputFilePath { get; set; }
+
+        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
+        public string ConsoleVerbosityLevel { get; set; }
 
         #region logoptions
 

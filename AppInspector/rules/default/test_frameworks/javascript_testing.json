@@ -1,14 +1,14 @@
 [
   {
     "name": "Testing Framework: Ava",
-    "id": "AI036700",
+    "id": "AI039900",
     "description": "Testing Framework: Ava",
     "applies_to": [
       "package.json",
       "yarn.lock"
     ],
     "tags": [
-      "Testing.Framework.Ava"
+      "Framework.Testing.Ava"
     ],
     "patterns": [
       {
@@ -26,13 +26,13 @@
   },
   {
     "name": "Testing Framework: DOH",
-    "id": "AI036800",
+    "id": "AI040000",
     "description": "Testing Framework: DOH",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.DOH"
+      "Framework.Testing.DOH"
     ],
     "patterns": [
       {
@@ -52,13 +52,13 @@
   },
   {
     "name": "Testing Framework: ",
-    "id": "AI036900",
+    "id": "AI040100",
     "description": "Testing Framework: ",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.JSUnit"
+      "Framework.Testing.JSUnit"
     ],
     "patterns": [
       {
@@ -78,13 +78,13 @@
   },
   {
     "name": "Testing Framework: EnhanceJS",
-    "id": "AI037000",
+    "id": "AI040200",
     "description": "Testing Framework: EnhanceJS",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.EnhanceJS"
+      "Framework.Testing.EnhanceJS"
     ],
     "patterns": [
       {
@@ -104,13 +104,13 @@
   },
   {
     "name": "Testing Framework: QUnit",
-    "id": "AI037100",
+    "id": "AI040300",
     "description": "Testing Framework: QUnit",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.QUnit"
+      "Framework.Testing.QUnit"
     ],
     "patterns": [
       {
@@ -130,13 +130,13 @@
   },
   {
     "name": "Testing Framework: UnitJS",
-    "id": "AI037200",
+    "id": "AI040400",
     "description": "Testing Framework: UnitJS",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.UnitJS"
+      "Framework.Testing.UnitJS"
     ],
     "patterns": [
       {
@@ -156,13 +156,13 @@
   },
   {
     "name": "Testing Framework: RHUnit",
-    "id": "AI037300",
+    "id": "AI040500",
     "description": "Testing Framework: RHUnit",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.RhUnit"
+      "Framework.Testing.RhUnit"
     ],
     "patterns": [
       {
@@ -182,13 +182,13 @@
   },
   {
     "name": "Testing Framework: Crosscheck",
-    "id": "AI037400",
+    "id": "AI040600",
     "description": "Testing Framework: Crosscheck",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Crosscheck"
+      "Framework.Testing.Crosscheck"
     ],
     "patterns": [
       {
@@ -208,13 +208,13 @@
   },
   {
     "name": "Testing Framework: J3Unit",
-    "id": "AI037500",
+    "id": "AI040700",
     "description": "Testing Framework: J3Unit",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.J3Unit"
+      "Framework.Testing.J3Unit"
     ],
     "patterns": [
       {
@@ -234,13 +234,13 @@
   },
   {
     "name": "Testing Framework: Mocha",
-    "id": "AI037600",
+    "id": "AI040800",
     "description": "Testing Framework: Mocha",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Mocha"
+      "Framework.Testing.Mocha"
     ],
     "patterns": [
       {
@@ -260,13 +260,13 @@
   },
   {
     "name": "Testing Framework: Intern",
-    "id": "AI037700",
+    "id": "AI040900",
     "description": "Testing Framework: Intern",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Intern"
+      "Framework.Testing.Intern"
     ],
     "patterns": [
       {
@@ -286,13 +286,13 @@
   },
   {
     "name": "Testing Framework: JSNUnit",
-    "id": "AI037800",
+    "id": "AI041000",
     "description": "Testing Framework: JSNUnit",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.JSNUnit"
+      "Framework.Testing.JSNUnit"
     ],
     "patterns": [
       {
@@ -312,13 +312,13 @@
   },
   {
     "name": "Testing Framework: YUITest",
-    "id": "AI037900",
+    "id": "AI041100",
     "description": "Testing Framework: YUITest",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.YUITest"
+      "Framework.Testing.YUITest"
     ],
     "patterns": [
       {
@@ -338,13 +338,13 @@
   },
   {
     "name": "Testing Framework: JSSpec",
-    "id": "AI038000",
+    "id": "AI041200",
     "description": "Testing Framework: JSSpec",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.JSSpec"
+      "Framework.Testing.JSSpec"
     ],
     "patterns": [
       {
@@ -364,13 +364,13 @@
   },
   {
     "name": "Testing Framework: UnitTesting",
-    "id": "AI038100",
+    "id": "AI041300",
     "description": "Testing Framework: UnitTesting",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.UnitTesting"
+      "Framework.Testing.UnitTesting"
     ],
     "patterns": [
       {
@@ -390,13 +390,13 @@
   },
   {
     "name": "Testing Framework: JSpec",
-    "id": "AI038200",
+    "id": "AI041400",
     "description": "Testing Framework: JSpec",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.JSpec"
+      "Framework.Testing.JSpec"
     ],
     "patterns": [
       {
@@ -416,13 +416,13 @@
   },
   {
     "name": "Testing Framework: Jasmine",
-    "id": "AI038300",
+    "id": "AI041500",
     "description": "Testing Framework: Jasmine",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Jasmine"
+      "Framework.Testing.Jasmine"
     ],
     "patterns": [
       {
@@ -442,13 +442,13 @@
   },
   {
     "name": "Testing Framework: Screw.Unit",
-    "id": "AI038400",
+    "id": "AI041600",
     "description": "Testing Framework: Screw.Unit",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.screw-unit"
+      "Framework.Testing.screw-unit"
     ],
     "patterns": [
       {
@@ -468,13 +468,13 @@
   },
   {
     "name": "Testing Framework: Tape",
-    "id": "AI038500",
+    "id": "AI041700",
     "description": "Testing Framework: Tape",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Tape"
+      "Framework.Testing.Tape"
     ],
     "patterns": [
       {
@@ -494,13 +494,13 @@
   },
   {
     "name": "Testing Framework: Teenytest",
-    "id": "AI038600",
+    "id": "AI041800",
     "description": "Testing Framework: Teenytest",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Teenytest"
+      "Framework.Testing.Teenytest"
     ],
     "patterns": [
       {
@@ -520,13 +520,13 @@
   },
   {
     "name": "Testing Framework: Simple",
-    "id": "AI038700",
+    "id": "AI041900",
     "description": "Testing Framework: Simple",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Test.Simple"
+      "Framework.Testing.Test.Simple"
     ],
     "patterns": [
       {
@@ -546,13 +546,13 @@
   },
   {
     "name": "Testing Framework: TestCase",
-    "id": "AI038800",
+    "id": "AI042000",
     "description": "Testing Framework: TestCase",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.TestCase"
+      "Framework.Testing.TestCase"
     ],
     "patterns": [
       {
@@ -572,13 +572,13 @@
   },
   {
     "name": "Testing Framework: TestIt",
-    "id": "AI038900",
+    "id": "AI042100",
     "description": "Testing Framework: TestIt",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.TestIt"
+      "Framework.Testing.TestIt"
     ],
     "patterns": [
       {
@@ -598,13 +598,13 @@
   },
   {
     "name": "Testing Framework: testdouble.js",
-    "id": "AI039000",
+    "id": "AI042200",
     "description": "Testing Framework: testdouble.js",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.testdouble.js"
+      "Framework.Testing.testdouble.js"
     ],
     "patterns": [
       {
@@ -624,13 +624,13 @@
   },
   {
     "name": "Testing Framework: jsUnitTest",
-    "id": "AI039100",
+    "id": "AI042300",
     "description": "Testing Framework: jsUnitTest",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.jsUnitTest"
+      "Framework.Testing.jsUnitTest"
     ],
     "patterns": [
       {
@@ -650,13 +650,13 @@
   },
   {
     "name": "Testing Framework: JSTest",
-    "id": "AI039200",
+    "id": "AI042400",
     "description": "Testing Framework: JSTest",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.JSTest"
+      "Framework.Testing.JSTest"
     ],
     "patterns": [
       {
@@ -676,13 +676,13 @@
   },
   {
     "name": "Testing Framework: jsUnity",
-    "id": "AI039300",
+    "id": "AI042500",
     "description": "Testing Framework: jsUnity",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.jsUnity"
+      "Framework.Testing.jsUnity"
     ],
     "patterns": [
       {
@@ -702,13 +702,13 @@
   },
   {
     "name": "Testing Framework: RhinoUnit",
-    "id": "AI039400",
+    "id": "AI042600",
     "description": "Testing Framework: RhinoUnit",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.RhinoUnit"
+      "Framework.Testing.RhinoUnit"
     ],
     "patterns": [
       {
@@ -728,13 +728,13 @@
   },
   {
     "name": "Testing Framework: JasUnit",
-    "id": "AI039500",
+    "id": "AI042700",
     "description": "Testing Framework: JasUnit",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.JasUnit"
+      "Framework.Testing.JasUnit"
     ],
     "patterns": [
       {
@@ -754,13 +754,13 @@
   },
   {
     "name": "Testing Framework: FireUnit",
-    "id": "AI039600",
+    "id": "AI042800",
     "description": "Testing Framework: FireUnit",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.FireUnit"
+      "Framework.Testing.FireUnit"
     ],
     "patterns": [
       {
@@ -778,13 +778,13 @@
   },
   {
     "name": "Testing Framework: JSTestDriver",
-    "id": "AI039700",
+    "id": "AI042900",
     "description": "Testing Framework: JSTestDriver",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.JSTestDriver"
+      "Framework.Testing.JSTestDriver"
     ],
     "patterns": [
       {
@@ -804,13 +804,13 @@
   },
   {
     "name": "Testing Framework: JS Test Runner",
-    "id": "AI039800",
+    "id": "AI043000",
     "description": "Testing Framework: JS Test Runner",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Js-test-runner"
+      "Framework.Testing.Js-test-runner"
     ],
     "patterns": [
       {
@@ -830,13 +830,13 @@
   },
   {
     "name": "Testing Framework: SinonJS",
-    "id": "AI039900",
+    "id": "AI043100",
     "description": "Testing Framework: SinonJS",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.SinonJS"
+      "Framework.Testing.SinonJS"
     ],
     "patterns": [
       {
@@ -856,13 +856,13 @@
   },
   {
     "name": "Testing Framework: SOAtest",
-    "id": "AI040000",
+    "id": "AI043200",
     "description": "Testing Framework: SOAtest",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.SOAtest"
+      "Framework.Testing.SOAtest"
     ],
     "patterns": [
       {
@@ -882,13 +882,13 @@
   },
   {
     "name": "Testing Framework: Vows",
-    "id": "AI040100",
+    "id": "AI043300",
     "description": "Testing Framework: Vows",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Vows"
+      "Framework.Testing.Vows"
     ],
     "patterns": [
       {
@@ -908,13 +908,13 @@
   },
   {
     "name": "Testing Framework: Nodeunit",
-    "id": "AI040200",
+    "id": "AI043400",
     "description": "Testing Framework: Nodeunit",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Nodeunit"
+      "Framework.Testing.Nodeunit"
     ],
     "patterns": [
       {
@@ -934,13 +934,13 @@
   },
   {
     "name": "Testing Framework: Tyrtle",
-    "id": "AI040300",
+    "id": "AI043500",
     "description": "Testing Framework: Tyrtle",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Tyrtle"
+      "Framework.Testing.Tyrtle"
     ],
     "patterns": [
       {
@@ -960,13 +960,13 @@
   },
   {
     "name": "Testing Framework: WRU",
-    "id": "AI040400",
+    "id": "AI043600",
     "description": "Testing Framework: WRU",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.wru"
+      "Framework.Testing.wru"
     ],
     "_comment": "https://github.com/WebReflection/wru",
     "patterns": [
@@ -987,13 +987,13 @@
   },
   {
     "name": "Testing Framework: BusterJS",
-    "id": "AI040500",
+    "id": "AI043700",
     "description": "Testing Framework: BusterJS",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.BusterJS"
+      "Framework.Testing.BusterJS"
     ],
     "patterns": [
       {
@@ -1013,13 +1013,13 @@
   },
   {
     "name": "Testing Framework: Lighttest",
-    "id": "AI040600",
+    "id": "AI043800",
     "description": "Testing Framework: Lighttest",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Lighttest"
+      "Framework.Testing.Lighttest"
     ],
     "patterns": [
       {
@@ -1039,13 +1039,13 @@
   },
   {
     "name": "Testing Framework: Chai",
-    "id": "AI040700",
+    "id": "AI043900",
     "description": "Testing Framework: Chai",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Chai"
+      "Framework.Testing.Chai"
     ],
     "patterns": [
       {
@@ -1065,13 +1065,13 @@
   },
   {
     "name": "Testing Framework: JSUS",
-    "id": "AI040800",
+    "id": "AI044000",
     "description": "Testing Framework: JSUS",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.JSUS"
+      "Framework.Testing.JSUS"
     ],
     "patterns": [
       {
@@ -1091,13 +1091,13 @@
   },
   {
     "name": "Testing Framework: WallabyJS",
-    "id": "AI040900",
+    "id": "AI044100",
     "description": "Testing Framework: WallabyJS",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.WallabyJS"
+      "Framework.Testing.WallabyJS"
     ],
     "patterns": [
       {
@@ -1117,13 +1117,13 @@
   },
   {
     "name": "Testing Framework: Fast-Check",
-    "id": "AI041000",
+    "id": "AI044200",
     "description": "Testing Framework: Fast-Check",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.fast-check"
+      "Framework.Testing.fast-check"
     ],
     "patterns": [
       {
@@ -1143,13 +1143,13 @@
   },
   {
     "name": "Testing Framework: Jest",
-    "id": "AI041100",
+    "id": "AI044300",
     "description": "Testing Framework: Jest",
     "applies_to": [
       "javascript"
     ],
     "tags": [
-      "Testing.Framework.Jest"
+      "Framework.Testing.Jest"
     ],
     "patterns": [
       {

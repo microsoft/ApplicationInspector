@@ -2,16 +2,16 @@
   {
     "name": "Network Connection",
     "description": "Network Connection",
-    "id": "AI029400",
+    "id": "AI030400",
     "applies_to": [
     ],
     "tags": [
-      "OS.Network.Connection"
+      "OS.Network.Connection.Miscellaneous"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "tftp|ntp|imap|snmp|ftps|sftp|ftp|nntp|smtp|telnet|ssh|pop3|gopher",
+        "pattern": "tftp|ntp\\.org|ntpupdate|imap|snmp|ftps|sftp|ftp|nntp|smtp|telnet|ssh|pop3|gopher",
         "type": "regex",
         "scopes": [
           "code"
@@ -25,7 +25,7 @@
   {
     "name": "Network Connection: TCP",
     "description": "Network Connection TCP",
-    "id": "AI029500",
+    "id": "AI030500",
     "applies_to": [
       "csharp"
     ],
@@ -69,7 +69,7 @@
   {
     "name": "Network Connection: TCP",
     "description": "Network Connection",
-    "id": "AI029600",
+    "id": "AI030600",
     "applies_to": [
       "c",
       "cpp"
@@ -94,7 +94,7 @@
   {
     "name": "Network Connection: TCP",
     "description": "Network Connection TCP",
-    "id": "AI029700",
+    "id": "AI030700",
     "applies_to": [
       "c",
       "cpp"
@@ -139,7 +139,7 @@
   {
     "name": "Network Connection: Socket",
     "description": "Network Connection Socket",
-    "id": "AI029800",
+    "id": "AI030800",
     "applies_to": [
       "python"
     ],
@@ -163,7 +163,7 @@
   {
     "name": "Network Connection: Socket",
     "description": "Network Socket",
-    "id": "AI029900",
+    "id": "AI030900",
     "tags": [
       "OS.Network.Connection.Socket"
     ],
@@ -185,7 +185,7 @@
   {
     "name": "Network Connection",
     "description": "Network Connection",
-    "id": "AI030000",
+    "id": "AI031000",
     "applies_to": [
       "csharp"
     ],
@@ -208,13 +208,14 @@
   {
     "name": "Network Connection: HTTP",
     "description": "Network Connection: HTTP",
-    "id": "AI030100",
+    "id": "AI031100",
     "applies_to": [
       "javascript",
       "html"
     ],
     "tags": [
-      "OS.Network.Connection.Http"
+      "OS.Network.Connection.Http",
+      "Component.Browser.Messaging.Ajax"
     ],
     "severity": "moderate",
     "patterns": [
@@ -252,7 +253,7 @@
   {
     "name": "Network Connection: HTTP",
     "description": "Network Connection: HTTP",
-    "id": "AI030200",
+    "id": "AI031200",
     "applies_to": [
       "javascript"
     ],
@@ -276,7 +277,7 @@
   {
     "name": "Network Connection: HTTP",
     "description": "Network Connection: HTTP",
-    "id": "AI030300",
+    "id": "AI031300",
     "applies_to": [
       "python"
     ],
@@ -300,7 +301,7 @@
   {
     "name": "Network Connection: HTTP",
     "description": "Network Connection: HTTP",
-    "id": "AI030400",
+    "id": "AI031400",
     "applies_to": [
     ],
     "tags": [
@@ -309,7 +310,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "http:\/",
+        "pattern": "https*:\/",
         "type": "regex",
         "scopes": [
           "code"
@@ -317,13 +318,23 @@
         "modifiers": [],
         "confidence": "low",
         "_comment": "HTTP URL without TLS"
+      },
+      {
+        "pattern": "url",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [],
+        "confidence": "medium",
+        "_comment": ""
       }
     ]
   },
   {
     "name": "Network Connection: HTTP",
     "description": "Network Connection: HTTP",
-    "id": "AI030500",
+    "id": "AI031500",
     "applies_to": [ "ruby" ],
     "tags": [
       "OS.Network.Connection.Http"
@@ -345,7 +356,7 @@
   {
     "name": "Network Connection: RPC",
     "description": "Network Connection: RPC",
-    "id": "AI030600",
+    "id": "AI031600",
     "applies_to": [ "csharp" ],
     "tags": [
       "OS.Network.Connection.RPC"
@@ -367,7 +378,7 @@
   {
     "name": "Network Connection: RPC",
     "description": "Network Connection: RPC",
-    "id": "AI030700",
+    "id": "AI031700",
     "applies_to": [ "python" ],
     "tags": [
       "OS.Network.Connection.RPC"
@@ -389,7 +400,7 @@
   {
     "name": "Network Connection: RPC",
     "description": "Network Connection: RPC",
-    "id": "AI030800",
+    "id": "AI031800",
     "applies_to": [ "c" ],
     "tags": [
       "OS.Network.Connecton.RPC"
@@ -411,7 +422,7 @@
   {
     "name": "Network Connection: RPC",
     "description": "Network Connection: RPC",
-    "id": "AI030900",
+    "id": "AI031900",
     "applies_to": [ "java" ],
     "tags": [
       "OS.Network.Connection.RPC"
@@ -433,7 +444,7 @@
   {
     "name": "Network Connection: RPC",
     "description": "Network Connection: RPC",
-    "id": "AI031000",
+    "id": "AI032000",
     "applies_to": [ "javascript" ],
     "tags": [
       "OS.Network.Connection.RPC"
@@ -455,7 +466,7 @@
   {
     "name": "Network Connection: Cellular",
     "description": "Network Connection: Cellular",
-    "id": "AI031100",
+    "id": "AI032100",
     "applies_to": [ "c", "cpp", "csharp" ],
     "tags": [
       "OS.Network.Connection.Cellular"
@@ -477,7 +488,7 @@
   {
     "name": "Network Connection: Modem",
     "description": "Network Connection: Modem",
-    "id": "AI031200",
+    "id": "AI032200",
     "applies_to": [ "c", "cpp", "csharp" ],
     "tags": [
       "OS.Network.Connection.Modem"

@@ -1,10 +1,10 @@
 [
   {
     "name": "Miscellaneous: Advertising Network (Google Adsense)",
-    "id": "AI019000",
+    "id": "AI000100",
     "description": "Miscellaneous: Advertising Network (Google Adsense)",
     "tags": [
-      "Miscellaneous.AdvertisingNetwork.GoogleAdsense"
+      "CloudServices.AdvertisingNetwork.GoogleAdsense"
     ],
     "severity": "moderate",
     "patterns": [
@@ -18,10 +18,10 @@
   },
   {
     "name": "Miscellaneous: Advertising Network (Outbrain)",
-    "id": "AI019100",
+    "id": "AI000200",
     "description": "Miscellaneous: Advertising Network (Outbrain)",
     "tags": [
-      "Miscellaneous.AdvertisingNetwork.Outbrain"
+      "CloudServices.AdvertisingNetwork.Outbrain"
     ],
     "severity": "moderate",
     "patterns": [
@@ -35,10 +35,10 @@
   },
   {
     "name": "Miscellaneous: Advertising Network (Bing Ads)",
-    "id": "AI019200",
+    "id": "AI000300",
     "description": "Miscellaneous: Advertising Network (Bing Ads)",
     "tags": [
-      "Miscellaneous.AdvertisingNetwork.BingAds"
+      "CloudServices.AdvertisingNetwork.BingAds"
     ],
     "severity": "moderate",
     "patterns": [

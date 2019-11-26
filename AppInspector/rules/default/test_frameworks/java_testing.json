@@ -1,13 +1,13 @@
 [
   {
     "name": "Testing Framework: Artos",
-    "id": "AI041200",
+    "id": "AI044400",
     "description": "Testing Framework: Artos",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Artos"
+      "Framework.Testing.Artos"
     ],
     "patterns": [
       {
@@ -25,13 +25,13 @@
   },
   {
     "name": "Testing Framework: Arquillian",
-    "id": "AI041300",
+    "id": "AI044500",
     "description": "Testing Framework: Arquillian",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Arquillian"
+      "Framework.Testing.Arquillian"
     ],
     "patterns": [
       {
@@ -49,13 +49,13 @@
   },
   {
     "name": "Testing Framework: AssertJ",
-    "id": "AI041400",
+    "id": "AI044600",
     "description": "Testing Framework: AssertJ",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.AssertJ"
+      "Framework.Testing.AssertJ"
     ],
     "patterns": [
       {
@@ -73,13 +73,13 @@
   },
   {
     "name": "Testing Framework: BeanSpec",
-    "id": "AI041500",
+    "id": "AI044700",
     "description": "Testing Framework: BeanSpec",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.BeanSpec"
+      "Framework.Testing.BeanSpec"
     ],
     "patterns": [
       {
@@ -97,13 +97,13 @@
   },
   {
     "name": "Testing Framework: BeanTest",
-    "id": "AI041600",
+    "id": "AI044800",
     "description": "Testing Framework: BeanTest",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.BeanTest"
+      "Framework.Testing.BeanTest"
     ],
     "patterns": [
       {
@@ -121,13 +121,13 @@
   },
   {
     "name": "Testing Framework: Cactus",
-    "id": "AI041700",
+    "id": "AI044900",
     "description": "Testing Framework: Cactus",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Cactus"
+      "Framework.Testing.Cactus"
     ],
     "patterns": [
       {
@@ -145,13 +145,13 @@
   },
   {
     "name": "Testing Framework: Concordion",
-    "id": "AI041800",
+    "id": "AI045000",
     "description": "Testing Framework: Concordion",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Concordion"
+      "Framework.Testing.Concordion"
     ],
     "patterns": [
       {
@@ -169,13 +169,13 @@
   },
   {
     "name": "Testing Framework: Concutest",
-    "id": "AI041900",
+    "id": "AI045100",
     "description": "Testing Framework: Concutest",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Concutest"
+      "Framework.Testing.Concutest"
     ],
     "patterns": [
       {
@@ -193,13 +193,13 @@
   },
   {
     "name": "Testing Framework: Cucumber",
-    "id": "AI042000",
+    "id": "AI045200",
     "description": "Testing Framework: Cucumber",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Cucumber"
+      "Framework.Testing.Cucumber"
     ],
     "patterns": [
       {
@@ -217,13 +217,13 @@
   },
   {
     "name": "Testing Framework: Cuppa",
-    "id": "AI042100",
+    "id": "AI045300",
     "description": "Testing Framework: Cuppa",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Cuppa"
+      "Framework.Testing.Cuppa"
     ],
     "patterns": [
       {
@@ -241,13 +241,13 @@
   },
   {
     "name": "Testing Framework: DbUnit",
-    "id": "AI042200",
+    "id": "AI045400",
     "description": "Testing Framework: DbUnit",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.DbUnit"
+      "Framework.Testing.DbUnit"
     ],
     "patterns": [
       {
@@ -265,13 +265,13 @@
   },
   {
     "name": "Testing Framework: EasyMock",
-    "id": "AI042300",
+    "id": "AI045500",
     "description": "Testing Framework: EasyMock",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.EasyMock"
+      "Framework.Testing.EasyMock"
     ],
     "patterns": [
       {
@@ -289,13 +289,13 @@
   },
   {
     "name": "Testing Framework: EtlUnit",
-    "id": "AI042400",
+    "id": "AI045600",
     "description": "Testing Framework: EtlUnit",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.EtlUnit"
+      "Framework.Testing.EtlUnit"
     ],
     "patterns": [
       {
@@ -313,13 +313,13 @@
   },
   {
     "name": "Testing Framework: EvoSuite",
-    "id": "AI042500",
+    "id": "AI045700",
     "description": "Testing Framework: EvoSuite",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.EvoSuite"
+      "Framework.Testing.EvoSuite"
     ],
     "patterns": [
       {
@@ -337,13 +337,13 @@
   },
   {
     "name": "Testing Framework: GrandTestAuto",
-    "id": "AI042600",
+    "id": "AI045800",
     "description": "Testing Framework: GrandTestAuto",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.GrandTestAuto"
+      "Framework.Testing.GrandTestAuto"
     ],
     "patterns": [
       {
@@ -363,13 +363,13 @@
   },
   {
     "name": "Testing Framework: GroboUtils",
-    "id": "AI042700",
+    "id": "AI045900",
     "description": "Testing Framework: GroboUtils",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.GroboUtils"
+      "Framework.Testing.GroboUtils"
     ],
     "patterns": [
       {
@@ -387,13 +387,13 @@
   },
   {
     "name": "Testing Framework: HavaRunner",
-    "id": "AI042800",
+    "id": "AI046000",
     "description": "Testing Framework: HavaRunner",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.HavaRunner"
+      "Framework.Testing.HavaRunner"
     ],
     "patterns": [
       {
@@ -411,13 +411,13 @@
   },
   {
     "name": "Testing Framework: Instinct",
-    "id": "AI042900",
+    "id": "AI046100",
     "description": "Testing Framework: Instinct",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Instinct"
+      "Framework.Testing.Instinct"
     ],
     "patterns": [
       {
@@ -435,13 +435,13 @@
   },
   {
     "name": "Testing Framework: JSST",
-    "id": "AI043000",
+    "id": "AI046200",
     "description": "Testing Framework: JSST",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.JSST"
+      "Framework.Testing.JSST"
     ],
     "patterns": [
       {
@@ -461,13 +461,13 @@
   },
   {
     "name": "Testing Framework: JBehave",
-    "id": "AI043100",
+    "id": "AI046300",
     "description": "Testing Framework: JBehave",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.JBehave"
+      "Framework.Testing.JBehave"
     ],
     "patterns": [
       {
@@ -487,13 +487,13 @@
   },
   {
     "name": "Testing Framework: JDave",
-    "id": "AI043200",
+    "id": "AI046400",
     "description": "Testing Framework: JDave",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.JDave"
+      "Framework.Testing.JDave"
     ],
     "patterns": [
       {
@@ -511,13 +511,13 @@
   },
   {
     "name": "Testing Framework: JExample",
-    "id": "AI043300",
+    "id": "AI046500",
     "description": "Testing Framework: JExample",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.JExample"
+      "Framework.Testing.JExample"
     ],
     "patterns": [
       {
@@ -535,13 +535,13 @@
   },
   {
     "name": "Testing Framework: JGiven",
-    "id": "AI043400",
+    "id": "AI046600",
     "description": "Testing Framework: JGiven",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.JGiven"
+      "Framework.Testing.JGiven"
     ],
     "patterns": [
       {
@@ -559,13 +559,13 @@
   },
   {
     "name": "Testing Framework: JMock",
-    "id": "AI043500",
+    "id": "AI046700",
     "description": "Testing Framework: JMock",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.JMock"
+      "Framework.Testing.JMock"
     ],
     "patterns": [
       {
@@ -583,13 +583,13 @@
   },
   {
     "name": "Testing Framework: JMockit",
-    "id": "AI043600",
+    "id": "AI046800",
     "description": "Testing Framework: JMockit",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.JMockit"
+      "Framework.Testing.JMockit"
     ],
     "patterns": [
       {
@@ -607,13 +607,13 @@
   },
   {
     "name": "Testing Framework: Jnario",
-    "id": "AI043700",
+    "id": "AI046900",
     "description": "Testing Framework: Jnario",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Jnario"
+      "Framework.Testing.Jnario"
     ],
     "patterns": [
       {
@@ -631,13 +631,13 @@
   },
   {
     "name": "Testing Framework: Jtest",
-    "id": "AI043800",
+    "id": "AI047000",
     "description": "Testing Framework: Jtest",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Jtest"
+      "Framework.Testing.Jtest"
     ],
     "patterns": [
       {
@@ -655,13 +655,13 @@
   },
   {
     "name": "Testing Framework: Jukito",
-    "id": "AI043900",
+    "id": "AI047100",
     "description": "Testing Framework: Jukito",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Jukito"
+      "Framework.Testing.Jukito"
     ],
     "patterns": [
       {
@@ -679,13 +679,13 @@
   },
   {
     "name": "Testing Framework: JUnit",
-    "id": "AI044000",
+    "id": "AI047200",
     "description": "Testing Framework: JUnit",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.JUnit"
+      "Framework.Testing.JUnit"
     ],
     "patterns": [
       {
@@ -705,13 +705,13 @@
   },
   {
     "name": "Testing Framework: JUnitEE",
-    "id": "AI044100",
+    "id": "AI047300",
     "description": "Testing Framework: JUnitEE",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.JUnitEE"
+      "Framework.Testing.JUnitEE"
     ],
     "patterns": [
       {
@@ -729,13 +729,13 @@
   },
   {
     "name": "Testing Framework: JWalk",
-    "id": "AI044200",
+    "id": "AI047400",
     "description": "Testing Framework: JWalk",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.JWalk"
+      "Framework.Testing.JWalk"
     ],
     "patterns": [
       {
@@ -753,13 +753,13 @@
   },
   {
     "name": "Testing Framework: Mockito",
-    "id": "AI044300",
+    "id": "AI047500",
     "description": "Testing Framework: Mockito",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Mockito"
+      "Framework.Testing.Mockito"
     ],
     "patterns": [
       {
@@ -777,13 +777,13 @@
   },
   {
     "name": "Testing Framework: Mockrunner",
-    "id": "AI044400",
+    "id": "AI047600",
     "description": "Testing Framework: Mockrunner",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Mockrunner"
+      "Framework.Testing.Mockrunner"
     ],
     "patterns": [
       {
@@ -801,13 +801,13 @@
   },
   {
     "name": "Testing Framework: Needle",
-    "id": "AI044500",
+    "id": "AI047700",
     "description": "Testing Framework: Needle",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Needle"
+      "Framework.Testing.Needle"
     ],
     "patterns": [
       {
@@ -825,13 +825,13 @@
   },
   {
     "name": "Testing Framework: NUTester",
-    "id": "AI044600",
+    "id": "AI047800",
     "description": "Testing Framework: NUTester",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.NUTester"
+      "Framework.Testing.NUTester"
     ],
     "patterns": [
       {
@@ -849,13 +849,13 @@
   },
   {
     "name": "Testing Framework: OpenPojo",
-    "id": "AI044700",
+    "id": "AI047900",
     "description": "Testing Framework: OpenPojo",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.OpenPojo"
+      "Framework.Testing.OpenPojo"
     ],
     "patterns": [
       {
@@ -873,13 +873,13 @@
   },
   {
     "name": "Testing Framework: PowerMock",
-    "id": "AI044800",
+    "id": "AI048000",
     "description": "Testing Framework: PowerMock",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.PowerMock"
+      "Framework.Testing.PowerMock"
     ],
     "patterns": [
       {
@@ -897,13 +897,13 @@
   },
   {
     "name": "Testing Framework: Randoop",
-    "id": "AI044900",
+    "id": "AI048100",
     "description": "Testing Framework: Randoop",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Randoop"
+      "Framework.Testing.Randoop"
     ],
     "patterns": [
       {
@@ -921,13 +921,13 @@
   },
   {
     "name": "Testing Framework: Spock",
-    "id": "AI045000",
+    "id": "AI048200",
     "description": "Testing Framework: Spock",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Spock"
+      "Framework.Testing.Spock"
     ],
     "patterns": [
       {
@@ -945,13 +945,13 @@
   },
   {
     "name": "Testing Framework: SpryTest",
-    "id": "AI045100",
+    "id": "AI048300",
     "description": "Testing Framework: SpryTest",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.SpryTest"
+      "Framework.Testing.SpryTest"
     ],
     "patterns": [
       {
@@ -969,13 +969,13 @@
   },
   {
     "name": "Testing Framework:SureAssert ",
-    "id": "AI045200",
+    "id": "AI048400",
     "description": "Testing Framework: SureAssert",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.SureAssert"
+      "Framework.Testing.SureAssert"
     ],
     "patterns": [
       {
@@ -993,13 +993,13 @@
   },
   {
     "name": "Testing Framework: Tacinga",
-    "id": "AI045300",
+    "id": "AI048500",
     "description": "Testing Framework: Tacinga",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Tacinga"
+      "Framework.Testing.Tacinga"
     ],
     "patterns": [
       {
@@ -1017,13 +1017,13 @@
   },
   {
     "name": "Testing Framework: TestNG",
-    "id": "AI045400",
+    "id": "AI048600",
     "description": "Testing Framework: TestNG",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.TestNG"
+      "Framework.Testing.TestNG"
     ],
     "patterns": [
       {
@@ -1041,13 +1041,13 @@
   },
   {
     "name": "Testing Framework: Unitils",
-    "id": "AI045500",
+    "id": "AI048700",
     "description": "Testing Framework: Unitils",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.Unitils"
+      "Framework.Testing.Unitils"
     ],
     "patterns": [
       {
@@ -1065,13 +1065,13 @@
   },
   {
     "name": "Testing Framework: XMLUnit",
-    "id": "AI045600",
+    "id": "AI048800",
     "description": "Testing Framework: XMLUnit",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Testing.Framework.XMLUnit"
+      "Framework.Testing.XMLUnit"
     ],
     "patterns": [
       {

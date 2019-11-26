@@ -1,11 +1,11 @@
 [
   {
     "name": "Development Framework: Standard C Library",
-    "id": "AI011500",
+    "id": "AI017100",
     "description": "Development Framework: Standard C Library",
     "recommendation": "",
     "applies_to": [ "c" ],
-    "tags": [ "Development.Framework.StandardCLibrary" ],
+    "tags": [ "Framework.Development.StandardCLibrary" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -18,11 +18,11 @@
   },
   {
     "name": "Development Framework: Boost",
-    "id": "AI011600",
+    "id": "AI017200",
     "description": "Development Framework: Boost",
     "recommendation": "",
     "applies_to": [ "c" ],
-    "tags": [ "Development.Framework.StandardCLibrary" ],
+    "tags": [ "Framework.Development.StandardCLibrary" ],
     "severity": "moderate",
     "patterns": [
       {

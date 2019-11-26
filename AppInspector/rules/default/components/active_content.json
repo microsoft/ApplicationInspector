@@ -1,34 +1,12 @@
 [
   {
     "name": "Component: Adobe Flash",
-    "id": "AI011700",
-    "description": "Component: Adobe Flash",
-    "applies_to": [
-      "actionscript"
-    ],
-    "tags": [
-      "Development.Framework.Component.AdobeFlash"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "import flash",
-        "type": "string",
-        "scopes": [
-          "code"
-        ],
-        "confidence": "high"
-      }
-    ]
-  },
-  {
-    "name": "Component: Adobe Flash",
-    "id": "AI011800",
+    "id": "AI004900",
     "description": "Component: Adobe Flash",
     "applies_to": [
     ],
     "tags": [
-      "Development.Framework.Component.AdobeFlash"
+      "Component.Executable.Adobe.Flash"
     ],
     "severity": "moderate",
     "patterns": [
@@ -44,16 +22,17 @@
   },
   {
     "name": "Component: Active-X",
-    "id": "AI011900",
+    "id": "AI005000",
     "description": "Component: Active-X",
     "applies_to": [
       "c",
       "cpp",
       "csharp",
-      "html"
+      "html",
+      "javascript"
     ],
     "tags": [
-      "Development.Framework.Component.ActiveX"
+      "Component.Executable.Microsoft.ActiveX"
     ],
     "severity": "moderate",
     "patterns": [
@@ -71,7 +50,7 @@
   },
   {
     "name": "Component: COM",
-    "id": "AI012000",
+    "id": "AI005100",
     "description": "Component: COM",
     "applies_to": [
       "c",
@@ -79,7 +58,7 @@
       "csharp"
     ],
     "tags": [
-      "Development.Framework.Component.COM"
+      "Component.Executable.Microsoft.COM"
     ],
     "severity": "moderate",
     "patterns": [
@@ -95,7 +74,7 @@
   },
   {
     "name": "Component: PDF",
-    "id": "AI012100",
+    "id": "AI005200",
     "description": "Component: PDF",
     "applies_to": [
       "c",
@@ -103,12 +82,12 @@
       "csharp"
     ],
     "tags": [
-      "Development.Framework.Component.PDF"
+      "Component.Executable.Adobe.PDF"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "pdf",
+        "pattern": ".pdf",
         "type": "string",
         "scopes": [
           "code"
@@ -118,11 +97,11 @@
     ]
   },
   {
-    "name": "Component: Silverlight",
-    "id": "AI012200",
-    "description": "Component: Silverlight",
+    "name": "Component: Microsoft Silverlight",
+    "id": "AI005300",
+    "description": "Component: Microsoft Silverlight",
     "tags": [
-      "Development.Framework.Component.Microsoft.Silverlight"
+      "Component.Executable.Microsoft.Silverlight"
     ],
     "severity": "moderate",
     "patterns": [

@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Data: Audio File",
+    "id": "AI015000",
+    "description": "Data: Audio File",
+    "tags": [
+      "Data.Media.Audio"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.(wma|tiff|wmv|asf|vp9|cr2|wav|mpeg|gsm|ogg|au|aiff|vox|aac|msv|dvf|flac|aifc|amz|atrac|m4a|m4p)",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "\\.(mp2|mp3|mp4|mpa|ra|rax|raw|smf|snd|sng|swa|hma|aac|ac3|eac3|Vorbis|pcm)",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "wma|tiff|wmv|asf|vp9|cr2|wav|mpeg|gsm|ogg|au|aiff|vox|aac|msv|dvf|flac|aifc|amz|atrac|m4a|m4p",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": ""
+      },
+      {
+        "pattern": "mp2|mp3|mp4|mpa|ra|rax|raw|smf|snd|sng|swa|hma|aac|ac3|eac3|Vorbis|pcm",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Data: Video File",
+    "id": "AI015100",
+    "description": "Data: Video File",
+    "tags": [
+      "Data.Media.Video"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.(avi|flv|mov|wmv|mp4|vob|hdv|ogg|oga|ogv|ogx)",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "\\.(mp4|m4v|f4v|f4a|m4b|m4r|f4b|mxf|op1a|op-atom)",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "avi|flv|mov|wmv|mp4|vob|hdv|ogg|oga|ogv|ogx",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": ""
+      },
+      {
+        "pattern": "mp4|m4v|f4v|f4a|m4b|m4r|f4b|mxf|op1a|op-atom",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  }
+]

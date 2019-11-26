@@ -1,10 +1,10 @@
 [
   {
     "name": "Development Framework: Google API's",
-    "id": "AI012210",
+    "id": "AI017300",
     "description": "Development Framework: Google API's",
     "applies_to": [ "csharp" ],
-    "tags": [ "Development.Framework.Google.API" ],
+    "tags": [ "Framework.Development.Google.API" ],
     "severity": "moderate",
     "patterns": [
       {

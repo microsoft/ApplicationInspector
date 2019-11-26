@@ -1,16 +1,16 @@
 [
   {
-    "name": "Media Parsing",
-    "id": "AI029300",
-    "description": "Media Parsing",
+    "name": "Audio Video Media Codec",
+    "id": "AI013600",
+    "description": "Audio Video Media Codec",
     "tags": [
-      "Data.Deserialization.Media"
+      "Data.Parsing.Media"
     ],
     "severity": "moderate",
     "_comment": "",
     "patterns": [
       {
-        "pattern": "ffmpeg|libraw|webp|mux",
+        "pattern": "ffmpeg|libraw|webp|mux|DivX|XviDH.263|H.264|HEVC|MPEG4|Theora|3GP|Windows Media|JPEG 2000",
         "type": "regex-word",
         "scopes": [
           "code",
@@ -21,7 +21,7 @@
         "_comment": ""
       },
       {
-        "pattern": "wma|mp3|mp4|tiff|wmv|asf|vp9|cr2",
+        "pattern": "Quicktime|MPEG-4|VP8|VP6|MPEG1|MPEG2|MPEG-TS|MPEG-4|DNXHD|XDCAM|DVCPRO|IMX|XDCAM",
         "type": "regex-word",
         "scopes": [
           "code",
@@ -34,3 +34,5 @@
     ]
   }
 ]
+
+

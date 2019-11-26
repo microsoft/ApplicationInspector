@@ -1,17 +1,17 @@
 [
   {
-    "name": "Data: XML",
-    "id": "AI007400",
-    "description": "Data: XML",
+    "name": "Data Handling: Processes XML",
+    "id": "AI013700",
+    "description": "Data Handling: Processes XML",
     "tags": [
-      "Data.XML"
+      "Data.Parsing.XML"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "xml|dom|sax|xpath|xmldom|xelement|xmldocument",
+        "pattern": "xml|sax|xpath|xmldom|xelement|xmldocument",
         "type": "regex-word",
-        "confidence":  "high",
+        "confidence": "high",
         "scopes": [
           "code"
         ]
@@ -19,12 +19,12 @@
     ]
   },
   {
-    "name": "Data: XML",
-    "id": "AI007500",
-    "description": "Data: XML",
+    "name": "Data Handling: Processes XML",
+    "id": "AI013800",
+    "description": "Data Handling: Processes XMLL",
     "applies_to": [ "python" ],
     "tags": [
-      "Data.XML"
+      "Data.Parsing.XML"
     ],
     "severity": "moderate",
     "patterns": [
@@ -39,12 +39,32 @@
     ]
   },
   {
-    "name": "Data: XML",
-    "id": "AI007600",
-    "description": "Data: XML",
+    "name": "Data Handling: Processes XML",
+    "id": "AI013900",
+    "description": "Data Handling: Processes XMLL",
+    "applies_to": [ "javascript" ],
+    "tags": [
+      "Data.Parsing.XML"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "parseFromString(.*,\"text\/xml\")|xhttp\\.responseXML",
+        "type": "regex-word",
+        "confidence": "high",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Data Handling: Processes XML",
+    "id": "AI014000",
+    "description": "Data Handling: Processes XML",
     "applies_to": [ "java" ],
     "tags": [
-      "Data.XML"
+      "Data.Parsing.XML"
     ],
     "severity": "moderate",
     "patterns": [
@@ -59,12 +79,12 @@
     ]
   },
   {
-    "name": "Data: XSLT Transformations",
-    "id": "AI007700",
-    "description": "Data: XSLT Transformations",
+    "name": "Data Handling: XSLT Transformations",
+    "id": "AI014100",
+    "description": "Data Handling: XSLT Transformations",
     "applies_to": [ "csharp" ],
     "tags": [
-      "Data.XSLT"
+      "Data.Parsing.XSLT"
     ],
     "severity": "moderate",
     "patterns": [
@@ -79,12 +99,12 @@
     ]
   },
   {
-    "name": "Data: XSLT Transformations",
-    "id": "AI007800",
-    "description": "Data: XSLT Transformations",
+    "name": "Data Handling: XSLT Transformations",
+    "id": "AI014200",
+    "description": "Data Handling: XSLT Transformations",
     "applies_to": [ "java" ],
     "tags": [
-      "Data.XSLT"
+      "Data.Parsing.XSLT"
     ],
     "severity": "moderate",
     "patterns": [
@@ -99,12 +119,12 @@
     ]
   },
   {
-    "name": "Data: XSLT Transformations",
-    "id": "AI007900",
-    "description": "Data: XSLT Transformations",
+    "name": "Data Handling: XSLT Transformations",
+    "id": "AI014300",
+    "description": "Data Handling: XSLT Transformations",
     "applies_to": [ "javascript" ],
     "tags": [
-      "Data.XSLT"
+      "Data.Parsing.XSLT"
     ],
     "severity": "moderate",
     "patterns": [
@@ -119,17 +139,18 @@
     ]
   },
   {
-    "name": "Data: XSLT Transformations",
-    "id": "AI008000",
-    "description": "Data: XSLT Transformations",
+    "name": "Data Handling: XSLT Transformations",
+    "id": "AI014400",
+    "description": "Data Handling: XSLT Transformations",
     "tags": [
-      "Data.XSLT"
+      "Data.Parsing.XSLT"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\.xls",
+        "pattern": "\\.xslt",
         "type": "regex",
+        "confidence": "high",
         "scopes": [
           "code"
         ]
@@ -138,17 +159,18 @@
   },
   {
     "name": "Data: XSLT Transformations",
-    "id": "AI008100",
-    "description": "Data: XSLT Transformations",
+    "id": "AI014500",
+    "description": "Data Handling: XSLT Transformations",
     "tags": [
-      "Data.XSLT"
+      "Data.Parsing.XSLT"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "xslt",
-        "type": "regex",
-        "modifications":  ["i"],
+        "pattern": "xslt|xsl:stylesheet",
+        "type": "regex-word",
+        "modifications": [ "i" ],
+        "confidence": "high",
         "scopes": [
           "code"
         ]

@@ -1,0 +1,257 @@
+[
+  {
+    "name": "CloudServices: DataStorage (Azure)",
+    "id": "AI002500",
+    "description": "CloudServices: DataStorage (Azure) Table,File,Blob",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "CloudServices.DataStorage.Microsoft.Azure",
+      "CloudServices.Hosting.Microsoft.Azure"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "CloudStorageAccount|Microsoft\\.Azure\\.Storage|Microsoft\\.Azure\\.Cosmos\\.Table|Microsoft\\.Azure\\.Documents",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": ".core.windows.net",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Azure)",
+    "id": "AI002600",
+    "description": "CloudServices: DataStorage (Azure) Table,File,Blob",
+    "applies_to": [
+      "python",
+      "java",
+      "yaml",
+      "pom"
+    ],
+    "tags": [
+      "CloudServices.DataStorage.Microsoft.Azure"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(BlockBlobService|azure)\\.storage|cosmosdb\\.azure\\.com",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Azure)",
+    "id": "AI002700",
+    "description": "CloudServices: DataStorage (Azure) Table,File,Blob",
+    "applies_to": [
+      "javascript"
+    ],
+    "tags": [
+      "CloudServices.DataStorage.Microsoft.Azure"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.createBlobService|azure/storage-blob",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Azure)",
+    "id": "AI002800",
+    "description": "CloudServices: DataStorage (Azure) Table,File,Blob",
+    "applies_to": [
+      "c",
+      "c++"
+    ],
+    "tags": [
+      "CloudServices.DataStorage.Microsoft.Azure"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "azure::storage|#include <was\/storage_account.h>",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Microsoft OneDrive)",
+    "id": "AI002900",
+    "description": "CloudServices: DataStorage (Microsoft OneDrive)",
+    "tags": [
+      "CloudServices.DataStorage.Microsoft.OneDrive"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "OneDrive",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "modifications": "i",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Amazon S3)",
+    "id": "AI003000",
+    "description": "CloudServices: DataStorage (Amazon S3)",
+    "applies_to": [
+      "c",
+      "c++"
+    ],
+    "tags": [
+      "CloudServices.DataStorage.Amazon.S3"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "aws/s3/|Aws::S3",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Amazon S3)",
+    "id": "AI003100",
+    "description": "CloudServices: DataStorage (Amazon S3)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "CloudServices.DataStorage.Amazon.S3"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "using Amazon.S3;",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Amazon S3)",
+    "id": "AI003200",
+    "description": "CloudServices: DataStorage (Amazon S3)",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "CloudServices.DataStorage.Amazon.S3"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "import boto3",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Google Drive)",
+    "id": "AI003300",
+    "description": "CloudServices: DataStorage (Google Drive)",
+    "tags": [
+      "CloudServices.DataStorage.Google.Drive"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "googleapis.com/upload/drive",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (DropBox)",
+    "id": "AI003400",
+    "description": "CloudServices: DataStorage (DropBox)",
+    "tags": [
+      "CloudServices.DataStorage.DropBox"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "api.dropboxapi.com",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (MediaFire)",
+    "id": "AI003500",
+    "description": "CloudServices: DataStorage (MediaFire)",
+    "tags": [
+      "CloudServices.DataStorage.MediaFire"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "MediaFire",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

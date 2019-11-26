@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Data: Financial (Account)",
+    "id": "AI014600",
+    "description": "Data: Financial (Account)",
+    "tags": [
+      "Data.Sensitive.Financial.BankAccount"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "bank\\s*(acct|account)",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "(checking|savings|chk)\\s*(account|acct)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Data: Financial (Income)",
+    "id": "AI014700",
+    "description": "Data: Financial (Income)",
+    "tags": [
+      "Data.Sensitive.Financial.Income"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "income|salary|salaries|financial",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Data: Financial (Currency)",
+    "id": "AI014800",
+    "description": "Data: Financial (Currency)",
+    "tags": [
+      "Data.Sensitive.Financial.Currency"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "currency|usd|money|dollar|coins|euro|peso|deuch-mark|dinar|franc|krone|pound|rupee|shekel|yen",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": "Currencies"
+      }
+    ]
+  },
+  {
+    "name": "Data: Financial (Credit Card)",
+    "id": "AI014900",
+    "description": "Data: Financial (Credit Card)",
+    "tags": [
+      "Data.Sensitive.Financial.CreditCard"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "visa|americanexpress|amex|(master|discover|credit|debit)\\s*card",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

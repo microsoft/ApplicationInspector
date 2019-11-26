@@ -224,7 +224,7 @@
     <value>Tagtest for [{0}]: </value>
   </data>
   <data name="VERIFY_RULES_RESULTS_FAIL" xml:space="preserve">
-    <value>Verify rules failed</value>
+    <value>Verify rules failed.  See log file for details.</value>
   </data>
   <data name="VERIFY_RULES_RESULTS_SUCCESS" xml:space="preserve">
     <value>Verify rules succeeded</value>

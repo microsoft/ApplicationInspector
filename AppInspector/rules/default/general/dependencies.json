@@ -1,81 +1,7 @@
 [
   {
-    "name": "Metric: Classes Defined",
-    "id": "AI020000",
-    "description": "Metric: Classes Defined",
-    "tags": [
-      "Metric.Classes.Defined"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "class (.*)",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
-      }
-    ]
-  },
-  {
-    "name": "Metric: Functions Defined",
-    "id": "AI020100",
-    "description": "Metric: Functions Defined",
-    "tags": [
-      "Metric.Functions.Defined"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "(def|function|fun) (.*)",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "confidence": "medium",
-        "_comment": ""
-      }
-    ]
-  },
-  {
-    "name": "Metric: HTML Forms Defined",
-    "id": "AI020200",
-    "description": "Metric: HTML Forms Defined",
-    "tags": [
-      "Metric.HTMLForm.Defined"
-    ],
-    "severity": "moderate",
-    "_comment": "",
-    "patterns": [
-      {
-        "pattern": "<form",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
-      }
-    ]
-  },
-  {
-    "name": "Metric: Exceptions Caught",
-    "id": "AI020300",
-    "description": "Metric: Exceptions Caught",
-    "tags": [
-      "Metric.Exception.Caught"
-    ],
-    "severity": "moderate",
-    "_comment": "may need to divide results by 2 to get more accurate counts i.e. pairs=single handling",
-    "patterns": [
-      {
-        "pattern": "catch|except|exception",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "confidence": "medium",
-        "_comment": ""
-      }
-    ]
-  },
-  {
     "name": "Dependency: Included Source",
-    "id": "AI020400",
+    "id": "AI025400",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -95,7 +21,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI020500",
+    "id": "AI025500",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -115,7 +41,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI020600",
+    "id": "AI025600",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -135,7 +61,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI020700",
+    "id": "AI025700",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -175,7 +101,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI020800",
+    "id": "AI025800",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -202,7 +128,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI020900",
+    "id": "AI025900",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -229,7 +155,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI021000",
+    "id": "AI026000",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -256,7 +182,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI021100",
+    "id": "AI026100",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -275,7 +201,7 @@
   },
   {
     "name": "Dependency: Included Source",
-    "id": "AI021200",
+    "id": "AI026200",
     "description": "Dependency: Included Source",
     "tags": [
       "Dependency.SourceInclude"
@@ -307,44 +233,6 @@
       },
       {
         "pattern": "\\$\\.getScript\\(.*",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
-      }
-    ]
-  },
-  {
-    "name": "Logging Call",
-    "id": "AI021300",
-    "description": "Logging Call",
-    "tags": [
-      "Metric.Logging.Call"
-    ],
-    "severity": "moderate",
-    "_comment": "",
-    "patterns": [
-      {
-        "pattern": "log|logger",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
-      }
-    ]
-  },
-  {
-    "name": "Sample Code",
-    "id": "AI021400",
-    "description": "Sample Code",
-    "tags": [
-      "Metric.SampleCode"
-    ],
-    "severity": "moderate",
-    "_comment": "",
-    "patterns": [
-      {
-        "pattern": "(sample|example) code",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
