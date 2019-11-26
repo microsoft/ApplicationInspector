@@ -15,9 +15,9 @@ To use Application Inspector, download the relevant binary (either platform-spec
 Application Inspector is a command-line tool. Simply run from a command line in Windows, Linux, or MacOS.
 
 ```
-> dotnet ApplicationInspector.dll
-Microsoft Application Inspector 1.0.0
-ApplicationInspector 1.0.0
+> dotnet AppInspector.dll or on Windows simply AppInspector.exe
+Microsoft Application Inspector 1.0.8
+ApplicationInspector 1.0.8
 (c) Microsoft Corporation. All rights reserved
 
 ERROR(S):
@@ -36,20 +36,20 @@ ERROR(S):
 
 ```
 # Scan a project directory, with output going to "output.html"
-dotnet ApplicationInspector.dll analyze -s /home/user/myproject 
+dotnet AppInspector.dll analyze -s /home/user/myproject 
 
 # Add custom rules (can be specified multiple times)
-dotnet ApplicationInspector.dll analyze -s /home/user/myproject -r /my/rules/directory -r /my/other/rules
+dotnet AppInspector.dll analyze -s /home/user/myproject -r /my/rules/directory -r /my/other/rules
 
 # Write to JSON 
-dotnet ApplicationInspector.dll analyze -s /home/user/myproject -f json
+dotnet AppInspector.dll analyze -s /home/user/myproject -f json
 ```
 
 ### Tagdiff Command
 
 Use to analyze and report on differences in tag based matches between two projects e.g. v1, v2
 
-    Usage: dotnet ApplicationInspector.dll tagdiff [arguments] [options]
+    Usage: dotnet AppInspector.dll tagdiff [arguments] [options]
 
     Arguments:
      --src1                        Required. Source 1 to compare (required)
@@ -64,17 +64,17 @@ Use to analyze and report on differences in tag based matches between two projec
 
 ##### Simplest use
 
-    dotnet ApplicationInspector.dll tagdiff /home/user/project1 /home/user/project2
+    dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2
 
 ##### Basic use
 
-    dotnet ApplicationInspector.dll tagdiff /home/user/project1 /home/user/project2 -t equality
+    dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t equality
 
 Output is a pass/fail result.
 
 ##### Basic use
 
-    dotnet ApplicationInspector.dll tagdiff /home/user/project1 /home/user/project2 -t inequality
+    dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t inequality
 
 Output includes list of differences between each.
 
@@ -89,7 +89,7 @@ unlikely that any source package would contain all of the default rules.  Instea
 as needed or specify a path using the custom-rules-path to point only to the rule(s) needed from the default set.  
 Otherwise, testing for all default rules present in source will likely yield a false or fail result in most cases.
 
-    Usage: dotnet ApplicationInspector.dll tagtest [arguments] [options
+    Usage: dotnet AppInspector.dll tagtest [arguments] [options
 
     Arguments:
     -s, --source-path             Required. Source to test (required)
@@ -103,57 +103,60 @@ Otherwise, testing for all default rules present in source will likely yield a f
 
 #### Simplest way to test source for all default rules present in source
 
-    dotnet ApplicationInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json
+    dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json
 
 #### Rules present test against custom rules only
 
-    dotnet ApplicationInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulespresent
+    dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulespresent
 
 #### Rules not present test against custom rules only
 
-    dotnet ApplicationInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
+    dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
 
 
 ### ExportTags Command
 
 Simple export of the ruleset schema for tags
 
-    Usage: dotnet ApplicationInspector.dll tags [arguments] [options]
+    Usage: dotnet AppInspector.dll tags [arguments] [options]
 
     Arguments:
     -r, --custom-rules-path       Custom rules path
     -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
     -o, --output-file-path        Path to output file
+	-x, --console-verbosity       Console verbosity [high|medium|low
 
 ##### Using default rules to console
 
-    dotnet ApplicationInspector.dll tags
+    dotnet AppInspector.dll tags
 
 ##### Using output file
 
-    dotnet ApplicationInspector.dll tags -o /home/user/myproject/exportags.txt
+    dotnet AppInspector.dll tags -o /home/user/myproject/exportags.txt
 
 ##### With custom rules and output file
 
-    dotnet ApplicationInspector.dll tags /home/user/myproject/customrules -o /hom/user/myproject/output-rules.txt
+    dotnet AppInspector.dll tags /home/user/myproject/customrules -o /hom/user/myproject/output-rules.txt
 
 ### Verify Command
 
 Verification that ruleset is compatible and error free for import and analysis
 
-    Usage: dotnet ApplicationInspector.dll verify [arguments]
+    Usage: dotnet AppInspector.dll verify [arguments]
 
     Arguments:
     -r, --custom-rules-path       Custom rules path
     -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
+	-o, --output-file-path        Path to output file
+    -x, --console-verbosity       Console verbosity [high|medium|low
 
 ##### Using default rules
 
-    dotnet ApplicationInspector.dll verify
+    dotnet AppInspector.dll verify
 
 ##### Using custom rules
 
-    dotnet ApplicationInspector.dll verify -r /home/user/myproject/customrules -i
+    dotnet AppInspector.dll verify -r /home/user/myproject/customrules -i
 
 # Build Instructions
 

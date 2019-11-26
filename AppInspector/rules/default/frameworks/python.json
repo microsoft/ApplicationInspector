@@ -1,11 +1,11 @@
 [
   {
     "name": "Development Framework: Django",
-    "id": "AI017300",
+    "id": "AI022900",
     "description": "Development Framework: Django",
     "applies_to": [ "python" ],
     "tags": [
-      "Development.Framework.Django"
+      "Framework.Development.Django"
     ],
     "severity": "moderate",
     "patterns": [
@@ -20,10 +20,10 @@
   },
   {
     "name": "Development Framework: Pryamid",
-    "id": "AI017400",
+    "id": "AI023000",
     "description": "Development Framework: Pryamid",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.Pryamid" ],
+    "tags": [ "Framework.Development.Pryamid" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -37,10 +37,10 @@
   },
   {
     "name": "Development Framework: Web2Py",
-    "id": "AI017500",
+    "id": "AI023100",
     "description": "Development Framework: Web2Py",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.Web2Py" ],
+    "tags": [ "Framework.Development.Web2Py" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -54,10 +54,10 @@
   },
   {
     "name": "Development Framework: CubicWeb",
-    "id": "AI017600",
+    "id": "AI023200",
     "description": "Development Framework: CubicWeb",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.CubicWeb" ],
+    "tags": [ "Framework.Development.CubicWeb" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -71,10 +71,10 @@
   },
   {
     "name": "Development Framework: OWL",
-    "id": "AI017700",
+    "id": "AI023300",
     "description": "Development Framework: OWL",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.OWL" ],
+    "tags": [ "Framework.Development.OWL" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -88,10 +88,10 @@
   },
   {
     "name": "Development Framework: RDF",
-    "id": "AI017800",
+    "id": "AI023400",
     "description": "Development Framework: RDF",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.RDF" ],
+    "tags": [ "Framework.Development.RDF" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -105,10 +105,10 @@
   },
   {
     "name": "Development Framework: RQL",
-    "id": "AI017900",
+    "id": "AI023500",
     "description": "Development Framework: RQL",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.RQL" ],
+    "tags": [ "Framework.Development.RQL" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -122,10 +122,10 @@
   },
   {
     "name": "Development Framework: Flask",
-    "id": "AI018000",
+    "id": "AI023600",
     "description": "Development Framework: Flask",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.Flask" ],
+    "tags": [ "Framework.Development.Flask" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -139,10 +139,10 @@
   },
   {
     "name": "Development Framework: Bottle",
-    "id": "AI018100",
+    "id": "AI023700",
     "description": "Development Framework: Bottle",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.Bottle" ],
+    "tags": [ "Framework.Development.Bottle" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -156,10 +156,10 @@
   },
   {
     "name": "Development Framework: CherryPy",
-    "id": "AI018200",
+    "id": "AI023800",
     "description": "Development Framework: CherryPy",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.CherryPy" ],
+    "tags": [ "Framework.Development.CherryPy" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -173,10 +173,10 @@
   },
   {
     "name": "Development Framework: Sanic",
-    "id": "AI018300",
+    "id": "AI023900",
     "description": "Development Framework: Sanic",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.Sanic" ],
+    "tags": [ "Framework.Development.Sanic" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -190,10 +190,10 @@
   },
   {
     "name": "Development Framework: Tornado",
-    "id": "AI018400",
+    "id": "AI024000",
     "description": "Development Framework: Tornado",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.Tornado" ],
+    "tags": [ "Framework.Development.Tornado" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -207,13 +207,13 @@
   },
   {
     "name": "Development Framework: TurboGears",
-    "id": "AI018500",
+    "id": "AI024100",
     "description": "Development Framework: TurboGears",
     "applies_to": [
       "python",
       "requirements.txt"
     ],
-    "tags": [ "Development.Framework.TurboGears" ],
+    "tags": [ "Framework.Development.TurboGears" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -227,12 +227,12 @@
   },
   {
     "name": "Development Framework: Giotto",
-    "id": "AI018600",
+    "id": "AI024200",
     "description": "Development Framework: Giotto",
     "applies_to": [
       "python"
     ],
-    "tags": [ "Development.Framework.Giotto" ],
+    "tags": [ "Framework.Development.Giotto" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -246,12 +246,12 @@
   },
   {
     "name": "Development Framework: Pylons",
-    "id": "AI018700",
+    "id": "AI024300",
     "description": "Development Framework: Pylons",
     "applies_to": [
       "python"
     ],
-    "tags": [ "Development.Framework.Pylons" ],
+    "tags": [ "Framework.Development.Pylons" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -265,10 +265,10 @@
   },
   {
     "name": "Development Framework: Google API's",
-    "id": "AI018710",
+    "id": "AI024400",
     "description": "Development Framework: Google API's",
     "applies_to": [ "python" ],
-    "tags": [ "Development.Framework.Google.API" ],
+    "tags": [ "Framework.Development.Google.API" ],
     "severity": "moderate",
     "patterns": [
       {

@@ -1,7 +1,7 @@
 [
   {
     "name": "OS: Environment Variable (Write)",
-    "id": "AI027300",
+    "id": "AI036200",
     "description": "OS: Environment Variable (Write)",
     "applies_to": [
     ],
@@ -23,12 +23,12 @@
   },
   {
     "name": "OS: Environment Variable",
-    "id": "AI027400",
+    "id": "AI036300",
     "description": "OS: Environment Variable",
     "applies_to": [
     ],
     "tags": [
-      "OS.Environment"
+      "OS.Environment.Windows.RegistryLocation"
     ],
     "severity": "moderate",
     "_comment": "Windows Registry location for environment variables",
@@ -45,7 +45,7 @@
   },
   {
     "name": "OS: Environment Variable (Write)",
-    "id": "AI027500",
+    "id": "AI036400",
     "description": "OS: Environment Variable (Write)",
     "applies_to": [
       "python"
@@ -67,7 +67,7 @@
   },
   {
     "name": "OS: Environment Variable (Write)",
-    "id": "AI027600",
+    "id": "AI036500",
     "description": "OS: Environment Variable (Write)",
     "applies_to": [
       "csharp"
@@ -90,7 +90,7 @@
   },
   {
     "name": "OS: Environment Variable (Write)",
-    "id": "AI027700",
+    "id": "AI036600",
     "description": "OS: Environment Variable (Write)",
     "applies_to": [
       "powershell"

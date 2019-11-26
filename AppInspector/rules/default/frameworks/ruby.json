@@ -1,10 +1,10 @@
 [
   {
     "name": "Development Framework: Grails",
-    "id": "AI018800",
+    "id": "AI024500",
     "description": "Development Framework: Grails",
     "applies_to": [ "groovy" ],
-    "tags": [ "Development.Framework.Grails" ],
+    "tags": [ "Framework.Development.Grails" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -18,10 +18,10 @@
   },
   {
     "name": "Development Framework: Rails",
-    "id": "AI018900",
+    "id": "AI024600",
     "description": "Development Framework: Rails",
     "applies_to": [ "ruby" ],
-    "tags": [ "Development.Framework.Rails" ],
+    "tags": [ "Framework.Development.Rails" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -35,10 +35,10 @@
   },
   {
     "name": "Development Framework: Google API's",
-    "id": "AI018910",
+    "id": "AI024700",
     "description": "Development Framework: Google API's",
     "applies_to": [ "ruby" ],
-    "tags": [ "Development.Framework.Google.API" ],
+    "tags": [ "Framework.Development.Google.API" ],
     "severity": "moderate",
     "patterns": [
       {

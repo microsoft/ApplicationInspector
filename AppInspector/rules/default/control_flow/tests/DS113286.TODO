@@ -1,3 +1,0 @@
-line: 1
-====
-NSString *string1 = [NSString stringWithFormat:@"A string: %@, a float: %1.2f", @"string", 31415.9265];

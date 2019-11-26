@@ -1,10 +1,10 @@
 [
   {
     "name": "Development Framework: Angular.JS",
-    "id": "AI013900",
+    "id": "AI019100",
     "description": "Development Framework: Angular.JS",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.AngularJS" ],
+    "tags": [ "Framework.Development.AngularJS" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -18,10 +18,10 @@
   },
   {
     "name": "Development Framework: Vue",
-    "id": "AI014000",
+    "id": "AI019200",
     "description": "Development Framework: Vue",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.Vue" ],
+    "tags": [ "Framework.Development.Vue" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -35,10 +35,10 @@
   },
   {
     "name": "Development Framework: EmberJS",
-    "id": "AI014100",
+    "id": "AI019300",
     "description": "Development Framework: EmberJS",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.EmberJS" ],
+    "tags": [ "Framework.Development.EmberJS" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -52,10 +52,10 @@
   },
   {
     "name": "Development Framework: Backbone",
-    "id": "AI014200",
+    "id": "AI019400",
     "description": "Development Framework: Backbone",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.Backbone" ],
+    "tags": [ "Framework.Development.Backbone" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -68,10 +68,10 @@
   },
   {
     "name": "Development Framework: jQuery",
-    "id": "AI014300",
+    "id": "AI019500",
     "description": "Development Framework: jQuery",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.jQuery" ],
+    "tags": [ "Framework.Development.jQuery" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -85,10 +85,10 @@
   },
   {
     "name": "Development Framework: Redux",
-    "id": "AI014400",
+    "id": "AI019600",
     "description": "Development Framework: Redux",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.Redux" ],
+    "tags": [ "Framework.Development.Redux" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -102,10 +102,10 @@
   },
   {
     "name": "Development Framework: Redux-Saga",
-    "id": "AI014500",
+    "id": "AI019700",
     "description": "Development Framework: Redux-Saga",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.Redux-Saga" ],
+    "tags": [ "Framework.Development.Redux-Saga" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -119,10 +119,10 @@
   },
   {
     "name": "Development Framework: React",
-    "id": "AI014600",
+    "id": "AI019800",
     "description": "Development Framework: React",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.React" ],
+    "tags": [ "Framework.Development.React" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -136,10 +136,10 @@
   },
   {
     "name": "Development Framework: RITEWay",
-    "id": "AI014700",
+    "id": "AI019900",
     "description": "Development Framework: RITEWay",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.RITEWay" ],
+    "tags": [ "Framework.Development.RITEWay" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -153,10 +153,10 @@
   },
   {
     "name": "Development Framework: Meteor",
-    "id": "AI014800",
+    "id": "AI020000",
     "description": "Development Framework: Meteor",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.Meteor" ],
+    "tags": [ "Framework.Development.Meteor" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -170,10 +170,10 @@
   },
   {
     "name": "Development Framework: Mithril",
-    "id": "AI014900",
+    "id": "AI020100",
     "description": "Development Framework: Mithril",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.Mithril" ],
+    "tags": [ "Framework.Development.Mithril" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -186,10 +186,10 @@
   },
   {
     "name": "Development Framework: Polymer",
-    "id": "AI015000",
+    "id": "AI020200",
     "description": "Development Framework: Polymer",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.Polymer" ],
+    "tags": [ "Framework.Development.Polymer" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -203,10 +203,10 @@
   },
   {
     "name": "Development Framework: Aurelia",
-    "id": "AI015100",
+    "id": "AI020300",
     "description": "Development Framework: Aurelia",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.Aurelia" ],
+    "tags": [ "Framework.Development.Aurelia" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -220,10 +220,10 @@
   },
   {
     "name": "Content Management Framework: Wordpress",
-    "id": "AI015200",
+    "id": "AI020400",
     "description": "Development Framework: Wordpress",
     "applies_to": [ "javascript", "html" ],
-    "tags": [ "Development.Framework.CMS.Wordpress" ],
+    "tags": [ "Framework.CMS.Wordpress" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -236,11 +236,62 @@
     ]
   },
   {
+    "name": "Content Management Framework: Drupal",
+    "id": "AI020500",
+    "description": "Development Framework: Drupal",
+    "applies_to": [ "javascript", "html" ],
+    "tags": [ "Framework.CMS.Drupal" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "drupal",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Content Management Framework: Sharepoint",
+    "id": "AI020600",
+    "description": "Development Framework: Sharepoint",
+    "applies_to": [ "javascript", "html" ],
+    "tags": [ "Framework.CMS.Sharepoint" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sharepoint",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Content Management Framework: Joomla",
+    "id": "AI020700",
+    "description": "Development Framework: Joomla",
+    "applies_to": [ "javascript", "html" ],
+    "tags": [ "Framework.CMS.Joomla" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "joomla",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
     "name": "Development Framework: Google API's",
-    "id": "AI015210",
+    "id": "AI020800",
     "description": "Development Framework: Google API's",
     "applies_to": [ "javascript" ],
-    "tags": [ "Development.Framework.Google.API" ],
+    "tags": [ "Framework.Development.Google.API" ],
     "severity": "moderate",
     "patterns": [
       {

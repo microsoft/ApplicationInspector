@@ -1,11 +1,11 @@
 [
   {
     "name": "Development Framework: Spring",
-    "id": "AI012300",
+    "id": "AI017400",
     "description": "Development Framework: Spring",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.Spring"
+      "Framework.Development.Spring"
     ],
     "severity": "moderate",
     "patterns": [
@@ -20,11 +20,11 @@
   },
   {
     "name": "Development Framework: Hibernate",
-    "id": "AI012400",
+    "id": "AI017500",
     "description": "Development Framework: Hibernate",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.Hibernate"
+      "Framework.Development.Hibernate"
     ],
     "severity": "moderate",
     "patterns": [
@@ -39,11 +39,11 @@
   },
   {
     "name": "Development Framework: Blade",
-    "id": "AI012500",
+    "id": "AI017600",
     "description": "Development Framework: Blade",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.Blade"
+      "Framework.Development.Blade"
     ],
     "severity": "moderate",
     "patterns": [
@@ -58,11 +58,11 @@
   },
   {
     "name": "Development Framework: DropWizard",
-    "id": "AI012600",
+    "id": "AI017700",
     "description": "Development Framework: DropWizard",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.DropWizard"
+      "Framework.Development.DropWizard"
     ],
     "severity": "moderate",
     "patterns": [
@@ -77,11 +77,11 @@
   },
   {
     "name": "Development Framework: GWT",
-    "id": "AI012700",
+    "id": "AI017800",
     "description": "Development Framework: GWT",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.GWT"
+      "Framework.Development.GWT"
     ],
     "severity": "moderate",
     "patterns": [
@@ -96,11 +96,11 @@
   },
   {
     "name": "Development Framework: JSF",
-    "id": "AI012800",
+    "id": "AI017900",
     "description": "Development Framework: JSF",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.JSF"
+      "Framework.Development.JSF"
     ],
     "severity": "moderate",
     "patterns": [
@@ -115,11 +115,11 @@
   },
   {
     "name": "Development Framework: JHipster",
-    "id": "AI012900",
+    "id": "AI018000",
     "description": "Development Framework: JHipster",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.JHipster"
+      "Framework.Development.JHipster"
     ],
     "severity": "moderate",
     "patterns": [
@@ -134,11 +134,11 @@
   },
   {
     "name": "Development Framework: MyBatis",
-    "id": "AI013000",
+    "id": "AI018100",
     "description": "Development Framework: MyBatis",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.MyBatis"
+      "Framework.Development.MyBatis"
     ],
     "severity": "moderate",
     "patterns": [
@@ -153,11 +153,11 @@
   },
   {
     "name": "Development Framework: Play Framework",
-    "id": "AI013100",
+    "id": "AI018200",
     "description": "Development Framework: Play Framework",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.PlayFramework"
+      "Framework.Development.PlayFramework"
     ],
     "severity": "moderate",
     "patterns": [
@@ -172,11 +172,11 @@
   },
   {
     "name": "Development Framework: PrimeFaces",
-    "id": "AI013200",
+    "id": "AI018300",
     "description": "Development Framework: PrimeFaces",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.PrimeFaces"
+      "Framework.Development.PrimeFaces"
     ],
     "severity": "moderate",
     "patterns": [
@@ -191,11 +191,11 @@
   },
   {
     "name": "Development Framework: Spark",
-    "id": "AI013300",
+    "id": "AI018400",
     "description": "Development Framework: Spark",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.Spark"
+      "Framework.Development.Spark"
     ],
     "severity": "moderate",
     "patterns": [
@@ -210,11 +210,11 @@
   },
   {
     "name": "Development Framework: Apache Struts",
-    "id": "AI013400",
+    "id": "AI018500",
     "description": "Development Framework: Apache Struts",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.ApacheStruts"
+      "Framework.Development.ApacheStruts"
     ],
     "severity": "moderate",
     "patterns": [
@@ -229,11 +229,11 @@
   },
   {
     "name": "Development Framework: Apache Tapestry",
-    "id": "AI013500",
+    "id": "AI018600",
     "description": "Development Framework: Apache Tapestry",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.ApacheTapestry"
+      "Framework.Development.ApacheTapestry"
     ],
     "severity": "moderate",
     "patterns": [
@@ -248,11 +248,11 @@
   },
   {
     "name": "Development Framework: Vaadin",
-    "id": "AI013600",
+    "id": "AI018700",
     "description": "Development Framework: Vaadin",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.Vaadin"
+      "Framework.Development.Vaadin"
     ],
     "severity": "moderate",
     "patterns": [
@@ -267,11 +267,11 @@
   },
   {
     "name": "Development Framework: Vert.x",
-    "id": "AI013700",
+    "id": "AI018800",
     "description": "Development Framework: Vert.x",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.Vertx"
+      "Framework.Development.Vertx"
     ],
     "severity": "moderate",
     "patterns": [
@@ -286,11 +286,11 @@
   },
   {
     "name": "Development Framework: Wicket",
-    "id": "AI013800",
+    "id": "AI018900",
     "description": "Development Framework: Wicket",
     "applies_to": [ "java" ],
     "tags": [
-      "Development.Framework.Wicket"
+      "Framework.Development.Wicket"
     ],
     "severity": "moderate",
     "patterns": [
@@ -305,10 +305,10 @@
   },
   {
     "name": "Development Framework: Google API's",
-    "id": "AI0138010",
+    "id": "AI019000",
     "description": "Development Framework: Google API's",
     "applies_to": [ "java" ],
-    "tags": [ "Development.Framework.Google.API" ],
+    "tags": [ "Framework.Development.Google.API" ],
     "severity": "moderate",
     "patterns": [
       {

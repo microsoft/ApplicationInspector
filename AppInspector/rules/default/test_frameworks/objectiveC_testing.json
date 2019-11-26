@@ -1,13 +1,13 @@
 [
   {
     "name": "Testing Framework: GHUnit",
-    "id": "AI045700",
+    "id": "AI048900",
     "description": "Testing Framework: GHUnit",
     "applies_to": [
       "objective-c"
     ],
     "tags": [
-      "Testing.Framework.GHUnit"
+      "Framework.Testing.GHUnit"
     ],
     "patterns": [
       {
@@ -25,13 +25,13 @@
   },
   {
     "name": "Testing Framework: Catch",
-    "id": "AI045800",
+    "id": "AI049000",
     "description": "Testing Framework: Catch",
     "applies_to": [
       "objective-c"
     ],
     "tags": [
-      "Testing.Framework.Catch"
+      "Framework.Testing.Catch"
     ],
     "patterns": [
       {
@@ -49,13 +49,13 @@
   },
   {
     "name": "Testing Framework: Cedar",
-    "id": "AI045900",
+    "id": "AI049100",
     "description": "Testing Framework: Cedar",
     "applies_to": [
       "objective-c"
     ],
     "tags": [
-      "Testing.Framework.Cedar"
+      "Framework.Testing.Cedar"
     ],
     "patterns": [
       {
@@ -74,13 +74,13 @@
   },
   {
     "name": "Testing Framework: Kiwi",
-    "id": "AI046000",
+    "id": "AI049200",
     "description": "Testing Framework: Kiwi",
     "applies_to": [
       "objective-c"
     ],
     "tags": [
-      "Testing.Framework.Kiwi"
+      "Framework.Testing.Kiwi"
     ],
     "patterns": [
       {
@@ -99,13 +99,13 @@
   },
   {
     "name": "Testing Framework: Specta",
-    "id": "AI046100",
+    "id": "AI049300",
     "description": "Testing Framework: Specta",
     "applies_to": [
       "objective-c"
     ],
     "tags": [
-      "Testing.Framework.Specta"
+      "Framework.Testing.Specta"
     ],
     "patterns": [
       {
@@ -124,13 +124,13 @@
   },
   {
     "name": "Testing Framework: Quick",
-    "id": "AI046200",
+    "id": "AI049400",
     "description": "Testing Framework: Quick",
     "applies_to": [
       "objective-c"
     ],
     "tags": [
-      "Testing.Framework.quick"
+      "Framework.Testing.quick"
     ],
     "patterns": [
       {
@@ -148,13 +148,13 @@
   },
   {
     "name": "Testing Framework: ObjcUnit",
-    "id": "AI046300",
+    "id": "AI049500",
     "description": "Testing Framework: ObjcUnit",
     "applies_to": [
       "objective-c"
     ],
     "tags": [
-      "Testing.Framework.ObjcUnit"
+      "Framework.Testing.ObjcUnit"
     ],
     "patterns": [
       {
@@ -172,13 +172,13 @@
   },
   {
     "name": "Testing Framework: OCUnit",
-    "id": "AI046400",
+    "id": "AI049600",
     "description": "Testing Framework: OCUnit",
     "applies_to": [
       "objective-c"
     ],
     "tags": [
-      "Testing.Framework.OCUnit"
+      "Framework.Testing.OCUnit"
     ],
     "patterns": [
       {
@@ -196,13 +196,13 @@
   },
   {
     "name": "Testing Framework: WOTest",
-    "id": "AI046500",
+    "id": "AI049700",
     "description": "Testing Framework: WOTest",
     "applies_to": [
       "objective-c"
     ],
     "tags": [
-      "Testing.Framework.WOTest"
+      "Framework.Testing.WOTest"
     ],
     "patterns": [
       {
@@ -220,13 +220,13 @@
   },
   {
     "name": "Testing Framework: XCTest",
-    "id": "AI046600",
+    "id": "AI049800",
     "description": "Testing Framework: XCTest",
     "applies_to": [
       "objective-c"
     ],
     "tags": [
-      "Testing.Framework.XCTest"
+      "Framework.Testing.XCTest"
     ],
     "patterns": [
       {

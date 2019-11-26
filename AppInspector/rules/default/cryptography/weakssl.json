@@ -1,7 +1,7 @@
 [
   {
     "name": "Detect Weak Cryptography",
-    "id": "AI005600",
+    "id": "AI010200",
     "description": "Detect use of cryptography",
     "recommendation": "",
     "applies_to": [

@@ -1,13 +1,13 @@
 [
   {
     "name": "Testing Framework: AutoTest",
-    "id": "AI046800",
+    "id": "AI050000",
     "description": "Testing Framework: AutoTest",
     "applies_to": [
       "python"
     ],
     "tags": [
-      "Testing.Framework.AutoTest"
+      "Framework.Testing.AutoTest"
     ],
     "patterns": [
       {
@@ -26,13 +26,13 @@
   },
   {
     "name": "Testing Framework: UnitTest",
-    "id": "AI046900",
+    "id": "AI050100",
     "description": "Testing Framework: UnitTest",
     "applies_to": [
       "python"
     ],
     "tags": [
-      "Testing.Framework.unittest"
+      "Framework.Testing.unittest"
     ],
     "patterns": [
       {
@@ -47,13 +47,13 @@
   },
   {
     "name": "Testing Framework: XPyUnit",
-    "id": "AI047000",
+    "id": "AI050200",
     "description": "Testing Framework: XPyUnit",
     "applies_to": [
       "python"
     ],
     "tags": [
-      "Testing.Framework.XPyUnit"
+      "Framework.Testing.XPyUnit"
     ],
     "patterns": [
       {
@@ -68,13 +68,13 @@
   },
   {
     "name": "Testing Framework: DocTest",
-    "id": "AI047100",
+    "id": "AI050300",
     "description": "Testing Framework: DocTest",
     "applies_to": [
       "python"
     ],
     "tags": [
-      "Testing.Framework.Doctest"
+      "Framework.Testing.Doctest"
     ],
     "patterns": [
       {
@@ -89,13 +89,13 @@
   },
   {
     "name": "Testing Framework: Nose",
-    "id": "AI047200",
+    "id": "AI050400",
     "description": "Testing Framework: Nose",
     "applies_to": [
       "python"
     ],
     "tags": [
-      "Testing.Framework.Nose"
+      "Framework.Testing.Nose"
     ],
     "patterns": [
       {
@@ -110,13 +110,13 @@
   },
   {
     "name": "Testing Framework: PyTest",
-    "id": "AI047300",
+    "id": "AI050500",
     "description": "Testing Framework: PyTest",
     "applies_to": [
       "python"
     ],
     "tags": [
-      "Testing.Framework.PyTest"
+      "Framework.Testing.PyTest"
     ],
     "patterns": [
       {
@@ -131,13 +131,13 @@
   },
   {
     "name": "Testing Framework: Should DSL",
-    "id": "AI047400",
+    "id": "AI050600",
     "description": "Testing Framework: Should DSL",
     "applies_to": [
       "python"
     ],
     "tags": [
-      "Testing.Framework.ShouldDSL"
+      "Framework.Testing.ShouldDSL"
     ],
     "patterns": [
       {

@@ -1,13 +1,13 @@
 [
   {
     "name": "Testing Framework: TestUnit",
-    "id": "AI047500",
+    "id": "AI050700",
     "description": "Testing Framework: TestUnit",
     "applies_to": [
       "ruby"
     ],
     "tags": [
-      "Testing.Framework.TestUnit"
+      "Framework.Testing.TestUnit"
     ],
     "patterns": [
       {
@@ -25,13 +25,13 @@
   },
   {
     "name": "Testing Framework: RSpec",
-    "id": "AI047600",
+    "id": "AI050800",
     "description": "Testing Framework: RSpec",
     "applies_to": [
       "ruby"
     ],
     "tags": [
-      "Testing.Framework.RSpec"
+      "Framework.Testing.RSpec"
     ],
     "patterns": [
       {
@@ -50,13 +50,13 @@
   },
   {
     "name": "Testing Framework: Shoulda",
-    "id": "AI047700",
+    "id": "AI050900",
     "description": "Testing Framework: Shoulda",
     "applies_to": [
       "ruby"
     ],
     "tags": [
-      "Testing.Framework.Shoulda"
+      "Framework.Testing.Shoulda"
     ],
     "patterns": [
       {
@@ -75,13 +75,13 @@
   },
   {
     "name": "Testing Framework: MicroTest",
-    "id": "AI047800",
+    "id": "AI051000",
     "description": "Testing Framework: MicroTest",
     "applies_to": [
       "ruby"
     ],
     "tags": [
-      "Testing.Framework.microtest"
+      "Framework.Testing.Microtest"
     ],
     "patterns": [
       {
@@ -100,13 +100,13 @@
   },
   {
     "name": "Testing Framework: Bacon",
-    "id": "AI047900",
+    "id": "AI051100",
     "description": "Testing Framework: Bacon",
     "applies_to": [
       "ruby"
     ],
     "tags": [
-      "Testing.Framework.Bacon"
+      "Framework.Testing.Bacon"
     ],
     "patterns": [
       {
@@ -125,13 +125,13 @@
   },
   {
     "name": "Testing Framework: MiniTest",
-    "id": "AI048000",
+    "id": "AI051200",
     "description": "Testing Framework: MiniTest",
     "applies_to": [
       "ruby"
     ],
     "tags": [
-      "Testing.Framework.minitest"
+      "Framework.Testing.Minitest"
     ],
     "patterns": [
       {
@@ -150,13 +150,13 @@
   },
   {
     "name": "Testing Framework: TMF",
-    "id": "AI048100",
+    "id": "AI051300",
     "description": "Testing Framework: TMF",
     "applies_to": [
       "ruby"
     ],
     "tags": [
-      "Testing.Framework.TMF"
+      "Framework.Testing.TMF"
     ],
     "patterns": [
       {

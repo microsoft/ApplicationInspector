@@ -1,7 +1,7 @@
 [
   {
     "name": "OS: Multiprocessing / Multithreading",
-    "id": "AI026500",
+    "id": "AI035400",
     "description": "OS: Multiprocessing / Multithreading",
     "tags": [
       "OS.Process.Multiprocessing"
@@ -21,7 +21,7 @@
   },
   {
     "name": "OS: Multiprocessing / Multithreading",
-    "id": "AI026600",
+    "id": "AI035500",
     "description": "OS: Multiprocessing / Multithreading",
     "applies_to": [
       "c",
@@ -46,7 +46,7 @@
   },
   {
     "name": "OS: Multiprocessing / Multithreading",
-    "id": "AI026700",
+    "id": "AI035600",
     "description": "OS: Multiprocessing / Multithreading",
     "applies_to": [
       "csharp"
@@ -77,7 +77,7 @@
   },
   {
     "name": "OS: Multiprocessing / Multithreading",
-    "id": "AI026800",
+    "id": "AI035700",
     "description": "OS: Multiprocessing / Multithreading",
     "applies_to": [
       "java"
@@ -99,7 +99,7 @@
   },
   {
     "name": "OS: Multiprocessing / Multithreading",
-    "id": "AI026900",
+    "id": "AI035800",
     "description": "OS: Multiprocessing / Multithreading",
     "applies_to": [
       "go"
@@ -121,7 +121,7 @@
   },
   {
     "name": "OS: Process Access (Read)",
-    "id": "AI027000",
+    "id": "AI035900",
     "description": "OS: Process Access (Read)",
     "applies_to": [
       "c",
@@ -130,7 +130,7 @@
       "python"
     ],
     "tags": [
-      "OS.Process.Access.Read"
+      "OS.Process.ListRequest"
     ],
     "severity": "moderate",
     "patterns": [
@@ -159,13 +159,13 @@
   },
   {
     "name": "OS: Process Access (Read)",
-    "id": "AI027100",
+    "id": "AI036000",
     "description": "OS: Process Access (Read)",
     "applies_to": [
       "powershell"
     ],
     "tags": [
-      "OS.Process.Access.Read"
+      "OS.Process.ListRequest"
     ],
     "severity": "moderate",
     "patterns": [
@@ -181,13 +181,13 @@
   },
   {
     "name": "OS: Process Access (Read)",
-    "id": "AI027200",
+    "id": "AI036100",
     "description": "OS: Process Access (Read)",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "OS.Process.Access.Read"
+      "OS.Process.ListRequest"
     ],
     "severity": "moderate",
     "patterns": [

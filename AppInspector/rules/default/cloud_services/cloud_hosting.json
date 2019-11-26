@@ -1,16 +1,16 @@
 [
   {
     "name": "Cloud Service: Amazon Web Services",
-    "id": "AI021500",
+    "id": "AI000500",
     "description": "Cloud Service: Amazon Web Services",
     "tags": [
-      "Hosting.CloudService.Amazon.AWS"
+      "CloudServices.Hosting.Amazon.AWS"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": ".amazonaws.com",
-        "type": "substring",
+        "pattern": "\\.amazonaws\\.com|aws\\.amazon\\.com",
+        "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -19,10 +19,10 @@
   },
   {
     "name": "Cloud Service: Apple iCloud",
-    "id": "AI021600",
+    "id": "AI000600",
     "description": "Cloud Service: Accessing Apple iCloud",
     "tags": [
-      "Hosting.CloudService.Apple.iCloud"
+      "CloudServices.Hosting.Apple.iCloud"
     ],
     "severity": "moderate",
     "patterns": [
@@ -44,10 +44,10 @@
   },
   {
     "name": "Cloud Service: Microsoft Azure",
-    "id": "AI021700",
+    "id": "AI000700",
     "description": "Cloud Service: Microsoft Azure",
     "tags": [
-      "Hosting.CloudService.Microsoft.Azure"
+      "CloudServices.Hosting.Microsoft.Azure"
     ],
     "severity": "moderate",
     "patterns": [
@@ -57,78 +57,40 @@
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
-      },
-      {
-        "pattern": "cloudapp",
-        "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
-      },
-      {
-        "pattern": ".core.windows.net",
-        "type": "substring",
-        "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
       }
     ]
   },
   {
-    "name": "Cloud Service: Microsoft Office Graph",
-    "id": "AI021800",
-    "description": "Cloud Service: Microsoft Office Graph",
+    "name": "Cloud Service: Microsoft Office 365",
+    "id": "AI000800",
+    "description": "Cloud Service: Microsoft Office 365",
     "tags": [
-      "Hosting.CloudService.Microsoft.Office.Graph"
+      "CloudServices.Application.Microsoft.Graph"
     ],
     "severity": "moderate",
     "patterns": [
-      {
-        "pattern": "graph.microsoft.com",
-        "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
-      },
-      {
-        "pattern": ".core.windows.net",
-        "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
-      },
       {
         "pattern": "office365|office\\.com",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [],
         "confidence": "high"
-      }
-    ]
-  },
-  {
-    "name": "Cloud Service: Microsoft Online",
-    "id": "AI021900",
-    "description": "Cloud Service: Microsoft Online",
-    "tags": [
-      "Hosting.CloudService.Microsoft.MicrosoftOnline"
-    ],
-    "severity": "moderate",
-    "patterns": [
+      },
       {
-        "pattern": "microsoftonline.com",
-        "type": "string",
+        "pattern": "graph\\.microsoft\\.com|MicrosoftGraph",
+        "type": "regex",
         "scopes": [ "code" ],
+        "modifiers": [],
         "confidence": "high"
       }
     ]
   },
   {
     "name": "Cloud Service: Google Cloud",
-    "id": "AI022000",
+    "id": "AI000900",
     "description": "Cloud Service: Google Cloud",
     "tags": [
-      "Hosting.CloudService.Google.Cloud"
+      "CloudServices.Hosting.Google"
     ],
     "severity": "moderate",
     "patterns": [
@@ -143,17 +105,17 @@
   },
   {
     "name": "Cloud Service: DigitalOcean Cloud",
-    "id": "AI022100",
+    "id": "AI001000",
     "description": "Accessing DigitalOcean",
     "tags": [
-      "Hosting.CloudService.DigitalOcean.Cloud"
+      "CloudServices.Hosting.DigitalOcean"
     ],
     "severity": "moderate",
     "_comment": "",
     "rule_info": "",
     "patterns": [
       {
-        "pattern": "api.digitalocean.com",
+        "pattern": "digitalocean.com",
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -164,11 +126,10 @@
   },
   {
     "name": "Cloud Service: SendGrid",
-    "id": "AI022200",
+    "id": "AI001100",
     "description": "Cloud Service: SendGrid",
     "tags": [
-      "Hosting.CloudService.SendGrid",
-      "Hosting.CloudService.Generic.Mail"
+      "CloudServices.Application.SendGrid.Mail"
     ],
     "severity": "moderate",
     "patterns": [
@@ -183,31 +144,11 @@
     ]
   },
   {
-    "name": "Cloud Service: DataBricks",
-    "id": "AI022300",
-    "description": "Cloud Service: DataBricks",
-    "tags": [
-      "Hosting.CloudService.DataBricks",
-      "Hosting.CloudService.Microsoft.Azure"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": ".cloud.databricks.com",
-        "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
-      }
-    ]
-  },
-  {
     "name": "Cloud Service: GitHub",
-    "id": "AI022400",
+    "id": "AI001200",
     "description": "Cloud Service: GitHub",
     "tags": [
-      "Hosting.CloudService.Repository.GitHub"
+      "CloudServices.Repository.GitHub"
     ],
     "severity": "moderate",
     "patterns": [
@@ -222,10 +163,10 @@
   },
   {
     "name": "Cloud Service: GitLab",
-    "id": "AI022500",
+    "id": "AI001300",
     "description": "Cloud Service: GitLab",
     "tags": [
-      "Hosting.CloudService.Repository.GitLab"
+      "CloudServices.Repository.GitLab"
     ],
     "severity": "moderate",
     "patterns": [
@@ -240,10 +181,10 @@
   },
   {
     "name": "Cloud Service: BitBucket",
-    "id": "AI022600",
+    "id": "AI001400",
     "description": "Cloud Service: BitBucket",
     "tags": [
-      "Hosting.CloudService.Repository.BitBucket"
+      "CloudServices.Repository.BitBucket"
     ],
     "severity": "moderate",
     "patterns": [
@@ -258,10 +199,10 @@
   },
   {
     "name": "Cloud Service: SourceForge",
-    "id": "AI022700",
+    "id": "AI001500",
     "description": "Cloud Service: SourceForge",
     "tags": [
-      "Hosting.CloudService.Repository.SourceForge"
+      "CloudServices.Repository.SourceForge"
     ],
     "severity": "moderate",
     "patterns": [
@@ -276,10 +217,10 @@
   },
   {
     "name": "Cloud Service: Savannah",
-    "id": "AI022800",
+    "id": "AI001600",
     "description": "Cloud Service: Savannah",
     "tags": [
-      "Hosting.CloudService.Repository.Savannah"
+      "CloudServices.Repository.Savannah"
     ],
     "severity": "moderate",
     "patterns": [
@@ -294,10 +235,10 @@
   },
   {
     "name": "Cloud Service: NuGet",
-    "id": "AI022900",
+    "id": "AI001700",
     "description": "Cloud Service: NuGet",
     "tags": [
-      "Hosting.CloudService.PackageManager.NuGet"
+      "CloudServices.PackageManager.NuGet"
     ],
     "severity": "moderate",
     "patterns": [
@@ -312,10 +253,10 @@
   },
   {
     "name": "Cloud Service: NPM",
-    "id": "AI023000",
+    "id": "AI001800",
     "description": "Cloud Service: NPM",
     "tags": [
-      "Hosting.CloudService.PackageManager.NPM"
+      "CloudServices.PackageManager.NPM"
     ],
     "severity": "moderate",
     "patterns": [
@@ -330,10 +271,10 @@
   },
   {
     "name": "Cloud Service: PyPI",
-    "id": "AI023100",
+    "id": "AI001900",
     "description": "Cloud Service: PyPI",
     "tags": [
-      "Hosting.CloudService.PackageManager.PyPI"
+      "CloudServices.PackageManager.PyPI"
     ],
     "severity": "moderate",
     "patterns": [
@@ -348,10 +289,10 @@
   },
   {
     "name": "Cloud Service: LaunchPad",
-    "id": "AI023200",
+    "id": "AI002000",
     "description": "Cloud Service: LaunchPad",
     "tags": [
-      "Hosting.CloudService.PackageManager.LaunchPad"
+      "CloudServices.PackageManager.LaunchPad"
     ],
     "severity": "moderate",
     "patterns": [
@@ -366,13 +307,13 @@
   },
   {
     "name": "Cloud Service: Travis.CI",
-    "id": "AI023300",
+    "id": "AI002100",
     "description": "Cloud Service: Travis.CI",
     "applies_to": [
       ".travis.yml"
     ],
     "tags": [
-      "Hosting.CloudService.CI.TravisCI"
+      "CloudServices.CI.TravisCI"
     ],
     "severity": "moderate",
     "patterns": [
@@ -387,13 +328,13 @@
   },
   {
     "name": "Cloud Service: Circle CI",
-    "id": "AI023400",
+    "id": "AI002200",
     "description": "Cloud Service: Circle CI",
     "applies_to": [
       "config.yml"
     ],
     "tags": [
-      "Hosting.CloudService.CI.CircleCI"
+      "CloudServices.CI.CircleCI"
     ],
     "severity": "moderate",
     "patterns": [
@@ -408,13 +349,13 @@
   },
   {
     "name": "Cloud Service: Azure Pipelines",
-    "id": "AI023500",
+    "id": "AI002300",
     "description": "Cloud Service: Azure Pipelines",
     "applies_to": [
-      "azure-pipelines.yml"
+      "yaml"
     ],
     "tags": [
-      "Hosting.CloudService.CI.AzurePipelines"
+      "CloudServices.CI.AzurePipelines"
     ],
     "severity": "moderate",
     "patterns": [
@@ -429,10 +370,10 @@
   },
   {
     "name": "Windows App Store",
-    "id": "AI023600",
+    "id": "AI002400",
     "description": "Windows App Store",
     "tags": [
-      "Hosting.CloudService.Microsoft.WindowsAppStore"
+      "CloudServices.Application.Microsoft.AppStore"
     ],
     "severity": "moderate",
     "patterns": [

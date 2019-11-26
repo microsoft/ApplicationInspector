@@ -1,7 +1,7 @@
 [
   {
     "name": "Cryptography: x.509 Use",
-    "id": "AI001300",
+    "id": "AI005900",
     "description": "Cryptography: x.509 Certificate Use",
     "tags": [
       "Cryptography.x509.Use"
@@ -30,7 +30,7 @@
   },
   {
     "name": "Cryptography: x.509 Use",
-    "id": "AI001400",
+    "id": "AI006000",
     "description": "Cryptography: x.509 Certificate Use",
     "applies_to": ["c", "cpp", "csharp"],
     "tags": [
@@ -52,31 +52,32 @@
   },
   {
     "name": "Cryptography: x.509 ClientAuth",
-    "id": "AI001500",
+    "id": "AI006100",
     "description": "Cryptography: x.509 Certificate ClientAuth",
     "tags": [
-      "Cryptography.x509.ClientAuth"
+      "Cryptography.x509.ClientAuth",
+      "Cryptography.x509.Keyfile"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\.(pem|pfx|key)",
+        "pattern": "\\.(pem|pfx)",
         "type": "regex-word",
         "scopes": [
           "code"
         ],
         "modifiers": [ "i" ],
         "confidence": "high",
-        "_comment": ""
+        "_comment": "use for client auth is not guaranteed"
       }
     ]
   },
   {
     "name": "Cryptography: x.509 Create",
-    "id": "AI001600",
+    "id": "AI006200",
     "description": "Cryptography: x.509 Create Certificate",
     "tags": [
-      "Cryptography.x509.Create"
+      "Cryptography.x509.CreateCertificate"
     ],
     "severity": "moderate",
     "patterns": [
@@ -123,14 +124,14 @@
     ]
   },
   {
-    "name": "Cryptography: DigitalSignature",
-    "id": "AI001700",
-    "description": "Cryptography: DigitalSignature",
+    "name": "Cryptography: Digital Signature or DSA",
+    "id": "AI006300",
+    "description": "Cryptography: Digital Signature or DSA",
     "applies_to": [
       "csharp"
     ],
     "tags": [
-      "Cryptography.DigitalSignature"
+      "Cryptography.Signing.Data"
     ],
     "severity": "moderate",
     "patterns": [
@@ -143,46 +144,14 @@
         "_comment": ""
       },
       {
-        "pattern": "DSACng",
+        "pattern": "DSACng|SignData|CreateSignature|DSACryptoServiceProvider|DSASignatureDeformatter|DSASignatureFormatter|DSAKeyValue",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
         "modifiers": [ "" ],
         "_comment": ""
       },
-      {
-        "pattern": "DSACryptoServiceProvider",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "DSASignatureDeformatter",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "DSASignatureFormatter",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
-        "pattern": "DSAKeyValue",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
+          {
         "pattern": "DSAParameters",
         "type": "regex",
         "scopes": [ "code" ],
@@ -193,16 +162,16 @@
     ]
   },
   {
-    "name": "Cryptography: DigitalSignature",
-    "id": "AI001800",
-    "description": "Cryptography: DigitalSignature",
+    "name": "Cryptography: Digital Signature",
+    "id": "AI006400",
+    "description": "Cryptography: Digital Signature",
     "tags": [
-      "Cryptography.DigitalSignature"
+      "Cryptography.Signing.Data"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "sign|signature|signer|signed",
+        "pattern": "sign(ing)*.*key|sign|signature|signer|signed",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -215,15 +184,15 @@
   },
   {
     "name": "Cryptography: CodeSign",
-    "id": "AI001900",
+    "id": "AI006500",
     "description": "Cryptography: CodeSign",
     "tags": [
-      "Cryptography.CodeSign"
+      "Cryptography.Signing.Code"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "sign(ing)* *key|code *sign|authenticode",
+        "pattern": "code.*sign|authenticode|sign.*code",
         "type": "regex",
         "scopes": [
           "code"

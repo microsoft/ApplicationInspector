@@ -12,12 +12,12 @@
           {
             "searchPattern": "Authentication",
             "displayName": "Authentication",
-            "detectedIcon": "fas fa-sign-in-alt"
+            "detectedIcon": "fas fa-user-lock"
           },
           {
             "searchPattern": "Authorization",
             "displayName": "Authorization",
-            "detectedIcon": "fas fa-passport"
+            "detectedIcon": "fas fa-user-shield"
           },
           {
             "searchPattern": "Cryptography",
@@ -26,17 +26,17 @@
           },
           {
             "searchPattern": "Deserialization",
-            "displayName": "ObjectDeserialization",
+            "displayName": "Object Deserialization",
             "detectedIcon": "far fa-object-ungroup"
           },
           {
-            "searchPattern": "Data.Media",
-            "displayName": "ParsesMediaFiles",
+            "searchPattern": "Data.Parsing.Media",
+            "displayName": "AV Media Parsing",
             "detectedIcon": "fas fa-photo-video"
           },
           {
             "searchPattern": "DynamicExecution",
-            "displayName": "DynamicExecution",
+            "displayName": "Dynamic Command Execution",
             "detectedIcon": "fab fa-audible"
           }
         ]
@@ -46,8 +46,7 @@
         "dataRef": "GeneralFeatures",
         "patterns": [
           {
-
-            "searchPattern": ".Network",
+            "searchPattern": "Network.",
             "displayName": "Network Communications",
             "detectedIcon": "fas fa-network-wired"
           },
@@ -63,8 +62,8 @@
           },
           {
             "searchPattern": "Multiprocessing",
-            "displayName": "Multi-Threading",
-            "detectedIcon": "fas fa-atom"
+            "displayName": "Multi-Threaded",
+            "detectedIcon": "fas fa-code-branch"
           },
           {
             "searchPattern": "Logging",
@@ -74,13 +73,23 @@
           {
             "searchPattern": "HTMLForm.Defined",
             "displayName": "HTML Forms",
-            "detectedIcon": "far fa-address-card"
+            "detectedIcon": "far fa-window-maximize"
+          },
+          {
+            "searchPattern": "Data.Parsing.XML",
+            "displayName": "Processes XML",
+            "detectedIcon": "far fa-file-code"
+          },
+          {
+            "searchPattern": "Data.Parsing.JSON",
+            "displayName": "Processes JSON",
+            "detectedIcon": "far fa-file-alt"
           }
         ]
       },
       {
-        "title": "Composition",
-        "dataRef": "Composition",
+        "title": "Development",
+        "dataRef": "Frameworks",
         "patterns": [
           {
             "searchPattern": "Development.Build",
@@ -88,127 +97,137 @@
             "detectedIcon": "fas fa-building"
           },
           {
-            "searchPattern": "Development.Framework",
+            "searchPattern": "Framework.Development",
             "displayName": "Development Framework",
             "detectedIcon": "fab fa-dev"
           },
           {
-            "searchPattern": "Testing.Framework",
+            "searchPattern": "Framework.Testing",
             "displayName": "Testing Framework",
             "detectedIcon": "fas fa-vial"
           },
           {
-            "searchPattern": "Framework.CMS",
-            "displayName": "Content Management System",
-            "detectedIcon": "fab fa-wpforms"
-          },
-          {
-            "searchPattern": "Reference.SocialMedia",
-            "displayName": "Social Media",
-            "detectedIcon": "fab fa-facebook-square"
-          },
-          {
             "searchPattern": "OpenSourceLicense",
-            "displayName": "Open Source License",
-            "detectedIcon": "fas fa-file-contract"
+            "displayName": "Open Source",
+            "detectedIcon": "fab fa-github"
           },
           {
             "searchPattern": "Dependency.SourceInclude",
             "displayName": "Source Include",
             "detectedIcon": "far fa-plus-square"
+          },
+          {
+            "searchPattern": "Framework.CMS",
+            "displayName": "Content Management System",
+            "detectedIcon": "fab fa-wordpress"
           }
         ]
       },
       {
-        "title": "Binary Objects",
-        "dataRef": "Objects",
+        "title": "Active Content",
+        "dataRef": "ActiveContent",
         "patterns": [
           {
-            "searchPattern": "Component.Adobe.Flash",
-            "displayName": "Flash",
+            "searchPattern": ".Flash",
+            "displayName": "Adobe-Flash",
             "detectedIcon": "fab fa-adobe"
           },
           {
-            "searchPattern": "Component.ActiveX",
-            "displayName": "ActiveX",
-            "detectedIcon": "fas fa-cubes"
+            "searchPattern": ".ActiveX",
+            "displayName": "Microsoft ActiveX",
+            "detectedIcon": "fas fa-file-invoice"
           },
           {
-            "searchPattern": "Component.PDF",
-            "displayName": "PDF",
+            "searchPattern": ".Microsoft.COM",
+            "displayName": "Microsoft COM",
+            "detectedIcon": "fab fa-hubspot"
+          },
+          {
+            "searchPattern": ".Silverlight",
+            "displayName": "Microsoft Silverlight",
+            "detectedIcon": "fas fa-bolt"
+          },
+          {
+            "searchPattern": ".PDF",
+            "displayName": "Adobe-PDF",
             "detectedIcon": "far fa-file-pdf"
           },
           {
-            "searchPattern": "ObjectType.Media",
-            "displayName": "Media",
-            "detectedIcon": "far fa-file-image"
-          }
+            "searchPattern": "Component.Browser.Messaging.Ajax",
+            "displayName": "Ajax",
+            "detectedIcon": "fas fa-exchange-alt"
+          }        
         ]
       },
       {
-        "title": "Data",
-        "dataRef": "Data",
+        "title": "Data Storage",
+        "dataRef": "DataStorage",
         "patterns": [
           {
-            "searchPattern": "DataAccess.SQL",
-            "displayName": "SQLCommands",
+            "searchPattern": "DBMS.SQLite",
+            "displayName": "SQLite Database",
             "detectedIcon": "fas fa-table"
           },
           {
-            "searchPattern": "DataAccess.ORM",
-            "displayName": "ObjectRelational Model",
-            "detectedIcon": "fab fa-connectdevelop"
+            "searchPattern": "DBMS.SQL",
+            "displayName": "SQL Database",
+            "detectedIcon": "fas fa-database"
           },
           {
-            "searchPattern": "DataAccess.ODBC",
-            "displayName": "Database Connection",
-            "detectedIcon": "fas fa-plug"
+            "searchPattern": "DBMS.NOSQL",
+            "displayName": "NOSQL Database",
+            "detectedIcon": "fas fa-archive"
           },
           {
-            "searchPattern": "DataAccess.Microsoft.Azure",
-            "displayName": "Azure Data Services",
-            "detectedIcon": "fab fa-microsoft"
+            "searchPattern": "DBMS.ORM",
+            "displayName": "Database ORM",
+            "detectedIcon": "fas fa-map"
           },
           {
-            "searchPattern": "Data.XML",
-            "displayName": "Processes XML",
-            "detectedIcon": "far fa-file-code"
+            "searchPattern": "CloudServices.DataStorage",
+            "displayName": "Cloud Data Storage",
+            "detectedIcon": "fas fa-cloud-upload-alt"
           },
           {
-            "searchPattern": "Data.JSON",
-            "displayName": "Processes JSON",
-            "detectedIcon": "far fa-file-code"
-          }         
+            "searchPattern": "Data.Compressed",
+            "displayName": "Zipped File Processing",
+            "detectedIcon": "far fa-file-archive"
+          }
         ]
       },
       {
         "title": "Sensitive Data",
-        "dataRef": "Sensitive Data",
+        "dataRef": "SensitiveData",
         "patterns": [
           {
             "searchPattern": "Sensitive.Identification",
-            "displayName": "Personal Identifiable Data",
+            "displayName": "Personally Identifiable Data",
             "detectedIcon": "fas fa-user-shield"
           },
           {
             "searchPattern": "Sensitive.Medical",
-            "displayName": "Medical Data",
+            "displayName": "Medical",
             "detectedIcon": "fas fa-stethoscope"
           },
           {
-            "searchPattern": "Sensitive.Secret",
-            "displayName": "Sensitive Key",
-            "detectedIcon": "fab fa-keycdn"
+            "searchPattern": "Secret",
+            "displayName": "Secret",
+            "detectedIcon": "fas fa-user-secret"
           },
           {
-            "searchPattern": "Sensitive.Account",
-            "displayName": "Account Data",
+            "searchPattern": "Account",
+            "displayName": "Account or Membership",
             "detectedIcon": "fas fa-user-circle"
           },
           {
-            "searchPattern": "Data.Finance",
-            "displayName": "Financial Data",
+            "searchPattern": "Sensitive.Financial",
+            "displayName": "Financial",
             "detectedIcon": "fas fa-money-bill"
+          },
+          {
+            "searchPattern": "CloudServices.Finance.eCommerce",
+            "displayName": "eCommerce",
+            "detectedIcon": "fas fa-shopping-cart"
           }
         ]
       },
@@ -217,43 +236,47 @@
         "dataRef": "CloudServices",
         "patterns": [
           {
-            "searchPattern": "CloudService.Microsoft.Azure",
-            "displayName": "Microsoft Azure",
+            "searchPattern": "CloudServices.Hosting.General",
+            "displayName": "Hosting",
             "detectedIcon": "fab fa-microsoft"
           },
           {
-            "searchPattern": "CloudService.Amazon.AWS",
-            "displayName": "Amazon AWS",
-            "detectedIcon": "fab fa-aws"
+            "searchPattern": "CloudServices.Application",
+            "displayName": "Cloud Application",
+            "detectedIcon": "fas fa-globe"
           },
           {
-            "searchPattern": "CloudService.Google",
-            "displayName": "Google Cloud Platform",
-            "detectedIcon": "fab fa-google"
+            "searchPattern": "CloudServices.SocialMedia",
+            "displayName": "Social Media",
+            "detectedIcon": "fab fa-facebook-square"
           },
           {
-            "searchPattern": "Microsoft.Office",
-            "displayName": "Microsoft Office",
-            "detectedIcon": "far fa-file-word"
+            "searchPattern": "CloudServices.Hosting.Repository",
+            "displayName": "Sourcecode Repository",
+            "detectedIcon": "fas fa-archive"
           },
           {
-            "searchPattern": "CloudService.Repository",
-            "displayName": "CloudService Repository",
-            "detectedIcon": "fab fa-github"
-          },
-          {
-            "searchPattern": "CloudService.PackageManager",
+            "searchPattern": "CloudServices.Hosting.PackageManager",
             "displayName": "Package Manager",
             "detectedIcon": "fas fa-box-open"
           },
           {
-            "searchPattern": "CloudService.CI",
+            "searchPattern": "CloudServices.Hosting.CI",
             "displayName": "Continuous Integration",
             "detectedIcon": "fas fa-vials"
+          },
+          {
+            "searchPattern": "CloudServices.DataStorage",
+            "displayName": "Cloud Data Storage",
+            "detectedIcon": "fas fa-cloud-download-alt"
+          },
+          {
+            "searchPattern": "CloudServices.BigData",
+            "displayName": "Big Data",
+            "detectedIcon": "fas fa-warehouse"
           }
         ]
       },
-
       {
         "title": "OS Integration",
         "dataRef": "OSIntegration",
@@ -275,23 +298,28 @@
           },
           {
             "searchPattern": "OS.Environment",
-            "displayName": "Environment Variables",
-            "detectedIcon": "fas fa-times"
+            "displayName": "Environment Variable Use",
+            "detectedIcon": "fas fa-tres"
           },
           {
-            "searchPattern": "OS.Process",
-            "displayName": "Process Management",
-            "detectedIcon": "fas fa-stream"
+            "searchPattern": "Process.ListRequest",
+            "displayName": "OS Process Scan",
+            "detectedIcon": "fas fa-binoculars"
           },
           {
-            "searchPattern": "OS.SystemRegistry",
+            "searchPattern": "OS.SystemRegistry.Read",
             "displayName": "Windows Registry",
-            "detectedIcon": "fas fa-tree"
+            "detectedIcon": "fas fa-cubes"
           },
           {
             "searchPattern": "OS.UserAccount",
             "displayName": "User Account",
             "detectedIcon": "fas fa-running"
+          },
+          {
+            "searchPattern": "Metadata.Application.Type.Service",
+            "displayName": "Local System Service",
+            "detectedIcon": "fas fa-door-open"
           }
         ]
       },
@@ -307,7 +335,7 @@
           {
             "searchPattern": "TokenImpersonation",
             "displayName": "Token Impersonation",
-            "detectedIcon": "fas fa-door-closed"
+            "detectedIcon": "fas fa-address-card"
           },
           {
             "searchPattern": "System.Userorname.Add",
@@ -327,19 +355,19 @@
           {
             "searchPattern": "Environment.Write",
             "displayName": "Environment Variable Write",
-            "detectedIcon": "fab fa-typo3"
+            "detectedIcon": "fas fa-tree"
           },
           {
             "searchPattern": "SystemRegistry.Write",
             "displayName": "Windows Registry Write",
-            "detectedIcon": "fab fa-sourcetree"
+            "detectedIcon": "fas fa-tools"
           },
           {
-            "searchPattern": "Windows.Registry.Security",
-            "displayName": "Windows Registry Security",
-            "detectedIcon": "fas fa-drum-steelpan"
-          },
-          
+            "searchPattern": "SystemRegistry.ACL",
+            "displayName": "Windows Registry ACL",
+            "detectedIcon": "fas fa-unlock"
+          }
+
         ]
       },
       {
@@ -347,29 +375,29 @@
         "dataRef": "Other",
         "patterns": [
           {
-            "searchPattern": "Miscellaneous.Analytics",
-            "displayName": "Analytics",
-            "detectedIcon": "fas fa-diagnoses"
+            "searchPattern": "Data.Media",
+            "displayName": "AV Media",
+            "detectedIcon": "fas fa-play-circle"
           },
           {
-            "searchPattern": "Miscellaneous.AdvertisingNetwork",
+            "searchPattern": "Web.Analytics",
+            "displayName": "Web Analytics",
+            "detectedIcon": "fas fa-flag-checkered"
+          },
+          {
+            "searchPattern": ".AdvertisingNetwork",
             "displayName": "Advertising Network",
             "detectedIcon": "fas fa-ad"
-          },
-          {
-            "searchPattern": "Process.Access.Read",
-            "displayName": "OS Process Scan",
-            "detectedIcon": "fab fa-centercode"
-          },
-          {
-            "searchPattern": "ObfuscatedCode",
-            "displayName": "Obfuscated Code",
-            "detectedIcon": "far fa-eye-slash"
           },
           {
             "searchPattern": "Exception.Caught",
             "displayName": "Exception Caught",
             "detectedIcon": "fas fa-meteor"
+          },
+          {
+            "searchPattern": "Data.Parsing.XSLT",
+            "displayName": "Uses XSLT",
+            "detectedIcon": "far fa-file-alt"
           },
           {
             "searchPattern": "Comment.Fix",

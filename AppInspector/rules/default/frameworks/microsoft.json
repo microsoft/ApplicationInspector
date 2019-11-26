@@ -1,10 +1,10 @@
 [
   {
     "name": "Development Framework: .NET Core",
-    "id": "AI015900",
+    "id": "AI021500",
     "description": "Development Framework: .NET Core",
     "applies_to": [ "csharp" ],
-    "tags": [ "Development.Framework.Microsoft.NETCore" ],
+    "tags": [ "Framework.Development.Microsoft.NETCore" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -17,10 +17,10 @@
   },
   {
     "name": "Development Framework: .NET Standard",
-    "id": "AI016000",
+    "id": "AI021600",
     "description": "Development Framework: .NET Standard",
     "applies_to": [ "csharp" ],
-    "tags": [ "Development.Framework.Microsoft.NETStandard" ],
+    "tags": [ "Framework.Development.Microsoft.NETStandard" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -33,10 +33,10 @@
   },
   {
     "name": "Development Framework: Mono",
-    "id": "AI016100",
+    "id": "AI021700",
     "description": "Development Framework: Mono",
     "applies_to": [ "csharp" ],
-    "tags": [ "Development.Framework.Microsoft.Mono" ],
+    "tags": [ "Framework.Development.Microsoft.Mono" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -49,10 +49,10 @@
   },
   {
     "name": "Development Framework: Microsoft MVC",
-    "id": "AI016200",
+    "id": "AI021800",
     "description": "Development Framework: Microsoft MVC",
     "applies_to": [ "csharp" ],
-    "tags": [ "Development.Framework.Microsoft.MVC" ],
+    "tags": [ "Framework.Development.Microsoft.MVC" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -72,10 +72,10 @@
   },
   {
     "name": "Development Framework: Microsoft WCF",
-    "id": "AI016300",
+    "id": "AI021900",
     "description": "Development Framework: Microsoft WCF",
     "applies_to": [ "csharp" ],
-    "tags": [ "Development.Framework.Microsoft.WCF" ],
+    "tags": [ "Framework.Development.Microsoft.WCF" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -88,10 +88,10 @@
   },
   {
     "name": "Development Framework: Microsoft MFC",
-    "id": "AI016400",
+    "id": "AI022000",
     "description": "Development Framework: Microsoft MFC",
     "applies_to": [ "c", "cpp", "csharp" ],
-    "tags": [ "Development.Framework.Microsoft.MFC" ],
+    "tags": [ "Framework.Development.Microsoft.MFC" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -104,10 +104,10 @@
   },
   {
     "name": "Development Framework: Microsoft ADO",
-    "id": "AI016500",
+    "id": "AI022100",
     "description": "Development Framework: Microsoft ADO",
     "applies_to": [ "csharp" ],
-    "tags": [ "Development.Framework.Microsoft.ADO" ],
+    "tags": [ "Framework.Development.Microsoft.ADO" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -120,10 +120,10 @@
   },
   {
     "name": "Development Framework: Microsoft Linq",
-    "id": "AI016600",
+    "id": "AI022200",
     "description": "Development Framework: Microsoft Linq",
     "applies_to": [ "csharp" ],
-    "tags": [ "Development.Framework.Microsoft.Linq" ],
+    "tags": [ "Framework.Development.Microsoft.Linq" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -137,10 +137,10 @@
   },
   {
     "name": "Development Framework: Windows SDK",
-    "id": "AI016700",
+    "id": "AI022300",
     "description": "Development Framework: Windows SDK",
     "applies_to": [ "c", "cpp", "csharp" ],
-    "tags": [ "Development.Framework.Microsoft.WindowsSDK" ],
+    "tags": [ "Framework.Development.Microsoft.WindowsSDK" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -154,10 +154,10 @@
   },
   {
     "name": "Development Framework: Microsoft Dynamics",
-    "id": "AI016900",
+    "id": "AI022400",
     "description": "Development Framework: Microsoft Dynamics",
     "tags": [
-      "Development.Framework.Microsoft.Server.Dynamics"
+      "Framework.Development.Microsoft.Server.Dynamics"
     ],
     "severity": "moderate",
     "patterns": [
@@ -171,10 +171,10 @@
   },
   {
     "name": "Development Framework: Microsoft IIS",
-    "id": "AI017000",
+    "id": "AI022500",
     "description": "Development Framework: Microsoft IIS",
     "tags": [
-      "Development.Framework.Microsoft.Server.IIS"
+      "Framework.Development.Microsoft.Server.IIS"
     ],
     "severity": "moderate",
     "patterns": [
@@ -188,10 +188,10 @@
   },
   {
     "name": "Development Framework: Microsoft ASP.NET",
-    "id": "AI017100",
+    "id": "AI022600",
     "description": "Development Framework: Microsoft ASP.NET",
     "tags": [
-      "Development.Framework.Microsoft.Server.ASP"
+      "Framework.Development.Microsoft.Server.ASP"
     ],
     "severity": "moderate",
     "patterns": [
@@ -202,5 +202,30 @@
         "_comment": ""
       }
     ]
-  }
+  },
+  {
+    "name": "Component: COM",
+    "id": "AI022700",
+    "description": "Component: COM",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp"
+    ],
+    "tags": [
+      "Framework.Development.Microsoft.COM",
+      "Component.Executable.Microsoft.COM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER|CoCreateInstance",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
 ]

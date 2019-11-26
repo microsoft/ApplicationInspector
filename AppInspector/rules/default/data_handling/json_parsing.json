@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Data Handling: Processes JSON",
+    "id": "AI013300",
+    "description": "Data Handling: Processes JSON",
+    "applies_to": ["javascript"],
+    "tags": [
+      "Data.Parsing.JSON"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "JSON.Parse",
+        "type": "string",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Data Handling: Processes JSON",
+    "id": "AI013400",
+    "description": "Data Handling: Processes JSON",
+    "applies_to": [ "csharp" ],
+    "tags": [
+      "Data.Parsing.JSON"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "JSON.createParser",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Data Handling: Processes JSON",
+    "id": "AI013500",
+    "description": "Data Handling: Processes JSON",
+    "tags": [
+      "Data.Parsing.JSON"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "json.*parser",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ]
+      }
+    ]
+  }
+] 

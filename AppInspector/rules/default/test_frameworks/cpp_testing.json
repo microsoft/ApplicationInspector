@@ -1,14 +1,14 @@
 [
   {
     "name": "Testing Framework: AceUnit",
-    "id": "AI035600",
+    "id": "AI038800",
     "description": "Testing Framework: AceUnit",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "Testing.Framework.AceUnit"
+      "Framework.Testing.AceUnit"
     ],
     "patterns": [
       {
@@ -28,14 +28,14 @@
   },
   {
     "name": "Testing Framework: Eryn",
-    "id": "AI035700",
+    "id": "AI038900",
     "description": "Testing Framework: Eryn",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "Testing.Framework.Eryn"
+      "Framework.Testing.Eryn"
     ],
     "patterns": [
       {
@@ -53,14 +53,14 @@
   },
   {
     "name": "Testing Framework: Autounit",
-    "id": "AI035800",
+    "id": "AI039000",
     "description": "Testing Framework: Autounit",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "Testing.Framework.Autounit"
+      "Framework.Testing.Autounit"
     ],
     "patterns": [
       {
@@ -78,14 +78,14 @@
   },
   {
     "name": "Testing Framework: Andit",
-    "id": "AI035900",
+    "id": "AI039100",
     "description": "Testing Framework: Andit",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "Testing.Framework.Andit"
+      "Framework.Testing.Andit"
     ],
     "patterns": [
       {
@@ -103,14 +103,14 @@
   },
   {
     "name": "Testing Framework: Boost",
-    "id": "AI036000",
+    "id": "AI039200",
     "description": "Testing Framework: Boost",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "Testing.Framework.Boost"
+      "Framework.Testing.Boost"
     ],
     "patterns": [
       {
@@ -128,14 +128,14 @@
   },
   {
     "name": "Testing Framework: BugEye",
-    "id": "AI036100",
+    "id": "AI039300",
     "description": "Testing Framework: BugEye",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "Testing.Framework.BugEye"
+      "Framework.Testing.BugEye"
     ],
     "patterns": [
       {
@@ -153,14 +153,14 @@
   },
   {
     "name": "Testing Framework: Catch2",
-    "id": "AI036200",
+    "id": "AI039400",
     "description": "Testing Framework: Catch2",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "Testing.Framework.Catch2"
+      "Framework.Testing.Catch2"
     ],
     "patterns": [
       {
@@ -179,14 +179,14 @@
 
   {
     "name": "Testing Framework: Catsrunner",
-    "id": "AI036300",
+    "id": "AI039500",
     "description": "Testing Framework: Catsrunner",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "Testing.Framework.Catsrunner"
+      "Framework.Testing.Catsrunner"
     ],
     "patterns": [
       {
@@ -204,14 +204,14 @@
   },
   {
     "name": "Testing Framework: cfix ",
-    "id": "AI036400",
+    "id": "AI039600",
     "description": "Testing Framework: cfix ",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "Testing.Framework.Cfix"
+      "Framework.Testing.Cfix"
     ],
     "_comment": "https://github.com/jpassing/cfix",
     "patterns": [
@@ -230,14 +230,14 @@
   },
   {
     "name": "Testing Framework: Cgreen",
-    "id": "AI036500",
+    "id": "AI039700",
     "description": "Testing Framework: Cgreen",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "Testing.Framework.Cgreen"
+      "Framework.Testing.Cgreen"
     ],
     "patterns": [
       {

@@ -132,6 +132,7 @@ namespace RulesEngine
         /// <param name="tag">Tag for the rules</param>
         public void AddString(string jsonstring, string sourcename, string tag = null)
         {
+            HashSet<string> dupRuleIds = new HashSet<string>();
             List<Rule> ruleList = new List<Rule>();
             JsonSerializerSettings settings = new JsonSerializerSettings()
             {
@@ -144,7 +145,7 @@ namespace RulesEngine
             }
             catch(Exception ex)
             {
-                Console.WriteLine($"Error parsing {sourcename}: {ex.Message}");
+                _logger.Error($"Error parsing {sourcename}: {ex.Message}");
                 throw ex;
             }
 
@@ -152,23 +153,32 @@ namespace RulesEngine
             {
                 foreach (Rule r in ruleList)
                 {
-                    r.Source = sourcename;
-                    r.RuntimeTag = tag;
-
-                    if (r.Patterns == null)
-                        r.Patterns = new SearchPattern[] { };
-
-                    foreach (SearchPattern pattern in r.Patterns)
+                    if (dupRuleIds.Add(r.Id))
                     {
-                        SanitizePatternRegex(pattern);
+                        r.Source = sourcename;
+                        r.RuntimeTag = tag;
+
+                        if (r.Patterns == null)
+                            r.Patterns = new SearchPattern[] { };
+
+                        foreach (SearchPattern pattern in r.Patterns)
+                        {
+                            SanitizePatternRegex(pattern);
+                        }
+
+                        if (r.Conditions == null)
+                            r.Conditions = new SearchCondition[] { };
+
+                        foreach (SearchCondition condition in r.Conditions)
+                        {
+                            SanitizePatternRegex(condition.Pattern);
+                        }
+
+                        _logger.Info(string.Format("Rule added: {0},{1},{2}", r.Id, r.Name, r.Description));
                     }
-
-                    if (r.Conditions == null)
-                        r.Conditions = new SearchCondition[] { };
-
-                    foreach (SearchCondition condition in r.Conditions)
-                    {                                             
-                        SanitizePatternRegex(condition.Pattern);                        
+                    else
+                    {
+                        throw new Exception(string.Format("Duplicate ruleId {0} found.", r.Id));
                     }
 
                 }

@@ -387,7 +387,7 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Verify rules failed.
+        ///   Looks up a localized string similar to Verify rules failed.  See log file for details..
         /// </summary>
         internal static string VERIFY_RULES_RESULTS_FAIL {
             get {

@@ -85,9 +85,10 @@ namespace Microsoft.AppInspector.Commands
             LastUpdated = DateTime.MinValue;
             DateScanned = DateTime.Now;
 
+            ConfigOutput(); 
             ConfigureConfidenceFilters();
             ConfigRules();
-            ConfigOutput();
+            
         }
 
 
@@ -176,9 +177,10 @@ namespace Microsoft.AppInspector.Commands
             {
                  if (_arg_fileFormat != "html")
                     _outputWriter.TextWriter = File.CreateText(_arg_outputFile);//not needed if html output since application controlled
+
+                _outputWriter.TextWriter.WriteLine(Program.GetVersionString());
             }
-            else
-                _outputWriter.TextWriter = Console.Out;
+
         }
 
 
@@ -207,7 +209,7 @@ namespace Microsoft.AppInspector.Commands
                         throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
                     
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
                 }

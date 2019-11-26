@@ -1,11 +1,11 @@
 [
   {
     "name": "Detect Frameworks",
-    "id": "AI017200",
+    "id": "AI022800",
     "description": "Detect well-known frameworks used",
     "recommendation": "",
     "applies_to": [ "php" ],
-    "tags": [ "Development.Framework.PHP" ],
+    "tags": [ "Framework.Development.PHP" ],
     "severity": "moderate",
     "_comment": "",
     "rule_info": "",
