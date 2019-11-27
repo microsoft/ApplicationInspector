@@ -161,7 +161,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "PlatformID.WinCE|Windows Mobile|Windows Embedded",
+        "pattern": "PlatformID.WinCE|Windows Mobile|Windows Embedded|Windows Phone",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],

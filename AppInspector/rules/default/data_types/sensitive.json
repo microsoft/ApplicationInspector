@@ -1,8 +1,8 @@
 [
   {
-    "name": "Data: Sensitive (Personal Information)",
+    "name": "Data: Sensitive (Identification)",
     "id": "AI015500",
-    "description": "Data: Sensitive (Personal Information)",
+    "description": "Data: Sensitive (Identification)",
     "tags": [
       "Data.Sensitive.Identification"
     ],
@@ -16,7 +16,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "birthdate|ethnicity|gender|age|citizenship|nationality|martial|marriage|married|spouce|mother|father|kids*",
+        "pattern": "birthdate|ethnicity|gender|citizenship|nationality|martial|marriage|married|spouce|mother|father|kids*",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -60,9 +60,9 @@
     ]
   },
   {
-    "name": "Data: Sensitive (Personal Information)",
+    "name": "Data: Sensitive (Identification)",
     "id": "AI015600",
-    "description": "Data: Sensitive (Personal Information)",
+    "description": "Data: Sensitive (Identification)",
     "tags": [
       "Data.Sensitive.Identification"
     ],
@@ -70,6 +70,13 @@
     "patterns": [
       {
         "pattern": "mobile|cell",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium"
+      },
+      {
+        "pattern": "age",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -94,9 +101,9 @@
     ]
   },
   {
-    "name": "Data: Sensitive (Personal Information)",
+    "name": "Data: Sensitive (Identification)",
     "id": "AI015700",
-    "description": "Data: Sensitive (Personal Information)",
+    "description": "Data: Sensitive (Identification)",
     "tags": [
       "Data.Sensitive.Identification"
     ],
@@ -128,9 +135,9 @@
     ]
   },
   {
-    "name": "Data: Sensitive (Medical Information)",
+    "name": "Data: Sensitive (Medical)",
     "id": "AI015800",
-    "description": "Data: Sensitive (Medical Information)",
+    "description": "Data: Sensitive (Medical)",
     "tags": [
       "Data.Sensitive.Medical"
     ],
@@ -146,9 +153,9 @@
     ]
   },
   {
-    "name": "Data: Sensitive (Account Information)",
+    "name": "Data: Sensitive (Account)",
     "id": "AI015900",
-    "description": "Data: Sensitive (Account Information)",
+    "description": "Data: Sensitive (Account)",
     "tags": [
       "Data.Sensitive.UserAccount"
     ],

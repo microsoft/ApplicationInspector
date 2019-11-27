@@ -1,9 +1,9 @@
 [
   {
-    "name": "Data Handling: Processes JSON",
+    "name": "Data: Parses JSON",
     "id": "AI013300",
-    "description": "Data Handling: Processes JSON",
-    "applies_to": ["javascript"],
+    "description": "Data: Parses JSON",
+    "applies_to": [ "javascript" ],
     "tags": [
       "Data.Parsing.JSON"
     ],
@@ -19,9 +19,9 @@
     ]
   },
   {
-    "name": "Data Handling: Processes JSON",
+    "name": "Data: Parses JSON",
     "id": "AI013400",
-    "description": "Data Handling: Processes JSON",
+    "description": "Data: Parses JSON",
     "applies_to": [ "csharp" ],
     "tags": [
       "Data.Parsing.JSON"
@@ -38,9 +38,9 @@
     ]
   },
   {
-    "name": "Data Handling: Processes JSON",
+    "name": "Data: Parses JSON",
     "id": "AI013500",
-    "description": "Data Handling: Processes JSON",
+    "description": "Data: Parses JSON",
     "tags": [
       "Data.Parsing.JSON"
     ],

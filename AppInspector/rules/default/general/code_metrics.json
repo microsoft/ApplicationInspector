@@ -88,6 +88,7 @@
         "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high",
+        "modifications":  ["i"],
         "_comment": ""
       }
     ]

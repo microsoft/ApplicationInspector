@@ -1,18 +1,18 @@
 [
   {
-    "name": "Feature: Authorization",
-    "id": "AI038700",
-    "description": "Feature: Authorization",
+    "name": "Authorization: Microsoft Azure SAS",
+    "id": "AI038800",
+    "description": "Authorization: Microsoft Azure SAS",
     "applies_to": [
       "common_source_code"
     ],
     "tags": [
-      "Feature.Authorization"
+      "Authorization.Microsoft.Azuze.SAS"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
-        "pattern": "authorize|authorized|authorization|permission|claim|sharedAccessPolicy|storageAccessKey|sharedAccessAccountPolicy|storageAccountOrConnectionString",
+        "pattern": "sharedAccessPolicy|storageAccessKey|sharedAccessAccountPolicy|storageAccountOrConnectionString",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -21,22 +21,98 @@
         "confidence": "high"
       },
       {
-        "pattern": "SASToken",
-        "type": "string",
+        "pattern": "SAS *Token",
+        "type": "regex",
         "scopes": [
           "code"
         ],
         "modifications": [ "i" ],
         "confidence": "high"
-      },
+      }
+    ]
+  },
+  {
+    "name": "Authorization: RBAC",
+    "id": "AI038900",
+    "description": "Authorization: RBAC",
+    "applies_to": [
+      "common_source_code"
+    ],
+    "tags": [
+      "Authorization.RBAC"
+    ],
+    "severity": "critical",
+    "patterns": [
       {
-        "pattern": "RBAC|role",
+        "pattern": "permissions*|rbac|userrole*s|roles*",
         "type": "regex-word",
         "scopes": [
           "code"
         ],
         "modifications": [ "i" ],
         "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Authorization: Claims",
+    "id": "AI039000",
+    "description": "Authorization: Claims",
+    "applies_to": [
+      "common_source_code"
+    ],
+    "tags": [
+      "Authorization.Claims"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "claims*",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifications": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Authorization: General",
+    "id": "AI039100",
+    "description": "Authorization: General",
+    "applies_to": [
+      "common_source_code"
+    ],
+    "tags": [
+      "Authorization.General"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "authorize|authorized|authorization|isauthorized",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifications": [ "i" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "SAS|SharedAccess",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": "since already covered by another rule if SAS related"
+        },
+        "search_in": "finding-region(-10,10)",
+        "negate_finding": true,
+        "_comment": ""
       }
     ]
   }

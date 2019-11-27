@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Threading;
 
 
 namespace Microsoft.AppInspector.Commands
@@ -35,6 +36,7 @@ namespace Microsoft.AppInspector.Commands
             CriticalError = 2
         }
 
+        IEnumerable<string> _srcfileList;
         AppProfile _appProfile;
         RuleProcessor _rulesProcessor;
         Writer _outputWriter;
@@ -66,6 +68,7 @@ namespace Microsoft.AppInspector.Commands
         private Confidence _arg_confidence;
         private WriteOnce.ConsoleVerbosity _arg_consoleVerbosityLevel;
         
+
         public AnalyzeCommand(AnalyzeCommandOptions opts)
         {
             _arg_sourcePath = opts.SourcePath;
@@ -85,8 +88,9 @@ namespace Microsoft.AppInspector.Commands
             LastUpdated = DateTime.MinValue;
             DateScanned = DateTime.Now;
 
-            ConfigOutput(); 
-            ConfigureConfidenceFilters();
+            ConfigOutput();
+            ConfigSourcetoScan();
+            ConfigConfidenceFilters();
             ConfigRules();
             
         }
@@ -97,7 +101,7 @@ namespace Microsoft.AppInspector.Commands
         /// <summary>
         /// Expects user to supply all that apply
         /// </summary>
-        void ConfigureConfidenceFilters()
+        void ConfigConfidenceFilters()
         {
             //parse and verify confidence values
             if (String.IsNullOrEmpty(_arg_confidenceFilters))
@@ -184,79 +188,78 @@ namespace Microsoft.AppInspector.Commands
         }
 
 
-        #endregion
-
-
         /// <summary>
-        /// Main entry point to start analysis; handles setting up rules, directory enumeration
-        /// file type detection and handoff
+        /// Simple validation on source path provided for scanning and preparation
         /// </summary>
-        /// <returns></returns>
-        public int Run()
+        void ConfigSourcetoScan()
         {
-            DateTime start = DateTime.Now;
-            
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Analyze"));
-            
-            //if it's not a directory, make an IEnumerable out of it for same error handling
-            IEnumerable<string> fileList;
             if (Directory.Exists(_arg_sourcePath))
             {
                 try
                 {
-                    fileList = Directory.EnumerateFiles(_arg_sourcePath, "*.*", SearchOption.AllDirectories);
-                    if (fileList.Count() == 0)
+                    _srcfileList = Directory.EnumerateFiles(_arg_sourcePath, "*.*", SearchOption.AllDirectories);
+                    if (_srcfileList.Count() == 0)
                         throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
-                    
+
                 }
                 catch (Exception)
                 {
                     throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
                 }
             }
-            else if (File.Exists(_arg_sourcePath))
-                fileList = new List<string>() { _arg_sourcePath };
+            else if (File.Exists(_arg_sourcePath)) //not a directory but make one for single flow
+                _srcfileList = new List<string>() { _arg_sourcePath };
             else
                 throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
 
+        }
 
-            _appProfile.MetaData.TotalFiles = fileList.Count();
+
+        #endregion
+
+
+        /// <summary>
+        /// Main entry point to start analysis; handles setting up rules, directory enumeration
+        /// file type detection and handoff
+        /// Pre: All Configure Methods have been called already and we are ready to SCAN
+        /// </summary>
+        /// <returns></returns>
+        public int Run()
+        {
+            DateTime start = DateTime.Now;          
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Analyze"));
+       
+            _appProfile.MetaData.TotalFiles = _srcfileList.Count();
 
             // Iterate through all files and process against rules
-            foreach (string filename in fileList)
+            foreach (string filename in _srcfileList)
             {
                 var fileExtension = new FileInfo(filename).Extension;
                 if (COMPRESSED_EXTENSIONS.Any(fileExtension.Contains))
-                    ExpandAndProcess(filename);
+                    UnZipAndProcess(filename);
                 else
                     ProcessAsFile(filename);
-
-                //progress report
-                int totalFilesReviewed = _appProfile.MetaData.FilesAnalyzed + _appProfile.MetaData.FilesSkipped;
-                int percentCompleted = (int)((float)totalFilesReviewed / (float)_appProfile.MetaData.TotalFiles * 100);
-                WriteOnce.General("\r"+ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted),false);
             }
 
-            //prepare summary report
             WriteOnce.General("\r"+ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
             WriteOnce.Operation(ErrMsg.GetString(ErrMsg.ID.CMD_PREPARING_REPORT));
-
+           
+            //Prepare report results
             _appProfile.MetaData.LastUpdated = LastUpdated.ToString();
             _appProfile.DateScanned = DateScanned.ToString();
             _appProfile.PrepareReport();
-            //close output files
+            TimeSpan timeSpan = start - DateTime.Now;
+            WriteOnce.Log.Trace(String.Format("Processing time: seconds:{0}", timeSpan.TotalSeconds * -1));
             FlushAll();
 
+            //wrapup result status
             if (_appProfile.MetaData.TotalFiles == _appProfile.MetaData.FilesSkipped)
                 WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOSUPPORTED_FILETYPES));
             else if (_appProfile.MatchList.Count == 0)
                 WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOPATTERNS));
             else
                 WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Analyze"));
-
-            TimeSpan timeSpan = start - DateTime.Now;
-            WriteOnce.Log.Trace(String.Format("Processing time: seconds:{0}", timeSpan.TotalSeconds*-1));
-
+            
             return _appProfile.MatchList.Count() == 0 ? (int)ExitCode.NoMatches : 
                 (int)ExitCode.MatchesFound;
         }
@@ -264,7 +267,8 @@ namespace Microsoft.AppInspector.Commands
 
 
         /// <summary>
-        /// Wrapper for files that are on disk and ready to read
+        /// Wrapper for files that are on disk and ready to read to allow separation of core
+        /// scan evaluation for use by decompression methods as well
         /// </summary>
         /// <param name="filename"></param>
         void ProcessAsFile(string filename)
@@ -273,13 +277,6 @@ namespace Microsoft.AppInspector.Commands
             {
                 _appProfile.MetaData.FileNames.Add(filename);
                 _appProfile.MetaData.PackageTypes.Add(ErrMsg.GetString(ErrMsg.ID.ANALYZE_UNCOMPRESSED_FILETYPE));
-
-                if (new System.IO.FileInfo(filename).Length > MAX_FILESIZE)
-                {
-                    WriteOnce.Log.Error(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filename));
-                    _appProfile.MetaData.FilesSkipped++;
-                    return;
-                }
 
                 string fileText = File.ReadAllText(filename);
                 ProcessInMemory(filename, fileText);
@@ -292,12 +289,13 @@ namespace Microsoft.AppInspector.Commands
 
 
         /// <summary>
-        /// Main WORKHORSE for analyzing file; called directly from decompression functions
+        /// Main WORKHORSE for analyzing file; called from file based or decompression functions
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="fileText"></param>
         void ProcessInMemory(string filePath, string fileText)
         {
+            #region quickvalidation
             if (fileText.Length > MAX_FILESIZE)
             {
                 WriteOnce.Log.Error(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath));
@@ -321,12 +319,18 @@ namespace Microsoft.AppInspector.Commands
                 WriteOnce.Log.Trace("Preparing to process file: " + filePath);
             }
 
-            #region minorRollupTracking
+            #endregion
+
+            #region minorRollupTrackingAndProgress
 
             _appProfile.MetaData.FilesAnalyzed++;
             _appProfile.MetaData.AddLanguage(language);
             _appProfile.MetaData.FileExtensions.Add(Path.GetExtension(filePath).Replace('.', ' ').TrimStart());
             LastUpdated = File.GetLastWriteTime(filePath);
+
+            int totalFilesReviewed = _appProfile.MetaData.FilesAnalyzed + _appProfile.MetaData.FilesSkipped;
+            int percentCompleted = (int)((float)totalFilesReviewed / (float)_appProfile.MetaData.TotalFiles * 100);
+            WriteOnce.General("\r" + ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted), false);
 
             #endregion
 
@@ -351,7 +355,7 @@ namespace Microsoft.AppInspector.Commands
                     foreach (string t in match.Rule.Tags)
                         dupTagFound = !uniqueTagsControl.Add(t);
 
-                    //all unique dependendencies saved even if this tag pattern is not-unique
+                    //save all unique dependendencies even if Dependency tag pattern is not-unique
                     var tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
                     String textMatch;
                     if (match.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))
@@ -359,7 +363,7 @@ namespace Microsoft.AppInspector.Commands
                     else
                         textMatch = ExtractTextSample(fileText, match.Boundary.Index, match.Boundary.Length);
 
-                    //TODO put all this in Issue class and avoid new wrapper type                      
+                    //wrap rule issue result to add metadata
                     MatchRecord record = new MatchRecord()
                     {
                         Filename = filePath,
@@ -541,7 +545,7 @@ namespace Microsoft.AppInspector.Commands
 
         #region ZipDecompression
 
-        void ExpandAndProcess(string filename)
+        void UnZipAndProcess(string filename)
         {
             if (!File.Exists(filename))
             {
@@ -610,7 +614,6 @@ namespace Microsoft.AppInspector.Commands
             WriteOnce.Log.Trace("Analyzing .zip file: [{0}])", filename);
 
             ZipFile zipFile;
-            int filesCount = 0;
             using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
             using (var memoryStream = new MemoryStream())
             {
@@ -622,7 +625,6 @@ namespace Microsoft.AppInspector.Commands
                     {
                         continue;
                     }
-                    filesCount++;
                     byte[] buffer = new byte[4096];
                     var zipStream = zipFile.GetInputStream(zipEntry);
                     if (zipEntry.Size > MAX_FILESIZE)
@@ -648,15 +650,48 @@ namespace Microsoft.AppInspector.Commands
                     memoryStream.SetLength(0);   // Clear out the stream
                 }
 
-                _appProfile.MetaData.TotalFiles += filesCount;
                 zipFile.Close();
             }
 
         }
 
+
+        /// <summary>
+        /// Helper if no other way to get file count for progress meter
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        int GetTarGzFileCount(string filename)
+        {
+            int count = 0;
+            using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            using (var gzipStream = new GZipInputStream(fileStream))
+            using (var memoryStream = new MemoryStream())
+            {
+                var tarStream = new TarInputStream(gzipStream);
+                TarEntry tarEntry;
+                while ((tarEntry = tarStream.GetNextEntry()) != null)
+                {
+                    if (tarEntry.IsDirectory)
+                    {
+                        continue;
+                    }
+
+                    count++;
+
+                }
+            }
+
+            Thread.Sleep(300);//give time for OS to close before full processing
+            return count;
+        }
+
+
         void ProcessTarGzFile(string filename)
         {
             WriteOnce.Log.Trace("Analyzing .tar.gz file: [{0}])", filename);
+
+            _appProfile.MetaData.TotalFiles = GetTarGzFileCount(filename);
 
             using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
             using (var gzipStream = new GZipInputStream(fileStream))
@@ -664,14 +699,12 @@ namespace Microsoft.AppInspector.Commands
             {
                 var tarStream = new TarInputStream(gzipStream);
                 TarEntry tarEntry;
-                int filesCount = 0;
                 while ((tarEntry = tarStream.GetNextEntry()) != null)
                 {
                     if (tarEntry.IsDirectory)
                     {
                         continue;
                     }
-                    filesCount++;
                     tarStream.CopyEntryContents(memoryStream);
                     if (tarEntry.Size > MAX_FILESIZE)
                     {
@@ -696,7 +729,7 @@ namespace Microsoft.AppInspector.Commands
 
                     memoryStream.SetLength(0);   // Clear out the stream
                 }
-                _appProfile.MetaData.TotalFiles+= filesCount;
+
                 tarStream.Close();
             }
 
