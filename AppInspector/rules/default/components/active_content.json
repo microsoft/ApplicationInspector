@@ -11,7 +11,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\.(swf|flv)",
+        "pattern": "\\.(swf|flv)|flash",
         "type": "regex",
         "scopes": [
           "code"

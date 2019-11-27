@@ -123,37 +123,17 @@ namespace Microsoft.AppInspector.Writers
             
         }
 
-
-
-        #region TagListGroupingMethods
+        #region UIAndReportResultsOrg
 
         /// <summary>
-        /// Retrieve the set of groups of tags for specified file section in TagReportGroups.json read previously i.e. in PrepareReport
-        /// </summary>
-        /// <param name="category"></param>
-        /// <returns></returns>
-        public List<TagInfo> GetTagInfoList(string category)
-        {
-            List<TagInfo> result = new List<TagInfo>();
-            List<TagGroup> tagGroups = GetCategoryTagGroups(category);
-            foreach (TagGroup group in tagGroups)
-            {
-                result.AddRange(KeyedTagInfoLists["tagGrp" + group.DataRef]);
-            }
-
-            return result;
-        }
-
-
-
-        /// <summary>
-        /// Get a list of taggroups for a given file name e.g. profile or composition
+        /// Get a list of TagGroup for a given category section name e.g. profile 
         /// </summary>
         /// <param name="category"></param>
         /// <returns></returns>
         public List<TagGroup> GetCategoryTagGroups(string category)
         {
             List<TagGroup> result = new List<TagGroup>();
+            //get all tag groups for specified category
             foreach (TagCategory categoryTagGroup in TagGroupPreferences)
             {
                 if (categoryTagGroup.Name == category)
@@ -163,6 +143,7 @@ namespace Microsoft.AppInspector.Writers
                 }
             }
 
+            //now get all matches for that group i.e. Authentication
             foreach (TagGroup group in result)
             {
                 GetUniqueMatchingTagInfoList(group);
@@ -186,11 +167,10 @@ namespace Microsoft.AppInspector.Writers
             return results;
         }
 
-
-
         /// <summary>
         /// Builds list of matching tags by profile pattern
         /// Ensures only one instance of a given tag in results unlike GetAllMatchingTags method
+        /// with highest confidence level for that tag pattern
         /// </summary>
         /// <param name="tagPattern"></param>
         /// <returns></returns>
@@ -228,8 +208,9 @@ namespace Microsoft.AppInspector.Writers
                                     pattern.Confidence = match.Issue.Confidence.ToString();
 
                                 }
-                                else //already have in results but...
-                                {//ensure we have highest confidence, severity as there are likly multiple matches for this tag pattern
+                                else 
+                                {   
+                                    //we have but ensure we get highest confidence, severity as there are likly multiple matches for this tag pattern
                                     foreach (TagInfo updateItem in result)
                                     {
                                         if (updateItem.Tag == tagItem)
@@ -257,7 +238,7 @@ namespace Microsoft.AppInspector.Writers
                         }
                     }
                 }
-                else if (addNotFound) //allow page to report on false presense items
+                else if (addNotFound) //allow to report on false presense items
                 {
                     TagInfo tagInfo = new TagInfo
                     {
@@ -283,7 +264,7 @@ namespace Microsoft.AppInspector.Writers
 
 
         /// <summary>
-        /// Gets a set of matching tags for a set of patterns returning for all matches
+        /// Gets a set of matching tags for a set of patterns, returning for all matches
         /// </summary>
         /// <param name="patterns"></param>
         /// <param name="addNotFound"></param>
@@ -353,11 +334,6 @@ namespace Microsoft.AppInspector.Writers
             return result;
         }
 
-
-        #endregion  
-
-
-        #region SortTagsMethods
 
         /// <summary>
         /// List of taginfo items ordered by name
@@ -436,7 +412,6 @@ namespace Microsoft.AppInspector.Writers
                 }
             }
 
-
             return result;
         }
 
@@ -445,7 +420,6 @@ namespace Microsoft.AppInspector.Writers
         /// Sorted by Severity
         /// </summary>
         /// <returns></returns>
-
         private List<TagInfo> GetTagInfoListBySeverity()
         {
             List<TagInfo> result = new List<TagInfo>();
@@ -477,14 +451,11 @@ namespace Microsoft.AppInspector.Writers
                 }
             }
 
-
             return result;
         }
-
-        #endregion
-
-      
     }
+
+    #endregion
 
 
     /// <summary>
@@ -520,7 +491,8 @@ namespace Microsoft.AppInspector.Writers
             {
                 ApplicationName = Path.GetFileNameWithoutExtension(sourcePath);
             }
-            //initialize set groups of dynamic lists variables that may have more than one value; some are filled
+
+            //initialize standard set groups using dynamic lists variables that may have more than one value; some are filled
             //using tag tests and others by different means like file type examination
             KeyedPropertyLists = new Dictionary<string, HashSet<string>>
             {
@@ -550,11 +522,14 @@ namespace Microsoft.AppInspector.Writers
             TagCounters = JsonConvert.DeserializeObject<List<TagCounter>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagCounterPref)));
             HashSet<string> dupCountersCheck = new HashSet<string>();
             foreach (TagCounter counter in TagCounters)
-                dupCountersCheck.Add(counter.Tag);
-                    
-            Languages = new Dictionary<string, int>();
+            {
+                if (!dupCountersCheck.Add(counter.Tag))
+                    WriteOnce.Log.Error("Duplidate counter specified in preferences");
+            }
 
+            Languages = new Dictionary<string, int>();
         }
+
 
         public void AddLanguage(string language)
         {
@@ -563,7 +538,6 @@ namespace Microsoft.AppInspector.Writers
             else
                 Languages.Add(language, 1);
         }
-
 
         //simple properties 
         [JsonProperty(PropertyName = "applicationName")]
@@ -593,6 +567,8 @@ namespace Microsoft.AppInspector.Writers
         public int TotalMatchesCount { get; set; }
         [JsonProperty(PropertyName = "uniqueMatchesCount")]
         public int UniqueMatchesCount { get { return UniqueTags.Count; } }
+
+        //Wrapper getters for serialzation and easy reference of standard properties found in dynamic lists
         [JsonIgnore]
         public List<TagCounterUI> TagCountersUI { get; set; }
         [JsonProperty(PropertyName = "TagCounters")]
@@ -672,14 +648,14 @@ namespace Microsoft.AppInspector.Writers
         /// <summary>
         /// Part of post processing to test for matches against app defined properties
         /// defined in MetaData class
-        /// TODO: decide if we can just call from AppProfile PrepareReport instead
+        /// Exludes a match if specified in preferences as a counted tag with exclude true
         /// </summary>
         /// <param name="matchRecord"></param>
         public bool AddStandardProperties(MatchRecord matchRecord)
         {
             bool includeAsMatch = true;
 
-            //standard testing for presence of a tag against the preffered set of tags
+            //testing for presence of a tag against the specified set in preferences for report org 
             foreach (string key in _propertyTagSearchPatterns.Keys)
             {
                 var tagPatternRegex = new Regex(_propertyTagSearchPatterns[key], RegexOptions.IgnoreCase);
@@ -699,7 +675,7 @@ namespace Microsoft.AppInspector.Writers
                 }
             }
 
-            // Author etc.
+            // Author etc. or standard properties we capture
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Author")))
                 this.Authors = ExtractJSONValue(matchRecord.TextSample);
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Description")))

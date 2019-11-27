@@ -1,6 +1,6 @@
 [
   {
-    "name": "Cryptography: Hash Algorithm Usage",
+    "name": "Cryptography: Hash Algorithm",
     "id": "AI008400",
     "description": "Cryptography: Hash Algorithm Usage",
     "tags": [
@@ -20,7 +20,7 @@
     ]
   },
   {
-    "name": "Cryptography: Hash Algorithm Usage (SHA-256)",
+    "name": "Cryptography: Hash Algorithm (SHA-256)",
     "id": "AI008500",
     "description": "Cryptography: Hash Algorithm Usage (SHA-256)",
     "tags": [
@@ -40,7 +40,7 @@
     ]
   },
   {
-    "name": "Cryptography: Hash Algorithm Usage (Legacy)",
+    "name": "Cryptography: Hash Algorithm (Legacy)",
     "id": "AI008600",
     "description": "Cryptography: Hash Algorithm Usage (Legacy)",
     "tags": [
@@ -50,9 +50,9 @@
     "patterns": [
       {
         "pattern": "MD2|MD4|MD5|SHA-?0",
-        "type": "regex",
+        "type": "regex-word",
         "scopes": [
-          "code"
+          "code", "comment"
         ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -60,7 +60,7 @@
     ]
   },
   {
-    "name": "Cryptography: Hash Algorithm Usage (SHA-3)",
+    "name": "Cryptography: Hash Algorithm (SHA-3)",
     "id": "AI008700",
     "description": "Cryptography: Hash Algorithm Usage (SHA-3)",
     "tags": [
@@ -80,7 +80,7 @@
     ]
   },
   {
-    "name": "Cryptography: Hash Algorithm Usage (Misc)",
+    "name": "Cryptography: Hash Algorithm (Misc)",
     "id": "AI008800",
     "description": "Cryptography: Hash Algorithm Usage (Misc)",
     "tags": [
@@ -101,7 +101,7 @@
     ]
   },
   {
-    "name": "Cryptography: Hash Algorithm Usage (Misc)",
+    "name": "Cryptography: Hash Algorithm (Misc)",
     "id": "AI008900",
     "description": "Cryptography: Hash Algorithm Usage (Misc)",
     "tags": [

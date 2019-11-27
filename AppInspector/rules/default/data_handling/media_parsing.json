@@ -6,7 +6,7 @@
     "tags": [
       "Data.Parsing.Media"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "_comment": "",
     "patterns": [
       {

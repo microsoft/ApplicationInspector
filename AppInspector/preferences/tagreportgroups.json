@@ -12,12 +12,12 @@
           {
             "searchPattern": "Authentication",
             "displayName": "Authentication",
-            "detectedIcon": "fas fa-user-lock"
+            "detectedIcon": "fas fa-user-shield"
           },
           {
             "searchPattern": "Authorization",
             "displayName": "Authorization",
-            "detectedIcon": "fas fa-user-shield"
+            "detectedIcon": "fas fa-user-lock"
           },
           {
             "searchPattern": "Cryptography",
@@ -299,7 +299,7 @@
           {
             "searchPattern": "OS.Environment",
             "displayName": "Environment Variable Use",
-            "detectedIcon": "fas fa-tres"
+            "detectedIcon": "fas fa-tree"
           },
           {
             "searchPattern": "Process.ListRequest",

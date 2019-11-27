@@ -42,7 +42,7 @@
         "_comment": ""
       },
       {
-        "pattern": "mp2|mp3|mp4|mpa|ra|rax|raw|smf|snd|sng|swa|hma|aac|ac3|eac3|Vorbis|pcm",
+        "pattern": "mp2|mp3|mp4|mpa|ra|rax|snd|sng|swa|hma|aac|ac3|eac3|Vorbis|pcm",
         "type": "regex-word",
         "scopes": [
           "code",

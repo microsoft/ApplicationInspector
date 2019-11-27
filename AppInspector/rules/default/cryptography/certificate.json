@@ -136,14 +136,6 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "DSA",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
-      },
-      {
         "pattern": "DSACng|SignData|CreateSignature|DSACryptoServiceProvider|DSASignatureDeformatter|DSASignatureFormatter|DSAKeyValue",
         "type": "regex",
         "scopes": [ "code" ],
@@ -171,7 +163,17 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "sign(ing)*.*key|sign|signature|signer|signed",
+        "pattern": "sign(ing)*.*key|signature.*key|valid.*signature",
+        "type": "regex-word",
+        "scopes": [
+          "code", "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "DSA",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -192,13 +194,29 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "code.*sign|authenticode|sign.*code",
+        "pattern": "code *sign|authenticode|sign *code",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "modifiers": [ "i" ],
         "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "shared access|SAS",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-30,30)",
+        "negate_finding": true,
         "_comment": ""
       }
     ]

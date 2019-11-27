@@ -12,13 +12,13 @@
     "patterns": [
       {
         "pattern": "tftp|ntp\\.org|ntpupdate|imap|snmp|ftps|sftp|ftp|nntp|smtp|telnet|ssh|pop3|gopher",
-        "type": "regex",
+        "type": "regex-word",
         "scopes": [
           "code"
         ],
         "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": "don't include auth api's to avoid duplicate reporting"
+        "confidence": "high",
+        "_comment": "don't include auth api's patterns to avoid duplicate reporting"
       }
     ]
   },
@@ -195,12 +195,12 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "WebClient|HttpClient|HttpRequest|HttpWebRequest",
+        "pattern": "WebClient|HttpClient|HttpRequest|HttpWebRequest|HttpWebResponse",
         "type": "regex",
         "scopes": [
           "code"
         ],
-        "modifiers": [],
+        "modifiers": ["i"],
         "confidence": "high"
       }
     ]
@@ -214,8 +214,7 @@
       "html"
     ],
     "tags": [
-      "OS.Network.Connection.Http",
-      "Component.Browser.Messaging.Ajax"
+      "OS.Network.Connection.Http.Ajax",
     ],
     "severity": "moderate",
     "patterns": [

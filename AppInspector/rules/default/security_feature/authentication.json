@@ -1,15 +1,15 @@
 [
   {
-    "name": "Feature: Authentication (MicrosoftOnline)",
+    "name": "Authentication: Microsoft (Identity)",
     "id": "AI037600",
-    "description": "Feature: Authentication (MicrosoftOnline) using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
     "tags": [
-      "Feature.Authentication.MicrosoftOnline"
+      "Authentication.Microsoft.Online"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
-        "pattern": "login\\.microsoftonline\\.com|SASToken|login\\.live.com|outlook\\.com|SAS Token|Shared *Access *Signature",
+        "pattern": "login\\.microsoftonline\\.com|SAS.*Token|login\\.live.com|outlook\\.com|Shared *Access *Signature",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -35,13 +35,13 @@
     ]
   },
   {
-    "name": "Feature: Authentication (Google)",
+    "name": "Authentication: Google",
     "id": "AI037700",
-    "description": "Feature: Authentication (Google)",
+    "description": "Authentication: Google",
     "tags": [
-      "Feature.Authentication.Google"
+      "Authentication.Google"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "using Google\\.Apis\\.Auth|GoogleCredential|AppIdentityCredential|oauth2/google|apis\\.google\\.com/js/api\\.js",
@@ -62,13 +62,13 @@
     ]
   },
   {
-    "name": "Feature: Authentication (Oauth)",
+    "name": "Authentication: (Oauth)",
     "id": "AI037800",
-    "description": "Feature: Authentication (Oauth)",
+    "description": "Authentication: (Oauth)",
     "tags": [
-      "Feature.Authentication.Oauth"
+      "Authentication.Oauth"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "oauth",
@@ -105,13 +105,13 @@
     ]
   },
   {
-    "name": "Feature: Authentication (OpenIDConnect)",
+    "name": "Authentication: OpenIDConnect",
     "id": "AI037900",
-    "description": "Feature: Authentication (OpenIDConnect)",
+    "description": "Authentication: OpenIDConnect based Oauth",
     "tags": [
-      "Feature.Authentication.OpenIDConnect"
+      "Authentication.OpenIDConnect"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "OpenID",
@@ -124,16 +124,16 @@
     ]
   },
   {
-    "name": "Feature: Authentication (Active Directory)",
+    "name": "Authentication: Microsoft (Active Directory)",
     "id": "AI038000",
-    "description": "Feature: Authentication",
+    "description": "Authentication: Microsoft (Active Directory)",
     "tags": [
-      "Feature.Authentication.Windows.AD"
+      "Authentication.Microsoft.Windows.ActiveDirectory"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
-        "pattern": "active-directory|Active *Directory|ADFS|PrincipleContext|ValidateCredentials",
+        "pattern": "active.*directory|ADFS",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -149,8 +149,8 @@
         "_comment": ""
       },
       {
-        "pattern": "System.DirectoryServices",
-        "type": "string",
+        "pattern": "System\\.DirectoryServices",
+        "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "medium",
@@ -159,13 +159,13 @@
     ]
   },
   {
-    "name": "Feature: Authentication (LDAP)",
+    "name": "Authentication: LDAP",
     "id": "AI038100",
-    "description": "Feature: Authentication (LDAP)",
+    "description": "Authentication: LDAP",
     "tags": [
-      "Feature.Authentication.LDAP"
+      "Authentication.LDAP"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "LDAP|ldaps",
@@ -186,13 +186,13 @@
     ]
   },
   {
-    "name": "Feature: Authentication (NTML)",
+    "name": "Authentication: Microsoft Windows (NTML)",
     "id": "AI038200",
-    "description": "Feature: Authentication (NTML)",
+    "description": "AAuthentication: Microsoft Windows (NTML)",
     "tags": [
-      "Feature.Authentication.Windows.NTLM"
+      "Authentication.Microsoft.Windows.NTLM"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "WWW-Authenticate: NTLM|windowsAuthentication|CredentialCache\\.DefaultCredentials|HTTPNtlmAuthHandler",
@@ -221,13 +221,13 @@
     ]
   },
   {
-    "name": "Feature: Authentication (JWT)",
+    "name": "Authentication: JWT",
     "id": "AI038300",
-    "description": "Feature: Authentication (JWT)",
+    "description": "Authentication: JWT",
     "tags": [
-      "Feature.Authentication.JWT"
+      "Authentication.JWT"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "jwt|RFC 7519|System.IdentityModel.Tokens.Jwt",
@@ -243,13 +243,13 @@
     ]
   },
   {
-    "name": "Feature: Authentication (HTML Form)",
+    "name": "Authentication: HTML Form Based",
     "id": "AI038400",
-    "description": "Feature: Authentication (HTML Form)",
+    "description": "Authentication: HTML Form Based",
     "tags": [
-      "Feature.Authentication.HTMLForm"
+      "Authentication.HTMLForm"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": " type=['\\\"]password['\\\"] ",
@@ -264,13 +264,13 @@
     ]
   },
   {
-    "name": "Feature: Authentication (SAML)",
+    "name": "Authentication: SAML",
     "id": "AI038500",
-    "description": "Feature: Authentication (SAML)",
+    "description": "Authentication: SAML",
     "tags": [
-      "Feature.Authentication.SAML"
+      "Authentication.SAML"
     ],
-    "severity": "moderate",
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "SAML|saml2",
@@ -279,17 +279,44 @@
         "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
+      },
+      {
+        "pattern": "federation|sso|networkcredential",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": ""
       }
     ]
   },
   {
-    "name": "Feature: Authentication (General)",
+    "name": "Authentication: Basic-Auth",
     "id": "AI038600",
-    "description": "Feature: Authentication (General)",
+    "description": "Authentication: Basic-Auth",
     "tags": [
-      "Feature.Authentication.General"
+      "Authentication.General"
     ],
-    "severity": "moderate",
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "Authorization: Basic|WWW-Authenticate",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Authentication: General",
+    "id": "AI038700",
+    "description": "Authentication: General",
+    "tags": [
+      "Authentication.General"
+    ],
+    "severity": "critical",
     "patterns": [
       {
         "pattern": "identity|auth|authenticated|authentication|log(in|on)|log(off|out)|signin|sign-?in|signout|sign-?out",
@@ -310,24 +337,8 @@
         "_comment": ""
       },
       {
-        "pattern": "Authorization: Basic|WWW-Authenticate",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
-      },
-      {
         "pattern": "connection_*string|conn_*string",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
-      },
-      {
-        "pattern": "federation|sso|networkcredential",
-        "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "medium",
