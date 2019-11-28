@@ -92,12 +92,25 @@ namespace Microsoft.AppInspector.Writers
             //start with all unique tags to initialize which is then used to sort into groups of tagInfo lists
             MetaData.UniqueTags = GetUniqueTags();
 
-            foreach (TagCategory CategoryTagGroup in TagGroupPreferences)
+            //for each preferred group of tag patterns determine if at least one instance was detected
+            foreach (TagCategory tagCategory in TagGroupPreferences)
             {
-                foreach (TagGroup tagGroup in CategoryTagGroup.Groups)
+                foreach (TagGroup tagGroup in tagCategory.Groups)
                 {
                     foreach (TagSearchPattern pattern in tagGroup.Patterns)
+                    {
                         pattern.Detected = MetaData.UniqueTags.Any(v => v.Contains(pattern.SearchPattern));
+
+                        //create dynamic "category" groups of tags with pattern relationship established from TagReportGroups.json
+                        //that can be used to populate reports with various attributes for each tag detected
+                        if (pattern.Detected)
+                        {
+                            if (tagCategory.Type == TagCategory.tagInfoType.uniqueTags)
+                                KeyedTagInfoLists["tagGrp" + tagGroup.DataRef] = GetUniqueMatchingTagInfoList(tagGroup);
+                            else if (tagCategory.Type == TagCategory.tagInfoType.allTags)
+                                KeyedTagInfoLists["tagGrp" + tagGroup.DataRef] = GetAllMatchingTagInfoList(tagGroup);
+                        }
+                    }
                 }
             }
 
@@ -105,19 +118,6 @@ namespace Microsoft.AppInspector.Writers
             KeyedSortedTagInfoLists["tagGrpAllTagsByConfidence"] = GetTagInfoListByConfidence();
             KeyedSortedTagInfoLists["tagGrpAllTagsBySeverity"] =  GetTagInfoListBySeverity();
             KeyedSortedTagInfoLists["tagGrpAllTagsByName"] =  GetTagInfoListByName();
-
-            //create dynamic "category" groups of tags with pattern relationship established from TagReportGroups.json
-            //that can be used to populate reports with various attributes for each tag detected
-            foreach (TagCategory tagCategory in TagGroupPreferences)
-            {
-                foreach (TagGroup group in tagCategory.Groups)
-                {
-                    if (tagCategory.Type == TagCategory.tagInfoType.uniqueTags)
-                        KeyedTagInfoLists["tagGrp" + group.DataRef] = GetUniqueMatchingTagInfoList(group);
-                    else if (tagCategory.Type == TagCategory.tagInfoType.allTags)
-                        KeyedTagInfoLists["tagGrp" + group.DataRef] = GetAllMatchingTagInfoList(group);
-                }
-            }
 
             MetaData.PrepareReport();
             
