@@ -97,7 +97,11 @@
                   <td style="">{% for item in outputs -%}{{item}} {% endfor -%}</td>
                 </tr>
                 <tr>
-                  <td style="width:300px;">OS Types</td>
+                  <td style="width:300px;">File Types</td>
+                  <td style="">{% for item in filetypes -%}<a href="https://fileinfo.com/extension/{{item}}" target="_blank" rel="noopener">{{item}}</a> {% endfor -%}</td>
+                </tr>
+                <tr>
+                  <td style="width:300px;">OS Targets</td>
                   <td style="">{% for item in ostargets -%}{{item}} {% endfor -%}</td>
                 </tr>
                 <tr>

@@ -15,9 +15,61 @@ using RulesEngine;
 namespace Microsoft.AppInspector.Writers
 {
     /// <summary>
-    /// Subset of MatchRecord and Issue properties for json output
-    /// TODO: look at possible consolidation with MatchRecord...do we need Issue.Rule etc. which are not
-    /// wanted for json output in their entirety
+    /// Writes in json format
+    /// Users can select arguments to filter output to 1. only simple tags 2. only matchlist without rollup metadata etc. 3. everything
+    /// Lists of tagreportgroups are written as well as match list details so users have chose to present the same
+    /// UI as shown in the HTML report to the level of detail desired...
+    /// </summary>
+    public class JsonWriter : Writer
+    {
+        List<Dictionary<string, object>> jsonResult = new List<Dictionary<string, object>>();
+
+        public override void WriteApp(AppProfile app)
+        {
+            // Store the results here temporarily building up a list of items in the desired order etc.
+            Dictionary<string, object> itemList = new Dictionary<string, object>(); ;
+            
+            if (app.SimpleTagsOnly)
+            {
+                List<string> keys = new List<string>(app.MetaData.UniqueTags);
+                itemList.Add("tags", keys);
+                keys.Sort();
+            }
+            else
+            {
+                if (!app.ExcludeRollup)
+                    itemList.Add("AppProfile", app);
+
+                //matches are added this way to avoid output of entire set of MatchItem properties which include full rule/patterns/cond.
+                List<MatchItems> matches = new List<MatchItems>();
+                
+                foreach (MatchRecord match in app.MatchList)
+                {
+                    MatchItems matchItem = new MatchItems(match);
+                    matches.Add(matchItem);
+                }
+
+                itemList.Add("matchDetails", matches);
+            }
+
+            jsonResult.Add(itemList);
+        }
+
+      
+        public override void FlushAndClose()
+        {
+            TextWriter.Write(JsonConvert.SerializeObject(jsonResult, Formatting.Indented));
+            TextWriter.Flush();
+            TextWriter.Close();
+        }
+
+        
+    }
+
+
+    /// <summary>
+    /// Subset of MatchRecord and Issue properties specific for json output to avoid inclusion of all
+    /// MatchRecord properities like rule/pattern subobjects...
     /// </summary>
     [Serializable]
     public class MatchItems
@@ -81,60 +133,8 @@ namespace Microsoft.AppInspector.Writers
         [JsonProperty(PropertyName = "boundaryLength")]
         public int BoundaryLength { get; set; }
 
- 
+
     }
 
 
-
-    /// <summary>
-    /// Writes in json format
-    /// Users can select arguments to filter output to 1. only simple tags 2. only matchlist without rollup metadata etc. 3. everything
-    /// Lists of tagreportgroups are written as well as match list details so users have chose to present the same
-    /// UI as shown in the HTML report to the level of detail desired...
-    /// </summary>
-    public class JsonWriter : Writer
-    {
-        List<Dictionary<string, object>> jsonResult = new List<Dictionary<string, object>>();
-
-        public override void WriteApp(AppProfile app)
-        {
-            // Store the results here temporarily building up a list of items in the desired order etc.
-            Dictionary<string, object> itemList = new Dictionary<string, object>(); ;
-            
-            if (app.SimpleTagsOnly)
-            {
-                List<string> keys = new List<string>(app.MetaData.UniqueTags);
-                itemList.Add("tags", keys);
-                keys.Sort();
-            }
-            else
-            {
-                if (!app.ExcludeRollup)
-                    itemList.Add("AppProfile", app);
-
-                //matches are added this way to avoid output of entire set of MatchItem properties which include full rule/patterns/cond.
-                List<MatchItems> matches = new List<MatchItems>();
-                
-                foreach (MatchRecord match in app.MatchList)
-                {
-                    MatchItems matchItem = new MatchItems(match);
-                    matches.Add(matchItem);
-                }
-
-                itemList.Add("matchDetails", matches);
-            }
-
-            jsonResult.Add(itemList);
-        }
-
-      
-        public override void FlushAndClose()
-        {
-            TextWriter.Write(JsonConvert.SerializeObject(jsonResult, Formatting.Indented));
-            TextWriter.Flush();
-            TextWriter.Close();
-        }
-
-        
-    }
 }

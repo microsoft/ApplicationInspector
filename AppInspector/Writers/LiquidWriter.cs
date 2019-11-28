@@ -17,66 +17,55 @@ using System.Linq;
 
 namespace Microsoft.AppInspector.Writers
 {
-    public class Random : DotLiquid.Tag
-    {
-        private int _max;
-
-        public override void Initialize(string tagName, string markup, List<string> tokens)
-        {
-            base.Initialize(tagName, markup, tokens);
-            _max = Convert.ToInt32(markup);
-        }
-    }
-
-
-
     public class LiquidWriter : Writer
     {
-        /**
-         * Writes data (defined in `app`) to the HTML template.
-         */
+        /// <summary>
+        /// Registers datatypes with html framework liquid and sets up data for use within it and used
+        /// with html partial.liquid files that are embedded as resources
+        /// </summary>
+        /// <param name="app"></param>
         public override void WriteApp(AppProfile app)
         {
             var htmlTemplateText = File.ReadAllText("html/index.html");
             Assembly test = Assembly.GetEntryAssembly();
             Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(), "ApplicationInspector.html.partials");
-            Template.RegisterTag<Random>("random");
-
+            
             RegisterSafeType(typeof(AppProfile));
             RegisterSafeType(typeof(AppMetaData));
            
             var htmlTemplate = Template.Parse(htmlTemplateText);
-
             var data = new Dictionary<string, object>();
             data["AppProfile"] = app;
 
-            //matches are added this way to avoid output of entire set of MatchItem properties which include full rule/patterns/cond.
+            //matchitems rather than records created to exclude full rule/patterns/cond.
             List<MatchItems> matches = new List<MatchItems>();
-
             foreach (MatchRecord match in app.MatchList)
             {
                 MatchItems matchItem = new MatchItems(match);
                 matches.Add(matchItem);
             }
+
             data["matchDetails"] = matches;
+            
             var hashData = new Hash();
-            hashData["profile"] = app;
-            hashData["match_details"] = matches;
             hashData["json"] = JsonConvert.SerializeObject(data, Formatting.Indented);
             hashData["application_version"] = Program.GetVersionString();
 
+            //add dynamic sets of groups of taginfo read from preferences for Profile page
             List<TagGroup> tagGroupList = app.GetCategoryTagGroups("profile");
             hashData["groups"] = tagGroupList;
 
+            //add summary values for sorted tags lists of taginfo
             foreach (string outerKey in app.KeyedSortedTagInfoLists.Keys)
                 hashData.Add(outerKey, app.KeyedSortedTagInfoLists[outerKey]);
 
-            hashData.Add("cputargets", app.MetaData.CPUTargets);
-            hashData.Add("apptypes", app.MetaData.AppTypes);
-            hashData.Add("packagetypes", app.MetaData.PackageTypes);
-            hashData.Add("ostargets", app.MetaData.OSTargets);
-            hashData.Add("outputs", app.MetaData.Outputs);
-
+            //add summary metadata lists
+            hashData["cputargets"] = app.MetaData.CPUTargets;
+            hashData["apptypes"] = app.MetaData.AppTypes;
+            hashData["packagetypes"] = app.MetaData.PackageTypes;
+            hashData["ostargets"] = app.MetaData.OSTargets;
+            hashData["outputs"] = app.MetaData.Outputs;
+            hashData["filetypes"] = app.MetaData.FileExtensions;
             hashData["tagcounters"] = app.MetaData.TagCountersUI;
 
             var htmlResult = htmlTemplate.Render(hashData);
