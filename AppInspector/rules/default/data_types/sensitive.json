@@ -30,13 +30,6 @@
         "confidence": "high"
       },
       {
-        "pattern": "email",
-        "type": "regex",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
-      },
-      {
         "pattern": "ipaddress|ipaddr",
         "type": "regex",
         "scopes": [ "code", "comment" ],
@@ -103,6 +96,41 @@
   {
     "name": "Data: Sensitive (Identification)",
     "id": "AI015700",
+    "description": "Data: Sensitive (Identification)",
+    "tags": [
+      "Data.Sensitive.Identification"
+    ],
+    "severity": "important",
+    "patterns": [
+      {
+        "pattern": "email",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "author",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-10,10)",
+        "negate_finding": true,
+        "_comment": ""
+      }
+    ]
+  },
+
+  {
+    "name": "Data: Sensitive (Identification)",
+    "id": "AI015710",
     "description": "Data: Sensitive (Identification)",
     "tags": [
       "Data.Sensitive.Identification"
