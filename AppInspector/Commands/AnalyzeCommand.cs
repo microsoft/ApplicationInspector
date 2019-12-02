@@ -184,6 +184,8 @@ namespace Microsoft.AppInspector.Commands
 
                 _outputWriter.TextWriter.WriteLine(Program.GetVersionString());
             }
+            else
+                _outputWriter.TextWriter = Console.Out;
 
         }
 

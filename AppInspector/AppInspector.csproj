@@ -7,14 +7,14 @@
     <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
     <RepositoryType></RepositoryType>
     <PackageTags>Static Linter</PackageTags>
-    <PackageReleaseNotes>Pre-release version</PackageReleaseNotes>
-    <Description>Characterizes software content</Description>
+    <PackageReleaseNotes>Beta (pre-release) version</PackageReleaseNotes>
+    <Description>Characterizes software features</Description>
     <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
     <HighEntropyVA>true</HighEntropyVA>
     <PackageId>ApplicationInspector</PackageId>
     <Product>ApplicationInspector</Product>
     <Authors>Microsoft</Authors>
-    <Version>1.0.8</Version>
+    <Version>1.0.9</Version>
     <AssemblyName>AppInspector</AssemblyName>
     <RootNamespace>ApplicationInspector</RootNamespace>
     <StartupObject>Microsoft.AppInspector.Program</StartupObject>
