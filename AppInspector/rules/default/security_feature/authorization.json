@@ -17,7 +17,7 @@
         "scopes": [
           "code"
         ],
-        "modifications": [ "i" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
@@ -26,7 +26,7 @@
         "scopes": [
           "code"
         ],
-        "modifications": [ "i" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -44,13 +44,52 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "permissions*|rbac|userrole*s|roles*",
+        "pattern": "rbac|userrole*s|roles*",
         "type": "regex-word",
         "scopes": [
           "code"
         ],
-        "modifications": [ "i" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Authorization: RBAC",
+    "id": "AI038910",
+    "description": "Authorization: RBAC",
+    "applies_to": [
+      "common_source_code"
+    ],
+    "tags": [
+      "Authorization.RBAC"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "permissions*",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "License|copyright|readme.md",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": "eliminate notices"
+        },
+        "search_in": "finding-region(-10,10)",
+        "negate_finding": true,
+        "_comment": ""
       }
     ]
   },
@@ -72,8 +111,24 @@
         "scopes": [
           "code"
         ],
-        "modifications": [ "i" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "License|copyright|Permission to use|readme.md",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": "eliminate notices"
+        },
+        "search_in": "finding-region(-10,10)",
+        "negate_finding": true,
+        "_comment": ""
       }
     ]
   },
@@ -95,7 +150,7 @@
         "scopes": [
           "code"
         ],
-        "modifications": [ "i" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ],

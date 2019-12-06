@@ -44,8 +44,8 @@
         "confidence": "medium"
       },
       {
-        "pattern": "mobile_*(phone|number)|cell_*(phone|number)|phone",
-        "type": "regex",
+        "pattern": "mobile_*(phone|number)|cell_*(phone|number)|telephone",
+        "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -62,15 +62,15 @@
     "severity": "important",
     "patterns": [
       {
-        "pattern": "mobile|cell",
-        "type": "regex",
+        "pattern": "mobile|cell|phone",
+        "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "medium"
       },
       {
         "pattern": "age",
-        "type": "regex",
+        "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "medium"
@@ -80,7 +80,7 @@
       {
         "pattern": {
           "pattern": "address|(first|last|sur)name|gender|contact|email",
-          "type": "regex",
+          "type": "regex-word",
           "scopes": [
             "code"
           ],
@@ -113,13 +113,13 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "author",
+          "pattern": "author|package.json",
           "type": "regex",
           "scopes": [
             "code"
           ],
           "modifiers": [ "i" ],
-          "_comment": ""
+          "_comment": "special case for package.json for SF"
         },
         "search_in": "finding-region(-10,10)",
         "negate_finding": true,

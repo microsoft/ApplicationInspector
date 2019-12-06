@@ -236,7 +236,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "mobile|tablet|phone",
+        "pattern": "mobile|tablet|iphone",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],

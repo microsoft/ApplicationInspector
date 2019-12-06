@@ -99,11 +99,11 @@ namespace Microsoft.AppInspector.Commands
                     try
                     {
                         rules.AddFile(filename);
-                        WriteOnce.Log.Info(string.Format("Rule file added {0}", filename));
+                        WriteOnce.Info(string.Format("Rule file added {0}", filename), true, WriteOnce.ConsoleVerbosity.High);
                     }
                     catch (Exception e)
                     {
-                        WriteOnce.Log.Error(string.Format("Rule file add failed {0}", filename));
+                        WriteOnce.Error(string.Format("Rule file add failed {0}", filename));
                         WriteOnce.Log.Error(e.Message + "\n" + e.StackTrace);
                         issues = true;
                     }

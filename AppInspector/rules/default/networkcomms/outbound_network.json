@@ -181,7 +181,6 @@
       }
     ]
   },
-
   {
     "name": "Network Connection",
     "description": "Network Connection",
@@ -195,12 +194,12 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "WebClient|HttpClient|HttpRequest|HttpWebRequest|HttpWebResponse",
+        "pattern": "WebClient|HttpClient|HttpRequest|HttpWebRequest|HttpWebResponse|using System\\.Net\\.Http",
         "type": "regex",
         "scopes": [
           "code"
         ],
-        "modifiers": ["i"],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -214,7 +213,7 @@
       "html"
     ],
     "tags": [
-      "OS.Network.Connection.Http.Ajax",
+      "OS.Network.Connection.Http.Ajax"
     ],
     "severity": "moderate",
     "patterns": [
@@ -316,11 +315,11 @@
         ],
         "modifiers": [],
         "confidence": "low",
-        "_comment": "HTTP URL without TLS"
+        "_comment": "HTTP URL with or without TLS"
       },
       {
-        "pattern": "url",
-        "type": "string",
+        "pattern": "curl|wpget",
+        "type": "regex-word",
         "scopes": [
           "code"
         ],
@@ -402,7 +401,7 @@
     "id": "AI031800",
     "applies_to": [ "c" ],
     "tags": [
-      "OS.Network.Connecton.RPC"
+      "OS.Network.Connection.RPC"
     ],
     "severity": "moderate",
     "patterns": [

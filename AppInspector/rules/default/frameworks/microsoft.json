@@ -79,8 +79,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "wcf",
-        "type": "string",
+        "pattern": "ServiceContract|using System\\.ServiceModel|WSHttpBinding",
+        "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ]
       }
@@ -95,10 +95,9 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "mfc",
+        "pattern": "CFrameWnd|CMDIFrameWnd|CView|CWnd|stdafx\\.h|winafx\\.h|afx\\.h",
         "type": "regex-word",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -162,9 +161,28 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "Dynamics",
+        "pattern": "Microsoft Dynamics|dynamics.com",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [ "code", "comment" ],
+        "modifiers":  ["i"],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Microsoft Exchange",
+    "id": "AI022410",
+    "description": "Development Framework: Microsoft Exchange",
+    "tags": [
+      "Framework.Development.Microsoft.Server.Exchange"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Microsoft Exchange",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers":  ["i"],
         "_comment": ""
       }
     ]
@@ -191,7 +209,7 @@
     "id": "AI022600",
     "description": "Development Framework: Microsoft ASP.NET",
     "tags": [
-      "Framework.Development.Microsoft.Server.ASP"
+      "Framework.Development.Microsoft.NET.ASP"
     ],
     "severity": "moderate",
     "patterns": [

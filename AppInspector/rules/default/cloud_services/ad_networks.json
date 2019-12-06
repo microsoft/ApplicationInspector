@@ -4,7 +4,7 @@
     "id": "AI000100",
     "description": "Miscellaneous: Advertising Network (Google Adsense)",
     "tags": [
-      "CloudServices.AdvertisingNetwork.GoogleAdsense"
+      "CloudServices.AdvertisingNetwork.Google.Adsense"
     ],
     "severity": "moderate",
     "patterns": [
@@ -38,7 +38,7 @@
     "id": "AI000300",
     "description": "Miscellaneous: Advertising Network (Bing Ads)",
     "tags": [
-      "CloudServices.AdvertisingNetwork.BingAds"
+      "CloudServices.AdvertisingNetwork.Microsoft.BingAds"
     ],
     "severity": "moderate",
     "patterns": [

@@ -17,6 +17,8 @@ namespace Microsoft.AppInspector
 {
     #region CommandLineArgOptions
 
+    enum logLevel { debug,info,warn,error,fatal,off };
+
     /// <summary>
     /// Command option classes for each command verb
     /// </summary>
@@ -67,7 +69,7 @@ namespace Microsoft.AppInspector
 
         [Option('l', "log-file-path", Required = false, HelpText = "Log file path")]
         public string LogFilePath { get; set; }
-        [Option('v', "log-file-level", Required = false, HelpText = "Log file level")]
+        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Debug|Info|Warn|Error|Fatal|Off]", Default = "Error")]
         public string LogFileLevel { get; set; }
 
         #endregion
@@ -102,7 +104,7 @@ namespace Microsoft.AppInspector
 
         [Option('l', "log-file-path", Required = false, HelpText = "Log file path")]
         public string LogFilePath { get; set; }
-        [Option('v', "log-file-level", Required = false, HelpText = "Log file level")]
+        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Debug|Info|Warn|Error|Fatal|Off]", Default = "Error")]
         public string LogFileLevel { get; set; }
 
 
@@ -135,7 +137,7 @@ namespace Microsoft.AppInspector
 
         [Option('l', "log-file-path", Required = false, HelpText = "Log file path")]
         public string LogFilePath { get; set; }
-        [Option('v', "log-file-level", Required = false, HelpText = "Log file level")]
+        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Debug|Info|Warn|Error|Fatal|Off]", Default = "Error")]
         public string LogFileLevel { get; set; }
 
 
@@ -161,7 +163,7 @@ namespace Microsoft.AppInspector
 
         [Option('l', "log-file-path", Required = false, HelpText = "Log file path")]
         public string LogFilePath { get; set; }
-        [Option('v', "log-file-level", Required = false, HelpText = "Log file level")]
+        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Debug|Info|Warn|Error|Fatal|Off]", Default = "Error")]
         public string LogFileLevel { get; set; }
 
 
@@ -188,7 +190,7 @@ namespace Microsoft.AppInspector
 
         [Option('l', "log-file-path", Required = false, HelpText = "Log file path")]
         public string LogFilePath { get; set; }
-        [Option('v', "log-file-level", Required = false, HelpText = "Log file level")]
+        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Debug|Info|Warn|Error|Fatal|Off]", Default = "Error")]
         public string LogFileLevel { get; set; }
 
 
@@ -326,9 +328,10 @@ namespace Microsoft.AppInspector
                     File.Delete(logFilePath);
             }
 
-            if (String.IsNullOrEmpty(logFileLevel))
-                logFileLevel = "ERROR";
-
+            logLevel log_level;
+            if (!Enum.TryParse(logFileLevel, true, out log_level))
+                throw new ArgumentException(String.Format("Invalid log file level value {0}", logFileLevel));
+            
             using (var fileTarget = new FileTarget()
             {
                 Name = "LogFile",

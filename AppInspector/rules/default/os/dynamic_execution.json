@@ -48,7 +48,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\beval\\(",
+        "pattern": "\beval\\(|new Function\b",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -100,13 +100,6 @@
         "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
-      },
-      {
-        "pattern": "xp_cmdshell",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
       }
     ]
   },
@@ -218,6 +211,24 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI034210",
+    "description": "OS: Dynamic Execution",
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "xp_cmdshell",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]

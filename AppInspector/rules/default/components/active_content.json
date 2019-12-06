@@ -14,9 +14,10 @@
         "pattern": "\\.(swf|flv)|flash",
         "type": "regex",
         "scopes": [
-          "code"
+          "code", "comment"
         ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": [ "i" ],
       }
     ]
   },
@@ -108,7 +109,7 @@
       {
         "pattern": "silverlight|\\.xap",
         "type": "string",
-        "modifications": ["i"],
+        "modifiers": [ "i" ],
         "scopes": [
           "code"
         ],

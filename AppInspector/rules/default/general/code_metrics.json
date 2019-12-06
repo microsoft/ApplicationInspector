@@ -88,7 +88,7 @@
         "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high",
-        "modifications":  ["i"],
+        "modifiers": [ "i" ],
         "_comment": ""
       }
     ]
@@ -106,6 +106,25 @@
       {
         "pattern": "(sample|example) code",
         "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "URL Reference",
+    "id": "AI025310",
+    "description": "URL Reference",
+    "tags": [
+      "Metric.URL"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "https*",
+        "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high",
         "_comment": ""
