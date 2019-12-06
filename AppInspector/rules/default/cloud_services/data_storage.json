@@ -119,7 +119,7 @@
           "code"
         ],
         "confidence": "high",
-        "modifications": "i",
+        "modifiers": [ "i" ],
         "_comment": ""
       }
     ]

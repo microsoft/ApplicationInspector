@@ -166,8 +166,8 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "SerializeObject|JavaScriptSerializer|Newtonsoft|json.net|",
-        "type": "regex",
+        "pattern": "SerializeObject|JavaScriptSerializer|Newtonsoft|json\\.net",
+        "type": "regex-word",
         "scopes": [
           "code"
         ],

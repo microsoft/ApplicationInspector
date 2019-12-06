@@ -16,7 +16,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "miner|ripple|nxt|zcash|tether|ether|btc|monero|markleroot|xmr|eth|p2pool",
+        "pattern": "p2pool|miner|ripple|nxt|zcash|tether|ether|btc|monero|markleroot|xmr|eth",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],

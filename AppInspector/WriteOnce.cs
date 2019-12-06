@@ -65,6 +65,9 @@ public class WriteOnce
 
     public static void Info(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
     {
+        if (Log != null && Log.Name != "Console")
+            Log.Info(msg);
+
         if (Writer != null && Writer != Console.Out)
             Writer.WriteLine(msg);
 

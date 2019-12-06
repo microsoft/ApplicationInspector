@@ -238,7 +238,7 @@
     "id": "AI001700",
     "description": "Cloud Service: NuGet",
     "tags": [
-      "CloudServices.PackageManager.NuGet"
+      "CloudServices.PackageManager.Microsoft.NuGet"
     ],
     "severity": "moderate",
     "patterns": [
@@ -355,7 +355,7 @@
       "yaml"
     ],
     "tags": [
-      "CloudServices.CI.AzurePipelines"
+      "CloudServices.CI.Microsoft.AzurePipelines"
     ],
     "severity": "moderate",
     "patterns": [

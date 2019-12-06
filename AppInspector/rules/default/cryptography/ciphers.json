@@ -141,10 +141,10 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RSA *encrypt|RSA *decrypt|public *key|private *key",
+        "pattern": "RSA.*encrypt|RSA.*decrypt|public.*key|private.*key",
         "type": "regex",
         "scopes": [
-          "code"
+          "code", "comment"
         ],
         "confidence": "high"
       },

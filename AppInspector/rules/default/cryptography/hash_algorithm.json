@@ -1,27 +1,7 @@
 [
   {
-    "name": "Cryptography: Hash Algorithm",
-    "id": "AI008400",
-    "description": "Cryptography: Hash Algorithm Usage",
-    "tags": [
-      "Cryptography.HashAlgorithm"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "HashAlgorithm|MessageDigest|DigestUtils",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
-      }
-    ]
-  },
-  {
     "name": "Cryptography: Hash Algorithm (SHA-256)",
-    "id": "AI008500",
+    "id": "AI008400",
     "description": "Cryptography: Hash Algorithm Usage (SHA-256)",
     "tags": [
       "Cryptography.HashAlgorithm.SHA2"
@@ -41,7 +21,7 @@
   },
   {
     "name": "Cryptography: Hash Algorithm (Legacy)",
-    "id": "AI008600",
+    "id": "AI008500",
     "description": "Cryptography: Hash Algorithm Usage (Legacy)",
     "tags": [
       "Cryptography.HashAlgorithm.Legacy"
@@ -52,7 +32,8 @@
         "pattern": "MD2|MD4|MD5|SHA-*(0|1)",
         "type": "regex-word",
         "scopes": [
-          "code", "comment"
+          "code",
+          "comment"
         ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -61,7 +42,7 @@
   },
   {
     "name": "Cryptography: Hash Algorithm (SHA-3)",
-    "id": "AI008700",
+    "id": "AI008600",
     "description": "Cryptography: Hash Algorithm Usage (SHA-3)",
     "tags": [
       "Cryptography.HashAlgorithm.SHA3"
@@ -81,7 +62,7 @@
   },
   {
     "name": "Cryptography: Hash Algorithm (Misc)",
-    "id": "AI008800",
+    "id": "AI008700",
     "description": "Cryptography: Hash Algorithm Usage (Misc)",
     "tags": [
       "Cryptography.HashAlgorithm.Misc"
@@ -94,6 +75,26 @@
         "scopes": [
           "code",
           "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm",
+    "id": "AI008800",
+    "description": "Cryptography: Hash Algorithm Usage",
+    "tags": [
+      "Cryptography.HashAlgorithm.Other"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "HashAlgorithm|MessageDigest|DigestUtils",
+        "type": "regex",
+        "scopes": [
+          "code"
         ],
         "modifiers": [ "i" ],
         "confidence": "high"

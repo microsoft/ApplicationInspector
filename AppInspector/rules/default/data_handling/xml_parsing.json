@@ -169,7 +169,7 @@
       {
         "pattern": "xslt|xsl:stylesheet",
         "type": "regex-word",
-        "modifications": [ "i" ],
+        "modifiers": [ "i" ],
         "confidence": "high",
         "scopes": [
           "code"

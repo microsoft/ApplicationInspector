@@ -17,7 +17,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Threading;
-
+using DotLiquid.Util;
 
 namespace Microsoft.AppInspector.Commands
 {
@@ -27,6 +27,8 @@ namespace Microsoft.AppInspector.Commands
 
         // Enable processing compressed files
         readonly string[] COMPRESSED_EXTENSIONS = "zip,gz,gzip,gem,tar,tgz,tar.gz,xz,7z".Split(",");
+        readonly string[] EXCLUDEMATCH_FILEPATH = "sample,example,test".Split(",");
+
         Regex IgnoreMimeRegex;
 
         public enum ExitCode
@@ -67,7 +69,10 @@ namespace Microsoft.AppInspector.Commands
         private bool _arg_simpleTagsOnly;
         private Confidence _arg_confidence;
         private WriteOnce.ConsoleVerbosity _arg_consoleVerbosityLevel;
-        
+
+
+        List<string> _fileExclusionList;//see exclusion list
+
 
         public AnalyzeCommand(AnalyzeCommandOptions opts)
         {
@@ -92,7 +97,9 @@ namespace Microsoft.AppInspector.Commands
             ConfigSourcetoScan();
             ConfigConfidenceFilters();
             ConfigRules();
-            
+
+            _fileExclusionList = EXCLUDEMATCH_FILEPATH.ToList<string>();
+
         }
 
 
@@ -298,8 +305,9 @@ namespace Microsoft.AppInspector.Commands
         void ProcessInMemory(string filePath, string fileText)
         {
             #region quickvalidation
-            if (fileText.Length > MAX_FILESIZE)
+            if (fileText.Length > MAX_FILESIZE || _fileExclusionList.Any(v => filePath.Contains(v)))
             {
+                WriteOnce.Log.Trace("Part of excluded list: " + filePath);
                 WriteOnce.Log.Error(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath));
                 _appProfile.MetaData.FilesSkipped++;
                 return;

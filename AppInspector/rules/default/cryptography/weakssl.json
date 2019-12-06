@@ -10,7 +10,7 @@
       "csharp"
     ],
     "tags": [
-      "Cryptography.WeakSSL"
+      "Cryptography.Protocol.TLS.WeakSSL"
     ],
     "severity": "critical",
     "_comment": "",

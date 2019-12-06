@@ -10,7 +10,7 @@
       "scala"
     ],
     "tags": [
-      "Cryptography.Library.BouncyCastle"
+      "Cryptography.Library.TLS.BouncyCastle"
     ],
     "severity": "moderate",
     "patterns": [
@@ -30,7 +30,7 @@
     "applies_to": [
     ],
     "tags": [
-      "Cryptography.Library.mbedTLS"
+      "Cryptography.Library.TLS.mbedTLS"
     ],
     "severity": "moderate",
     "patterns": [
@@ -50,7 +50,7 @@
     "applies_to": [
     ],
     "tags": [
-      "Cryptography.Library.OpenSSL"
+      "Cryptography.Library.TLS.OpenSSL"
     ],
     "severity": "moderate",
     "patterns": [
@@ -70,7 +70,7 @@
     "applies_to": [
     ],
     "tags": [
-      "Cryptography.Library.BoringSSL"
+      "Cryptography.Library.TLS.BoringSSL"
     ],
     "severity": "moderate",
     "patterns": [
@@ -90,7 +90,7 @@
     "applies_to": [
     ],
     "tags": [
-      "Cryptography.Library.LibreSSL"
+      "Cryptography.Library.TLS.LibreSSL"
     ],
     "severity": "moderate",
     "patterns": [
@@ -133,7 +133,7 @@
       "csharp"
     ],
     "tags": [
-      "Cryptography.Library.NET"
+      "Cryptography.Library.Microsoft.NET"
     ],
     "severity": "moderate",
     "patterns": [
