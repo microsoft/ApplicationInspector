@@ -49,7 +49,8 @@ namespace Microsoft.AppInspector
             VERIFY_RULES_RESULTS_FAIL,
             VERIFY_RULES_RESULTS_SUCCESS,
             RUNTIME_ERROR_NAMED,
-            RUNTIME_ERROR_UNNAMED
+            RUNTIME_ERROR_UNNAMED,
+            RUNTIME_ERROR_PRELOG
         };
 
         public static string GetString(ErrMsg.ID id)

@@ -34,7 +34,8 @@ namespace Microsoft.AppInspector.Commands
             _arg_customRulesPath = opt.CustomRulesPath;
             _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
             _arg_outputFile = opt.OutputFilePath;
-            Enum.TryParse(opt.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel);
+            if (!Enum.TryParse(opt.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
+                throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
             WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
             ConfigureOutput();
             ConfigRules();

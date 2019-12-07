@@ -85,7 +85,8 @@ namespace Microsoft.AppInspector.Commands
             _arg_confidenceFilters = opts.ConfidenceFilters;
             _arg_ignoreDefaultRules = opts.IgnoreDefaultRules;
             _arg_simpleTagsOnly = opts.SimpleTagsOnly;
-            Enum.TryParse(opts.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel);
+            if (!Enum.TryParse(opts.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
+                throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
             WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
 
             IgnoreMimeRegex = new Regex(@"^(audio|video)/.*$");

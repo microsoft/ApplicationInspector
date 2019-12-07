@@ -263,21 +263,23 @@ namespace Microsoft.AppInspector
             }
             catch (OpException e)
             {
-                WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_NAMED, e.Message));
-#if DEBUG
-                WriteOnce.Error($"Runtime error: {e.Message}\n{e.StackTrace}");//save time debugging else keep console clean
-#else
-                Logger.Error($"Runtime error: {e.StackTrace}");//no sensitive data expected in output
-#endif
+                if (Logger != null)
+                {
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_NAMED, e.Message));
+                    Logger.Error($"Runtime error: {e.StackTrace}");
+                }
+                else
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_PRELOG, e.Message));
             }
             catch (Exception e)
             {
-                WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_UNNAMED));
-#if DEBUG
-                WriteOnce.Error($"Runtime error: {e.Message}\n{e.StackTrace}");//save time debugging else keep console clean
-#else
-                Logger.Error($"Runtime error: {e.StackTrace}");//no sensitive data expected in output
-#endif
+                if (Logger != null)
+                {
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_UNNAMED));
+                    Logger.Error($"Runtime error: {e.StackTrace}");
+                }
+                else
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_PRELOG, e.Message));
             }
 
             return finalResult;
@@ -330,7 +332,7 @@ namespace Microsoft.AppInspector
 
             logLevel log_level;
             if (!Enum.TryParse(logFileLevel, true, out log_level))
-                throw new ArgumentException(String.Format("Invalid log file level value {0}", logFileLevel));
+                throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v")));
             
             using (var fileTarget = new FileTarget()
             {

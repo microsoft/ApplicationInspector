@@ -45,5 +45,10 @@
     "tag": "Metric.Logging.Call",
     "displayName": "Logging Calls",
     "includeAsMatch": false
+  },
+  {
+    "tag": "Metric.URL",
+    "displayName": "URL's",
+    "includeAsMatch": false
   }
 ]

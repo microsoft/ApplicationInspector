@@ -25,6 +25,7 @@ namespace Microsoft.AppInspector.Commands
         private bool _arg_ignoreDefaultRules;
         private TagTestType _arg_tagTestType;
         private RuleSet _rulesSet;
+        private WriteOnce.ConsoleVerbosity _arg_consoleVerbosityLevel;
 
         public enum ExitCode
         {
@@ -43,9 +44,9 @@ namespace Microsoft.AppInspector.Commands
             _arg_customRulesPath = opt.CustomRulesPath;
             _arg_outputFile = opt.OutputFilePath;
 
-            WriteOnce.ConsoleVerbosity arg_consoleVerbosityLevel;
-            Enum.TryParse(opt.ConsoleVerbosityLevel, true, out arg_consoleVerbosityLevel);
-            WriteOnce.Verbosity = arg_consoleVerbosityLevel;
+            if (!Enum.TryParse(opt.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
+                throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
+            WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
 
             if (string.IsNullOrEmpty(opt.TestType))
                 _arg_tagTestType = TagTestType.RulesPresent;
