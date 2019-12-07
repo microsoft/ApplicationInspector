@@ -252,6 +252,15 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}.  Log file failed to create..
+        /// </summary>
+        internal static string RUNTIME_ERROR_PRELOG {
+            get {
+                return ResourceManager.GetString("RUNTIME_ERROR_PRELOG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A runtime error has occured.  Please see log file for more information..
         /// </summary>
         internal static string RUNTIME_ERROR_UNNAMED {
