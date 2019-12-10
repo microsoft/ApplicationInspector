@@ -1,10 +1,10 @@
 # Introduction 
 
-Microsoft Application Inspector is an analysis tool that can help identify "interesting" characteristics of source code, and in doing so, can describe **what a piece of software is** and **what it does**. Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it will simply describe what it finds.
+Microsoft Application Inspector is an analysis tool that can help identify "interesting" characteristics of source code, and in doing so, can describe **what a piece of software is** and **what it does**. Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it will simply describe what it finds against a set of over 500 rule patterns for feature detection including features that impact security such as use of cryptography and more.
 
-We created Application Inspector to help us identify risky open source software components based on their specific features, but the output of the tool can be used in other (non-security) contexts as well.
+We created Application Inspector to help us identify risky open source software components based on their specific features, but the output of the tool can be used in other (non-security) contexts as well such as simply vetting the purposed component primary objectives and supporting developers in selecting a component that only does what is expected.
 
-**Application Inspector is currently in PUBLIC PREVIEW.** Functionality may change without warning. Please do not rely on Application Inspector for important workloads, but your feedback is important to us. If you're interested in contributing, please review CONTRIBUTING.md.
+**Application Inspector is currently in PUBLIC BETA.** Our first general audience release is planned for 12/14/19.
 
 # Getting Started
 
@@ -16,8 +16,8 @@ Application Inspector is a command-line tool. Simply run from a command line in 
 
 ```
 > dotnet AppInspector.dll or on Windows simply AppInspector.exe
-Microsoft Application Inspector 1.0.8
-ApplicationInspector 1.0.8
+Microsoft Application Inspector 1.0.11
+ApplicationInspector 1.0.11
 (c) Microsoft Corporation. All rights reserved
 
 ERROR(S):
@@ -26,7 +26,7 @@ ERROR(S):
   analyze        Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics
   tagdiff        Compares unique tag values between two source paths
   tagtest        Test presence of smaller set or custom tags in source (compare or verify modes)
-  exporttags     Export unique rule tags
+  exporttags     Export unique rule tags identifying what features detection is supported
   verifyrules    Verify rules syntax is valid
   help           Display more information on a specific command.
   version        Display version information.
@@ -60,7 +60,7 @@ Use to analyze and report on differences in tag based matches between two projec
      -o, --output-file-path        Path to output file
      -x, --console-verbosity       Console verbosity [high|medium|low
      -l, --log-file-path           Log file path
-     -v, --log-file-level          Log file level
+     -v, --log-file-level          Log file level [error|trace|debug|info]
 
 ##### Simplest use
 
