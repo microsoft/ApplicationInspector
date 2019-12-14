@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 
 
-namespace Microsoft.AppInspector.Writers
+namespace Microsoft.AppInspector
 {
     /// <summary>
     /// Parent wrapper class for representing source characterization parts

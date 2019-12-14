@@ -1,149 +1,150 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using ApplicationInspector.Properties;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Linq;
-using Microsoft.AppInspector.Writers;
 
-static public class Utils
+
+namespace Microsoft.AppInspector
 {
-    static string _basePath;
-    public enum AppPath { basePath, defaultRules, defaultLog, tagGroupPref, tagCounterPref };
-
-    static public string GetPath(AppPath pathType)
+    static public class Utils
     {
-        string result = "";
-        switch (pathType)
-        {
-            case AppPath.basePath:
-                result = GetBaseAppPath();
-                break;
-            case AppPath.defaultLog:
-                result = Path.Combine(GetBaseAppPath(), "log.txt");
-                break;
-            case AppPath.defaultRules:
-                result = Path.Combine(GetBaseAppPath(), "rules", "default");
-                break;
-            case AppPath.tagGroupPref:
-                result = Path.Combine(GetBaseAppPath(), "preferences", "tagreportgroups.json");
-                break;
-            case AppPath.tagCounterPref:
-                result = Path.Combine(GetBaseAppPath(), "preferences", "tagcounters.json");
-                break;
+        static string _basePath;
+        public enum AppPath { basePath, defaultRules, defaultLog, tagGroupPref, tagCounterPref };
 
+        static public string GetPath(AppPath pathType)
+        {
+            string result = "";
+            switch (pathType)
+            {
+                case AppPath.basePath:
+                    result = GetBaseAppPath();
+                    break;
+                case AppPath.defaultLog:
+                    result = Path.Combine(GetBaseAppPath(), "log.txt");
+                    break;
+                case AppPath.defaultRules:
+                    result = Path.Combine(GetBaseAppPath(), "rules", "default");
+                    break;
+                case AppPath.tagGroupPref:
+                    result = Path.Combine(GetBaseAppPath(), "preferences", "tagreportgroups.json");
+                    break;
+                case AppPath.tagCounterPref:
+                    result = Path.Combine(GetBaseAppPath(), "preferences", "tagcounters.json");
+                    break;
+
+            }
+
+            return result;
         }
 
-        return result;
-    }
+        static private string GetBaseAppPath()
+        {
+            if (!String.IsNullOrEmpty(_basePath))
+                return _basePath;
 
-    static private string GetBaseAppPath()
-    {
-        if (!String.IsNullOrEmpty(_basePath))
+            _basePath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
             return _basePath;
-
-        _basePath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
-        return _basePath;
-    }
-
-
-
-    /// <summary>
-    /// Attempt to map application type tags or file type or language to identify
-    /// WebApplications, Windows Services, Client Apps, WebServices, Azure Functions etc.
-    /// </summary>
-    /// <param name="match"></param>
-    static public String DetectSolutionType(MatchRecord match)
-    {
-        string result = "";
-        if (match.Issue.Rule.Tags.Any(s => s.Contains("ApplicationType")))
-        {
-            foreach (string tag in match.Issue.Rule.Tags)
-            {
-                int index = tag.IndexOf("ApplicationType");
-                if (-1 != index)
-                {
-                    result = tag.Substring(index + 16);
-                    break;
-                }
-            }
         }
-        else
+
+
+
+        /// <summary>
+        /// Attempt to map application type tags or file type or language to identify
+        /// WebApplications, Windows Services, Client Apps, WebServices, Azure Functions etc.
+        /// </summary>
+        /// <param name="match"></param>
+        static public String DetectSolutionType(MatchRecord match)
         {
-            switch (match.Filename)
+            string result = "";
+            if (match.Issue.Rule.Tags.Any(s => s.Contains("ApplicationType")))
             {
-                case "web.config":
-                    result = "Web.Application";
-                    break;
-                case "app.config":
-                    result = ".NETclient";
-                    break;
-                default:
-                    switch (Path.GetExtension(match.Filename))
+                foreach (string tag in match.Issue.Rule.Tags)
+                {
+                    int index = tag.IndexOf("ApplicationType");
+                    if (-1 != index)
                     {
-                        case ".cshtml":
-                            result = "Web.Application";
-                            break;
-                        case ".htm":
-                        case ".html":
-                        case ".js":
-                            result = "Web.Application";
-                            break;
-                        case "powershell":
-                        case "shellscript":
-                        case "wincmdscript":
-                            result = "script";
-                            break;
-                        default:
-                            switch (match.Language)
-                            {
-                                case "ruby":
-                                case "perl":
-                                case "php":
-                                    result = "Web.Application";
-                                    break;
-                            }
-                            break;
+                        result = tag.Substring(index + 16);
+                        break;
                     }
-                    break;
+                }
             }
-
-        }
-
-        return result;
-    }
-
-
-
-    public static void OpenBrowser(string url)
-    {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BROWSER")))
+            else
             {
-                try
+                switch (match.Filename)
                 {
-                    Process.Start("xdg-open", url);
+                    case "web.config":
+                        result = "Web.Application";
+                        break;
+                    case "app.config":
+                        result = ".NETclient";
+                        break;
+                    default:
+                        switch (Path.GetExtension(match.Filename))
+                        {
+                            case ".cshtml":
+                                result = "Web.Application";
+                                break;
+                            case ".htm":
+                            case ".html":
+                            case ".js":
+                                result = "Web.Application";
+                                break;
+                            case "powershell":
+                            case "shellscript":
+                            case "wincmdscript":
+                                result = "script";
+                                break;
+                            default:
+                                switch (match.Language)
+                                {
+                                    case "ruby":
+                                    case "perl":
+                                    case "php":
+                                        result = "Web.Application";
+                                        break;
+                                }
+                                break;
+                        }
+                        break;
                 }
-                catch (Exception)
+
+            }
+
+            return result;
+        }
+
+
+
+        public static void OpenBrowser(string url)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BROWSER")))
                 {
-                    WriteOnce.Error("Unable to open browser.  Open output file directly.");
+                    try
+                    {
+                        Process.Start("xdg-open", url);
+                    }
+                    catch (Exception)
+                    {
+                        WriteOnce.Error("Unable to open browser.  Open output file directly.");
+                    }
                 }
             }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Process.Start("open", url);
+            }
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            Process.Start("open", url);
-        }
+
     }
-
-
    
 }

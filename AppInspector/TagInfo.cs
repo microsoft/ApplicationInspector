@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using DotLiquid;
-using System.Reflection.Metadata.Ecma335;
 
-namespace Microsoft.AppInspector.Writers
+
+namespace Microsoft.AppInspector
 {
     /// <summary>
     /// Root parent for tag group preferences file

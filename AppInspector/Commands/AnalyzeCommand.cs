@@ -10,16 +10,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ICSharpCode.SharpZipLib.Core;
-using Microsoft.AppInspector.Writers;
 using RulesEngine;
 using System.Text.RegularExpressions; 
 using System.Text;
 using Newtonsoft.Json;
-using System.Diagnostics;
 using System.Threading;
-using DotLiquid.Util;
 
-namespace Microsoft.AppInspector.Commands
+
+namespace Microsoft.AppInspector
 {
     public class AnalyzeCommand : ICommand
     {
@@ -70,6 +68,7 @@ namespace Microsoft.AppInspector.Commands
         private bool _arg_outputUniqueTagsOnly;
         private string _arg_confidenceFilters;
         private bool _arg_simpleTagsOnly;
+        private bool _arg_allowSampleFiles;
         private Confidence _arg_confidence;
         private WriteOnce.ConsoleVerbosity _arg_consoleVerbosityLevel;
 
@@ -84,6 +83,7 @@ namespace Microsoft.AppInspector.Commands
             _arg_fileFormat = opts.OutputFileFormat;
             _arg_outputTextFormat = opts.TextOutputFormat;
             _arg_outputUniqueTagsOnly = !opts.AllowDupTags;
+            _arg_allowSampleFiles = opts.AllowSampleFiles;
             _arg_customRulesPath = opts.CustomRulesPath;
             _arg_confidenceFilters = opts.ConfidenceFilters;
             _arg_ignoreDefaultRules = opts.IgnoreDefaultRules;
@@ -309,7 +309,15 @@ namespace Microsoft.AppInspector.Commands
         void ProcessInMemory(string filePath, string fileText)
         {
             #region quickvalidation
-            if (fileText.Length > MAX_FILESIZE || _fileExclusionList.Any(v => filePath.Contains(v)))
+            if (fileText.Length > MAX_FILESIZE)
+            {
+                WriteOnce.Log.Trace("File too large: " + filePath);
+                WriteOnce.Log.Error(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath));
+                _appProfile.MetaData.FilesSkipped++;
+                return;
+            }
+
+            if (!_arg_allowSampleFiles && _fileExclusionList.Any(v => filePath.Contains(v)))
             {
                 WriteOnce.Log.Trace("Part of excluded list: " + filePath);
                 WriteOnce.Log.Error(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath));

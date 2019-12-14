@@ -3,19 +3,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using DotLiquid;
 using DotLiquid.FileSystems;
 using Newtonsoft.Json;
 using System.Linq;
 
-namespace Microsoft.AppInspector.Writers
+namespace Microsoft.AppInspector
 {
     public class LiquidWriter : Writer
     {

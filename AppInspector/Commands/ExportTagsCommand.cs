@@ -7,7 +7,7 @@ using System.IO;
 using RulesEngine;
 
 
-namespace Microsoft.AppInspector.Commands
+namespace Microsoft.AppInspector
 {
     public class ExportTagsCommand : ICommand
    {
