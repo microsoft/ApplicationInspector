@@ -156,7 +156,7 @@ Otherwise, testing for all default rules present in source will likely yield a f
     -r, --custom-rules-path       Custom rules path
     -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
     -o, --output-file-path        Path to output file
-	-x, --console-verbosity       Console verbosity [high|medium|low
+    -x, --console-verbosity       Console verbosity [high|medium|low
 ```
 ##### Export default rule tags to console
 ```
@@ -179,7 +179,7 @@ Verification that ruleset is compatible and error free for import and analysis
     Arguments:
     -r, --custom-rules-path       Custom rules path
     -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
-	-o, --output-file-path        Path to output file
+    -o, --output-file-path        Path to output file
     -x, --console-verbosity       Console verbosity [high|medium|low
 ```
 ##### Simplist case to verify default rules
