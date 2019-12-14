@@ -46,70 +46,70 @@ ERROR(S):
 
 ### Command Help
 ```
-    Usage: dotnet AppInspector.dll [arguments] [options]
+  Usage: dotnet AppInspector.dll [arguments] [options]
 
-    dotnet AppInspector.dll -description of available commands
-    dotnet AppInspectorldll <command> -options description for a given command
+  dotnet AppInspector.dll -description of available commands
+  dotnet AppInspectorldll <command> -options description for a given command
 ```
 
 ### Analyze Command
 ```
-    Usage: dotnet AppInspector.dll analyze [arguments] [options]
+  Usage: dotnet AppInspector.dll analyze [arguments] [options]
 
-    Arguments:
-    -s, --source-path             Required. Path to source code to inspect (required)
-    -o, --output-file-path        Path to output file
-    -f, --output-file-format      (Default: html) Output format [html|json|text]
-    -e, --text-format             (Default: Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m) 
-    -r, --custom-rules-path       Custom rules path
-    -t, --tag-output-only         (Default: false) Output only contains identified tags
-    -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
-    -d, --allow-dup-tags          (Default: false) Output only contains non-unique tag matches
-    -c, --confidence-filters      (Default: high,medium) Output only if matches rule pattern confidence [<value>,] [high|medium|low]
-    -x, --console-verbosity       (Default: medium) Console verbosity [high|medium|low|none]
-    -l, --log-file-path           Log file path
-    -v, --log-file-level          (Default: Error) Log file level [Debug|Info|Warn|Error|Fatal|Off]
+  Arguments:
+  -s, --source-path             Required. Path to source code to inspect (required)
+  -o, --output-file-path        Path to output file
+  -f, --output-file-format      (Default: html) Output format [html|json|text]
+  -e, --text-format             (Default: Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m) 
+  -r, --custom-rules-path       Custom rules path
+  -t, --tag-output-only         (Default: false) Output only contains identified tags
+  -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
+  -d, --allow-dup-tags          (Default: false) Output only contains non-unique tag matches
+  -c, --confidence-filters      (Default: high,medium) Output only if matches rule pattern confidence [<value>,] [high|medium|low]
+  -x, --console-verbosity       (Default: medium) Console verbosity [high|medium|low|none]
+  -l, --log-file-path           Log file path
+  -v, --log-file-level          (Default: Error) Log file level [Debug|Info|Warn|Error|Fatal|Off]
 ```
 ##### Scan a project directory, with output sent to "output.html" (default behavior includes launching default browser to this file)
 ```
-dotnet AppInspector.dll analyze -s /home/user/myproject 
+  dotnet AppInspector.dll analyze -s /home/user/myproject 
 ```
 ##### Add custom rules (can be specified multiple times)
 ```
-dotnet AppInspector.dll analyze -s /home/user/myproject -r /my/rules/directory -r /my/other/rules
+  dotnet AppInspector.dll analyze -s /home/user/myproject -r /my/rules/directory -r /my/other/rules
 ```
 ##### Write to JSON format
 ```
-dotnet AppInspector.dll analyze -s /home/user/myproject -f json
+  dotnet AppInspector.dll analyze -s /home/user/myproject -f json
 ```
 ### Tagdiff Command
 
 Use to analyze and report on differences in tags (features) between two project or project versions e.g. v1, v2 to see what changed
 ```
-    Usage: dotnet AppInspector.dll tagdiff [arguments] [options]
+  Usage: dotnet AppInspector.dll tagdiff [arguments] [options]
 
-    Arguments:
-     --src1                        Required. Source 1 to compare (required)
-     --src2                        Required. Source 2 to compare (required
-     -t, --test-type               (Default: equality) Type of test to run [equality|inequality]
-     -r, --custom-rules-path       Custom rules path
-     -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
-     -o, --output-file-path        Path to output file
-     -x, --console-verbosity       Console verbosity [high|medium|low
-     -l, --log-file-path           Log file path
-     -v, --log-file-level          Log file level [error|trace|debug|info]
+  Arguments:
+  --src1                        Required. Source 1 to compare (required)
+  --src2                        Required. Source 2 to compare (required
+  -t, --test-type               (Default: equality) Type of test to run [equality|inequality]
+  -r, --custom-rules-path       Custom rules path
+  -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
+  -o, --output-file-path        Path to output file
+  -x, --console-verbosity       Console verbosity [high|medium|low
+  -l, --log-file-path           Log file path
+  -v, --log-file-level          Log file level [error|trace|debug|info]
 ```
 ##### Simplist way to see the delta in tag features between two projects
 ```
-    dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2
+  dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2
 ```
 ##### Basic use
 ```
-    dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t equality
+  dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t equality
 ```
 ##### Basic use
 ```
-    dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t inequality
+  dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t inequality
 ```
 ### TagTest Command
 
@@ -122,73 +122,73 @@ unlikely that any source package would contain all of the default rules.  Instea
 as needed or specify a path using the custom-rules-path to point only to the rule(s) needed from the default set.  
 Otherwise, testing for all default rules present in source will likely yield a false or fail result in most cases.
 ```
-    Usage: dotnet AppInspector.dll tagtest [arguments] [options
+  Usage: dotnet AppInspector.dll tagtest [arguments] [options
 
-    Arguments:
-    -s, --source-path             Required. Source to test (required)
-    -t, --test-type               (Default: rulespresent) Test to perform [rulespresent|rulesnotpresent]
-    -r, --custom-rules-path       Custom rules path 
-    -i, --ignore-default-rules    (Default: true) Ignore default rules bundled with application
-    -o, --output-file-path        Path to output file
-    -x, --console-verbosity       Console verbosity [high|medium|low
-    -l, --log-file-path           Log file path
-    -v, --log-file-level          Log file level
+  Arguments:
+  -s, --source-path             Required. Source to test (required)
+  -t, --test-type               (Default: rulespresent) Test to perform [rulespresent|rulesnotpresent]
+  -r, --custom-rules-path       Custom rules path 
+  -i, --ignore-default-rules    (Default: true) Ignore default rules bundled with application
+  -o, --output-file-path        Path to output file
+  -x, --console-verbosity       Console verbosity [high|medium|low
+  -l, --log-file-path           Log file path
+  -v, --log-file-level          Log file level
 ```
 #### Simplest use to see if a set of rules are all present in a project
 ```
-    dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json
+  dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json
 ```
 #### Basic use
 ```
-    dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulespresent
+  dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulespresent
 ```
 #### Basic use
 ```
-    dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
+  dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
 ```
 ### ExportTags Command
 
-    Simple export of the ruleset schema for tags representing what features are supported for detection
+  Simple export of the ruleset schema for tags representing what features are supported for detection
 ```
-    Usage: dotnet AppInspector.dll exporttags [arguments] [options]
+  Usage: dotnet AppInspector.dll exporttags [arguments] [options]
 
-    Arguments:
-    -r, --custom-rules-path       Custom rules path
-    -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
-    -o, --output-file-path        Path to output file
-    -x, --console-verbosity       Console verbosity [high|medium|low
+  Arguments:
+  -r, --custom-rules-path       Custom rules path
+  -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
+  -o, --output-file-path        Path to output file
+  -x, --console-verbosity       Console verbosity [high|medium|low
 ```
 ##### Export default rule tags to console
 ```
-    dotnet AppInspector.dll exporttags
+  dotnet AppInspector.dll exporttags
 ```
 ##### Using output file
 ```
-    dotnet AppInspector.dll exporttags -o /home/user/myproject/exportags.txt
+  dotnet AppInspector.dll exporttags -o /home/user/myproject/exportags.txt
 ```
 ##### With custom rules and output file
 ```
-    dotnet AppInspector.dll exporttags -r /home/user/myproject/customrules -o /hom/user/myproject/exportags.txt
+  dotnet AppInspector.dll exporttags -r /home/user/myproject/customrules -o /hom/user/myproject/exportags.txt
 ```
 ### Verify Command
 
 Verification that ruleset is compatible and error free for import and analysis
 ```
-    Usage: dotnet AppInspector.dll verifyrules [arguments]
+  Usage: dotnet AppInspector.dll verifyrules [arguments]
 
-    Arguments:
-    -r, --custom-rules-path       Custom rules path
-    -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
-    -o, --output-file-path        Path to output file
-    -x, --console-verbosity       Console verbosity [high|medium|low
+  Arguments:
+  -r, --custom-rules-path       Custom rules path
+  -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
+  -o, --output-file-path        Path to output file
+  -x, --console-verbosity       Console verbosity [high|medium|low
 ```
 ##### Simplist case to verify default rules
 ```
-    dotnet AppInspector.dll verifyrules
+  dotnet AppInspector.dll verifyrules
 ```
 ##### Using custom rules only
 ```
-    dotnet AppInspector.dll verifyrules -r /home/user/myproject/customrules -i
+  dotnet AppInspector.dll verifyrules -r /home/user/myproject/customrules -i
 ```
 # Build Instructions
 
@@ -196,11 +196,11 @@ Building from source requires .NET Core 3.0. Standard dotnet build commands can 
 
 ### Framework Dependent
 ```
-    dotnet build -c Release
+  dotnet build -c Release
 ```
 ### Platform Targeted Portable
 ```
-    dotnet publish -c Release -r win-x86
-    dotnet publish -c Release -r linux-x64
-    dotnet publish -c Release -r osx-x64
+  dotnet publish -c Release -r win-x86
+  dotnet publish -c Release -r linux-x64
+  dotnet publish -c Release -r osx-x64
 ```
