@@ -93,7 +93,7 @@ jobs:
     inputs:
       ConnectedServiceName: 'AppInspector_CodeSign'
       FolderPath: '$(Build.BinariesDirectory)\windows\ApplicationInspector_$(ReleaseVersion)'
-      Pattern: 'ApplicationInspector.dll, ApplicationInspector.exe, RulesEngine.dll'
+      Pattern: 'AppInspector.dll, AppInspector.exe, RulesEngine.dll'
       signConfigType: 'inlineSignParams'
       inlineOperation: |
         [
