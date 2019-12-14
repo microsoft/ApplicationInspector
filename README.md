@@ -133,7 +133,7 @@ Otherwise, testing for all default rules present in source will likely yield a f
     -x, --console-verbosity       Console verbosity [high|medium|low
     -l, --log-file-path           Log file path
     -v, --log-file-level          Log file level
-	```
+```
 #### Simplest use to see if a set of rules are all present in a project
 ```
     dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json
@@ -185,7 +185,7 @@ Verification that ruleset is compatible and error free for import and analysis
 ##### Simplist case to verify default rules
 ```
     dotnet AppInspector.dll verifyrules
-
+```
 ##### Using custom rules only
 ```
     dotnet AppInspector.dll verifyrules -r /home/user/myproject/customrules -i
