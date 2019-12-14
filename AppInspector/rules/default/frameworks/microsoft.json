@@ -41,35 +41,28 @@
     "patterns": [
       {
         "pattern": "using (gtk|Glade)",
-        "type": "string",
+        "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ]
       }
     ]
   },
   {
-    "name": "Development Framework: Microsoft MVC",
+    "name": "Development Framework: Microsoft Azure",
     "id": "AI022600",
-    "description": "Development Framework: Microsoft MVC",
+    "description": "Development Framework: Microsoft Azure",
     "applies_to": [ "csharp" ],
     "tags": [
-      "Framework.Development.Microsoft.MVC",
+      "Framework.Development.Microsoft.Azure",
       "Metadata.ApplicationType.Web.Application"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "System.Web.Mvc|ActionResult|IAsyncController",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
-      },
-      {
-        "pattern": "aspnetcore",
+        "pattern": "Microsoft.Azure.WebJobs.Host",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -115,14 +108,15 @@
     "id": "AI022900",
     "description": "Development Framework: Microsoft ADO",
     "applies_to": [ "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.ADO" ],
+    "tags": [ "Framework.Development.Microsoft.ADO", "Data.DBMS.SQL.ADO" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "ado",
-        "type": "string",
+        "pattern": "System\\.Data\\.(SqlClient|OleDb|OracleClient|Odbc|EntityClient)",
+        "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -176,7 +170,7 @@
         "pattern": "Microsoft Dynamics|dynamics.com",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers":  ["i"],
+        "modifiers": [ "i" ],
         "_comment": ""
       }
     ]
@@ -194,7 +188,7 @@
         "pattern": "Microsoft Exchange",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers":  ["i"],
+        "modifiers": [ "i" ],
         "_comment": ""
       }
     ]
@@ -259,5 +253,5 @@
         "confidence": "high"
       }
     ]
-  },
+  }
 ]

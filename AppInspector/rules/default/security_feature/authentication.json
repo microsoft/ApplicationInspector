@@ -1,7 +1,7 @@
 [
   {
     "name": "Authentication: Microsoft (Identity)",
-    "id": "AI038800",
+    "id": "AI038900",
     "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
     "tags": [
       "Authentication.Microsoft.Online"
@@ -36,7 +36,7 @@
   },
   {
     "name": "Authentication: Google",
-    "id": "AI038900",
+    "id": "AI039000",
     "description": "Authentication: Google",
     "tags": [
       "Authentication.Google"
@@ -63,11 +63,10 @@
   },
   {
     "name": "Authentication: (Oauth)",
-    "id": "AI039000",
+    "id": "AI039100",
     "description": "Authentication: (Oauth)",
     "tags": [
-      "Authentication.Oauth",
-      "Data.Sensitive.Secret"
+      "Authentication.Oauth"
     ],
     "severity": "critical",
     "patterns": [
@@ -107,7 +106,7 @@
   },
   {
     "name": "Authentication: OpenIDConnect",
-    "id": "AI039100",
+    "id": "AI039200",
     "description": "Authentication: OpenIDConnect based Oauth",
     "tags": [
       "Authentication.OpenIDConnect"
@@ -126,7 +125,7 @@
   },
   {
     "name": "Authentication: Microsoft (Active Directory)",
-    "id": "AI039200",
+    "id": "AI039300",
     "description": "Authentication: Microsoft (Active Directory)",
     "tags": [
       "Authentication.Microsoft.Windows.ActiveDirectory"
@@ -161,7 +160,7 @@
   },
   {
     "name": "Authentication: LDAP",
-    "id": "AI039300",
+    "id": "AI039400",
     "description": "Authentication: LDAP",
     "tags": [
       "Authentication.LDAP"
@@ -188,7 +187,7 @@
   },
   {
     "name": "Authentication: Microsoft Windows (NTML)",
-    "id": "AI039400",
+    "id": "AI039500",
     "description": "AAuthentication: Microsoft Windows (NTML)",
     "tags": [
       "Authentication.Microsoft.Windows.NTLM"
@@ -223,7 +222,7 @@
   },
   {
     "name": "Authentication: JWT",
-    "id": "AI039500",
+    "id": "AI039600",
     "description": "Authentication: JWT",
     "tags": [
       "Authentication.JWT"
@@ -245,7 +244,7 @@
   },
   {
     "name": "Authentication: HTML Form Based",
-    "id": "AI039600",
+    "id": "AI039700",
     "description": "Authentication: HTML Form Based",
     "tags": [
       "Authentication.HTMLForm"
@@ -266,7 +265,7 @@
   },
   {
     "name": "Authentication: SAML",
-    "id": "AI039700",
+    "id": "AI039800",
     "description": "Authentication: SAML",
     "tags": [
       "Authentication.SAML"
@@ -293,7 +292,7 @@
   },
   {
     "name": "Authentication: Basic-Auth",
-    "id": "AI039800",
+    "id": "AI039900",
     "description": "Authentication: Basic-Auth",
     "tags": [
       "Authentication.General"
@@ -312,7 +311,7 @@
   },
   {
     "name": "Authentication: General",
-    "id": "AI039900",
+    "id": "AI040000",
     "description": "Authentication: General",
     "tags": [
       "Authentication.General"
@@ -333,11 +332,10 @@
   },
   {
     "name": "Authentication: General",
-    "id": "AI040000",
+    "id": "AI040100",
     "description": "Authentication: General",
     "tags": [
-      "Authentication.General",
-      "Data.Sensitive.Secret"
+      "Authentication.General"
     ],
     "severity": "critical",
     "patterns": [

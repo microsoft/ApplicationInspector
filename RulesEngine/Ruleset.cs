@@ -145,8 +145,7 @@ namespace RulesEngine
             }
             catch(Exception ex)
             {
-                _logger.Error($"Error parsing {sourcename}: {ex.Message}");
-                throw ex;
+                throw new Exception($"Error parsing {sourcename}: {ex.Message}");
             }
 
             if (ruleList != null)
@@ -174,7 +173,8 @@ namespace RulesEngine
                             SanitizePatternRegex(condition.Pattern);
                         }
 
-                        _logger.Info(string.Format("Rule added: {0},{1},{2}", r.Id, r.Name, r.Description));
+                        if (_logger != null)
+                            _logger.Info(string.Format("Rule added: {0},{1},{2}", r.Id, r.Name, r.Description));
                     }
                     else
                     {

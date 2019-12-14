@@ -10,7 +10,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "ShellExecute|[DllImport|Assembly\\.LoadFile|Assembly\\.LoadFrom",
+        "pattern": "ShellExecute|DllImport|Assembly\\.LoadFile|Assembly\\.LoadFrom",
         "type": "regex",
         "modifiers": [ "i" ],
         "scopes": [

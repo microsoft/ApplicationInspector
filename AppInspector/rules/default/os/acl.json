@@ -1,7 +1,7 @@
 [
   {
     "name": "OS Operation: ACL",
-    "id": "AI033400",
+    "id": "AI033500",
     "description": "OS Operation: ACL",
     "applies_to": [
       "csharp"
@@ -23,7 +23,7 @@
   },
   {
     "name": "OS Operation: ACL (Write)",
-    "id": "AI033500",
+    "id": "AI033600",
     "description": "OS Operation: ACL (Write)",
     "applies_to": [
       "csharp"
@@ -45,7 +45,7 @@
   },
   {
     "name": "OS Operation: ACL (Write)",
-    "id": "AI033600",
+    "id": "AI033700",
     "description": "OS Operation: ACL (Write)",
     "applies_to": [
       "c",
@@ -76,7 +76,7 @@
   },
   {
     "name": "OS Operation: ACL Audit (Write)",
-    "id": "AI033700",
+    "id": "AI033800",
     "description": "OS Operation: ACL Audit (Write)",
     "applies_to": [
       "c",
@@ -107,7 +107,7 @@
   },
   {
     "name": "OS Operation: ACL Token Impersonation",
-    "id": "AI033800",
+    "id": "AI033900",
     "description": "OS Operation: ACL Token Impersonation",
     "tags": [
       "OS.ACL.TokenImpersonation"
@@ -127,7 +127,7 @@
   },
   {
     "name": "OS Operation: ACL Token Impersonation",
-    "id": "AI033900",
+    "id": "AI034000",
     "description": "OS Operation: ACL Token Impersonation",
     "applies_to": [
       "c",
@@ -150,7 +150,7 @@
   },
   {
     "name": "OS Operation: ACL Token Impersonation",
-    "id": "AI034000",
+    "id": "AI034100",
     "description": "OS Operation: ACL Token Impersonation",
     "applies_to": [
       "csharp"
@@ -172,7 +172,7 @@
   },
   {
     "name": "OS Operation: ACL Impersonation (App Container)",
-    "id": "AI034100",
+    "id": "AI034200",
     "description": "OS Operation: ACL Impersonation (App Container)",
     "applies_to": [
       "csharp"
@@ -194,7 +194,7 @@
   },
   {
     "name": "OS Operation: ACL Impersonation (App Container)",
-    "id": "AI034200",
+    "id": "AI034300",
     "description": "OS Operation: ACL Impersonation (App Container)",
     "applies_to": [
       "c",
@@ -217,7 +217,7 @@
   },
   {
     "name": "OS Operation: ACL System Token (Write)",
-    "id": "AI034300",
+    "id": "AI034400",
     "description": "OS Operation: ACL System Token (Write)",
     "applies_to": [
       "c",
@@ -240,7 +240,7 @@
   },
   {
     "name": "OS Operation: ACL (Write)",
-    "id": "AI034400",
+    "id": "AI034500",
     "description": "OS Operation: ACL (Write)",
     "applies_to": [
       "powershell"
@@ -262,7 +262,7 @@
   },
   {
     "name": "OS Operation: ACL (Write)",
-    "id": "AI034500",
+    "id": "AI034600",
     "description": "OS Operation: ACL (Write)",
     "tags": [
       "OS.ACL.Write"
@@ -281,7 +281,7 @@
   },
   {
     "name": "OS Operation: Elevated Permissions",
-    "id": "AI034600",
+    "id": "AI034700",
     "description": "OS Operation: Elevated Permissions",
     "applies_to": [
       "package.json"

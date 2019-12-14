@@ -114,7 +114,7 @@ namespace Microsoft.AppInspector
 
             }
 
-            return result;
+            return result.ToLower();
         }
 
 

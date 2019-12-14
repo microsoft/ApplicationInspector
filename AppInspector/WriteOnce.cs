@@ -122,6 +122,32 @@ namespace Microsoft.AppInspector
         }
 
 
+        static public void SafeLog(string message, NLog.LogLevel logLevel)
+        {
+            if (Log != null && Log.Name != "Console")
+            {
+                int value = logLevel.Ordinal;
+                switch (value)
+                {
+                    case 0:
+                        Log.Trace(message);
+                        break;
+                    case 1:
+                        Log.Debug(message);
+                        break;
+                    case 2:
+                        Log.Info(message);
+                        break;
+                    case 3:
+                        Log.Warn(message);
+                        break;
+                    case 4:
+                        Log.Trace(message);
+                        break;
+                }
+            }
+        }
+
 
         public static void FlushAll()
         {

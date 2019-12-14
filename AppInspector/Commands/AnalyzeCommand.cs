@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using Newtonsoft.Json;
 using System.Threading;
-
+using NLog;
 
 namespace Microsoft.AppInspector
 {
@@ -25,7 +25,7 @@ namespace Microsoft.AppInspector
 
         // Enable processing compressed files
         readonly string[] COMPRESSED_EXTENSIONS = "zip,gz,gzip,gem,tar,tgz,tar.gz,xz,7z".Split(",");
-        readonly string[] EXCLUDEMATCH_FILEPATH = "sample,example,test".Split(",");
+        readonly string[] EXCLUDEMATCH_FILEPATH = "sample,example,test,.vs,.git".Split(",");
 
         Regex IgnoreMimeRegex;
 
@@ -114,7 +114,7 @@ namespace Microsoft.AppInspector
         /// </summary>
         void ConfigConfidenceFilters()
         {
-            WriteOnce.Log.Trace("AnalyzeCommand::ConfigConfidenceFilters");
+            WriteOnce.SafeLog("AnalyzeCommand::ConfigConfidenceFilters", LogLevel.Trace);
             //parse and verify confidence values
             if (String.IsNullOrEmpty(_arg_confidenceFilters))
                 _arg_confidence = Confidence.High | Confidence.Medium; //excludes low by default
@@ -141,7 +141,7 @@ namespace Microsoft.AppInspector
         /// </summary>
         void ConfigRules()
         {
-            WriteOnce.Log.Trace("AnalyzeCommand::ConfigRules");
+            WriteOnce.SafeLog("AnalyzeCommand::ConfigRules", LogLevel.Trace);
 
             RuleSet rulesSet = new RuleSet(Program.Logger);
             List<string> rulePaths = new List<string>();
@@ -189,7 +189,7 @@ namespace Microsoft.AppInspector
      
         void ConfigOutput()
         {
-            WriteOnce.Log.Trace("AnalyzeCommand::ConfigOutput");
+            WriteOnce.SafeLog("AnalyzeCommand::ConfigOutput", LogLevel.Trace);
 
             //Set output type, format and outstream
             _outputWriter = WriterFactory.GetWriter(_arg_fileFormat ?? "text", (string.IsNullOrEmpty(_arg_outputFile)) ? null : "text", _arg_outputTextFormat);
@@ -211,7 +211,7 @@ namespace Microsoft.AppInspector
         /// </summary>
         void ConfigSourcetoScan()
         {
-            WriteOnce.Log.Trace("AnalyzeCommand::ConfigSourcetoScan");
+            WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
 
             if (Directory.Exists(_arg_sourcePath))
             {
@@ -246,7 +246,7 @@ namespace Microsoft.AppInspector
         /// <returns></returns>
         public int Run()
         {
-            WriteOnce.Log.Trace("AnalyzeCommand::Run");
+            WriteOnce.SafeLog("AnalyzeCommand::Run", LogLevel.Trace);
 
             DateTime start = DateTime.Now;          
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Analyze"));
@@ -271,7 +271,7 @@ namespace Microsoft.AppInspector
             _appProfile.DateScanned = DateScanned.ToString();
             _appProfile.PrepareReport();
             TimeSpan timeSpan = start - DateTime.Now;
-            WriteOnce.Log.Trace(String.Format("Processing time: seconds:{0}", timeSpan.TotalSeconds * -1));
+            WriteOnce.SafeLog(String.Format("Processing time: seconds:{0}", timeSpan.TotalSeconds * -1), LogLevel.Trace);
             FlushAll();
 
             //wrapup result status
@@ -320,16 +320,16 @@ namespace Microsoft.AppInspector
             #region quickvalidation
             if (fileText.Length > MAX_FILESIZE)
             {
-                WriteOnce.Log.Trace("File too large: " + filePath);
-                WriteOnce.Log.Error(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath));
+                WriteOnce.SafeLog("File too large: " + filePath, LogLevel.Trace);
+                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath), LogLevel.Error);
                 _appProfile.MetaData.FilesSkipped++;
                 return;
             }
 
             if (!_arg_allowSampleFiles && _fileExclusionList.Any(v => filePath.Contains(v)))
             {
-                WriteOnce.Log.Trace("Part of excluded list: " + filePath);
-                WriteOnce.Log.Error(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath));
+                WriteOnce.SafeLog("Part of excluded list: " + filePath, LogLevel.Trace);
+                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath), LogLevel.Error);
                 _appProfile.MetaData.FilesSkipped++;
                 return;
             }
@@ -340,14 +340,14 @@ namespace Microsoft.AppInspector
             // Skip files written in unknown language
             if (string.IsNullOrEmpty(language))
             {
-                WriteOnce.Log.Trace("Language not found for file: " + filePath);
+                WriteOnce.SafeLog("Language not found for file: " + filePath, LogLevel.Trace);
                 language = Path.GetFileName(filePath);
                 _appProfile.MetaData.FilesSkipped++;
                 return;
             }
             else
             {
-                WriteOnce.Log.Trace("Preparing to process file: " + filePath);
+                WriteOnce.SafeLog("Preparing to process file: " + filePath, LogLevel.Trace);
             }
 
             #endregion
@@ -379,7 +379,7 @@ namespace Microsoft.AppInspector
                 // Iterate through each match issue 
                 foreach (Issue match in matches)
                 {
-                    WriteOnce.Log.Trace("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", match.Rule.Id, match.Rule.Name, filePath);
+                    WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", match.Rule.Id, match.Rule.Name, filePath), LogLevel.Trace);
 
                     //maintain a list of unique tags; multi-purpose but primarily for filtering -u option
                     bool dupTagFound = false;
@@ -417,7 +417,7 @@ namespace Microsoft.AppInspector
             }
             else
             {
-                WriteOnce.Log.Trace("No pattern matches detected for file: " + filePath);
+                WriteOnce.SafeLog("No pattern matches detected for file: " + filePath, LogLevel.Trace);
             }
 
         }
@@ -441,7 +441,7 @@ namespace Microsoft.AppInspector
             catch (Exception)
             {
                 //control the error description and continue; error in rules engine possible
-                WriteOnce.Log.Error("Unexpected indexing issue in ExtractTextSample.  Process continued");
+                WriteOnce.SafeLog("Unexpected indexing issue in ExtractTextSample.  Process continued", LogLevel.Error);
             }
 
             return result;
@@ -612,7 +612,7 @@ namespace Microsoft.AppInspector
                             }
                             else
                             {
-                                WriteOnce.Log.Warn("no support for .gz unless .tar.gz: " + fileExtension);
+                                WriteOnce.SafeLog("no support for .gz unless .tar.gz: " + fileExtension, LogLevel.Warn);
                                 _appProfile.MetaData.PackageTypes.Add("compressed-unsupported");
                             }
                             break;
@@ -623,10 +623,10 @@ namespace Microsoft.AppInspector
                         case ".gem":
                         case ".tar":
                         case ".nupkg":
-                            WriteOnce.Log.Warn($"Processing of {fileExtension} not implemented yet.");
+                            WriteOnce.SafeLog($"Processing of {fileExtension} not implemented yet.", LogLevel.Warn);
                             break;
                         default:
-                            WriteOnce.Log.Warn("no support for compressed type: " + fileExtension);
+                            WriteOnce.SafeLog("no support for compressed type: " + fileExtension, LogLevel.Warn);
                             break;
                     }
 
@@ -642,7 +642,7 @@ namespace Microsoft.AppInspector
 
         void ProcessZipFile(string filename)
         {
-            WriteOnce.Log.Trace("Analyzing .zip file: [{0}])", filename);
+            WriteOnce.SafeLog(string.Format("Analyzing .zip file: [{0}])", filename), LogLevel.Trace);
 
             ZipFile zipFile;
             using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
@@ -661,7 +661,7 @@ namespace Microsoft.AppInspector
                     if (zipEntry.Size > MAX_FILESIZE)
                     {
                         _appProfile.MetaData.FilesSkipped++;
-                        WriteOnce.Log.Error(string.Format("{0} in {1} is too large.  File skipped", zipEntry.Name, filename));
+                        WriteOnce.SafeLog(string.Format("{0} in {1} is too large.  File skipped", zipEntry.Name, filename), LogLevel.Error);
                         zipFile.Close();
                         continue;
                     }
@@ -671,7 +671,7 @@ namespace Microsoft.AppInspector
                     if (IgnoreMimeRegex.IsMatch(mimeType) && new FileInfo(filename).Extension != "ts")
                     {
                         _appProfile.MetaData.FilesSkipped++;
-                        WriteOnce.Log.Error("Ignoring zip entry [{0}]", zipEntry.Name);
+                        WriteOnce.SafeLog(string.Format("Ignoring zip entry [{0}]", zipEntry.Name), LogLevel.Error);
                     }
                     else
                     {
@@ -720,7 +720,7 @@ namespace Microsoft.AppInspector
 
         void ProcessTarGzFile(string filename)
         {
-            WriteOnce.Log.Trace("Analyzing .tar.gz file: [{0}])", filename);
+            WriteOnce.SafeLog(string.Format("Analyzing .tar.gz file: [{0}]", filename), LogLevel.Trace);
 
             _appProfile.MetaData.TotalFiles = GetTarGzFileCount(filename);
 
@@ -740,7 +740,7 @@ namespace Microsoft.AppInspector
                     if (tarEntry.Size > MAX_FILESIZE)
                     {
                         _appProfile.MetaData.FilesSkipped++;
-                        WriteOnce.Log.Error(string.Format("{0} in {1} is too large.  File skipped", tarEntry.Name, filename));
+                        WriteOnce.SafeLog(string.Format("{0} in {1} is too large.  File skipped", tarEntry.Name, filename), LogLevel.Error);
                         tarStream.Close();
                         continue;
                     }
@@ -749,7 +749,7 @@ namespace Microsoft.AppInspector
                     if (IgnoreMimeRegex.IsMatch(mimeType) && new FileInfo(filename).Extension != "ts")
                     {
                         _appProfile.MetaData.FilesSkipped++;
-                        WriteOnce.Log.Error("Ignoring tar entry [{0}]", tarEntry.Name);
+                        WriteOnce.SafeLog(string.Format("Ignoring tar entry [{0}]", tarEntry.Name), LogLevel.Error);
                     }
                     else
                     {
