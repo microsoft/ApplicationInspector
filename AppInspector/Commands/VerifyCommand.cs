@@ -6,10 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using RulesEngine;
-using Microsoft.AppInspector;
-using System.Runtime.InteropServices.ComTypes;
 
-namespace Microsoft.AppInspector.Commands
+
+namespace Microsoft.AppInspector
 {
     /// <summary>
     /// Wraps rulesengine verify for ruleset

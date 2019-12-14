@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics;
 using CommandLine;
 using System.Reflection;
-using Microsoft.AppInspector.Commands;
 using NLog;
 using NLog.Targets;
 using NLog.Config;
@@ -16,8 +15,6 @@ namespace Microsoft.AppInspector
 {
     #region CommandLineArgOptions
 
-    enum logLevel { debug,info,warn,error,fatal,off };
-
     /// <summary>
     /// Command option classes for each command verb
     /// </summary>
@@ -25,8 +22,6 @@ namespace Microsoft.AppInspector
     [Verb("analyze", HelpText = "Inspect source directory/file for defined feature characteristics")]
     public class AnalyzeCommandOptions
     {
-        private bool uniqueTagsOnly;
-
         [Option('s', "source-path", Required = true, HelpText = "Path to source code to inspect (required)")]
         public string SourcePath { get; set; }
 
@@ -53,6 +48,9 @@ namespace Microsoft.AppInspector
 
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; }
+
+        [Option('k', "include-sample-paths", Required = false, HelpText = "Include source paths that have sample names in analysis", Default = false)]
+        public bool AllowSampleFiles { get; set; }
 
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
         public string ConsoleVerbosityLevel { get; set; }
@@ -300,6 +298,7 @@ namespace Microsoft.AppInspector
         {
             var config = new NLog.Config.LoggingConfiguration();
 
+
             if (String.IsNullOrEmpty(logFilePath))
             {
                 logFilePath = Utils.GetPath(Utils.AppPath.defaultLog);
@@ -308,9 +307,15 @@ namespace Microsoft.AppInspector
                     File.Delete(logFilePath);
             }
 
-            logLevel log_level;
-            if (!Enum.TryParse(logFileLevel, true, out log_level))
+            LogLevel log_level = LogLevel.Error;//default
+            try
+            {
+                log_level = LogLevel.FromString(logFileLevel);
+            }
+            catch (Exception)
+            {
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v")));
+            }
             
             using (var fileTarget = new FileTarget()
             {
@@ -322,7 +327,7 @@ namespace Microsoft.AppInspector
             })
             {
                 config.AddTarget(fileTarget);
-                config.LoggingRules.Add(new LoggingRule("*", LogLevel.FromString(logFileLevel), fileTarget));
+                config.LoggingRules.Add(new LoggingRule("*", log_level, fileTarget));
             }
 
             LogManager.Configuration = config;      

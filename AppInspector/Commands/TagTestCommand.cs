@@ -8,7 +8,7 @@ using RulesEngine;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace Microsoft.AppInspector.Commands
+namespace Microsoft.AppInspector
 {
 
     /// <summary>

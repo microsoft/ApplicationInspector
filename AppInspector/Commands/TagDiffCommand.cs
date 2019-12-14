@@ -7,7 +7,7 @@ using System.Linq;
 using System.IO;
 
 
-namespace Microsoft.AppInspector.Commands
+namespace Microsoft.AppInspector
 {
     [Serializable]
     public class TagsFile
@@ -15,8 +15,6 @@ namespace Microsoft.AppInspector.Commands
         [JsonProperty(PropertyName = "tags")]
         public string[] Tags { get; set; }
     }
-
-
 
     /// <summary>
     /// Used to compare two source paths and report tag differences

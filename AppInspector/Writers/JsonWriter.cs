@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Text;
 using RulesEngine;
 
-namespace Microsoft.AppInspector.Writers
+namespace Microsoft.AppInspector
 {
     /// <summary>
     /// Writes in json format
