@@ -7,21 +7,21 @@
     <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
     <RepositoryType></RepositoryType>
     <PackageTags>Static Linter</PackageTags>
-    <PackageReleaseNotes>Beta (pre-release) version</PackageReleaseNotes>
-    <Description>Characterizes software features</Description>
+    <PackageReleaseNotes>General Release (Preview) version</PackageReleaseNotes>
+    <Description>Characterizes software features.</Description>
     <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
     <HighEntropyVA>true</HighEntropyVA>
     <PackageId>ApplicationInspector</PackageId>
     <Product>ApplicationInspector</Product>
     <Authors>Microsoft</Authors>
-    <Version>1.0.11</Version>
+    <Version>1.0.12</Version>
     <AssemblyName>AppInspector</AssemblyName>
     <RootNamespace>ApplicationInspector</RootNamespace>
     <StartupObject>Microsoft.AppInspector.Program</StartupObject>
     <Company>Microsoft</Company>
     <SignAssembly>true</SignAssembly>
-    <AssemblyVersion>1.0.11.0</AssemblyVersion>
-    <FileVersion>1.0.11.0</FileVersion>
+    <AssemblyVersion>1.0.12.0</AssemblyVersion>
+    <FileVersion>1.0.12.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

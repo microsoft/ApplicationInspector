@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Component: Windows DLL",
+    "id": "AI005400",
+    "description": "Component: Windows DLL",
+    "applies_to": [ "csharp" ],
+    "tags": [
+      "Component.Executable.Microsoft.DLL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ShellExecute|[DllImport|Assembly\\.LoadFile|Assembly\\.LoadFrom",
+        "type": "regex",
+        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: Windows DLL",
+    "id": "AI005500",
+    "description": "Component: Windows DLL",
+    "applies_to": [ "cpp" ],
+    "tags": [
+      "Component.Executable.Microsoft.DLL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "LoadLibrary",
+        "type": "string",
+        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: Windows DLL",
+    "id": "AI005600",
+    "description": "Component: Windows DLL",
+    "applies_to": [ "python", "java" ],
+    "tags": [
+      "Component.Executable.Microsoft.DLL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "System\\.Load|ctypes\\.WinDLL",
+        "type": "regex",
+        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  }
+  ]

@@ -1,7 +1,7 @@
 [
   {
     "name": "Metadata: Target Processor",
-    "id": "AI029100",
+    "id": "AI030100",
     "description": "Metadata: Target Processor",
     "tags": [
       "Metadata.Hardware.Processor"
@@ -20,7 +20,7 @@
   },
   {
     "name": "Metadata: Application Name",
-    "id": "AI029200",
+    "id": "AI030200",
     "description": "Metadata: Application Name",
     "tags": [
       "Metadata.Project.Name"
@@ -33,13 +33,12 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
-
       }
     ]
   },
   {
     "name": "Metadata: Build Output Category",
-    "id": "AI029300",
+    "id": "AI030300",
     "description": "Metadata: Build Output Category",
     "tags": [
       "Metadata.Application.BuildOutput.Category"
@@ -52,23 +51,21 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
-
       },
       {
         "pattern": "<ConfigurationType>.*<\/ConfigurationType>",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
-
       }
     ]
   },
   {
     "name": "Metadata: Application Type (Windows Forms)",
-    "id": "AI029400",
+    "id": "AI030400",
     "description": "Metadata: Application Type (Windows Forms)",
     "tags": [
-      "Metadata.Application.Type.Winforms"
+      "Metadata.ApplicationType.Client.Winforms"
     ],
     "applies_to": [ "csharp" ],
     "severity": "moderate",
@@ -80,16 +77,15 @@
         "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
-
       }
     ]
   },
   {
     "name": "Metadata: Application Type (Service)",
-    "id": "AI029500",
+    "id": "AI030500",
     "description": "Metadata: Application Type (Service)",
     "tags": [
-      "Metadata.Application.Type.Service"
+      "Metadata.ApplicationType.Client.Service.Windows"
     ],
     "applies_to": [ "csharp" ],
     "severity": "moderate",
@@ -99,16 +95,15 @@
         "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high"
-
       }
     ]
   },
   {
     "name": "Metadata: Application Type (Service)",
-    "id": "AI029600",
+    "id": "AI030600",
     "description": "Metadata: Application Type (Service)",
     "tags": [
-      "Metadata.Application.Type.Service"
+      "Metadata.ApplicationType.Client.Service.Windows"
     ],
     "applies_to": [ "c", "cpp", "shellscript" ],
     "severity": "moderate",
@@ -124,8 +119,26 @@
     ]
   },
   {
+    "name": "Metadata: Application Type (Service)",
+    "id": "AI030700",
+    "description": "Metadata: Application Type (Service)",
+    "tags": [
+      "Metadata.ApplicationType.Client.Service.Windows"
+    ],
+    "applies_to": [ "cpp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RegisterServiceCtrlHandler|serviceCtrlHandler|StartServiceCtrlDispatcher|SERVICE_STATUS|SERVICE_RUNNING|SERVICE_WIN32|SERVICE_CONTROL",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
     "name": "Metadata: Application Name",
-    "id": "AI029700",
+    "id": "AI030800",
     "description": "Metadata: Application Name",
     "tags": [
       "Metadata.Application.Name"
@@ -145,7 +158,7 @@
   },
   {
     "name": "Metadata: Application Name",
-    "id": "AI029800",
+    "id": "AI030900",
     "description": "Metadata: Application Name",
     "tags": [
       "Metadata.Application.Name"
@@ -165,7 +178,7 @@
   },
   {
     "name": "Metadata: Application Description",
-    "id": "AI029900",
+    "id": "AI031000",
     "description": "Metadata: Application Description",
     "tags": [
       "Metadata.Application.Description"
@@ -185,7 +198,7 @@
   },
   {
     "name": "Metadata: Application Version",
-    "id": "AI030000",
+    "id": "AI031100",
     "description": "Metadata: Application Version",
     "tags": [
       "Metadata.Application.Version"
@@ -205,7 +218,7 @@
   },
   {
     "name": "Metadata: Application Version",
-    "id": "AI030100",
+    "id": "AI031200",
     "description": "Metadata: Application Version",
     "tags": [
       "Metadata.Application.Version"
@@ -227,7 +240,7 @@
   },
   {
     "name": "Metadata: Application Author",
-    "id": "AI030200",
+    "id": "AI031300",
     "description": "Metadata: Application Author",
     "tags": [
       "Metadata.Application.Author"
@@ -246,7 +259,7 @@
   },
   {
     "name": "Metadata: Application Author",
-    "id": "AI030300",
+    "id": "AI031400",
     "description": "Metadata: Application Author",
     "tags": [
       "Metadata.Application.Author"

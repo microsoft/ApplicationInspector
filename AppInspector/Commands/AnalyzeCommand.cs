@@ -46,6 +46,9 @@ namespace Microsoft.AppInspector.Commands
         DateTime DateScanned { get; set; }
         DateTime _lastUpdated;
 
+        /// <summary>
+        /// Updated dynamically to more recent file in source
+        /// </summary>
         public DateTime LastUpdated
         {
             get { return _lastUpdated;  }
@@ -80,7 +83,7 @@ namespace Microsoft.AppInspector.Commands
             _arg_outputFile = opts.OutputFilePath;
             _arg_fileFormat = opts.OutputFileFormat;
             _arg_outputTextFormat = opts.TextOutputFormat;
-            _arg_outputUniqueTagsOnly = opts.UniqueTagsOnly;
+            _arg_outputUniqueTagsOnly = !opts.AllowDupTags;
             _arg_customRulesPath = opts.CustomRulesPath;
             _arg_confidenceFilters = opts.ConfidenceFilters;
             _arg_ignoreDefaultRules = opts.IgnoreDefaultRules;

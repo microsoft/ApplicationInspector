@@ -692,7 +692,7 @@ namespace Microsoft.AppInspector.Writers
                 this.OSTargets.Add(ExtractJSONValue(matchRecord.TextSample));
 
             //special handling; attempt to detect app types...review for multiple pattern rule limitation
-            String solutionType = Utils.DetectSolutionType(matchRecord.Filename, matchRecord.Language, matchRecord.Issue.Rule.Tags[0], matchRecord.TextSample);
+            String solutionType = Utils.DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
                 AppTypes.Add(solutionType);
 

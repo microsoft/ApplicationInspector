@@ -1,7 +1,7 @@
 [
   {
     "name": "Platform: Microsoft .NET Core",
-    "id": "AI027500",
+    "id": "AI028500",
     "description": "Platform: .NET Core",
     "applies_to": [ "VSProject", "csharp" ],
     "tags": [ "Platform.Microsoft.NETCore" ],
@@ -17,7 +17,7 @@
   },
   {
     "name": "Platform: Microsoft .NET Standard",
-    "id": "AI027600",
+    "id": "AI028600",
     "description": "Platform: Microsoft .NET Standard",
     "applies_to": [ "VSProject", "csharp" ],
     "tags": [ "Platform.Microsoft.NETStandard" ],
@@ -33,7 +33,7 @@
   },
   {
     "name": "Platform: Microsoft Mono",
-    "id": "AI027700",
+    "id": "AI028700",
     "description": "Platform: Microsoft Mono",
     "applies_to": [ "VSProject", "csharp" ],
     "tags": [ "Platform.Microsoft.Mono" ],
@@ -49,7 +49,7 @@
   },
   {
     "name": "Platform: Google Android",
-    "id": "AI027800",
+    "id": "AI028800",
     "description": "Platform: Google Android",
     "tags": [
       "Platform.OS.Google.Android"
@@ -76,7 +76,7 @@
   },
   {
     "name": "Platform: Apple iOS",
-    "id": "AI027900",
+    "id": "AI028900",
     "description": "Platform: Apple iOS",
     "tags": [
       "Platform.OS.Apple.iOS"
@@ -95,7 +95,7 @@
   },
   {
     "name": "Platform: Apple MacOS",
-    "id": "AI028000",
+    "id": "AI029000",
     "description": "Platform: Apple MacOS",
     "tags": [
       "Platform.OS.Apple.MacOS"
@@ -114,7 +114,7 @@
   },
   {
     "name": "Platform: Microsoft Windows",
-    "id": "AI028100",
+    "id": "AI029100",
     "description": "Platform: Microsoft Windows Server",
     "tags": [
       "Platform.OS.Microsoft.WindowsServer"
@@ -133,7 +133,7 @@
   },
   {
     "name": "Platform: Microsoft Windows",
-    "id": "AI028200",
+    "id": "AI029200",
     "description": "Platform: Microsoft Windows",
     "tags": [
       "Platform.OS.Microsoft.WindowsStandard"
@@ -153,7 +153,7 @@
 
   {
     "name": "Platform: Microsoft Windows",
-    "id": "AI028300",
+    "id": "AI029300",
     "description": "Platform: Microsoft Windows",
     "tags": [
       "Platform.OS.Microsoft.WindowsCE"
@@ -172,7 +172,7 @@
   },
   {
     "name": "Development Framework: Windows Universal Platform",
-    "id": "AI028400",
+    "id": "AI029400",
     "description": "Development Framework: Windows Universal Platform",
     "tags": [
       "Platform.OS.Microsoft.WindowsUniversalPlatform"
@@ -190,7 +190,7 @@
   },
   {
     "name": "Platform: Linux",
-    "id": "AI028500",
+    "id": "AI029500",
     "description": "Platform: Linux",
     "tags": [
       "Platform.OS.Linux.Distro"
@@ -209,7 +209,7 @@
   },
   {
     "name": "Platform: Microsoft XBox",
-    "id": "AI028600",
+    "id": "AI029600",
     "description": "Platform: Microsoft XBox",
     "tags": [
       "Platform.OS.Microsoft.XBox"
@@ -228,7 +228,7 @@
   },
   {
     "name": "Platform: Mobile Device",
-    "id": "AI028700",
+    "id": "AI029700",
     "description": "Platform: Mobile Device",
     "tags": [
       "Platform.Device.Mobile"
@@ -263,7 +263,7 @@
   },
   {
     "name": "Platform: IOT",
-    "id": "AI028800",
+    "id": "AI029800",
     "description": "Platform: IOT",
     "tags": [
       "Platform.Device.IOT"
@@ -282,7 +282,7 @@
   },
   {
     "name": "Hardware: Microsoft Kinex",
-    "id": "AI028900",
+    "id": "AI029900",
     "description": "Platform: Microsoft Kinex",
     "tags": [
       "Hardware.Accessory.Microsoft.Kinex"
@@ -301,7 +301,7 @@
   },
   {
     "name": "Hardware: Reference Design",
-    "id": "AI029000",
+    "id": "AI030000",
     "description": "Hardware: Reference Design",
     "tags": [
       "Hardware.ReferenceDesign"

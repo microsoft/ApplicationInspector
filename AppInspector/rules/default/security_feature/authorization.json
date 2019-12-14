@@ -1,7 +1,7 @@
 [
   {
     "name": "Authorization: Microsoft Azure SAS",
-    "id": "AI038800",
+    "id": "AI040100",
     "description": "Authorization: Microsoft Azure SAS",
     "applies_to": [
       "common_source_code"
@@ -33,7 +33,7 @@
   },
   {
     "name": "Authorization: RBAC",
-    "id": "AI038900",
+    "id": "AI040200",
     "description": "Authorization: RBAC",
     "applies_to": [
       "common_source_code"
@@ -56,7 +56,7 @@
   },
   {
     "name": "Authorization: RBAC",
-    "id": "AI038910",
+    "id": "AI040300",
     "description": "Authorization: RBAC",
     "applies_to": [
       "common_source_code"
@@ -95,7 +95,7 @@
   },
   {
     "name": "Authorization: Claims",
-    "id": "AI039000",
+    "id": "AI040400",
     "description": "Authorization: Claims",
     "applies_to": [
       "common_source_code"
@@ -134,7 +134,7 @@
   },
   {
     "name": "Authorization: General",
-    "id": "AI039100",
+    "id": "AI040500",
     "description": "Authorization: General",
     "applies_to": [
       "common_source_code"

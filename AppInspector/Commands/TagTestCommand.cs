@@ -131,7 +131,7 @@ namespace Microsoft.AppInspector.Commands
                     CustomRulesPath = _arg_customRulesPath,
                     IgnoreDefaultRules = _arg_ignoreDefaultRules,
                     SimpleTagsOnly = true,
-                    UniqueTagsOnly = true,
+                    AllowDupTags = false,
                     ConsoleVerbosityLevel = "None"
                 });
 

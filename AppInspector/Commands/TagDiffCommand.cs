@@ -99,7 +99,7 @@ namespace Microsoft.AppInspector.Commands
                     CustomRulesPath = _arg_rulesPath,
                     IgnoreDefaultRules = _arg_ignoreDefault,
                     SimpleTagsOnly = true,
-                    UniqueTagsOnly = true,
+                    AllowDupTags = false,
                     ConsoleVerbosityLevel = "None"
                 });
                 AnalyzeCommand cmd2 = new AnalyzeCommand(new AnalyzeCommandOptions
@@ -110,7 +110,7 @@ namespace Microsoft.AppInspector.Commands
                     CustomRulesPath = _arg_rulesPath,
                     IgnoreDefaultRules = _arg_ignoreDefault,
                     SimpleTagsOnly = true,
-                    UniqueTagsOnly = true,
+                    AllowDupTags = false,
                     ConsoleVerbosityLevel = "None"
                 });
 

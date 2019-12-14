@@ -1,7 +1,7 @@
 [
   {
     "name": "Cryptography: x.509 Use",
-    "id": "AI005900",
+    "id": "AI006200",
     "description": "Cryptography: x.509 Certificate Use",
     "tags": [
       "Cryptography.x509.Use"
@@ -30,7 +30,7 @@
   },
   {
     "name": "Cryptography: x.509 Use",
-    "id": "AI006000",
+    "id": "AI006300",
     "description": "Cryptography: x.509 Certificate Use",
     "applies_to": ["c", "cpp", "csharp"],
     "tags": [
@@ -52,7 +52,7 @@
   },
   {
     "name": "Cryptography: x.509 ClientAuth",
-    "id": "AI006100",
+    "id": "AI006400",
     "description": "Cryptography: x.509 Certificate ClientAuth",
     "tags": [
       "Cryptography.x509.ClientAuth",
@@ -74,7 +74,7 @@
   },
   {
     "name": "Cryptography: x.509 Create",
-    "id": "AI006200",
+    "id": "AI006500",
     "description": "Cryptography: x.509 Create Certificate",
     "tags": [
       "Cryptography.x509.CreateCertificate"
@@ -125,7 +125,7 @@
   },
   {
     "name": "Cryptography: Digital Signature or DSA",
-    "id": "AI006300",
+    "id": "AI006600",
     "description": "Cryptography: Digital Signature or DSA",
     "applies_to": [
       "csharp"
@@ -155,7 +155,7 @@
   },
   {
     "name": "Cryptography: Digital Signature",
-    "id": "AI006400",
+    "id": "AI006700",
     "description": "Cryptography: Digital Signature",
     "tags": [
       "Cryptography.Signing.Data"
@@ -186,7 +186,7 @@
   },
   {
     "name": "Cryptography: CodeSign",
-    "id": "AI006500",
+    "id": "AI006800",
     "description": "Cryptography: CodeSign",
     "tags": [
       "Cryptography.Signing.Code"

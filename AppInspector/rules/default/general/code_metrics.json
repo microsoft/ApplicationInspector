@@ -1,7 +1,7 @@
 [
   {
     "name": "Metric: Classes Defined",
-    "id": "AI024800",
+    "id": "AI025700",
     "description": "Metric: Classes Defined",
     "tags": [
       "Metric.Code.Class.Defined"
@@ -19,7 +19,7 @@
   },
   {
     "name": "Metric: Functions Defined",
-    "id": "AI024900",
+    "id": "AI025800",
     "description": "Metric: Functions Defined",
     "tags": [
       "Metric.Code.Function.Defined"
@@ -37,7 +37,7 @@
   },
   {
     "name": "Metric: HTML Forms Defined",
-    "id": "AI025000",
+    "id": "AI025900",
     "description": "Metric: HTML Forms Defined",
     "tags": [
       "Metric.Code.HTMLForm.Defined"
@@ -56,7 +56,7 @@
   },
   {
     "name": "Metric: Exceptions Caught",
-    "id": "AI025100",
+    "id": "AI026000",
     "description": "Metric: Exceptions Caught",
     "tags": [
       "Metric.Code.Exception.Caught"
@@ -75,7 +75,7 @@
   },
   {
     "name": "Logging Call",
-    "id": "AI025200",
+    "id": "AI026100",
     "description": "Logging Call",
     "tags": [
       "Metric.Logging.Call"
@@ -95,7 +95,7 @@
   },
   {
     "name": "Sample Code",
-    "id": "AI025300",
+    "id": "AI026200",
     "description": "Sample Code",
     "tags": [
       "Metric.SampleCode"
@@ -114,7 +114,7 @@
   },
   {
     "name": "URL Reference",
-    "id": "AI025310",
+    "id": "AI026300",
     "description": "URL Reference",
     "tags": [
       "Metric.URL"
