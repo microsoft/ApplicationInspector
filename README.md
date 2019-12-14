@@ -59,18 +59,18 @@ ERROR(S):
     Arguments:
     -s, --source-path             Required. Path to source code to inspect (required)
     -o, --output-file-path        Path to output file
-	-f, --output-file-format      (Default: html) Output format [html|json|text]
-	-e, --text-format             (Default: Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m) Text format specifiers
-	-r, --custom-rules-path       Custom rules path
-	-t, --tag-output-only         (Default: false) Output only contains identified tags
-	-i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
-	-d, --allow-dup-tags          (Default: false) Output only contains non-unique tag matches
-	-c, --confidence-filters      (Default: high,medium) Output only if matches rule pattern confidence [<value>,] [high|medium|low]
-	-x, --console-verbosity       (Default: medium) Console verbosity [high|medium|low|none]
-	-l, --log-file-path           Log file path
-	-v, --log-file-level          (Default: Error) Log file level [Debug|Info|Warn|Error|Fatal|Off]
+    -f, --output-file-format      (Default: html) Output format [html|json|text]
+    -e, --text-format             (Default: Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m) 
+    -r, --custom-rules-path       Custom rules path
+    -t, --tag-output-only         (Default: false) Output only contains identified tags
+    -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
+    -d, --allow-dup-tags          (Default: false) Output only contains non-unique tag matches
+    -c, --confidence-filters      (Default: high,medium) Output only if matches rule pattern confidence [<value>,] [high|medium|low]
+    -x, --console-verbosity       (Default: medium) Console verbosity [high|medium|low|none]
+    -l, --log-file-path           Log file path
+    -v, --log-file-level          (Default: Error) Log file level [Debug|Info|Warn|Error|Fatal|Off]
 ```
-##### Scan a project directory, with output sent to "output.html" (the default behavior includes launching default local browser to this file)
+##### Scan a project directory, with output sent to "output.html" (default behavior includes launching default browser to this file)
 ```
 dotnet AppInspector.dll analyze -s /home/user/myproject 
 ```
