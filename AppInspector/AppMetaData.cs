@@ -524,7 +524,7 @@ namespace Microsoft.AppInspector
             foreach (TagCounter counter in TagCounters)
             {
                 if (!dupCountersCheck.Add(counter.Tag))
-                    WriteOnce.Log.Error("Duplidate counter specified in preferences");
+                    WriteOnce.SafeLog("Duplidate counter specified in preferences", NLog.LogLevel.Error);
             }
 
             Languages = new Dictionary<string, int>();
@@ -678,6 +678,8 @@ namespace Microsoft.AppInspector
             // Author etc. or standard properties we capture
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Author")))
                 this.Authors = ExtractJSONValue(matchRecord.TextSample);
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Publisher")))
+                this.Authors = ExtractXMLValue(matchRecord.TextSample);
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Description")))
                 this.Description = ExtractJSONValue(matchRecord.TextSample);
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Name")))
@@ -685,11 +687,11 @@ namespace Microsoft.AppInspector
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Version")))
                 this.SourceVersion = ExtractJSONValue(matchRecord.TextSample);
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Hardware.Processor")))
-                this.CPUTargets.Add(ExtractJSONValue(matchRecord.TextSample));
+                this.CPUTargets.Add(ExtractJSONValue(matchRecord.TextSample).ToLower());
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.BuildOutput.Category")))
-                this.Outputs.Add(ExtractXMLValue(matchRecord.TextSample));
+                this.Outputs.Add(ExtractXMLValue(matchRecord.TextSample).ToLower());
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Platform.OS")))
-                this.OSTargets.Add(ExtractJSONValue(matchRecord.TextSample));
+                this.OSTargets.Add(ExtractJSONValue(matchRecord.TextSample).ToLower());
 
             //special handling; attempt to detect app types...review for multiple pattern rule limitation
             String solutionType = Utils.DetectSolutionType(matchRecord);

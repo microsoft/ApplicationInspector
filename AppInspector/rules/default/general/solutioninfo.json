@@ -157,28 +157,8 @@
     ]
   },
   {
-    "name": "Metadata: Application Name",
-    "id": "AI030900",
-    "description": "Metadata: Application Name",
-    "tags": [
-      "Metadata.Application.Name"
-    ],
-    "applies_to": [ "package.json" ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "\\\"name\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
-
-      }
-    ]
-  },
-  {
     "name": "Metadata: Application Description",
-    "id": "AI031000",
+    "id": "AI030900",
     "description": "Metadata: Application Description",
     "tags": [
       "Metadata.Application.Description"
@@ -198,7 +178,7 @@
   },
   {
     "name": "Metadata: Application Version",
-    "id": "AI031100",
+    "id": "AI031000",
     "description": "Metadata: Application Version",
     "tags": [
       "Metadata.Application.Version"
@@ -218,7 +198,7 @@
   },
   {
     "name": "Metadata: Application Version",
-    "id": "AI031200",
+    "id": "AI031100",
     "description": "Metadata: Application Version",
     "tags": [
       "Metadata.Application.Version"
@@ -240,7 +220,7 @@
   },
   {
     "name": "Metadata: Application Author",
-    "id": "AI031300",
+    "id": "AI031200",
     "description": "Metadata: Application Author",
     "tags": [
       "Metadata.Application.Author"
@@ -259,7 +239,7 @@
   },
   {
     "name": "Metadata: Application Author",
-    "id": "AI031400",
+    "id": "AI031300",
     "description": "Metadata: Application Author",
     "tags": [
       "Metadata.Application.Author"
@@ -268,6 +248,45 @@
     "patterns": [
       {
         "pattern": "author[=: ](.*)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ],
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Publisher",
+    "id": "AI031400",
+    "description": "Metadata: Application Publisher",
+    "applies_to": [ "VSProject" ],
+    "tags": [
+      "Metadata.Application.Publisher"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<PublisherName>.*<\/PublisherName>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ],
+        "_comment": "use as additional author value"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Target Framework",
+    "id": "AI031500",
+    "description": "Metadata: Target Framework",
+    "tags": [
+      "Metadata.Application.Target.Framework"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<TargetFramework>.*<\/TargetFramework>",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",

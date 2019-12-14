@@ -16,32 +16,18 @@
         "confidence": "high"
       },
       {
-        "pattern": "birthdate|ethnicity|gender|citizenship|nationality|martial|marriage|married|spouce|mother|father|kids*",
+        "pattern": "birthdate|ethnicity|gender|citizenship|nationality|martial|marriage|married|spouce|mother|father",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
-        "pattern": "ssn|ssnumber|socialsecurity|nationalid|passport|drvlic|studentID|govtID|driverlic|driverslicense|identification",
+        "pattern": "socialsecurity|nationalid|passport|drvlic|studentID|govtID|driverlic|driverslicense",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
-      },
-      {
-        "pattern": "ipaddress|ipaddr",
-        "type": "regex",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
-      },
-      {
-        "pattern": "geotracking",
-        "type": "string",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "medium"
       },
       {
         "pattern": "mobile_*(phone|number)|cell_*(phone|number)|telephone",
@@ -62,7 +48,7 @@
     "severity": "important",
     "patterns": [
       {
-        "pattern": "mobile|cell|phone",
+        "pattern": "mobile|cell|phone|ipaddress|ipaddr|geolocation|geotracking|identification|ssnumber|ssn|children|kids*",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -79,7 +65,7 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "address|(first|last|sur)name|gender|contact|email",
+          "pattern": "address|(first|last|sur)name|gender|contact|email|user|mother|father",
           "type": "regex-word",
           "scopes": [
             "code"
@@ -87,7 +73,7 @@
           "modifiers": [ "i" ],
           "_comment": ""
         },
-        "search_in": "finding-region(-30,30)",
+        "search_in": "finding-region(-40,40)",
         "negate_finding": false,
         "_comment": ""
       }
@@ -190,7 +176,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "registration|membership|account|acct|acctnum|accountnum|accountnumber",
+        "pattern": "registration|membership|acctnum|accountnum|accountnumber",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],

@@ -104,7 +104,7 @@ namespace Microsoft.AppInspector
                     catch (Exception e)
                     {
                         WriteOnce.Error(string.Format("Rule file add failed {0}", filename));
-                        WriteOnce.Log.Error(e.Message + "\n" + e.StackTrace);
+                        WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, NLog.LogLevel.Error);
                         issues = true;
                     }
                 }
