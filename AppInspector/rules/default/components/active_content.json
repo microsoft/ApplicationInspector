@@ -14,7 +14,8 @@
         "pattern": "\\.(swf|flv)|flash",
         "type": "regex",
         "scopes": [
-          "code", "comment"
+          "code",
+          "comment"
         ],
         "confidence": "high",
         "modifiers": [ "i" ],
@@ -38,7 +39,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "active-?x",
+        "pattern": "active-?x|COleControlModule",
         "type": "regex",
         "scopes": [
           "code",

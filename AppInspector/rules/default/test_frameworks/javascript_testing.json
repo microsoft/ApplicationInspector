@@ -1,7 +1,7 @@
 [
   {
     "name": "Testing Framework: Ava",
-    "id": "AI039900",
+    "id": "AI041700",
     "description": "Testing Framework: Ava",
     "applies_to": [
       "package.json",
@@ -26,7 +26,7 @@
   },
   {
     "name": "Testing Framework: DOH",
-    "id": "AI040000",
+    "id": "AI041800",
     "description": "Testing Framework: DOH",
     "applies_to": [
       "javascript"
@@ -52,7 +52,7 @@
   },
   {
     "name": "Testing Framework: ",
-    "id": "AI040100",
+    "id": "AI041900",
     "description": "Testing Framework: ",
     "applies_to": [
       "javascript"
@@ -78,7 +78,7 @@
   },
   {
     "name": "Testing Framework: EnhanceJS",
-    "id": "AI040200",
+    "id": "AI042000",
     "description": "Testing Framework: EnhanceJS",
     "applies_to": [
       "javascript"
@@ -104,7 +104,7 @@
   },
   {
     "name": "Testing Framework: QUnit",
-    "id": "AI040300",
+    "id": "AI042100",
     "description": "Testing Framework: QUnit",
     "applies_to": [
       "javascript"
@@ -130,7 +130,7 @@
   },
   {
     "name": "Testing Framework: UnitJS",
-    "id": "AI040400",
+    "id": "AI042200",
     "description": "Testing Framework: UnitJS",
     "applies_to": [
       "javascript"
@@ -156,7 +156,7 @@
   },
   {
     "name": "Testing Framework: RHUnit",
-    "id": "AI040500",
+    "id": "AI042300",
     "description": "Testing Framework: RHUnit",
     "applies_to": [
       "javascript"
@@ -182,7 +182,7 @@
   },
   {
     "name": "Testing Framework: Crosscheck",
-    "id": "AI040600",
+    "id": "AI042400",
     "description": "Testing Framework: Crosscheck",
     "applies_to": [
       "javascript"
@@ -208,7 +208,7 @@
   },
   {
     "name": "Testing Framework: J3Unit",
-    "id": "AI040700",
+    "id": "AI042500",
     "description": "Testing Framework: J3Unit",
     "applies_to": [
       "javascript"
@@ -234,7 +234,7 @@
   },
   {
     "name": "Testing Framework: Mocha",
-    "id": "AI040800",
+    "id": "AI042600",
     "description": "Testing Framework: Mocha",
     "applies_to": [
       "javascript"
@@ -260,7 +260,7 @@
   },
   {
     "name": "Testing Framework: Intern",
-    "id": "AI040900",
+    "id": "AI042700",
     "description": "Testing Framework: Intern",
     "applies_to": [
       "javascript"
@@ -286,7 +286,7 @@
   },
   {
     "name": "Testing Framework: JSNUnit",
-    "id": "AI041000",
+    "id": "AI042800",
     "description": "Testing Framework: JSNUnit",
     "applies_to": [
       "javascript"
@@ -312,7 +312,7 @@
   },
   {
     "name": "Testing Framework: YUITest",
-    "id": "AI041100",
+    "id": "AI042900",
     "description": "Testing Framework: YUITest",
     "applies_to": [
       "javascript"
@@ -338,7 +338,7 @@
   },
   {
     "name": "Testing Framework: JSSpec",
-    "id": "AI041200",
+    "id": "AI043000",
     "description": "Testing Framework: JSSpec",
     "applies_to": [
       "javascript"
@@ -364,7 +364,7 @@
   },
   {
     "name": "Testing Framework: UnitTesting",
-    "id": "AI041300",
+    "id": "AI043100",
     "description": "Testing Framework: UnitTesting",
     "applies_to": [
       "javascript"
@@ -390,7 +390,7 @@
   },
   {
     "name": "Testing Framework: JSpec",
-    "id": "AI041400",
+    "id": "AI043200",
     "description": "Testing Framework: JSpec",
     "applies_to": [
       "javascript"
@@ -416,7 +416,7 @@
   },
   {
     "name": "Testing Framework: Jasmine",
-    "id": "AI041500",
+    "id": "AI043300",
     "description": "Testing Framework: Jasmine",
     "applies_to": [
       "javascript"
@@ -442,7 +442,7 @@
   },
   {
     "name": "Testing Framework: Screw.Unit",
-    "id": "AI041600",
+    "id": "AI043400",
     "description": "Testing Framework: Screw.Unit",
     "applies_to": [
       "javascript"
@@ -468,7 +468,7 @@
   },
   {
     "name": "Testing Framework: Tape",
-    "id": "AI041700",
+    "id": "AI043500",
     "description": "Testing Framework: Tape",
     "applies_to": [
       "javascript"
@@ -494,7 +494,7 @@
   },
   {
     "name": "Testing Framework: Teenytest",
-    "id": "AI041800",
+    "id": "AI043600",
     "description": "Testing Framework: Teenytest",
     "applies_to": [
       "javascript"
@@ -520,7 +520,7 @@
   },
   {
     "name": "Testing Framework: Simple",
-    "id": "AI041900",
+    "id": "AI043700",
     "description": "Testing Framework: Simple",
     "applies_to": [
       "javascript"
@@ -546,7 +546,7 @@
   },
   {
     "name": "Testing Framework: TestCase",
-    "id": "AI042000",
+    "id": "AI043800",
     "description": "Testing Framework: TestCase",
     "applies_to": [
       "javascript"
@@ -572,7 +572,7 @@
   },
   {
     "name": "Testing Framework: TestIt",
-    "id": "AI042100",
+    "id": "AI043900",
     "description": "Testing Framework: TestIt",
     "applies_to": [
       "javascript"
@@ -598,7 +598,7 @@
   },
   {
     "name": "Testing Framework: testdouble.js",
-    "id": "AI042200",
+    "id": "AI044000",
     "description": "Testing Framework: testdouble.js",
     "applies_to": [
       "javascript"
@@ -624,7 +624,7 @@
   },
   {
     "name": "Testing Framework: jsUnitTest",
-    "id": "AI042300",
+    "id": "AI044100",
     "description": "Testing Framework: jsUnitTest",
     "applies_to": [
       "javascript"
@@ -650,7 +650,7 @@
   },
   {
     "name": "Testing Framework: JSTest",
-    "id": "AI042400",
+    "id": "AI044200",
     "description": "Testing Framework: JSTest",
     "applies_to": [
       "javascript"
@@ -676,7 +676,7 @@
   },
   {
     "name": "Testing Framework: jsUnity",
-    "id": "AI042500",
+    "id": "AI044300",
     "description": "Testing Framework: jsUnity",
     "applies_to": [
       "javascript"
@@ -702,7 +702,7 @@
   },
   {
     "name": "Testing Framework: RhinoUnit",
-    "id": "AI042600",
+    "id": "AI044400",
     "description": "Testing Framework: RhinoUnit",
     "applies_to": [
       "javascript"
@@ -728,7 +728,7 @@
   },
   {
     "name": "Testing Framework: JasUnit",
-    "id": "AI042700",
+    "id": "AI044500",
     "description": "Testing Framework: JasUnit",
     "applies_to": [
       "javascript"
@@ -754,7 +754,7 @@
   },
   {
     "name": "Testing Framework: FireUnit",
-    "id": "AI042800",
+    "id": "AI044600",
     "description": "Testing Framework: FireUnit",
     "applies_to": [
       "javascript"
@@ -778,7 +778,7 @@
   },
   {
     "name": "Testing Framework: JSTestDriver",
-    "id": "AI042900",
+    "id": "AI044700",
     "description": "Testing Framework: JSTestDriver",
     "applies_to": [
       "javascript"
@@ -804,7 +804,7 @@
   },
   {
     "name": "Testing Framework: JS Test Runner",
-    "id": "AI043000",
+    "id": "AI044800",
     "description": "Testing Framework: JS Test Runner",
     "applies_to": [
       "javascript"
@@ -830,7 +830,7 @@
   },
   {
     "name": "Testing Framework: SinonJS",
-    "id": "AI043100",
+    "id": "AI044900",
     "description": "Testing Framework: SinonJS",
     "applies_to": [
       "javascript"
@@ -856,7 +856,7 @@
   },
   {
     "name": "Testing Framework: SOAtest",
-    "id": "AI043200",
+    "id": "AI045000",
     "description": "Testing Framework: SOAtest",
     "applies_to": [
       "javascript"
@@ -882,7 +882,7 @@
   },
   {
     "name": "Testing Framework: Vows",
-    "id": "AI043300",
+    "id": "AI045100",
     "description": "Testing Framework: Vows",
     "applies_to": [
       "javascript"
@@ -908,7 +908,7 @@
   },
   {
     "name": "Testing Framework: Nodeunit",
-    "id": "AI043400",
+    "id": "AI045200",
     "description": "Testing Framework: Nodeunit",
     "applies_to": [
       "javascript"
@@ -934,7 +934,7 @@
   },
   {
     "name": "Testing Framework: Tyrtle",
-    "id": "AI043500",
+    "id": "AI045300",
     "description": "Testing Framework: Tyrtle",
     "applies_to": [
       "javascript"
@@ -960,7 +960,7 @@
   },
   {
     "name": "Testing Framework: WRU",
-    "id": "AI043600",
+    "id": "AI045400",
     "description": "Testing Framework: WRU",
     "applies_to": [
       "javascript"
@@ -987,7 +987,7 @@
   },
   {
     "name": "Testing Framework: BusterJS",
-    "id": "AI043700",
+    "id": "AI045500",
     "description": "Testing Framework: BusterJS",
     "applies_to": [
       "javascript"
@@ -1013,7 +1013,7 @@
   },
   {
     "name": "Testing Framework: Lighttest",
-    "id": "AI043800",
+    "id": "AI045600",
     "description": "Testing Framework: Lighttest",
     "applies_to": [
       "javascript"
@@ -1039,7 +1039,7 @@
   },
   {
     "name": "Testing Framework: Chai",
-    "id": "AI043900",
+    "id": "AI045700",
     "description": "Testing Framework: Chai",
     "applies_to": [
       "javascript"
@@ -1065,7 +1065,7 @@
   },
   {
     "name": "Testing Framework: JSUS",
-    "id": "AI044000",
+    "id": "AI045800",
     "description": "Testing Framework: JSUS",
     "applies_to": [
       "javascript"
@@ -1091,7 +1091,7 @@
   },
   {
     "name": "Testing Framework: WallabyJS",
-    "id": "AI044100",
+    "id": "AI045900",
     "description": "Testing Framework: WallabyJS",
     "applies_to": [
       "javascript"
@@ -1117,7 +1117,7 @@
   },
   {
     "name": "Testing Framework: Fast-Check",
-    "id": "AI044200",
+    "id": "AI046000",
     "description": "Testing Framework: Fast-Check",
     "applies_to": [
       "javascript"
@@ -1143,7 +1143,7 @@
   },
   {
     "name": "Testing Framework: Jest",
-    "id": "AI044300",
+    "id": "AI046100",
     "description": "Testing Framework: Jest",
     "applies_to": [
       "javascript"

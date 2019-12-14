@@ -1,11 +1,11 @@
 [
   {
     "name": "Data: Read File From PasteBin or Similar",
-    "id": "AI013610",
+    "id": "AI014000",
     "description": "Data: Read From PasteBin or Similar",
     "tags": [
       "Data.PasteBin",
-      "Network.Connection.File.PasteBin"
+      "OS.Network.Connection.File.PasteBin"
     ],
     "severity": "moderate",
     "patterns": [

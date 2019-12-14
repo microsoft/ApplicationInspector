@@ -1,7 +1,7 @@
 [
   {
     "name": "Development Framework: .NET Core",
-    "id": "AI021500",
+    "id": "AI022300",
     "description": "Development Framework: .NET Core",
     "applies_to": [ "csharp" ],
     "tags": [ "Framework.Development.Microsoft.NETCore" ],
@@ -17,7 +17,7 @@
   },
   {
     "name": "Development Framework: .NET Standard",
-    "id": "AI021600",
+    "id": "AI022400",
     "description": "Development Framework: .NET Standard",
     "applies_to": [ "csharp" ],
     "tags": [ "Framework.Development.Microsoft.NETStandard" ],
@@ -33,7 +33,7 @@
   },
   {
     "name": "Development Framework: Mono",
-    "id": "AI021700",
+    "id": "AI022500",
     "description": "Development Framework: Mono",
     "applies_to": [ "csharp" ],
     "tags": [ "Framework.Development.Microsoft.Mono" ],
@@ -49,15 +49,18 @@
   },
   {
     "name": "Development Framework: Microsoft MVC",
-    "id": "AI021800",
+    "id": "AI022600",
     "description": "Development Framework: Microsoft MVC",
     "applies_to": [ "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.MVC" ],
+    "tags": [
+      "Framework.Development.Microsoft.MVC",
+      "Metadata.ApplicationType.Web.Application"
+    ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "mvc",
-        "type": "string",
+        "pattern": "System.Web.Mvc|ActionResult|IAsyncController",
+        "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ]
       },
@@ -72,10 +75,13 @@
   },
   {
     "name": "Development Framework: Microsoft WCF",
-    "id": "AI021900",
+    "id": "AI022700",
     "description": "Development Framework: Microsoft WCF",
     "applies_to": [ "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.WCF" ],
+    "tags": [
+      "Framework.Development.Microsoft.WCF",
+      "Metadata.ApplicationType.Web.Service"
+    ],
     "severity": "moderate",
     "patterns": [
       {
@@ -88,10 +94,13 @@
   },
   {
     "name": "Development Framework: Microsoft MFC",
-    "id": "AI022000",
+    "id": "AI022800",
     "description": "Development Framework: Microsoft MFC",
     "applies_to": [ "c", "cpp", "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.MFC" ],
+    "tags": [
+      "Framework.Development.Microsoft.MFC",
+      "Metadata.ApplicationType.Client.Windows"
+    ],
     "severity": "moderate",
     "patterns": [
       {
@@ -103,7 +112,7 @@
   },
   {
     "name": "Development Framework: Microsoft ADO",
-    "id": "AI022100",
+    "id": "AI022900",
     "description": "Development Framework: Microsoft ADO",
     "applies_to": [ "csharp" ],
     "tags": [ "Framework.Development.Microsoft.ADO" ],
@@ -119,7 +128,7 @@
   },
   {
     "name": "Development Framework: Microsoft Linq",
-    "id": "AI022200",
+    "id": "AI023000",
     "description": "Development Framework: Microsoft Linq",
     "applies_to": [ "csharp" ],
     "tags": [ "Framework.Development.Microsoft.Linq" ],
@@ -136,10 +145,13 @@
   },
   {
     "name": "Development Framework: Windows SDK",
-    "id": "AI022300",
+    "id": "AI023100",
     "description": "Development Framework: Windows SDK",
     "applies_to": [ "c", "cpp", "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.WindowsSDK" ],
+    "tags": [
+      "Framework.Development.Microsoft.WindowsSDK",
+      "Metadata.ApplicationType.Client.Windows"
+    ],
     "severity": "moderate",
     "patterns": [
       {
@@ -153,7 +165,7 @@
   },
   {
     "name": "Development Framework: Microsoft Dynamics",
-    "id": "AI022400",
+    "id": "AI023200",
     "description": "Development Framework: Microsoft Dynamics",
     "tags": [
       "Framework.Development.Microsoft.Server.Dynamics"
@@ -171,7 +183,7 @@
   },
   {
     "name": "Development Framework: Microsoft Exchange",
-    "id": "AI022410",
+    "id": "AI023300",
     "description": "Development Framework: Microsoft Exchange",
     "tags": [
       "Framework.Development.Microsoft.Server.Exchange"
@@ -189,10 +201,11 @@
   },
   {
     "name": "Development Framework: Microsoft IIS",
-    "id": "AI022500",
+    "id": "AI023400",
     "description": "Development Framework: Microsoft IIS",
     "tags": [
-      "Framework.Development.Microsoft.Server.IIS"
+      "Framework.Development.Microsoft.Server.IIS",
+      "Metadata.ApplicationType.Web.Application"
     ],
     "severity": "moderate",
     "patterns": [
@@ -206,10 +219,11 @@
   },
   {
     "name": "Development Framework: Microsoft ASP.NET",
-    "id": "AI022600",
+    "id": "AI023500",
     "description": "Development Framework: Microsoft ASP.NET",
     "tags": [
-      "Framework.Development.Microsoft.NET.ASP"
+      "Framework.Development.Microsoft.NET.ASP",
+      "Metadata.ApplicationType.Web.Application"
     ],
     "severity": "moderate",
     "patterns": [
@@ -223,7 +237,7 @@
   },
   {
     "name": "Component: COM",
-    "id": "AI022700",
+    "id": "AI023600",
     "description": "Component: COM",
     "applies_to": [
       "c",

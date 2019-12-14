@@ -1,7 +1,7 @@
 [
   {
     "name": "Data: Compressed File (Zip,Tgz)",
-    "id": "AI010300",
+    "id": "AI010600",
     "description": "Data: Compressed File Handling",
     "tags": [
       "Data.Zipfile"

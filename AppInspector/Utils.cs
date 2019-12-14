@@ -6,7 +6,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-
+using System.Linq;
+using Microsoft.AppInspector.Writers;
 
 static public class Utils
 {
@@ -54,87 +55,65 @@ static public class Utils
     /// Attempt to map application type tags or file type or language to identify
     /// WebApplications, Windows Services, Client Apps, WebServices, Azure Functions etc.
     /// </summary>
-    /// <param name="fileName"></param>
-    /// <param name="language"></param>
-    /// <param name="tag"></param>
-    /// <param name="sample"></param>
-    static public String DetectSolutionType(string fileName, string language, string tag, string sample)
+    /// <param name="match"></param>
+    static public String DetectSolutionType(MatchRecord match)
     {
         string result = "";
-
-        if (tag.Contains("Application.Type"))
+        if (match.Issue.Rule.Tags.Any(s => s.Contains("ApplicationType")))
         {
-            int lastDot = sample.LastIndexOf(".");
-            if (-1 != lastDot)
-                result = sample.Substring(lastDot + 1);
-        }
-        else if (tag.Contains("Microsoft.MVC"))
-        {
-            result = "webapplication";
-        }
-        else if (tag.Contains("Microsoft.MFC") || tag.Contains(".WinSDK"))
-        {
-            result = "winclient";
+            foreach (string tag in match.Issue.Rule.Tags)
+            {
+                int index = tag.IndexOf("ApplicationType");
+                if (-1 != index)
+                {
+                    result = tag.Substring(index + 16);
+                    break;
+                }
+            }
         }
         else
         {
-            ///////////first chance
-            switch (fileName)
+            switch (match.Filename)
             {
                 case "web.config":
-                    result = "webapplication";
+                    result = "Web.Application";
                     break;
                 case "app.config":
-                    result = ".netclient";
+                    result = ".NETclient";
                     break;
-                case "pom.xml":
-                case "build.make.xml":
-                case "build.gradle":
-                    result = "java";
+                default:
+                    switch (Path.GetExtension(match.Filename))
+                    {
+                        case ".cshtml":
+                            result = "Web.Application";
+                            break;
+                        case ".htm":
+                        case ".html":
+                        case ".js":
+                            result = "Web.Application";
+                            break;
+                        case "powershell":
+                        case "shellscript":
+                        case "wincmdscript":
+                            result = "script";
+                            break;
+                        default:
+                            switch (match.Language)
+                            {
+                                case "ruby":
+                                case "perl":
+                                case "php":
+                                    result = "Web.Application";
+                                    break;
+                            }
+                            break;
+                    }
                     break;
-                case "package.json":
-                    result = "node";
-                    break;
-            }
-
-            if (string.IsNullOrEmpty(result))
-            {
-                ////////////second chance
-                switch (Path.GetExtension(fileName))
-                {
-                    case ".cshtml":
-                        result = "ASP.NET";
-                        break;
-                    case ".htm":
-                    case ".html":
-                    case ".js":
-                        result = "webapplication";
-                        break;
-                    case "powershell":
-                    case "shellscript":
-                    case "wincmdscript":
-                        result = "script";
-                        break;
-                }
-            }
-
-            if (string.IsNullOrEmpty(result))
-            {
-                ///////////third chance
-                switch (language)
-                {
-                    case "ruby":
-                    case "perl":
-                    case "php":
-                        result = "webapplication";
-                        break;
-                }
             }
 
         }
 
         return result;
-
     }
 
 

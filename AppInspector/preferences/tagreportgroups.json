@@ -154,7 +154,7 @@
           },
           {
             "searchPattern": "Component.Browser.Messaging.Ajax",
-            "displayName": "Ajax",
+            "displayName": "Javascript Ajax",
             "detectedIcon": "fas fa-exchange-alt"
           }        
         ]
@@ -317,7 +317,7 @@
             "detectedIcon": "fas fa-running"
           },
           {
-            "searchPattern": "Metadata.Application.Type.Service",
+            "searchPattern": "Metadata.ApplicationType.Client.Service",
             "displayName": "Local System Service",
             "detectedIcon": "fas fa-door-open"
           }

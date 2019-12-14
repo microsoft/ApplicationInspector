@@ -1,7 +1,7 @@
 [
   {
     "name": "Detect Frameworks",
-    "id": "AI022800",
+    "id": "AI023700",
     "description": "Detect well-known frameworks used",
     "recommendation": "",
     "applies_to": [ "php" ],

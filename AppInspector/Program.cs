@@ -9,9 +9,8 @@ using Microsoft.AppInspector.Commands;
 using NLog;
 using NLog.Targets;
 using NLog.Config;
-using System.Text.RegularExpressions;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
+
 
 namespace Microsoft.AppInspector
 {
@@ -23,7 +22,7 @@ namespace Microsoft.AppInspector
     /// Command option classes for each command verb
     /// </summary>
 
-    [Verb("analyze", HelpText = "Inspect source directory/file against defined characteristics")]
+    [Verb("analyze", HelpText = "Inspect source directory/file for defined feature characteristics")]
     public class AnalyzeCommandOptions
     {
         private bool uniqueTagsOnly;
@@ -37,29 +36,22 @@ namespace Microsoft.AppInspector
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [html|json|text]", Default = "html")]
         public string OutputFileFormat { get; set; }
 
-        [Option('e', "text-format", Required = false, HelpText = "Text format specifiers", Default = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m")]
+        [Option('e', "text-format", Required = false, HelpText = "Match text format specifiers", Default = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m")]
         public string TextOutputFormat { get; set; }
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
         public string CustomRulesPath { get; set; }
 
-        [Option('t', "tag-output-only", Required = false, HelpText = "Output only contains identified tags", Default = false)]
+        [Option('t', "tag-output-only", Required = false, HelpText = "Output only identified tags", Default = false)]
         public bool SimpleTagsOnly { get; set; }
 
-        [Option('i', "ignore-default-rules", Required = false, HelpText = "Ignore default rules bundled with application", Default = false)]
+        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
-        [Option('u', "unique-tags-only", Required = false, HelpText = "Output only contains unique tag matches", Default = true)]
-        public bool UniqueTagsOnly
-        {
-            get { return uniqueTagsOnly; }
-            set
-            {
-                uniqueTagsOnly = value;
-            }
-        }
+        [Option('d', "allow-dup-tags", Required = false, HelpText = "Output contains unique and non-unique tag matches", Default = false)]
+        public bool AllowDupTags { get; set; }
 
-        [Option('c', "confidence-filters", Required = false, HelpText = "Outout only if matching confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
+        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; }
 
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
@@ -90,7 +82,7 @@ namespace Microsoft.AppInspector
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
         public string CustomRulesPath { get; set; }
 
-        [Option('i', "ignore-default-rules", Required = false, HelpText = "Ignore default rules bundled with application", Default = false)]
+        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
         [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
@@ -123,7 +115,7 @@ namespace Microsoft.AppInspector
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
         public string CustomRulesPath { get; set; }
 
-        [Option('i', "ignore-default-rules", Required = false, HelpText = "Ignore default rules bundled with application", Default = true)]
+        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = true)]
         public bool IgnoreDefaultRules { get; set; }
 
         [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
@@ -150,7 +142,7 @@ namespace Microsoft.AppInspector
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
         public string CustomRulesPath { get; set; }
 
-        [Option('i', "ignore-default-rules", Required = false, HelpText = "Ignore default rules bundled with application", Default = false)]
+        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
         [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
@@ -177,7 +169,7 @@ namespace Microsoft.AppInspector
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
         public string CustomRulesPath { get; set; }
 
-        [Option('i', "ignore-default-rules", Required = false, HelpText = "Ignore default rules bundled with application", Default = false)]
+        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
         [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
@@ -202,7 +194,6 @@ namespace Microsoft.AppInspector
 
     class Program
     {
-        static bool _uniqueOverRide = true;
 
         public static string GetVersionString()
         {
@@ -218,8 +209,6 @@ namespace Microsoft.AppInspector
 
         static public Logger Logger { get; set; }
 
-        static bool ConsoleNoWait { get; set; }
-
 
         /// <summary>
         /// Program entry point which defines command verbs and options to running
@@ -230,16 +219,6 @@ namespace Microsoft.AppInspector
             int finalResult = -1;
             
             WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Medium;
-            //TODO had to add work around for very strange behavior from cmdlineparser that will not accept a false from
-            //the command line; several attempts to force, rename etc. to no avail.  This works for now.
-            if (args.Length > 0 && args[0] == "analyze")
-            {
-                for (int i=0;i<args.Length;i++)
-                {
-                    if (args[i] == "-u" || args[i] == "--unique-tags-only")
-                        _uniqueOverRide = args[i + 1] == "true";
-                }
-            }
 
             try
             {
@@ -288,7 +267,6 @@ namespace Microsoft.AppInspector
 
         private static int RunAnalyzeCommand(AnalyzeCommandOptions opts)
         {
-            opts.UniqueTagsOnly = _uniqueOverRide;
             SetupLogging(opts.LogFilePath, opts.LogFileLevel);
             return new AnalyzeCommand(opts).Run();
         }
