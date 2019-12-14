@@ -114,6 +114,7 @@ namespace Microsoft.AppInspector
         /// </summary>
         void ConfigConfidenceFilters()
         {
+            WriteOnce.Log.Trace("AnalyzeCommand::ConfigConfidenceFilters");
             //parse and verify confidence values
             if (String.IsNullOrEmpty(_arg_confidenceFilters))
                 _arg_confidence = Confidence.High | Confidence.Medium; //excludes low by default
@@ -140,6 +141,8 @@ namespace Microsoft.AppInspector
         /// </summary>
         void ConfigRules()
         {
+            WriteOnce.Log.Trace("AnalyzeCommand::ConfigRules");
+
             RuleSet rulesSet = new RuleSet(Program.Logger);
             List<string> rulePaths = new List<string>();
             if (!_arg_ignoreDefaultRules)
@@ -186,6 +189,8 @@ namespace Microsoft.AppInspector
      
         void ConfigOutput()
         {
+            WriteOnce.Log.Trace("AnalyzeCommand::ConfigOutput");
+
             //Set output type, format and outstream
             _outputWriter = WriterFactory.GetWriter(_arg_fileFormat ?? "text", (string.IsNullOrEmpty(_arg_outputFile)) ? null : "text", _arg_outputTextFormat);
             if (!string.IsNullOrEmpty(_arg_outputFile))
@@ -206,6 +211,8 @@ namespace Microsoft.AppInspector
         /// </summary>
         void ConfigSourcetoScan()
         {
+            WriteOnce.Log.Trace("AnalyzeCommand::ConfigSourcetoScan");
+
             if (Directory.Exists(_arg_sourcePath))
             {
                 try
@@ -239,6 +246,8 @@ namespace Microsoft.AppInspector
         /// <returns></returns>
         public int Run()
         {
+            WriteOnce.Log.Trace("AnalyzeCommand::Run");
+
             DateTime start = DateTime.Now;          
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Analyze"));
        
