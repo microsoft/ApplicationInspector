@@ -42,7 +42,7 @@ ERROR(S):
   version        Display version information
 ```
 
-### Examples:
+## Examples:
 
 ```
 ### Command Help
@@ -71,15 +71,17 @@ ERROR(S):
 	-v, --log-file-level          (Default: Error) Log file level [Debug|Info|Warn|Error|Fatal|Off]
 
 
-# Scan a project directory, with output sent to "output.html" (the default behavior includes launching default local browser to this file)
+##### Scan a project directory, with output sent to "output.html" (the default behavior includes launching default local browser to this file)
+
 dotnet AppInspector.dll analyze -s /home/user/myproject 
 
-# Add custom rules (can be specified multiple times)
+##### Add custom rules (can be specified multiple times)
+
 dotnet AppInspector.dll analyze -s /home/user/myproject -r /my/rules/directory -r /my/other/rules
 
-# Write to JSON format
+##### Write to JSON format
+
 dotnet AppInspector.dll analyze -s /home/user/myproject -f json
-```
 
 ### Tagdiff Command
 
@@ -98,7 +100,7 @@ Use to analyze and report on differences in tags (features) between two project 
      -l, --log-file-path           Log file path
      -v, --log-file-level          Log file level [error|trace|debug|info]
 
-##### Simplest use
+##### Simplist way to see the delta in tag features between two projects
 
     dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2
 
@@ -106,13 +108,9 @@ Use to analyze and report on differences in tags (features) between two project 
 
     dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t equality
 
-Output is a pass/fail result.
-
 ##### Basic use
 
     dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t inequality
-
-Output includes list of differences between each.
 
 ### TagTest Command
 
@@ -120,7 +118,7 @@ Used to verify (pass/fail) that a specified set of rule tags is present or not p
 user only wants to know true/false if crytography is present as expected or if personal data is not present
 as expected and get a simple yes/no result rather than a full analyis report.
 
-The user is expected to use the *custom-rules-path* option rather than the default ruleset because it is 
+Note: The user is expected to use the *custom-rules-path* option rather than the default ruleset because it is 
 unlikely that any source package would contain all of the default rules.  Instead, create a custom path and rule set
 as needed or specify a path using the custom-rules-path to point only to the rule(s) needed from the default set.  
 Otherwise, testing for all default rules present in source will likely yield a false or fail result in most cases.
@@ -137,22 +135,22 @@ Otherwise, testing for all default rules present in source will likely yield a f
     -l, --log-file-path           Log file path
     -v, --log-file-level          Log file level
 
-#### Simplest way to test source for all default rules present in source
+#### Simplest use to see if a set of rules are all present in a project
 
     dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json
 
-#### Rules present test against custom rules only
+#### Basic use
 
     dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulespresent
 
-#### Rules not present test against custom rules only
+#### Basic use
 
     dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
 
 
 ### ExportTags Command
 
-Simple export of the ruleset schema for tags
+    Simple export of the ruleset schema for tags representing what features are supported for detection
 
     Usage: dotnet AppInspector.dll exporttags [arguments] [options]
 
@@ -162,7 +160,7 @@ Simple export of the ruleset schema for tags
     -o, --output-file-path        Path to output file
 	-x, --console-verbosity       Console verbosity [high|medium|low
 
-##### Using default rules to console
+##### Export default rule tags to console
 
     dotnet AppInspector.dll exporttags
 
@@ -186,7 +184,7 @@ Verification that ruleset is compatible and error free for import and analysis
 	-o, --output-file-path        Path to output file
     -x, --console-verbosity       Console verbosity [high|medium|low
 
-##### Using default rules
+##### Simplist case to verify default rules
 
     dotnet AppInspector.dll verifyrules
 
