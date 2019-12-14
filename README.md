@@ -1,30 +1,32 @@
 # Introduction 
 
-Microsoft Application Inspector is an analysis tool that can help identify "interesting" characteristics of source code, and in doing so, can describe **what a piece of software is** and **what it does**. Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it will simply describe what it finds against a set of over 500 rule patterns for feature detection including features that impact security such as use of cryptography and more.
+Microsoft Application Inspector is an analysis tool that can help identify "interesting" characteristics of source code, and in doing so, can describe **what the software is** or **what it does** from inspection of identified features.
+
+Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it will simply describe what it finds against a set of over 500 rule patterns for feature detection including features that impact security such as use of cryptography and more.
 
 We created Application Inspector to help us identify risky third party software components based on their specific features, but the output of the tool can be used in other (non-security) contexts as well such as simply being better informed.  
 
 Application Inspector cuts down on the time needed to determine what a component could do by identifying a broad set of possible features which lets you choose the best component with the smallest footprint.
 
-**Application Inspector is currently in GENERAL RELEASE for v1.0** Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
-=======
+Application Inspector v1.0 is now in GENERAL RELEASE status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
 # Getting Started
 
 To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release). If you use the .NET Core version, you will need to have .NET Core 3.0 or later installed.
 
-## Usage
-
-Application Inspector is a command-line tool. Run it from a command line in Windows, Linux, or MacOS.  Be sure to see our project wiki page for more help https://Github.com/Microsoft/ApplicationInspector/wiki
-
 ## Tags
 
 Tags are representative of common features and are organized into a heirarchal nomenclature as seen in the default rules e.g. Cryptography.Protocol.TLS
 
+## Usage
+
+Application Inspector is a command-line tool. Run it from a command line in Windows, Linux, or MacOS.  Be sure to see our project wiki page for more help https://Github.com/Microsoft/ApplicationInspector/wiki
+
 ```
 > dotnet AppInspector.dll or on Windows simply AppInspector.exe <command> <options>
-Microsoft Application Inspector 1.0.12
-ApplicationInspector 1.0.12
+
+Microsoft Application Inspector 1.0.14
+ApplicationInspector 1.0.14
 
 (c) Microsoft Corporation. All rights reserved
 
