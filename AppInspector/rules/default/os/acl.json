@@ -7,7 +7,7 @@
       "csharp"
     ],
     "tags": [
-      "OS.ACL"
+      "OS.ACL.FileSecurity"
     ],
     "severity": "moderate",
     "patterns": [
