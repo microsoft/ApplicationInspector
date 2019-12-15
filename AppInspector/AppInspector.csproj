@@ -14,7 +14,7 @@
     <PackageId>ApplicationInspector</PackageId>
     <Product>ApplicationInspector</Product>
     <Authors>Microsoft</Authors>
-    <Version>1.0.15</Version>
+    <Version>1.0.16</Version>
     <AssemblyName>AppInspector</AssemblyName>
     <RootNamespace>ApplicationInspector</RootNamespace>
     <StartupObject>Microsoft.AppInspector.Program</StartupObject>
