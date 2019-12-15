@@ -16,6 +16,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Threading;
 using NLog;
+using DotLiquid;
 
 namespace Microsoft.AppInspector
 {
@@ -174,11 +175,15 @@ namespace Microsoft.AppInspector
             
             if (_arg_outputUniqueTagsOnly)
             {
-                List<TagException> tagExceptions = JsonConvert.DeserializeObject<List<TagException>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagCounterPref)));
-                string[] exceptions = new string[tagExceptions.Count];
-                for (int i=0;i<tagExceptions.Count;i++)
-                    exceptions[i] = tagExceptions[i].Tag;
-                _rulesProcessor.UniqueTagExceptions = exceptions;
+                List<TagException> tagExceptions;
+                if (File.Exists(Utils.GetPath(Utils.AppPath.tagCounterPref)))
+                {
+                    tagExceptions = JsonConvert.DeserializeObject<List<TagException>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagCounterPref)));
+                    string[] exceptions = new string[tagExceptions.Count];
+                    for (int i = 0; i < tagExceptions.Count; i++)
+                        exceptions[i] = tagExceptions[i].Tag;
+                    _rulesProcessor.UniqueTagExceptions = exceptions;
+                }
             }
 
             _appProfile = new AppProfile(_arg_sourcePath, rulePaths, false, _arg_simpleTagsOnly, _arg_outputUniqueTagsOnly);
