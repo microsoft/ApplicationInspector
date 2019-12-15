@@ -66,9 +66,12 @@ namespace Microsoft.AppInspector
             MatchList = new List<MatchRecord>();
             KeyedTagInfoLists = new Dictionary<string, List<TagInfo>>();
             KeyedSortedTagInfoLists = new Dictionary<string, List<TagInfo>>();
-            
+
             //read default/user preferences on what tags to report presence on and groupings
-            TagGroupPreferences = JsonConvert.DeserializeObject<List<TagCategory>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagGroupPref)));
+            if (File.Exists(Utils.GetPath(Utils.AppPath.tagGroupPref)))
+                TagGroupPreferences = JsonConvert.DeserializeObject<List<TagCategory>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagGroupPref)));
+            else
+                TagGroupPreferences = new List<TagCategory>();
 
             ExcludeRollup = excludeRollup;
             SimpleTagsOnly = simpleTagsOnly;
@@ -519,7 +522,11 @@ namespace Microsoft.AppInspector
             _propertyTagSearchPatterns.Add("strGrpCPUTargets", ".CPU");
 
             //read default/user preferences on what tags to count
-            TagCounters = JsonConvert.DeserializeObject<List<TagCounter>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagCounterPref)));
+            if (File.Exists(Utils.GetPath(Utils.AppPath.tagCounterPref)))
+                TagCounters = JsonConvert.DeserializeObject<List<TagCounter>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagCounterPref)));
+            else
+                TagCounters = new List<TagCounter>();
+
             HashSet<string> dupCountersCheck = new HashSet<string>();
             foreach (TagCounter counter in TagCounters)
             {

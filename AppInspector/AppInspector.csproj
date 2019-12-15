@@ -20,8 +20,9 @@
     <StartupObject>Microsoft.AppInspector.Program</StartupObject>
     <Company>Microsoft</Company>
     <SignAssembly>true</SignAssembly>
-    <AssemblyVersion>1.0.15.0</AssemblyVersion>
-    <FileVersion>1.0.15.0</FileVersion>
+    <AssemblyVersion>1.0.16.0</AssemblyVersion>
+    <FileVersion>1.0.16.0</FileVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
