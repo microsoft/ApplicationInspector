@@ -8,7 +8,7 @@ We created Application Inspector to help us identify risky third party software 
 
 Application Inspector cuts down on the time needed to determine what a component could do by identifying a broad set of possible features which lets you choose the best component with the smallest footprint.
 
-Application Inspector v1.0 is now in GENERAL RELEASE status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
+Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
 # Getting Started
 
@@ -25,8 +25,8 @@ Application Inspector is a command-line tool. Run it from a command line in Wind
 ```
 > dotnet AppInspector.dll or on Windows simply AppInspector.exe <command> <options>
 
-Microsoft Application Inspector 1.0.14
-ApplicationInspector 1.0.14
+Microsoft Application Inspector 1.0.17
+ApplicationInspector 1.0.17
 
 (c) Microsoft Corporation. All rights reserved
 
