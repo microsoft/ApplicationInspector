@@ -50,7 +50,9 @@ namespace Microsoft.AppInspector
             VERIFY_RULES_RESULTS_SUCCESS,
             RUNTIME_ERROR_NAMED,
             RUNTIME_ERROR_UNNAMED,
-            RUNTIME_ERROR_PRELOG
+            RUNTIME_ERROR_PRELOG,
+            BROWSER_ENVIRONMENT_VAR,
+            BROWSER_START_FAIL
         };
 
         public static string GetString(ErrMsg.ID id)

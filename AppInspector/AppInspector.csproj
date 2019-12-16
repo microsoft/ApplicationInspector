@@ -6,22 +6,22 @@
     <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
     <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
     <RepositoryType></RepositoryType>
-    <PackageTags>Static Linter</PackageTags>
-    <PackageReleaseNotes>General Release (Preview) version</PackageReleaseNotes>
+    <PackageTags>Security Static Analyzer</PackageTags>
+    <PackageReleaseNotes>1.0 General Release</PackageReleaseNotes>
     <Description>Characterizes software features.</Description>
     <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
     <HighEntropyVA>true</HighEntropyVA>
     <PackageId>ApplicationInspector</PackageId>
-    <Product>ApplicationInspector</Product>
+    <Product>Application Inspector</Product>
     <Authors>Microsoft</Authors>
-    <Version>1.0.16</Version>
+    <Version>1.0.17</Version>
     <AssemblyName>AppInspector</AssemblyName>
     <RootNamespace>ApplicationInspector</RootNamespace>
     <StartupObject>Microsoft.AppInspector.Program</StartupObject>
     <Company>Microsoft</Company>
     <SignAssembly>true</SignAssembly>
-    <AssemblyVersion>1.0.16.0</AssemblyVersion>
-    <FileVersion>1.0.16.0</FileVersion>
+    <AssemblyVersion>1.0.17.0</AssemblyVersion>
+    <FileVersion>1.0.17.0</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

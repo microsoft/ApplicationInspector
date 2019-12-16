@@ -133,6 +133,24 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to launch output.html.  Set the BROWSER environment variable to your desired browser or open file manually..
+        /// </summary>
+        internal static string BROWSER_ENVIRONMENT_VAR {
+            get {
+                return ResourceManager.GetString("BROWSER_ENVIRONMENT_VAR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to launch output.html in default browser.  Open manually to view report..
+        /// </summary>
+        internal static string BROWSER_START_FAIL {
+            get {
+                return ResourceManager.GetString("BROWSER_START_FAIL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} command completed.
         /// </summary>
         internal static string CMD_COMPLETED {

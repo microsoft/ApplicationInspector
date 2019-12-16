@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Linq;
-
+using CommandLine;
 
 namespace Microsoft.AppInspector
 {
@@ -123,7 +123,15 @@ namespace Microsoft.AppInspector
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
+               
+                try
+                {
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
+                }
+                catch (Exception)
+                {
+                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_FAIL));
+                }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
@@ -135,13 +143,24 @@ namespace Microsoft.AppInspector
                     }
                     catch (Exception)
                     {
-                        WriteOnce.Error("Unable to open browser.  Open output file directly.");
+                        WriteOnce.SafeLog("Unable to open browser using BROWSER environment var", NLog.LogLevel.Error);
                     }
+                }
+                else
+                {
+                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_ENVIRONMENT_VAR));
                 }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                Process.Start("open", url);
+                try
+                {
+                    Process.Start("open", url);
+                }
+                catch (Exception)
+                {
+                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_FAIL));
+                }
             }
         }
 
