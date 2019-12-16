@@ -141,6 +141,12 @@
   <data name="ANALYZE_UNSUPPORTED_COMPR_TYPE" xml:space="preserve">
     <value>unsupported</value>
   </data>
+  <data name="BROWSER_ENVIRONMENT_VAR" xml:space="preserve">
+    <value>Unable to launch output.html.  Set the BROWSER environment variable to your desired browser or open file manually.</value>
+  </data>
+  <data name="BROWSER_START_FAIL" xml:space="preserve">
+    <value>Unable to launch output.html in default browser.  Open manually to view report.</value>
+  </data>
   <data name="CMD_COMPLETED" xml:space="preserve">
     <value>{0} command completed</value>
   </data>

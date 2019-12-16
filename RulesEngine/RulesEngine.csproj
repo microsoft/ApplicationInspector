@@ -5,18 +5,19 @@
     <PackageId>RulesEngine</PackageId>
     <PackageVersion>1.0.2</PackageVersion>
     <Authors>Microsoft</Authors>
-    <PackageTags>Security Linter</PackageTags>
+    <PackageTags>Security Static Analysis</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageLicenseUrl>https://github.com/Microsoft/ApplicationInspector</PackageLicenseUrl>
     <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
-    <Description>RulesEngine is used by ApplicationInspector exclusively as a derivitive and no longer supported .NET version of Microsoft.DevSkim</Description>
+    <Description>RulesEngine is used by Application Inspector exclusively as a derivitive of a non-supported .NET version of Microsoft.DevSkim as a part now of Microsoft Application Inspector.</Description>
     <PackageIconUrl></PackageIconUrl>
-    <PackageProjectUrl></PackageProjectUrl>
-    <RepositoryUrl></RepositoryUrl>
-    <PackageReleaseNotes>First public release</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/Microsoft/ApplicationInspector</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Microsoft/ApplicationInspector</RepositoryUrl>
+    <PackageReleaseNotes>1.0 General Release</PackageReleaseNotes>
     <HighEntropyVA>true</HighEntropyVA>
     <AssemblyName>RulesEngine</AssemblyName>
     <RootNamespace>RulesEngine</RootNamespace>
+    <Version>1.0.17</Version>
   </PropertyGroup>
 
   <ItemGroup>
