@@ -23,7 +23,7 @@ Tags are representative of common features and are organized into a heirarchal n
 Application Inspector is a command-line tool. Run it from a command line in Windows, Linux, or MacOS.  Be sure to see our project wiki page for more help https://Github.com/Microsoft/ApplicationInspector/wiki
 
 ```
-> dotnet AppInspector.dll or on Windows simply AppInspector.exe <command> <options>
+> dotnet AppInspector.dll or on **Windows** simply AppInspector.exe <command> <options>
 
 Microsoft Application Inspector 1.0.17
 ApplicationInspector 1.0.17
