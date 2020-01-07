@@ -1,8 +1,8 @@
 # Introduction 
 
-Microsoft Application Inspector is an analysis tool that can help identify "interesting" characteristics of source code, and in doing so, can describe **what the software is** or **what it does** from inspection of identified features.
+Microsoft Application Inspector is a software source code analysis tool that helps identify well-known features and other interesting characteristics of code to aid in determining **what the software is** or **what it does** by conducting an inspecting scan.
 
-Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it will simply describe what it finds against a set of over 500 rule patterns for feature detection including features that impact security such as use of cryptography and more.  
+Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it will simply report what it finds against a set of over 500 rule patterns for feature detection including features that impact security such as the use of cryptography and more.  
 
 It includes a filterable confidence indicator to help minimize false positives matches as well as customizable default rules and conditional match logic.  
 
