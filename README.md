@@ -4,7 +4,9 @@ Microsoft Application Inspector is an analysis tool that can help identify "inte
 
 Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it will simply describe what it finds against a set of over 500 rule patterns for feature detection including features that impact security such as use of cryptography and more.  
 
-It includes a filterable pattern match confidence indicator to help minimize false positives as well as customizable default rules and conditional match logic.  Be sure to see our project wiki page for more help https://Github.com/Microsoft/ApplicationInspector/wiki for **illustrations** and additional help.
+It includes a filterable confidence indicator to help minimize false positives matches as well as customizable default rules and conditional match logic.  
+
+Be sure to see our project wiki page for more help https://Github.com/Microsoft/ApplicationInspector/wiki for **illustrations** and additional help.
 
 Application Inspector cuts down on the time needed to determine what a component could do by identifying a broad set of possible features which lets you choose the best component with the smallest footprint.  We created Application Inspector to help us identify risky third party software components based on their specific features, but the output of the tool can be used in other (non-security) contexts as well such as simply being better informed. 
 
