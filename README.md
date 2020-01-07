@@ -1,4 +1,4 @@
- Introduction 
+# Introduction 
 
 Microsoft Application Inspector is an analysis tool that can help identify "interesting" characteristics of source code, and in doing so, can describe **what the software is** or **what it does** from inspection of identified features.
 
@@ -8,7 +8,11 @@ It includes a filterable confidence indicator to help minimize false positives m
 
 Be sure to see our project wiki page for more help https://Github.com/Microsoft/ApplicationInspector/wiki for **illustrations** and additional help.
 
-Application Inspector cuts down on the time needed to determine what a component could do by identifying a broad set of possible features which lets you choose the best component with the smallest footprint.  We created Application Inspector to help us identify risky third party software components based on their specific features, but the output of the tool can be used in other (non-security) contexts as well such as simply being better informed. 
+# Value
+
+Application Inspector cuts down on the time needed to determine what a component could do by identifying features in the code which then informs you for choosing the best component to meet your needs with the smallest footprint.  This permits you to avoid inclusion of features you don't want for the problem, system or context your app will run in.  It also helps identify feature changes between versions.
+
+Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. 
 
 Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
