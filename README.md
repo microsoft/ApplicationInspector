@@ -10,7 +10,7 @@ Be sure to see our project wiki page for more help https://Github.com/Microsoft/
 
 # Goals
 
-Application Inspector cuts down on the time needed to determine what a component could do by quickly identifying well-known features in the code which **can inform you for choosing the best component to meet your needs with a smaller footprint of unknowns** which is very important.  It enables you to avoid inclusion of features you don't want for the problem, system or context your app will run in.  
+Application Inspector cuts down on the time needed to determine what a component could do by quickly identifying well-known features in the code which **can inform you for choosing the best component to meet your needs with a smaller footprint of unknowns which is very important.**  It enables you to avoid inclusion of features you don't want for the problem, system or context your app will run in.  
 
 Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. It also helps identify feature changes between versions.
 
