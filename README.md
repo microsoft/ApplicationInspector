@@ -8,28 +8,28 @@ It includes a filterable confidence indicator to help minimize false positives m
 
 Be sure to see our project wiki page for more help https://Github.com/Microsoft/ApplicationInspector/wiki for **illustrations** and additional help.
 
-# Value
+# Goals
 
-Application Inspector cuts down on the time needed to determine what a component could do by identifying features in the code which then informs you for choosing the best component to meet your needs with the smallest footprint.  This permits you to avoid inclusion of features you don't want for the problem, system or context your app will run in.  It also helps identify feature changes between versions.
+Application Inspector cuts down on the time needed to determine what a component could do by quickly identifying well-known features in the code which can inform you for choosing the best component to meet your needs with a smaller footprint of unknowns.  It enables you to avoid inclusion of features you don't want for the problem, system or context your app will run in.  
 
-Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. 
+Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. It also helps identify feature changes between versions.
 
 Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
-# Getting Started
+# Using Application Inspector
 
 To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release). If you use the .NET Core version, you will need to have .NET Core 3.0 or later installed.
 
 ## Tags
 
-Tags are representative of common features and are organized into a heirarchal nomenclature as seen in the default rules e.g. Cryptography.Protocol.TLS
+Tags represent features using a systematic heirarchal nomenclature e.g. Cryptography.Protocol.TLS.
 
 ## Usage
 
 Application Inspector is a command-line tool. Run it from a command line in Windows, Linux, or MacOS.  
 
 ```
-> dotnet AppInspector.dll or on **Windows** simply AppInspector.exe <command> <options>
+> dotnet AppInspector.dll or on *Windows* simply AppInspector.exe <command> <options>
 
 Microsoft Application Inspector 1.0.17
 ApplicationInspector 1.0.17
