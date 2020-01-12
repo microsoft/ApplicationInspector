@@ -126,8 +126,15 @@ namespace Microsoft.AppInspector
             TextWriter.WriteLine("Total files: {0}", app.MetaData.TotalFiles);
             TextWriter.WriteLine("Detections: {0} in {1} file(s)", app.MetaData.TotalMatchesCount, app.MetaData.FilesAffected);
             TextWriter.WriteLine("Unique detections: {0}", app.MetaData.UniqueMatchesCount);
+            
             TextWriter.WriteLine(MakeHeading("UniqueTags"));
-            foreach (string tag in app.MetaData.UniqueTags)
+            List<string> tags = new List<string>();
+            foreach (MatchRecord match in app.MatchList)
+                foreach (string tag in match.Issue.Rule.Tags)
+                    tags.Add(tag);
+
+            tags.Sort();
+            foreach (string tag in tags)
                 TextWriter.WriteLine(tag);
 
             TextWriter.WriteLine(MakeHeading("Select Counters"));

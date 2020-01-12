@@ -15,7 +15,7 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
-        "comment": ""
+        "_comment": ""
       }
     ]
   },

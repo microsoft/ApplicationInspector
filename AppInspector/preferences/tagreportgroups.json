@@ -210,8 +210,8 @@
             "detectedIcon": "fas fa-stethoscope"
           },
           {
-            "searchPattern": "Secret",
-            "displayName": "Secret",
+            "searchPattern": "Sensitive.Credentials",
+            "displayName": "Credentials",
             "detectedIcon": "fas fa-user-secret"
           },
           {

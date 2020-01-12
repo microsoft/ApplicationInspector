@@ -2,22 +2,22 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 [
   {
-    "tag": "Metric.Classes.Defined",
+    "tag": "Metric.Code.Class.Defined", 
     "displayName": "Classes",
     "includeAsMatch": false
   },
   {
-    "tag": "Metric.Functions.Defined",
+    "tag": "Metric.Code.Function.Defined",
     "displayName": "Functions",
     "includeAsMatch": false
   },
   {
-    "tag": "Metric.Exception.Caught",
+    "tag": "Metric.Code.Exception.Caught",
     "displayName": "Exceptions",
     "includeAsMatch": false
   },
   {
-    "tag": "Metric.HTMLForm.Defined",
+    "tag": "Metric.Code.HTMLForm.Defined",
     "displayName": "Forms",
     "includeAsMatch": true
   },
@@ -42,12 +42,12 @@
     "includeAsMatch": true
   },
   {
-    "tag": "Metric.Logging.Call",
+    "tag": "Metric.Code.Logging.Call",
     "displayName": "Logging Calls",
     "includeAsMatch": false
   },
   {
-    "tag": "Metric.URL",
+    "tag": "Metric.Code.URL",
     "displayName": "URL's",
     "includeAsMatch": false
   }

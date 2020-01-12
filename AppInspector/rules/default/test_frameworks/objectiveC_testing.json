@@ -68,7 +68,7 @@
           "i"
         ],
         "confidence": "high",
-        "comment": ""
+        "_comment": ""
       }
     ]
   },
@@ -93,7 +93,7 @@
           "i"
         ],
         "confidence": "high",
-        "comment": ""
+        "_comment": ""
       }
     ]
   },
