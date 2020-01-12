@@ -49,7 +49,7 @@ namespace Microsoft.AppInspector
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; }
 
-        [Option('k', "include-sample-paths", Required = false, HelpText = "Include source paths that have sample names in analysis", Default = false)]
+        [Option('k', "include-sample-paths", Required = false, HelpText = "Include source files with (sample,example,test,.vs,.git) in pathname in analysis", Default = false)]
         public bool AllowSampleFiles { get; set; }
 
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]

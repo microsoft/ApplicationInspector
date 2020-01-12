@@ -26,7 +26,7 @@ namespace Microsoft.AppInspector
 
         // Enable processing compressed files
         readonly string[] COMPRESSED_EXTENSIONS = "zip,gz,gzip,gem,tar,tgz,tar.gz,xz,7z".Split(",");
-        readonly string[] EXCLUDEMATCH_FILEPATH = "sample,example,test,.vs,.git".Split(",");
+        readonly string[] EXCLUDEMATCH_FILEPATH = "sample,example,test,docs,.vs,.git".Split(",");
 
         Regex IgnoreMimeRegex;
 
@@ -40,6 +40,7 @@ namespace Microsoft.AppInspector
         IEnumerable<string> _srcfileList;
         AppProfile _appProfile;
         RuleProcessor _rulesProcessor;
+        HashSet<string> _uniqueTagsControl;
         Writer _outputWriter;
 
         DateTime DateScanned { get; set; }
@@ -104,7 +105,7 @@ namespace Microsoft.AppInspector
             ConfigRules();
 
             _fileExclusionList = EXCLUDEMATCH_FILEPATH.ToList<string>();
-
+            _uniqueTagsControl = new HashSet<string>();
         }
 
 
@@ -263,7 +264,7 @@ namespace Microsoft.AppInspector
             {
                 var fileExtension = new FileInfo(filename).Extension;
                 if (COMPRESSED_EXTENSIONS.Any(fileExtension.Contains))
-                    UnZipAndProcess(filename);
+                    UnZipAndProcess(filename); //determine if file is a compressed item to unpackage for processing
                 else
                     ProcessAsFile(filename);
             }
@@ -331,6 +332,7 @@ namespace Microsoft.AppInspector
                 return;
             }
 
+            //exclude sample, test or similar files by default or as specified in exclusion list
             if (!_arg_allowSampleFiles && _fileExclusionList.Any(v => filePath.Contains(v)))
             {
                 WriteOnce.SafeLog("Part of excluded list: " + filePath, LogLevel.Trace);
@@ -339,7 +341,7 @@ namespace Microsoft.AppInspector
                 return;
             }
 
-            //determine if file is a compressed item to unpackage for processing
+            //check for supported language
             string language = Language.FromFileName(filePath);
 
             // Skip files written in unknown language
@@ -379,17 +381,15 @@ namespace Microsoft.AppInspector
                 _appProfile.MetaData.FilesAffected++;
                 _appProfile.MetaData.TotalMatchesCount += matches.Count();
 
-                HashSet<string> uniqueTagsControl = new HashSet<string>();
-
                 // Iterate through each match issue 
                 foreach (Issue match in matches)
                 {
                     WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", match.Rule.Id, match.Rule.Name, filePath), LogLevel.Trace);
 
-                    //maintain a list of unique tags; multi-purpose but primarily for filtering -u option
+                    //maintain a list of unique tags; multi-purpose but primarily for filtering -d option
                     bool dupTagFound = false;
                     foreach (string t in match.Rule.Tags)
-                        dupTagFound = !uniqueTagsControl.Add(t);
+                        dupTagFound = !_uniqueTagsControl.Add(t);
 
                     //save all unique dependendencies even if Dependency tag pattern is not-unique
                     var tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);

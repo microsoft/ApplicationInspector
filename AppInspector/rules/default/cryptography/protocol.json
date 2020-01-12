@@ -107,7 +107,7 @@
         "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high",
-        "comment": "e.g. ssl_crl, ssl_ecdh_curve, others"
+        "_comment": "e.g. ssl_crl, ssl_ecdh_curve, others"
       },
       {
         "pattern": "SSLCADNRequest|SSLCARevocation|SSLCompression|SSLEngine|SSLFIPS|SSLInsecureRenegotiation",

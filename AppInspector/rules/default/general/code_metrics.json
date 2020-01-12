@@ -1,26 +1,27 @@
 [
   {
-    "name": "Metric: Classes Defined",
+    "name": "Metric: Class Definition",
     "id": "AI025700",
     "description": "Metric: Classes Defined",
     "tags": [
       "Metric.Code.Class.Defined"
     ],
     "severity": "moderate",
+    "applies_to": [ "csharp", "cpp", "javascript", "pyton", "vb", "rust", "ruby", "groovy", "php" ],
     "patterns": [
       {
-        "pattern": "class (.*)",
+        "pattern": "class",
         "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high",
-        "_comment": ""
+        "_comment": "langs defined to exclude css class reference vs class data structure which provides complexity/size insight"
       }
     ]
   },
   {
-    "name": "Metric: Functions Defined",
+    "name": "Metric: Function Definition",
     "id": "AI025800",
-    "description": "Metric: Functions Defined",
+    "description": "Metric: Function Defined",
     "tags": [
       "Metric.Code.Function.Defined"
     ],
@@ -31,14 +32,14 @@
         "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "medium",
-        "_comment": ""
+        "_comment": "doesn't detect a number of other potential patterns at present"
       }
     ]
   },
   {
-    "name": "Metric: HTML Forms Defined",
+    "name": "Metric: HTML Form Definition",
     "id": "AI025900",
-    "description": "Metric: HTML Forms Defined",
+    "description": "Metric: HTML Form Defined",
     "tags": [
       "Metric.Code.HTMLForm.Defined"
     ],
@@ -55,9 +56,9 @@
     ]
   },
   {
-    "name": "Metric: Exceptions Caught",
+    "name": "Metric: Exception Caught",
     "id": "AI026000",
-    "description": "Metric: Exceptions Caught",
+    "description": "Metric: Exception Caught",
     "tags": [
       "Metric.Code.Exception.Caught"
     ],
@@ -74,11 +75,11 @@
     ]
   },
   {
-    "name": "Logging Call",
+    "name": "Metric: Logging Call",
     "id": "AI026100",
     "description": "Logging Call",
     "tags": [
-      "Metric.Logging.Call"
+      "Metric.Code.Logging.Call"
     ],
     "severity": "moderate",
     "_comment": "",
@@ -94,11 +95,11 @@
     ]
   },
   {
-    "name": "Sample Code",
+    "name": "Metric: Sample Code",
     "id": "AI026200",
     "description": "Sample Code",
     "tags": [
-      "Metric.SampleCode"
+      "Metric.Code.SampleCode"
     ],
     "severity": "moderate",
     "_comment": "",
@@ -108,16 +109,16 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
-        "_comment": ""
+        "_comment": "only matched if sample exclusions arg set"
       }
     ]
   },
   {
-    "name": "URL Reference",
+    "name": "Metric: URL Reference",
     "id": "AI026300",
     "description": "URL Reference",
     "tags": [
-      "Metric.URL"
+      "Metric.Code.URL"
     ],
     "severity": "moderate",
     "_comment": "",
