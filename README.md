@@ -72,6 +72,7 @@ ERROR(S):
   -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
   -d, --allow-dup-tags          (Default: false) Output only contains non-unique tag matches
   -c, --confidence-filters      (Default: high,medium) Output only if matches rule pattern confidence [<value>,] [high|medium|low]
+  -k, --include-sample-paths    (Default: false) Include source files with (sample,example,test,.vs,.git) in pathname in analysis
   -x, --console-verbosity       (Default: medium) Console verbosity [high|medium|low|none]
   -l, --log-file-path           Log file path
   -v, --log-file-level          (Default: Error) Log file level [Debug|Info|Warn|Error|Fatal|Off]
