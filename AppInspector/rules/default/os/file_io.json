@@ -18,6 +18,7 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high",
         "_comment": ""
       }
     ]
@@ -40,6 +41,7 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high",
         "_comment": ""
       },
       {
@@ -48,6 +50,7 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high",
         "_comment": ""
       },
       {
@@ -56,6 +59,7 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high",
         "_comment": ""
       }
     ]
@@ -73,8 +77,26 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "open[(][\"']",
+        "pattern": "open\\(.*,.*r.*\\);",
         "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": ".readlines(",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": ".read(",
+        "type": "string",
         "scopes": [
           "code"
         ],
@@ -108,6 +130,7 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high",
         "_comment": ""
       },
       {
@@ -138,6 +161,7 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high",
         "_comment": ""
       },
       {
@@ -146,6 +170,7 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high",
         "_comment": ""
       }
     ]
@@ -263,15 +288,6 @@
     ],
     "severity": "moderate",
     "patterns": [
-      {
-        "pattern": ".deleteDirectory(",
-        "type": "string",
-        "scopes": [
-          "code"
-        ],
-        "confidence": "high",
-        "_comment": ""
-      },
       {
         "pattern": "file.delete(",
         "type": "string",
