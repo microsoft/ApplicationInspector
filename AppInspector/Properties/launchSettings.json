@@ -1,8 +1,7 @@
 {
   "profiles": {
     "ApplicationInspector": {
-      "commandName": "Project",
-      "commandLineArgs": "analyze -s c:\\temp\\foop.py"
+      "commandName": "Project"
     }
   }
 }
