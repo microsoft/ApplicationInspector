@@ -14,14 +14,14 @@
     <PackageId>ApplicationInspector</PackageId>
     <Product>Application Inspector</Product>
     <Authors>Microsoft</Authors>
-    <Version>1.0.18</Version>
+    <Version>1.0.19</Version>
     <AssemblyName>AppInspector</AssemblyName>
     <RootNamespace>ApplicationInspector</RootNamespace>
     <StartupObject>Microsoft.AppInspector.Program</StartupObject>
     <Company>Microsoft</Company>
     <SignAssembly>true</SignAssembly>
-    <AssemblyVersion>1.0.18.0</AssemblyVersion>
-    <FileVersion>1.0.18.0</FileVersion>
+    <AssemblyVersion>1.0.19.0</AssemblyVersion>
+    <FileVersion>1.0.19.0</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 

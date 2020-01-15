@@ -212,6 +212,13 @@
           "code"
         ],
         "confidence": "high"
+      },
+      {
+        "pattern": "\\bsystem\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "_comment": ""
       }
     ]
   },
@@ -225,7 +232,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "xp_cmdshell",
+        "pattern": "xp_cmdshell|xp_regread|xp_instance_regread|xp_regwrite|sp_makewebtask|xp_sendmail|sp_configure|sp_executesql|dbcc writepage",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
