@@ -167,5 +167,24 @@
         "confidence": "high"
       }
     ]
+  },
+  {
+    "name": "Cryptography: SSH Protocol",
+    "id": "AI009910",
+    "description": "Cryptography: SSH Protocol",
+    "tags": [
+      "Cryptography.Protocol.KeyExchange"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "DiffieHellman|ECDsa",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i", "comment" ],
+        "_comment": ""
+      }
+    ]
   }
 ]

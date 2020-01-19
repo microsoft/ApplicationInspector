@@ -32,9 +32,9 @@
     ]
   },
   {
-    "name": "Authorization: RBAC",
+    "name": "Authorization: Roles Based Access (RBAC)",
     "id": "AI040300",
-    "description": "Authorization: RBAC",
+    "description": "Authorization: Roles Based Access (RBAC)",
     "applies_to": [
       "common_source_code"
     ],
@@ -55,14 +55,14 @@
     ]
   },
   {
-    "name": "Authorization: RBAC",
+    "name": "Authorization: Permissions",
     "id": "AI040400",
-    "description": "Authorization: RBAC",
+    "description": "Authorization: Permissions",
     "applies_to": [
       "common_source_code"
     ],
     "tags": [
-      "Authorization.RBAC"
+      "Authorization.Permissions"
     ],
     "severity": "critical",
     "patterns": [

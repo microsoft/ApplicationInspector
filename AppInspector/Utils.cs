@@ -99,7 +99,7 @@ namespace Microsoft.AppInspector
                                 result = "script";
                                 break;
                             default:
-                                switch (match.Language)
+                                switch (match.Language.Name)
                                 {
                                     case "ruby":
                                     case "perl":

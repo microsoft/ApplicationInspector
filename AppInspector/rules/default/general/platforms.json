@@ -4,7 +4,7 @@
     "id": "AI028500",
     "description": "Platform: .NET Core",
     "applies_to": [ "VSProject", "csharp" ],
-    "tags": [ "Platform.Microsoft.NETCore" ],
+    "tags": [ "Metadata.Platform.Microsoft.NETCore" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -20,7 +20,7 @@
     "id": "AI028600",
     "description": "Platform: Microsoft .NET Standard",
     "applies_to": [ "VSProject", "csharp" ],
-    "tags": [ "Platform.Microsoft.NETStandard" ],
+    "tags": [ "Metadata.Platform.Microsoft.NETStandard" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -36,7 +36,7 @@
     "id": "AI028700",
     "description": "Platform: Microsoft Mono",
     "applies_to": [ "VSProject", "csharp" ],
-    "tags": [ "Platform.Microsoft.Mono" ],
+    "tags": [ "Metadata.Platform.Microsoft.Mono" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -52,7 +52,7 @@
     "id": "AI028800",
     "description": "Platform: Google Android",
     "tags": [
-      "Platform.OS.Google.Android"
+      "Metadata.Platform.OS.Google.Android"
     ],
     "severity": "moderate",
     "patterns": [
@@ -79,7 +79,7 @@
     "id": "AI028900",
     "description": "Platform: Apple iOS",
     "tags": [
-      "Platform.OS.Apple.iOS"
+      "Metadata.Platform.OS.Apple.iOS"
     ],
     "severity": "moderate",
     "patterns": [
@@ -98,7 +98,7 @@
     "id": "AI029000",
     "description": "Platform: Apple MacOS",
     "tags": [
-      "Platform.OS.Apple.MacOS"
+      "Metadata.Platform.OS.Apple.MacOS"
     ],
     "severity": "moderate",
     "patterns": [
@@ -117,7 +117,7 @@
     "id": "AI029100",
     "description": "Platform: Microsoft Windows Server",
     "tags": [
-      "Platform.OS.Microsoft.WindowsServer"
+      "Metadata.Platform.OS.Microsoft.WindowsServer"
     ],
     "severity": "moderate",
     "patterns": [
@@ -136,7 +136,7 @@
     "id": "AI029200",
     "description": "Platform: Microsoft Windows",
     "tags": [
-      "Platform.OS.Microsoft.WindowsStandard"
+      "Metadata.Platform.OS.Microsoft.WindowsStandard"
     ],
     "severity": "moderate",
     "patterns": [
@@ -156,7 +156,7 @@
     "id": "AI029300",
     "description": "Platform: Microsoft Windows",
     "tags": [
-      "Platform.OS.Microsoft.WindowsCE"
+      "Metadata.Platform.OS.Microsoft.WindowsCE"
     ],
     "severity": "moderate",
     "patterns": [
@@ -175,7 +175,7 @@
     "id": "AI029400",
     "description": "Development Framework: Windows Universal Platform",
     "tags": [
-      "Platform.OS.Microsoft.WindowsUniversalPlatform"
+      "Metadata.Platform.OS.Microsoft.WindowsUniversalPlatform"
     ],
     "severity": "moderate",
     "patterns": [
@@ -193,7 +193,7 @@
     "id": "AI029500",
     "description": "Platform: Linux",
     "tags": [
-      "Platform.OS.Linux.Distro"
+      "Metadata.Platform.OS.Linux.Distro"
     ],
     "severity": "moderate",
     "patterns": [
@@ -212,7 +212,7 @@
     "id": "AI029600",
     "description": "Platform: Microsoft XBox",
     "tags": [
-      "Platform.OS.Microsoft.XBox"
+      "Metadata.Platform.OS.Microsoft.XBox"
     ],
     "severity": "moderate",
     "patterns": [
@@ -231,7 +231,7 @@
     "id": "AI029700",
     "description": "Platform: Mobile Device",
     "tags": [
-      "Platform.Device.Mobile"
+      "Metadata.Platform.Device.Mobile"
     ],
     "severity": "moderate",
     "patterns": [
@@ -266,7 +266,7 @@
     "id": "AI029800",
     "description": "Platform: IOT",
     "tags": [
-      "Platform.Device.IOT"
+      "Metadata.Platform.Device.IOT"
     ],
     "severity": "moderate",
     "patterns": [

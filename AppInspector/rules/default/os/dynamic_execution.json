@@ -161,7 +161,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "createprocess|execl|execlp|execlp|execv|execve|execvp|execvpe|execle|fork",
+        "pattern": "shellexecute|createprocess|execl|execlp|execlp|execv|execve|execvp|execvpe|execle|fork",
         "type": "regex-word",
         "scopes": [
           "code"

@@ -79,6 +79,15 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File size exceeded for {0}.  Analysis halted.  Try unzipping first..
+        /// </summary>
+        internal static string ANALYZE_FILESIZE_HALT {
+            get {
+                return ResourceManager.GetString("ANALYZE_FILESIZE_HALT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File {0} is too large.  File skipped..
         /// </summary>
         internal static string ANALYZE_FILESIZE_SKIPPED {

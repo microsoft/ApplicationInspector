@@ -144,11 +144,11 @@
     ]
   },
   {
-    "name": "Cloud Service: GitHub",
+    "name": "Code Repo: GitHub",
     "id": "AI001200",
-    "description": "Cloud Service: GitHub",
+    "description": "Code Repo: GitHub",
     "tags": [
-      "CloudServices.Repository.GitHub"
+      "Metadata.Development.Repository.GitHub"
     ],
     "severity": "moderate",
     "patterns": [
@@ -162,11 +162,11 @@
     ]
   },
   {
-    "name": "Cloud Service: GitLab",
+    "name": "Code Repo: GitLab",
     "id": "AI001300",
-    "description": "Cloud Service: GitLab",
+    "description": "Code Repo: GitLab",
     "tags": [
-      "CloudServices.Repository.GitLab"
+      "Metadata.Development.Repository.GitLab"
     ],
     "severity": "moderate",
     "patterns": [
@@ -180,11 +180,11 @@
     ]
   },
   {
-    "name": "Cloud Service: BitBucket",
+    "name": "Code Repo: BitBucket",
     "id": "AI001400",
-    "description": "Cloud Service: BitBucket",
+    "description": "Code Repo: BitBucket",
     "tags": [
-      "CloudServices.Repository.BitBucket"
+      "Metadata.Development.Repository.BitBucket"
     ],
     "severity": "moderate",
     "patterns": [
@@ -198,11 +198,11 @@
     ]
   },
   {
-    "name": "Cloud Service: SourceForge",
+    "name": "Code Repo: SourceForge",
     "id": "AI001500",
-    "description": "Cloud Service: SourceForge",
+    "description": "Code Repo: SourceForge",
     "tags": [
-      "CloudServices.Repository.SourceForge"
+      "Metadata.Development.Repository.SourceForge"
     ],
     "severity": "moderate",
     "patterns": [
@@ -216,11 +216,11 @@
     ]
   },
   {
-    "name": "Cloud Service: Savannah",
+    "name": "Code Repo: Savannah",
     "id": "AI001600",
-    "description": "Cloud Service: Savannah",
+    "description": "Code Repo: Savannah",
     "tags": [
-      "CloudServices.Repository.Savannah"
+      "Metadata.Development.Repository.Savannah"
     ],
     "severity": "moderate",
     "patterns": [
@@ -234,11 +234,11 @@
     ]
   },
   {
-    "name": "Cloud Service: NuGet",
+    "name": "Component PackageManager: NuGet",
     "id": "AI001700",
-    "description": "Cloud Service: NuGet",
+    "description": "Component PackageManager: NuGet",
     "tags": [
-      "CloudServices.PackageManager.Microsoft.NuGet"
+      "Metadata.Development.PackageManager.Microsoft.NuGet"
     ],
     "severity": "moderate",
     "patterns": [
@@ -252,11 +252,11 @@
     ]
   },
   {
-    "name": "Cloud Service: NPM",
+    "name": "Component PackageManager: NPM",
     "id": "AI001800",
-    "description": "Cloud Service: NPM",
+    "description": "Component PackageManager: NPM",
     "tags": [
-      "CloudServices.PackageManager.NPM"
+      "Metadata.Development.PackageManager.NPM"
     ],
     "severity": "moderate",
     "patterns": [
@@ -270,11 +270,11 @@
     ]
   },
   {
-    "name": "Cloud Service: PyPI",
+    "name": "Component PackageManager: PyPI",
     "id": "AI001900",
-    "description": "Cloud Service: PyPI",
+    "description": "v: PyPI",
     "tags": [
-      "CloudServices.PackageManager.PyPI"
+      "Metadata.Development.PackageManager.PyPI"
     ],
     "severity": "moderate",
     "patterns": [
@@ -288,11 +288,11 @@
     ]
   },
   {
-    "name": "Cloud Service: LaunchPad",
+    "name": "Component PackageManager: LaunchPad",
     "id": "AI002000",
-    "description": "Cloud Service: LaunchPad",
+    "description": "Component PackageManager: LaunchPad",
     "tags": [
-      "CloudServices.PackageManager.LaunchPad"
+      "Metadata.Development.PackageManager.LaunchPad"
     ],
     "severity": "moderate",
     "patterns": [
@@ -306,14 +306,14 @@
     ]
   },
   {
-    "name": "Cloud Service: Travis.CI",
+    "name": "Development CI: Travis.CI",
     "id": "AI002100",
-    "description": "Cloud Service: Travis.CI",
+    "description": "Development CI: Travis.CI",
     "applies_to": [
       ".travis.yml"
     ],
     "tags": [
-      "CloudServices.CI.TravisCI"
+      "Metadata.Build.CI.TravisCI"
     ],
     "severity": "moderate",
     "patterns": [
@@ -327,14 +327,14 @@
     ]
   },
   {
-    "name": "Cloud Service: Circle CI",
+    "name": "Development CI: Circle CI",
     "id": "AI002200",
-    "description": "Cloud Service: Circle CI",
+    "description": "Development CI: Circle CI",
     "applies_to": [
       "config.yml"
     ],
     "tags": [
-      "CloudServices.CI.CircleCI"
+      "Metadata.Build.CI.CircleCI"
     ],
     "severity": "moderate",
     "patterns": [
@@ -348,14 +348,14 @@
     ]
   },
   {
-    "name": "Cloud Service: Azure Pipelines",
+    "name": "Development CI: Azure Pipelines",
     "id": "AI002300",
-    "description": "Cloud Service: Azure Pipelines",
+    "description": "Development CI: Azure Pipelines",
     "applies_to": [
       "yaml"
     ],
     "tags": [
-      "CloudServices.CI.Microsoft.AzurePipelines"
+      "Metadata.Build.Microsoft.AzurePipelines"
     ],
     "severity": "moderate",
     "patterns": [

@@ -17,7 +17,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "AES-?(128|192|256)",
+        "pattern": "AES-?(128|192|256)|Rijndael",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -94,7 +94,7 @@
     ]
   },
   {
-    "name": "Cryptography: Encryption",
+    "name": "Cryptography: Encryption (RSA)",
     "id": "AI007300",
     "description": "Cryptography: Encryption",
     "applies_to": [
@@ -132,7 +132,7 @@
     ]
   },
   {
-    "name": "Cryptography: Encryption",
+    "name": "Cryptography: Encryption (RSA)",
     "id": "AI007400",
     "description": "Cryptography: Encryption",
     "tags": [
@@ -141,7 +141,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RSA.*encrypt|RSA.*decrypt|public.*key|private.*key",
+        "pattern": "RSA.*encrypt|RSA.*decrypt|public.?key|private.?key|privkey|pubkey",
         "type": "regex",
         "scopes": [
           "code", "comment"
@@ -154,12 +154,12 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium"
+        "confidence": "low"
       }
     ]
   },
   {
-    "name": "Cryptography: Encryption",
+    "name": "Cryptography: Encryption (RSA)",
     "id": "AI007500",
     "description": "Cryptography: Encryption",
     "tags": [
@@ -168,7 +168,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "asymmetric|rsa",
+        "pattern": "asymmetric",
         "type": "regex-word",
         "scopes": [
           "code",
@@ -179,11 +179,11 @@
     ]
   },
   {
-    "name": "Cryptography: Encryption",
+    "name": "Cryptography: Encryption (General)",
     "id": "AI007600",
     "description": "Cryptography: Encryption",
     "tags": [
-      "Cryptography.Encryption"
+      "Cryptography.Encryption.General"
     ],
     "severity": "moderate",
     "patterns": [
@@ -195,14 +195,6 @@
           "comment"
         ],
         "confidence": "high"
-      },
-      {
-        "pattern": "DiffieHellman|Rijndael|ECDsa",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "i", "comment" ],
-        "_comment": ""
       }
     ]
   }

@@ -39,10 +39,12 @@ namespace RulesEngine
         /// </summary>
         /// <param name="fileName">File name</param>
         /// <returns>Language</returns>
-        public static string FromFileName(string fileName)
+        public static bool FromFileName(string fileName, ref LanguageInfo info)
         {
             if (fileName == null)
-                return string.Empty;
+                return false;
+
+            bool result = false;
 
             string file = Path.GetFileName(fileName).ToLower(CultureInfo.CurrentCulture);
             string ext = Path.GetExtension(file);
@@ -51,7 +53,11 @@ namespace RulesEngine
             foreach (LanguageInfo item in Instance.Languages)
             {
                 if (item.Name == file)
-                    return item.Name;
+                {
+                    info = item;
+                    result = true;
+                    break;
+                }
             }
 
             // Look for extension only ext is defined
@@ -60,11 +66,15 @@ namespace RulesEngine
                 foreach (LanguageInfo item in Instance.Languages)
                 {
                     if (Array.Exists(item.Extensions, x => x.EndsWith(ext)))
-                        return item.Name;
+                    {
+                        info = item;
+                        result = true;
+                        break;
+                    }
                 }
             }
 
-            return string.Empty;
+            return result;
         }
 
         /// <summary>

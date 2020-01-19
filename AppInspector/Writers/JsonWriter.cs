@@ -77,7 +77,8 @@ namespace Microsoft.AppInspector
         public MatchItems(MatchRecord matchRecord)
         {
             FileName = matchRecord.Filename;
-            SourceType = matchRecord.Language;
+            SourceLabel = matchRecord.Language.Name;
+            SourceType = matchRecord.Language.Type.ToString();
             StartLocationLine = matchRecord.Issue.StartLocation.Line;
             StartLocationColumn = matchRecord.Issue.StartLocation.Column;
             EndLocationLine = matchRecord.Issue.EndLocation.Line;
@@ -114,6 +115,8 @@ namespace Microsoft.AppInspector
         public string Severity { get; set; }
         [JsonProperty(PropertyName = "tags")]
         public string[] Tags { get; set; }
+        [JsonProperty(PropertyName = "sourceLabel")]
+        public string SourceLabel { get; set; }
         [JsonProperty(PropertyName = "sourceType")]
         public string SourceType { get; set; }
         [JsonProperty(PropertyName = "sample")]

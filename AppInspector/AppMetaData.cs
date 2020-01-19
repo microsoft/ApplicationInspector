@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using RulesEngine;
 using System.IO;
 using System.Linq;
-
+using DotLiquid.Tags;
 
 namespace Microsoft.AppInspector
 {
@@ -619,6 +619,13 @@ namespace Microsoft.AppInspector
         public HashSet<string> CloudTargets { get { return KeyedPropertyLists["strGrpCloudTargets"]; } }
         [JsonProperty(PropertyName = "CPUTargets")]
         public HashSet<string> CPUTargets { get { return KeyedPropertyLists["strGrpCPUTargets"]; } }
+        private string ExtractValue(string s)
+        {
+            if (s.ToLower().Contains("</"))
+                return ExtractXMLValue(s);
+            else
+                return ExtractJSONValue(s);
+        }
 
         private string ExtractJSONValue(string s)
         {
@@ -672,39 +679,39 @@ namespace Microsoft.AppInspector
                 }
             }
 
-            //update counts for default or user specified tags
+            // Author etc. or STANDARD METADATA properties we capture from any supported file type; others just captured as general tag matches...
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Author")))
+                this.Authors = ExtractValue(matchRecord.TextSample);
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Publisher")))
+                this.Authors = ExtractValue(matchRecord.TextSample);
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Description")))
+                this.Description = ExtractValue(matchRecord.TextSample);
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Name")))
+                this.ApplicationName = ExtractValue(matchRecord.TextSample);
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Version")))
+                this.SourceVersion = ExtractValue(matchRecord.TextSample);
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Hardware.Processor")))
+                this.CPUTargets.Add(ExtractValue(matchRecord.TextSample).ToLower());
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.BuildOutput.Category")))
+                this.Outputs.Add(ExtractValue(matchRecord.TextSample).ToLower());        
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Platform.OS")))
+                this.OSTargets.Add(ExtractValue(matchRecord.TextSample).ToLower());
+
+            //Special handling; attempt to detect app types...review for multiple pattern rule limitation
+            String solutionType = Utils.DetectSolutionType(matchRecord);
+            if (!string.IsNullOrEmpty(solutionType))
+                AppTypes.Add(solutionType);
+
+            //Update metric counters for default or user specified tags
             foreach (TagCounter counter in TagCounters)
             {
                 if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains(counter.Tag)))
                 {
                     counter.Count++;
-                    includeAsMatch = counter.IncludeAsMatch;
+                    includeAsMatch = counter.IncludeAsMatch;//Exclude as feature matches per preferences from reporting full match details
                 }
             }
-
-            // Author etc. or standard properties we capture
-            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Author")))
-                this.Authors = ExtractJSONValue(matchRecord.TextSample);
-            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Publisher")))
-                this.Authors = ExtractXMLValue(matchRecord.TextSample);
-            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Description")))
-                this.Description = ExtractJSONValue(matchRecord.TextSample);
-            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Name")))
-                this.ApplicationName = ExtractJSONValue(matchRecord.TextSample);
-            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Version")))
-                this.SourceVersion = ExtractJSONValue(matchRecord.TextSample);
-            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Hardware.Processor")))
-                this.CPUTargets.Add(ExtractJSONValue(matchRecord.TextSample).ToLower());
-            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.BuildOutput.Category")))
-                this.Outputs.Add(ExtractXMLValue(matchRecord.TextSample).ToLower());
-            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Platform.OS")))
-                this.OSTargets.Add(ExtractJSONValue(matchRecord.TextSample).ToLower());
-
-            //special handling; attempt to detect app types...review for multiple pattern rule limitation
-            String solutionType = Utils.DetectSolutionType(matchRecord);
-            if (!string.IsNullOrEmpty(solutionType))
-                AppTypes.Add(solutionType);
-
+            
             return includeAsMatch;
         }
 

@@ -326,29 +326,26 @@ namespace Microsoft.AppInspector
             #region quickvalidation
             if (fileText.Length > MAX_FILESIZE)
             {
-                WriteOnce.SafeLog("File too large: " + filePath, LogLevel.Trace);
-                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath), LogLevel.Error);
+                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath), LogLevel.Warn);
                 _appProfile.MetaData.FilesSkipped++;
                 return;
             }
 
             //exclude sample, test or similar files by default or as specified in exclusion list
-            if (!_arg_allowSampleFiles && _fileExclusionList.Any(v => filePath.Contains(v)))
+            if (!_arg_allowSampleFiles && _fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
             {
                 WriteOnce.SafeLog("Part of excluded list: " + filePath, LogLevel.Trace);
-                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath), LogLevel.Error);
+                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath), LogLevel.Trace);
                 _appProfile.MetaData.FilesSkipped++;
                 return;
             }
 
             //check for supported language
-            string language = Language.FromFileName(filePath);
-
+            LanguageInfo languageInfo = new LanguageInfo();
             // Skip files written in unknown language
-            if (string.IsNullOrEmpty(language))
+            if (!Language.FromFileName(filePath, ref languageInfo))
             {
                 WriteOnce.SafeLog("Language not found for file: " + filePath, LogLevel.Trace);
-                language = Path.GetFileName(filePath);
                 _appProfile.MetaData.FilesSkipped++;
                 return;
             }
@@ -362,7 +359,7 @@ namespace Microsoft.AppInspector
             #region minorRollupTrackingAndProgress
 
             _appProfile.MetaData.FilesAnalyzed++;
-            _appProfile.MetaData.AddLanguage(language);
+            _appProfile.MetaData.AddLanguage(languageInfo.Name);
             _appProfile.MetaData.FileExtensions.Add(Path.GetExtension(filePath).Replace('.', ' ').TrimStart());
             LastUpdated = File.GetLastWriteTime(filePath);
 
@@ -373,7 +370,7 @@ namespace Microsoft.AppInspector
             #endregion
 
             //process file against rules
-            Issue[] matches = _rulesProcessor.Analyze(fileText, language);
+            Issue[] matches = _rulesProcessor.Analyze(fileText, languageInfo.Name);
 
             //if any matches found for this file...
             if (matches.Count() > 0)
@@ -386,6 +383,10 @@ namespace Microsoft.AppInspector
                 {
                     WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", match.Rule.Id, match.Rule.Name, filePath), LogLevel.Trace);
 
+                    //do not accept features from build type files (only metadata) to avoid false positives that are not part of the executable program
+                    if (languageInfo.Type == LanguageInfo.LangFileType.Build && match.Rule.Tags.Any(v => !v.Contains("Metadata")))
+                        continue;
+
                     //maintain a list of unique tags; multi-purpose but primarily for filtering -d option
                     bool dupTagFound = false;
                     foreach (string t in match.Rule.Tags)
@@ -395,7 +396,7 @@ namespace Microsoft.AppInspector
                     var tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
                     String textMatch;
                     if (match.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))
-                        textMatch = ExtractDependency(fileText, match.Boundary.Index, match.PatternMatch, language);
+                        textMatch = ExtractDependency(fileText, match.Boundary.Index, match.PatternMatch, languageInfo.Name);
                     else
                         textMatch = ExtractTextSample(fileText, match.Boundary.Index, match.Boundary.Length);
 
@@ -403,7 +404,7 @@ namespace Microsoft.AppInspector
                     MatchRecord record = new MatchRecord()
                     {
                         Filename = filePath,
-                        Language = language,
+                        Language = languageInfo,
                         Filesize = fileText.Length,
                         TextSample = textMatch,
                         Excerpt = ExtractExcerpt(fileText, match.StartLocation.Line),
@@ -411,12 +412,12 @@ namespace Microsoft.AppInspector
                     };
 
                     //preserve issue level characteristics as rolled up meta data of interest
-                    bool valid = _appProfile.MetaData.AddStandardProperties(record);
+                    bool addAsFeatureMatch = _appProfile.MetaData.AddStandardProperties(record);
 
                     //bail after extracting any dependency unique items IF user requested
                     if (_arg_outputUniqueTagsOnly && dupTagFound)
                         continue;
-                    else if (valid)
+                    else if (addAsFeatureMatch)
                         _appProfile.MatchList.Add(record);
                 }
             }
@@ -588,6 +589,12 @@ namespace Microsoft.AppInspector
                 throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, filename));
             }
 
+            //zip itself may be too huge for timely processing
+            if (new FileInfo(filename).Length > MAX_FILESIZE)
+            {
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_HALT, filename));
+            }
+
             // Ignore images and other junk like that
             var fileExtension = new FileInfo(filename).Extension;
             var mimeType = MimeTypeMap.GetMimeType(fileExtension);
@@ -666,14 +673,14 @@ namespace Microsoft.AppInspector
                     if (zipEntry.Size > MAX_FILESIZE)
                     {
                         _appProfile.MetaData.FilesSkipped++;
-                        WriteOnce.SafeLog(string.Format("{0} in {1} is too large.  File skipped", zipEntry.Name, filename), LogLevel.Error);
+                        WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, zipEntry.Name), LogLevel.Warn);
                         zipFile.Close();
                         continue;
                     }
 
                     StreamUtils.Copy(zipStream, memoryStream, buffer);
                     var mimeType = MimeTypeMap.GetMimeType(Path.GetExtension(zipEntry.Name));
-                    if (IgnoreMimeRegex.IsMatch(mimeType) && new FileInfo(filename).Extension != "ts")
+                    if (IgnoreMimeRegex.IsMatch(mimeType) && new FileInfo(zipEntry.Name).Extension != ".ts")
                     {
                         _appProfile.MetaData.FilesSkipped++;
                         WriteOnce.SafeLog(string.Format("Ignoring zip entry [{0}]", zipEntry.Name), LogLevel.Error);
@@ -745,13 +752,13 @@ namespace Microsoft.AppInspector
                     if (tarEntry.Size > MAX_FILESIZE)
                     {
                         _appProfile.MetaData.FilesSkipped++;
-                        WriteOnce.SafeLog(string.Format("{0} in {1} is too large.  File skipped", tarEntry.Name, filename), LogLevel.Error);
+                        WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, tarEntry.Name), LogLevel.Warn);
                         tarStream.Close();
                         continue;
                     }
 
                     var mimeType = MimeTypeMap.GetMimeType(Path.GetExtension(tarEntry.Name));
-                    if (IgnoreMimeRegex.IsMatch(mimeType) && new FileInfo(filename).Extension != "ts")
+                    if (IgnoreMimeRegex.IsMatch(mimeType) && new FileInfo(tarEntry.Name).Extension != ".ts")
                     {
                         _appProfile.MetaData.FilesSkipped++;
                         WriteOnce.SafeLog(string.Format("Ignoring tar entry [{0}]", tarEntry.Name), LogLevel.Error);

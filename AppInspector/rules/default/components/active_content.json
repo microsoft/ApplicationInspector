@@ -11,14 +11,34 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\.(swf|flv)|flash",
+        "pattern": "\\.(swf|flv)",
         "type": "regex",
         "scopes": [
           "code",
           "comment"
         ],
         "confidence": "high",
-        "modifiers": [ "i" ],
+        "modifiers": [ "i" ]
+      },
+      {
+        "pattern": "adobe flash",
+        "type": "string",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "confidence": "medium",
+        "modifiers": [ "i" ]
+      },
+      {
+        "pattern": "flash",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "confidence": "low",
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -30,8 +50,7 @@
       "c",
       "cpp",
       "csharp",
-      "html",
-      "javascript"
+      "vb"
     ],
     "tags": [
       "Component.Executable.Microsoft.ActiveX"
@@ -39,11 +58,44 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "active-?x|COleControlModule",
+        "pattern": "CoInitialize|CoCreateInstance|comClassInterface|CLSCTX_INPROC_SERVER|ProgId|COleControlModule|ComDefaultInterface|ComVisible|IOleInPlaceObject|IOleControl|IOleObjective",
+        "type": "regex-word",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "active-?x|CreateObject",
         "type": "regex",
         "scopes": [
           "code",
           "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Component: Active-X",
+    "id": "AI005010",
+    "description": "Component: Active-X",
+    "applies_to": [
+      "javascript", "typescript"
+    ],
+    "tags": [
+      "Component.Executable.Microsoft.ActiveX"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "new ActiveXObject",
+        "type": "string",
+        "scopes": [
+          "code"
         ],
         "modifiers": [ "i" ],
         "confidence": "high"

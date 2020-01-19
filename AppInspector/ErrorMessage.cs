@@ -21,6 +21,7 @@ namespace Microsoft.AppInspector
             ANALYZE_UNCOMPRESSED_FILETYPE,
             ANALYZE_UNSUPPORTED_COMPR_TYPE,
             ANALYZE_FILESIZE_SKIPPED,
+            ANALYZE_FILESIZE_HALT,
             ANALYZE_OUTPUT_FILE,
             CMD_PREPARING_REPORT,
             CMD_COMPLETED,
