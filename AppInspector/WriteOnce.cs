@@ -142,7 +142,7 @@ namespace Microsoft.AppInspector
                         Log.Warn(message);
                         break;
                     case 4:
-                        Log.Trace(message);
+                        Log.Error(message);
                         break;
                 }
             }
