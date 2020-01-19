@@ -89,12 +89,27 @@
       },
       {
         "title": "Development",
-        "dataRef": "Frameworks",
+        "dataRef": "Development",
         "patterns": [
           {
-            "searchPattern": "Development.Build",
+            "searchPattern": "Metadata.Development.Build",
             "displayName": "Build",
             "detectedIcon": "fas fa-building"
+          },
+          {
+            "searchPattern": "Metadata.Development.Repository",
+            "displayName": "Sourcecode Repository",
+            "detectedIcon": "fas fa-archive"
+          },
+          {
+            "searchPattern": "Metadata.Development.PackageManager",
+            "displayName": "Package Manager",
+            "detectedIcon": "fas fa-box-open"
+          },
+          {
+            "searchPattern": "Metadata.Development.CI",
+            "displayName": "Continuous Integration",
+            "detectedIcon": "fas fa-vials"
           },
           {
             "searchPattern": "Framework.Development",
@@ -110,11 +125,6 @@
             "searchPattern": "OpenSourceLicense",
             "displayName": "Open Source",
             "detectedIcon": "fab fa-github"
-          },
-          {
-            "searchPattern": "Dependency.SourceInclude",
-            "displayName": "Source Include",
-            "detectedIcon": "far fa-plus-square"
           },
           {
             "searchPattern": "Framework.CMS",
@@ -153,7 +163,7 @@
             "detectedIcon": "far fa-file-pdf"
           },
           {
-            "searchPattern": "Component.Browser.Messaging.Ajax",
+            "searchPattern": "OS.Network.Connection.Http.Ajax",
             "displayName": "Javascript Ajax",
             "detectedIcon": "fas fa-exchange-alt"
           }        
@@ -215,7 +225,7 @@
             "detectedIcon": "fas fa-user-secret"
           },
           {
-            "searchPattern": "Account",
+            "searchPattern": "Sensitive.UserAccount",
             "displayName": "Account or Membership",
             "detectedIcon": "fas fa-user-circle"
           },
@@ -223,11 +233,6 @@
             "searchPattern": "Sensitive.Financial",
             "displayName": "Financial",
             "detectedIcon": "fas fa-money-bill"
-          },
-          {
-            "searchPattern": "CloudServices.Finance.eCommerce",
-            "displayName": "eCommerce",
-            "detectedIcon": "fas fa-shopping-cart"
           }
         ]
       },
@@ -236,7 +241,7 @@
         "dataRef": "CloudServices",
         "patterns": [
           {
-            "searchPattern": "CloudServices.Hosting.General",
+            "searchPattern": "CloudServices.Hosting",
             "displayName": "Hosting",
             "detectedIcon": "fab fa-microsoft"
           },
@@ -251,21 +256,6 @@
             "detectedIcon": "fab fa-facebook-square"
           },
           {
-            "searchPattern": "CloudServices.Hosting.Repository",
-            "displayName": "Sourcecode Repository",
-            "detectedIcon": "fas fa-archive"
-          },
-          {
-            "searchPattern": "CloudServices.Hosting.PackageManager",
-            "displayName": "Package Manager",
-            "detectedIcon": "fas fa-box-open"
-          },
-          {
-            "searchPattern": "CloudServices.Hosting.CI",
-            "displayName": "Continuous Integration",
-            "detectedIcon": "fas fa-vials"
-          },
-          {
             "searchPattern": "CloudServices.DataStorage",
             "displayName": "Cloud Data Storage",
             "detectedIcon": "fas fa-cloud-download-alt"
@@ -274,6 +264,11 @@
             "searchPattern": "CloudServices.BigData",
             "displayName": "Big Data",
             "detectedIcon": "fas fa-warehouse"
+          },
+          {
+            "searchPattern": "CloudServices.Finance.eCommerce",
+            "displayName": "eCommerce",
+            "detectedIcon": "fas fa-shopping-cart"
           }
         ]
       },
@@ -282,7 +277,7 @@
         "dataRef": "OSIntegration",
         "patterns": [
           {
-            "searchPattern": "Platform.OS",
+            "searchPattern": "Metadata.Platform.OS",
             "displayName": "OS Identification",
             "detectedIcon": "fab fa-linux"
           },

@@ -302,5 +302,31 @@
         "confidence": "high"
       }
     ]
+  },
+  {
+    "name": "Development Framework: Node",
+    "id": "AI021610",
+    "description": "Development Framework: Node",
+    "applies_to": [ "javascript" ],
+    "tags": [
+      "Metadata.ApplicationType.Web.Service"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "app\\.listen|server\\.listen",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "\\.listen\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium"
+      }
+    ]
   }
 ]

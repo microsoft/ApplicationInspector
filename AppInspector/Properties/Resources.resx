@@ -120,6 +120,9 @@
   <data name="ANALYZE_COMPRESSED_FILETYPE" xml:space="preserve">
     <value>compressed</value>
   </data>
+  <data name="ANALYZE_FILESIZE_HALT" xml:space="preserve">
+    <value>File size exceeded for {0}.  Analysis halted.  Try unzipping first.</value>
+  </data>
   <data name="ANALYZE_FILESIZE_SKIPPED" xml:space="preserve">
     <value>File {0} is too large.  File skipped.</value>
   </data>

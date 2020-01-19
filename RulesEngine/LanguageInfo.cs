@@ -8,12 +8,18 @@ namespace RulesEngine
     /// <summary>
     /// Content Type class
     /// </summary>
-    class LanguageInfo
+    public class LanguageInfo
     {
+        public enum LangFileType { Code, Build, Other };
+
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
         [JsonProperty(PropertyName = "extensions")]
         public string[] Extensions { get; set; }
+        [JsonProperty(PropertyName = "type")]
+        public LangFileType Type { get; set; }
     }
+
+
 }

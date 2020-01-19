@@ -12,7 +12,7 @@ namespace Microsoft.AppInspector
         public SimpleTextWriter(string formatString)
         {
             if (string.IsNullOrEmpty(formatString))
-                _formatString = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";
+                _formatString = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,SourceLabel:%l,SourceType:%tLine:%L,Sample:%m";
             else
                 _formatString = formatString;
         }
@@ -155,7 +155,8 @@ namespace Microsoft.AppInspector
         public void WriteMatch(MatchRecord match)
         {
             string output = _formatString.Replace("%F", match.Filename);
-            output = output.Replace("%t", match.Language);
+            output = output.Replace("%l", match.Language.Name);
+            output = output.Replace("%t", match.Language.Type.ToString());
             output = output.Replace("%L", match.Issue.StartLocation.Line.ToString());
             output = output.Replace("%C", match.Issue.StartLocation.Column.ToString());
             output = output.Replace("%l", match.Issue.EndLocation.Line.ToString());

@@ -4,10 +4,17 @@
     "id": "AI009300",
     "description": "Cryptography: Key Derivation",
     "tags": [
-      "Cryptography.KeyDerivation"
+      "Cryptography.KeyDerivation.General"
     ],
     "severity": "moderate",
     "patterns": [
+      {
+        "pattern": "KeyDerivationAlgorithmNames|SampleDeriveKeyMaterialPbkdf|RNGCryptoServiceProvider|Rfc2898DeriveBytes|KeyDerivation|DeriveKey|PasswordDeriveBytes",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
     ]
   },
   {
@@ -15,12 +22,13 @@
     "id": "AI009400",
     "description": "Cryptography: Key Derivation (PBKDF1)",
     "tags": [
-      "Cryptography.KeyDerivation.PBKDF1"
+      "Cryptography.KeyDerivation.PBKDF1",
+      "Cryptography.HashAlgorithm.PBKDF1"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "pbkdf1|PasswordDeriveBytes",
+        "pattern": "pbkdf1",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -33,7 +41,8 @@
     "id": "AI009500",
     "description": "Cryptography: Key Derivation (PBKDF2)",
     "tags": [
-      "Cryptography.KeyDerivation.PBKDF2"
+      "Cryptography.KeyDerivation.PBKDF2",
+      "Cryptography.HashAlgorithm.PBKDF1"
     ],
     "severity": "moderate",
     "patterns": [

@@ -253,7 +253,7 @@ namespace Microsoft.AppInspector
                 if (Logger != null)
                 {
                     WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_UNNAMED));
-                    Logger.Error($"Runtime error: {e.StackTrace}");
+                    Logger.Error($"Runtime error: {e.Message} {e.StackTrace}");
                 }
                 else
                     WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_PRELOG, e.Message));

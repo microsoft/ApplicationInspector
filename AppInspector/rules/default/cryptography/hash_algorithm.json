@@ -22,7 +22,7 @@
   {
     "name": "Cryptography: Hash Algorithm (Legacy)",
     "id": "AI008800",
-    "description": "Cryptography: Hash Algorithm Usage (Legacy)",
+    "description": "Cryptography: Hash Algorithm (Legacy)",
     "tags": [
       "Cryptography.HashAlgorithm.Legacy"
     ],
@@ -63,7 +63,7 @@
   {
     "name": "Cryptography: Hash Algorithm (Misc)",
     "id": "AI009000",
-    "description": "Cryptography: Hash Algorithm Usage (Misc)",
+    "description": "Cryptography: Hash Algorithm (Misc)",
     "tags": [
       "Cryptography.HashAlgorithm.Misc"
     ],
@@ -102,11 +102,11 @@
     ]
   },
   {
-    "name": "Cryptography: Hash Algorithm (Misc)",
+    "name": "Cryptography: Hash Algorithm (General)",
     "id": "AI009200",
-    "description": "Cryptography: Hash Algorithm Usage (Misc)",
+    "description": "Cryptography: Hash Algorithm (General)",
     "tags": [
-      "Cryptography.HashAlgorithm.Other"
+      "Cryptography.HashAlgorithm.General"
     ],
     "severity": "moderate",
     "patterns": [

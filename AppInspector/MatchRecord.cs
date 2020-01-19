@@ -8,7 +8,7 @@ namespace Microsoft.AppInspector
 {
     public class MatchRecord
     {
-        public string Language { get; set; }
+        public LanguageInfo Language { get; set; }
         public string Filename { get; set; }
         public int Filesize { get; set; }
         public string TextSample { get; set; }

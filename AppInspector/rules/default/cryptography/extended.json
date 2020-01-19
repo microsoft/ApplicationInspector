@@ -1,6 +1,6 @@
 [
   {
-    "name": "Detect Cryptography",
+    "name": "Cryptography: Encryption (General)",
     "id": "AI007900",
     "description": "Detect use of cryptography",
     "recommendation": "",
@@ -9,7 +9,7 @@
       "vb"
     ],
     "tags": [
-      "Cryptography.Encryption"
+      "Cryptography.Encryption.General"
     ],
     "severity": "critical",
     "_comment": "",
