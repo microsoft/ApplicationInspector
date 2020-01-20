@@ -7,14 +7,11 @@ namespace Microsoft.AppInspector
 {
     public class WriterFactory
     {
-        public static Writer GetWriter(string writerName, string defaultWritter, string format = null)
+        public static Writer GetWriter(string writerName, string defaultWriter, string format = null)
         {
             if (string.IsNullOrEmpty(writerName))
-                writerName = defaultWritter;
+                writerName = defaultWriter;
             
-            if (string.IsNullOrEmpty(writerName))
-                writerName = "text";
-
             switch (writerName.ToLowerInvariant())
             {  
                 case "_dummy":
