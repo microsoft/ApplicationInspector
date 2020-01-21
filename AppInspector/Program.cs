@@ -19,7 +19,7 @@ namespace Microsoft.AppInspector
     /// Command option classes for each command verb
     /// </summary>
 
-    [Verb("analyze", HelpText = "Inspect source directory/file for defined feature characteristics")]
+    [Verb("analyze", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics")]
     public class AnalyzeCommandOptions
     {
         [Option('s', "source-path", Required = true, HelpText = "Path to source code to inspect (required)")]
@@ -101,7 +101,7 @@ namespace Microsoft.AppInspector
         #endregion
     }
 
-    [Verb("tagtest", HelpText = "Test presence of tags in source (compare or verify modes)")]
+    [Verb("tagtest", HelpText = "Test presence of smaller set or custom tags in source (compare or verify modes)")]
     public class TagTestCommandOptions
     {
         [Option('s', "source-path", Required = true, HelpText = "Source to test (required)")]
@@ -134,7 +134,7 @@ namespace Microsoft.AppInspector
         #endregion
     }
 
-    [Verb("exporttags", HelpText = "Export unique rule tags")]
+    [Verb("exporttags", HelpText = "Export default unique rule tags to view what features may be detected")]
     public class ExportTagsCommandOptions
     {
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
