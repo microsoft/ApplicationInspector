@@ -4,7 +4,7 @@
     "id": "AI030100",
     "description": "Metadata: Target Processor",
     "tags": [
-      "Metadata.Hardware.Processor"
+      "Metadata.Application.Target.Processor"
     ],
     "applies_to": [ "VSsolution", "VSProject", "cpp" ],
     "severity": "moderate",
@@ -23,7 +23,7 @@
     "id": "AI030200",
     "description": "Metadata: Application Name",
     "tags": [
-      "Metadata.Project.Name"
+      "Metadata.Application.Name"
     ],
     "applies_to": [ "VSProject" ],
     "severity": "moderate",
@@ -37,11 +37,11 @@
     ]
   },
   {
-    "name": "Metadata: Build Output Category",
+    "name": "Metadata: Build Output Type",
     "id": "AI030300",
-    "description": "Metadata: Build Output Category",
+    "description": "Metadata: Build Output Type",
     "tags": [
-      "Metadata.Application.BuildOutput.Category"
+      "Metadata.Application.Output.Type"
     ],
     "applies_to": [ "VSProject" ],
     "severity": "moderate",
@@ -65,7 +65,7 @@
     "id": "AI030400",
     "description": "Metadata: Application Type (Windows Forms)",
     "tags": [
-      "Metadata.ApplicationType.Client.Winforms"
+      "Metadata.Application.Type.Client.Winforms"
     ],
     "applies_to": [ "csharp" ],
     "severity": "moderate",
@@ -85,7 +85,7 @@
     "id": "AI030500",
     "description": "Metadata: Application Type (Service)",
     "tags": [
-      "Metadata.ApplicationType.Client.Service.Windows"
+      "Metadata.Application.Type.Client.Service.Windows"
     ],
     "applies_to": [ "csharp" ],
     "severity": "moderate",
@@ -103,7 +103,7 @@
     "id": "AI030600",
     "description": "Metadata: Application Type (Service)",
     "tags": [
-      "Metadata.ApplicationType.Client.Service.Windows"
+      "Metadata.Application.Type.Client.Service.Windows"
     ],
     "applies_to": [ "c", "cpp", "shellscript" ],
     "severity": "moderate",
@@ -123,7 +123,7 @@
     "id": "AI030700",
     "description": "Metadata: Application Type (Service)",
     "tags": [
-      "Metadata.ApplicationType.Client.Service.Windows"
+      "Metadata.Application.Type.Client.Service.Windows"
     ],
     "applies_to": [ "cpp" ],
     "severity": "moderate",
@@ -292,6 +292,114 @@
         "confidence": "high",
         "modifiers": [ "i" ],
         "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (Kubernetes)",
+    "id": "AI031510",
+    "description": "Metadata: Application Container (Kubernetes)",
+    "tags": [
+      "Metadata.Application.Container.Kubernetes"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Kubernetes",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (Docker)",
+    "id": "AI031520",
+    "description": "Metadata: Application Container (Docker)",
+    "tags": [
+      "Metadata.Application.Container.Docker"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Docker|RancherOS",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (rktlet)",
+    "id": "AI031530",
+    "description": "Metadata: Application Container (rktlet)",
+    "tags": [
+      "Metadata.Application.Container.rktlet"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "rktlet",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (CRI-O)",
+    "id": "AI031540",
+    "description": "Metadata: Application Container (CRI-O)",
+    "tags": [
+      "Metadata.Application.Container.CRI-O"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "CRI-O",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (Microsoft Hyper-V)",
+    "id": "AI031550",
+    "description": "Metadata: Application Container (Microsoft Hyper-V)",
+    "tags": [
+      "Metadata.Application.Container.Microsoft.Hyper-V"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "hyper-v",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (Microsoft Server)",
+    "id": "AI031560",
+    "description": "Metadata: Application Container (Microsoft Server)",
+    "tags": [
+      "Metadata.Application.Container.Microsoft.Core"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Nano Server|Server Core",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   }

@@ -182,14 +182,6 @@
         "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
-      },
-      {
-        "pattern": "LDAP",
-        "type": "sub-string",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
       }
     ]
   },

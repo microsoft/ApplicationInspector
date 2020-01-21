@@ -128,7 +128,7 @@
       {
         "pattern": "react",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [ "all" ],
         "modifiers": [ "i" ],
         "confidence": "high"
       }
@@ -309,7 +309,7 @@
     "description": "Development Framework: Node",
     "applies_to": [ "javascript" ],
     "tags": [
-      "Metadata.ApplicationType.Web.Service"
+      "Metadata.Application.Type.Web.Service"
     ],
     "severity": "moderate",
     "patterns": [

@@ -690,9 +690,9 @@ namespace Microsoft.AppInspector
                 this.ApplicationName = ExtractValue(matchRecord.TextSample);
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Version")))
                 this.SourceVersion = ExtractValue(matchRecord.TextSample);
-            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Hardware.Processor")))
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Target.Processor")))
                 this.CPUTargets.Add(ExtractValue(matchRecord.TextSample).ToLower());
-            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.BuildOutput.Category")))
+            if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Output.Type")))
                 this.Outputs.Add(ExtractValue(matchRecord.TextSample).ToLower());        
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Platform.OS")))
                 this.OSTargets.Add(ExtractValue(matchRecord.TextSample).ToLower());

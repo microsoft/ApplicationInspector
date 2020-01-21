@@ -59,7 +59,7 @@
     "name": "Data: DBMS (PostgreSQL)",
     "id": "AI011000",
     "description": "Data: DBMS (PostgreSQL)",
-    "applies_to": [],
+    "applies_to": ["javascript"],
     "tags": [
       "Data.DBMS.SQLite"
     ],
@@ -122,7 +122,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "mongodb|mongoclient|pymongo|redis|hbase|neo4j|cassandra|couchbase|memcached|couchdb",
+        "pattern": "mongodb|mongoose|mongoclient|pymongo|redis|hbase|neo4j|cassandra|couchbase|memcached|couchdb",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -131,9 +131,9 @@
     ]
   },
   {
-    "name": "Data: SQL",
+    "name": "Data: DBMS (SQL)",
     "id": "AI011400",
-    "description": "Data: SQL",
+    "description": "Data: DBMS SQL",
     "applies_to": [ "java" ],
     "tags": [
       "Data.DBMS.SQL"
@@ -150,9 +150,9 @@
     ]
   },
   {
-    "name": "Data: SQL",
+    "name": "Data: DBMS (SQL)",
     "id": "AI011500",
-    "description": "Data: SQL",
+    "description": "Data: DBMS (SQL)",
     "applies_to": [ "csharp" ],
     "tags": [
       "Data.DBMS.SQL"
@@ -169,9 +169,9 @@
     ]
   },
   {
-    "name": "Data: SQL",
+    "name": "Data: DBMS (SQL)",
     "id": "AI011600",
-    "description": "Data: SQL",
+    "description": "Data: DBMS (SQL)",
     "applies_to": [],
     "tags": [
       "Data.DBMS.SQL"
@@ -179,7 +179,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "['\\\"](select|insert|delete)\\s.*",
+        "pattern": "['\\\"](select|insert|delete|update)\\s.*",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -200,6 +200,25 @@
         "search_in": "finding-region(-5,5)",
         "negate_finding": false,
         "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (SQL)",
+    "id": "AI011610",
+    "description": "Data: DBMS (SQL)",
+    "applies_to": [],
+    "tags": [
+      "Data.DBMS.SQL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mysql",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },

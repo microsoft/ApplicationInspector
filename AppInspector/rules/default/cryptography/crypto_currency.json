@@ -1,10 +1,10 @@
 [
   {
-    "name": "CryptoCurrency",
+    "name": "Cryptograpy: CryptoCurrency",
     "id": "AI007700",
-    "description": "CryptoCurrency",
+    "description": "Cryptograpy: CryptoCurrency",
     "tags": [
-      "Cryptography.Currency"
+      "Cryptography.CryptoCurrency"
     ],
     "severity": "moderate",
     "patterns": [

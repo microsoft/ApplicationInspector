@@ -1,11 +1,10 @@
 [
   {
-    "name": "Data: Read File From PasteBin or Similar",
+    "name": "CloudServices: DataStorage (PasteBin or Similar)",
     "id": "AI014000",
-    "description": "Data: Read From PasteBin or Similar",
+    "description": "CloudServices: DataStorage (PasteBin or Similar)",
     "tags": [
-      "Data.PasteBin",
-      "OS.Network.Connection.File.PasteBin"
+      "CloudServices.DataStorage.PasteBin"
     ],
     "severity": "moderate",
     "patterns": [

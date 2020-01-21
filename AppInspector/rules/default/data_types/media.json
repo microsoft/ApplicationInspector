@@ -9,7 +9,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\.(wma|tiff|wmv|asf|vp9|cr2|wav|mpeg|gsm|ogg|au|aiff|vox|aac|msv|dvf|flac|aifc|amz|atrac|m4a|m4p)",
+        "pattern": "\\.(wma|wmv|asf|vp9|cr2|wav|mpeg|gsm|ogg|au|aiff|vox|aac|msv|dvf|flac|aifc|amz|atrac|m4a|m4p)",
         "type": "regex-word",
         "scopes": [
           "code",
@@ -31,7 +31,7 @@
         "_comment": ""
       },
       {
-        "pattern": "wma|tiff|wmv|asf|vp9|cr2|wav|mpeg|gsm|ogg|au|aiff|vox|aac|msv|dvf|flac|aifc|amz|atrac|m4a|m4p",
+        "pattern": "wma|wmv|asf|vp9|cr2|wav|mpeg|gsm|ogg|au|aiff|vox|aac|msv|dvf|flac|aifc|amz|atrac|m4a|m4p",
         "type": "regex-word",
         "scopes": [
           "code",

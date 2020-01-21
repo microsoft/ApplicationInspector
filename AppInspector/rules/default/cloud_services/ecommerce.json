@@ -36,8 +36,8 @@
         "confidence": "high"
       },
       {
-        "pattern": "demandware|yocart|opencart|magento|magentohost/api|volusion|vtex|x-vtex-api-appkey|alibaba|apple.*pay",
-        "type": "regex",
+        "pattern": "demandware|yocart|opencart|magento|magentohost\/api|volusion|x-vtex-api-appkey|alibaba|apple.*pay",
+        "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"

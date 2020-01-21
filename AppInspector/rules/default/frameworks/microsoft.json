@@ -54,7 +54,7 @@
     "applies_to": [ "csharp" ],
     "tags": [
       "Framework.Development.Microsoft.Azure",
-      "Metadata.ApplicationType.Web.Application"
+      "Metadata.Application.Type.Web.Application"
     ],
     "severity": "moderate",
     "patterns": [
@@ -73,7 +73,7 @@
     "applies_to": [ "csharp" ],
     "tags": [
       "Framework.Development.Microsoft.WCF",
-      "Metadata.ApplicationType.Web.Service"
+      "Metadata.Application.Type.Web.Service"
     ],
     "severity": "moderate",
     "patterns": [
@@ -92,7 +92,7 @@
     "applies_to": [ "c", "cpp", "csharp" ],
     "tags": [
       "Framework.Development.Microsoft.MFC",
-      "Metadata.ApplicationType.Client.Windows"
+      "Metadata.Application.Type.Client.Windows"
     ],
     "severity": "moderate",
     "patterns": [
@@ -144,7 +144,7 @@
     "applies_to": [ "c", "cpp", "csharp" ],
     "tags": [
       "Framework.Development.Microsoft.WindowsSDK",
-      "Metadata.ApplicationType.Client.Windows"
+      "Metadata.Application.Type.Client.Windows"
     ],
     "severity": "moderate",
     "patterns": [
@@ -199,7 +199,7 @@
     "description": "Development Framework: Microsoft IIS",
     "tags": [
       "Framework.Development.Microsoft.Server.IIS",
-      "Metadata.ApplicationType.Web.Application"
+      "Metadata.Application.Type.Web.Application"
     ],
     "severity": "moderate",
     "patterns": [
@@ -217,7 +217,7 @@
     "description": "Development Framework: Microsoft ASP.NET",
     "tags": [
       "Framework.Development.Microsoft.NET.ASP",
-      "Metadata.ApplicationType.Web.Application"
+      "Metadata.Application.Type.Web.Application"
     ],
     "severity": "moderate",
     "patterns": [

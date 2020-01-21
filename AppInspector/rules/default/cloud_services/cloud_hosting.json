@@ -1,10 +1,10 @@
 [
   {
-    "name": "Cloud Service: Amazon Web Services",
+    "name": "Cloud Service: Hosting (Amazon Web Services)",
     "id": "AI000500",
-    "description": "Cloud Service: Amazon Web Services",
+    "description": "Cloud Service: Hosting (Amazon Web Services)",
     "tags": [
-      "CloudServices.Hosting.Amazon.AWS"
+      "Metadata.CloudServices.Hosting.Amazon.AWS"
     ],
     "severity": "moderate",
     "patterns": [
@@ -18,11 +18,11 @@
     ]
   },
   {
-    "name": "Cloud Service: Apple iCloud",
+    "name": "Cloud Service: Hosting (Apple iCloud)",
     "id": "AI000600",
-    "description": "Cloud Service: Accessing Apple iCloud",
+    "description": "Cloud Service: Hosting (Apple iCloud)",
     "tags": [
-      "CloudServices.Hosting.Apple.iCloud"
+      "Metadata.CloudServices.Hosting.Apple.iCloud"
     ],
     "severity": "moderate",
     "patterns": [
@@ -43,11 +43,11 @@
     ]
   },
   {
-    "name": "Cloud Service: Microsoft Azure",
+    "name": "Cloud Service: Hosting (Microsoft Azure)",
     "id": "AI000700",
-    "description": "Cloud Service: Microsoft Azure",
+    "description": "Cloud Service: Hosting (Microsoft Azure)",
     "tags": [
-      "CloudServices.Hosting.Microsoft.Azure"
+      "Metadata.CloudServices.Hosting.Microsoft.Azure"
     ],
     "severity": "moderate",
     "patterns": [
@@ -61,11 +61,11 @@
     ]
   },
   {
-    "name": "Cloud Service: Microsoft Office 365",
+    "name": "Cloud Service: Application (Microsoft Office 365)",
     "id": "AI000800",
-    "description": "Cloud Service: Microsoft Office 365",
+    "description": "Cloud Service: Application (Microsoft Office 365)",
     "tags": [
-      "CloudServices.Application.Microsoft.Graph"
+      "CloudServices.Application.Microsoft.O365"
     ],
     "severity": "moderate",
     "patterns": [
@@ -86,11 +86,11 @@
     ]
   },
   {
-    "name": "Cloud Service: Google Cloud",
+    "name": "Cloud Service: Hosting (Google Cloud)",
     "id": "AI000900",
-    "description": "Cloud Service: Google Cloud",
+    "description": "Cloud Service: Hosting (Google Cloud)",
     "tags": [
-      "CloudServices.Hosting.Google"
+      "Metadata.CloudServices.Hosting.Google"
     ],
     "severity": "moderate",
     "patterns": [
@@ -104,11 +104,11 @@
     ]
   },
   {
-    "name": "Cloud Service: DigitalOcean Cloud",
+    "name": "Cloud Service: Hosting (DigitalOcean Cloud)",
     "id": "AI001000",
-    "description": "Accessing DigitalOcean",
+    "description": "Cloud Service: Hosting (DigitalOcean Cloud)",
     "tags": [
-      "CloudServices.Hosting.DigitalOcean"
+      "Metadata.CloudServices.Hosting.DigitalOcean"
     ],
     "severity": "moderate",
     "_comment": "",
@@ -125,9 +125,9 @@
     ]
   },
   {
-    "name": "Cloud Service: SendGrid",
+    "name": "Cloud Service: Application (SendGrid)",
     "id": "AI001100",
-    "description": "Cloud Service: SendGrid",
+    "description": "Cloud Service: Application (SendGrid)",
     "tags": [
       "CloudServices.Application.SendGrid.Mail"
     ],
@@ -144,11 +144,11 @@
     ]
   },
   {
-    "name": "Code Repo: GitHub",
+    "name": "Cloud Service: Code Repository (GitHub)",
     "id": "AI001200",
-    "description": "Code Repo: GitHub",
+    "description": "Cloud Service: Code Repository (GitHub)",
     "tags": [
-      "Metadata.Development.Repository.GitHub"
+      "Metadata.CloudServices.Code.Repo.GitHub"
     ],
     "severity": "moderate",
     "patterns": [
@@ -162,11 +162,11 @@
     ]
   },
   {
-    "name": "Code Repo: GitLab",
+    "name": "Cloud Service: Code Repository (GitLab)",
     "id": "AI001300",
-    "description": "Code Repo: GitLab",
+    "description": "Cloud Service: Code Repository (GitLab)",
     "tags": [
-      "Metadata.Development.Repository.GitLab"
+      "Metadata.CloudServices.Code.Repo.GitLab"
     ],
     "severity": "moderate",
     "patterns": [
@@ -180,11 +180,11 @@
     ]
   },
   {
-    "name": "Code Repo: BitBucket",
+    "name": "Cloud Service: Code Repository (BitBucket)",
     "id": "AI001400",
-    "description": "Code Repo: BitBucket",
+    "description": "Cloud Service: Code Repository (BitBucket)",
     "tags": [
-      "Metadata.Development.Repository.BitBucket"
+      "Metadata.CloudServices.Code.Repo.BitBucket"
     ],
     "severity": "moderate",
     "patterns": [
@@ -198,11 +198,11 @@
     ]
   },
   {
-    "name": "Code Repo: SourceForge",
+    "name": "Cloud Service: Code Repository (SourceForge)",
     "id": "AI001500",
-    "description": "Code Repo: SourceForge",
+    "description": "Cloud Service: Code Repository (SourceForge)",
     "tags": [
-      "Metadata.Development.Repository.SourceForge"
+      "Metadata.CloudServices.Code.Repo.SourceForge"
     ],
     "severity": "moderate",
     "patterns": [
@@ -216,11 +216,11 @@
     ]
   },
   {
-    "name": "Code Repo: Savannah",
+    "name": "Cloud Service: Code Repository (Savannah)",
     "id": "AI001600",
-    "description": "Code Repo: Savannah",
+    "description": "Cloud Service: Code Repository (Savannah)",
     "tags": [
-      "Metadata.Development.Repository.Savannah"
+      "Metadata.CloudServices.Code.Repo.Savannah"
     ],
     "severity": "moderate",
     "patterns": [
@@ -234,11 +234,11 @@
     ]
   },
   {
-    "name": "Component PackageManager: NuGet",
+    "name": "Cloud Service: Code Package Repository (NuGet)",
     "id": "AI001700",
-    "description": "Component PackageManager: NuGet",
+    "description": "Cloud Service: Code Package Repository (NuGet)",
     "tags": [
-      "Metadata.Development.PackageManager.Microsoft.NuGet"
+      "Metadata.CloudServices.Code.Repo.Microsoft.NuGet"
     ],
     "severity": "moderate",
     "patterns": [
@@ -252,11 +252,11 @@
     ]
   },
   {
-    "name": "Component PackageManager: NPM",
+    "name": "Cloud Service: Code Package Repository (NPM)",
     "id": "AI001800",
-    "description": "Component PackageManager: NPM",
+    "description": "Cloud Service: Code Package Repository (NPM)",
     "tags": [
-      "Metadata.Development.PackageManager.NPM"
+      "Metadata.CloudServices.Code.Repo.NPM"
     ],
     "severity": "moderate",
     "patterns": [
@@ -264,17 +264,16 @@
         "pattern": "npm",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
+        "modifiers": [ "i" ]
       }
     ]
   },
   {
-    "name": "Component PackageManager: PyPI",
+    "name": "Cloud Service: Code Package Repository (PyPI)",
     "id": "AI001900",
-    "description": "v: PyPI",
+    "description": "Cloud Service: Code Package Repository (PyPI)",
     "tags": [
-      "Metadata.Development.PackageManager.PyPI"
+      "Metadata.CloudServices.Code.Repo.PyPI"
     ],
     "severity": "moderate",
     "patterns": [
@@ -288,11 +287,11 @@
     ]
   },
   {
-    "name": "Component PackageManager: LaunchPad",
+    "name": "Cloud Service: Code Package Repository (LaunchPad)",
     "id": "AI002000",
-    "description": "Component PackageManager: LaunchPad",
+    "description": "Cloud Service: Code Package Repository (LaunchPad)",
     "tags": [
-      "Metadata.Development.PackageManager.LaunchPad"
+      "Metadata.CloudServices.Code.Repo.LaunchPad"
     ],
     "severity": "moderate",
     "patterns": [
@@ -306,14 +305,32 @@
     ]
   },
   {
-    "name": "Development CI: Travis.CI",
+    "name": "Cloud Service: Code Repository (Visual Studio)",
+    "id": "AI001410",
+    "description": "Cloud Service: Code Repository (Visual Studio)",
+    "tags": [
+      "Metadata.CloudServices.Code.Repo.VisualStudio"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "visualstudio.com",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: CI (TravisCI)",
     "id": "AI002100",
-    "description": "Development CI: Travis.CI",
+    "description": "Cloud Service: CI (TravisCI)",
     "applies_to": [
-      ".travis.yml"
+      "yaml"
     ],
     "tags": [
-      "Metadata.Build.CI.TravisCI"
+      "Metadata.CloudServices.Code.CI.TravisCI"
     ],
     "severity": "moderate",
     "patterns": [
@@ -327,14 +344,14 @@
     ]
   },
   {
-    "name": "Development CI: Circle CI",
+    "name": "Cloud Service: CI (Circle CI)",
     "id": "AI002200",
-    "description": "Development CI: Circle CI",
+    "description": "Cloud Service: CI (Circle CI)",
     "applies_to": [
-      "config.yml"
+      "yaml"
     ],
     "tags": [
-      "Metadata.Build.CI.CircleCI"
+      "Metadata.CloudServices.Code.CI.CircleCI"
     ],
     "severity": "moderate",
     "patterns": [
@@ -348,14 +365,14 @@
     ]
   },
   {
-    "name": "Development CI: Azure Pipelines",
+    "name": "Cloud Service: CI (Azure Pipelines)",
     "id": "AI002300",
-    "description": "Development CI: Azure Pipelines",
+    "description": "Cloud Service: CI (Azure Pipelines)",
     "applies_to": [
       "yaml"
     ],
     "tags": [
-      "Metadata.Build.Microsoft.AzurePipelines"
+      "Metadata.CloudServices.Code.CI.Microsoft.Azure"
     ],
     "severity": "moderate",
     "patterns": [
@@ -369,11 +386,11 @@
     ]
   },
   {
-    "name": "Windows App Store",
+    "name": "Cloud Service: Hosting App Store (Windows)",
     "id": "AI002400",
-    "description": "Windows App Store",
+    "description": "Cloud Service: Hosting App Store (Windows)",
     "tags": [
-      "CloudServices.Application.Microsoft.AppStore"
+      "Metadata.CloudServices.Hosting.Microsoft.AppStore"
     ],
     "severity": "moderate",
     "patterns": [

@@ -1,8 +1,8 @@
 [
   {
-    "name": "OS: User Account (Write)",
+    "name": "OS: User Account Write (Add)",
     "id": "AI038700",
-    "description": "OS: User Account (Write)",
+    "description": "OS: User Account Write (Add)",
     "applies_to": [
       "csharp"
     ],
@@ -23,9 +23,9 @@
     ]
   },
   {
-    "name": "OS: User Account (Write)",
+    "name": "OS: User Account Write (Modify)",
     "id": "AI038800",
-    "description": "OS: User Account (Write)",
+    "description": "OS: User Account Write (Modify)",
     "applies_to": [
       "csharp"
     ],

@@ -1,13 +1,13 @@
 [
   {
-    "name": "OS Operation: ACL",
+    "name": "OS Operation: ACL Write (FileSecurity)",
     "id": "AI033500",
     "description": "OS Operation: ACL",
     "applies_to": [
       "csharp"
     ],
     "tags": [
-      "OS.ACL.FileSecurity"
+      "OS.ACL.Write.FileSecurity"
     ],
     "severity": "moderate",
     "patterns": [
@@ -19,14 +19,30 @@
         ],
         "confidence": "high"
       }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "SetAccessControl|RemoveAccessRule",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
+      }
     ]
   },
   {
-    "name": "OS Operation: ACL (Write)",
+    "name": "OS Operation: ACL Write (General)",
     "id": "AI033600",
     "description": "OS Operation: ACL (Write)",
     "applies_to": [
-      "csharp"
+      "java"
     ],
     "tags": [
       "OS.ACL.Write"
@@ -34,7 +50,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "SetNamedSecurityInfo|SetEntriesInAcl",
+        "pattern": "acl.(remove|add)",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -49,10 +65,11 @@
     "description": "OS Operation: ACL (Write)",
     "applies_to": [
       "c",
-      "cpp"
+      "cpp",
+      ""
     ],
     "tags": [
-      "OS.ACL.Write"
+      "OS.ACL.Write.General"
     ],
     "severity": "moderate",
     "patterns": [
@@ -83,7 +100,7 @@
       "cpp"
     ],
     "tags": [
-      "OS.ACL.Audit.Write"
+      "OS.ACL.Write.Audit"
     ],
     "severity": "moderate",
     "patterns": [
@@ -106,11 +123,11 @@
     ]
   },
   {
-    "name": "OS Operation: ACL Token Impersonation",
+    "name": "OS Operation: ACL (Impersonation)",
     "id": "AI033900",
-    "description": "OS Operation: ACL Token Impersonation",
+    "description": "OS Operation: ACL (Impersonation)",
     "tags": [
-      "OS.ACL.TokenImpersonation"
+      "OS.ACL.Impersonation"
     ],
     "severity": "moderate",
     "patterns": [
@@ -120,15 +137,15 @@
         "scopes": [
           "code"
         ],
-        "confidence": "low",
+        "confidence": "medium",
         "_comment": ""
       }
     ]
   },
   {
-    "name": "OS Operation: ACL Token Impersonation",
+    "name": "OS Operation: ACL (Impersonation)",
     "id": "AI034000",
-    "description": "OS Operation: ACL Token Impersonation",
+    "description": "OS Operation: ACL (Impersonation)",
     "applies_to": [
       "c",
       "cpp"
@@ -149,9 +166,9 @@
     ]
   },
   {
-    "name": "OS Operation: ACL Token Impersonation",
+    "name": "OS Operation: ACL (Impersonation)",
     "id": "AI034100",
-    "description": "OS Operation: ACL Token Impersonation",
+    "description": "OS Operation: ACL (Impersonation)",
     "applies_to": [
       "csharp"
     ],
@@ -171,14 +188,14 @@
     ]
   },
   {
-    "name": "OS Operation: ACL Impersonation (App Container)",
+    "name": "OS Operation: ACL (Impersonation)",
     "id": "AI034200",
-    "description": "OS Operation: ACL Impersonation (App Container)",
+    "description": "OS Operation: ACL (Impersonation)",
     "applies_to": [
       "csharp"
     ],
     "tags": [
-      "OS.ACL.AppContainer.TokenImpersonation"
+      "OS.ACL.TokenImpersonation"
     ],
     "severity": "moderate",
     "patterns": [
@@ -193,15 +210,15 @@
     ]
   },
   {
-    "name": "OS Operation: ACL Impersonation (App Container)",
+    "name": "OS Operation: ACL Write (App Container)",
     "id": "AI034300",
-    "description": "OS Operation: ACL Impersonation (App Container)",
+    "description": "OS Operation: ACL (App Container)",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "OS.ACL.AppContainer.TokenImpersonation"
+      "OS.ACL.Write.AppContainer"
     ],
     "severity": "moderate",
     "patterns": [
@@ -216,15 +233,15 @@
     ]
   },
   {
-    "name": "OS Operation: ACL System Token (Write)",
+    "name": "OS Operation: ACL Write (System Token)",
     "id": "AI034400",
-    "description": "OS Operation: ACL System Token (Write)",
+    "description": "OS Operation: ACL Write (System Token)",
     "applies_to": [
       "c",
       "cpp"
     ],
     "tags": [
-      "OS.ACL.SystemToken.Write"
+      "OS.ACL.Write.SystemToken."
     ],
     "severity": "moderate",
     "patterns": [
@@ -280,14 +297,14 @@
     ]
   },
   {
-    "name": "OS Operation: Elevated Permissions",
+    "name": "OS Operation: Enable Elevated Permissions",
     "id": "AI034700",
-    "description": "OS Operation: Elevated Permissions",
+    "description": "OS Operation: Enable Elevated Permissions",
     "applies_to": [
       "package.json"
     ],
     "tags": [
-      "OS.ACL.Permission.Elevated"
+      "Metadata.OS.ACL.Write.Unsafe"
     ],
     "severity": "moderate",
     "patterns": [
