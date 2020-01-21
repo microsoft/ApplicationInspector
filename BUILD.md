@@ -2,8 +2,9 @@
 
 ## Pre-requisites
 
-### CLI + GUI:
+### .NET Core:
 - .NET Core 3.0 or better (https://dotnet.microsoft.com/download/dotnet-core/3.0)
+- Download the application code as a zip and expand or clone in Visual Studio 2019 and simply build in IDE
 
 ## Building
 
