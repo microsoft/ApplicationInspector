@@ -22,7 +22,10 @@ namespace Microsoft.AppInspector
 {
     public class AnalyzeCommand : ICommand
     {
-        readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Do not analyze files larger than 5 MB
+        readonly int MAX_ZIP_FILE_SIZE = 1024 * 1000 * 15;  // Don't unzip files larger than 15 MB 
+        readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
+        readonly int MAX_HTML_REPORT_FILE_SIZE = 1024 * 1000 * 1;  // Warn about potential slow rendering
+        readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
         // Enable processing compressed files
         readonly string[] COMPRESSED_EXTENSIONS = "zip,gz,gzip,gem,tar,tgz,tar.gz,xz,7z".Split(",");
@@ -199,15 +202,21 @@ namespace Microsoft.AppInspector
 
             //Set output type, format and outstream
             _outputWriter = WriterFactory.GetWriter(_arg_fileFormat ?? "text", (string.IsNullOrEmpty(_arg_outputFile)) ? null : "text", _arg_outputTextFormat);
-            if (!string.IsNullOrEmpty(_arg_outputFile))
+            if (_arg_fileFormat == "html")
             {
-                 if (_arg_fileFormat != "html")
-                    _outputWriter.TextWriter = File.CreateText(_arg_outputFile);//not needed if html output since application controlled
-
+                if (!string.IsNullOrEmpty(_arg_outputFile)) 
+                    WriteOnce.Info("output file ignored for html format");
+                _outputWriter.TextWriter = Console.Out;
+            }
+            else if (!string.IsNullOrEmpty(_arg_outputFile))
+            {
+                _outputWriter.TextWriter = File.CreateText(_arg_outputFile);//not needed if html output since application controlled
                 _outputWriter.TextWriter.WriteLine(Program.GetVersionString());
             }
             else
+            {
                 _outputWriter.TextWriter = Console.Out;
+            }
 
         }
 
@@ -257,7 +266,7 @@ namespace Microsoft.AppInspector
             DateTime start = DateTime.Now;          
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Analyze"));
        
-            _appProfile.MetaData.TotalFiles = _srcfileList.Count();
+            _appProfile.MetaData.TotalFiles = _srcfileList.Count();//updated for zipped files later
 
             // Iterate through all files and process against rules
             foreach (string filename in _srcfileList)
@@ -287,6 +296,12 @@ namespace Microsoft.AppInspector
                 WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOPATTERNS));
             else
                 WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Analyze"));
+
+            //html report size warning
+            if (_arg_fileFormat == "html" && new FileInfo("output.html").Length > MAX_HTML_REPORT_FILE_SIZE)
+            {
+                WriteOnce.Info(ErrMsg.GetString(ErrMsg.ID.ANALYZE_REPORTSIZE_WARN)); 
+            }
             
             return _appProfile.MatchList.Count() == 0 ? (int)ExitCode.NoMatches : 
                 (int)ExitCode.MatchesFound;
@@ -323,6 +338,7 @@ namespace Microsoft.AppInspector
         /// <param name="fileText"></param>
         void ProcessInMemory(string filePath, string fileText)
         {
+
             #region quickvalidation
             if (fileText.Length > MAX_FILESIZE)
             {
@@ -365,6 +381,10 @@ namespace Microsoft.AppInspector
 
             int totalFilesReviewed = _appProfile.MetaData.FilesAnalyzed + _appProfile.MetaData.FilesSkipped;
             int percentCompleted = (int)((float)totalFilesReviewed / (float)_appProfile.MetaData.TotalFiles * 100);
+            //reported: if a zip contains more zip files in it the total count may be off -complex.  ~workaround: freeze UI
+            if (percentCompleted > 100)
+                percentCompleted = 100;
+
             WriteOnce.General("\r" + ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted), false);
 
             #endregion
@@ -442,6 +462,10 @@ namespace Microsoft.AppInspector
             string result = "";
             try
             {
+                //some js file results may be too long for practical display
+                if (length > MAX_TEXT_SAMPLE_LENGTH)
+                    length = MAX_TEXT_SAMPLE_LENGTH;
+
                 result = fileText.Substring(index, length).Trim();
             }
             catch (Exception)
@@ -590,7 +614,7 @@ namespace Microsoft.AppInspector
             }
 
             //zip itself may be too huge for timely processing
-            if (new FileInfo(filename).Length > MAX_FILESIZE)
+            if (new FileInfo(filename).Length > MAX_ZIP_FILE_SIZE)
             {
                 throw new OpException(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_HALT, filename));
             }
