@@ -34,8 +34,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "Registry(.CurrentUser)?.(Write|CreateSubKey|Delete)",
-        "type": "regex-word",
+        "pattern": "Registry(Key)?(.*)?.(SetValue|CreateSubKey|Delete)",
+        "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
         "_comment": ""
@@ -60,6 +60,49 @@
         "scopes": [ "code" ],
         "confidence": "high",
         "_comment": "_winreg and winreg built-in modules"
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Windows Registry (Write)",
+    "id": "AI038210",
+    "description": "OS Operation: Windows Registry (Write)",
+    "tags": [
+      "OS.SystemRegistry.Write"
+    ],
+    "applies_to": [
+      "powershell"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Registry",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "(HKLM|HKCU):",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "Set-ItemProperty",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
       }
     ]
   },
@@ -115,8 +158,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RegistryKey",
-        "type": "string",
+        "pattern": "Registry",
+        "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -126,6 +169,22 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "Get-ItemProperty",
+          "type": "string",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
       }
     ]
   },
@@ -142,10 +201,11 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "Registry(.CurrentUser)?.(Read|OpenSubKey)",
-        "type": "regex-word",
+        "pattern": "Registry(Key)?(.*)?.GetValue",
+        "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high"
+        "confidence": "high",
+        "_comment": ""
       }
     ]
   }

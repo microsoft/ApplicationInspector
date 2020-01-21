@@ -1,6 +1,6 @@
 [
   {
-    "name": "Network Connection",
+    "name": "Network Connection: FTP, Telnet or Similar",
     "description": "Network Connection",
     "id": "AI031600",
     "applies_to": [
@@ -182,7 +182,7 @@
     ]
   },
   {
-    "name": "Network Connection",
+    "name": "Network Connection: HTTP",
     "description": "Network Connection",
     "id": "AI032200",
     "applies_to": [
@@ -205,8 +205,8 @@
     ]
   },
   {
-    "name": "Network Connection: HTTP",
-    "description": "Network Connection: HTTP",
+    "name": "Network Connection: HTTP Content (Ajax)",
+    "description": "Network Connection: HTTP Content (Ajax)",
     "id": "AI032300",
     "applies_to": [
       "javascript",
@@ -223,7 +223,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "jQuery AJAX"
       },
@@ -233,7 +232,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "Fetch API"
       },
@@ -243,7 +241,7 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
+        "modifiers": ["i"],
         "confidence": "high"
       }
     ]

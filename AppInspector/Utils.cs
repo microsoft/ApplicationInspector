@@ -60,11 +60,11 @@ namespace Microsoft.AppInspector
         static public String DetectSolutionType(MatchRecord match)
         {
             string result = "";
-            if (match.Issue.Rule.Tags.Any(s => s.Contains("ApplicationType")))
+            if (match.Issue.Rule.Tags.Any(s => s.Contains("Application.Type")))
             {
                 foreach (string tag in match.Issue.Rule.Tags)
                 {
-                    int index = tag.IndexOf("ApplicationType");
+                    int index = tag.IndexOf("Application.Type");
                     if (-1 != index)
                     {
                         result = tag.Substring(index + 16);
