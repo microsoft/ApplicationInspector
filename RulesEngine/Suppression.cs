@@ -58,7 +58,7 @@ namespace RulesEngine
         /// </summary>
         private void ParseLine()
         {
-            // String.Contains is faster then RegEx. Quickly test if the further parsing is necessary or not
+            // String.Contains is faster than RegEx. Quickly test if the further parsing is necessary or not
             if (!_text.Contains(KeywordPrefix))
                 return;
 
@@ -86,7 +86,7 @@ namespace RulesEngine
                     }
                 }
 
-                // parse Ids.                
+                // Parse Ids                
                 if (idString == KeywordAll)
                 {
                     _issues.Add(new SuppressedIssue()
