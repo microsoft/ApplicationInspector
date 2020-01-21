@@ -24,7 +24,7 @@
     "name": "Component: Windows DLL",
     "id": "AI005500",
     "description": "Component: Windows DLL",
-    "applies_to": [ "cpp" ],
+    "applies_to": [ "c", "cpp" ],
     "tags": [
       "Component.Executable.Microsoft.DLL"
     ],

@@ -5,7 +5,7 @@
     "description": "Development Framework: Standard C Library",
     "recommendation": "",
     "applies_to": [ "c" ],
-    "tags": [ "Framework.Development.StandardCLibrary" ],
+    "tags": [ "Framework.Development.Library.StandardC" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -22,7 +22,7 @@
     "description": "Development Framework: Boost",
     "recommendation": "",
     "applies_to": [ "c" ],
-    "tags": [ "Framework.Development.StandardCLibrary" ],
+    "tags": [ "Framework.Development.Library.Boost" ],
     "severity": "moderate",
     "patterns": [
       {

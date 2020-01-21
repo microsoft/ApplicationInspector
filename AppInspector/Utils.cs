@@ -46,7 +46,7 @@ namespace Microsoft.AppInspector
             if (!String.IsNullOrEmpty(_basePath))
                 return _basePath;
 
-            _basePath = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
+            _basePath = Path.GetFullPath(System.AppContext.BaseDirectory);
             return _basePath;
         }
 

@@ -21,7 +21,7 @@ namespace Microsoft.AppInspector
         /// <param name="app"></param>
         public override void WriteApp(AppProfile app)
         {
-            var htmlTemplateText = File.ReadAllText("html/index.html");
+            var htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
             Assembly test = Assembly.GetEntryAssembly();
             Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(), "ApplicationInspector.html.partials");
             
