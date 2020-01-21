@@ -23,6 +23,7 @@ namespace Microsoft.AppInspector
             ANALYZE_FILESIZE_SKIPPED,
             ANALYZE_FILESIZE_HALT,
             ANALYZE_OUTPUT_FILE,
+            ANALYZE_REPORTSIZE_WARN,
             CMD_PREPARING_REPORT,
             CMD_COMPLETED,
             CMD_CRITICAL_FILE_ERR,

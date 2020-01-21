@@ -124,6 +124,15 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The output.html file size is large and may render slowly.  Try alternate output format options as needed..
+        /// </summary>
+        internal static string ANALYZE_REPORTSIZE_WARN {
+            get {
+                return ResourceManager.GetString("ANALYZE_REPORTSIZE_WARN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to uncompressed.
         /// </summary>
         internal static string ANALYZE_UNCOMPRESSED_FILETYPE {

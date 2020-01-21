@@ -138,6 +138,9 @@
   <data name="ANALYZE_OUTPUT_FILE" xml:space="preserve">
     <value>See output file {0}</value>
   </data>
+  <data name="ANALYZE_REPORTSIZE_WARN" xml:space="preserve">
+    <value>The output.html file size is large and may render slowly.  Try alternate output format options as needed.</value>
+  </data>
   <data name="ANALYZE_UNCOMPRESSED_FILETYPE" xml:space="preserve">
     <value>uncompressed</value>
   </data>
