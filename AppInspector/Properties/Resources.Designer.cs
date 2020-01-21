@@ -151,7 +151,7 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to launch output.html.  Set the BROWSER environment variable to your desired browser or open file manually..
+        ///   Looks up a localized string similar to Unable to launch output.html automatically.  Set the BROWSER environment variable to your desired browser or launch your browser and navigate to the file to view the report file manually..
         /// </summary>
         internal static string BROWSER_ENVIRONMENT_VAR {
             get {
