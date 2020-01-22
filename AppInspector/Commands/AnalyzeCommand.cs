@@ -24,7 +24,6 @@ namespace Microsoft.AppInspector
     {
         readonly int MAX_ZIP_FILE_SIZE = 1024 * 1000 * 15;  // Don't unzip files larger than 15 MB 
         readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
-        readonly int MAX_HTML_REPORT_FILE_SIZE = 1024 * 1000 * 1;  // Warn about potential slow rendering
         readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
         // Enable processing compressed files
@@ -297,12 +296,6 @@ namespace Microsoft.AppInspector
             else
                 WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Analyze"));
 
-            //html report size warning
-            if (_arg_fileFormat == "html" && new FileInfo("output.html").Length > MAX_HTML_REPORT_FILE_SIZE)
-            {
-                WriteOnce.Info(ErrMsg.GetString(ErrMsg.ID.ANALYZE_REPORTSIZE_WARN)); 
-            }
-            
             return _appProfile.MatchList.Count() == 0 ? (int)ExitCode.NoMatches : 
                 (int)ExitCode.MatchesFound;
         }

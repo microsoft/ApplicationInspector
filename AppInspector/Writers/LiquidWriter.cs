@@ -14,6 +14,8 @@ namespace Microsoft.AppInspector
 {
     public class LiquidWriter : Writer
     {
+        readonly int MAX_HTML_REPORT_FILE_SIZE = 1024 * 1000 * 1;  // > 1MB warn about potential slow rendering
+
         /// <summary>
         /// Registers datatypes with html framework liquid and sets up data for use within it and used
         /// with html partial.liquid files that are embedded as resources
@@ -64,16 +66,24 @@ namespace Microsoft.AppInspector
             hashData["tagcounters"] = app.MetaData.TagCountersUI;
 
             var htmlResult = htmlTemplate.Render(hashData);
-            File.WriteAllText("output.html", htmlResult);
-           
+            string htmlOutputFilePath = Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "output.html");
+            File.WriteAllText(htmlOutputFilePath, htmlResult);
+
             //writes out json report for convenience and linking to from report page(s)
-            String jsonReportPath = Path.Combine("output.json");
+            String jsonReportPath = Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "output.json");
             Writer jsonWriter = WriterFactory.GetWriter("json", jsonReportPath);
             jsonWriter.TextWriter = File.CreateText(jsonReportPath);
             jsonWriter.WriteApp(app);
             jsonWriter.FlushAndClose();
 
-            Utils.OpenBrowser("output.html");
+            //html report size warning
+            string outputHTMLPath = Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "output.html");
+            if (File.Exists(outputHTMLPath) && new FileInfo(outputHTMLPath).Length > MAX_HTML_REPORT_FILE_SIZE)
+            {
+                WriteOnce.Info(ErrMsg.GetString(ErrMsg.ID.ANALYZE_REPORTSIZE_WARN));
+            }  
+           
+            Utils.OpenBrowser(htmlOutputFilePath);
         }
 
        
