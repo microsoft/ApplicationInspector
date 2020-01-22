@@ -6,7 +6,7 @@ Application Inspector is different from traditional static analysis tools in tha
 
 The tool includes several output formats with the default being an html report similar to the one shown here.
 
-![AppInspector-Features](https://user-images.githubusercontent.com/47648296/71859552-2dd62480-30a4-11ea-9803-fa9bdb304fd7.png)
+![AppInspector-Features](https://user-images.githubusercontent.com/47648296/72893326-9c82c700-3ccd-11ea-8944-9831ea17f3e0.png)
 
 It includes a filterable confidence indicator to help minimize false positives matches as well as customizable default rules and conditional match logic.  
 
@@ -14,7 +14,7 @@ Be sure to see our project wiki page for more help https://Github.com/Microsoft/
 
 # Goals
 
-Application Inspector **can inform you better** for choosing the best component to meet your needs with a smaller footprint of unknowns which is very important to keeping the attack surface small.  It enables you to avoid inclusion of features you don't want for the problem, system or context your app will run in.  
+Application Inspector helps **inform you better** when choosing the best component to meet your needs with a smaller footprint of unknowns which is important to keeping the attack surface small.  It helps you to avoid inclusion of components with unexpected features you don't want in your app.  
 
 Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. For instance, it can also help **identify feature deltas** or changes between versions which can be critical for detecting injection of backdoors.
 
@@ -22,7 +22,7 @@ Using Application Inspector to **automate detection** of features of interest or
 
 Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
-# Using Application Inspector
+# Getting Application Inspector
 
 To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release). If you use the .NET Core version, you will need to have .NET Core 3.0 or later installed.
 
