@@ -61,7 +61,7 @@ ERROR(S):
   Usage: dotnet AppInspector.dll [arguments] [options]
 
   dotnet AppInspector.dll -description of available commands
-  dotnet AppInspectorldll <command> -options description for a given command
+  dotnet AppInspector.dll <command> -options description for a given command
 ```
 
 ### Analyze Command
