@@ -26,9 +26,7 @@ Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedb
 
 To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release). If you use the .NET Core version, you will need to have .NET Core 3.0 or later installed.
 
-## Tags
-
-Tags represent features using a systematic heirarchal nomenclature e.g. Cryptography.Protocol.TLS.
+It might be valuable to consult the project wiki for additional background on Rules, Tags and more used to identify features.  Tags are used as a systematic heirarchal nomenclature e.g. Cryptography.Protocol.TLS to more easily represent features.
 
 ## Usage
 
