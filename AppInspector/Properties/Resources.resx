@@ -139,7 +139,7 @@
     <value>See output file {0}</value>
   </data>
   <data name="ANALYZE_REPORTSIZE_WARN" xml:space="preserve">
-    <value>The output.html file size is large and may render slowly.  Try alternate output format options as needed.</value>
+    <value>The output.html file size is large and may render slowly.  Consider running using alternate output format options as needed.</value>
   </data>
   <data name="ANALYZE_UNCOMPRESSED_FILETYPE" xml:space="preserve">
     <value>uncompressed</value>
@@ -148,10 +148,13 @@
     <value>unsupported</value>
   </data>
   <data name="BROWSER_ENVIRONMENT_VAR" xml:space="preserve">
-    <value>Unable to launch output.html automatically.  Set the BROWSER environment variable to your desired browser or launch your browser and navigate to the file to view the report file manually.</value>
+    <value>Unable to launch output.html automatically.  Set the BROWSER environment variable to your desired browser and try again or launch your browser and navigate to the file to view the report file manually.</value>
   </data>
   <data name="BROWSER_START_FAIL" xml:space="preserve">
-    <value>Unable to launch output.html in default browser.  Open manually to view report.</value>
+    <value>Unable to launch output.html in default browser.  Launch your browser manually to view output.html report file.</value>
+  </data>
+  <data name="BROWSER_START_SUCCESS" xml:space="preserve">
+    <value>Opening default browser to output.html report</value>
   </data>
   <data name="CMD_COMPLETED" xml:space="preserve">
     <value>{0} command completed</value>

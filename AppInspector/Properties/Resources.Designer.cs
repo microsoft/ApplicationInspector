@@ -124,7 +124,7 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The output.html file size is large and may render slowly.  Try alternate output format options as needed..
+        ///   Looks up a localized string similar to The output.html file size is large and may render slowly.  Consider running using alternate output format options as needed..
         /// </summary>
         internal static string ANALYZE_REPORTSIZE_WARN {
             get {
@@ -151,7 +151,7 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to launch output.html automatically.  Set the BROWSER environment variable to your desired browser or launch your browser and navigate to the file to view the report file manually..
+        ///   Looks up a localized string similar to Unable to launch output.html automatically.  Set the BROWSER environment variable to your desired browser and try again or launch your browser and navigate to the file to view the report file manually..
         /// </summary>
         internal static string BROWSER_ENVIRONMENT_VAR {
             get {
@@ -160,11 +160,20 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to launch output.html in default browser.  Open manually to view report..
+        ///   Looks up a localized string similar to Unable to launch output.html in default browser.  Launch your browser manually to view output.html report file..
         /// </summary>
         internal static string BROWSER_START_FAIL {
             get {
                 return ResourceManager.GetString("BROWSER_START_FAIL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opening default browser to output.html report.
+        /// </summary>
+        internal static string BROWSER_START_SUCCESS {
+            get {
+                return ResourceManager.GetString("BROWSER_START_SUCCESS", resourceCulture);
             }
         }
         
