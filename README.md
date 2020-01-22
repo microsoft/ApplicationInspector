@@ -18,7 +18,7 @@ Application Inspector **can inform you better** for choosing the best component 
 
 Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. For instance, it can also help **identify feature deltas** or changes between versions which can be critical for detecting injection of backdoors.
 
-Using Application Inspector to automate detection of features of interest or changes or to build a data repository of metadata regarding your enterprise applications is achievable.
+Using Application Inspector to **automate detection** of features of interest or changes or to build a data repository of metadata regarding your enterprise applications is achievable.
 
 Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
