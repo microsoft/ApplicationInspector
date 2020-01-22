@@ -14,11 +14,13 @@ Be sure to see our project wiki page for more help https://Github.com/Microsoft/
 
 # Goals
 
-Application Inspector helps **inform you better** when choosing the best component to meet your needs with a smaller footprint of unknowns which is important to keeping the attack surface small.  It helps you to avoid inclusion of components with unexpected features you don't want in your app.  
+Application Inspector helps **inform you better** for choosing the best components to meet your needs with a smaller footprint of unknowns for keeping your application attack surface smaller.  It helps you to avoid inclusion of components with unexpected features you don't want.  
 
-Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. For instance, it can also help **identify feature deltas** or changes between versions which can be critical for detecting injection of backdoors.
+Application Inspector can help **identify feature deltas** or changes between component versions which can be critical for detecting injection of backdoors.
 
-Using Application Inspector to **automate detection** of features of interest or changes or to build a data repository of metadata regarding your enterprise applications is achievable.
+It can be used to **automate detection** of features of interest to identify components that require additional scrutiny as part of your build pipeline or create a repository of metadata regarding all of your enterprise application.
+
+Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. 
 
 Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
