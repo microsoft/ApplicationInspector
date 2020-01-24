@@ -150,6 +150,10 @@ namespace Microsoft.AppInspector
                 string file1TagsJson = File.ReadAllText(tmp1);
                 string file2TagsJson = File.ReadAllText(tmp2);
 
+                //fix #97 adjust for app version in structure change
+                file1TagsJson = file1TagsJson.Substring(file1TagsJson.IndexOf("["));
+                file2TagsJson = file2TagsJson.Substring(file2TagsJson.IndexOf("["));
+
                 var file1Tags = JsonConvert.DeserializeObject<TagsFile[]>(file1TagsJson).First();
                 var file2Tags = JsonConvert.DeserializeObject<TagsFile[]>(file2TagsJson).First();
 

@@ -80,17 +80,6 @@ namespace RulesEngine
             return result;
         }
 
-        /// <summary>
-        /// Analyzes given line of code
-        /// </summary>
-        /// <param name="text">Source code</param>
-        /// <param name="language">Language</param>
-        /// <returns>Array of matches</returns>
-        public Issue[] Analyze(string text, string language)
-        {
-            return Analyze(text, new string[] { language });
-        }
-
 
         /// <summary>
         /// Analyzes given line of code
@@ -98,8 +87,9 @@ namespace RulesEngine
         /// <param name="text">Source code</param>
         /// <param name="languages">List of languages</param>
         /// <returns>Array of matches</returns>
-        public Issue[] Analyze(string text, string[] languages)
+        public Issue[] Analyze(string text, LanguageInfo languageInfo)
         {
+            string[] languages = new string[] { languageInfo.Name };
             // Get rules for the given content type
             IEnumerable<Rule> rules = GetRulesForLanguages(languages);
             List<Issue> resultsList = new List<Issue>();
@@ -155,7 +145,12 @@ namespace RulesEngine
                                     passedConditions = false;
                                     break;
                                 }
+                               
                             }
+
+                            //do not accept features from build type files (only metadata) to avoid false positives that are not part of the executable program
+                            if (languageInfo.Type == LanguageInfo.LangFileType.Build && rule.Tags.Any(v => !v.Contains("Metadata")))
+                                passedConditions = false;
 
                             if (passedConditions)
                             {

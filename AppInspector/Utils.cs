@@ -67,7 +67,7 @@ namespace Microsoft.AppInspector
                     int index = tag.IndexOf("Application.Type");
                     if (-1 != index)
                     {
-                        result = tag.Substring(index + 16);
+                        result = tag.Substring(index + 17);
                         break;
                     }
                 }

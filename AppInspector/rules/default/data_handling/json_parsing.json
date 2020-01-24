@@ -29,7 +29,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "JSON.createParser",
+        "pattern": "JSON\\.createParser|JObject\\.Parse",
         "type": "regex",
         "scopes": [
           "code"

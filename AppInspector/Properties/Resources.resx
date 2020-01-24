@@ -227,7 +227,7 @@
     <value>failed</value>
   </data>
   <data name="TAGTEST_RESULTS_NONE" xml:space="preserve">
-    <value>None</value>
+    <value>none</value>
   </data>
   <data name="TAGTEST_RESULTS_SUCCESS" xml:space="preserve">
     <value>succeeded</value>

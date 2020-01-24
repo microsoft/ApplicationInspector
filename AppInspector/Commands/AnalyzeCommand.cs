@@ -309,6 +309,8 @@ namespace Microsoft.AppInspector
         /// <param name="filename"></param>
         void ProcessAsFile(string filename)
         {
+
+
             if (File.Exists(filename))
             {
                 _appProfile.MetaData.FileNames.Add(filename);
@@ -383,7 +385,7 @@ namespace Microsoft.AppInspector
             #endregion
 
             //process file against rules
-            Issue[] matches = _rulesProcessor.Analyze(fileText, languageInfo.Name);
+            Issue[] matches = _rulesProcessor.Analyze(fileText, languageInfo);
 
             //if any matches found for this file...
             if (matches.Count() > 0)

@@ -1,8 +1,8 @@
 [
   {
-    "name": "Social Media (Facebook)",
+    "name": "Social Media: Facebook",
     "id": "AI003700",
-    "description": "Social Media (Facebook)",
+    "description": "Social Media Facebook",
     "tags": [
       "CloudServices.SocialMedia.Facebook"
     ],
@@ -18,7 +18,7 @@
     ]
   },
   {
-    "name": "Social Media (Twitter)",
+    "name": "Social Media: Twitter",
     "id": "AI003800",
     "description": "Social Media (Twitter)",
     "tags": [
@@ -36,7 +36,7 @@
     ]
   },
   {
-    "name": "Social Media (YouTube)",
+    "name": "Social Media: YouTube",
     "id": "AI003900",
     "description": "Social Media (YouTube)",
     "tags": [
@@ -54,9 +54,9 @@
     ]
   },
   {
-    "name": "Social Media (Instagram)",
+    "name": "Social Media: Instagram",
     "id": "AI004000",
-    "description": "Social Media (Instagram)",
+    "description": "Social Media: Instagram",
     "tags": [
       "CloudServices.SocialMedia.Instagram"
     ],
@@ -72,9 +72,9 @@
     ]
   },
   {
-    "name": "Social Media (Misc)",
+    "name": "Social Media: Misc",
     "id": "AI004100",
-    "description": "Social Media (Misc)",
+    "description": "Social Media: Misc",
     "tags": [
       "CloudServices.SocialMedia.Misc"
     ],
