@@ -49,7 +49,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "parseFromString(.*,\"text\/xml\")|xhttp\\.responseXML",
+        "pattern": "parseFromString\\(.*,\"text\/xml\"\\)|xhttp\\.responseXML",
         "type": "regex-word",
         "confidence": "high",
         "scopes": [

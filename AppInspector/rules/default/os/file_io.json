@@ -36,7 +36,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\bFile\\.Read.*\\b",
+        "pattern": "\\bFile\\.Read",
         "type": "regex",
         "scopes": [
           "code"

@@ -85,15 +85,6 @@
         ],
         "confidence": "high",
         "_comment": ""
-      },
-      {
-        "pattern": "cosmosdb",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
-        "confidence": "high",
-        "_comment": ""
       }
     ]
   },
@@ -160,7 +151,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "azure::storage|#include <was\/storage_account.h>",
+        "pattern": "azure::storage|#include <was\/storage_account\\.h>",
         "type": "regex",
         "scopes": [
           "code"
