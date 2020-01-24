@@ -26,7 +26,7 @@ Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedb
 
 # Contribute
 
-We have a strong default starting base for feature detection.  There are many feature identification patterns yet to be defined and we invite you to submit ideas on what you want to see.  This is a chance to literally impact the open source ecosystem helping provide a tool that everyone can use.  See the [Rules](https://github.com/microsoft/applicationinspector/wiki) section of the wiki for more.
+We have a strong default starting base of Rules for feature detection.  But there are many feature identification patterns yet to be defined and we invite you to **submit ideas** on what you want to see or take a crack at defining a few.  This is a chance to literally impact the open source ecosystem helping provide a tool that everyone can use.  See the [Rules](https://github.com/microsoft/applicationinspector/wiki) section of the wiki for more.  
 
 # Getting Application Inspector
 
