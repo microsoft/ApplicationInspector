@@ -74,7 +74,7 @@ ERROR(S):
 
   Arguments:
   -s, --source-path             Required. Path to source code to inspect (required)
-  -o, --output-file-path        Path to output file
+  -o, --output-file-path        Path to output file.  Ignored with -f html option which auto creates output.html
   -f, --output-file-format      (Default: html) Output format [html|json|text]
   -e, --text-format             (Default: Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m) 
   -r, --custom-rules-path       Custom rules path
@@ -118,15 +118,15 @@ Use to analyze and report on differences in tags (features) between two project 
 ```
 ##### Simplist way to see the delta in tag features between two projects
 ```
-  dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2
+  dotnet AppInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2
 ```
 ##### Basic use
 ```
-  dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t equality
+  dotnet AppInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2 -t equality
 ```
 ##### Basic use
 ```
-  dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t inequality
+  dotnet AppInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2 -t inequality
 ```
 ### TagTest Command
 
@@ -153,15 +153,15 @@ Otherwise, testing for all default rules present in source will likely yield a f
 ```
 #### Simplest use to see if a set of rules are all present in a project
 ```
-  dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json
+  dotnet AppInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json
 ```
 #### Basic use
 ```
-  dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulespresent
+  dotnet AppInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json -t rulespresent
 ```
 #### Basic use
 ```
-  dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
+  dotnet AppInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
 ```
 ### ExportTags Command
 
