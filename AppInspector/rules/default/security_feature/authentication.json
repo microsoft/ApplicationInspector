@@ -351,7 +351,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "AuthenticationHeaderValue(\"SAML\"",
+        "pattern": "AuthenticationHeaderValue(\"SAML\")",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
