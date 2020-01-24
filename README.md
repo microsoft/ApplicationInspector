@@ -24,6 +24,10 @@ Basically, we created Application Inspector to help us identify risky third part
 
 Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
+# Contribute
+
+We have a strong default starting base for feature detection.  There are many feature identification patterns yet to be defined and we invite you to submit ideas on what you want to see.  This is a chance to literally impact the open source ecosystem helping provide a tool that everyone can use.  See the [Rules](https://github.com/microsoft/applicationinspector/wiki) section of the wiki for more.
+
 # Getting Application Inspector
 
 To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release). If you use the .NET Core version, you will need to have .NET Core 3.0 or later installed.
