@@ -9,7 +9,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "xml|sax|xpath|xmldom|xelement|xmldocument",
+        "pattern": "sax|xpath|xmldom|xelement|xmldocument",
         "type": "regex-word",
         "confidence": "high",
         "scopes": [

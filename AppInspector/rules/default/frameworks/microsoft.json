@@ -78,8 +78,14 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "ServiceContract|using System\\.ServiceModel|WSHttpBinding",
+        "pattern": "ServiceContract|using System\\.ServiceModel|WSHttpBinding|[HttpGet]|[HttpPut]",
         "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      },
+      {
+        "pattern": "Controller\\b",
+        "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ]
       }
@@ -222,9 +228,10 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "ASP\\.NET|MVC",
+        "pattern": "ASP\\.NET|\\b\\.MVC\\b",
         "type": "regex",
         "scopes": [ "code" ],
+        "modifiers": ["i"],
         "_comment": ""
       }
     ]

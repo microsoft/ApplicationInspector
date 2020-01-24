@@ -156,7 +156,10 @@ namespace Microsoft.AppInspector
             {
                 //results
                 WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
-                WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+                if (_arg_tagTestType == TagTestType.RulesPresent)
+                    WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+                else
+                    WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
 
                 WriteOnce.FlushAll();
                 WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagtest"));
@@ -168,6 +171,7 @@ namespace Microsoft.AppInspector
 
             //assumed (result == AnalyzeCommand.ExitCode.MatchesFound)
             string file1TagsJson = File.ReadAllText(tmp1);
+            file1TagsJson = file1TagsJson.Substring(file1TagsJson.IndexOf("["));
             var file1TagsObj = JsonConvert.DeserializeObject<TagsFile[]>(file1TagsJson);
             var file1Tags = file1TagsObj.First(); // here we have a single FileList object
             File.Delete(tmp1);

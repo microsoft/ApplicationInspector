@@ -387,7 +387,7 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to None.
+        ///   Looks up a localized string similar to none.
         /// </summary>
         internal static string TAGTEST_RESULTS_NONE {
             get {

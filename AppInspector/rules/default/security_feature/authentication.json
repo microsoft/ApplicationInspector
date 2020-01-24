@@ -17,7 +17,7 @@
         "_comment": ""
       },
       {
-        "pattern": "System.IdentityModel.Tokens.Jwt|AzureADB2C|SingleAccountPublicClientApplication|MultipleAccountPublicClientApplication",
+        "pattern": "System\\.IdentityModel|AzureADB2C|SingleAccountPublicClientApplication|MultipleAccountPublicClientApplication",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -25,11 +25,61 @@
         "_comment": ""
       },
       {
-        "pattern": "adal|msal|AAD|Microsoft.IdentityModel|passport.net",
+        "pattern": "microsoft\\.aad|adal|msal|AADClient|Microsoft\\.IdentityModel|passport\\.net|ServicePrincipalCredentials",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "AuthenticationResult|MsalServiceException",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "aad",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Authentication: Microsoft (Identity)",
+    "id": "AI038910",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Authentication.Microsoft.Online"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "AcquireTokenForClient|ConfidentialClientApplicationBuilder",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "\\.WithClientClaims\\(*cert*)|\\.WithCertificate\\(",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": "negate cases for certificate rule identifying client TLS auth"
+        },
+        "search_in": "finding-region(-10,10)",
+        "negate_finding": true,
         "_comment": ""
       }
     ]
@@ -79,7 +129,7 @@
         "_comment": ""
       },
       {
-        "pattern": "auth_token|access_token|client_credentials|client_*id|client_*secret",
+        "pattern": "auth.?token|access.?token|client.?credentials|client.?id|client.?secret|api.?key",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -133,7 +183,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "active( |_)*directory|ADFS",
+        "pattern": "active.?directory|ADFS",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -144,12 +194,11 @@
         "pattern": "ADsOpenObject|ADObject|ADComputer|ADGroup|ADUser|ADContainer|ADDomain",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },
       {
-        "pattern": "Microsoft\\.IdentityModel",
+        "pattern": "Microsoft\\.IdentityModel\\.ActiveDirectory",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -221,6 +270,32 @@
     ]
   },
   {
+    "name": "Authentication: Microsoft Windows (Kerberos)",
+    "id": "AI039510",
+    "description": "AAuthentication: Microsoft Windows (Kerberos)",
+    "applies_to": [
+      "c",
+      "cpp",
+      "python",
+      "java",
+      "csharp"
+    ],
+    "tags": [
+      "Authentication.Microsoft.Windows.Kerberos"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "WindowsIdentity|WindowsPrincipal|Kerberos",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "possible use for NTLM but default is Kerberos"
+      }
+    ]
+  },
+  {
     "name": "Authentication: JWT",
     "id": "AI039600",
     "description": "Authentication: JWT",
@@ -230,7 +305,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "jwt|RFC 7519|System\\.IdentityModel\\.Tokens\\.Jwt",
+        "pattern": "jwt|RFC 7519|System\\.IdentityModel\\.Tokens\\.Jwt|JwtSecurityToken|JsonWebToken",
         "type": "regex-word",
         "scopes": [
           "code",
@@ -267,6 +342,28 @@
     "name": "Authentication: SAML",
     "id": "AI039800",
     "description": "Authentication: SAML",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Authentication.SAML"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "AuthenticationHeaderValue(\"SAML\"",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Authentication: SAML",
+    "id": "AI039810",
+    "description": "Authentication: SAML",
     "tags": [
       "Authentication.SAML"
     ],
@@ -274,14 +371,14 @@
     "patterns": [
       {
         "pattern": "SAML|saml2",
-        "type": "regex",
+        "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },
       {
-        "pattern": "federation|sso|networkcredential",
+        "pattern": "federation|sso",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -300,7 +397,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "Authorization: Basic|WWW-Authenticate",
+        "pattern": "\"Authorization: Basic|WWW-Authenticate|AuthenticationHeaderValue\\(\"Basic\"",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -319,7 +416,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "identity|auth|authenticated|authentication|log(in|on)|log(off|out)|signin|sign-?in|signout|sign-?out",
+        "pattern": "principal|identity|auth|authenticated|authentication|log(in|on)|log(off|out)|signin|sign-?in|signout|sign-?out|networkcredential",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -348,7 +445,7 @@
         "_comment": ""
       },
       {
-        "pattern": "connection_*string|conn_*string",
+        "pattern": "connection_*string|conn_*string|DefaultNetworkCredentials",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],

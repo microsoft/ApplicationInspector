@@ -58,7 +58,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "CoInitialize|CoCreateInstance|comClassInterface|CLSCTX_INPROC_SERVER|ProgId|COleControlModule|ComDefaultInterface|ComVisible|IOleInPlaceObject|IOleControl|IOleObjective",
+        "pattern": "CoInitialize|CoCreateInstance|comClassInterface|CLSCTX_INPROC_SERVER|ProgId|COleControlModule|ComDefaultInterface|IOleInPlaceObject|IOleControl|IOleObjective",
         "type": "regex-word",
         "scopes": [
           "code",

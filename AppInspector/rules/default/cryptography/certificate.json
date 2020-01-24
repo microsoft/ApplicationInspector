@@ -1,10 +1,10 @@
 [
   {
-    "name": "Cryptography: x.509 Use",
+    "name": "Cryptography: x.509 Certificate Use",
     "id": "AI006200",
     "description": "Cryptography: x.509 Certificate Use",
     "tags": [
-      "Cryptography.x509.Use"
+      "Cryptography.X509Certificates.Use"
     ],
     "severity": "moderate",
     "patterns": [
@@ -19,7 +19,7 @@
         "_comment": "do not include pfx or pem see rule below for x509 client auth"
       },
       {
-        "pattern": "PKCS|PaddingMode|SubjectIdentifier",
+        "pattern": "PKCS|PaddingMode|SubjectIdentifier|Certificate",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
@@ -29,12 +29,12 @@
     ]
   },
   {
-    "name": "Cryptography: x.509 Use",
+    "name": "Cryptography: x.509 Certificate Use",
     "id": "AI006300",
     "description": "Cryptography: x.509 Certificate Use",
-    "applies_to": ["c", "cpp", "csharp"],
+    "applies_to": [ "c", "cpp", "csharp" ],
     "tags": [
-      "Cryptography.x509.Use"
+      "Cryptography.X509Certificates.Use"
     ],
     "severity": "moderate",
     "patterns": [
@@ -51,12 +51,12 @@
     ]
   },
   {
-    "name": "Cryptography: x.509 ClientAuth",
+    "name": "Cryptography: x.509 Certificate ClientAuth",
     "id": "AI006400",
     "description": "Cryptography: x.509 Certificate ClientAuth",
     "tags": [
-      "Cryptography.x509.ClientAuth",
-      "Cryptography.x509.Keyfile"
+      "Cryptography.X509Certificates.ClientAuth",
+      "Cryptography.X509Certificates.Keyfile"
     ],
     "severity": "moderate",
     "patterns": [
@@ -73,11 +73,48 @@
     ]
   },
   {
-    "name": "Cryptography: x.509 Create",
+    "name": "Cryptography: x.509 Certificate ClientAuth",
+    "id": "AI006410",
+    "description": "Cryptography: x.509 Certificate ClientAuth",
+    "tags": [
+      "Cryptography.X509Certificates.ClientAuth"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.WithClientClaims\\(*cert*\\)|\\.WithCertificate\\(",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "AcquireTokenForClient|ConfidentialClientApplicationBuilder",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-10,10)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: x.509 Certificate Create",
     "id": "AI006500",
     "description": "Cryptography: x.509 Create Certificate",
     "tags": [
-      "Cryptography.x509.CreateCertificate"
+      "Cryptography.X509Certificates.Create"
     ],
     "severity": "moderate",
     "patterns": [
@@ -143,7 +180,7 @@
         "modifiers": [ "" ],
         "_comment": ""
       },
-          {
+      {
         "pattern": "DSAParameters",
         "type": "regex",
         "scopes": [ "code" ],
@@ -163,10 +200,11 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "sign(ing)*.*key|signature.*key|valid.*signature",
+        "pattern": "sign(ing)*.?key|signature.?key|valid.?signature|data.?sign|sign.?data",
         "type": "regex-word",
         "scopes": [
-          "code", "comment"
+          "code",
+          "comment"
         ],
         "modifiers": [ "i" ],
         "confidence": "high",
@@ -194,7 +232,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "code *sign|authenticode|sign *code",
+        "pattern": "code.?sign|authenticode|sign.?code",
         "type": "regex",
         "scopes": [
           "code"

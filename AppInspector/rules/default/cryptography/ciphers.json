@@ -106,7 +106,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RSACng|RSACryptoServiceProvider|RSAEncryptionPadding|RSAOAEPKeyExchangeDeformatter",
+        "pattern": "RSACng|RSACryptoServiceProvider|RSAEncryptionPadding|RSAOAEPKeyExchangeDeformatter|X509AsymmetricSecurityKey",
         "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high",

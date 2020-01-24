@@ -59,7 +59,7 @@
     "name": "Data: DBMS (PostgreSQL)",
     "id": "AI011000",
     "description": "Data: DBMS (PostgreSQL)",
-    "applies_to": ["javascript"],
+    "applies_to": [ "javascript" ],
     "tags": [
       "Data.DBMS.SQLite"
     ],
@@ -274,6 +274,24 @@
       }
     ]
   },
+    {
+    "name": "Data: DBMS (General)",
+    "id": "AI012000",
+    "description": "Data: DBMS (General)",
+    "applies_to": [ "csharp", "c++", "java", "python", "objective-c", "go" ],
+    "tags": [
+      "Data.DBMS.General"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "database",
+        "type": "regex-word",
+        "scopes": [ "code", "comment" ],
+        "confidence": "high"
+      }
+    ]
+  },
   {
     "name": "Data: ODBC",
     "id": "AI011900",
@@ -294,7 +312,7 @@
   },
   {
     "name": "Data: ODBC",
-    "id": "AI012000",
+    "id": "AI012010",
     "description": "Data: ODBC",
     "applies_to": [ "csharp", "c++", "java", "python", "objective-c", "go" ],
     "tags": [

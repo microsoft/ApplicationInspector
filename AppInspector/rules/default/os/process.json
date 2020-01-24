@@ -16,6 +16,15 @@
         ],
         "confidence": "high",
         "_comment": ""
+      },
+      {
+        "pattern": "async",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": ""
       }
     ]
   },
@@ -57,7 +66,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "BackgroundWorker|Task\\.Run|Async",
+        "pattern": "BackgroundWorker|Task\\.Run|Async|System.Threading",
         "type": "regex",
         "scopes": [
           "code"

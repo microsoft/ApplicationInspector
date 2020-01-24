@@ -194,7 +194,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "WebClient|HttpClient|HttpRequest|HttpWebRequest|HttpWebResponse|using System\\.Net\\.Http",
+        "pattern": "WebClient|HttpClient|HttpRequest|HttpWebRequest|HttpWebResponse|System\\.Net\\.Http|Microsoft\\.AspNetCore\\.Http",
         "type": "regex",
         "scopes": [
           "code"
@@ -485,7 +485,7 @@
     "name": "Network Connection: Modem",
     "description": "Network Connection: Modem",
     "id": "AI033400",
-    "applies_to": [ "c", "cpp", "csharp" ],
+    "applies_to": [ "c", "cpp", "csharp", "java" ],
     "tags": [
       "OS.Network.Connection.Modem"
     ],
@@ -499,6 +499,37 @@
         ],
         "modifiers": [],
         "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: General",
+    "description": "Network Connection: General",
+    "id": "AI033410",
+    "tags": [
+      "OS.Network.Connection.General"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "send.*message",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "send\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [],
+        "confidence": "medium",
         "_comment": ""
       }
     ]

@@ -2,7 +2,7 @@
   {
     "name": "CloudServices: DataStorage (Azure)",
     "id": "AI002500",
-    "description": "CloudServices: DataStorage (Azure) Table,File,Blob",
+    "description": "CloudServices: DataStorage (Azure Table,File,Blob)",
     "applies_to": [
       "csharp"
     ],
@@ -13,7 +13,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "CloudStorageAccount|Microsoft\\.Azure\\.Storage|Microsoft\\.Azure\\.Cosmos\\.Table|Microsoft\\.Azure\\.Documents",
+        "pattern": "CloudStorageAccount|Microsoft\\.Azure\\.Storage|Microsoft\\.Azure\\.Cosmos\\.Table|Microsoft\\.Azure\\.Documents|Microsoft.WindowsAzure.Storage",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -22,8 +22,8 @@
         "_comment": ""
       },
       {
-        "pattern": ".core.windows.net",
-        "type": "string",
+        "pattern": "cosmosdb",
+        "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [],
         "confidence": "high"
@@ -33,7 +33,7 @@
   {
     "name": "CloudServices: DataStorage (Azure)",
     "id": "AI002600",
-    "description": "CloudServices: DataStorage (Azure) Table,File,Blob",
+    "description": "CloudServices: DataStorage (Azure Table,File,Blob)",
     "applies_to": [
       "python",
       "java",
@@ -46,8 +46,17 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "(BlockBlobService|azure)\\.storage|cosmosdb\\.azure\\.com",
+        "pattern": "(BlockBlobService|azure)\\.storage|cosmosdb\\.azure\\.com|BlobStorageAccount",
         "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "cosmosdb",
+        "type": "regex",
         "scopes": [
           "code"
         ],
@@ -59,7 +68,7 @@
   {
     "name": "CloudServices: DataStorage (Azure)",
     "id": "AI002700",
-    "description": "CloudServices: DataStorage (Azure) Table,File,Blob",
+    "description": "CloudServices: DataStorage (Azure Table,File,Blob)",
     "applies_to": [
       "javascript"
     ],
@@ -70,6 +79,64 @@
     "patterns": [
       {
         "pattern": "\\.createBlobService|azure/storage-blob",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "cosmosdb",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (AzureKeyVault)",
+    "id": "AI002710",
+    "description": "CloudServices: DataStorage (AzureKeyVault)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "CloudServices.DataStorage.Microsoft.AzureKeyVault",
+      "Data.Sensitive.Secret"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "new ClientSecret|keyvault",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (AzureKeyVault)",
+    "id": "AI002720",
+    "description": "CloudServices: DataStorage (AzureKeyVault)",
+    "applies_to": [
+      "python",
+      "java"
+    ],
+    "tags": [
+      "CloudServices.DataStorage.Microsoft.AzureKeyVault",
+      "Data.Sensitive.Secret"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "azure\\.keyvault|KeyVaultClient|azure\\.mgmt\\.keyvault",
         "type": "regex",
         "scopes": [
           "code"
