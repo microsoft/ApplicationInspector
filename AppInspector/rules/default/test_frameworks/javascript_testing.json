@@ -660,7 +660,7 @@
     ],
     "patterns": [
       {
-        "pattern": "JSTest(\\.net)?",
+        "pattern": "JSTest\\.net",
         "type": "regex",
         "scopes": [
           "code",
