@@ -82,7 +82,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\.WithClientClaims\\(*cert*\\)|\\.WithCertificate\\(",
+        "pattern": "\\.WithClientClaims\\(.*cert.*\\)|\\.WithCertificate\\(",
         "type": "regex-word",
         "scopes": [
           "code"

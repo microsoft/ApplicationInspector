@@ -48,8 +48,56 @@
     "severity": "moderate",
     "patterns": [
       {
+        "pattern": "sqlite|python3-apsw",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "apsw",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (SQLite)",
+    "id": "AI010910",
+    "description": "Data: DBMS (SQLite)",
+    "applies_to": [ "csharp" ],
+    "tags": [
+      "Data.DBMS.SQLite"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SqliteCommand|SqliteConnection|System\\.Data\\.SQLite|Microsoft\\.Data\\.SQLite",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (SQLite)",
+    "id": "AI010920",
+    "description": "Data: DBMS (SQLite)",
+    "applies_to": [
+      "java",
+      "objective-c",
+      "php",
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "Data.DBMS.SQLite"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
         "pattern": "sqlite",
-        "type": "string",
+        "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -61,7 +109,7 @@
     "description": "Data: DBMS (PostgreSQL)",
     "applies_to": [ "javascript" ],
     "tags": [
-      "Data.DBMS.SQLite"
+      "Data.DBMS.PostgreSQL"
     ],
     "severity": "moderate",
     "patterns": [
@@ -80,7 +128,7 @@
     "description": "Data: DBMS (PostgreSQL)",
     "applies_to": [ "python" ],
     "tags": [
-      "Data.DBMS.SQLite"
+      "Data.DBMS.PostgreSQL"
     ],
     "severity": "moderate",
     "patterns": [
@@ -99,7 +147,7 @@
     "description": "Data: DBMS (PostgreSQL)",
     "applies_to": [ "csharp" ],
     "tags": [
-      "Data.DBMS.SQLite"
+      "Data.DBMS.PostgreSQL"
     ],
     "severity": "moderate",
     "patterns": [
@@ -122,7 +170,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "mongodb|mongoose|mongoclient|pymongo|redis|hbase|neo4j|cassandra|couchbase|memcached|couchdb",
+        "pattern": "mongodb|mongoose|mongoclient|pymongo|redis|hbase|neo4j|cassandra|couchbase|memcached|couchdb|litedb|LiteDatabase|tinydb",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],

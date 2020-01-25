@@ -181,23 +181,23 @@
           {
             "searchPattern": "DBMS.NOSQL",
             "displayName": "NOSQL database",
+            "detectedIcon": "fab fa-mdb"
+          },
+          {
+            "searchPattern": "DBMS.PostgreSQL",
+            "displayName": "PostgreSQL Database",
             "detectedIcon": "fas fa-archive"
           },
           {
-            "searchPattern": "DBMS.ORM",
+            "searchPattern": "DBMS.Oracle",
             "displayName": "Database ORM",
             "detectedIcon": "fas fa-map"
           },
           {
-            "searchPattern": "CloudServices.DataStorage",
-            "displayName": "Cloud data storage",
-            "detectedIcon": "fas fa-cloud-upload-alt"
-          },
-          {
-            "searchPattern": "Data.Compressed",
-            "displayName": "Zip file processing",
-            "detectedIcon": "far fa-file-archive"
-          }
+            "searchPattern": "DBMS.General",
+            "displayName": "General database",
+            "detectedIcon": "fas fa-save"
+          }       
         ]
       },
       {
@@ -225,6 +225,21 @@
             "detectedIcon": "fas fa-user-circle"
           },
           {
+            "searchPattern": "Sensitive.ProductKey",
+            "displayName": "Product key",
+            "detectedIcon": "fas fa-compact-disc"
+          },
+          {
+            "searchPattern": "CryptoCurrency",
+            "displayName": "Crypto currency",
+            "detectedIcon": "fab fa-bitcoin"
+          },
+          {
+            "searchPattern": "Sensitive.Secret",
+            "displayName": "Senstive secret",
+            "detectedIcon": "fab fa-keycdn"
+          },
+          {
             "searchPattern": "Sensitive.Financial",
             "displayName": "Financial data",
             "detectedIcon": "fas fa-money-bill"
@@ -248,7 +263,7 @@
           {
             "searchPattern": "CloudServices.DataStorage",
             "displayName": "Cloud data storage",
-            "detectedIcon": "fas fa-cloud-download-alt"
+            "detectedIcon": "fas fa-cloud-upload-alt"
           },
           {
             "searchPattern": "CloudServices.BigData",
@@ -358,6 +373,11 @@
             "searchPattern": "Data.Media",
             "displayName": "AV media",
             "detectedIcon": "fas fa-play-circle"
+          },
+          {
+            "searchPattern": "Data.Compressed",
+            "displayName": "Zip file processing",
+            "detectedIcon": "far fa-file-archive"
           },
           {
             "searchPattern": "HTMLForm.Defined",

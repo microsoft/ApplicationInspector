@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <PackageId>Microsoft.MultiExtractor</PackageId>
+    <Authors>Michael Scovetta,Guy Acosta</Authors>
+    <Company>Microsoft</Company>
+    <Description>MultiExtractor is a library for performing file extraction from many different types of file archives, recursively.</Description>
+    <Copyright>Microsoft</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
+    <PackageReference Include="sharpcompress" Version="0.24.0" />
+    <PackageReference Include="SharpZipLib" Version="1.2.0" />
+  </ItemGroup>
+
+</Project>

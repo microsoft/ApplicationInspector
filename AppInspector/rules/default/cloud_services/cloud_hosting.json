@@ -86,6 +86,62 @@
     ]
   },
   {
+    "name": "Cloud Service: Application (Telemetry)",
+    "id": "AI000810",
+    "description": "Cloud Service: Application (Telemetry)",
+    "applies_to": [ "csharp" ],
+    "tags": [
+      "CloudServices.Application.Microsoft.Telemetry"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "TelemetryClient|Microsoft\\.ApplicationInsights|MetricTelemetry",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Application (Telemetry)",
+    "id": "AI000820",
+    "description": "Cloud Service: Application (Telemetry)",
+    "applies_to": [ "javascript" ],
+    "tags": [
+      "CloudServices.Application.Microsoft.Telemetry"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "appInsights\\.trackMetric",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Application (Telemetry)",
+    "id": "AI000830",
+    "description": "Cloud Service: Application (Telemetry)",
+    "tags": [
+      "CloudServices.Application.Microsoft.Telemetry"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "applicationinsights",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
     "name": "Cloud Service: Hosting (Google Cloud)",
     "id": "AI000900",
     "description": "Cloud Service: Hosting (Google Cloud)",

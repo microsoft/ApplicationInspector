@@ -14,7 +14,7 @@ namespace Microsoft.AppInspector
 {
     public class LiquidWriter : Writer
     {
-        readonly int MAX_HTML_REPORT_FILE_SIZE = 1024 * 1000 * 1;  // > 1MB warn about potential slow rendering
+        readonly int MAX_HTML_REPORT_FILE_SIZE = 1024 * 1000 * 3;  //warn about potential slow rendering
 
         /// <summary>
         /// Registers datatypes with html framework liquid and sets up data for use within it and used

@@ -14,14 +14,14 @@
     <PackageId>ApplicationInspector</PackageId>
     <Product>Application Inspector</Product>
     <Authors>Microsoft</Authors>
-    <Version>1.0.23</Version>
+    <Version>1.0.24</Version>
     <AssemblyName>AppInspector</AssemblyName>
     <RootNamespace>ApplicationInspector</RootNamespace>
     <StartupObject>Microsoft.AppInspector.Program</StartupObject>
     <Company>Microsoft</Company>
     <SignAssembly>true</SignAssembly>
-    <AssemblyVersion>1.0.23.0</AssemblyVersion>
-    <FileVersion>1.0.23.0</FileVersion>
+    <AssemblyVersion>1.0.24.0</AssemblyVersion>
+    <FileVersion>1.0.24.0</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
@@ -59,10 +59,8 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
     <PackageReference Include="DotLiquid" Version="2.0.314" />
-    <PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NLog" Version="4.6.7" />
-    <PackageReference Include="SharpZipLib" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -118,6 +116,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MultiExtractor\MultiExtractor.csproj" />
     <ProjectReference Include="..\RulesEngine\RulesEngine.csproj" />
   </ItemGroup>
 
