@@ -1,36 +1,29 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using ICSharpCode.SharpZipLib.GZip;
-using ICSharpCode.SharpZipLib.Tar;
-using ICSharpCode.SharpZipLib.Zip;
-using MimeTypes;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ICSharpCode.SharpZipLib.Core;
 using RulesEngine;
 using System.Text.RegularExpressions; 
 using System.Text;
 using Newtonsoft.Json;
 using System.Threading;
 using NLog;
-using DotLiquid;
+using MultiExtractor;
+
 
 namespace Microsoft.AppInspector
 {
     public class AnalyzeCommand : ICommand
     {
-        readonly int MAX_ZIP_FILE_SIZE = 1024 * 1000 * 15;  // Don't unzip files larger than 15 MB 
+        readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files 
         readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
         readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
-        // Enable processing compressed files
-        readonly string[] COMPRESSED_EXTENSIONS = "zip,gz,gzip,gem,tar,tgz,tar.gz,xz,7z".Split(",");
         readonly string[] EXCLUDEMATCH_FILEPATH = "sample,example,test,docs,.vs,.git".Split(",");
-
-        Regex IgnoreMimeRegex;
 
         public enum ExitCode
         {
@@ -96,7 +89,6 @@ namespace Microsoft.AppInspector
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
             WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
 
-            IgnoreMimeRegex = new Regex(@"^(audio|video)/.*$");
 
             LastUpdated = DateTime.MinValue;
             DateScanned = DateTime.Now;
@@ -270,11 +262,11 @@ namespace Microsoft.AppInspector
             // Iterate through all files and process against rules
             foreach (string filename in _srcfileList)
             {
-                var fileExtension = new FileInfo(filename).Extension;
-                if (COMPRESSED_EXTENSIONS.Any(fileExtension.Contains))
-                    UnZipAndProcess(filename); //determine if file is a compressed item to unpackage for processing
-                else
+                ArchiveFileType archiveFileType = MiniMagic.DetectFileType(filename);
+                if (archiveFileType == ArchiveFileType.UNKNOWN)
                     ProcessAsFile(filename);
+                else
+                    UnZipAndProcess(filename,archiveFileType);
             }
 
             WriteOnce.General("\r"+ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
@@ -309,8 +301,6 @@ namespace Microsoft.AppInspector
         /// <param name="filename"></param>
         void ProcessAsFile(string filename)
         {
-
-
             if (File.Exists(filename))
             {
                 _appProfile.MetaData.FileNames.Add(filename);
@@ -331,7 +321,7 @@ namespace Microsoft.AppInspector
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="fileText"></param>
-        void ProcessInMemory(string filePath, string fileText)
+        void ProcessInMemory(string filePath, string fileText, bool zipParent=false)
         {
 
             #region quickvalidation
@@ -372,11 +362,12 @@ namespace Microsoft.AppInspector
             _appProfile.MetaData.FilesAnalyzed++;
             _appProfile.MetaData.AddLanguage(languageInfo.Name);
             _appProfile.MetaData.FileExtensions.Add(Path.GetExtension(filePath).Replace('.', ' ').TrimStart());
-            LastUpdated = File.GetLastWriteTime(filePath);
+            if (!zipParent)
+                LastUpdated = File.GetLastWriteTime(filePath);
 
             int totalFilesReviewed = _appProfile.MetaData.FilesAnalyzed + _appProfile.MetaData.FilesSkipped;
             int percentCompleted = (int)((float)totalFilesReviewed / (float)_appProfile.MetaData.TotalFiles * 100);
-            //reported: if a zip contains more zip files in it the total count may be off -complex.  ~workaround: freeze UI
+            //earlier issue now resolved so app handles mixed zipped/zipped and unzipped/zipped directories but catch all for non-critical UI
             if (percentCompleted > 100)
                 percentCompleted = 100;
 
@@ -599,206 +590,48 @@ namespace Microsoft.AppInspector
         #endregion
 
 
-        #region ZipDecompression
-
-        void UnZipAndProcess(string filename)
+        void UnZipAndProcess(string filename, ArchiveFileType archiveFileType)
         {
-            if (!File.Exists(filename))
-            {
-                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, filename));
-            }
-
             //zip itself may be too huge for timely processing
-            if (new FileInfo(filename).Length > MAX_ZIP_FILE_SIZE)
+            if (new FileInfo(filename).Length > WARN_ZIP_FILE_SIZE)
             {
-                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_HALT, filename));
+                WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_COMPRESSED_FILESIZE_WARN));
+            }
+            else
+            {
+                WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_COMPRESSED_PROCESSING));
             }
 
-            // Ignore images and other junk like that
-            var fileExtension = new FileInfo(filename).Extension;
-            var mimeType = MimeTypeMap.GetMimeType(fileExtension);
-            bool mimeMatch = false;
-            if (!IgnoreMimeRegex.IsMatch(mimeType))
+            try
             {
-                var isValidExtension = COMPRESSED_EXTENSIONS.Any(fileExtension.Contains);
-                if (isValidExtension || fileExtension == "ts")
-                    mimeMatch = true;
-                else if (mimeType.Contains("zip", StringComparison.CurrentCultureIgnoreCase) || // Should have been caught in file extensions above, but still OK.
-                    mimeType.Contains("tar", StringComparison.CurrentCultureIgnoreCase) ||
-                    mimeType.Contains("compressed", StringComparison.CurrentCultureIgnoreCase))
-                    mimeMatch = true;
+                IEnumerable<FileEntry> files = Extractor.ExtractFile(filename);
 
-                if (mimeMatch)
+                if (files.Count() > 0)
                 {
-                    // Now process the file
-                    switch (fileExtension)
+                    _appProfile.MetaData.TotalFiles +=files.Count();//additive in case additional child zip files processed
+                    _appProfile.MetaData.PackageTypes.Add(ErrMsg.GetString(ErrMsg.ID.ANALYZE_COMPRESSED_FILETYPE));
+
+                    foreach (FileEntry file in files)
                     {
-                        case ".tgz":
-                            ProcessTarGzFile(filename);
-                            break;
-                        case ".gz":
-                            if (filename.Contains(".tar.gz"))
-                            {
-                                ProcessTarGzFile(filename);
-                            }
-                            else
-                            {
-                                WriteOnce.SafeLog("no support for .gz unless .tar.gz: " + fileExtension, LogLevel.Warn);
-                                _appProfile.MetaData.PackageTypes.Add("compressed-unsupported");
-                            }
-                            break;
-                        case ".jar":
-                        case ".zip":
-                            ProcessZipFile(filename);
-                            break;
-                        case ".gem":
-                        case ".tar":
-                        case ".nupkg":
-                            WriteOnce.SafeLog($"Processing of {fileExtension} not implemented yet.", LogLevel.Warn);
-                            break;
-                        default:
-                            WriteOnce.SafeLog("no support for compressed type: " + fileExtension, LogLevel.Warn);
-                            break;
+                        WriteOnce.Log.Trace("processing zip file entry: " + file.FullPath);
+                        byte[] streamByteArray = file.Content.ToArray();
+                        ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), true);
                     }
-
-                    _appProfile.MetaData.PackageTypes.Add("compressed");
-
                 }
                 else
-                    _appProfile.MetaData.PackageTypes.Add("compressed-unsupported");
-
-
-            }
-        }
-
-        void ProcessZipFile(string filename)
-        {
-            WriteOnce.SafeLog(string.Format("Analyzing .zip file: [{0}])", filename), LogLevel.Trace);
-
-            ZipFile zipFile;
-            using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
-            using (var memoryStream = new MemoryStream())
-            {
-                zipFile = new ZipFile(fileStream);
-                _appProfile.MetaData.TotalFiles = (int)zipFile.Count;
-                foreach (ZipEntry zipEntry in zipFile)
                 {
-                    if (zipEntry.IsDirectory)
-                    {
-                        continue;
-                    }
-                    byte[] buffer = new byte[4096];
-                    var zipStream = zipFile.GetInputStream(zipEntry);
-                    if (zipEntry.Size > MAX_FILESIZE)
-                    {
-                        _appProfile.MetaData.FilesSkipped++;
-                        WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, zipEntry.Name), LogLevel.Warn);
-                        zipFile.Close();
-                        continue;
-                    }
-
-                    StreamUtils.Copy(zipStream, memoryStream, buffer);
-                    var mimeType = MimeTypeMap.GetMimeType(Path.GetExtension(zipEntry.Name));
-                    if (IgnoreMimeRegex.IsMatch(mimeType) && new FileInfo(zipEntry.Name).Extension != ".ts")
-                    {
-                        _appProfile.MetaData.FilesSkipped++;
-                        WriteOnce.SafeLog(string.Format("Ignoring zip entry [{0}]", zipEntry.Name), LogLevel.Error);
-                    }
-                    else
-                    {
-                        byte[] streamByteArray = memoryStream.ToArray();
-                        ProcessInMemory(Path.GetFileName(zipEntry.Name), Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length));
-                    }
-                    memoryStream.SetLength(0);   // Clear out the stream
+                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_COMPRESSED_ERROR, filename));
                 }
 
-                zipFile.Close();
             }
-
-        }
-
-
-        /// <summary>
-        /// Helper if no other way to get file count for progress meter
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <returns></returns>
-        int GetTarGzFileCount(string filename)
-        {
-            int count = 0;
-            using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
-            using (var gzipStream = new GZipInputStream(fileStream))
-            using (var memoryStream = new MemoryStream())
+            catch (Exception e)
             {
-                var tarStream = new TarInputStream(gzipStream);
-                TarEntry tarEntry;
-                while ((tarEntry = tarStream.GetNextEntry()) != null)
-                {
-                    if (tarEntry.IsDirectory)
-                    {
-                        continue;
-                    }
-
-                    count++;
-
-                }
-            }
-
-            Thread.Sleep(300);//give time for OS to close before full processing
-            return count;
-        }
-
-
-        void ProcessTarGzFile(string filename)
-        {
-            WriteOnce.SafeLog(string.Format("Analyzing .tar.gz file: [{0}]", filename), LogLevel.Trace);
-
-            _appProfile.MetaData.TotalFiles = GetTarGzFileCount(filename);
-
-            using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read))
-            using (var gzipStream = new GZipInputStream(fileStream))
-            using (var memoryStream = new MemoryStream())
-            {
-                var tarStream = new TarInputStream(gzipStream);
-                TarEntry tarEntry;
-                while ((tarEntry = tarStream.GetNextEntry()) != null)
-                {
-                    if (tarEntry.IsDirectory)
-                    {
-                        continue;
-                    }
-                    tarStream.CopyEntryContents(memoryStream);
-                    if (tarEntry.Size > MAX_FILESIZE)
-                    {
-                        _appProfile.MetaData.FilesSkipped++;
-                        WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, tarEntry.Name), LogLevel.Warn);
-                        tarStream.Close();
-                        continue;
-                    }
-
-                    var mimeType = MimeTypeMap.GetMimeType(Path.GetExtension(tarEntry.Name));
-                    if (IgnoreMimeRegex.IsMatch(mimeType) && new FileInfo(tarEntry.Name).Extension != ".ts")
-                    {
-                        _appProfile.MetaData.FilesSkipped++;
-                        WriteOnce.SafeLog(string.Format("Ignoring tar entry [{0}]", tarEntry.Name), LogLevel.Error);
-                    }
-                    else
-                    {
-                        //file name may contain slashes; remove prior to call
-                        byte[] streamByteArray = memoryStream.ToArray();
-                        ProcessInMemory(Path.GetFileName(tarEntry.Name), Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length));
-                    }
-
-                    memoryStream.SetLength(0);   // Clear out the stream
-                }
-
-                tarStream.Close();
+                string errmsg = ErrMsg.FormatString(ErrMsg.ID.ANALYZE_COMPRESSED_ERROR, filename);
+                WriteOnce.Error(errmsg);
+                throw new Exception(errmsg + e.Message + "\n" + e.StackTrace);
             }
 
         }
-
-        #endregion
-
 
     }
   

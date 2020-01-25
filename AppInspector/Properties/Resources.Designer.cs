@@ -61,6 +61,24 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Problem while decompressing {0}: Unzip and try running on uncompressed files..
+        /// </summary>
+        internal static string ANALYZE_COMPRESSED_ERROR {
+            get {
+                return ResourceManager.GetString("ANALYZE_COMPRESSED_ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decompressing may take longer for larger files.
+        /// </summary>
+        internal static string ANALYZE_COMPRESSED_FILESIZE_WARN {
+            get {
+                return ResourceManager.GetString("ANALYZE_COMPRESSED_FILESIZE_WARN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to compressed.
         /// </summary>
         internal static string ANALYZE_COMPRESSED_FILETYPE {
@@ -70,20 +88,20 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Decompressing files....
+        /// </summary>
+        internal static string ANALYZE_COMPRESSED_PROCESSING {
+            get {
+                return ResourceManager.GetString("ANALYZE_COMPRESSED_PROCESSING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}% source files processed.
         /// </summary>
         internal static string ANALYZE_FILES_PROCESSED_PCNT {
             get {
                 return ResourceManager.GetString("ANALYZE_FILES_PROCESSED_PCNT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to File size exceeded for {0}.  Analysis halted.  Try unzipping first..
-        /// </summary>
-        internal static string ANALYZE_FILESIZE_HALT {
-            get {
-                return ResourceManager.GetString("ANALYZE_FILESIZE_HALT", resourceCulture);
             }
         }
         

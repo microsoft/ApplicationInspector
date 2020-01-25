@@ -70,7 +70,7 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "\\.WithClientClaims\\(*cert*)|\\.WithCertificate\\(",
+          "pattern": "\\.WithClientClaims\\(.*cert.*\\)|\\.WithCertificate\\(",
           "type": "regex",
           "scopes": [
             "code"
@@ -112,9 +112,9 @@
     ]
   },
   {
-    "name": "Authentication: (Oauth)",
+    "name": "Authentication: Oauth",
     "id": "AI039100",
-    "description": "Authentication: (Oauth)",
+    "description": "Authentication: Oauth",
     "tags": [
       "Authentication.Oauth"
     ],

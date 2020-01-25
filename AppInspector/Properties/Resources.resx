@@ -117,11 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ANALYZE_COMPRESSED_ERROR" xml:space="preserve">
+    <value>Problem while decompressing {0}: Unzip and try running on uncompressed files.</value>
+  </data>
+  <data name="ANALYZE_COMPRESSED_FILESIZE_WARN" xml:space="preserve">
+    <value>Decompressing may take longer for larger files</value>
+  </data>
   <data name="ANALYZE_COMPRESSED_FILETYPE" xml:space="preserve">
     <value>compressed</value>
   </data>
-  <data name="ANALYZE_FILESIZE_HALT" xml:space="preserve">
-    <value>File size exceeded for {0}.  Analysis halted.  Try unzipping first.</value>
+  <data name="ANALYZE_COMPRESSED_PROCESSING" xml:space="preserve">
+    <value>Decompressing files...</value>
   </data>
   <data name="ANALYZE_FILESIZE_SKIPPED" xml:space="preserve">
     <value>File {0} is too large.  File skipped.</value>
