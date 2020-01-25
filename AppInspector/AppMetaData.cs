@@ -629,34 +629,40 @@ namespace Microsoft.AppInspector
 
         private string ExtractJSONValue(string s)
         {
+            string result = "";
             try
             {
                 var parts = s.Split(':');
                 var value = parts[1];
                 value = value.Replace("\"", "");
-                value = value.Trim();
-                return value;
+                result = value.Trim();
+                
             } 
             catch(Exception)
             {
-                return s;
+                result = s;
             }
+
+            return System.Net.WebUtility.HtmlEncode(result);
         }
 
 
         private string ExtractXMLValue(string s)
         {
+            string result = "";
             try
             {
                 int firstTag = s.IndexOf(">");
                 int endTag = s.IndexOf("</", firstTag);
-                string value = s.Substring(firstTag+1, endTag - firstTag - 1);
-                return value;
+                var value = s.Substring(firstTag+1, endTag - firstTag - 1);
+                result = value;
             }
             catch (Exception)
             {
-                return s;
+                result = s;
             }
+
+            return System.Net.WebUtility.HtmlEncode(result);
         }
 
         /// <summary>
@@ -665,7 +671,7 @@ namespace Microsoft.AppInspector
         /// Exludes a match if specified in preferences as a counted tag with exclude true
         /// </summary>
         /// <param name="matchRecord"></param>
-        public bool AddStandardProperties(MatchRecord matchRecord)
+        public bool AddStandardProperties(ref MatchRecord matchRecord)
         {
             bool includeAsMatch = true;
 

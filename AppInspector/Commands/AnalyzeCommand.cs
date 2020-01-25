@@ -414,7 +414,7 @@ namespace Microsoft.AppInspector
                     };
 
                     //preserve issue level characteristics as rolled up meta data of interest
-                    bool addAsFeatureMatch = _appProfile.MetaData.AddStandardProperties(record);
+                    bool addAsFeatureMatch = _appProfile.MetaData.AddStandardProperties(ref record);
 
                     //bail after extracting any dependency unique items IF user requested
                     if (_arg_outputUniqueTagsOnly && dupTagFound)
