@@ -711,7 +711,10 @@ namespace Microsoft.AppInspector
                     includeAsMatch = counter.IncludeAsMatch;//Exclude as feature matches per preferences from reporting full match details
                 }
             }
-            
+
+            //once patterns checked; prepare text for output blocking browser xss
+            matchRecord.TextSample = System.Net.WebUtility.HtmlEncode(matchRecord.TextSample);
+
             return includeAsMatch;
         }
 

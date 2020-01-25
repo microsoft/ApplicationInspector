@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Text;
 
 namespace Microsoft.AppInspector
 {
@@ -168,7 +169,7 @@ namespace Microsoft.AppInspector
             output = output.Replace("%S", match.Issue.Rule.Severity.ToString());
             output = output.Replace("%X", match.Issue.Confidence.ToString());//override rule confidence because of unstructured text vs source
             output = output.Replace("%D", match.Issue.Rule.Description);
-            output = output.Replace("%m", match.TextSample);
+            output = output.Replace("%m", System.Net.WebUtility.HtmlEncode(match.TextSample));//readability for non-browser format type
             output = output.Replace("%T", string.Join(',',match.Issue.Rule.Tags));
 
             TextWriter.WriteLine(output);
