@@ -1,28 +1,38 @@
 # Introduction 
 
-Microsoft Application Inspector is a software source code analysis tool that helps identify well-known features and other interesting characteristics of code to aid in determining **what the software is** or **what it does** by conducting an inspecting scan.
+Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining **what the software is** or **what it does**.
 
-Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it will simply report what it finds against a set of over 500 rule patterns for feature detection including features that impact security such as the use of cryptography and more.  
+Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it simply reports what it finds against a set of over 400 rule patterns for feature detection including features that impact security such as the use of cryptography and more.  This can be extremely helpful in reducing the time needed to determine what Open Source or other components do by examining the source directly rather than trusting to limited documentation or recommendations.  
+
+The tool includes several output formats with the default being an html report similar to the one shown here.
+
+![AppInspector-Features](https://user-images.githubusercontent.com/47648296/72893326-9c82c700-3ccd-11ea-8944-9831ea17f3e0.png)
 
 It includes a filterable confidence indicator to help minimize false positives matches as well as customizable default rules and conditional match logic.  
 
-Be sure to see our project wiki page for more help https://Github.com/Microsoft/ApplicationInspector/wiki for **illustrations** and additional help.
+Be sure to see our project wiki page for more help https://Github.com/Microsoft/ApplicationInspector/wiki for **illustrations** and additional information and help.
 
 # Goals
 
-Application Inspector cuts down on the time needed to determine what a component could do by quickly identifying well-known features in the code which **can inform you for choosing the best component to meet your needs with a smaller footprint of unknowns which is very important.**  It enables you to avoid inclusion of features you don't want for the problem, system or context your app will run in.  
+Application Inspector helps **inform you better** for choosing the best components to meet your needs with a smaller footprint of unknowns for keeping your application attack surface smaller.  It helps you to avoid inclusion of components with unexpected features you don't want.  
 
-Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. For instance, it **can also help identify feature deltas or changes between versions which can be critical for detecting injection of backdoors.**
+Application Inspector can help **identify feature deltas** or changes between component versions which can be critical for detecting injection of backdoors.
+
+It can be used to **automate detection** of features of interest to identify components that require additional scrutiny as part of your build pipeline or create a repository of metadata regarding all of your enterprise application.
+
+Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. 
 
 Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
-# Using Application Inspector
+# Contribute
+
+We have a strong default starting base of Rules for feature detection.  But there are many feature identification patterns yet to be defined and we invite you to **submit ideas** on what you want to see or take a crack at defining a few.  This is a chance to literally impact the open source ecosystem helping provide a tool that everyone can use.  See the [Rules](https://github.com/microsoft/applicationinspector/wiki) section of the wiki for more.  
+
+# Getting Application Inspector
 
 To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release). If you use the .NET Core version, you will need to have .NET Core 3.0 or later installed.
 
-## Tags
-
-Tags represent features using a systematic heirarchal nomenclature e.g. Cryptography.Protocol.TLS.
+It might be valuable to consult the project wiki for additional background on Rules, Tags and more used to identify features.  Tags are used as a systematic heirarchal nomenclature e.g. Cryptography.Protocol.TLS to more easily represent features.
 
 ## Usage
 
@@ -55,7 +65,7 @@ ERROR(S):
   Usage: dotnet AppInspector.dll [arguments] [options]
 
   dotnet AppInspector.dll -description of available commands
-  dotnet AppInspectorldll <command> -options description for a given command
+  dotnet AppInspector.dll <command> -options description for a given command
 ```
 
 ### Analyze Command
@@ -64,7 +74,7 @@ ERROR(S):
 
   Arguments:
   -s, --source-path             Required. Path to source code to inspect (required)
-  -o, --output-file-path        Path to output file
+  -o, --output-file-path        Path to output file.  Ignored with -f html option which auto creates output.html
   -f, --output-file-format      (Default: html) Output format [html|json|text]
   -e, --text-format             (Default: Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m) 
   -r, --custom-rules-path       Custom rules path
@@ -108,15 +118,15 @@ Use to analyze and report on differences in tags (features) between two project 
 ```
 ##### Simplist way to see the delta in tag features between two projects
 ```
-  dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2
+  dotnet AppInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2
 ```
 ##### Basic use
 ```
-  dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t equality
+  dotnet AppInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2 -t equality
 ```
 ##### Basic use
 ```
-  dotnet AppInspector.dll tagdiff /home/user/project1 /home/user/project2 -t inequality
+  dotnet AppInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2 -t inequality
 ```
 ### TagTest Command
 
@@ -143,15 +153,15 @@ Otherwise, testing for all default rules present in source will likely yield a f
 ```
 #### Simplest use to see if a set of rules are all present in a project
 ```
-  dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json
+  dotnet AppInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json
 ```
 #### Basic use
 ```
-  dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulespresent
+  dotnet AppInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json -t rulespresent
 ```
 #### Basic use
 ```
-  dotnet AppInspector.dll tagtest /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
+  dotnet AppInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
 ```
 ### ExportTags Command
 

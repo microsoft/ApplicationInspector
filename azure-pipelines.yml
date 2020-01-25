@@ -188,28 +188,6 @@ jobs:
           $tmp = (Get-FileHash "$(Build.StagingDirectory)\$name").Hash
           Add-Content $(Build.StagingDirectory)\HASHES.txt "$tmp`t$name"
         }
-  - task: EsrpCodeSigning@1
-    displayName: PGP ClearSign Hashes
-    inputs:
-      ConnectedServiceName: 'AppInspector_CodeSign'
-      FolderPath: '$(Build.StagingDirectory)'
-      Pattern: 'HASHES.txt'
-      signConfigType: 'inlineSignParams'
-      inlineOperation: |
-        [
-          {
-            "KeyCode" : "CP-450778-Pgp",
-            "OperationCode" : "PgpClearsign",
-            "Parameters" : {},
-            "ToolName" : "sign",
-            "ToolVersion" : "1.0"
-          }
-        ]
-      SessionTimeout: '60'
-      MaxConcurrency: '50'
-      MaxRetryAttempts: '5'
-  - powershell: 'Get-ChildItem -Path ''$(Build.StagingDirectory)'' CodeSign* | foreach { Remove-Item -Path $_.FullName }'
-    displayName: 'Delete Code Sign Summaries'
   - task: PublishPipelineArtifact@1
     displayName: Publish All Artifacts
     inputs:
