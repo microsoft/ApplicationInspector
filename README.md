@@ -2,7 +2,7 @@
 
 Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining **what the software is** or **what it does**.  It has received attention on [ZDNet](https://www.zdnet.com/article/microsoft-application-inspector-is-now-open-source-so-use-it-to-test-code-security/
 ), [SecurityWeek](https://www.securityweek.com/microsoft-introduces-free-source-code-analyzer), [CSOOnline](https://www.csoonline.com/article/3514732/microsoft-s-offers-application-inspector-to-probe-untrusted-open-source-code.html), [Linux.com/news](https://www.linux.com/news/microsoft-application-inspector-is-now-open-source-so-use-it-to-test-code-security/), [HelpNetSecurity](https://www.helpnetsecurity.com/2020/01/17/microsoft-application-inspector/
-), Twitter and more and was first featured on [Microsoft.com](https://www.microsoft.com/security/blog/2020/01/16/introducing-microsoft-application-inspector/) 
+), Twitter and more and was first featured on [Microsoft.com](https://www.microsoft.com/security/blog/2020/01/16/introducing-microsoft-application-inspector/).
 
 Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it simply reports what it finds against a set of over 400 rule patterns for feature detection including features that impact security such as the use of cryptography and more.  This can be extremely helpful in reducing the time needed to determine what Open Source or other components do by examining the source directly rather than trusting to limited documentation or recommendations.  
 
@@ -20,9 +20,9 @@ Application Inspector helps **inform you better** for choosing the best componen
 
 Application Inspector can help **identify feature deltas** or changes between component versions which can be critical for detecting injection of backdoors.
 
-It can be used to **automate detection** of features of interest to identify components that require additional scrutiny as part of your build pipeline or create a repository of metadata regarding all of your enterprise application.
+It can be used to **automate detection of features** of interest to identify components that require additional scrutiny as part of your build pipeline or create a repository of metadata regarding all of your enterprise application.
 
-Basically, we created Application Inspector to help us identify risky third party software components based on their specific features, but the tool is helpful in many non-security contexts as well. 
+Basically, we created Application Inspector to help us **identify risky third party software components** based on their specific features, but the tool is helpful in many non-security contexts as well. 
 
 Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
