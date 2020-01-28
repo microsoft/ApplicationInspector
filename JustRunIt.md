@@ -25,5 +25,5 @@ You can also get help directly from the application by simply typing in the appl
 or with a command to get the required and optional arguments for a given command.
 
 * AppInspector <no arguments> - to get a list of available top level commands
-* AppInspection [command] < no arguments> - to get a list of required and optional arguments to supply with the selected command
-* AppInspection [command] [arguments] -to run a given command with the required or optional parameters
+* AppInspector [command] < no arguments> - to get a list of required and optional arguments to supply with the selected command
+* AppInspector [command] [arguments] -to run a given command with the required or optional parameters
