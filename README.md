@@ -32,7 +32,7 @@ We have a strong default starting base of Rules for feature detection.  But ther
 
 # Getting Application Inspector
 
-To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release). If you use the .NET Core version, you will need to have .NET Core 3.0 or later installed.
+To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release). If you use the .NET Core version, you will need to have .NET Core 3.0 or later installed.  See the [JustRunIt.md](https://github.com/microsoft/ApplicationInspector/blob/master/JustRunIt.md) or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/master/BUILD.md) files for help.
 
 It might be valuable to consult the project wiki for additional background on Rules, Tags and more used to identify features.  Tags are used as a systematic heirarchal nomenclature e.g. Cryptography.Protocol.TLS to more easily represent features.
 
