@@ -19,7 +19,7 @@ dotnet build
 
 Linux/Mac
 ```
-make
+dotnet build
 ```
 
 ### Building a Release version
@@ -31,5 +31,5 @@ dotnet publish -c Release -r win10-x64
 
 Linux/Mac
 ```
-make release
+dotnet publish
 ```
