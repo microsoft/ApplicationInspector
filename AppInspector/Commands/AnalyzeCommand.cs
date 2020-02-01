@@ -202,7 +202,6 @@ namespace Microsoft.AppInspector
             else if (!string.IsNullOrEmpty(_arg_outputFile))
             {
                 _outputWriter.TextWriter = File.CreateText(_arg_outputFile);//not needed if html output since application controlled
-                _outputWriter.TextWriter.WriteLine(Program.GetVersionString());
             }
             else
             {
