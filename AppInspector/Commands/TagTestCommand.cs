@@ -171,7 +171,6 @@ namespace Microsoft.AppInspector
 
             //assumed (result == AnalyzeCommand.ExitCode.MatchesFound)
             string file1TagsJson = File.ReadAllText(tmp1);
-            file1TagsJson = file1TagsJson.Substring(file1TagsJson.IndexOf("["));
             var file1TagsObj = JsonConvert.DeserializeObject<TagsFile[]>(file1TagsJson);
             var file1Tags = file1TagsObj.First(); // here we have a single FileList object
             File.Delete(tmp1);
