@@ -165,12 +165,15 @@ class TemplateInsertion {
                     .text(removePrefix(match.fileName));
                 $li.append($a);
                 $('#file_listing_modal ul').append($li);
+
+                $('#match-line-number').text('Line number: ' + match.startLocationLine.toString());
             }
         }
         $('#file_listing_modal').on('shown.bs.modal', function (e) {
             $('a.content-link').first().trigger('click');
         });
 
+       
         $('#file_listing_modal').modal();
 
         
