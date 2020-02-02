@@ -43,8 +43,8 @@ Application Inspector is a command-line tool. Run it from a command line in Wind
 ```
 > dotnet AppInspector.dll or on *Windows* simply AppInspector.exe <command> <options>
 
-Microsoft Application Inspector 1.0.17
-ApplicationInspector 1.0.17
+Microsoft Application Inspector 1.0.25
+ApplicationInspector 1.0.25
 
 (c) Microsoft Corporation. All rights reserved
 
@@ -77,17 +77,17 @@ ERROR(S):
   Arguments:
   -s, --source-path             Required. Path to source code to inspect (required)
   -o, --output-file-path        Path to output file.  Ignored with -f html option which auto creates output.html
-  -f, --output-file-format      (Default: html) Output format [html|json|text]
-  -e, --text-format             (Default: Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m) 
+  -f, --output-file-format      Output format [html|json|text]. Default = html
+  -e, --text-format             Match text format specifiers 
   -r, --custom-rules-path       Custom rules path
-  -t, --tag-output-only         (Default: false) Output only contains identified tags
-  -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
-  -d, --allow-dup-tags          (Default: false) Output only contains non-unique tag matches
-  -c, --confidence-filters      (Default: high,medium) Output only if matches rule pattern confidence [<value>,] [high|medium|low]
-  -k, --file-path-exclusions    Exclude source files (none|default: sample,example,test,docs,.vs,.git)
-  -x, --console-verbosity       (Default: medium) Console verbosity [high|medium|low|none]
-  -l, --log-file-path           Log file path
-  -v, --log-file-level          (Default: Error) Log file level [Debug|Info|Warn|Error|Fatal|Off]
+  -t, --tag-output-only         Output only contains identified tags. Default = false
+  -i, --ignore-default-rules    Ignore default rules bundled with application. Default = false
+  -d, --allow-dup-tags          Output only non-unique tag matches. Default = false
+  -c, --confidence-filters      Output only matches with confidence [high|medium|low].  Default = high,medium
+  -k, --file-path-exclusions    Exclude source files [none|<list>]. Default = sample,example,test,docs,.vs,.git
+  -x, --console-verbosity       Console verbosity [high|medium|low|none].  Default = medium
+  -l, --log-file-path           Log file path.  Default is <application path>/log.txt
+  -v, --log-file-level          Log file level [Debug|Info|Warn|Error|Fatal|Off].  Default = Error
 ```
 ##### Scan a project directory, with output sent to "output.html" (default behavior includes launching default browser to this file)
 ```
@@ -110,13 +110,13 @@ Use to analyze and report on differences in tags (features) between two project 
   Arguments:
   --src1                        Required. Source 1 to compare (required)
   --src2                        Required. Source 2 to compare (required
-  -t, --test-type               (Default: equality) Type of test to run [equality|inequality]
+  -t, --test-type               Type of test to run [equality|inequality].  Default = equality
   -r, --custom-rules-path       Custom rules path
-  -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
+  -i, --ignore-default-rules    Ignore default rules bundled with application.  Default = false
   -o, --output-file-path        Path to output file
-  -x, --console-verbosity       Console verbosity [high|medium|low
+  -x, --console-verbosity       Console verbosity [high|medium|low].  Default = medium
   -l, --log-file-path           Log file path
-  -v, --log-file-level          Log file level [error|trace|debug|info]
+  -v, --log-file-level          Log file level [error|trace|debug|info].  Default = error
 ```
 ##### Simplist way to see the delta in tag features between two projects
 ```
@@ -145,11 +145,11 @@ Otherwise, testing for all default rules present in source will likely yield a f
 
   Arguments:
   -s, --source-path             Required. Source to test (required)
-  -t, --test-type               (Default: rulespresent) Test to perform [rulespresent|rulesnotpresent]
+  -t, --test-type               Test to perform [rulespresent|rulesnotpresent].  Default = rulespresent
   -r, --custom-rules-path       Custom rules path 
-  -i, --ignore-default-rules    (Default: true) Ignore default rules bundled with application
+  -i, --ignore-default-rules    Ignore default rules bundled with application.  Default = true
   -o, --output-file-path        Path to output file
-  -x, --console-verbosity       Console verbosity [high|medium|low
+  -x, --console-verbosity       Console verbosity [high|medium|low].  Default = medium
   -l, --log-file-path           Log file path
   -v, --log-file-level          Log file level
 ```
@@ -173,9 +173,9 @@ Otherwise, testing for all default rules present in source will likely yield a f
 
   Arguments:
   -r, --custom-rules-path       Custom rules path
-  -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
+  -i, --ignore-default-rules    Ignore default rules bundled with application.  Default = false
   -o, --output-file-path        Path to output file
-  -x, --console-verbosity       Console verbosity [high|medium|low
+  -x, --console-verbosity       Console verbosity [high|medium|low].  Default = medium
 ```
 ##### Export default rule tags to console
 ```
@@ -197,9 +197,9 @@ Verification that ruleset is compatible and error free for import and analysis
 
   Arguments:
   -r, --custom-rules-path       Custom rules path
-  -i, --ignore-default-rules    (Default: false) Ignore default rules bundled with application
+  -i, --ignore-default-rules    Ignore default rules bundled with application.  Default = false
   -o, --output-file-path        Path to output file
-  -x, --console-verbosity       Console verbosity [high|medium|low
+  -x, --console-verbosity       Console verbosity [high|medium|low].  Default = medium.
 ```
 ##### Simplist case to verify default rules
 ```
