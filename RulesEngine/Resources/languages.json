@@ -156,11 +156,11 @@
   },
   {
     "name": "package.json",
-    "extensions": [ ".json" ],
+    "extensions": [ ],
     "type": "build"
   },
   {
-    "name": "packages.config",
+    "name": "nugetpkg",
     "extensions": [ "packages.config" ],
     "type": "build"
   },
@@ -176,22 +176,22 @@
   },
   {
     "name": "pom.xml",
-    "extensions": [ "pom.xml" ],
+    "extensions": [ ],
     "type": "build"
   },
   {
     "name": "build.xml",
-    "extensions": [ "build.xml" ],
+    "extensions": [ ],
     "type": "build"
   },
   {
     "name": "build.gradle",
-    "extensions": [ "build.gradle" ],
+    "extensions": [ ],
     "type": "build"
   },
   {
     "name": "build.make.xml",
-    "extensions": [ "build.make.xml" ],
+    "extensions": [ ],
     "type": "build"
   },
   {
@@ -201,7 +201,7 @@
   },
   {
     "name": "project.clj",
-    "extensions": [ ".clj" ],
+    "extensions": [ ],
     "type": "build"
   },
   {
@@ -211,7 +211,12 @@
   },
   {
     "name": "build.py",
-    "extensions": [ "build.py" ],
+    "extensions": [ ],
+    "type": "build"
+  },
+  {
+    "name": "typescript",
+    "extensions": [ "tsconfig.json", "typings.json" ],
     "type": "build"
   },
   {

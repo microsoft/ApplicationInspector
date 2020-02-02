@@ -129,11 +129,17 @@
   <data name="ANALYZE_COMPRESSED_PROCESSING" xml:space="preserve">
     <value>Decompressing files...</value>
   </data>
+  <data name="ANALYZE_EXCLUDED_TYPE_SKIPPED" xml:space="preserve">
+    <value>File skipped: Name or path in exclude list. {0}</value>
+  </data>
   <data name="ANALYZE_FILESIZE_SKIPPED" xml:space="preserve">
-    <value>File {0} is too large.  File skipped.</value>
+    <value>File skipped: File size is too large.  {0}</value>
   </data>
   <data name="ANALYZE_FILES_PROCESSED_PCNT" xml:space="preserve">
     <value>{0}% source files processed</value>
+  </data>
+  <data name="ANALYZE_LANGUAGE_NOTFOUND" xml:space="preserve">
+    <value>File skipped: Language not found for file {0}</value>
   </data>
   <data name="ANALYZE_NOPATTERNS" xml:space="preserve">
     <value>No pattern matches were detected for files in source path</value>

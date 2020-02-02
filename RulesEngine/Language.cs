@@ -55,8 +55,7 @@ namespace RulesEngine
                 if (item.Name == file)
                 {
                     info = item;
-                    result = true;
-                    break;
+                    return true;
                 }
             }
 
@@ -68,8 +67,7 @@ namespace RulesEngine
                     if (Array.Exists(item.Extensions, x => x.EndsWith(ext)))
                     {
                         info = item;
-                        result = true;
-                        break;
+                        return true;
                     }
                 }
             }

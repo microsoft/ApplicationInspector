@@ -10,7 +10,7 @@ namespace RulesEngine
     /// </summary>
     public class LanguageInfo
     {
-        public enum LangFileType { Code, Build, Other };
+        public enum LangFileType { Code, Build };
 
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
