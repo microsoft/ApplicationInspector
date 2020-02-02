@@ -23,8 +23,6 @@ namespace Microsoft.AppInspector
         readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
         readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
-        readonly string[] EXCLUDEMATCH_FILEPATH = "sample,example,test,docs,.vs,.git".Split(",");
-
         public enum ExitCode
         {
             NoMatches = 0,
@@ -65,7 +63,6 @@ namespace Microsoft.AppInspector
         private bool _arg_outputUniqueTagsOnly;
         private string _arg_confidenceFilters;
         private bool _arg_simpleTagsOnly;
-        private bool _arg_allowSampleFiles;
         private Confidence _arg_confidence;
         private WriteOnce.ConsoleVerbosity _arg_consoleVerbosityLevel;
 
@@ -80,11 +77,14 @@ namespace Microsoft.AppInspector
             _arg_fileFormat = opts.OutputFileFormat;
             _arg_outputTextFormat = opts.TextOutputFormat;
             _arg_outputUniqueTagsOnly = !opts.AllowDupTags;
-            _arg_allowSampleFiles = opts.AllowSampleFiles;
             _arg_customRulesPath = opts.CustomRulesPath;
             _arg_confidenceFilters = opts.ConfidenceFilters;
             _arg_ignoreDefaultRules = opts.IgnoreDefaultRules;
             _arg_simpleTagsOnly = opts.SimpleTagsOnly;
+            _fileExclusionList = opts.FilePathExclusions.Split(",").ToList<string>();
+            if (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None"))
+                _fileExclusionList.Clear();
+
             if (!Enum.TryParse(opts.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
             WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
@@ -98,7 +98,6 @@ namespace Microsoft.AppInspector
             ConfigConfidenceFilters();
             ConfigRules();
 
-            _fileExclusionList = EXCLUDEMATCH_FILEPATH.ToList<string>();
             _uniqueTagsControl = new HashSet<string>();
         }
 
@@ -606,18 +605,18 @@ namespace Microsoft.AppInspector
         /// <summary>
         /// Common validation called by ProcessAsFile and UnzipAndProcess to ensure same order and checks made
         /// </summary>
-        /// <param name="filename"></param>
+        /// <param name="filePath"></param>
         /// <param name="languageInfo"></param>
         /// <param name="fileLength">should be > zero if called from unzip method</param>
         /// <returns></returns>
-        bool FileChecksPassed(string filename, ref LanguageInfo languageInfo, long fileLength = 0)
+        bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
         {
-            _appProfile.MetaData.FileExtensions.Add(Path.GetExtension(filename).Replace('.', ' ').TrimStart());
+            _appProfile.MetaData.FileExtensions.Add(Path.GetExtension(filePath).Replace('.', ' ').TrimStart());
 
             // 1. Skip files written in unknown language
-            if (!Language.FromFileName(filename, ref languageInfo))
+            if (!Language.FromFileName(filePath, ref languageInfo))
             {
-                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_LANGUAGE_NOTFOUND, filename), LogLevel.Warn);
+                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_LANGUAGE_NOTFOUND, filePath), LogLevel.Warn);
                 _appProfile.MetaData.FilesSkipped++;
                 return false;
             }
@@ -625,9 +624,9 @@ namespace Microsoft.AppInspector
             _appProfile.MetaData.AddLanguage(languageInfo.Name);
 
             // 2. Skip excluded files i.e. sample, test or similar unless ignore filter requested
-            if (!_arg_allowSampleFiles && _fileExclusionList.Any(v => filename.ToLower().Contains(v)))
+            if (_fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
             {
-                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
+                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filePath), LogLevel.Warn);
                 _appProfile.MetaData.FilesSkipped++;
                 return false;
             }
@@ -635,17 +634,17 @@ namespace Microsoft.AppInspector
             // 3. Skip if exceeds file size limits
             try
             {
-                fileLength = fileLength <= 0 ? new FileInfo(filename).Length : fileLength;
+                fileLength = fileLength <= 0 ? new FileInfo(filePath).Length : fileLength;
                 if (fileLength > MAX_FILESIZE)
                 {
-                    WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filename), LogLevel.Warn);
+                    WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILESIZE_SKIPPED, filePath), LogLevel.Warn);
                     _appProfile.MetaData.FilesSkipped++;
                     return false;
                 }
             }
             catch (Exception)
             {
-                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, filename));
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, filePath));
             }
 
             return true;
