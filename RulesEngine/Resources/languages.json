@@ -60,6 +60,11 @@
     "type": "code"
   },
   {
+    "name": "dart",
+    "extensions": [ ".dart" ],
+    "type": "code"
+  },
+  {
     "name": "java",
     "extensions": [ ".java" ],
     "type": "code"
@@ -156,7 +161,7 @@
   },
   {
     "name": "package.json",
-    "extensions": [ ],
+    "extensions": [],
     "type": "build"
   },
   {
@@ -176,22 +181,22 @@
   },
   {
     "name": "pom.xml",
-    "extensions": [ ],
+    "extensions": [],
     "type": "build"
   },
   {
     "name": "build.xml",
-    "extensions": [ ],
+    "extensions": [],
     "type": "build"
   },
   {
     "name": "build.gradle",
-    "extensions": [ ],
+    "extensions": [],
     "type": "build"
   },
   {
     "name": "build.make.xml",
-    "extensions": [ ],
+    "extensions": [],
     "type": "build"
   },
   {
@@ -201,7 +206,7 @@
   },
   {
     "name": "project.clj",
-    "extensions": [ ],
+    "extensions": [],
     "type": "build"
   },
   {
@@ -211,7 +216,7 @@
   },
   {
     "name": "build.py",
-    "extensions": [ ],
+    "extensions": [],
     "type": "build"
   },
   {

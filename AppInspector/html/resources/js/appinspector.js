@@ -109,7 +109,7 @@ class TemplateInsertion {
                 type: 'donut'
             },
             donut: {
-                title: "Languages",
+                title: "Language Files",
                 label: {
                     format: function(value) { return value; }
                 }
