@@ -97,6 +97,15 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File skipped: Name or path in exclude list. {0}.
+        /// </summary>
+        internal static string ANALYZE_EXCLUDED_TYPE_SKIPPED {
+            get {
+                return ResourceManager.GetString("ANALYZE_EXCLUDED_TYPE_SKIPPED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}% source files processed.
         /// </summary>
         internal static string ANALYZE_FILES_PROCESSED_PCNT {
@@ -106,11 +115,20 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File {0} is too large.  File skipped..
+        ///   Looks up a localized string similar to File skipped: File size is too large.  {0}.
         /// </summary>
         internal static string ANALYZE_FILESIZE_SKIPPED {
             get {
                 return ResourceManager.GetString("ANALYZE_FILESIZE_SKIPPED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File skipped: Language not found for file {0}.
+        /// </summary>
+        internal static string ANALYZE_LANGUAGE_NOTFOUND {
+            get {
+                return ResourceManager.GetString("ANALYZE_LANGUAGE_NOTFOUND", resourceCulture);
             }
         }
         
