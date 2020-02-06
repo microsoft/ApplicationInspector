@@ -16,10 +16,6 @@ namespace MultiExtractor
     public static class Extractor
     {
         private const int BUFFER_SIZE = 4096;
-        private static int _count;
-        //private static List<FileEntry> _files;
-
-        public static int Count { get { return _count; } }
         
         public static bool IsSupportedFormat(string filename)
         {
@@ -29,31 +25,19 @@ namespace MultiExtractor
 
         public static IEnumerable<FileEntry> ExtractFile(string filename)
         {
-            _count = 0;
-            //_files = new List<FileEntry>();
             using var memoryStream = new MemoryStream(File.ReadAllBytes(filename));
-            //using var fileEntry = new FileEntry(filename, "", memoryStream);
             return ExtractFile(new FileEntry(filename, "", memoryStream));
-            //return _files;
         }
         public static IEnumerable<FileEntry> ExtractFile(string filename, ArchiveFileType archiveFileType)
         {
-            _count = 0;
-            //_files = new List<FileEntry>();
             using var memoryStream = new MemoryStream(File.ReadAllBytes(filename));
-            //using var fileEntry = new FileEntry(filename, "", memoryStream);
             return ExtractFile(new FileEntry(filename, "", memoryStream), archiveFileType);
-            //return _files;
         }
 
         public static IEnumerable<FileEntry> ExtractFile(string filename, byte[] archiveBytes)
         {
-            _count = 0;
-            //_files = new List<FileEntry>();
             using var memoryStream = new MemoryStream(archiveBytes);
-            //using var fileEntry = new FileEntry(filename, "", memoryStream);
             return ExtractFile(new FileEntry(filename, "", memoryStream));
-            //return _files;
         }
 
         #region internal
@@ -61,7 +45,6 @@ namespace MultiExtractor
         private static IEnumerable<FileEntry> ExtractFile(FileEntry fileEntry)
         {
             return ExtractFile(fileEntry, MiniMagic.DetectFileType(fileEntry));
-            //return _files;
         }
 
 
@@ -131,7 +114,6 @@ namespace MultiExtractor
                 StreamUtils.Copy(zipStream, memoryStream, buffer);
 
                 var newFileEntry = new FileEntry(zipEntry.Name, fileEntry.FullPath, memoryStream);
-                _count++;
                 foreach (var extractedFile in ExtractFile(newFileEntry))
                 {
                     files.Add(extractedFile);
@@ -156,8 +138,7 @@ namespace MultiExtractor
             }
 
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
-            _count++;
-
+            
             foreach (var extractedFile in ExtractFile(newFileEntry))
             {
                 files.Add(extractedFile);
@@ -182,7 +163,6 @@ namespace MultiExtractor
                 tarStream.CopyEntryContents(memoryStream);
 
                 var newFileEntry = new FileEntry(tarEntry.Name, fileEntry.FullPath, memoryStream);
-                _count++;
                 foreach (var extractedFile in ExtractFile(newFileEntry))
                 {
                     files.Add(extractedFile);
@@ -202,7 +182,6 @@ namespace MultiExtractor
 
             var newFilename = Path.GetFileNameWithoutExtension(fileEntry.Name);
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
-            _count++;
             foreach (var extractedFile in ExtractFile(newFileEntry))
             {
                 files.Add(extractedFile);
@@ -221,7 +200,6 @@ namespace MultiExtractor
 
             var newFilename = Path.GetFileNameWithoutExtension(fileEntry.Name);
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
-            _count++;
             foreach (var extractedFile in ExtractFile(newFileEntry))
             {
                 files.Add(extractedFile);
@@ -242,7 +220,6 @@ namespace MultiExtractor
                     continue;
                 }
                 var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
-                _count++;
                 foreach (var extractedFile in ExtractFile(newFileEntry))
                 {
                     files.Add(extractedFile);
@@ -264,7 +241,6 @@ namespace MultiExtractor
                     continue;
                 }
                 var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
-                _count++;
                 foreach (var extractedFile in ExtractFile(newFileEntry))
                 {
                     files.Add(extractedFile);
