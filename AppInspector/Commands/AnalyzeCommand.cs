@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using NLog;
 using MultiExtractor;
-
+using System.Runtime.CompilerServices;
 
 namespace Microsoft.AppInspector
 {
@@ -84,6 +84,11 @@ namespace Microsoft.AppInspector
             _fileExclusionList = opts.FilePathExclusions.Split(",").ToList<string>();
             if (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None"))
                 _fileExclusionList.Clear();
+            else
+            {
+                for (int i = 0; i < _fileExclusionList.Count; i++)
+                    _fileExclusionList[i] = _fileExclusionList[i].ToLower();
+            }
 
             if (!Enum.TryParse(opts.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
@@ -551,6 +556,14 @@ namespace Microsoft.AppInspector
 
         void UnZipAndProcess(string filename, ArchiveFileType archiveFileType)
         {
+            // zip itself may be in excluded list i.e. sample, test or similar unless ignore filter requested
+            if (_fileExclusionList.Any(v => filename.ToLower().Contains(v)))
+            {
+                WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
+                _appProfile.MetaData.FilesSkipped++;
+                return;
+            }
+
             //zip itself may be too huge for timely processing
             if (new FileInfo(filename).Length > WARN_ZIP_FILE_SIZE)
             {
@@ -574,7 +587,7 @@ namespace Microsoft.AppInspector
                     
                     foreach (FileEntry file in files)
                     {
-                        //check for supported language
+                        //check uncompressed file passes standard checks 
                         LanguageInfo languageInfo = new LanguageInfo();
                         if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                         {
@@ -585,7 +598,7 @@ namespace Microsoft.AppInspector
                 }
                 else
                 {
-                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_COMPRESSED_ERROR, filename));
+                    WriteOnce.SafeLog(string.Format("Decompression found no files in {0}", filename), LogLevel.Warn);//zero results can be valid
                 }
 
             }
