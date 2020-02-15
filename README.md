@@ -6,7 +6,7 @@ Microsoft Application Inspector is a software source code analysis tool that hel
 
 Application Inspector is different from traditional static analysis tools in that it doesn't attempt to identify "good" or "bad" patterns; it simply reports what it finds against a set of over 400 rule patterns for feature detection including features that impact security such as the use of cryptography and more.  This can be extremely helpful in reducing the time needed to determine what Open Source or other components do by examining the source directly rather than trusting to limited documentation or recommendations.  
 
-The tool supports scanning various programming languages including C, C++, C#, Java, JavaScript, HTML, Python, Objective-C, Go, Ruby, PowerShell and [more](https://github.com/microsoft/ApplicationInspector/wiki/2.1-Field:-applies_to-(languages-support)) and can scan projects with mixed langauge files.  It also includes HTML, JSON and text output formats with the default being an HTML report similar to the one shown here.
+The tool supports scanning various programming languages including C, C++, C#, Java, JavaScript, HTML, Python, Objective-C, Go, Ruby, PowerShell and [more](https://github.com/microsoft/ApplicationInspector/wiki/2.1-Field:-applies_to-(languages-support)) and can scan projects with mixed language files.  It also includes HTML, JSON and text output formats with the default being an HTML report similar to the one shown here.
 
 ![AppInspector-Features](https://user-images.githubusercontent.com/47648296/72893326-9c82c700-3ccd-11ea-8944-9831ea17f3e0.png)
 
@@ -34,7 +34,7 @@ We have a strong default starting base of Rules for feature detection.  But ther
 
 To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release). If you use the .NET Core version, you will need to have .NET Core 3.0 or later installed.  See the [JustRunIt.md](https://github.com/microsoft/ApplicationInspector/blob/master/JustRunIt.md) or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/master/BUILD.md) files for help.
 
-It might be valuable to consult the project wiki for additional background on Rules, Tags and more used to identify features.  Tags are used as a systematic heirarchal nomenclature e.g. Cryptography.Protocol.TLS to more easily represent features.
+It might be valuable to consult the project wiki for additional background on Rules, Tags and more used to identify features.  Tags are used as a systematic hierarchical nomenclature e.g. Cryptography.Protocol.TLS to more easily represent features.
 
 ## Usage
 
@@ -133,8 +133,8 @@ Use to analyze and report on differences in tags (features) between two project 
 ### TagTest Command
 
 Used to verify (pass/fail) that a specified set of rule tags is present or not present in a project e.g.
-user only wants to know true/false if crytography is present as expected or if personal data is not present
-as expected and get a simple yes/no result rather than a full analyis report.
+user only wants to know true/false if cryptography is present as expected or if personal data is not present
+as expected and get a simple yes/no result rather than a full analysis report.
 
 Note: The user is expected to use the *custom-rules-path* option rather than the default ruleset because it is 
 unlikely that any source package would contain all of the default rules.  Instead, create a custom path and rule set
