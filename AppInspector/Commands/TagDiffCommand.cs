@@ -98,6 +98,7 @@ namespace Microsoft.AppInspector
                     IgnoreDefaultRules = _arg_ignoreDefault,
                     SimpleTagsOnly = true,
                     AllowDupTags = false,
+                    FilePathExclusions = "sample,example,test,docs,.vs,.git",
                     ConsoleVerbosityLevel = "None"
                 });
                 AnalyzeCommand cmd2 = new AnalyzeCommand(new AnalyzeCommandOptions
@@ -109,6 +110,7 @@ namespace Microsoft.AppInspector
                     IgnoreDefaultRules = _arg_ignoreDefault,
                     SimpleTagsOnly = true,
                     AllowDupTags = false,
+                    FilePathExclusions = "sample,example,test,docs,.vs,.git",
                     ConsoleVerbosityLevel = "None"
                 });
 

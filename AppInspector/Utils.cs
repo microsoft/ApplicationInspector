@@ -91,6 +91,7 @@ namespace Microsoft.AppInspector
                             case ".htm":
                             case ".html":
                             case ".js":
+                            case ".ts":
                                 result = "Web.Application";
                                 break;
                             case "powershell":
