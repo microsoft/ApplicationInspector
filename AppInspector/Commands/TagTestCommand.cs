@@ -132,6 +132,7 @@ namespace Microsoft.AppInspector
                     IgnoreDefaultRules = _arg_ignoreDefaultRules,
                     SimpleTagsOnly = true,
                     AllowDupTags = false,
+                    FilePathExclusions = "sample,example,test,docs,.vs,.git",
                     ConsoleVerbosityLevel = "None"
                 });
 

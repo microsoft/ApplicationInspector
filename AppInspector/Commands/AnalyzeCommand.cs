@@ -81,14 +81,14 @@ namespace Microsoft.AppInspector
             _arg_confidenceFilters = opts.ConfidenceFilters;
             _arg_ignoreDefaultRules = opts.IgnoreDefaultRules;
             _arg_simpleTagsOnly = opts.SimpleTagsOnly;
-            _fileExclusionList = opts.FilePathExclusions.Split(",").ToList<string>();
-            if (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None"))
-                _fileExclusionList.Clear();
-            else
+
+            if (!string.IsNullOrEmpty(opts.FilePathExclusions))
             {
-                for (int i = 0; i < _fileExclusionList.Count; i++)
-                    _fileExclusionList[i] = _fileExclusionList[i].ToLower();
+                _fileExclusionList = opts.FilePathExclusions.ToLower().Split(",").ToList<string>();
+                if (_fileExclusionList != null && (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None")))
+                    _fileExclusionList.Clear();
             }
+          
 
             if (!Enum.TryParse(opts.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
