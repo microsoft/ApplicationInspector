@@ -13,7 +13,7 @@ namespace RulesEngine
     public enum Severity 
     {        
         /// <summary>
-        /// Critial issues
+        /// Critical issues
         /// </summary>
         Critical = 1,
         /// <summary>
