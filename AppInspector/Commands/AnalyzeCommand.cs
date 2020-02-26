@@ -367,7 +367,7 @@ namespace Microsoft.AppInspector
                     foreach (string t in match.Rule.Tags)
                         dupTagFound = !_uniqueTagsControl.Add(t);
 
-                    //save all unique dependendencies even if Dependency tag pattern is not-unique
+                    //save all unique dependencies even if Dependency tag pattern is not-unique
                     var tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
                     String textMatch;
                     if (match.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))

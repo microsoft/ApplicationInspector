@@ -141,7 +141,7 @@ namespace Microsoft.AppInspector
                 {
                     try
                     {
-                        Process.Start("xdg-open", url);
+                        Process.Start("xdg-open", "\"" + url + "\"");
                         WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_SUCCESS));
                     }
                     catch (Exception)
@@ -158,7 +158,7 @@ namespace Microsoft.AppInspector
             {
                 try
                 {
-                    Process.Start("open", url);
+                    Process.Start("open", "\"" + url + "\"");
                     WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_SUCCESS));
                 }
                 catch (Exception)
