@@ -46,6 +46,9 @@ namespace Microsoft.AppInspector
         [Option('d', "allow-dup-tags", Required = false, HelpText = "Output contains unique and non-unique tag matches", Default = false)]
         public bool AllowDupTags { get; set; }
 
+        [Option('b', "supress-browser-open", Required = false, HelpText = "HTML formatted output is automatically opened to default browser", Default = false)]
+        public bool AutoBrowserOpen { get; set; }
+
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; }
 

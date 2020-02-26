@@ -61,6 +61,7 @@ namespace Microsoft.AppInspector
         private string _arg_customRulesPath;
         private bool _arg_ignoreDefaultRules;
         private bool _arg_outputUniqueTagsOnly;
+        private bool _arg_autoBrowserOpen;
         private string _arg_confidenceFilters;
         private bool _arg_simpleTagsOnly;
         private Confidence _arg_confidence;
@@ -79,6 +80,7 @@ namespace Microsoft.AppInspector
             _arg_outputUniqueTagsOnly = !opts.AllowDupTags;
             _arg_customRulesPath = opts.CustomRulesPath;
             _arg_confidenceFilters = opts.ConfidenceFilters;
+            _arg_autoBrowserOpen = !opts.AutoBrowserOpen;
             _arg_ignoreDefaultRules = opts.IgnoreDefaultRules;
             _arg_simpleTagsOnly = opts.SimpleTagsOnly;
 
@@ -185,7 +187,7 @@ namespace Microsoft.AppInspector
                 }
             }
 
-            _appProfile = new AppProfile(_arg_sourcePath, rulePaths, false, _arg_simpleTagsOnly, _arg_outputUniqueTagsOnly);
+            _appProfile = new AppProfile(_arg_sourcePath, rulePaths, false, _arg_simpleTagsOnly, _arg_outputUniqueTagsOnly, _arg_autoBrowserOpen);
             _appProfile.Args = "analyze -f " + _arg_fileFormat + " -u " + _arg_outputUniqueTagsOnly.ToString().ToLower() + " -v " +
                 WriteOnce.Verbosity.ToString() + " -x " + _arg_confidence + " -i " + _arg_ignoreDefaultRules.ToString().ToLower();
         }
@@ -289,7 +291,11 @@ namespace Microsoft.AppInspector
             else if (_appProfile.MatchList.Count == 0)
                 WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOPATTERNS));
             else
+            {
                 WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Analyze"));
+                if (!_arg_autoBrowserOpen)
+                    WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, "output.html"));
+            }
 
             return _appProfile.MatchList.Count() == 0 ? (int)ExitCode.NoMatches :
                 (int)ExitCode.MatchesFound;

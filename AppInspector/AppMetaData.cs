@@ -49,6 +49,8 @@ namespace Microsoft.AppInspector
         public bool SimpleTagsOnly { get; set; }
         [JsonIgnore]
         public bool UniqueTagsOnly { get; }
+        [JsonIgnore]
+        public bool AutoBrowserOpen { get; set; }
        
 
         /// <summary>
@@ -59,7 +61,7 @@ namespace Microsoft.AppInspector
         /// <param name="excludeRollup">omit aggregated rollup e.g. simple output with matches</param>
         /// <param name="simpleTagsOnly">simple output override</param>
         /// <param name="uniqueTagsOnly">avoid duplicate tag reporting</param>
-        public AppProfile(string sourcePath, List<string> rulePaths, bool excludeRollup, bool simpleTagsOnly, bool uniqueTagsOnly)
+        public AppProfile(string sourcePath, List<string> rulePaths, bool excludeRollup, bool simpleTagsOnly, bool uniqueTagsOnly, bool autoOpenBrowser=true)
         {
             SourcePath = sourcePath;
             Version = Program.GetVersion();
@@ -76,6 +78,7 @@ namespace Microsoft.AppInspector
             ExcludeRollup = excludeRollup;
             SimpleTagsOnly = simpleTagsOnly;
             UniqueTagsOnly = uniqueTagsOnly;
+            AutoBrowserOpen = autoOpenBrowser;
 
             MetaData = new AppMetaData(sourcePath, rulePaths)
             {

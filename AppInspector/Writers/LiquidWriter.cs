@@ -83,7 +83,8 @@ namespace Microsoft.AppInspector
                 WriteOnce.Info(ErrMsg.GetString(ErrMsg.ID.ANALYZE_REPORTSIZE_WARN));
             }  
            
-            Utils.OpenBrowser(htmlOutputFilePath);
+            if (app.AutoBrowserOpen)
+                Utils.OpenBrowser(htmlOutputFilePath);
         }
 
        
