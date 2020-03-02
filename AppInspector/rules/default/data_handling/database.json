@@ -228,7 +228,7 @@
     "patterns": [
       {
         "pattern": "['\\\"](select|insert|delete|update)\\s.*",
-        "type": "regex-word",
+        "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
