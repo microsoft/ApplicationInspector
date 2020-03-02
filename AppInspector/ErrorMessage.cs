@@ -26,6 +26,7 @@ namespace Microsoft.AppInspector
             ANALYZE_COMPRESSED_FILESIZE_WARN,
             ANALYZE_COMPRESSED_PROCESSING,
             ANALYZE_COMPRESSED_ERROR,
+            ANALYZE_FILE_TYPE_OPEN,
             ANALYZE_OUTPUT_FILE,
             ANALYZE_REPORTSIZE_WARN,
             CMD_PREPARING_REPORT,

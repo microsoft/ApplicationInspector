@@ -25,10 +25,11 @@ namespace Microsoft.AppInspector
 
         public enum ExitCode
         {
-            NoMatches = 0,
-            MatchesFound = 1,
+            Success = 0,
+            NoMatches = 1,
             CriticalError = 2
         }
+
 
         IEnumerable<string> _srcfileList;
         AppProfile _appProfile;
@@ -267,11 +268,21 @@ namespace Microsoft.AppInspector
             // Iterate through all files and process against rules
             foreach (string filename in _srcfileList)
             {
-                ArchiveFileType archiveFileType = MiniMagic.DetectFileType(filename);
+                ArchiveFileType archiveFileType;
+                try //fix for #146
+                {
+                    archiveFileType = MiniMagic.DetectFileType(filename);
+                }
+                catch (Exception e)
+                {
+                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILE_TYPE_OPEN, filename));
+                }
+
                 if (archiveFileType == ArchiveFileType.UNKNOWN)//not a known zipped file type
                     ProcessAsFile(filename);
                 else
-                    UnZipAndProcess(filename,archiveFileType);
+                    UnZipAndProcess(filename, archiveFileType);
+                
             }
 
             WriteOnce.General("\r"+ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
@@ -298,7 +309,7 @@ namespace Microsoft.AppInspector
             }
 
             return _appProfile.MatchList.Count() == 0 ? (int)ExitCode.NoMatches :
-                (int)ExitCode.MatchesFound;
+                (int)ExitCode.Success;
         }
 
 

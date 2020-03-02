@@ -106,6 +106,15 @@ namespace ApplicationInspector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to determine file type.  File open error for {0}.
+        /// </summary>
+        internal static string ANALYZE_FILE_TYPE_OPEN {
+            get {
+                return ResourceManager.GetString("ANALYZE_FILE_TYPE_OPEN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}% source files processed.
         /// </summary>
         internal static string ANALYZE_FILES_PROCESSED_PCNT {
