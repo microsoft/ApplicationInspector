@@ -1,22 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>    
-    <PackageId>RulesEngine</PackageId>
-    <PackageVersion>1.0.2</PackageVersion>
+  	<OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>    
+    <PackageId>Microsoft.ApplicationInspector.RulesEngine</PackageId>
+    <PackageVersion>0.0.0-placeholder</PackageVersion>
     <Authors>Microsoft</Authors>
     <PackageTags>Security Static Analysis</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageLicenseUrl>https://github.com/Microsoft/ApplicationInspector</PackageLicenseUrl>
     <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
-    <Description>RulesEngine is used by Application Inspector exclusively as a derivitive of a non-supported .NET version of Microsoft.DevSkim as a part now of Microsoft Application Inspector.</Description>
+    <Description>Part of core application for rules processing.</Description>
     <PackageIconUrl></PackageIconUrl>
     <PackageProjectUrl>https://github.com/Microsoft/ApplicationInspector</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Microsoft/ApplicationInspector</RepositoryUrl>
     <HighEntropyVA>true</HighEntropyVA>
-    <AssemblyName>AppInspector.RulesEngine</AssemblyName>
-    <RootNamespace>RulesEngine</RootNamespace>
+    <AssemblyName>ApplicationInspector.RulesEngine</AssemblyName>
+    <RootNamespace>Microsoft.ApplicationInspector.RulesEngine</RootNamespace>
     <Version>0.0.0-placeholder</Version>
+    <Product>Applicaction Inspector</Product>
+    <FileVersion>0.0.0.0</FileVersion>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

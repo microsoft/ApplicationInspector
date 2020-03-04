@@ -1,16 +1,16 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.RulesEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using RulesEngine;
 
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     public class ExportTagsCommand : Command
-   {
+    {
         public enum ExitCode
         {
             Success = 0,
@@ -101,14 +101,14 @@ namespace Microsoft.AppInspector
                 }
             }
 
-             //separate loop so results are sorted (Sorted type)
+            //separate loop so results are sorted (Sorted type)
             foreach (string s in uniqueTags.Values)
                 WriteOnce.Result(s, true);
 
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Exporttags"));
             WriteOnce.FlushAll();
             if (!String.IsNullOrEmpty(_arg_outputFile))
-                WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile),true, ConsoleColor.Gray,WriteOnce.ConsoleVerbosity.Low);
+                WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
 
 
             return (int)ExitCode.Success;

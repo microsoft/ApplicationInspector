@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     public class WriterFactory
     {
@@ -11,16 +11,16 @@ namespace Microsoft.AppInspector
         {
             if (string.IsNullOrEmpty(writerName))
                 writerName = defaultWritter;
-            
+
             if (string.IsNullOrEmpty(writerName))
                 writerName = "text";
 
             switch (writerName.ToLowerInvariant())
-            {  
+            {
                 case "_dummy":
                     return new DummyWriter();
                 case "json":
-                    return new JsonWriter();                    
+                    return new JsonWriter();
                 case "text":
                     return new SimpleTextWriter(format);
                 case "html":

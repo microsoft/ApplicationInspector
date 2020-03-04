@@ -1,16 +1,15 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.RulesEngine;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using RulesEngine;
 using System.IO;
 using System.Linq;
-using DotLiquid.Tags;
+using System.Text.RegularExpressions;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
     /// Parent wrapper class for representing source characterization parts
@@ -41,7 +40,7 @@ namespace Microsoft.AppInspector
         [JsonIgnore]
         public List<TagCategory> TagGroupPreferences { get; set; }//read preferred list of groups and tags for profile page
 
-        
+
         //Report properties
         [JsonIgnore]
         public bool ExcludeRollup { get; set; }
@@ -51,7 +50,7 @@ namespace Microsoft.AppInspector
         public bool UniqueTagsOnly { get; }
         [JsonIgnore]
         public bool AutoBrowserOpen { get; set; }
-       
+
 
         /// <summary>
         /// Constructor initializes several internal lists not populated by rules processing
@@ -61,7 +60,7 @@ namespace Microsoft.AppInspector
         /// <param name="excludeRollup">omit aggregated rollup e.g. simple output with matches</param>
         /// <param name="simpleTagsOnly">simple output override</param>
         /// <param name="uniqueTagsOnly">avoid duplicate tag reporting</param>
-        public AppProfile(string sourcePath, List<string> rulePaths, bool excludeRollup, bool simpleTagsOnly, bool uniqueTagsOnly, bool autoOpenBrowser=true)
+        public AppProfile(string sourcePath, List<string> rulePaths, bool excludeRollup, bool simpleTagsOnly, bool uniqueTagsOnly, bool autoOpenBrowser = true)
         {
             SourcePath = sourcePath;
             Version = Utils.GetVersion();
@@ -122,11 +121,11 @@ namespace Microsoft.AppInspector
 
             //create simple ranked page lists for sorted display for app defined report page
             KeyedSortedTagInfoLists["tagGrpAllTagsByConfidence"] = GetTagInfoListByConfidence();
-            KeyedSortedTagInfoLists["tagGrpAllTagsBySeverity"] =  GetTagInfoListBySeverity();
-            KeyedSortedTagInfoLists["tagGrpAllTagsByName"] =  GetTagInfoListByName();
+            KeyedSortedTagInfoLists["tagGrpAllTagsBySeverity"] = GetTagInfoListBySeverity();
+            KeyedSortedTagInfoLists["tagGrpAllTagsByName"] = GetTagInfoListByName();
 
             MetaData.PrepareReport();
-            
+
         }
 
         #region UIAndReportResultsOrg
@@ -180,7 +179,7 @@ namespace Microsoft.AppInspector
         /// </summary>
         /// <param name="tagPattern"></param>
         /// <returns></returns>
-        private List<TagInfo> GetUniqueMatchingTagInfoList(TagGroup tagGroup, bool addNotFound=true)
+        private List<TagInfo> GetUniqueMatchingTagInfoList(TagGroup tagGroup, bool addNotFound = true)
         {
             List<TagInfo> result = new List<TagInfo>();
             HashSet<string> hashSet = new HashSet<string>();
@@ -207,15 +206,15 @@ namespace Microsoft.AppInspector
                                         ShortTag = pattern.DisplayName,
                                         StatusIcon = pattern.DetectedIcon,
                                         Detected = true
-                                    }) ;
+                                    });
 
                                     hashSet.Add(pattern.SearchPattern);
 
                                     pattern.Confidence = match.Issue.Confidence.ToString();
 
                                 }
-                                else 
-                                {   
+                                else
+                                {
                                     //we have but ensure we get highest confidence, severity as there are likly multiple matches for this tag pattern
                                     foreach (TagInfo updateItem in result)
                                     {
@@ -263,7 +262,7 @@ namespace Microsoft.AppInspector
 
             }
 
-       
+
             return result;
         }
 
@@ -301,7 +300,7 @@ namespace Microsoft.AppInspector
                                         Severity = match.Issue.Rule.Severity.ToString(),
                                         ShortTag = tagItem.Substring(tagItem.LastIndexOf('.') + 1),
                                         StatusIcon = pattern.DetectedIcon,
-                                        Detected = true                                 
+                                        Detected = true
                                     });
 
                                     hashSet.Add(tagItem);
@@ -334,7 +333,7 @@ namespace Microsoft.AppInspector
                         }
                     }
                 }
-               
+
             }
 
             return result;
@@ -516,7 +515,7 @@ namespace Microsoft.AppInspector
                 ["strGrpCloudTargets"] = new HashSet<string>(),
                 ["strGrpUniqueDependencies"] = new HashSet<string>()
             };
-            
+
             //predefined standard tags to track; only some are propertygrouplist are tag based
             _propertyTagSearchPatterns = new Dictionary<string, string>();
             _propertyTagSearchPatterns.Add("strGrpOSTargets", ".OS.Targets");
@@ -558,11 +557,11 @@ namespace Microsoft.AppInspector
         public string Authors { get; set; }
         [JsonProperty(PropertyName = "description")]
         public string Description { get; set; }
-        
+
         private DateTime _lastUpdated = DateTime.MinValue;
         [JsonProperty(PropertyName = "lastUpdated")]
         public string LastUpdated { get; set; }
-        
+
         //stats
         [JsonProperty(PropertyName = "filesAnalyzed")]
         public int FilesAnalyzed { get; set; }
@@ -571,7 +570,7 @@ namespace Microsoft.AppInspector
         [JsonProperty(PropertyName = "filesSkipped")]
         public int FilesSkipped { get; set; }
         [JsonProperty(PropertyName = "filesAffected")]
-        public int FilesAffected { get; set; }    
+        public int FilesAffected { get; set; }
         //following "counter" methods can not use enumeration on matches list which are unique by default
         [JsonProperty(PropertyName = "totalMatchesCount")]
         public int TotalMatchesCount { get; set; }
@@ -612,7 +611,7 @@ namespace Microsoft.AppInspector
         [JsonProperty(PropertyName = "targets")]
         public HashSet<string> Targets { get { return KeyedPropertyLists["strGrpTargets"]; } }
         [JsonProperty(PropertyName = "languages")]
-        public Dictionary<string, int> Languages;     
+        public Dictionary<string, int> Languages;
         [JsonProperty(PropertyName = "OSTargets")]
         public HashSet<string> OSTargets { get { return KeyedPropertyLists["strGrpOSTargets"]; } }
         [JsonProperty(PropertyName = "fileExtensions")]
@@ -639,9 +638,9 @@ namespace Microsoft.AppInspector
                 var value = parts[1];
                 value = value.Replace("\"", "");
                 result = value.Trim();
-                
-            } 
-            catch(Exception)
+
+            }
+            catch (Exception)
             {
                 result = s;
             }
@@ -657,7 +656,7 @@ namespace Microsoft.AppInspector
             {
                 int firstTag = s.IndexOf(">");
                 int endTag = s.IndexOf("</", firstTag);
-                var value = s.Substring(firstTag+1, endTag - firstTag - 1);
+                var value = s.Substring(firstTag + 1, endTag - firstTag - 1);
                 result = value;
             }
             catch (Exception)
@@ -702,7 +701,7 @@ namespace Microsoft.AppInspector
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Target.Processor")))
                 this.CPUTargets.Add(ExtractValue(matchRecord.TextSample).ToLower());
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Metadata.Application.Output.Type")))
-                this.Outputs.Add(ExtractValue(matchRecord.TextSample).ToLower());        
+                this.Outputs.Add(ExtractValue(matchRecord.TextSample).ToLower());
             if (matchRecord.Issue.Rule.Tags.Any(v => v.Contains("Platform.OS")))
                 this.OSTargets.Add(ExtractValue(matchRecord.TextSample).ToLower());
 

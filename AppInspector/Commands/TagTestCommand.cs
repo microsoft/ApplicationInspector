@@ -1,14 +1,14 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.RulesEngine;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RulesEngine;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
 
     /// <summary>
@@ -17,7 +17,7 @@ namespace Microsoft.AppInspector
     /// </summary>
     public class TagTestCommand : Command
     {
-        enum TagTestType { RulesPresent, RulesNotPresent}
+        enum TagTestType { RulesPresent, RulesNotPresent }
 
         private string _arg_srcPath;
         private string _arg_customRulesPath;
@@ -42,7 +42,7 @@ namespace Microsoft.AppInspector
         {
             _arg_srcPath = opt.SourcePath;
             _arg_customRulesPath = opt.CustomRulesPath;
-            _arg_outputFile = opt.OutputFilePath; 
+            _arg_outputFile = opt.OutputFilePath;
             _arg_logger = opt.Log;
 
             if (!Enum.TryParse(opt.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
@@ -111,10 +111,10 @@ namespace Microsoft.AppInspector
         public override int Run()
         {
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "tagtest"));
-            
+
             //init based on true or false present argument value
             bool testSuccess = true;
-    
+
             //one file vs ruleset
             string tmp1 = Path.GetTempFileName();
             WriteOnce.ConsoleVerbosity saveVerbosity = WriteOnce.Verbosity;
@@ -137,7 +137,7 @@ namespace Microsoft.AppInspector
                     ConsoleVerbosityLevel = "None"
                 });
 
-                
+
                 //quiet analysis commands
                 result = (AnalyzeCommand.ExitCode)cmd1.Run();
             }
@@ -197,14 +197,14 @@ namespace Microsoft.AppInspector
                     }
                 }
             }
-        
+
             //results
             WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
             if (testSuccess)
                 WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
             else
                 WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
-            
+
             WriteOnce.FlushAll();
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagtest"));
 

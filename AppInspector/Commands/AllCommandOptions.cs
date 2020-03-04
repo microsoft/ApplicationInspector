@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (C) Microsoft. All rights reserved.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+
 using CommandLine;
 using NLog;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     public class AllCommandOptions
     {
@@ -143,7 +143,7 @@ namespace Microsoft.AppInspector
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
         public string ConsoleVerbosityLevel { get; set; }
 
-  
+
     }
 
 

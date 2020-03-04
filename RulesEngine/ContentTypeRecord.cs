@@ -3,7 +3,7 @@
 
 using Newtonsoft.Json;
 
-namespace RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
     /// Class to hold mapping from Visual Studio content type do DevSkim language

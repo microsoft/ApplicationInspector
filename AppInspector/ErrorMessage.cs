@@ -2,10 +2,10 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 
+using Microsoft.ApplicationInspector.Commands.Properties;
 using System;
-using ApplicationInspector.Properties;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     static public class ErrMsg
     {

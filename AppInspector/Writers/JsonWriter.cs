@@ -2,17 +2,11 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
-using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
-using RulesEngine;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
     /// Writes in json format
@@ -28,7 +22,7 @@ namespace Microsoft.AppInspector
         {
             // Store the results here temporarily building up a list of items in the desired order etc.
             Dictionary<string, object> itemList = new Dictionary<string, object>(); ;
-            
+
             if (app.SimpleTagsOnly)
             {
                 List<string> keys = new List<string>(app.MetaData.UniqueTags);
@@ -42,7 +36,7 @@ namespace Microsoft.AppInspector
 
                 //matches are added this way to avoid output of entire set of MatchItem properties which include full rule/patterns/cond.
                 List<MatchItems> matches = new List<MatchItems>();
-                
+
                 foreach (MatchRecord match in app.MatchList)
                 {
                     MatchItems matchItem = new MatchItems(match);
@@ -55,7 +49,7 @@ namespace Microsoft.AppInspector
             jsonResult.Add(itemList);
         }
 
-      
+
         public override void FlushAndClose()
         {
             TextWriter.Write(JsonConvert.SerializeObject(jsonResult, Formatting.Indented));
@@ -63,7 +57,7 @@ namespace Microsoft.AppInspector
             TextWriter.Close();
         }
 
-        
+
     }
 
 

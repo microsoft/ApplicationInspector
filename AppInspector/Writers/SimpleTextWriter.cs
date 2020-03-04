@@ -2,9 +2,8 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Text;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     public class SimpleTextWriter : Writer
     {
@@ -49,9 +48,9 @@ namespace Microsoft.AppInspector
         }
 
 
-        private string StringList (HashSet<string> data)
+        private string StringList(HashSet<string> data)
         {
-            string results="";
+            string results = "";
 
             foreach (string s in data)
                 results += s + " ";
@@ -60,7 +59,7 @@ namespace Microsoft.AppInspector
         }
 
 
-        private string StringList(Dictionary<string,int> data)
+        private string StringList(Dictionary<string, int> data)
         {
             string results = "";
 
@@ -127,7 +126,7 @@ namespace Microsoft.AppInspector
             TextWriter.WriteLine("Total files: {0}", app.MetaData.TotalFiles);
             TextWriter.WriteLine("Detections: {0} in {1} file(s)", app.MetaData.TotalMatchesCount, app.MetaData.FilesAffected);
             TextWriter.WriteLine("Unique detections: {0}", app.MetaData.UniqueMatchesCount);
-            
+
             TextWriter.WriteLine(MakeHeading("UniqueTags"));
             List<string> tags = new List<string>();
             foreach (MatchRecord match in app.MatchList)
@@ -149,7 +148,7 @@ namespace Microsoft.AppInspector
                 List<TagInfo> list = app.KeyedTagInfoLists[tagGroupCategory];
                 TextWriter.WriteLine(string.Format("[{0}]", tagGroupCategory));
                 foreach (TagInfo tagInfo in list)
-                    TextWriter.WriteLine("Tag:{0},Detected:{1},Confidence:{2}", tagInfo.Tag, tagInfo.Detected, tagInfo.Confidence);             
+                    TextWriter.WriteLine("Tag:{0},Detected:{1},Confidence:{2}", tagInfo.Tag, tagInfo.Detected, tagInfo.Confidence);
             }
         }
 
@@ -170,7 +169,7 @@ namespace Microsoft.AppInspector
             output = output.Replace("%X", match.Issue.Confidence.ToString());//override rule confidence because of unstructured text vs source
             output = output.Replace("%D", match.Issue.Rule.Description);
             output = output.Replace("%m", System.Net.WebUtility.HtmlEncode(match.TextSample));//readability for non-browser format type
-            output = output.Replace("%T", string.Join(',',match.Issue.Rule.Tags));
+            output = output.Replace("%T", string.Join(',', match.Issue.Rule.Tags));
 
             TextWriter.WriteLine(output);
 

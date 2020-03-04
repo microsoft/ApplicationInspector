@@ -3,7 +3,7 @@
 
 using NLog;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     abstract public class Command
     {

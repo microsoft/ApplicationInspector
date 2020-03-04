@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using DotLiquid;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using DotLiquid;
 
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
     /// Root parent for tag group preferences file
@@ -65,7 +65,9 @@ namespace Microsoft.AppInspector
         [JsonProperty(PropertyName = "detected")]
         public bool Detected { get; set; }
         [JsonProperty(PropertyName = "details")]
-        public string Details { get 
+        public string Details
+        {
+            get
             {
                 string result = Detected == true ? "View" : "N/A";
                 return result;
@@ -110,7 +112,7 @@ namespace Microsoft.AppInspector
         }
         public string Severity { get; set; }
         public bool Detected { get; set; }
-       
+
     }
 
     public class TagCounterUI : Drop
@@ -125,7 +127,7 @@ namespace Microsoft.AppInspector
         public bool IncludeAsMatch { get; set; }
     }
 
-    public class TagCounter 
+    public class TagCounter
     {
         [JsonProperty(PropertyName = "tag")]
         public string Tag { get; set; }
@@ -142,7 +144,7 @@ namespace Microsoft.AppInspector
     public class TagException
     {
         [JsonProperty(PropertyName = "tag")]
-        public string Tag { get; set; }       
+        public string Tag { get; set; }
     }
 
 }

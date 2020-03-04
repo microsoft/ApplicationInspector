@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using NLog;
 
 [assembly: CLSCompliant(true)]
-namespace RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
     /// Heart of RulesEngine. Parses code applies rules
