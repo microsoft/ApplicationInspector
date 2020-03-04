@@ -5,7 +5,6 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
     <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
-    <RepositoryType></RepositoryType>
     <PackageTags>Security Static Analyzer</PackageTags>
     <Description>Characterizes software features.</Description>
     <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
