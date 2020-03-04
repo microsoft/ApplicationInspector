@@ -15,7 +15,7 @@ namespace Microsoft.AppInspector
     /// Used to test a specific set of rules were all found in target source; Pass/Fail as well as inverse option to test if a set of rules is not 
     /// found in source code
     /// </summary>
-    public class TagTestCommand : ICommand
+    public class TagTestCommand : Command
     {
         enum TagTestType { RulesPresent, RulesNotPresent}
 
@@ -42,7 +42,8 @@ namespace Microsoft.AppInspector
         {
             _arg_srcPath = opt.SourcePath;
             _arg_customRulesPath = opt.CustomRulesPath;
-            _arg_outputFile = opt.OutputFilePath;
+            _arg_outputFile = opt.OutputFilePath; 
+            _arg_logger = opt.Log;
 
             if (!Enum.TryParse(opt.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
@@ -54,7 +55,7 @@ namespace Microsoft.AppInspector
                 throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
 
             _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
-            _rulesSet = new RuleSet(Program.Logger);
+            _rulesSet = new RuleSet(null);//.Logger);
 
             if (string.IsNullOrEmpty(opt.CustomRulesPath) && _arg_ignoreDefaultRules)
                 throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
@@ -101,13 +102,13 @@ namespace Microsoft.AppInspector
             if (!string.IsNullOrEmpty(_arg_outputFile))
             {
                 outputWriter = File.CreateText(_arg_outputFile);
-                outputWriter.WriteLine(Program.GetVersionString());
+                outputWriter.WriteLine(Utils.GetVersionString());
                 WriteOnce.Writer = outputWriter;
             }
         }
 
 
-        public int Run()
+        public override int Run()
         {
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "tagtest"));
             

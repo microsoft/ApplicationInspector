@@ -15,7 +15,7 @@
     <RepositoryUrl>https://github.com/Microsoft/ApplicationInspector</RepositoryUrl>
     <PackageReleaseNotes>1.0 General Release</PackageReleaseNotes>
     <HighEntropyVA>true</HighEntropyVA>
-    <AssemblyName>RulesEngine</AssemblyName>
+    <AssemblyName>AppInspector.RulesEngine</AssemblyName>
     <RootNamespace>RulesEngine</RootNamespace>
     <Version>1.0.17</Version>
   </PropertyGroup>

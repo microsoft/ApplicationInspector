@@ -19,7 +19,7 @@ namespace Microsoft.AppInspector
     /// <summary>
     /// Used to compare two source paths and report tag differences
     /// </summary>
-    public class TagDiffCommand : ICommand
+    public class TagDiffCommand : Command
    {
         private string _arg_src1, _arg_src2;
         private string _arg_rulesPath;
@@ -43,6 +43,8 @@ namespace Microsoft.AppInspector
             _arg_src2 = opt.SourcePath2;
             _arg_rulesPath = opt.CustomRulesPath;
             _arg_outputFile = opt.OutputFilePath;
+            _arg_logger = opt.Log;
+
             if (!Enum.TryParse(opt.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
             WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
@@ -54,7 +56,7 @@ namespace Microsoft.AppInspector
 
         }
 
-        public int Run()
+        public override int Run()
         {
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Tagdiff"));
             
@@ -63,7 +65,7 @@ namespace Microsoft.AppInspector
             if (!string.IsNullOrEmpty(_arg_outputFile))
             {
                 outputWriter = File.CreateText(_arg_outputFile);
-                outputWriter.WriteLine(Program.GetVersionString());
+                outputWriter.WriteLine(Utils.GetVersionString());
                 WriteOnce.Writer = outputWriter;
             }
 

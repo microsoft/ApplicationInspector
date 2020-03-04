@@ -1,0 +1,82 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
+    <RepositoryType></RepositoryType>
+    <PackageTags>Security Static Analyzer</PackageTags>
+    <PackageReleaseNotes>1.0 General Release</PackageReleaseNotes>
+    <Description>Characterizes software features.</Description>
+    <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
+    <HighEntropyVA>true</HighEntropyVA>
+    <PackageId>ApplicationInspector</PackageId>
+    <Product>Application Inspector</Product>
+    <Authors>Microsoft</Authors>
+    <Version>1.0.28</Version>
+    <AssemblyName>AppInspectorLib</AssemblyName>
+    <RootNamespace>ApplicationInspector</RootNamespace>
+    <StartupObject></StartupObject>
+    <Company>Microsoft</Company>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyVersion>1.0.28.0</AssemblyVersion>
+    <FileVersion>1.0.28.0</FileVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <ApplicationIcon />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="htmlreport\**" />
+    <EmbeddedResource Remove="htmlreport\**" />
+    <EmbeddedResource Remove="linux\**" />
+    <None Remove="htmlreport\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.6.0" />
+    <PackageReference Include="DotLiquid" Version="2.0.314" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NLog" Version="4.6.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+ <ItemGroup>
+    <None Update="rules\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MultiExtractor\MultiExtractor.csproj" />
+    <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj" />
+  </ItemGroup>
+
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
+</Project>

@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Linq;
-using CommandLine;
+using System.Reflection;
 
 namespace Microsoft.AppInspector
 {
@@ -14,6 +14,19 @@ namespace Microsoft.AppInspector
     {
         static string _basePath;
         public enum AppPath { basePath, defaultRules, defaultLog, tagGroupPref, tagCounterPref };
+
+
+        public static string GetVersionString()
+        {
+            return String.Format("Microsoft Application Inspector {0}", GetVersion());
+        }
+
+        public static string GetVersion()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            return fileVersionInfo.ProductVersion;
+        }
 
         static public string GetPath(AppPath pathType)
         {

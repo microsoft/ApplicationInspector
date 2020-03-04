@@ -64,7 +64,7 @@ namespace Microsoft.AppInspector
         public AppProfile(string sourcePath, List<string> rulePaths, bool excludeRollup, bool simpleTagsOnly, bool uniqueTagsOnly, bool autoOpenBrowser=true)
         {
             SourcePath = sourcePath;
-            Version = Program.GetVersion();
+            Version = Utils.GetVersion();
             MatchList = new List<MatchRecord>();
             KeyedTagInfoLists = new Dictionary<string, List<TagInfo>>();
             KeyedSortedTagInfoLists = new Dictionary<string, List<TagInfo>>();
