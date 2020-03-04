@@ -24,8 +24,7 @@ namespace Microsoft.AppInspector
         public override void WriteApp(AppProfile app)
         {
             var htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
-            Assembly test = Assembly.GetEntryAssembly();
-            Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(), "ApplicationInspector.html.partials");
+            Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(), "AppInspector.CLI.html.partials");
             
             RegisterSafeType(typeof(AppProfile));
             RegisterSafeType(typeof(AppMetaData));
@@ -46,7 +45,7 @@ namespace Microsoft.AppInspector
             
             var hashData = new Hash();
             hashData["json"] = JsonConvert.SerializeObject(data, Formatting.Indented);
-            hashData["application_version"] = Program.GetVersionString();
+            hashData["application_version"] = Utils.GetVersionString();
 
             //add dynamic sets of groups of taginfo read from preferences for Profile page
             List<TagGroup> tagGroupList = app.GetCategoryTagGroups("profile");

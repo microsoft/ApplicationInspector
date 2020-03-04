@@ -17,7 +17,7 @@ using System.Runtime.CompilerServices;
 
 namespace Microsoft.AppInspector
 {
-    public class AnalyzeCommand : ICommand
+    public class AnalyzeCommand : Command
     {
         readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files 
         readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
@@ -84,6 +84,7 @@ namespace Microsoft.AppInspector
             _arg_autoBrowserOpen = !opts.AutoBrowserOpen;
             _arg_ignoreDefaultRules = opts.IgnoreDefaultRules;
             _arg_simpleTagsOnly = opts.SimpleTagsOnly;
+            _arg_logger = opts.Log;
 
             if (!string.IsNullOrEmpty(opts.FilePathExclusions))
             {
@@ -146,7 +147,7 @@ namespace Microsoft.AppInspector
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigRules", LogLevel.Trace);
 
-            RuleSet rulesSet = new RuleSet(Program.Logger);
+            RuleSet rulesSet = new RuleSet(_arg_logger);
             List<string> rulePaths = new List<string>();
             if (!_arg_ignoreDefaultRules)
                 rulePaths.Add(Utils.GetPath(Utils.AppPath.defaultRules));
@@ -173,7 +174,7 @@ namespace Microsoft.AppInspector
             }
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
-            _rulesProcessor = new RuleProcessor(rulesSet, _arg_confidence, _arg_outputUniqueTagsOnly, _arg_simpleTagsOnly, Program.Logger);
+            _rulesProcessor = new RuleProcessor(rulesSet, _arg_confidence, _arg_outputUniqueTagsOnly, _arg_simpleTagsOnly, _arg_logger);
 
             if (_arg_outputUniqueTagsOnly)
             {
@@ -256,7 +257,7 @@ namespace Microsoft.AppInspector
         /// Pre: All Configure Methods have been called already and we are ready to SCAN
         /// </summary>
         /// <returns></returns>
-        public int Run()
+        public override int Run()
         {
             WriteOnce.SafeLog("AnalyzeCommand::Run", LogLevel.Trace);
 

@@ -9,7 +9,7 @@ using RulesEngine;
 
 namespace Microsoft.AppInspector
 {
-    public class ExportTagsCommand : ICommand
+    public class ExportTagsCommand : Command
    {
         public enum ExitCode
         {
@@ -30,6 +30,8 @@ namespace Microsoft.AppInspector
             _arg_customRulesPath = opt.CustomRulesPath;
             _arg_outputFile = opt.OutputFilePath;
             _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
+            _arg_logger = opt.Log;
+
             if (!Enum.TryParse(opt.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
             WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
@@ -46,7 +48,7 @@ namespace Microsoft.AppInspector
             if (!string.IsNullOrEmpty(_arg_outputFile))
             {
                 outputWriter = File.CreateText(_arg_outputFile);
-                outputWriter.WriteLine(Program.GetVersionString());
+                outputWriter.WriteLine(Utils.GetVersionString());
                 WriteOnce.Writer = outputWriter;
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Low;
             }
@@ -81,7 +83,7 @@ namespace Microsoft.AppInspector
             }
         }
 
-        public int Run()
+        public override int Run()
         {
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Exporttags"));
 
