@@ -3,11 +3,11 @@
 
 using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.IO;
+using System.Linq;
 
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     [Serializable]
     public class TagsFile
@@ -20,7 +20,7 @@ namespace Microsoft.AppInspector
     /// Used to compare two source paths and report tag differences
     /// </summary>
     public class TagDiffCommand : Command
-   {
+    {
         private string _arg_src1, _arg_src2;
         private string _arg_rulesPath;
         private string _arg_outputFile;
@@ -59,7 +59,7 @@ namespace Microsoft.AppInspector
         public override int Run()
         {
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Tagdiff"));
-            
+
             //setup output                       
             TextWriter outputWriter;
             if (!string.IsNullOrEmpty(_arg_outputFile))
@@ -182,7 +182,7 @@ namespace Microsoft.AppInspector
             }
 
             //cleanup
-            try 
+            try
             {
                 File.Delete(tmp1);
                 File.Delete(tmp2);

@@ -2,20 +2,18 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 
+using Microsoft.ApplicationInspector.RulesEngine;
+using MultiExtractor;
+using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using RulesEngine;
-using System.Text.RegularExpressions;
 using System.Text;
-using Newtonsoft.Json;
-using System.Threading;
-using NLog;
-using MultiExtractor;
-using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     public class AnalyzeCommand : Command
     {
@@ -45,7 +43,7 @@ namespace Microsoft.AppInspector
         /// </summary>
         public DateTime LastUpdated
         {
-            get { return _lastUpdated;  }
+            get { return _lastUpdated; }
             set
             {
                 //find last updated file in solution
@@ -92,7 +90,7 @@ namespace Microsoft.AppInspector
                 if (_fileExclusionList != null && (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None")))
                     _fileExclusionList.Clear();
             }
-          
+
 
             if (!Enum.TryParse(opts.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
@@ -283,10 +281,10 @@ namespace Microsoft.AppInspector
                     ProcessAsFile(filename);
                 else
                     UnZipAndProcess(filename, archiveFileType);
-                
+
             }
 
-            WriteOnce.General("\r"+ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
+            WriteOnce.General("\r" + ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
             WriteOnce.Operation(ErrMsg.GetString(ErrMsg.ID.CMD_PREPARING_REPORT));
 
             //Prepare report results
@@ -601,8 +599,8 @@ namespace Microsoft.AppInspector
 
                 if (files.Count() > 0)
                 {
-                    _appProfile.MetaData.TotalFiles +=files.Count();//additive in case additional child zip files processed
-                    
+                    _appProfile.MetaData.TotalFiles += files.Count();//additive in case additional child zip files processed
+
                     foreach (FileEntry file in files)
                     {
                         //check uncompressed file passes standard checks 

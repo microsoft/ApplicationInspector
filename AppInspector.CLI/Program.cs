@@ -1,37 +1,21 @@
 ﻿//Copyright(c) Microsoft Corporation.All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Diagnostics;
 using CommandLine;
-using System.Reflection;
+using Microsoft.ApplicationInspector.Commands;
 using NLog;
-using NLog.Targets;
 using NLog.Config;
+using NLog.Targets;
+using System;
 using System.IO;
-using Microsoft.AppInspector;
 
 
-namespace Microsoft.AppInspector.CLI
+namespace Microsoft.ApplicationInspector.CLI
 {
-   
     class Program
     {
 
-        public static string GetVersionString()
-        {
-            return String.Format("Microsoft Application Inspector {0}", GetVersion());
-        }
-
-        public static string GetVersion()
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fileVersionInfo.ProductVersion;
-        }
-
         static public Logger Logger { get; set; }
-
 
         /// <summary>
         /// Program entry point which defines command verbs and options to running
@@ -40,13 +24,13 @@ namespace Microsoft.AppInspector.CLI
         static int Main(string[] args)
         {
             int finalResult = -1;
-            
+
             WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Medium;
 
             try
             {
-                WriteOnce.Info(GetVersionString());
-                var argsResult = Parser.Default.ParseArguments<AnalyzeCommandOptions, 
+                WriteOnce.Info(Utils.GetVersionString());
+                var argsResult = Parser.Default.ParseArguments<AnalyzeCommandOptions,
                     TagDiffCommandOptions,
                     TagTestCommandOptions,
                     ExportTagsCommandOptions,
@@ -99,7 +83,7 @@ namespace Microsoft.AppInspector.CLI
             SetupLogging(opts);
             return new TagDiffCommand(opts).Run();
         }
-        
+
         private static int RunTagTestCommand(TagTestCommandOptions opts)
         {
             SetupLogging(opts);
@@ -140,7 +124,7 @@ namespace Microsoft.AppInspector.CLI
             {
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v")));
             }
-            
+
             using (var fileTarget = new FileTarget()
             {
                 Name = "LogFile",
@@ -154,10 +138,10 @@ namespace Microsoft.AppInspector.CLI
                 config.LoggingRules.Add(new LoggingRule("*", log_level, fileTarget));
             }
 
-            LogManager.Configuration = config;      
+            LogManager.Configuration = config;
             opts.Log = LogManager.GetCurrentClassLogger();
             Logger = opts.Log;
-            Logger.Info("["+ DateTime.Now.ToLocalTime() + "] //////////////////////////////////////////////////////////");
+            Logger.Info("[" + DateTime.Now.ToLocalTime() + "] //////////////////////////////////////////////////////////");
             WriteOnce.Log = Logger;//allows log to be written to as well as console or output file
 
         }

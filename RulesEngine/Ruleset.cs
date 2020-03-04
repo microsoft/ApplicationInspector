@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
     /// Storage for rules

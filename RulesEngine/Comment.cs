@@ -3,7 +3,7 @@
 
 using Newtonsoft.Json;
 
-namespace RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
     /// Comment class to hold information about comment for each language

@@ -1,12 +1,12 @@
 ﻿// Copyright(C) Microsoft.All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using NLog;
 using System;
 using System.IO;
-using NLog;
 
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
     /// Wraps Console, Output and Log Writes for convenience to write once from calling

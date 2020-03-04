@@ -3,7 +3,7 @@
 
 using Newtonsoft.Json;
 
-namespace RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
     /// Content Type class

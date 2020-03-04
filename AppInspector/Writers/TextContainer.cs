@@ -1,13 +1,13 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.RulesEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using RulesEngine;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
     /// Class to handle text as a searchable container
@@ -22,11 +22,11 @@ namespace Microsoft.AppInspector
         {
             _language = language;
             _content = content;
-            _lineEnds = new List<int>(){ 0 };            
+            _lineEnds = new List<int>() { 0 };
 
             // Find line end in the text
             int pos = 0;
-            while(pos > -1 && pos < _content.Length)
+            while (pos > -1 && pos < _content.Length)
             {
                 if (++pos < _content.Length)
                 {
@@ -110,8 +110,8 @@ namespace Microsoft.AppInspector
         public Boundary GetLineBoundary(int index)
         {
             Boundary result = new Boundary();
-            
-            for(int i=0; i < _lineEnds.Count; i++)
+
+            for (int i = 0; i < _lineEnds.Count; i++)
             {
                 if (_lineEnds[i] >= index)
                 {
@@ -122,7 +122,7 @@ namespace Microsoft.AppInspector
             }
 
             return result;
-        }        
+        }
 
         /// <summary>
         /// Return content of the line
@@ -184,7 +184,7 @@ namespace Microsoft.AppInspector
             if (pattern.Scopes.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
                 return true;
 
-            bool isInComment = (  IsBetween(text, boundary.Index, prefix, suffix)
+            bool isInComment = (IsBetween(text, boundary.Index, prefix, suffix)
                                || IsBetween(text, boundary.Index, inline, "\n"));
 
             return !(isInComment && !pattern.Scopes.Contains(PatternScope.Comment));
@@ -282,7 +282,7 @@ namespace Microsoft.AppInspector
             if (m.Success)
             {
                 result = true;
-                for (int i=1; i < m.Groups.Count; i++)
+                for (int i = 1; i < m.Groups.Count; i++)
                 {
                     if (int.TryParse(m.Groups[i].Value, out int value))
                     {

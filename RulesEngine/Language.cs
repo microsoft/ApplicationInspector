@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
     /// Helper class for language based commenting
@@ -20,14 +20,14 @@ namespace RulesEngine
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             // Load comments
-            Stream resource = assembly.GetManifestResourceStream("RulesEngine.Resources.comments.json");
+            Stream resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.comments.json");
             using (StreamReader file = new StreamReader(resource))
             {
                 Comments = JsonConvert.DeserializeObject<List<Comment>>(file.ReadToEnd());
             }
 
             // Load languages
-            resource = assembly.GetManifestResourceStream("RulesEngine.Resources.languages.json");
+            resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.languages.json");
             using (StreamReader file = new StreamReader(resource))
             {
                 Languages = JsonConvert.DeserializeObject<List<LanguageInfo>>(file.ReadToEnd());
@@ -159,11 +159,11 @@ namespace RulesEngine
                     _instance = new Language();
 
                 return _instance;
-            }        
+            }
         }
 
         private List<Comment> Comments;
-        private List<LanguageInfo> Languages;      
+        private List<LanguageInfo> Languages;
     }
 }
 

@@ -3,18 +3,19 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>Microsoft.ApplicationInspector.Commands</PackageId>
+    <PackageVersion>0.0.0-placeholder</PackageVersion>
     <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
     <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
     <PackageTags>Security Static Analyzer</PackageTags>
     <Description>Characterizes software features.</Description>
     <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
     <HighEntropyVA>true</HighEntropyVA>
-    <PackageId>Microsoft.ApplicationInspector.Lib</PackageId>
     <Product>Application Inspector</Product>
     <Authors>Microsoft</Authors>
     <Version>0.0.0-placeholder</Version>
-    <AssemblyName>AppInspectorLib</AssemblyName>
-    <RootNamespace>ApplicationInspector</RootNamespace>
+    <AssemblyName>ApplicationInspector.Commands</AssemblyName>
+    <RootNamespace>Microsoft.ApplicationInspector.Commands</RootNamespace>
     <StartupObject></StartupObject>
     <Company>Microsoft</Company>
     <SignAssembly>true</SignAssembly>
@@ -28,18 +29,12 @@
     <DefineConstants>TRACE</DefineConstants>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>1701;1702;2225</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants />
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="htmlreport\**" />
-    <EmbeddedResource Remove="htmlreport\**" />
-    <EmbeddedResource Remove="linux\**" />
-    <None Remove="htmlreport\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
@@ -61,6 +56,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="linux\**" />
+    <EmbeddedResource Remove="linux\**" />
+    <None Remove="linux\**" />
   </ItemGroup>
 
  <ItemGroup>

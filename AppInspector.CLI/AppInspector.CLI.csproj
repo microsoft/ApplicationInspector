@@ -3,14 +3,17 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Microsoft.ApplicationInspector.CLI</RootNamespace>
+    <AssemblyName>ApplicationInspector.CLI</AssemblyName>
+    <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
+    <Product>Application Inspector</Product>
+    <Company>Microsoft</Company>
+    <Authors>Microsoft</Authors>
+    <Version>0.0.0-placeholder</Version>
+    <Description>Command line tool for GUI launch of Application Inspector</Description>
+    <FileVersion>0.0.0.0</FileVersion>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="html\partials\_file_listing.liquid" />
-    <None Remove="html\partials\_report_overview.liquid" />
-    <None Remove="html\partials\_report_profile.liquid" />
-    <None Remove="html\partials\_report_summary.liquid" />
-  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="html\partials\_file_listing.liquid" />
@@ -27,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AppInspector\AppInspector.Lib.csproj" />
+    <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
   </ItemGroup>
 
   <ItemGroup>

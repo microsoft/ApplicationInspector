@@ -1,20 +1,19 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Newtonsoft.Json;
+using Microsoft.ApplicationInspector.RulesEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using RulesEngine;
 
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
     /// Wraps rulesengine verify for ruleset
     /// </summary>
     public class VerifyRulesCommand : Command
-   {
+    {
         public enum ExitCode
         {
             Verified = 0,
@@ -111,7 +110,7 @@ namespace Microsoft.AppInspector
                     }
                 }
             }
-            
+
             //option to write validating data
             if (_arg_consoleVerbosityLevel == WriteOnce.ConsoleVerbosity.High)
                 WritePartialRuleDetails(rules);
@@ -130,7 +129,7 @@ namespace Microsoft.AppInspector
             return issues ? (int)ExitCode.NotVerified : (int)ExitCode.Verified;
         }
 
-        
+
         void WritePartialRuleDetails(RuleSet rules)
         {
             WriteOnce.Result("RuleId,Rulename,RuleDesc,Tags,AppliesToLanguage", true, WriteOnce.ConsoleVerbosity.High);

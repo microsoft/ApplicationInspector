@@ -4,11 +4,11 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     static public class Utils
     {
@@ -137,7 +137,7 @@ namespace Microsoft.AppInspector
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-               
+
                 try
                 {
                     Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
@@ -182,5 +182,5 @@ namespace Microsoft.AppInspector
         }
 
     }
-   
+
 }

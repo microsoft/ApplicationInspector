@@ -4,7 +4,7 @@
 using Newtonsoft.Json;
 using System;
 
-namespace RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
     /// Issue severity

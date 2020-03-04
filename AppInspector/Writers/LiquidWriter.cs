@@ -1,16 +1,16 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using DotLiquid;
 using DotLiquid.FileSystems;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
-namespace Microsoft.AppInspector
+namespace Microsoft.ApplicationInspector.Commands
 {
     public class LiquidWriter : Writer
     {
@@ -24,11 +24,11 @@ namespace Microsoft.AppInspector
         public override void WriteApp(AppProfile app)
         {
             var htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
-            Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(), "AppInspector.CLI.html.partials");
-            
+            Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(), "Microsoft.ApplicationInspector.CLI.html.partials");
+
             RegisterSafeType(typeof(AppProfile));
             RegisterSafeType(typeof(AppMetaData));
-           
+
             var htmlTemplate = Template.Parse(htmlTemplateText);
             var data = new Dictionary<string, object>();
             data["AppProfile"] = app;
@@ -42,7 +42,7 @@ namespace Microsoft.AppInspector
             }
 
             data["matchDetails"] = matches;
-            
+
             var hashData = new Hash();
             hashData["json"] = JsonConvert.SerializeObject(data, Formatting.Indented);
             hashData["application_version"] = Utils.GetVersionString();
@@ -80,13 +80,13 @@ namespace Microsoft.AppInspector
             if (File.Exists(outputHTMLPath) && new FileInfo(outputHTMLPath).Length > MAX_HTML_REPORT_FILE_SIZE)
             {
                 WriteOnce.Info(ErrMsg.GetString(ErrMsg.ID.ANALYZE_REPORTSIZE_WARN));
-            }  
-           
+            }
+
             if (app.AutoBrowserOpen)
                 Utils.OpenBrowser(htmlOutputFilePath);
         }
 
-       
+
         public override void FlushAndClose()
         {
             TextWriter.Flush();
