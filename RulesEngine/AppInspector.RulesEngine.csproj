@@ -13,7 +13,6 @@
     <PackageIconUrl></PackageIconUrl>
     <PackageProjectUrl>https://github.com/Microsoft/ApplicationInspector</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Microsoft/ApplicationInspector</RepositoryUrl>
-    <PackageReleaseNotes>1.0 General Release</PackageReleaseNotes>
     <HighEntropyVA>true</HighEntropyVA>
     <AssemblyName>AppInspector.RulesEngine</AssemblyName>
     <RootNamespace>RulesEngine</RootNamespace>
