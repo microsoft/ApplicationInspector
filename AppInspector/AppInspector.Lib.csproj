@@ -7,7 +7,6 @@
     <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
     <RepositoryType></RepositoryType>
     <PackageTags>Security Static Analyzer</PackageTags>
-    <PackageReleaseNotes>1.0 General Release</PackageReleaseNotes>
     <Description>Characterizes software features.</Description>
     <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
     <HighEntropyVA>true</HighEntropyVA>
