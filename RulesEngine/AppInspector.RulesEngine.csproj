@@ -17,7 +17,7 @@
     <HighEntropyVA>true</HighEntropyVA>
     <AssemblyName>AppInspector.RulesEngine</AssemblyName>
     <RootNamespace>RulesEngine</RootNamespace>
-    <Version>1.0.17</Version>
+    <Version>0.0.0-placeholder</Version>
   </PropertyGroup>
 
   <ItemGroup>
