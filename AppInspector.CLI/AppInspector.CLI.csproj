@@ -13,7 +13,7 @@
     <Description>Command line tool for GUI launch of Application Inspector</Description>
     <FileVersion>0.0.0.0</FileVersion>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
-	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackAsTool>true</PackAsTool>
     <PackageId>Microsoft.CST.ApplicationInspector.CLI</PackageId>
     <PackageVersion>0.0.0</PackageVersion>
