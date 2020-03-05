@@ -9,9 +9,8 @@
     <PackageTags>Security Static Analysis</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageLicenseUrl>https://github.com/Microsoft/ApplicationInspector</PackageLicenseUrl>
-    <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright> 
     <Description>Part of core application for rules processing.</Description>
-    <PackageIconUrl></PackageIconUrl>
     <PackageProjectUrl>https://github.com/Microsoft/ApplicationInspector</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Microsoft/ApplicationInspector</RepositoryUrl>
     <HighEntropyVA>true</HighEntropyVA>
@@ -22,12 +21,6 @@
     <FileVersion>0.0.0.0</FileVersion>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="linux\**" />
-    <EmbeddedResource Remove="linux\**" />
-    <None Remove="linux\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />

@@ -3,28 +3,35 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <PackageId>Microsoft.ApplicationInspector.Commands</PackageId>
+    <PackageId>Microsoft.CST.ApplicationInspector.Commands</PackageId>
     <PackageVersion>0.0.0-placeholder</PackageVersion>
     <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
     <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
     <PackageTags>Security Static Analyzer</PackageTags>
     <Description>Characterizes software features.</Description>
-    <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright> 
     <HighEntropyVA>true</HighEntropyVA>
     <Product>Application Inspector</Product>
     <Authors>Microsoft</Authors>
     <Version>0.0.0-placeholder</Version>
     <AssemblyName>ApplicationInspector.Commands</AssemblyName>
     <RootNamespace>Microsoft.ApplicationInspector.Commands</RootNamespace>
-    <StartupObject></StartupObject>
     <Company>Microsoft</Company>
     <SignAssembly>true</SignAssembly>
-    <AssemblyVersion>1.0.28.0</AssemblyVersion>
-    <FileVersion>1.0.28.0</FileVersion>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <ApplicationIcon />
+    <AssemblyVersion>0.0.0</AssemblyVersion>
+    <FileVersion>0.0.0</FileVersion>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageIcon>icon-128.png</PackageIcon>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
+  <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
+    </ItemGroup>
+  </Target>
+  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -58,12 +65,6 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="linux\**" />
-    <EmbeddedResource Remove="linux\**" />
-    <None Remove="linux\**" />
-  </ItemGroup>
-
  <ItemGroup>
     <None Update="rules\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -71,11 +72,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MultiExtractor\MultiExtractor.csproj" />
-    <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj" />
+    <ProjectReference Include="..\MultiExtractor\MultiExtractor.csproj">
+	    <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+        <IncludeAssets>MultiExtractor.dll</IncludeAssets>
+    </ProjectReference>
+		
+    <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj">
+        <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+        <IncludeAssets>ApplicationInspector.RulesEngine.dll</IncludeAssets>
+	 </ProjectReference>
   </ItemGroup>
 
-
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+  <ItemGroup>
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath=""/>
+    <None Include="..\icon-128.png" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
 </Project>

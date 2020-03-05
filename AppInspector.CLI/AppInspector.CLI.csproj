@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Microsoft.ApplicationInspector.CLI</RootNamespace>
     <AssemblyName>ApplicationInspector.CLI</AssemblyName>
-    <Copyright>(c) Microsoft Corporation. All rights reserved</Copyright>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright> 
     <Product>Application Inspector</Product>
     <Company>Microsoft</Company>
     <Authors>Microsoft</Authors>
@@ -13,6 +13,15 @@
     <Description>Command line tool for GUI launch of Application Inspector</Description>
     <FileVersion>0.0.0.0</FileVersion>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
+	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackAsTool>true</PackAsTool>
+    <PackageId>Microsoft.CST.ApplicationInspector.CLI</PackageId>
+    <PackageVersion>0.0.0</PackageVersion>
+    <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
+    <PackageTags>Security Static Analyzer</PackageTags>
+    <ToolCommandName>appinspector</ToolCommandName>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageIcon>icon-128.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -152,5 +161,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath=""/>
+    <None Include="..\icon-128.png" Pack="true" PackagePath=""/>
+  </ItemGroup>
 </Project>

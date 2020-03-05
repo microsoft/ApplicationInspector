@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>Microsoft.MultiExtractor</PackageId>
-    <Authors>Michael Scovetta,Guy Acosta</Authors>
+    <Authors>Microsoft</Authors>
     <Company>Microsoft</Company>
     <Description>MultiExtractor is a library for performing file extraction from many different types of file archives, recursively.</Description>
-    <Copyright>Microsoft</Copyright>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright> 
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
