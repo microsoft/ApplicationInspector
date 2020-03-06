@@ -18,7 +18,7 @@ namespace Microsoft.ApplicationInspector.CLI
         static public Logger Logger { get; set; }
 
         /// <summary>
-        /// Program entry point which defines command verbs and options to running
+        /// CLI program entry point which defines command verbs and options to running
         /// </summary>
         /// <param name="args"></param>
         static int Main(string[] args)
@@ -26,7 +26,6 @@ namespace Microsoft.ApplicationInspector.CLI
             int finalResult = -1;
 
             WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Medium;
-
             try
             {
                 WriteOnce.Info(Utils.GetVersionString());

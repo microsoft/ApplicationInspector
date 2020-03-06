@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -64,37 +65,41 @@ namespace Microsoft.ApplicationInspector.Commands
         private string _arg_confidenceFilters;
         private bool _arg_simpleTagsOnly;
         private Confidence _arg_confidence;
-        private WriteOnce.ConsoleVerbosity _arg_consoleVerbosityLevel;
+        private string _arg_consoleVerbosityLevel;
 
 
         List<string> _fileExclusionList;//see exclusion list
 
 
-        public AnalyzeCommand(AnalyzeCommandOptions opts)
+        public AnalyzeCommand(AnalyzeCommandOptions opt)
         {
-            _arg_sourcePath = opts.SourcePath;
-            _arg_outputFile = opts.OutputFilePath;
-            _arg_fileFormat = opts.OutputFileFormat;
-            _arg_outputTextFormat = opts.TextOutputFormat;
-            _arg_outputUniqueTagsOnly = !opts.AllowDupTags;
-            _arg_customRulesPath = opts.CustomRulesPath;
-            _arg_confidenceFilters = opts.ConfidenceFilters;
-            _arg_autoBrowserOpen = !opts.AutoBrowserOpen;
-            _arg_ignoreDefaultRules = opts.IgnoreDefaultRules;
-            _arg_simpleTagsOnly = opts.SimpleTagsOnly;
-            _arg_logger = opts.Log;
+            _arg_sourcePath = opt.SourcePath;
+            _arg_outputFile = opt.OutputFilePath;
+            _arg_fileFormat = opt.OutputFileFormat;
+            _arg_outputTextFormat = opt.TextOutputFormat;
+            _arg_outputUniqueTagsOnly = !opt.AllowDupTags;
+            _arg_customRulesPath = opt.CustomRulesPath;
+            _arg_confidenceFilters = opt.ConfidenceFilters ?? "high,medium";
+            _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
+            _arg_autoBrowserOpen = !opt.AutoBrowserOpen;
+            _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
+            _arg_simpleTagsOnly = opt.SimpleTagsOnly;
+            _arg_logger = opt.Log;
 
-            if (!string.IsNullOrEmpty(opts.FilePathExclusions))
+            //if not called via CLI set default
+            opt.FilePathExclusions = opt.FilePathExclusions ?? "sample,example,test,docs,.vs,.git";
+
+            if (!string.IsNullOrEmpty(opt.FilePathExclusions))
             {
-                _fileExclusionList = opts.FilePathExclusions.ToLower().Split(",").ToList<string>();
+                _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").ToList<string>();
                 if (_fileExclusionList != null && (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None")))
                     _fileExclusionList.Clear();
             }
 
-
-            if (!Enum.TryParse(opts.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
+            WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
+            if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
-            WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
+            WriteOnce.Verbosity = verbosity;
 
 
             LastUpdated = DateTime.MinValue;
@@ -250,7 +255,33 @@ namespace Microsoft.ApplicationInspector.Commands
 
 
         /// <summary>
-        /// Main entry point to start analysis; handles setting up rules, directory enumeration
+        /// Option for DLL use as alternate to Run which only outputs a file to return results as string
+        /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added
+        /// </summary>
+        /// <returns>output results</returns>
+        public string GetResult()
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            if (!assembly.GetName().Name.Contains("ApplicationInspector.CLI"))
+            {
+                WriteOnce.FlushAll();
+                WriteOnce.Log = _arg_logger;
+            }
+
+            _arg_fileFormat ??= "json";
+            _arg_outputFile ??= "output.json";
+            ConfigOutput();
+
+            if ((int)ExitCode.Success == Run())
+            {
+                return File.ReadAllText(_arg_outputFile);
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Main entry point to start analysis from CLI; handles setting up rules, directory enumeration
         /// file type detection and handoff
         /// Pre: All Configure Methods have been called already and we are ready to SCAN
         /// </summary>
@@ -304,7 +335,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Analyze"));
                 if (!_arg_autoBrowserOpen)
-                    WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, "output.html"));
+                    WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, "output.html"), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
             }
 
             return _appProfile.MatchList.Count() == 0 ? (int)ExitCode.NoMatches :
@@ -353,8 +384,8 @@ namespace Microsoft.ApplicationInspector.Commands
             //earlier issue now resolved so app handles mixed zipped/zipped and unzipped/zipped directories but catch all for non-critical UI
             if (percentCompleted > 100)
                 percentCompleted = 100;
-
-            WriteOnce.General("\r" + ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted), false);
+            else if (percentCompleted < 100) //caller already reports @100% so avoid 2x for file output
+                WriteOnce.General("\r" + ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted), false);
 
             #endregion
 
@@ -559,10 +590,15 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     _outputWriter.FlushAndClose();//not required for html formal i.e. multiple files already closed
                     _outputWriter = null;
-                    if (!String.IsNullOrEmpty(_arg_outputFile))
-                        WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile));
-                    else
-                        WriteOnce.NewLine();
+
+                    //Special case to avoid writing tmp file path to output file for TagTest,TagDiff or when called as a DLL since unnecessary
+                    if (_arg_consoleVerbosityLevel.ToLower() != "none")
+                    {
+                        if (!String.IsNullOrEmpty(_arg_outputFile))
+                            WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Medium);
+                        else
+                            WriteOnce.NewLine();
+                    }
                 }
             }
         }

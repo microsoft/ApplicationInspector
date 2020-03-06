@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -25,7 +26,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private bool _arg_ignoreDefaultRules;
         private TagTestType _arg_tagTestType;
         private RuleSet _rulesSet;
-        private WriteOnce.ConsoleVerbosity _arg_consoleVerbosityLevel;
+        private string _arg_consoleVerbosityLevel;
 
         public enum ExitCode
         {
@@ -43,19 +44,20 @@ namespace Microsoft.ApplicationInspector.Commands
             _arg_srcPath = opt.SourcePath;
             _arg_customRulesPath = opt.CustomRulesPath;
             _arg_outputFile = opt.OutputFilePath;
+            _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
+            opt.TestType ??= "RulesPresent";
             _arg_logger = opt.Log;
 
-            if (!Enum.TryParse(opt.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
+            WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
+            if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
-            WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
+            WriteOnce.Verbosity = verbosity;
 
-            if (string.IsNullOrEmpty(opt.TestType))
-                _arg_tagTestType = TagTestType.RulesPresent;
-            else if (!Enum.TryParse(opt.TestType, true, out _arg_tagTestType))
+            if (!Enum.TryParse(opt.TestType, true, out _arg_tagTestType))
                 throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
 
             _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
-            _rulesSet = new RuleSet(null);//.Logger);
+            _rulesSet = new RuleSet(_arg_logger);
 
             if (string.IsNullOrEmpty(opt.CustomRulesPath) && _arg_ignoreDefaultRules)
                 throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
@@ -108,6 +110,36 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
+
+        /// <summary>
+        /// Option for DLL use as alternate to Run which only outputs a file to return results as string
+        /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added
+        /// </summary>
+        /// <returns>output results</returns>
+        public string GetResult()
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            if (!assembly.GetName().Name.Contains("ApplicationInspector.CLI"))
+            {
+                WriteOnce.FlushAll();
+                WriteOnce.Log = _arg_logger;
+            }
+
+            _arg_outputFile ??= "output.txt";
+
+            if ((int)ExitCode.CriticalError != Run())
+            {
+                return File.ReadAllText(_arg_outputFile);
+            }
+
+            return string.Empty;
+        }
+
+
+        /// <summary>
+        /// Main entry from CLI
+        /// </summary>
+        /// <returns></returns>
         public override int Run()
         {
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "tagtest"));
@@ -134,7 +166,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     SimpleTagsOnly = true,
                     AllowDupTags = false,
                     FilePathExclusions = "sample,example,test,docs,.vs,.git",
-                    ConsoleVerbosityLevel = "None"
+                    ConsoleVerbosityLevel = "None",
+                    Log = _arg_logger
                 });
 
 

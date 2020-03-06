@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
-
+using System.Reflection;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -26,7 +26,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private string _arg_outputFile;
         private bool _arg_ignoreDefault;
         private TagTestType _arg_tagTestType;
-        private WriteOnce.ConsoleVerbosity _arg_consoleVerbosityLevel;
+        private string _arg_consoleVerbosityLevel;
 
         public enum ExitCode
         {
@@ -42,12 +42,15 @@ namespace Microsoft.ApplicationInspector.Commands
             _arg_src1 = opt.SourcePath1;
             _arg_src2 = opt.SourcePath2;
             _arg_rulesPath = opt.CustomRulesPath;
+            _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
+            opt.TestType ??= "equality";
             _arg_outputFile = opt.OutputFilePath;
             _arg_logger = opt.Log;
 
-            if (!Enum.TryParse(opt.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
+            WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
+            if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
-            WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
+            WriteOnce.Verbosity = verbosity;
 
             if (!Enum.TryParse(opt.TestType, true, out _arg_tagTestType))
                 throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
@@ -56,18 +59,38 @@ namespace Microsoft.ApplicationInspector.Commands
 
         }
 
+        /// <summary>
+        /// Option for DLL use as alternate to Run which only outputs a file to return results as string
+        /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added
+        /// </summary>
+        /// <returns>output results</returns>
+        public string GetResult()
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            if (!assembly.GetName().Name.Contains("ApplicationInspector.CLI"))
+            {
+                WriteOnce.FlushAll();
+                WriteOnce.Log = _arg_logger;
+            }
+
+            _arg_outputFile ??= "output.txt";
+
+            if ((int)ExitCode.CriticalError != Run())
+            {
+                return File.ReadAllText(_arg_outputFile);
+            }
+
+            return string.Empty;
+        }
+
+
+        /// <summary>
+        /// Main entry from CLI
+        /// </summary>
+        /// <returns></returns>
         public override int Run()
         {
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Tagdiff"));
-
-            //setup output                       
-            TextWriter outputWriter;
-            if (!string.IsNullOrEmpty(_arg_outputFile))
-            {
-                outputWriter = File.CreateText(_arg_outputFile);
-                outputWriter.WriteLine(Utils.GetVersionString());
-                WriteOnce.Writer = outputWriter;
-            }
 
             if (_arg_src1 == _arg_src2)
             {
@@ -101,7 +124,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     SimpleTagsOnly = true,
                     AllowDupTags = false,
                     FilePathExclusions = "sample,example,test,docs,.vs,.git",
-                    ConsoleVerbosityLevel = "None"
+                    ConsoleVerbosityLevel = "none",
+                    Log = _arg_logger
                 });
                 AnalyzeCommand cmd2 = new AnalyzeCommand(new AnalyzeCommandOptions
                 {
@@ -113,7 +137,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     SimpleTagsOnly = true,
                     AllowDupTags = false,
                     FilePathExclusions = "sample,example,test,docs,.vs,.git",
-                    ConsoleVerbosityLevel = "None"
+                    ConsoleVerbosityLevel = "none",
+                    Log = _arg_logger
                 });
 
 
@@ -151,6 +176,15 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.MatchesFound)
             {
+                //setup output here rather than top to avoid analyze command output in this command output                   
+                TextWriter outputWriter;
+                if (!string.IsNullOrEmpty(_arg_outputFile))
+                {
+                    outputWriter = File.CreateText(_arg_outputFile);
+                    outputWriter.WriteLine(Utils.GetVersionString());
+                    WriteOnce.Writer = outputWriter;
+                }
+
                 string file1TagsJson = File.ReadAllText(tmp1);
                 string file2TagsJson = File.ReadAllText(tmp2);
 
