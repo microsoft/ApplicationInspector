@@ -10,7 +10,7 @@
     <Company>Microsoft</Company>
     <Authors>Microsoft</Authors>
     <Version>0.0.0-placeholder</Version>
-    <Description>Command line tool for GUI launch of Application Inspector</Description>
+    <Description>Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining what the software is or what it does. This is a dotnet tool package. For the library, see Microsoft.CST.ApplicationInspector.</Description>
     <FileVersion>0.0.0.0</FileVersion>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
