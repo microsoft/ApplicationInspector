@@ -1,7 +1,7 @@
 # Overview
 
 If you're not looking to build the application and simply want to download it and start using it.  All you really need for setup is
-the .NET Core 3 pre-requisites.
+the .NET Core pre-requisites.
 
 ## Pre-requisites
 
