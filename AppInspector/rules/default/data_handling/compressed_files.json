@@ -9,15 +9,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\.(zip|gz|gzip|gem|tar|tgz|tar.gz|xz|7z)",
-        "type": "regex",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
-      },
-      {
-        "pattern": "zip|gz|gzip|gem|tar|tgz|tar\\.gz|xz|7z",
+        "pattern": "\\.(zip|gz|gzip|gem|tar|tgz|tar\\.gz|xz|7z)",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
