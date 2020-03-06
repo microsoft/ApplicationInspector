@@ -32,19 +32,20 @@ We have a strong default starting base of Rules for feature detection.  But ther
 
 # Getting Application Inspector
 
-To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release). If you use the .NET Core version, you will need to have .NET Core 3.0 or later installed.  See the [JustRunIt.md](https://github.com/microsoft/ApplicationInspector/blob/master/JustRunIt.md) or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/master/BUILD.md) files for help.
+To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release) from the Releases page or see the NuGet Support page in our wiki. If you use the .NET Core version, you will need to have .NET Core 3.1 or later installed.  See the [JustRunIt.md](https://github.com/microsoft/ApplicationInspector/blob/master/JustRunIt.md) or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/master/BUILD.md) files for help.
 
-It might be valuable to consult the project wiki for additional background on Rules, Tags and more used to identify features.  Tags are used as a systematic hierarchical nomenclature e.g. Cryptography.Protocol.TLS to more easily represent features.
+# Developers 
+
+It might be valuable to consult the project wiki for additional background on Rules, Tags and more used to identify features.  Tags are used as a systematic hierarchical nomenclature e.g. Cryptography.Protocol.TLS to more easily represent features.  The commands may be used programmatically using just the Microsoft.CST.ApplicationInspector.Commands package.
 
 ## Usage
 
-Application Inspector is a command-line tool. Run it from a command line in Windows, Linux, or MacOS.  
+Application Inspector is availble as a command line tool or NuGet package and is supported on Windows, Linux, or MacOS.  
 
 ```
-> dotnet AppInspector.dll or on *Windows* simply AppInspector.exe <command> <options>
+> dotnet ApplicationInspector.dll or on *Windows* simply ApplicationInspector.exe <command> <options>
 
-Microsoft Application Inspector 1.0.25
-ApplicationInspector 1.0.25
+Microsoft Application Inspector
 
 (c) Microsoft Corporation. All rights reserved
 
@@ -64,7 +65,7 @@ ERROR(S):
 
 ### Command Help
 ```
-  Usage: dotnet AppInspector.dll [arguments] [options]
+  Usage: dotnet ApplicationInspector.dll [arguments] [options]
 
   dotnet AppInspector.dll -description of available commands
   dotnet AppInspector.dll <command> -options description for a given command
@@ -72,7 +73,7 @@ ERROR(S):
 
 ### Analyze Command
 ```
-  Usage: dotnet AppInspector.dll analyze [arguments] [options]
+  Usage: dotnet ApplicationInspector.dll analyze [arguments] [options]
 
   Arguments:
   -s, --source-path             Required. Path to source code to inspect (required)
@@ -91,21 +92,21 @@ ERROR(S):
 ```
 ##### Scan a project directory, with output sent to "output.html" (default behavior includes launching default browser to this file)
 ```
-  dotnet AppInspector.dll analyze -s /home/user/myproject 
+  dotnet ApplicationInspector.dll analyze -s /home/user/myproject 
 ```
 ##### Add custom rules (can be specified multiple times)
 ```
-  dotnet AppInspector.dll analyze -s /home/user/myproject -r /my/rules/directory -r /my/other/rules
+  dotnet ApplicationInspector.dll analyze -s /home/user/myproject -r /my/rules/directory -r /my/other/rules
 ```
 ##### Write to JSON format
 ```
-  dotnet AppInspector.dll analyze -s /home/user/myproject -f json
+  dotnet ApplicationInspector.dll analyze -s /home/user/myproject -f json
 ```
 ### Tagdiff Command
 
 Use to analyze and report on differences in tags (features) between two project or project versions e.g. v1, v2 to see what changed
 ```
-  Usage: dotnet AppInspector.dll tagdiff [arguments] [options]
+  Usage: dotnet ApplicationInspector.dll tagdiff [arguments] [options]
 
   Arguments:
   --src1                        Required. Source 1 to compare (required)
@@ -120,15 +121,15 @@ Use to analyze and report on differences in tags (features) between two project 
 ```
 ##### Simplist way to see the delta in tag features between two projects
 ```
-  dotnet AppInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2
+  dotnet ApplicationInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2
 ```
 ##### Basic use
 ```
-  dotnet AppInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2 -t equality
+  dotnet ApplicationInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2 -t equality
 ```
 ##### Basic use
 ```
-  dotnet AppInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2 -t inequality
+  dotnet ApplicationInspector.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2 -t inequality
 ```
 ### TagTest Command
 
@@ -141,7 +142,7 @@ unlikely that any source package would contain all of the default rules.  Instea
 as needed or specify a path using the custom-rules-path to point only to the rule(s) needed from the default set.  
 Otherwise, testing for all default rules present in source will likely yield a false or fail result in most cases.
 ```
-  Usage: dotnet AppInspector.dll tagtest [arguments] [options
+  Usage: dotnet ApplicationInspector.dll tagtest [arguments] [options
 
   Arguments:
   -s, --source-path             Required. Source to test (required)
@@ -155,21 +156,21 @@ Otherwise, testing for all default rules present in source will likely yield a f
 ```
 #### Simplest use to see if a set of rules are all present in a project
 ```
-  dotnet AppInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json
+  dotnet ApplicationInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json
 ```
 #### Basic use
 ```
-  dotnet AppInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json -t rulespresent
+  dotnet ApplicationInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json -t rulespresent
 ```
 #### Basic use
 ```
-  dotnet AppInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
+  dotnet ApplicationInspector.dll tagtest -s /home/user/project1 -r /home/user/myrules.json -t rulesnotpresent
 ```
 ### ExportTags Command
 
   Simple export of the ruleset schema for tags representing what features are supported for detection
 ```
-  Usage: dotnet AppInspector.dll exporttags [arguments] [options]
+  Usage: dotnet ApplicationInspector.dll exporttags [arguments] [options]
 
   Arguments:
   -r, --custom-rules-path       Custom rules path
@@ -179,21 +180,21 @@ Otherwise, testing for all default rules present in source will likely yield a f
 ```
 ##### Export default rule tags to console
 ```
-  dotnet AppInspector.dll exporttags
+  dotnet ApplicationInspector.dll exporttags
 ```
 ##### Using output file
 ```
-  dotnet AppInspector.dll exporttags -o /home/user/myproject/exportags.txt
+  dotnet ApplicationInspector.dll exporttags -o /home/user/myproject/exportags.txt
 ```
 ##### With custom rules and output file
 ```
-  dotnet AppInspector.dll exporttags -r /home/user/myproject/customrules -o /hom/user/myproject/exportags.txt
+  dotnet ApplicationInspector.dll exporttags -r /home/user/myproject/customrules -o /hom/user/myproject/exportags.txt
 ```
 ### Verify Command
 
 Verification that ruleset is compatible and error free for import and analysis
 ```
-  Usage: dotnet AppInspector.dll verifyrules [arguments]
+  Usage: dotnet ApplicationInspector.dll verifyrules [arguments]
 
   Arguments:
   -r, --custom-rules-path       Custom rules path
@@ -203,11 +204,11 @@ Verification that ruleset is compatible and error free for import and analysis
 ```
 ##### Simplist case to verify default rules
 ```
-  dotnet AppInspector.dll verifyrules
+  dotnet ApplicationInspector.dll verifyrules
 ```
 ##### Using custom rules only
 ```
-  dotnet AppInspector.dll verifyrules -r /home/user/myproject/customrules -i
+  dotnet ApplicationInspector.dll verifyrules -r /home/user/myproject/customrules -i
 ```
 # Build Instructions
 
