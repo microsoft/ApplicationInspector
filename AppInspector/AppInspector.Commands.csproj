@@ -86,6 +86,7 @@
   <ItemGroup>
     <None Include="..\LICENSE.txt" Pack="true" PackagePath=""/>
     <None Include="..\icon-128.png" Pack="true" PackagePath=""/>
+    <None Update="rules\**" Pack="true" PackagePath="lib\$(TargetFramework)\"/>
   </ItemGroup>
 
 </Project>
