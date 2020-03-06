@@ -12,7 +12,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         [Option('l', "log-file-path", Required = false, HelpText = "Log file path")]
         public string LogFilePath { get; set; }
-        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Debug|Info|Warn|Error|Fatal|Off]", Default = "Error")]
+        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Debug|Info|Warn|Error|Trace|Fatal|Off]", Default = "Error")]
         public string LogFileLevel { get; set; }
 
     }

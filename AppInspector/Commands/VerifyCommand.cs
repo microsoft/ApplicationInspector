@@ -5,7 +5,7 @@ using Microsoft.ApplicationInspector.RulesEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Reflection;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -25,24 +25,27 @@ namespace Microsoft.ApplicationInspector.Commands
         private string _arg_customRulesPath;
         private bool _arg_ignoreDefaultRules;
         private string _arg_outputFile;
-        WriteOnce.ConsoleVerbosity _arg_consoleVerbosityLevel;
+        string _arg_consoleVerbosityLevel;
 
         public VerifyRulesCommand(VerifyRulesCommandOptions opt)
         {
             _arg_customRulesPath = opt.CustomRulesPath;
             _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
             _arg_outputFile = opt.OutputFilePath;
+            _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
             _arg_logger = opt.Log;
 
-            if (!Enum.TryParse(opt.ConsoleVerbosityLevel, true, out _arg_consoleVerbosityLevel))
+            WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
+            if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
-            WriteOnce.Verbosity = _arg_consoleVerbosityLevel;
-            ConfigureOutput();
+            WriteOnce.Verbosity = verbosity;
+
+            ConfigOutput();
             ConfigRules();
         }
 
 
-        private void ConfigureOutput()
+        private void ConfigOutput()
         {
             //setup output                       
             TextWriter outputWriter;
@@ -73,7 +76,36 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
+        /// <summary>
+        /// Option for DLL use as alternate to Run which only outputs a file to return results as string
+        /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added
+        /// </summary>
+        /// <returns>output results</returns>
+        public string GetResult()
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            if (!assembly.GetName().Name.Contains("ApplicationInspector.CLI"))
+            {
+                WriteOnce.FlushAll();
+                WriteOnce.Log = _arg_logger;
+            }
 
+            _arg_outputFile ??= "output.txt";
+            ConfigOutput();
+
+            if ((int)ExitCode.CriticalError != Run())
+            {
+                return File.ReadAllText(_arg_outputFile);
+            }
+
+            return string.Empty;
+        }
+
+
+        /// <summary>
+        /// Main entry from CLI
+        /// </summary>
+        /// <returns></returns>
         public override int Run()
         {
             bool issues = false;
@@ -112,7 +144,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //option to write validating data
-            if (_arg_consoleVerbosityLevel == WriteOnce.ConsoleVerbosity.High)
+            if (_arg_consoleVerbosityLevel.ToLower() == "high")
                 WritePartialRuleDetails(rules);
 
             //final status report
