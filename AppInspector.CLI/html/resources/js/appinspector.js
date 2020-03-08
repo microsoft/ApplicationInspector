@@ -27,10 +27,10 @@
         $('#file_listing_modal').modal();
     })
 
-	/*
-	 * When a user clicks on a file listing filename, load the data
-	 * to show into the Ace editor in the popup dialog.
-	 */
+    /*
+     * When a user clicks on a file listing filename, load the data
+     * to show into the Ace editor in the popup dialog.
+     */
     $('#file_listing_modal').on('click', 'a.content-link', (e) => {
         const content = $(e.target).data('excerpt');
         const startLocationLine = $(e.target).data('startLocationLine');
@@ -47,8 +47,6 @@
     templateInsertion.processSummaryPage();
     templateInsertion.processProfilePage();
 });
-
-
 
 class TemplateInsertion {
     constructor(data) {
@@ -98,7 +96,6 @@ class TemplateInsertion {
             }
         });
 
-      
         c3.generate({
             bindto: '#s_pi_languages_chart', 
             size: {
@@ -116,14 +113,12 @@ class TemplateInsertion {
             }
         });
 
-        
         $('#s_pi_application_name').html(this.mt.applicationName);
         $('#s_pi_version').html(this.mt.sourceVersion);
         $('#s_pi_description').html(this.mt.description || 'No description available.');
         $('#s_pi_source_path').html(this.ap.sourcePath);
         $('#s_pi_author').html(this.mt.authors || 'No author found.');
         $('#s_pi_date_scanned').html(this.ap.dateScanned);
-       
     }
 
     combineConfidence(a, b) {
@@ -151,7 +146,7 @@ class TemplateInsertion {
                 return fn;
             }
             return fn.slice($this.ap.sourcePath.length);
-        }
+        };
 
         for (let match of $this.md) {
             let excerpt = atob(match.excerpt || '') || match.sample;
@@ -173,17 +168,13 @@ class TemplateInsertion {
             $('a.content-link').first().trigger('click');
         });
 
-       
         $('#file_listing_modal').modal();
-
-        
     }
 
     /*
      * Builds the Profile page, including event handlers.
      */
     processProfilePage() {
-
         // Process each icon with the 'feature_icon' class.
         $('a.feature_icon').each((idx, elt) => {
             const targetRegexValue = $(elt).data('target');
@@ -211,7 +202,6 @@ class TemplateInsertion {
                 $(elt).addClass('disabled');
             }
         });
-
        
         // Process each icon with the 'feature_icon' class.
         $('a.confidence_image').each((idx, elt) => {
@@ -281,14 +271,13 @@ class TemplateInsertion {
                 //    .text('High');
                 //$td1d.append($td1dp);
                 //$td1.append($td1d);
-                $tr.append($td0)
+                $tr.append($td0);
                 //$tr.append($td1);
                 $tbody.append($tr);
             }
         });
     }
 }
-
 
 function SortbyConfidence() {
     $('#divconf').attr('style', 'display:normal;border:none');
