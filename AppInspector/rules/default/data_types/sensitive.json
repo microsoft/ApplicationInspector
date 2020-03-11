@@ -16,7 +16,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "birthdate|ethnicity|gender|citizenship|nationality|martial|marriage|married|spouce|mother|father",
+        "pattern": "birthdate|ethnicity|gender|citizenship|nationality|martial|marriage|married|spouse|mother|father",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],

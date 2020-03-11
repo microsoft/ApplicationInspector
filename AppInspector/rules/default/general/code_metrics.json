@@ -7,7 +7,7 @@
       "Metric.Code.Class.Defined"
     ],
     "severity": "moderate",
-    "applies_to": [ "csharp", "cpp", "javascript", "pyton", "vb", "rust", "ruby", "groovy", "php" ],
+    "applies_to": [ "csharp", "cpp", "javascript", "python", "vb", "rust", "ruby", "groovy", "php" ],
     "patterns": [
       {
         "pattern": "class",

@@ -1,24 +1,5 @@
 [
   {
-    "name": "Cryptography: Algorithm Implementation",
-    "id": "AI005700",
-    "description": "Cryptography: Algorithm Implementation",
-    "tags": [
-      "Cryptography.Implementation"
-    ],
-    "severity": "important",
-    "_comment": "Implementing a standard cryptographic algorithm",
-    "patterns": [
-      {
-        "pattern": "5a827999",
-        "type": "regex-word",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": []
-      }
-    ]
-  },
-  {
     "name": "Cryptography: Algorithm Implementation (SHA1)",
     "id": "AI005800",
     "description": "Cryptography: Algorithm Implementation (SHA1)",

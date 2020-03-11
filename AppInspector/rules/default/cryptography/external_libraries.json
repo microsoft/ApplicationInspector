@@ -1,8 +1,8 @@
 [
   {
-    "name": "Crypographic Library: BouncyCastle",
+    "name": "Cryptographic Library: BouncyCastle",
     "id": "AI008000",
-    "description": "Crypographic Library: BouncyCastle",
+    "description": "Cryptographic Library: BouncyCastle",
     "applies_to": [
       "csharp",
       "java",
@@ -24,9 +24,9 @@
     ]
   },
   {
-    "name": "Crypographic Library: mbed TLS",
+    "name": "Cryptographic Library: mbed TLS",
     "id": "AI008100",
-    "description": "Crypographic Library: mbed TLS",
+    "description": "Cryptographic Library: mbed TLS",
     "applies_to": [
     ],
     "tags": [
@@ -44,9 +44,9 @@
     ]
   },
   {
-    "name": "Crypographic Library: OpenSSL",
+    "name": "Cryptographic Library: OpenSSL",
     "id": "AI008200",
-    "description": "Crypographic Library: OpenSSL",
+    "description": "Cryptographic Library: OpenSSL",
     "applies_to": [
     ],
     "tags": [
@@ -64,9 +64,9 @@
     ]
   },
   {
-    "name": "Crypographic Library: BoringSSL",
+    "name": "Cryptographic Library: BoringSSL",
     "id": "AI008300",
-    "description": "Crypographic Library: BoringSSL",
+    "description": "Cryptographic Library: BoringSSL",
     "applies_to": [
     ],
     "tags": [
@@ -84,9 +84,9 @@
     ]
   },
   {
-    "name": "Crypographic Library: LibreSSL",
+    "name": "Cryptographic Library: LibreSSL",
     "id": "AI008400",
-    "description": "Crypographic Library: LibreSSL",
+    "description": "Cryptographic Library: LibreSSL",
     "applies_to": [
     ],
     "tags": [
@@ -104,9 +104,9 @@
     ]
   },
   {
-    "name": "Crypographic Library: Win32",
+    "name": "Cryptographic Library: Win32",
     "id": "AI008500",
-    "description": "Crypographic Library: Win32",
+    "description": "Cryptographic Library: Win32",
     "applies_to": [
     ],
     "tags": [
@@ -124,9 +124,9 @@
     ]
   },
   {
-    "name": "Crypographic Library: .NET",
+    "name": "Cryptographic Library: .NET",
     "id": "AI008600",
-    "description": "Crypographic Library: .NET",
+    "description": "Cryptographic Library: .NET",
     "applies_to": [
       "c",
       "cpp",

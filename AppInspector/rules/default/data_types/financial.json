@@ -54,7 +54,7 @@
     ],
     "patterns": [
       {
-        "pattern": "currency|usd|money|dollar|coins|euro|peso|deuch-mark|dinar|franc|krone|pound|rupee|shekel|yen",
+        "pattern": "currency|usd|money|dollar|coins|euro|peso|deutsche-mark|dinar|franc|krone|pound|rupee|shekel|yen",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],

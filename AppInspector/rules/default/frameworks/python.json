@@ -19,11 +19,11 @@
     ]
   },
   {
-    "name": "Development Framework: Pryamid",
+    "name": "Development Framework: Pyramid",
     "id": "AI023900",
-    "description": "Development Framework: Pryamid",
+    "description": "Development Framework: Pyramid",
     "applies_to": [ "python" ],
-    "tags": [ "Framework.Development.Pryamid" ],
+    "tags": [ "Framework.Development.Pyramid" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -31,7 +31,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
+        "confidence": "high"
       }
     ]
   },
