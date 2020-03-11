@@ -34,7 +34,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     break;
             }
             writer.WriteValue(svrstr);
-            writer.WriteValue(svr.ToString().ToLower());
+            //writer.WriteValue(svr.ToString().ToLower());
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

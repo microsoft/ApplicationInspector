@@ -122,8 +122,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     CustomRulesPath = _arg_rulesPath,
                     IgnoreDefaultRules = _arg_ignoreDefault,
                     SimpleTagsOnly = true,
-                    AllowDupTags = false,
-                    FilePathExclusions = "sample,example,test,docs,.vs,.git",
                     ConsoleVerbosityLevel = "none",
                     Log = _arg_logger
                 });
@@ -135,8 +133,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     CustomRulesPath = _arg_rulesPath,
                     IgnoreDefaultRules = _arg_ignoreDefault,
                     SimpleTagsOnly = true,
-                    AllowDupTags = false,
-                    FilePathExclusions = "sample,example,test,docs,.vs,.git",
                     ConsoleVerbosityLevel = "none",
                     Log = _arg_logger
                 });

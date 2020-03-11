@@ -33,13 +33,15 @@ namespace Microsoft.ApplicationInspector.CLI
                     TagDiffCommandOptions,
                     TagTestCommandOptions,
                     ExportTagsCommandOptions,
-                    VerifyRulesCommandOptions>(args)
+                    VerifyRulesCommandOptions,
+                    PackRulesCommandOptions>(args)
                   .MapResult(
                     (AnalyzeCommandOptions opts) => RunAnalyzeCommand(opts),
                     (TagDiffCommandOptions opts) => RunTagDiffCommand(opts),
                     (TagTestCommandOptions opts) => RunTagTestCommand(opts),
                     (ExportTagsCommandOptions opts) => RunExportTagsCommand(opts),
                     (VerifyRulesCommandOptions opts) => RunVerifyRulesCommand(opts),
+                    (PackRulesCommandOptions opts) => RunPackRulesCommand(opts),
                     errs => 1
                   );
 
@@ -101,6 +103,12 @@ namespace Microsoft.ApplicationInspector.CLI
             return new VerifyRulesCommand(opts).Run();
         }
 
+
+        private static int RunPackRulesCommand(PackRulesCommandOptions opts)
+        {
+            SetupLogging(opts);
+            return new PackRulesCommand(opts).Run();
+        }
 
         static void SetupLogging(AllCommandOptions opts)
         {

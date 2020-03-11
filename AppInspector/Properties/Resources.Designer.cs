@@ -333,6 +333,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Output file not specified for custom rules pack command.
+        /// </summary>
+        internal static string PACK_MISSING_OUTPUT_ARG {
+            get {
+                return ResourceManager.GetString("PACK_MISSING_OUTPUT_ARG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}.  Please see log file for more information..
         /// </summary>
         internal static string RUNTIME_ERROR_NAMED {

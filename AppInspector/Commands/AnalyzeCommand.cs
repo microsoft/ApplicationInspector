@@ -152,8 +152,18 @@ namespace Microsoft.ApplicationInspector.Commands
 
             RuleSet rulesSet = new RuleSet(_arg_logger);
             List<string> rulePaths = new List<string>();
+
             if (!_arg_ignoreDefaultRules)
-                rulePaths.Add(Utils.GetPath(Utils.AppPath.defaultRules));
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                string[] resourceName = assembly.GetManifestResourceNames();
+                string filePath = "Microsoft.ApplicationInspector.Commands.defaultRules.json";
+                Stream resource = assembly.GetManifestResourceStream(filePath);
+                using (StreamReader file = new StreamReader(resource))
+                {
+                    rulesSet.AddString(file.ReadToEnd(), filePath, null);
+                }
+            }
 
             if (!string.IsNullOrEmpty(_arg_customRulesPath))
                 rulePaths.Add(_arg_customRulesPath);

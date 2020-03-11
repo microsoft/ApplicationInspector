@@ -30,7 +30,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public VerifyRulesCommand(VerifyRulesCommandOptions opt)
         {
             _arg_customRulesPath = opt.CustomRulesPath;
-            _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
             _arg_outputFile = opt.OutputFilePath;
             _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
             _arg_logger = opt.Log;
@@ -63,8 +62,6 @@ namespace Microsoft.ApplicationInspector.Commands
         void ConfigRules()
         {
             _rulePaths = new List<string>();
-            if (!_arg_ignoreDefaultRules)
-                _rulePaths.Add(Utils.GetPath(Utils.AppPath.defaultRules));
 
             if (!string.IsNullOrEmpty(_arg_customRulesPath))
                 _rulePaths.Add(_arg_customRulesPath);
@@ -114,6 +111,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             //load [each] rules file separately to report out where a failure is happening 
             RuleSet rules = new RuleSet(WriteOnce.Log);
+
             IEnumerable<string> fileListing = new List<string>();
             foreach (string rulePath in _rulePaths)
             {
