@@ -1,8 +1,8 @@
 [
   {
-    "name": "Cryptograpy: CryptoCurrency",
+    "name": "Cryptography: CryptoCurrency",
     "id": "AI007700",
-    "description": "Cryptograpy: CryptoCurrency",
+    "description": "Cryptography: CryptoCurrency",
     "tags": [
       "Cryptography.CryptoCurrency"
     ],
@@ -16,7 +16,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "p2pool|miner|ripple|nxt|zcash|tether|ether|btc|monero|markleroot|xmr|eth",
+        "pattern": "p2pool|miner|ripple|nxt|zcash|tether|ether|btc|monero|merkleroot|xmr|eth",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],

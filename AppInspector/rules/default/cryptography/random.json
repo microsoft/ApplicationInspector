@@ -1,8 +1,8 @@
 [
   {
-    "name": "Crypgraphy: PRNG",
+    "name": "Cryptography: PRNG",
     "id": "AI010000",
-    "description": "Crypgraphy: PRNG",
+    "description": "Cryptography: PRNG",
     "tags": [
       "Cryptography.Randomness.PRNG"
     ],
@@ -42,9 +42,9 @@
     ]
   },
   {
-    "name": "Crypgraphy: PRNG",
+    "name": "Cryptography: PRNG",
     "id": "AI010100",
-    "description": "Crypgraphy: PRNG",
+    "description": "Cryptography: PRNG",
     "tags": [
       "Cryptography.Randomness.PRNG"
     ],
@@ -65,9 +65,9 @@
     ]
   },
   {
-    "name": "Crypgraphy: PRNG",
+    "name": "Cryptography: PRNG",
     "id": "AI010200",
-    "description": "Crypgraphy: PRNG",
+    "description": "Cryptography: PRNG",
     "tags": [
       "Cryptography.Randomness.PRNG"
     ],
@@ -87,9 +87,9 @@
     ]
   },
   {
-    "name": "Crypgraphy: PRNG",
+    "name": "Cryptography: PRNG",
     "id": "AI010300",
-    "description": "Crypgraphy: PRNG",
+    "description": "Cryptography: PRNG",
     "tags": [
       "Cryptography.Randomness.PRNG"
     ],
@@ -109,9 +109,9 @@
     ]
   },
   {
-    "name": "Crypgraphy: PRNG",
+    "name": "Cryptography: PRNG",
     "id": "AI010400",
-    "description": "Crypgraphy: PRNG",
+    "description": "Cryptography: PRNG",
     "tags": [
       "Cryptography.Randomness.PRNG"
     ],
