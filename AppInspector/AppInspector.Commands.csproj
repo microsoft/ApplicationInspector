@@ -87,7 +87,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="BeforeCompile">
-    <Exec Command="..\RulesPacker\ApplicationInspector.CLI.exe packrules -r rules\default -o Resources\defaultRules.json" />
+    <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRules.json" />
   </Target>
 
 </Project>

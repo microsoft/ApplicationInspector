@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "ApplicationInspector.CLI/1.1.7-g11266b705f": {
+      "ApplicationInspector.CLI/1.1.8-g21f58273f4": {
         "dependencies": {
           "CommandLineParser": "2.6.0",
           "DotLiquid": "2.0.314",
@@ -89,7 +89,7 @@
         "runtime": {
           "ApplicationInspector.RulesEngine.dll": {
             "assemblyVersion": "1.1.0.0",
-            "fileVersion": "1.1.7.9745"
+            "fileVersion": "1.1.8.62753"
           }
         }
       },
@@ -97,14 +97,14 @@
         "runtime": {
           "MultiExtractor.dll": {
             "assemblyVersion": "1.1.0.0",
-            "fileVersion": "1.1.7.9745"
+            "fileVersion": "1.1.8.62753"
           }
         }
       }
     }
   },
   "libraries": {
-    "ApplicationInspector.CLI/1.1.7-g11266b705f": {
+    "ApplicationInspector.CLI/1.1.8-g21f58273f4": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
