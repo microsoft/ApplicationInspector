@@ -86,4 +86,8 @@
     <None Include="..\icon-128.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="BeforeCompile">
+    <Exec Command="..\RulesPacker\ApplicationInspector.CLI.exe packrules -r rules\default -o Resources\defaultRules.json" />
+  </Target>
+
 </Project>
