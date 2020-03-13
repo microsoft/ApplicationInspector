@@ -1,0 +1,205 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "ApplicationInspector.CLI/1.1.8-g21f58273f4": {
+        "dependencies": {
+          "CommandLineParser": "2.6.0",
+          "DotLiquid": "2.0.314",
+          "Microsoft.CST.ApplicationInspector.Commands": "0.0.0-placeholder",
+          "NLog": "4.6.7",
+          "Nerdbank.GitVersioning": "3.0.50",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "runtime": {
+          "ApplicationInspector.CLI.dll": {}
+        }
+      },
+      "CommandLineParser/2.6.0": {
+        "runtime": {
+          "lib/netstandard2.0/CommandLine.dll": {
+            "assemblyVersion": "2.6.0.0",
+            "fileVersion": "2.6.0.0"
+          }
+        }
+      },
+      "DotLiquid/2.0.314": {
+        "runtime": {
+          "lib/netstandard1.3/DotLiquid.dll": {
+            "assemblyVersion": "2.0.314.0",
+            "fileVersion": "2.0.314.0"
+          }
+        },
+        "resources": {
+          "lib/netstandard1.3/it/DotLiquid.resources.dll": {
+            "locale": "it"
+          }
+        }
+      },
+      "MediaTypeMap.Core/2.3.3": {},
+      "Microsoft.NETCore.Platforms/2.1.2": {},
+      "Nerdbank.GitVersioning/3.0.50": {},
+      "Newtonsoft.Json/12.0.3": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.0.3.23909"
+          }
+        }
+      },
+      "NLog/4.6.7": {
+        "runtime": {
+          "lib/netstandard2.0/NLog.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.6.7.10445"
+          }
+        }
+      },
+      "SharpCompress/0.24.0": {
+        "dependencies": {
+          "System.Text.Encoding.CodePages": "4.5.1"
+        }
+      },
+      "SharpZipLib/1.2.0": {},
+      "System.Runtime.CompilerServices.Unsafe/4.5.2": {},
+      "System.Text.Encoding.CodePages/4.5.1": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "2.1.2",
+          "System.Runtime.CompilerServices.Unsafe": "4.5.2"
+        }
+      },
+      "Microsoft.CST.ApplicationInspector.Commands/0.0.0-placeholder": {
+        "dependencies": {
+          "CommandLineParser": "2.6.0",
+          "DotLiquid": "2.0.314",
+          "Microsoft.ApplicationInspector.RulesEngine": "0.0.0-placeholder",
+          "Microsoft.MultiExtractor": "1.0.0",
+          "NLog": "4.6.7",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "runtime": {
+          "ApplicationInspector.Commands.dll": {}
+        }
+      },
+      "ApplicationInspector.RulesEngine/1.1.0.0": {
+        "runtime": {
+          "ApplicationInspector.RulesEngine.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.8.62753"
+          }
+        }
+      },
+      "MultiExtractor/1.1.0.0": {
+        "runtime": {
+          "MultiExtractor.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.8.62753"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ApplicationInspector.CLI/1.1.8-g21f58273f4": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CommandLineParser/2.6.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jjJ2Ey2pPY6OeY74Qau2cH+M+pN4kvvSP+kKlDzIZUcJs1oK+QlNjQYnm8HQj2fQa2aZLtwJig4MI0Vbx4YBSA==",
+      "path": "commandlineparser/2.6.0",
+      "hashPath": "commandlineparser.2.6.0.nupkg.sha512"
+    },
+    "DotLiquid/2.0.314": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-3yzgQrajOKO2p/O1Dmbxx36DkfCz3Gtu5NC1C7CwWg//oLZ9WXo2D4McM+/jsdU9iVyq7WY12G2VhdErEEyS8g==",
+      "path": "dotliquid/2.0.314",
+      "hashPath": "dotliquid.2.0.314.nupkg.sha512"
+    },
+    "MediaTypeMap.Core/2.3.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5295drXPri9xReva/rBMO7V07B3NRUmpVjH26co5z72mbh/wL5cY5QcByjfHQ4bJ8IXbkBiOAW2Ep/eqxAdvhQ==",
+      "path": "mediatypemap.core/2.3.3",
+      "hashPath": "mediatypemap.core.2.3.3.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/2.1.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-mOJy3M0UN+LUG21dLGMxaWZEP6xYpQEpLuvuEQBaownaX4YuhH6NmNUlN9si+vNkAS6dwJ//N1O4DmLf2CikVg==",
+      "path": "microsoft.netcore.platforms/2.1.2",
+      "hashPath": "microsoft.netcore.platforms.2.1.2.nupkg.sha512"
+    },
+    "Nerdbank.GitVersioning/3.0.50": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-jDbjKVHHhLBRjvRw+nDs8d/g8hRt7YUb1LHKEt3cR52SpnZfxf5Q7NGNxmnmeYxoT8ecAW44P4wciXz3yPlubA==",
+      "path": "nerdbank.gitversioning/3.0.50",
+      "hashPath": "nerdbank.gitversioning.3.0.50.nupkg.sha512"
+    },
+    "Newtonsoft.Json/12.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
+      "path": "newtonsoft.json/12.0.3",
+      "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
+    },
+    "NLog/4.6.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-xSIzXrIF89Ww6yoJPvyBcu4JLgNiDiEaTT4GyVltZEeVIvkgSm9J/srUy1Yz0EXwbTv502l8knoCFrgNc/MUMA==",
+      "path": "nlog/4.6.7",
+      "hashPath": "nlog.4.6.7.nupkg.sha512"
+    },
+    "SharpCompress/0.24.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-3zpUOie9xRrEc6o33Z546rseYttnoxVDMC3wsGYsUa5wXas3wTG96v+dHxcGMCta/Kid9jFIl8/Lc/GbNpKZVA==",
+      "path": "sharpcompress/0.24.0",
+      "hashPath": "sharpcompress.0.24.0.nupkg.sha512"
+    },
+    "SharpZipLib/1.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zvWa/L02JHNatdtjya6Swpudb2YEHaOLHL1eRrqpjm71iGRNUNONO5adUF/9CHbSJbzhELW1UoH4NGy7n7+3bQ==",
+      "path": "sharpziplib/1.2.0",
+      "hashPath": "sharpziplib.1.2.0.nupkg.sha512"
+    },
+    "System.Runtime.CompilerServices.Unsafe/4.5.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wprSFgext8cwqymChhrBLu62LMg/1u92bU+VOwyfBimSPVFXtsNqEWC92Pf9ofzJFlk4IHmJA75EDJn1b2goAQ==",
+      "path": "system.runtime.compilerservices.unsafe/4.5.2",
+      "hashPath": "system.runtime.compilerservices.unsafe.4.5.2.nupkg.sha512"
+    },
+    "System.Text.Encoding.CodePages/4.5.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4J2JQXbftjPMppIHJ7IC+VXQ9XfEagN92vZZNoG12i+zReYlim5dMoXFC1Zzg7tsnKDM7JPo5bYfFK4Jheq44w==",
+      "path": "system.text.encoding.codepages/4.5.1",
+      "hashPath": "system.text.encoding.codepages.4.5.1.nupkg.sha512"
+    },
+    "Microsoft.CST.ApplicationInspector.Commands/0.0.0-placeholder": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ApplicationInspector.RulesEngine/1.1.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MultiExtractor/1.1.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

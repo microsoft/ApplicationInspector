@@ -60,7 +60,8 @@ namespace Microsoft.ApplicationInspector.Commands
             RUNTIME_ERROR_PRELOG,
             BROWSER_ENVIRONMENT_VAR,
             BROWSER_START_FAIL,
-            BROWSER_START_SUCCESS
+            BROWSER_START_SUCCESS,
+            PACK_MISSING_OUTPUT_ARG
         };
 
         public static string GetString(ErrMsg.ID id)

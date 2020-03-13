@@ -23,7 +23,6 @@ namespace Microsoft.ApplicationInspector.Commands
         private string _arg_srcPath;
         private string _arg_customRulesPath;
         private string _arg_outputFile;
-        private bool _arg_ignoreDefaultRules;
         private TagTestType _arg_tagTestType;
         private RuleSet _rulesSet;
         private string _arg_consoleVerbosityLevel;
@@ -56,10 +55,9 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!Enum.TryParse(opt.TestType, true, out _arg_tagTestType))
                 throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
 
-            _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
             _rulesSet = new RuleSet(_arg_logger);
 
-            if (string.IsNullOrEmpty(opt.CustomRulesPath) && _arg_ignoreDefaultRules)
+            if (string.IsNullOrEmpty(opt.CustomRulesPath))
                 throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
 
             ConfigureRules();
@@ -70,8 +68,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public void ConfigureRules()
         {
             List<string> rulePaths = new List<string>();
-            if (!_arg_ignoreDefaultRules)
-                rulePaths.Add(Utils.GetPath(Utils.AppPath.defaultRules));
 
             if (!string.IsNullOrEmpty(_arg_customRulesPath))
                 rulePaths.Add(_arg_customRulesPath);
@@ -162,10 +158,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     OutputFilePath = tmp1,
                     OutputFileFormat = "json",
                     CustomRulesPath = _arg_customRulesPath,
-                    IgnoreDefaultRules = _arg_ignoreDefaultRules,
                     SimpleTagsOnly = true,
-                    AllowDupTags = false,
-                    FilePathExclusions = "sample,example,test,docs,.vs,.git",
                     ConsoleVerbosityLevel = "None",
                     Log = _arg_logger
                 });

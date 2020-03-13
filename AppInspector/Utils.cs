@@ -13,7 +13,7 @@ namespace Microsoft.ApplicationInspector.Commands
     static public class Utils
     {
         static string _basePath;
-        public enum AppPath { basePath, defaultRules, defaultLog, tagGroupPref, tagCounterPref };
+        public enum AppPath { basePath, defaultRulesSrc, defaultRulesPackedFile, defaultLog, tagGroupPref, tagCounterPref };
 
 
         public static string GetVersionString()
@@ -39,8 +39,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 case AppPath.defaultLog:
                     result = Path.Combine(GetBaseAppPath(), "log.txt");
                     break;
-                case AppPath.defaultRules:
-                    result = Path.Combine(GetBaseAppPath(), "rules", "default");
+                case AppPath.defaultRulesSrc:
+                    result = Path.GetFullPath(Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "rules", "default"));//used to ref project folder
+                    break;
+                case AppPath.defaultRulesPackedFile:
+                    result = Path.Combine(System.AppContext.BaseDirectory, "..", "..", "..", "..", "AppInspector", "Resources", "defaultRules.json");//packed default file in project resources
                     break;
                 case AppPath.tagGroupPref:
                     result = Path.Combine(GetBaseAppPath(), "preferences", "tagreportgroups.json");

@@ -100,9 +100,6 @@ namespace Microsoft.ApplicationInspector.Commands
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
         public string CustomRulesPath { get; set; }
 
-        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = true)]
-        public bool IgnoreDefaultRules { get; set; }
-
         [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
         public string OutputFilePath { get; set; }
 
@@ -128,14 +125,11 @@ namespace Microsoft.ApplicationInspector.Commands
     }
 
 
-    [Verb("verifyrules", HelpText = "Verify rules syntax is valid")]
+    [Verb("verifyrules", HelpText = "Verify custom rules syntax is valid")]
     public class VerifyRulesCommandOptions : AllCommandOptions
     {
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
         public string CustomRulesPath { get; set; }
-
-        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
-        public bool IgnoreDefaultRules { get; set; }
 
         [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
         public string OutputFilePath { get; set; }
@@ -146,5 +140,24 @@ namespace Microsoft.ApplicationInspector.Commands
 
     }
 
+    [Verb("packrules", HelpText = "Combine multiple rules into one file for ease in distribution")]
+    public class PackRulesCommandOptions : AllCommandOptions
+    {
+        [Option('d', "pack-default-rules", Required = false, HelpText = "Repack default rules")]
+        public bool RepackDefaultRules { get; set; }
+
+        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
+        public string CustomRulesPath { get; set; }
+
+        [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
+        public string OutputFilePath { get; set; }
+
+        [Option('i', "not-indented", Required = false, HelpText = "Remove indentation from json output", Default = false)]
+        public bool NotIndented { get; set; }
+
+        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
+        public string ConsoleVerbosityLevel { get; set; }
+
+    }
 
 }

@@ -26,7 +26,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             string svrstr = svr.ToString().ToLower();
 
             writer.WriteValue(svrstr);
-            writer.WriteValue(svr.ToString().ToLower());
+            //writer.WriteValue(svr.ToString().ToLower());
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

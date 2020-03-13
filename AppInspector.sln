@@ -16,6 +16,26 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiExtractor", "MultiExtr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.CLI", "AppInspector.CLI\AppInspector.CLI.csproj", "{824ED27E-A4CF-46A6-A01F-98B0821EB61C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RulesPacker", "RulesPacker", "{C464D0CE-5254-4EA5-87C9-C0C96E40C3CB}"
+	ProjectSection(SolutionItems) = preProject
+		RulesPacker\ApplicationInspector.CLI.deps.json = RulesPacker\ApplicationInspector.CLI.deps.json
+		RulesPacker\ApplicationInspector.CLI.dll = RulesPacker\ApplicationInspector.CLI.dll
+		RulesPacker\ApplicationInspector.CLI.exe = RulesPacker\ApplicationInspector.CLI.exe
+		RulesPacker\ApplicationInspector.CLI.pdb = RulesPacker\ApplicationInspector.CLI.pdb
+		RulesPacker\ApplicationInspector.CLI.runtimeconfig.dev.json = RulesPacker\ApplicationInspector.CLI.runtimeconfig.dev.json
+		RulesPacker\ApplicationInspector.CLI.runtimeconfig.json = RulesPacker\ApplicationInspector.CLI.runtimeconfig.json
+		RulesPacker\ApplicationInspector.Commands.dll = RulesPacker\ApplicationInspector.Commands.dll
+		RulesPacker\ApplicationInspector.Commands.pdb = RulesPacker\ApplicationInspector.Commands.pdb
+		RulesPacker\ApplicationInspector.RulesEngine.dll = RulesPacker\ApplicationInspector.RulesEngine.dll
+		RulesPacker\ApplicationInspector.RulesEngine.pdb = RulesPacker\ApplicationInspector.RulesEngine.pdb
+		RulesPacker\CommandLine.dll = RulesPacker\CommandLine.dll
+		RulesPacker\DotLiquid.dll = RulesPacker\DotLiquid.dll
+		RulesPacker\MultiExtractor.dll = RulesPacker\MultiExtractor.dll
+		RulesPacker\MultiExtractor.pdb = RulesPacker\MultiExtractor.pdb
+		RulesPacker\Newtonsoft.Json.dll = RulesPacker\Newtonsoft.Json.dll
+		RulesPacker\NLog.dll = RulesPacker\NLog.dll
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +61,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C464D0CE-5254-4EA5-87C9-C0C96E40C3CB} = {876245F3-D7C5-4AA3-A288-2CE94BF63B8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D8F88F7-47D4-475A-B1AF-713132222341}

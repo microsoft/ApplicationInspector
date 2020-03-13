@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -28,7 +28,7 @@
 
   <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
     <ItemGroup>
-      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
     </ItemGroup>
   </Target>
   
@@ -46,7 +46,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
     <PackageReference Include="DotLiquid" Version="2.0.314" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NLog" Version="4.6.7" />
   </ItemGroup>
 
@@ -65,10 +65,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
- <ItemGroup>
-    <None Update="rules\**">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\defaultRules.json" Link="defaultRules.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,9 +82,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\LICENSE.txt" Pack="true" PackagePath=""/>
-    <None Include="..\icon-128.png" Pack="true" PackagePath=""/>
-    <None Update="rules\**" Pack="true" PackagePath="lib\$(TargetFramework)\"/>
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="..\icon-128.png" Pack="true" PackagePath="" />
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="BeforeCompile">
+    <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRules.json" />
+  </Target>
 
 </Project>
