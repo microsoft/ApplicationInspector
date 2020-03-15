@@ -266,3 +266,4 @@ __pycache__/
 /AppInspector/wip.txt
 /AppInspector/linux/ApplicationInspector
 /Microsoft.DevSkim/linux/ApplicationInspector
+AppInspector/Resources/defaultRules.json
