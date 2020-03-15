@@ -52,7 +52,7 @@ class TemplateInsertion {
     constructor(data) {
         this.ap = data.AppProfile;
         this.mt = this.ap.MetaData;
-        this.md = data.matchDetails;
+        this.md = this.ap.FormattedMatchList;
     }
 
     processSummaryPage() {

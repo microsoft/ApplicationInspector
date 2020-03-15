@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -16,122 +15,30 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class JsonWriter : Writer
     {
-        List<Dictionary<string, object>> jsonResult = new List<Dictionary<string, object>>();
-
         public override void WriteApp(AppProfile app)
         {
-            // Store the results here temporarily building up a list of items in the desired order etc.
-            Dictionary<string, object> itemList = new Dictionary<string, object>(); ;
 
             if (app.SimpleTagsOnly)
             {
                 List<string> keys = new List<string>(app.MetaData.UniqueTags);
-                itemList.Add("tags", keys);
                 keys.Sort();
+                TextWriter.Write(JsonConvert.SerializeObject(keys, Formatting.Indented));
             }
             else
             {
-                if (!app.ExcludeRollup)
-                    itemList.Add("AppProfile", app);
-
-                //matches are added this way to avoid output of entire set of MatchItem properties which include full rule/patterns/cond.
-                List<MatchItems> matches = new List<MatchItems>();
-
-                foreach (MatchRecord match in app.MatchList)
-                {
-                    MatchItems matchItem = new MatchItems(match);
-                    matches.Add(matchItem);
-                }
-
-                itemList.Add("matchDetails", matches);
+                JsonSerializer jsonSerializer = new JsonSerializer();
+                jsonSerializer.Formatting = Formatting.Indented;
+                jsonSerializer.Serialize(TextWriter, app);
             }
-
-            jsonResult.Add(itemList);
         }
 
 
         public override void FlushAndClose()
         {
-            TextWriter.Write(JsonConvert.SerializeObject(jsonResult, Formatting.Indented));
             TextWriter.Flush();
             TextWriter.Close();
         }
 
 
     }
-
-
-    /// <summary>
-    /// Subset of MatchRecord and Issue properties specific for json output to avoid inclusion of all
-    /// MatchRecord properities like rule/pattern subobjects...
-    /// </summary>
-    [Serializable]
-    public class MatchItems
-    {
-        public MatchItems(MatchRecord matchRecord)
-        {
-            FileName = matchRecord.Filename;
-            SourceLabel = matchRecord.Language.Name;
-            SourceType = matchRecord.Language.Type.ToString();
-            StartLocationLine = matchRecord.Issue.StartLocation.Line;
-            StartLocationColumn = matchRecord.Issue.StartLocation.Column;
-            EndLocationLine = matchRecord.Issue.EndLocation.Line;
-            EndLocationColumn = matchRecord.Issue.EndLocation.Column;
-            BoundaryIndex = matchRecord.Issue.Boundary.Index;
-            BoundaryLength = matchRecord.Issue.Boundary.Length;
-            RuleId = matchRecord.Issue.Rule.Id;
-            Severity = matchRecord.Issue.Rule.Severity.ToString();
-            RuleName = matchRecord.Issue.Rule.Name;
-            RuleDescription = matchRecord.Issue.Rule.Description;
-            PatternConfidence = matchRecord.Issue.Confidence.ToString();
-            PatternType = matchRecord.Issue.PatternMatch.PatternType.ToString();
-            MatchingPattern = matchRecord.Issue.PatternMatch.Pattern;
-            Sample = matchRecord.TextSample;
-            Excerpt = matchRecord.Excerpt;
-            Tags = matchRecord.Issue.Rule.Tags;
-        }
-
-        [JsonProperty(PropertyName = "fileName")]
-        public string FileName { get; set; }
-        [JsonProperty(PropertyName = "ruleId")]
-        public string RuleId { get; set; }
-        [JsonProperty(PropertyName = "ruleName")]
-        public string RuleName { get; set; }
-        [JsonProperty(PropertyName = "ruleDescription")]
-        public string RuleDescription { get; set; }
-        [JsonProperty(PropertyName = "pattern")]
-        public string MatchingPattern { get; set; }
-        [JsonProperty(PropertyName = "type")]
-        public string PatternType { get; set; }
-        [JsonProperty(PropertyName = "confidence")]
-        public string PatternConfidence { get; set; }
-        [JsonProperty(PropertyName = "severity")]
-        public string Severity { get; set; }
-        [JsonProperty(PropertyName = "tags")]
-        public string[] Tags { get; set; }
-        [JsonProperty(PropertyName = "sourceLabel")]
-        public string SourceLabel { get; set; }
-        [JsonProperty(PropertyName = "sourceType")]
-        public string SourceType { get; set; }
-        [JsonProperty(PropertyName = "sample")]
-        public string Sample { get; set; }
-        [JsonProperty(PropertyName = "excerpt")]
-        public string Excerpt { get; set; }
-        [JsonProperty(PropertyName = "startLocationLine")]
-        public int StartLocationLine { get; set; }
-        [JsonProperty(PropertyName = "startLocationColumn")]
-        public int StartLocationColumn { get; set; }
-        [JsonProperty(PropertyName = "endLocationLine")]
-        public int EndLocationLine { get; set; }
-        [JsonProperty(PropertyName = "endLocationColumn")]
-        public int EndLocationColumn { get; set; }
-        [JsonProperty(PropertyName = "boundaryIndex")]
-        public int BoundaryIndex { get; set; }
-        [JsonProperty(PropertyName = "boundaryLength")]
-        public int BoundaryLength { get; set; }
-
-
-    }
-
-
 }

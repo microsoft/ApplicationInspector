@@ -3,7 +3,6 @@
 
 using DotLiquid;
 using DotLiquid.FileSystems;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +18,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <summary>
         /// Registers datatypes with html framework liquid and sets up data for use within it and used
         /// with html partial.liquid files that are embedded as resources
+        /// Liquid processing within partial html files only requires data ref to object while JS requires json objects
         /// </summary>
         /// <param name="app"></param>
         public override void WriteApp(AppProfile app)
@@ -33,18 +33,8 @@ namespace Microsoft.ApplicationInspector.Commands
             var data = new Dictionary<string, object>();
             data["AppProfile"] = app;
 
-            //matchitems rather than records created to exclude full rule/patterns/cond.
-            List<MatchItems> matches = new List<MatchItems>();
-            foreach (MatchRecord match in app.MatchList)
-            {
-                MatchItems matchItem = new MatchItems(match);
-                matches.Add(matchItem);
-            }
-
-            data["matchDetails"] = matches;
-
             var hashData = new Hash();
-            hashData["json"] = JsonConvert.SerializeObject(data, Formatting.Indented);
+            hashData["json"] = Newtonsoft.Json.JsonConvert.SerializeObject(data);//json serialization required for [js] access to objects
             hashData["application_version"] = Utils.GetVersionString();
 
             //add dynamic sets of groups of taginfo read from preferences for Profile page

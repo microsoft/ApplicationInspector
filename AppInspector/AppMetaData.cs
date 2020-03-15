@@ -16,7 +16,6 @@ namespace Microsoft.ApplicationInspector.Commands
     /// Contains data elements that represent post processing options 
     /// Contains data elements that are related to organization and presentation of tagGroups
     /// </summary>
-    [Serializable]
     public class AppProfile
     {
         [JsonProperty(PropertyName = "appInspectorVer")]
@@ -36,10 +35,10 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonIgnore]
         public Dictionary<string, List<TagInfo>> KeyedSortedTagInfoLists { get; } //split to avoid json serialization with others
         [JsonIgnore]
-        public List<MatchRecord> MatchList { get; set; }//results list of rulesprocessing
+        public List<MatchRecord> MatchList { get; set; }//list of MatchRecords that wrap and augment Issues class during processing
+        public List<LimitedMatchRecord> FormattedMatchList { get; set; }//lighter formatted list structure more suited for json output to limit extraneous fieldo in Issues class
         [JsonIgnore]
         public List<TagCategory> TagGroupPreferences { get; set; }//read preferred list of groups and tags for profile page
-
 
         //Report properties
         [JsonIgnore]
@@ -65,6 +64,7 @@ namespace Microsoft.ApplicationInspector.Commands
             SourcePath = sourcePath;
             Version = Utils.GetVersion();
             MatchList = new List<MatchRecord>();
+            FormattedMatchList = new List<LimitedMatchRecord>();
             KeyedTagInfoLists = new Dictionary<string, List<TagInfo>>();
             KeyedSortedTagInfoLists = new Dictionary<string, List<TagInfo>>();
 
@@ -123,6 +123,12 @@ namespace Microsoft.ApplicationInspector.Commands
             KeyedSortedTagInfoLists["tagGrpAllTagsByConfidence"] = GetTagInfoListByConfidence();
             KeyedSortedTagInfoLists["tagGrpAllTagsBySeverity"] = GetTagInfoListBySeverity();
             KeyedSortedTagInfoLists["tagGrpAllTagsByName"] = GetTagInfoListByName();
+
+            foreach (MatchRecord matchRecord in MatchList)
+            {
+                LimitedMatchRecord matchItem = new LimitedMatchRecord(matchRecord);
+                FormattedMatchList.Add(matchItem);
+            }
 
             MetaData.PrepareReport();
 
@@ -458,6 +464,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return result;
         }
+
     }
 
     #endregion
@@ -467,7 +474,6 @@ namespace Microsoft.ApplicationInspector.Commands
     /// Contains meta data elements around the source scanned
     /// Contains rollup data for reporting purposes
     /// </summary>
-    [Serializable]
     public class AppMetaData
     {
         //Multi-list of elements makes it easier to pass to HTML template engine -direct getters also work
@@ -743,6 +749,80 @@ namespace Microsoft.ApplicationInspector.Commands
                     Count = counter.Count
                 });
         }
+    }
+
+
+
+    /// <summary>
+    /// Subset of MatchRecord and Issue properties specific for json output to avoid inclusion of all
+    /// MatchRecord properities like rule/pattern subobjects...
+    /// </summary>
+
+    public class LimitedMatchRecord
+    {
+        public LimitedMatchRecord(MatchRecord matchRecord)
+        {
+            FileName = matchRecord.Filename;
+            SourceLabel = matchRecord.Language.Name;
+            SourceType = matchRecord.Language.Type.ToString();
+            StartLocationLine = matchRecord.Issue.StartLocation.Line;
+            StartLocationColumn = matchRecord.Issue.StartLocation.Column;
+            EndLocationLine = matchRecord.Issue.EndLocation.Line;
+            EndLocationColumn = matchRecord.Issue.EndLocation.Column;
+            BoundaryIndex = matchRecord.Issue.Boundary.Index;
+            BoundaryLength = matchRecord.Issue.Boundary.Length;
+            RuleId = matchRecord.Issue.Rule.Id;
+            Severity = matchRecord.Issue.Rule.Severity.ToString();
+            RuleName = matchRecord.Issue.Rule.Name;
+            RuleDescription = matchRecord.Issue.Rule.Description;
+            PatternConfidence = matchRecord.Issue.Confidence.ToString();
+            PatternType = matchRecord.Issue.PatternMatch.PatternType.ToString();
+            MatchingPattern = matchRecord.Issue.PatternMatch.Pattern;
+            Sample = matchRecord.TextSample;
+            Excerpt = matchRecord.Excerpt;
+            Tags = matchRecord.Issue.Rule.Tags;
+        }
+
+        [JsonProperty(PropertyName = "fileName")]
+        public string FileName { get; set; }
+        [JsonProperty(PropertyName = "ruleId")]
+        public string RuleId { get; set; }
+        [JsonProperty(PropertyName = "ruleName")]
+        public string RuleName { get; set; }
+        [JsonProperty(PropertyName = "ruleDescription")]
+        public string RuleDescription { get; set; }
+        [JsonProperty(PropertyName = "pattern")]
+        public string MatchingPattern { get; set; }
+        [JsonProperty(PropertyName = "type")]
+        public string PatternType { get; set; }
+        [JsonProperty(PropertyName = "confidence")]
+        public string PatternConfidence { get; set; }
+        [JsonProperty(PropertyName = "severity")]
+        public string Severity { get; set; }
+        [JsonProperty(PropertyName = "tags")]
+        public string[] Tags { get; set; }
+        [JsonProperty(PropertyName = "sourceLabel")]
+        public string SourceLabel { get; set; }
+        [JsonProperty(PropertyName = "sourceType")]
+        public string SourceType { get; set; }
+        [JsonProperty(PropertyName = "sample")]
+        public string Sample { get; set; }
+        [JsonProperty(PropertyName = "excerpt")]
+        public string Excerpt { get; set; }
+        [JsonProperty(PropertyName = "startLocationLine")]
+        public int StartLocationLine { get; set; }
+        [JsonProperty(PropertyName = "startLocationColumn")]
+        public int StartLocationColumn { get; set; }
+        [JsonProperty(PropertyName = "endLocationLine")]
+        public int EndLocationLine { get; set; }
+        [JsonProperty(PropertyName = "endLocationColumn")]
+        public int EndLocationColumn { get; set; }
+        [JsonProperty(PropertyName = "boundaryIndex")]
+        public int BoundaryIndex { get; set; }
+        [JsonProperty(PropertyName = "boundaryLength")]
+        public int BoundaryLength { get; set; }
+
+
     }
 
 }
