@@ -259,6 +259,8 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# App Inspector artifacts
 /AppInspector/htmlReport
 /AppInspectorLog.txt
 /AppInspector/Log.txt
@@ -266,4 +268,4 @@ __pycache__/
 /AppInspector/wip.txt
 /AppInspector/linux/ApplicationInspector
 /Microsoft.DevSkim/linux/ApplicationInspector
-AppInspector/Resources/defaultRules.json
+/AppInspector/Resources/defaultRules.json
