@@ -32,13 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.6.0" />
-    <PackageReference Include="DotLiquid" Version="2.0.314" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NLog" Version="4.6.7" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
   </ItemGroup>
 
