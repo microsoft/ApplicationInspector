@@ -48,6 +48,7 @@
     <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NLog" Version="4.6.8" />
+    <PackageReference Include="SharpZipLib" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -87,7 +88,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="BeforeCompile">
-    <MakeDir Directories="Resources"/>
+    <MakeDir Directories="Resources" />
     <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRules.json" />
   </Target>
 
