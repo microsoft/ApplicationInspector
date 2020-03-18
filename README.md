@@ -94,13 +94,9 @@ ERROR(S):
 ```
   dotnet ApplicationInspector.dll analyze -s /home/user/myproject 
 ```
-##### Add custom rules (can be specified multiple times)
-```
-  dotnet ApplicationInspector.dll analyze -s /home/user/myproject -r /my/rules/directory -r /my/other/rules
-```
 ##### Write to JSON format
 ```
-  dotnet ApplicationInspector.dll analyze -s /home/user/myproject -f json
+  dotnet ApplicationInspector.dll analyze -s /home/user/myproject -f json -o results.json
 ```
 ### Tagdiff Command
 
