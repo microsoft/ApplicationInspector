@@ -239,5 +239,37 @@
         "confidence": "high"
       }
     ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035510",
+    "description": "OS: Dynamic Execution",
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "powershell|cmd|rundll32|regedit|wscript|javaw|csc|regsvr32|certutil|bitsadmin|schtasks|wmic|eqnedt32|msiexec|cmstp|mshta|curl|installutil|regsvcs|regasm|msbuild|cscript|msxsl|runonce",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "sc (config|query|start|stop)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "reg (add|copy|delete|import|export|restore|save|unload|compare)",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
   }
 ]
