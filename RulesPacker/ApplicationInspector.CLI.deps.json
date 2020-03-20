@@ -6,24 +6,20 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v3.1": {
-      "ApplicationInspector.CLI/1.1.8-g21f58273f4": {
+      "ApplicationInspector.CLI/1.1.17-g49a063a188": {
         "dependencies": {
-          "CommandLineParser": "2.6.0",
-          "DotLiquid": "2.0.314",
           "Microsoft.CST.ApplicationInspector.Commands": "0.0.0-placeholder",
-          "NLog": "4.6.7",
-          "Nerdbank.GitVersioning": "3.0.50",
-          "Newtonsoft.Json": "12.0.3"
+          "Nerdbank.GitVersioning": "3.0.50"
         },
         "runtime": {
           "ApplicationInspector.CLI.dll": {}
         }
       },
-      "CommandLineParser/2.6.0": {
+      "CommandLineParser/2.7.82": {
         "runtime": {
           "lib/netstandard2.0/CommandLine.dll": {
-            "assemblyVersion": "2.6.0.0",
-            "fileVersion": "2.6.0.0"
+            "assemblyVersion": "2.7.82.0",
+            "fileVersion": "2.7.82.0"
           }
         }
       },
@@ -51,11 +47,11 @@
           }
         }
       },
-      "NLog/4.6.7": {
+      "NLog/4.6.8": {
         "runtime": {
           "lib/netstandard2.0/NLog.dll": {
             "assemblyVersion": "4.0.0.0",
-            "fileVersion": "4.6.7.10445"
+            "fileVersion": "4.6.8.10751"
           }
         }
       },
@@ -64,7 +60,14 @@
           "System.Text.Encoding.CodePages": "4.5.1"
         }
       },
-      "SharpZipLib/1.2.0": {},
+      "SharpZipLib/1.2.0": {
+        "runtime": {
+          "lib/netstandard2.0/ICSharpCode.SharpZipLib.dll": {
+            "assemblyVersion": "1.2.0.246",
+            "fileVersion": "1.2.0.246"
+          }
+        }
+      },
       "System.Runtime.CompilerServices.Unsafe/4.5.2": {},
       "System.Text.Encoding.CodePages/4.5.1": {
         "dependencies": {
@@ -74,12 +77,13 @@
       },
       "Microsoft.CST.ApplicationInspector.Commands/0.0.0-placeholder": {
         "dependencies": {
-          "CommandLineParser": "2.6.0",
+          "CommandLineParser": "2.7.82",
           "DotLiquid": "2.0.314",
           "Microsoft.ApplicationInspector.RulesEngine": "0.0.0-placeholder",
           "Microsoft.MultiExtractor": "1.0.0",
-          "NLog": "4.6.7",
-          "Newtonsoft.Json": "12.0.3"
+          "NLog": "4.6.8",
+          "Newtonsoft.Json": "12.0.3",
+          "SharpZipLib": "1.2.0"
         },
         "runtime": {
           "ApplicationInspector.Commands.dll": {}
@@ -89,7 +93,7 @@
         "runtime": {
           "ApplicationInspector.RulesEngine.dll": {
             "assemblyVersion": "1.1.0.0",
-            "fileVersion": "1.1.8.62753"
+            "fileVersion": "1.1.17.41033"
           }
         }
       },
@@ -97,24 +101,24 @@
         "runtime": {
           "MultiExtractor.dll": {
             "assemblyVersion": "1.1.0.0",
-            "fileVersion": "1.1.8.62753"
+            "fileVersion": "1.1.17.41033"
           }
         }
       }
     }
   },
   "libraries": {
-    "ApplicationInspector.CLI/1.1.8-g21f58273f4": {
+    "ApplicationInspector.CLI/1.1.17-g49a063a188": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
     },
-    "CommandLineParser/2.6.0": {
+    "CommandLineParser/2.7.82": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-jjJ2Ey2pPY6OeY74Qau2cH+M+pN4kvvSP+kKlDzIZUcJs1oK+QlNjQYnm8HQj2fQa2aZLtwJig4MI0Vbx4YBSA==",
-      "path": "commandlineparser/2.6.0",
-      "hashPath": "commandlineparser.2.6.0.nupkg.sha512"
+      "sha512": "sha512-JnjxBu4++EDnYtDzHskiPrPJ9hAna8amu8qlQx8J+2oZnPddDnkR/0FFtQMDz0Cs0YF2lbyW3OmYfRmIrLNY0A==",
+      "path": "commandlineparser/2.7.82",
+      "hashPath": "commandlineparser.2.7.82.nupkg.sha512"
     },
     "DotLiquid/2.0.314": {
       "type": "package",
@@ -151,12 +155,12 @@
       "path": "newtonsoft.json/12.0.3",
       "hashPath": "newtonsoft.json.12.0.3.nupkg.sha512"
     },
-    "NLog/4.6.7": {
+    "NLog/4.6.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-xSIzXrIF89Ww6yoJPvyBcu4JLgNiDiEaTT4GyVltZEeVIvkgSm9J/srUy1Yz0EXwbTv502l8knoCFrgNc/MUMA==",
-      "path": "nlog/4.6.7",
-      "hashPath": "nlog.4.6.7.nupkg.sha512"
+      "sha512": "sha512-LKB0uN5naOTxdNz++iapk6arNYv2asE8FPRBAmQZ1fe8y8C1Zm6sldh/w9TP/w5s7FGK8s0x6ny0og5ytFK1oQ==",
+      "path": "nlog/4.6.8",
+      "hashPath": "nlog.4.6.8.nupkg.sha512"
     },
     "SharpCompress/0.24.0": {
       "type": "package",

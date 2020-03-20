@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ANALYZE_COMPRESSED_ERROR" xml:space="preserve">
-    <value>Problem while decompressing {0}: Unzip and try running on uncompressed files.</value>
+    <value>Problem while decompressing {0}: Unzip and try running on uncompressed files</value>
   </data>
   <data name="ANALYZE_COMPRESSED_FILESIZE_WARN" xml:space="preserve">
     <value>Decompressing may take longer for larger files</value>
@@ -151,7 +151,7 @@
     <value>No file types found in source path that are supported</value>
   </data>
   <data name="ANALYZE_OUTPUT_FILE" xml:space="preserve">
-    <value>See output file {0}</value>
+    <value>See output file at {0}</value>
   </data>
   <data name="ANALYZE_REPORTSIZE_WARN" xml:space="preserve">
     <value>The output.html file size is large and may render slowly.  Consider running using alternate output format options as needed.</value>
@@ -166,7 +166,7 @@
     <value>Unable to launch output.html automatically.  Set the BROWSER environment variable to your desired browser and try again or launch your browser and navigate to the file to view the report file manually.</value>
   </data>
   <data name="BROWSER_START_FAIL" xml:space="preserve">
-    <value>Unable to launch output.html in default browser.  Launch your browser manually to view output.html report file.</value>
+    <value>Unable to launch output.html in default browser.  Launch your browser manually to view output.html report file</value>
   </data>
   <data name="BROWSER_START_SUCCESS" xml:space="preserve">
     <value>Opening default browser to output.html report</value>
@@ -187,7 +187,7 @@
     <value>Invalid rule path {0}</value>
   </data>
   <data name="CMD_NORULES_SPECIFIED" xml:space="preserve">
-    <value>No rules specified.  At least one valid rules path required.</value>
+    <value>No rules specified.  At least one valid rules path required</value>
   </data>
   <data name="CMD_PREPARING_REPORT" xml:space="preserve">
     <value>Preparing report</value>
@@ -212,13 +212,13 @@
     <value>Output file not specified for custom rules pack command</value>
   </data>
   <data name="RUNTIME_ERROR_NAMED" xml:space="preserve">
-    <value>{0}.  Please see log file for more information.</value>
+    <value>{0}.  Please see log file at {1} for more details</value>
   </data>
   <data name="RUNTIME_ERROR_PRELOG" xml:space="preserve">
-    <value>{0}.  Log file failed to create.</value>
+    <value>{0}.  No additional information available</value>
   </data>
   <data name="RUNTIME_ERROR_UNNAMED" xml:space="preserve">
-    <value>A runtime error has occured.  Please see log file for more information.</value>
+    <value>A runtime error has occured.  Please see log file at {0} for more details.</value>
   </data>
   <data name="TAGDIFF_NO_TAGS_FOUND" xml:space="preserve">
     <value>No tags found in one or both source paths</value>
@@ -260,7 +260,7 @@
     <value>Tagtest for [{0}]: </value>
   </data>
   <data name="VERIFY_RULES_RESULTS_FAIL" xml:space="preserve">
-    <value>Verify rules failed.  See log file for details.</value>
+    <value>Verify rules failed.  See log file for details</value>
   </data>
   <data name="VERIFY_RULES_RESULTS_SUCCESS" xml:space="preserve">
     <value>Verify rules succeeded</value>

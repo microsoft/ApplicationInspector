@@ -22,7 +22,7 @@ namespace Microsoft.ApplicationInspector.Commands
     public class TagDiffCommand : Command
     {
         private string _arg_src1, _arg_src2;
-        private string _arg_rulesPath;
+        private string _arg_customRulesPath;
         private string _arg_outputFile;
         private bool _arg_ignoreDefault;
         private TagTestType _arg_tagTestType;
@@ -41,11 +41,14 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _arg_src1 = opt.SourcePath1;
             _arg_src2 = opt.SourcePath2;
-            _arg_rulesPath = opt.CustomRulesPath;
+            _arg_customRulesPath = opt.CustomRulesPath;
             _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
+
+            _arg_ignoreDefault = opt.IgnoreDefaultRules;
             opt.TestType ??= "equality";
             _arg_outputFile = opt.OutputFilePath;
             _arg_logger = opt.Log;
+
 
             WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
             if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
@@ -54,10 +57,11 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!Enum.TryParse(opt.TestType, true, out _arg_tagTestType))
                 throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
-
-            _arg_ignoreDefault = opt.IgnoreDefaultRules;
-
         }
+
+
+
+
 
         /// <summary>
         /// Option for DLL use as alternate to Run which only outputs a file to return results as string
@@ -119,7 +123,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     SourcePath = _arg_src1,
                     OutputFilePath = tmp1,
                     OutputFileFormat = "json",
-                    CustomRulesPath = _arg_rulesPath,
+                    CustomRulesPath = _arg_customRulesPath,
                     IgnoreDefaultRules = _arg_ignoreDefault,
                     SimpleTagsOnly = true,
                     ConsoleVerbosityLevel = "none",
@@ -130,7 +134,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     SourcePath = _arg_src2,
                     OutputFilePath = tmp2,
                     OutputFileFormat = "json",
-                    CustomRulesPath = _arg_rulesPath,
+                    CustomRulesPath = _arg_customRulesPath,
                     IgnoreDefaultRules = _arg_ignoreDefault,
                     SimpleTagsOnly = true,
                     ConsoleVerbosityLevel = "none",
@@ -184,8 +188,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 string file1TagsJson = File.ReadAllText(tmp1);
                 string file2TagsJson = File.ReadAllText(tmp2);
 
-                var file1Tags = JsonConvert.DeserializeObject<TagsFile[]>(file1TagsJson).First();
-                var file2Tags = JsonConvert.DeserializeObject<TagsFile[]>(file2TagsJson).First();
+                var file1Tags = JsonConvert.DeserializeObject<TagsFile>(file1TagsJson);
+                var file2Tags = JsonConvert.DeserializeObject<TagsFile>(file2TagsJson);
 
                 //can't simply compare counts as content may differ; must compare both in directions in two passes a->b; b->a
                 //first pass

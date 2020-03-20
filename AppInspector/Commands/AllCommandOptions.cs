@@ -23,10 +23,10 @@ namespace Microsoft.ApplicationInspector.Commands
     [Verb("analyze", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics")]
     public class AnalyzeCommandOptions : AllCommandOptions
     {
-        [Option('s', "source-path", Required = true, HelpText = "Path to source code to inspect (required)")]
+        [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect")]
         public string SourcePath { get; set; }
 
-        [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
+        [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string OutputFilePath { get; set; }
 
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [html|json|text]", Default = "html")]
@@ -35,7 +35,7 @@ namespace Microsoft.ApplicationInspector.Commands
         [Option('e', "text-format", Required = false, HelpText = "Match text format specifiers", Default = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m")]
         public string TextOutputFormat { get; set; }
 
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
+        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
         [Option('t', "tag-output-only", Required = false, HelpText = "Output only identified tags", Default = false)]
@@ -47,7 +47,7 @@ namespace Microsoft.ApplicationInspector.Commands
         [Option('d', "allow-dup-tags", Required = false, HelpText = "Output contains unique and non-unique tag matches", Default = false)]
         public bool AllowDupTags { get; set; }
 
-        [Option('b', "supress-browser-open", Required = false, HelpText = "HTML formatted output is automatically opened to default browser", Default = false)]
+        [Option('b', "suppress-browser-open", Required = false, HelpText = "Suppress automatic open to HTML output using default browser", Default = false)]
         public bool AutoBrowserOpen { get; set; }
 
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
@@ -65,22 +65,22 @@ namespace Microsoft.ApplicationInspector.Commands
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]
     public class TagDiffCommandOptions : AllCommandOptions
     {
-        [Option("src1", Required = true, HelpText = "Source 1 to compare (required)")]
+        [Option("src1", Required = true, HelpText = "Source 1 to compare")]
         public string SourcePath1 { get; set; }
 
-        [Option("src2", Required = true, HelpText = "Source 2 to compare (required")]
+        [Option("src2", Required = true, HelpText = "Source 2 to compare")]
         public string SourcePath2 { get; set; }
 
         [Option('t', "test-type", Required = false, HelpText = "Type of test to run [equality|inequality]", Default = "equality")]
         public string TestType { get; set; }
 
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
+        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
-        [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
+        [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string OutputFilePath { get; set; }
 
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
@@ -88,19 +88,20 @@ namespace Microsoft.ApplicationInspector.Commands
 
     }
 
-    [Verb("tagtest", HelpText = "Test presence of smaller set or custom tags in source (compare or verify modes)")]
+
+    [Verb("tagtest", HelpText = "Test (T/F) for presence of custom rule set in source")]
     public class TagTestCommandOptions : AllCommandOptions
     {
-        [Option('s', "source-path", Required = true, HelpText = "Source to test (required)")]
+        [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect")]
         public string SourcePath { get; set; }
 
         [Option('t', "test-type", Required = false, HelpText = "Test to perform [rulespresent|rulesnotpresent] ", Default = "rulespresent")]
         public string TestType { get; set; }
 
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
+        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
-        [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
+        [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string OutputFilePath { get; set; }
 
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
@@ -108,16 +109,16 @@ namespace Microsoft.ApplicationInspector.Commands
 
     }
 
-    [Verb("exporttags", HelpText = "Export default unique rule tags to view what features may be detected")]
+    [Verb("exporttags", HelpText = "Export unique rule tags to view what code features may be detected")]
     public class ExportTagsCommandOptions : AllCommandOptions
     {
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
+        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
-        [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
+        [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string OutputFilePath { get; set; }
 
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
@@ -128,10 +129,10 @@ namespace Microsoft.ApplicationInspector.Commands
     [Verb("verifyrules", HelpText = "Verify custom rules syntax is valid")]
     public class VerifyRulesCommandOptions : AllCommandOptions
     {
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
+        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
-        [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
+        [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string OutputFilePath { get; set; }
 
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
@@ -140,16 +141,16 @@ namespace Microsoft.ApplicationInspector.Commands
 
     }
 
-    [Verb("packrules", HelpText = "Combine multiple rules into one file for ease in distribution")]
+    [Verb("packrules", HelpText = "Combine multiple rule files into one file for ease in distribution")]
     public class PackRulesCommandOptions : AllCommandOptions
     {
-        [Option('d', "pack-default-rules", Required = false, HelpText = "Repack default rules")]
+        [Option('d', "pack-default-rules", Required = false, HelpText = "Repack default rules. Automatic on Application Inspector build")]
         public bool RepackDefaultRules { get; set; }
 
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules path")]
+        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
-        [Option('o', "output-file-path", Required = false, HelpText = "Path to output file")]
+        [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string OutputFilePath { get; set; }
 
         [Option('i', "not-indented", Required = false, HelpText = "Remove indentation from json output", Default = false)]

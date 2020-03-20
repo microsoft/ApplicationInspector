@@ -11,6 +11,10 @@ using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
+    /// <summary>
+    /// Used to combine validated rules into one json for ease in distribution of this
+    /// application
+    /// </summary>
     public class PackRulesCommand : Command
     {
         public enum ExitCode
@@ -20,12 +24,15 @@ namespace Microsoft.ApplicationInspector.Commands
             CriticalError = 2
         }
 
+        private string _path;
+        private string _outputfile;
+        private bool _indent;
         private string _arg_consoleVerbosityLevel;
 
         public PackRulesCommand(PackRulesCommandOptions opt)
         {
             _path = opt.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : opt.CustomRulesPath;
-            _outputfile = opt.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesPackedFile) : opt.OutputFilePath;
+            _outputfile = opt.RepackDefaultRules && String.IsNullOrEmpty(opt.OutputFilePath) ? Utils.GetPath(Utils.AppPath.defaultRulesPackedFile) : opt.OutputFilePath;
             _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel;
 
             if (!opt.RepackDefaultRules && string.IsNullOrEmpty(opt.CustomRulesPath) || string.IsNullOrEmpty(_outputfile))
@@ -40,13 +47,19 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.Verbosity = verbosity;
         }
 
+        /// <summary>
+        /// After verifying rules are valid syntax and load; combines into a single .json file 
+        /// for ease in distribution including this application's defaultset which are
+        /// added to the manifest as an embedded resource (see AppInspector.Commands.csproj)
+        /// </summary>
+        /// <returns></returns>
         public override int Run()
         {
             WriteOnce.SafeLog("PackRules::Run", LogLevel.Trace);
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "PackRules"));
-            Verifier verifier = new Verifier(_path);
+            RulesVerifier verifier = new RulesVerifier(_path);
 
-            if (!verifier.Verify())
+            if (!verifier.Verify())//throws anyway
                 return (int)ExitCode.CriticalError;
 
             List<Rule> list = new List<Rule>(verifier.CompiledRuleset.AsEnumerable());
@@ -63,12 +76,10 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "PackRules"));
+            WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _outputfile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Medium);
 
             return (int)ExitCode.NoIssues;
         }
 
-        private string _path;
-        private string _outputfile;
-        private bool _indent;
     }
 }

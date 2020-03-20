@@ -157,6 +157,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     SourcePath = _arg_srcPath,
                     OutputFilePath = tmp1,
                     OutputFileFormat = "json",
+                    IgnoreDefaultRules = true,
                     CustomRulesPath = _arg_customRulesPath,
                     SimpleTagsOnly = true,
                     ConsoleVerbosityLevel = "None",
@@ -199,8 +200,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             //assumed (result == AnalyzeCommand.ExitCode.MatchesFound)
             string file1TagsJson = File.ReadAllText(tmp1);
-            var file1TagsObj = JsonConvert.DeserializeObject<TagsFile[]>(file1TagsJson);
-            var file1Tags = file1TagsObj.First(); // here we have a single FileList object
+            var file1Tags = JsonConvert.DeserializeObject<TagsFile>(file1TagsJson);
             File.Delete(tmp1);
 
             foreach (Rule r in _rulesSet)
