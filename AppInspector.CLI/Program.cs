@@ -4,10 +4,8 @@
 using CommandLine;
 using Microsoft.ApplicationInspector.Commands;
 using NLog;
-using NLog.Config;
-using NLog.Targets;
 using System;
-using System.IO;
+
 
 
 namespace Microsoft.ApplicationInspector.CLI
@@ -52,7 +50,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 if (Logger != null)
                 {
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_NAMED, e.Message));
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_NAMED, e.Message, Utils.LogFilePath));
                     Logger.Error($"Runtime error: {e.StackTrace}");
                 }
                 else
@@ -62,7 +60,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 if (Logger != null)
                 {
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_UNNAMED));
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_UNNAMED, Utils.LogFilePath));
                     Logger.Error($"Runtime error: {e.Message} {e.StackTrace}");
                 }
                 else
@@ -75,83 +73,59 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunAnalyzeCommand(AnalyzeCommandOptions opts)
         {
-            SetupLogging(opts);
+            Logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = Logger;
+            opts.Log = Logger;
+
             return new AnalyzeCommand(opts).Run();
         }
 
         private static int RunTagDiffCommand(TagDiffCommandOptions opts)
         {
-            SetupLogging(opts);
+            Logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = Logger;
+            opts.Log = Logger;
+
             return new TagDiffCommand(opts).Run();
         }
 
         private static int RunTagTestCommand(TagTestCommandOptions opts)
         {
-            SetupLogging(opts);
+            Logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = Logger;
+            opts.Log = Logger;
+
             return new TagTestCommand(opts).Run();
         }
 
         private static int RunExportTagsCommand(ExportTagsCommandOptions opts)
         {
-            SetupLogging(opts);
+            Logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = Logger;
+            opts.Log = Logger;
+
             return new ExportTagsCommand(opts).Run();
         }
 
         private static int RunVerifyRulesCommand(VerifyRulesCommandOptions opts)
         {
-            SetupLogging(opts);
+            Logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = Logger;
+            opts.Log = Logger;
+
             return new VerifyRulesCommand(opts).Run();
         }
 
 
         private static int RunPackRulesCommand(PackRulesCommandOptions opts)
         {
-            SetupLogging(opts);
+            Logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = Logger;
+            opts.Log = Logger;
+
             return new PackRulesCommand(opts).Run();
         }
 
-        static void SetupLogging(AllCommandOptions opts)
-        {
-            var config = new NLog.Config.LoggingConfiguration();
-
-            if (String.IsNullOrEmpty(opts.LogFilePath))
-            {
-                opts.LogFilePath = Utils.GetPath(Utils.AppPath.defaultLog);
-                //if using default app log path clean up previous for convenience in reading
-                if (File.Exists(opts.LogFilePath))
-                    File.Delete(opts.LogFilePath);
-            }
-
-            LogLevel log_level = LogLevel.Error;//default
-            try
-            {
-                log_level = LogLevel.FromString(opts.LogFileLevel);
-            }
-            catch (Exception)
-            {
-                throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v")));
-            }
-
-            using (var fileTarget = new FileTarget()
-            {
-                Name = "LogFile",
-                FileName = opts.LogFilePath,
-                Layout = @"${date:universalTime=true:format=s} ${threadid} ${level:uppercase=true} - ${message}",
-                ForceMutexConcurrentWrites = true
-
-            })
-            {
-                config.AddTarget(fileTarget);
-                config.LoggingRules.Add(new LoggingRule("*", log_level, fileTarget));
-            }
-
-            LogManager.Configuration = config;
-            opts.Log = LogManager.GetCurrentClassLogger();
-            Logger = opts.Log;
-            Logger.Info("[" + DateTime.Now.ToLocalTime() + "] //////////////////////////////////////////////////////////");
-            WriteOnce.Log = Logger;//allows log to be written to as well as console or output file
-
-        }
 
     }
 }

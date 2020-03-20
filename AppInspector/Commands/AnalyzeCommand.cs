@@ -150,38 +150,32 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigRules", LogLevel.Trace);
 
-            RuleSet rulesSet = new RuleSet(_arg_logger);
+            RuleSet rulesSet = null;
             List<string> rulePaths = new List<string>();
 
             if (!_arg_ignoreDefaultRules)
             {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                string[] resourceName = assembly.GetManifestResourceNames();
-                string filePath = "Microsoft.ApplicationInspector.Commands.defaultRules.json";
-                Stream resource = assembly.GetManifestResourceStream(filePath);
-                using (StreamReader file = new StreamReader(resource))
-                {
-                    rulesSet.AddString(file.ReadToEnd(), filePath, null);
-                }
+                rulePaths.Add(Utils.GetPath(Utils.AppPath.defaultRulesPackedFile));
+                rulesSet = Utils.GetDefaultRuleSet(_arg_logger);
             }
 
             if (!string.IsNullOrEmpty(_arg_customRulesPath))
+            {
+                if (rulesSet == null)
+                    rulesSet = new RuleSet(_arg_logger);
+
                 rulePaths.Add(_arg_customRulesPath);
 
-            foreach (string rulePath in rulePaths)
-            {
-                if (Directory.Exists(rulePath))
-                    rulesSet.AddDirectory(rulePath);
-                else if (File.Exists(rulePath))
-                    rulesSet.AddFile(rulePath);
+                if (Directory.Exists(_arg_customRulesPath))
+                    rulesSet.AddDirectory(_arg_customRulesPath);
+                else if (File.Exists(_arg_customRulesPath))
+                    rulesSet.AddFile(_arg_customRulesPath);
                 else
-                {
-                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, rulePath));
-                }
+                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _arg_customRulesPath));
             }
 
             //error check based on ruleset not path enumeration
-            if (rulesSet.Count() == 0)
+            if (rulesSet == null || rulesSet.Count() == 0)
             {
                 throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
             }
@@ -265,7 +259,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
 
         /// <summary>
-        /// Option for DLL use as alternate to Run which only outputs a file to return results as string
+        /// Option for DLL use as alternate to Run() which only outputs a file to return results as string
         /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added
         /// </summary>
         /// <returns>output results</returns>
@@ -315,6 +309,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch (Exception e)
                 {
+                    WriteOnce.SafeLog(e.Message, LogLevel.Error);
                     throw new OpException(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILE_TYPE_OPEN, filename));
                 }
 

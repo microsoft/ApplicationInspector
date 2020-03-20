@@ -5,7 +5,6 @@ using NLog;
 using System;
 using System.IO;
 
-
 namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
@@ -25,7 +24,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         public static ConsoleVerbosity Verbosity { get; set; }
 
-        public static Logger Log { get; set; }
+        public static Logger Log { get; set; } //use SafeLog or check for null before use
 
         public static TextWriter Writer { get; set; }
         private static ConsoleColor _infoColor = ConsoleColor.Magenta;
@@ -124,6 +123,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
         static public void SafeLog(string message, NLog.LogLevel logLevel)
         {
+            if (Log == null)
+                Log = Utils.SetupLogging();
+
             if (Log != null && Log.Name != "Console")
             {
                 int value = logLevel.Ordinal;

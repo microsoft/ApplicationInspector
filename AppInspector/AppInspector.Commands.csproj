@@ -87,9 +87,9 @@
     <None Include="..\icon-128.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
+
   <Target Name="PreBuild" BeforeTargets="BeforeCompile">
     <MakeDir Directories="Resources" />
     <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRules.json" />
   </Target>
-
 </Project>

@@ -22,7 +22,9 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 List<string> keys = new List<string>(app.MetaData.UniqueTags);
                 keys.Sort();
-                TextWriter.Write(JsonConvert.SerializeObject(keys, Formatting.Indented));
+                TagsFile tags = new TagsFile();
+                tags.Tags = keys.ToArray();
+                TextWriter.Write(JsonConvert.SerializeObject(tags, Formatting.Indented));
             }
             else
             {

@@ -3,33 +3,32 @@
 
 using Microsoft.ApplicationInspector.RulesEngine;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
-    public class ExportTagsCommand : Command
+    /// <summary>
+    /// Used to verify user custom ruleset.  Default ruleset has no need for support outside of PackRulesCommand for verification
+    /// since each build performs a verification already and the output is added to the binary manifest
+    /// </summary>
+    public class VerifyRulesCommand : Command
     {
         public enum ExitCode
         {
-            Success = 0,
-            Error = 1,
+            Verified = 0,
+            NotVerified = 1,
             CriticalError = 2
         }
 
-        private string _arg_outputFile;
-        private string _arg_customRulesPath;
-        private bool _arg_ignoreDefaultRules;
-        private RuleSet _rules;
-        private string _arg_consoleVerbosityLevel;
+        string _arg_customRulesPath;
+        string _arg_outputFile;
+        string _arg_consoleVerbosityLevel;
 
-        public ExportTagsCommand(ExportTagsCommandOptions opt)
+        public VerifyRulesCommand(VerifyRulesCommandOptions opt)
         {
-            _rules = new RuleSet(WriteOnce.Log);
             _arg_customRulesPath = opt.CustomRulesPath;
             _arg_outputFile = opt.OutputFilePath;
-            _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
             _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
             _arg_logger = opt.Log;
 
@@ -38,12 +37,12 @@ namespace Microsoft.ApplicationInspector.Commands
                 throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
             WriteOnce.Verbosity = verbosity;
 
-            ConfigureOutput();
+            ConfigOutput();
             ConfigRules();
         }
 
 
-        private void ConfigureOutput()
+        private void ConfigOutput()
         {
             //setup output                       
             TextWriter outputWriter;
@@ -60,29 +59,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
         void ConfigRules()
         {
-            if (!_arg_ignoreDefaultRules)
-            {
-                _rules = Utils.GetDefaultRuleSet(_arg_logger);
-            }
-
-            if (!string.IsNullOrEmpty(_arg_customRulesPath))
-            {
-                if (_rules == null)
-                    _rules = new RuleSet(_arg_logger);
-
-                if (Directory.Exists(_arg_customRulesPath))
-                    _rules.AddDirectory(_arg_customRulesPath);
-                else if (File.Exists(_arg_customRulesPath))
-                    _rules.AddFile(_arg_customRulesPath);
-                else
-                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _arg_customRulesPath));
-            }
-
-            //error check based on ruleset not path enumeration
-            if (_rules == null || _rules.Count() == 0)
-            {
+            if (string.IsNullOrEmpty(_arg_customRulesPath))
                 throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
-            }
+
         }
 
 
@@ -101,7 +80,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             _arg_outputFile ??= "output.txt";
-            ConfigureOutput();
+            ConfigOutput();
 
             if ((int)ExitCode.CriticalError != Run())
             {
@@ -112,36 +91,38 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
-        //Main entry from CLI
+        /// <summary>
+        /// Main entry from CLI
+        /// </summary>
+        /// <returns></returns>
         public override int Run()
         {
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Exporttags"));
+            bool issues = false;
 
-            SortedDictionary<string, string> uniqueTags = new SortedDictionary<string, string>();
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Verify Rules"));
 
-            foreach (Rule r in _rules)
+            RulesVerifier verifier = new RulesVerifier(_arg_customRulesPath);
+            if (!verifier.Verify())
+                return (int)ExitCode.NotVerified;
+
+            RuleSet rules = verifier.CompiledRuleset;
+
+            //report each add
+            foreach (Rule rule in rules)
             {
-                //builds a list of unique tags
-                foreach (string t in r.Tags)
-                {
-                    if (uniqueTags.ContainsKey(t))
-                        continue;
-                    else
-                        uniqueTags.Add(t, t);
-                }
+                WriteOnce.Result(string.Format("Rule {0}-{1} verified", rule.Id, rule.Name), true, WriteOnce.ConsoleVerbosity.High);
             }
 
-            //separate loop so results are sorted (Sorted type)
-            foreach (string s in uniqueTags.Values)
-                WriteOnce.Result(s, true);
+            WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.VERIFY_RULES_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Verify Rules"));
 
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Exporttags"), true, WriteOnce.ConsoleVerbosity.Low);
             WriteOnce.FlushAll();
             if (!String.IsNullOrEmpty(_arg_outputFile))
                 WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
 
-
-            return (int)ExitCode.Success;
+            return issues ? (int)ExitCode.NotVerified : (int)ExitCode.Verified;
         }
+
     }
+
 }
