@@ -159,7 +159,7 @@ Use to analyze and report on differences in tags (features) between two project 
   --help                        Display this help screen.
 
 ```
-##### Simplist way to see the delta in tag features between two projects
+##### Simplist way to see the delta of tag features between two projects
 ```
   dotnet ApplicationInspector.CLI.dll tagdiff --src1 /home/user/project1 --src2 /home/user/project2
 ```
