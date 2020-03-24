@@ -141,7 +141,7 @@ stages:
         SupportLogOnError: false
         TreatSignatureUpdateFailureAs: 'Warning'
         SignatureFreshness: 'UpToDate'
-        TreatStaleSignatureAs: 'Error'
+        TreatStaleSignatureAs: 'Warning'
     - task: ArchiveFiles@2
       displayName: Archive Artifact - Windows
       inputs:
