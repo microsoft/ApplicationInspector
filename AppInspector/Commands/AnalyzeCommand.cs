@@ -233,6 +233,9 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
 
+            if (String.IsNullOrEmpty(_arg_sourcePath))
+                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
+
             if (Directory.Exists(_arg_sourcePath))
             {
                 try
