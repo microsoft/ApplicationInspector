@@ -94,6 +94,13 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
+        static public bool CLIExecutionContext()
+        {
+            Assembly assembly = Assembly.GetCallingAssembly();
+            return assembly.GetName().Name.Contains("ApplicationInspector.CLI");
+        }
+
+
 
         /// <summary>
         /// Attempt to map application type tags or file type or language to identify
@@ -238,6 +245,9 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             LogLevel log_level = LogLevel.Error;//default
+            if (String.IsNullOrEmpty(opts.LogFileLevel))
+                opts.LogFileLevel = "Error";
+
             try
             {
                 log_level = LogLevel.FromString(opts.LogFileLevel);
