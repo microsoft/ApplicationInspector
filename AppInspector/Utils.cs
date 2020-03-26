@@ -267,13 +267,13 @@ namespace Microsoft.ApplicationInspector.Commands
             })
             {
                 config.AddTarget(fileTarget);
-                config.LoggingRules.Add(new LoggingRule("*", log_level, fileTarget));
+                config.LoggingRules.Add(new LoggingRule("CST.ApplicationInspector", log_level, fileTarget));
             }
 
             LogFilePath = opts.LogFilePath;//preserve for console path msg
 
             LogManager.Configuration = config;
-            Logger logger = LogManager.GetCurrentClassLogger();
+            Logger logger = LogManager.GetLogger("CST.ApplicationInspector");
             logger.Info("[" + DateTime.Now.ToLocalTime() + "] //////////////////////////////////////////////////////////");
 
             return logger;
