@@ -142,6 +142,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow duplicate matches argument not supported for html output format.  Select a different output format (text/json) or remove the argument..
+        /// </summary>
+        internal static string ANALYZE_NODUPLICATES_HTML_FORMAT {
+            get {
+                return ResourceManager.GetString("ANALYZE_NODUPLICATES_HTML_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No pattern matches were detected for files in source path.
         /// </summary>
         internal static string ANALYZE_NOPATTERNS {

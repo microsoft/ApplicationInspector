@@ -29,6 +29,7 @@ namespace Microsoft.ApplicationInspector.Commands
             ANALYZE_FILE_TYPE_OPEN,
             ANALYZE_OUTPUT_FILE,
             ANALYZE_REPORTSIZE_WARN,
+            ANALYZE_NODUPLICATES_HTML_FORMAT,
             CMD_PREPARING_REPORT,
             CMD_COMPLETED,
             CMD_CRITICAL_FILE_ERR,

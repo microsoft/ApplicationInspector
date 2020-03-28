@@ -166,6 +166,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (!string.IsNullOrEmpty(_arg_outputFile))
                     WriteOnce.Info("output file ignored for html format");
                 _outputWriter.TextWriter = Console.Out;
+
+                if (!_arg_outputUniqueTagsOnly) //fix #183
+                    throw new Exception(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
             }
             else if (!string.IsNullOrEmpty(_arg_outputFile))
             {
