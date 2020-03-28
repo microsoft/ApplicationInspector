@@ -53,7 +53,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     Utils.Logger = null;
                     WriteOnce.Log = null;
                 }
-                throw e;
+                throw;
             }
         }
 
@@ -160,32 +160,47 @@ namespace Microsoft.ApplicationInspector.Commands
 
             SortedDictionary<string, string> uniqueTags = new SortedDictionary<string, string>();
 
-            foreach (Rule r in _rules)
+            try
             {
-                //builds a list of unique tags
-                foreach (string t in r.Tags)
+
+                foreach (Rule r in _rules)
                 {
-                    if (uniqueTags.ContainsKey(t))
-                        continue;
-                    else
-                        uniqueTags.Add(t, t);
+                    //builds a list of unique tags
+                    foreach (string t in r.Tags)
+                    {
+                        if (uniqueTags.ContainsKey(t))
+                            continue;
+                        else
+                            uniqueTags.Add(t, t);
+                    }
                 }
+
+                //separate loop so results are sorted (Sorted type)
+                foreach (string s in uniqueTags.Values)
+                    WriteOnce.Result(s, true);
+
+                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Exporttags"));
+                if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
+                    WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, WriteOnce.ConsoleVerbosity.Low, false);
+
+                WriteOnce.FlushAll();
             }
-
-            //separate loop so results are sorted (Sorted type)
-            foreach (string s in uniqueTags.Values)
-                WriteOnce.Result(s, true);
-
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Exporttags"));
-            if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
-                WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
-
-            WriteOnce.FlushAll();
-
-            if (_arg_close_log_on_exit)
+            catch (Exception e)
             {
-                Utils.Logger = null;
-                WriteOnce.Log = null;
+                WriteOnce.Error(e.Message);
+                //exit normaly for CLI callers and throw for DLL callers
+                if (Utils.CLIExecutionContext)
+                    return (int)ExitCode.CriticalError;
+                else
+                    throw;
+            }
+            finally
+            {
+                if (_arg_close_log_on_exit)
+                {
+                    Utils.Logger = null;
+                    WriteOnce.Log = null;
+                }
             }
 
             return (int)ExitCode.Success;
