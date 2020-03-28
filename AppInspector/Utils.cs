@@ -261,7 +261,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 System.IO.StreamReader file = new System.IO.StreamReader(opts.LogFilePath);
                 String line = file.ReadLine();
                 file.Close();
-                if (line.Contains("AppInsLog"))
+                if (line.Contains("AppInsLog"))//safety to prevent file path other than our logs from deletion
                     File.Delete(opts.LogFilePath);
             }
 
@@ -296,6 +296,7 @@ namespace Microsoft.ApplicationInspector.Commands
             LogManager.Configuration = config;
             Logger = LogManager.GetLogger("CST.ApplicationInspector");
             return Logger;
+
         }
 
     }
