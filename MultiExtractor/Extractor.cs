@@ -1,22 +1,19 @@
-﻿using System;
+﻿using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 using ICSharpCode.SharpZipLib.Zip;
-using ICSharpCode.SharpZipLib.Core;
-using System.IO;
-using System.Collections.Generic;
 using SharpCompress.Archives.Rar;
-using SharpCompress.Compressors.Xz;
 using SharpCompress.Compressors.BZip2;
-using ICSharpCode.SharpZipLib;
-using System.Dynamic;
+using SharpCompress.Compressors.Xz;
+using System.Collections.Generic;
+using System.IO;
 
 namespace MultiExtractor
 {
     public static class Extractor
     {
         private const int BUFFER_SIZE = 4096;
-        
+
         public static bool IsSupportedFormat(string filename)
         {
             ArchiveFileType archiveFileType = MiniMagic.DetectFileType(filename);
@@ -138,7 +135,7 @@ namespace MultiExtractor
             }
 
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
-            
+
             foreach (var extractedFile in ExtractFile(newFileEntry))
             {
                 files.Add(extractedFile);
@@ -212,7 +209,7 @@ namespace MultiExtractor
         {
             List<FileEntry> files = new List<FileEntry>();
             using var rarArchive = RarArchive.Open(fileEntry.Content);
-            using var memoryStream = new MemoryStream();
+
             foreach (var entry in rarArchive.Entries)
             {
                 if (entry.IsDirectory)
@@ -233,7 +230,7 @@ namespace MultiExtractor
         {
             List<FileEntry> files = new List<FileEntry>();
             using var rarArchive = RarArchive.Open(fileEntry.Content);
-            using var memoryStream = new MemoryStream();
+
             foreach (var entry in rarArchive.Entries)
             {
                 if (entry.IsDirectory)

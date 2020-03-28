@@ -24,40 +24,33 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
-        public bool Verify()
+        public void Verify()
         {
-            bool isCompiled = true;
-
             if (Directory.Exists(_rulesPath))
-                isCompiled = LoadDirectory(_rulesPath);
+                LoadDirectory(_rulesPath);
             else if (File.Exists(_rulesPath))
-                isCompiled = LoadFile(_rulesPath);
+                LoadFile(_rulesPath);
             else
             {
                 throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _rulesPath));
             }
 
-            return isCompiled;
         }
 
 
 
-        private bool LoadDirectory(string path)
+        private void LoadDirectory(string path)
         {
-            bool result = true;
             foreach (string filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
             {
-                if (!LoadFile(filename))
-                    result = false;
+                LoadFile(filename);
             }
-
-            return result;
         }
 
-        private bool LoadFile(string file)
+        private void LoadFile(string file)
         {
             RuleSet rules = new RuleSet();
-            bool noProblem = true;
+
             try
             {
                 rules.AddFile(file, null);
@@ -69,10 +62,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 throw new Exception(ErrMsg.FormatString(ErrMsg.ID.VERIFY_RULE_FAILED, file));
             }
 
-            if (noProblem)
-                _rules.AddRange(rules.AsEnumerable());
-
-            return noProblem;
+            _rules.AddRange(rules.AsEnumerable());
         }
 
 

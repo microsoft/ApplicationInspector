@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Text;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -50,34 +51,40 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private string StringList(HashSet<string> data)
         {
-            string results = "";
+            StringBuilder build = new StringBuilder();
 
             foreach (string s in data)
-                results += s + " ";
+                build.Append(" ");
 
-            return results;
+            return build.ToString();
         }
 
 
         private string StringList(Dictionary<string, int> data)
         {
-            string results = "";
+            StringBuilder build = new StringBuilder();
 
             foreach (string s in data.Keys)
-                results += s + " ";
+            {
+                build.Append(s);
+                build.Append(" ");
+            }
 
-            return results;
+            return build.ToString();
         }
 
 
         private string StringList(SortedDictionary<string, string> data)
         {
-            string results = "";
+            StringBuilder build = new StringBuilder();
 
             foreach (string s in data.Values)
-                results += s + " ";
+            {
+                build.Append(s);
+                build.Append(" ");
+            }
 
-            return results;
+            return build.ToString();
         }
 
 
@@ -88,11 +95,12 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private string MakeHeading(string header)
         {
-            string result = string.Format("[{0}]", header);
+            StringBuilder build = new StringBuilder();
+            build.Append(string.Format("[{0}]", header));
             for (int i = header.Length; i < COLUMN_MAX; i++)
-                result += "-";
+                build.Append("-");
 
-            return result;
+            return build.ToString();
         }
 
 

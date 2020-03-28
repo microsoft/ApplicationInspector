@@ -57,7 +57,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     Utils.Logger = null;
                     WriteOnce.Log = null;
                 }
-                throw e;
+                throw;
             }
         }
 
@@ -140,7 +140,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public override int Run()
         {
             WriteOnce.SafeLog("VerifyRulesCommand::Run", LogLevel.Trace);
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Verify Rules"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "verifyrules"));
 
             ExitCode exitCode = ExitCode.CriticalError;
 
@@ -159,7 +159,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
 
                 WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.VERIFY_RULES_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
-                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Verify Rules"));
+                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "verifyrules"));
                 if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
                     WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
                 WriteOnce.FlushAll();
@@ -169,9 +169,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.Error(e.Message);
                 //exit normaly for CLI callers and throw for DLL callers
                 if (Utils.CLIExecutionContext)
-                    return (int)ExitCode.CriticalError;//no way to distinguish from critical fail
+                    return (int)ExitCode.CriticalError;
                 else
-                    throw e;
+                    throw;
             }
             finally
             {

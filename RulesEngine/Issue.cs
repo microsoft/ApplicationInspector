@@ -9,6 +9,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class Issue
     {
+        Confidence _confidence;
         /// <summary>
         /// Creates new instance of Issue
         /// </summary>
@@ -18,9 +19,25 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             Boundary = new Boundary();
             StartLocation = new Location();
             IsSuppressionInfo = false;
+            Confidence = Confidence.Medium;
         }
 
-        public Confidence Confidence { get; set; }
+        public Confidence Confidence
+        {
+            get
+            {
+#pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
+                if (_confidence == null)//possible from serialiation
+#pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
+                    _confidence = Confidence.Medium;
+
+                return _confidence;
+            }
+            set
+            {
+                _confidence = value;
+            }
+        }
 
         /// <summary>
         /// Boundary of issue (index, length)

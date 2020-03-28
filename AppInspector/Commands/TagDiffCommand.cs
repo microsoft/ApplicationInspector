@@ -70,7 +70,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     Utils.Logger = null;
                     WriteOnce.Log = null;
                 }
-                throw e;
+                throw;
             }
         }
 
@@ -161,7 +161,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public override int Run()
         {
             WriteOnce.SafeLog("TagDiffCommand::Run", LogLevel.Trace);
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Tagdiff"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "tagdiff"));
 
             ExitCode exitCode = ExitCode.CriticalError;
             //save to quiet analyze cmd and restore
@@ -264,9 +264,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGDIFF_RESULTS_DIFFER), false);
                     WriteOnce.Result(resultsDiffer.ToString());
-                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagdiff"));
+                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "tagdiff"));
                     if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
-                        WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
+                        WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, WriteOnce.ConsoleVerbosity.Low, false);
 
                     WriteOnce.FlushAll();
                 }
@@ -294,7 +294,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (Utils.CLIExecutionContext)
                     return (int)ExitCode.CriticalError;
                 else
-                    throw e;
+                    throw;
             }
             finally
             {

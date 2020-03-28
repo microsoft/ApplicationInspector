@@ -93,7 +93,6 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             RuleSet ruleSet = new RuleSet(logger);
             Assembly assembly = Assembly.GetExecutingAssembly();
-            string[] resourceName = assembly.GetManifestResourceNames();
             string filePath = "Microsoft.ApplicationInspector.Commands.defaultRulesPkd.json";
             Stream resource = assembly.GetManifestResourceStream(filePath);
             using (StreamReader file = new StreamReader(resource))
@@ -296,7 +295,6 @@ namespace Microsoft.ApplicationInspector.Commands
             LogManager.Configuration = config;
             Logger = LogManager.GetLogger("CST.ApplicationInspector");
             return Logger;
-
         }
 
     }
