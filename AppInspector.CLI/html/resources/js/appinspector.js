@@ -153,10 +153,12 @@ class TemplateInsertion {
             if (match.ruleId === ruleid || match.ruleName === ruleid) {
                 let $li = $('<li>');
                 let $a = $('<a>');
+                let $l = match.startLocationLine-3;
+                if ($l < 0) $l = 1; //fix #183
                 $a.addClass('content-link')
                     .attr('href', '#')
                     .data('excerpt', excerpt)
-                    .data('startLocationLine', match.startLocationLine - 3)
+                    .data('startLocationLine', $l)
                     .text(removePrefix(match.fileName));
                 $li.append($a);
                 $('#file_listing_modal ul').append($li);
