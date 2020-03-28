@@ -10,6 +10,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class SearchPattern
     {
+        Confidence _confidence;
+
         [JsonProperty(PropertyName = "pattern")]
         public string Pattern { get; set; }
 
@@ -20,17 +22,30 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         [JsonProperty(PropertyName = "modifiers")]
         public string[] Modifiers { get; set; }
 
-        [JsonProperty(PropertyName = "scopes")]        
+        [JsonProperty(PropertyName = "scopes")]
         public PatternScope[] Scopes { get; set; }
 
         [JsonProperty(PropertyName = "confidence")]
-        public Confidence Confidence { get; set; }
+        public Confidence Confidence
+        {
+            get
+            {
+                if (_confidence == null)//possible from serialiation
+                    _confidence = Confidence.Medium;
+
+                return _confidence;
+            }
+            set
+            {
+                _confidence = value;
+            }
+        }
 
         public SearchPattern()
         {
-           Confidence = Confidence.Medium;
+            Confidence = Confidence.Medium;
         }
     }
 
-    
+
 }

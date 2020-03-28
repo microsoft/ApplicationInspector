@@ -115,7 +115,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     Utils.Logger = null;
                     WriteOnce.Log = null;
                 }
-                throw e;
+                throw;
             }
 
             _uniqueTagsControl = new HashSet<string>();
@@ -326,7 +326,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public override int Run()
         {
             WriteOnce.SafeLog("AnalyzeCommand::Run", LogLevel.Trace);
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Analyze"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "analyze"));
 
             try
             {
@@ -369,7 +369,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOPATTERNS));
                 else
                 {
-                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Analyze"));
+                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "analyze"));
                     if (!_arg_autoBrowserOpen)
                         WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, "output.html"), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
                 }
@@ -381,7 +381,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (Utils.CLIExecutionContext)
                     return (int)ExitCode.CriticalError;
                 else
-                    throw e;
+                    throw;
             }
             finally
             {
@@ -609,7 +609,7 @@ namespace Microsoft.ApplicationInspector.Commands
              * space, so we'll find the smallest number of spaces at the beginning of
              * each line and use that.
              */
-            var n = (int)Math.Floor(Math.Log10(excerptEndLine) + 1);
+
             var minSpaces = -1;
             for (var i = excerptStartLine; i <= excerptEndLine; i++)
             {
@@ -650,7 +650,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     if (_arg_consoleVerbosityLevel.ToLower() != "none")
                     {
                         if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
-                            WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Medium);
+                            WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, WriteOnce.ConsoleVerbosity.Medium, false);
                         else
                             WriteOnce.NewLine();
                     }
@@ -714,7 +714,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 string errmsg = ErrMsg.FormatString(ErrMsg.ID.ANALYZE_COMPRESSED_ERROR, filename);
                 WriteOnce.Error(errmsg);
-                throw e;
+                throw;
             }
 
         }
@@ -766,7 +766,7 @@ namespace Microsoft.ApplicationInspector.Commands
             catch (Exception e)
             {
                 WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, filePath));
-                throw e;
+                throw;
             }
 
             return true;

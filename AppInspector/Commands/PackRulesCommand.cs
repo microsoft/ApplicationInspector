@@ -64,7 +64,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     Utils.Logger = null;
                     WriteOnce.Log = null;
                 }
-                throw e;
+                throw;
             }
         }
 
@@ -134,7 +134,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public override int Run()
         {
             WriteOnce.SafeLog("PackRules::Run", LogLevel.Trace);
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "PackRules"));
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "packrules"));
 
             try
             {
@@ -154,7 +154,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     fs.Close();
                 }
 
-                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "PackRules"));
+                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "packrules"));
                 WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputfile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Medium);
                 WriteOnce.FlushAll();
             }
@@ -165,7 +165,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (Utils.CLIExecutionContext)
                     return (int)ExitCode.CriticalError;
                 else
-                    throw e;
+                    throw;
             }
             finally
             {

@@ -68,7 +68,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     Utils.Logger = null;
                     WriteOnce.Log = null;
                 }
-                throw e;
+                throw;
             }
         }
 
@@ -221,7 +221,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzeCmdResult = (AnalyzeCommand.ExitCode)cmd1.Run();
 
                 //must be done here to avoid losing our handle from analyze command overwriting WriteOnce.Writer
-                _arg_outputFile ??= "output.json";
                 ConfigureFileOutput();
 
                 //restore
@@ -239,7 +238,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     else
                         WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
 
-                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagtest"));
+                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "tagtest"));
 
                     exitCode = _arg_tagTestType == TagTestType.RulesPresent ? ExitCode.SomeTagsFailed : ExitCode.TagsTestSuccess;
                 }
@@ -287,7 +286,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagtest"));
                     if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
-                        WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
+                        WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, WriteOnce.ConsoleVerbosity.Low, false);
 
                     WriteOnce.FlushAll();
                 }
@@ -304,7 +303,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (Utils.CLIExecutionContext)
                     return (int)ExitCode.CriticalError;
                 else
-                    throw e;
+                    throw;
             }
             finally
             {
