@@ -2,10 +2,10 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.ApplicationInspector.RulesEngine;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -15,14 +15,14 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             Success = 0,
             Error = 1,
-            CriticalError = 2
+            CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
         }
 
-        private string _arg_outputFile;
-        private string _arg_customRulesPath;
-        private bool _arg_ignoreDefaultRules;
-        private RuleSet _rules;
-        private string _arg_consoleVerbosityLevel;
+        string _arg_outputFile;
+        string _arg_customRulesPath;
+        bool _arg_ignoreDefaultRules;
+        RuleSet _rules;
+        string _arg_consoleVerbosityLevel;
 
         public ExportTagsCommand(ExportTagsCommandOptions opt)
         {
@@ -32,19 +32,63 @@ namespace Microsoft.ApplicationInspector.Commands
             _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
             _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
             _arg_logger = opt.Log;
+            _arg_log_file_path = opt.LogFilePath;
+            _arg_log_level = opt.LogFileLevel;
+            _arg_close_log_on_exit = Utils.CLIExecutionContext ? true : opt.CloseLogOnCommandExit;
 
-            WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-            if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
-                throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
-            WriteOnce.Verbosity = verbosity;
+            _arg_logger ??= Utils.SetupLogging(opt);
+            WriteOnce.Log ??= _arg_logger;
 
-            ConfigureOutput();
-            ConfigRules();
+            try
+            {
+                ConfigureConsoleOutput();
+                ConfigFileOutput();
+                ConfigRules();
+            }
+            catch (Exception e)
+            {
+                WriteOnce.Error(e.Message);
+                if (_arg_close_log_on_exit)
+                {
+                    Utils.Logger = null;
+                    WriteOnce.Log = null;
+                }
+                throw e;
+            }
         }
 
 
-        private void ConfigureOutput()
+        #region ConfigMethods
+
+        /// <summary>
+        /// Establish console verbosity
+        /// For NuGet DLL use, console is muted overriding any arguments sent
+        /// </summary>
+        void ConfigureConsoleOutput()
         {
+            WriteOnce.SafeLog("ExportTagsCommand::ConfigureConsoleOutput", LogLevel.Trace);
+
+            //Set console verbosity based on run context (none for DLL use) and caller arguments
+            if (!Utils.CLIExecutionContext)
+                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
+            else
+            {
+                WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
+                if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
+                {
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
+                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
+                }
+                else
+                    WriteOnce.Verbosity = verbosity;
+            }
+        }
+
+
+        private void ConfigFileOutput()
+        {
+            WriteOnce.SafeLog("ExportTagsCommand::ConfigOutput", LogLevel.Trace);
+
             //setup output                       
             TextWriter outputWriter;
 
@@ -53,13 +97,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 outputWriter = File.CreateText(_arg_outputFile);
                 outputWriter.WriteLine(Utils.GetVersionString());
                 WriteOnce.Writer = outputWriter;
-                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Low;
             }
         }
 
 
         void ConfigRules()
         {
+            WriteOnce.SafeLog("ExportTagsCommand::ConfigRules", LogLevel.Trace);
+
             if (!_arg_ignoreDefaultRules)
             {
                 _rules = Utils.GetDefaultRuleSet(_arg_logger);
@@ -75,15 +120,17 @@ namespace Microsoft.ApplicationInspector.Commands
                 else if (File.Exists(_arg_customRulesPath))
                     _rules.AddFile(_arg_customRulesPath);
                 else
-                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _arg_customRulesPath));
+                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _arg_customRulesPath));
             }
 
             //error check based on ruleset not path enumeration
             if (_rules == null || _rules.Count() == 0)
             {
-                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
+                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
             }
         }
+
+        #endregion
 
 
         /// <summary>
@@ -91,17 +138,10 @@ namespace Microsoft.ApplicationInspector.Commands
         /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added
         /// </summary>
         /// <returns>output results</returns>
-        public string GetResult()
+        public override string GetResult()
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            if (!assembly.GetName().Name.Contains("ApplicationInspector.CLI"))
-            {
-                WriteOnce.FlushAll();
-                WriteOnce.Log = _arg_logger;
-            }
-
-            _arg_outputFile ??= "output.txt";
-            ConfigureOutput();
+            _arg_outputFile = Path.GetTempFileName();
+            ConfigFileOutput();
 
             if ((int)ExitCode.CriticalError != Run())
             {
@@ -115,6 +155,7 @@ namespace Microsoft.ApplicationInspector.Commands
         //Main entry from CLI
         public override int Run()
         {
+            WriteOnce.SafeLog("ExportTagsCommand::Run", LogLevel.Trace);
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Exporttags"));
 
             SortedDictionary<string, string> uniqueTags = new SortedDictionary<string, string>();
@@ -135,11 +176,17 @@ namespace Microsoft.ApplicationInspector.Commands
             foreach (string s in uniqueTags.Values)
                 WriteOnce.Result(s, true);
 
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Exporttags"), true, WriteOnce.ConsoleVerbosity.Low);
-            WriteOnce.FlushAll();
-            if (!String.IsNullOrEmpty(_arg_outputFile))
+            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Exporttags"));
+            if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
                 WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
 
+            WriteOnce.FlushAll();
+
+            if (_arg_close_log_on_exit)
+            {
+                Utils.Logger = null;
+                WriteOnce.Log = null;
+            }
 
             return (int)ExitCode.Success;
         }

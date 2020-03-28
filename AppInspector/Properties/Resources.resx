@@ -211,14 +211,17 @@
   <data name="PACK_MISSING_OUTPUT_ARG" xml:space="preserve">
     <value>Output file not specified for custom rules pack command</value>
   </data>
+  <data name="PACK_RULES_NO_CLI_DEFAULT" xml:space="preserve">
+    <value>Pack default rules request from outside CLI call not supported.  Use custom rules option.</value>
+  </data>
   <data name="RUNTIME_ERROR_NAMED" xml:space="preserve">
-    <value>{0}.  Please see log file at {1} for more details</value>
+    <value>Additional details may be found in log file at {0}</value>
   </data>
   <data name="RUNTIME_ERROR_PRELOG" xml:space="preserve">
-    <value>{0}.  No additional information available</value>
+    <value>No additional information or log available</value>
   </data>
   <data name="RUNTIME_ERROR_UNNAMED" xml:space="preserve">
-    <value>A runtime error has occured.  Please see log file at {0} for more details.</value>
+    <value>Additional details may be found in log file at {0}</value>
   </data>
   <data name="TAGDIFF_NO_TAGS_FOUND" xml:space="preserve">
     <value>No tags found in one or both source paths</value>
@@ -258,6 +261,9 @@
   </data>
   <data name="TAGTEST_RESULTS_TEST_TYPE" xml:space="preserve">
     <value>Tagtest for [{0}]: </value>
+  </data>
+  <data name="VERIFY_RULES_NO_CLI_DEFAULT" xml:space="preserve">
+    <value>Verify default rules request from outside CLI call not supported.  Use custom rules option.</value>
   </data>
   <data name="VERIFY_RULES_RESULTS_FAIL" xml:space="preserve">
     <value>Verify rules failed.  See log file for details</value>

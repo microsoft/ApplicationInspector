@@ -44,6 +44,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\defaultRules.json" />
+    <None Remove="Resources\defaultRulesPkd.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\defaultRulesPkd.json" Link="defaultRulesPkd.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.7.82" />
     <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
@@ -67,10 +76,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\defaultRules.json" Link="defaultRules.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MultiExtractor\MultiExtractor.csproj">
 	    <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
         <IncludeAssets>MultiExtractor.dll</IncludeAssets>
@@ -90,6 +95,6 @@
 
   <Target Name="PreBuild" BeforeTargets="BeforeCompile">
     <MakeDir Directories="Resources" />
-    <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRules.json" />
+    <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRulesPkd.json" />
   </Target>
 </Project>

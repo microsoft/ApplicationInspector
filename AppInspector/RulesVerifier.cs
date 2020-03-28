@@ -34,7 +34,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 isCompiled = LoadFile(_rulesPath);
             else
             {
-                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _rulesPath));
+                throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _rulesPath));
             }
 
             return isCompiled;
@@ -66,7 +66,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 Debug.Write(e.Message);//Ensure console message indicates problem for Build process
                 WriteOnce.SafeLog(e.Message, NLog.LogLevel.Error);
-                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.VERIFY_RULE_FAILED, file));
+                throw new Exception(ErrMsg.FormatString(ErrMsg.ID.VERIFY_RULE_FAILED, file));
             }
 
             if (noProblem)

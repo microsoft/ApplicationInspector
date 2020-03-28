@@ -17,8 +17,16 @@ namespace Microsoft.ApplicationInspector.Commands
     //Miscellenous common methods needed from several places throughout
     static public class Utils
     {
+        public enum ExitCode
+        {
+            Success = 0,
+            PartialFail = 1,
+            CriticalError = 2
+        }
+
         static string _basePath;
         static public string LogFilePath { get; set; } //used to capture and report log path for console messages
+        static public Logger Logger { get; set; }
 
         public enum AppPath { basePath, defaultRulesSrc, defaultRulesPackedFile, defaultLog, tagGroupPref, tagCounterPref };
 
@@ -33,6 +41,8 @@ namespace Microsoft.ApplicationInspector.Commands
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             return fileVersionInfo.ProductVersion;
         }
+
+        static public bool CLIExecutionContext { get; set; }
 
         static public string GetPath(AppPath pathType)
         {
@@ -49,7 +59,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     result = Path.GetFullPath(Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "rules", "default"));//used to ref project folder
                     break;
                 case AppPath.defaultRulesPackedFile://Packrules default output use
-                    result = Path.Combine(System.AppContext.BaseDirectory, "..", "..", "..", "..", "AppInspector", "Resources", "defaultRules.json");//packed default file in project resources
+                    result = Path.Combine(System.AppContext.BaseDirectory, "..", "..", "..", "..", "AppInspector", "Resources", "defaultRulesPkd.json");//packed default file in project resources
                     break;
                 case AppPath.tagGroupPref://CLI use only
                     result = Path.Combine(GetBaseAppPath(), "preferences", "tagreportgroups.json");
@@ -60,6 +70,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             }
 
+            result = Path.GetFullPath(result);
             return result;
         }
 
@@ -83,7 +94,7 @@ namespace Microsoft.ApplicationInspector.Commands
             RuleSet ruleSet = new RuleSet(logger);
             Assembly assembly = Assembly.GetExecutingAssembly();
             string[] resourceName = assembly.GetManifestResourceNames();
-            string filePath = "Microsoft.ApplicationInspector.Commands.defaultRules.json";
+            string filePath = "Microsoft.ApplicationInspector.Commands.defaultRulesPkd.json";
             Stream resource = assembly.GetManifestResourceStream(filePath);
             using (StreamReader file = new StreamReader(resource))
             {
@@ -91,13 +102,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             return ruleSet;
-        }
-
-
-        static public bool CLIExecutionContext()
-        {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            return assembly.GetName().Name.Contains("ApplicationInspector.CLI");
         }
 
 
@@ -182,7 +186,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch (Exception)
                 {
-                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_FAIL));
+                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_FAIL));//soft error
                 }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -196,7 +200,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     catch (Exception)
                     {
-                        WriteOnce.SafeLog("Unable to open browser using BROWSER environment var", NLog.LogLevel.Error);
+                        WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_FAIL));//soft error
                     }
                 }
                 else
@@ -213,7 +217,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch (Exception)
                 {
-                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_FAIL));
+                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_FAIL));//soft error
                 }
             }
         }
@@ -232,15 +236,32 @@ namespace Microsoft.ApplicationInspector.Commands
 
 
 
+        /// <summary>
+        /// Setup application inspector logging; 1 file per process
+        /// </summary>
+        /// <param name="opts"></param>
+        /// <returns></returns>
         public static Logger SetupLogging(AllCommandOptions opts)
         {
+            //prevent being called again if already set unless closed first
+            if (Logger != null)
+                return Logger;
+
             var config = new NLog.Config.LoggingConfiguration();
 
             if (String.IsNullOrEmpty(opts.LogFilePath))
             {
                 opts.LogFilePath = Utils.GetPath(Utils.AppPath.defaultLog);
-                //if using default app log path clean up previous for convenience in reading
-                if (File.Exists(opts.LogFilePath))
+            }
+
+            //clean up previous for convenience in reading
+            if (File.Exists(opts.LogFilePath))
+            {
+                // Read the file and display it line by line.  
+                System.IO.StreamReader file = new System.IO.StreamReader(opts.LogFilePath);
+                String line = file.ReadLine();
+                file.Close();
+                if (line.Contains("AppInsLog"))//safety to prevent file path other than our logs from deletion
                     File.Delete(opts.LogFilePath);
             }
 
@@ -254,14 +275,14 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             catch (Exception)
             {
-                throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v")));
+                throw new Exception((ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v")));
             }
 
             using (var fileTarget = new FileTarget()
             {
                 Name = "LogFile",
                 FileName = opts.LogFilePath,
-                Layout = @"${date:universalTime=true:format=s} ${threadid} ${level:uppercase=true} - ${message}",
+                Layout = @"${date:universalTime=true:format=s} ${threadid} ${level:uppercase=true} - AppInsLog - ${message}",
                 ForceMutexConcurrentWrites = true
 
             })
@@ -273,10 +294,9 @@ namespace Microsoft.ApplicationInspector.Commands
             LogFilePath = opts.LogFilePath;//preserve for console path msg
 
             LogManager.Configuration = config;
-            Logger logger = LogManager.GetLogger("CST.ApplicationInspector");
-            logger.Info("[" + DateTime.Now.ToLocalTime() + "] //////////////////////////////////////////////////////////");
+            Logger = LogManager.GetLogger("CST.ApplicationInspector");
+            return Logger;
 
-            return logger;
         }
 
     }
