@@ -3,11 +3,11 @@
 
 using Microsoft.ApplicationInspector.RulesEngine;
 using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -18,22 +18,22 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class TagTestCommand : Command
     {
-        enum TagTestType { RulesPresent, RulesNotPresent }
-
-        private string _arg_srcPath;
-        private string _arg_customRulesPath;
-        private string _arg_outputFile;
-        private TagTestType _arg_tagTestType;
-        private RuleSet _rulesSet;
-        private string _arg_consoleVerbosityLevel;
-
         public enum ExitCode
         {
-            NoDiff = 0,
-            DiffFound = 1,
-            CriticalError = 2
+            TagsTestSuccess = 0,
+            SomeTagsFailed = 1,
+            CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
         }
 
+        enum TagTestType { RulesPresent, RulesNotPresent }
+
+        string _arg_srcPath;
+        string _arg_customRulesPath;
+        string _arg_outputFile;
+        string _arg_tag_test_type_raw;
+        TagTestType _arg_tagTestType;
+        RuleSet _rulesSet;
+        string _arg_consoleVerbosityLevel;
 
         /// Compares a set of rules against a source path...
         /// Used for both RulesPresent and RulesNotePresent options
@@ -44,29 +44,100 @@ namespace Microsoft.ApplicationInspector.Commands
             _arg_customRulesPath = opt.CustomRulesPath;
             _arg_outputFile = opt.OutputFilePath;
             _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
-            opt.TestType ??= "RulesPresent";
+            _arg_tag_test_type_raw = opt.TestType ?? "RulesPresent";
             _arg_logger = opt.Log;
+            _arg_log_file_path = opt.LogFilePath;
+            _arg_log_level = opt.LogFileLevel;
+            _arg_close_log_on_exit = Utils.CLIExecutionContext ? true : opt.CloseLogOnCommandExit;
 
-            WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-            if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
-                throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
-            WriteOnce.Verbosity = verbosity;
-
-            if (!Enum.TryParse(opt.TestType, true, out _arg_tagTestType))
-                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, opt.TestType));
-
+            _arg_logger ??= Utils.SetupLogging(opt);
+            WriteOnce.Log ??= _arg_logger;
             _rulesSet = new RuleSet(_arg_logger);
 
-            if (string.IsNullOrEmpty(opt.CustomRulesPath))
-                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
+            try
+            {
+                ConfigureConsoleOutput();
+                ConfigureCompareTest();
+                ConfigureRules();
+            }
+            catch (Exception e) //group error handling
+            {
+                WriteOnce.Error(e.Message);
+                if (_arg_close_log_on_exit)
+                {
+                    Utils.Logger = null;
+                    WriteOnce.Log = null;
+                }
+                throw e;
+            }
+        }
 
-            ConfigureRules();
-            ConfigureOutput();
+
+        #region configure
+
+
+        /// <summary>
+        /// Establish console verbosity
+        /// For NuGet DLL use, console is muted overriding any arguments sent
+        /// </summary>
+        void ConfigureConsoleOutput()
+        {
+            WriteOnce.SafeLog("TagTestCommand::ConfigureConsoleOutput", LogLevel.Trace);
+
+            //Set console verbosity based on run context (none for DLL use) and caller arguments
+            if (!Utils.CLIExecutionContext)
+                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
+            else
+            {
+                WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
+                if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
+                {
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
+                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
+                }
+                else
+                    WriteOnce.Verbosity = verbosity;
+            }
+        }
+
+
+        void ConfigureFileOutput()
+        {
+            WriteOnce.SafeLog("TagTestCommand::ConfigOutput", LogLevel.Trace);
+
+            WriteOnce.FlushAll();
+
+            //setup output                       
+            TextWriter outputWriter;
+            if (!string.IsNullOrEmpty(_arg_outputFile))
+            {
+                outputWriter = File.CreateText(_arg_outputFile);
+                outputWriter.WriteLine(Utils.GetVersionString());
+                WriteOnce.Writer = outputWriter;
+            }
+        }
+
+
+        void ConfigureCompareTest()
+        {
+            if (!Enum.TryParse(_arg_tag_test_type_raw, true, out _arg_tagTestType))
+            {
+                WriteOnce.Error((ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, _arg_tag_test_type_raw)));
+                throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, _arg_tag_test_type_raw));
+            }
         }
 
 
         public void ConfigureRules()
         {
+            WriteOnce.SafeLog("TagTestCommand::ConfigRules", LogLevel.Trace);
+
+            if (string.IsNullOrEmpty(_arg_customRulesPath))
+            {
+                WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
+                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
+            }
+
             List<string> rulePaths = new List<string>();
 
             if (!string.IsNullOrEmpty(_arg_customRulesPath))
@@ -80,30 +151,19 @@ namespace Microsoft.ApplicationInspector.Commands
                     _rulesSet.AddFile(rulePath);
                 else
                 {
-                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, rulePath));
+                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, rulePath));
                 }
             }
 
             //error check based on ruleset not path enumeration
             if (_rulesSet.Count() == 0)
             {
-                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
+                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
             }
 
         }
 
-
-        void ConfigureOutput()
-        {
-            //setup output                       
-            TextWriter outputWriter;
-            if (!string.IsNullOrEmpty(_arg_outputFile))
-            {
-                outputWriter = File.CreateText(_arg_outputFile);
-                outputWriter.WriteLine(Utils.GetVersionString());
-                WriteOnce.Writer = outputWriter;
-            }
-        }
+        #endregion
 
 
 
@@ -112,17 +172,9 @@ namespace Microsoft.ApplicationInspector.Commands
         /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added
         /// </summary>
         /// <returns>output results</returns>
-        public string GetResult()
+        public override string GetResult()
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            if (!assembly.GetName().Name.Contains("ApplicationInspector.CLI"))
-            {
-                WriteOnce.FlushAll();
-                WriteOnce.Log = _arg_logger;
-            }
-
-            _arg_outputFile ??= "output.txt";
-
+            _arg_outputFile = Path.GetTempFileName();
             if ((int)ExitCode.CriticalError != Run())
             {
                 return File.ReadAllText(_arg_outputFile);
@@ -138,20 +190,20 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         public override int Run()
         {
+            WriteOnce.SafeLog("TagTestCommand::Run", LogLevel.Trace);
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "tagtest"));
 
             //init based on true or false present argument value
-            bool testSuccess = true;
-
-            //one file vs ruleset
-            string tmp1 = Path.GetTempFileName();
+            ExitCode exitCode = ExitCode.CriticalError;
             WriteOnce.ConsoleVerbosity saveVerbosity = WriteOnce.Verbosity;
-            AnalyzeCommand.ExitCode result = AnalyzeCommand.ExitCode.CriticalError;
+            AnalyzeCommand.ExitCode analyzeCmdResult = AnalyzeCommand.ExitCode.CriticalError;
 
-            //setup analyze call with silent option
-            #region analyzesetup
             try
             {
+                //one file vs ruleset
+                string tmp1 = Path.GetTempFileName();
+
+                //setup analyze call with silent option
                 AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeCommandOptions
                 {
                     SourcePath = _arg_srcPath,
@@ -165,76 +217,105 @@ namespace Microsoft.ApplicationInspector.Commands
                 });
 
 
-                //quiet analysis commands
-                result = (AnalyzeCommand.ExitCode)cmd1.Run();
+                //get and perform initial analyze on results
+                analyzeCmdResult = (AnalyzeCommand.ExitCode)cmd1.Run();
+
+                //must be done here to avoid losing our handle from analyze command overwriting WriteOnce.Writer
+                _arg_outputFile ??= "output.json";
+                ConfigureFileOutput();
+
+                //restore
+                WriteOnce.Verbosity = saveVerbosity;
+
+                if (analyzeCmdResult == AnalyzeCommand.ExitCode.CriticalError)
+                {
+                    throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_CRITICAL_FILE_ERR));
+                }
+                else if (analyzeCmdResult == AnalyzeCommand.ExitCode.NoMatches)
+                {
+                    WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
+                    if (_arg_tagTestType == TagTestType.RulesPresent)
+                        WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+                    else
+                        WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
+
+                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagtest"));
+
+                    exitCode = _arg_tagTestType == TagTestType.RulesPresent ? ExitCode.SomeTagsFailed : ExitCode.TagsTestSuccess;
+                }
+                else //assumed (result == AnalyzeCommand.ExitCode.MatchesFound)
+                {
+                    string file1TagsJson = File.ReadAllText(tmp1);
+                    var file1Tags = JsonConvert.DeserializeObject<TagsFile>(file1TagsJson);
+                    File.Delete(tmp1);
+
+                    exitCode = ExitCode.TagsTestSuccess;
+                    foreach (Rule r in _rulesSet)
+                    {
+                        //supports both directions by generalizing 
+                        string[] testList1 = _arg_tagTestType == TagTestType.RulesNotPresent ?
+                            r.Tags : file1Tags.Tags;
+
+                        string[] testList2 = _arg_tagTestType == TagTestType.RulesNotPresent ?
+                            file1Tags.Tags : r.Tags;
+
+                        foreach (string t in testList2)
+                        {
+                            if (TagTest(testList1, t))
+                                WriteOnce.Result(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TAGS_FOUND, t), true, WriteOnce.ConsoleVerbosity.High);
+                            else
+                            {
+                                exitCode = ExitCode.SomeTagsFailed;
+                                WriteOnce.Result(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TAGS_MISSING, t), true, WriteOnce.ConsoleVerbosity.High);
+                            }
+
+                            if (exitCode != ExitCode.TagsTestSuccess)
+                                break;
+                        }
+
+                        if (exitCode != ExitCode.TagsTestSuccess)
+                            break;
+                    }
+
+                    //results
+                    WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
+
+                    if (exitCode == ExitCode.SomeTagsFailed)
+                        WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+                    else
+                        WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
+
+                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagtest"));
+                    if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
+                        WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
+
+                    WriteOnce.FlushAll();
+                }
             }
             catch (Exception e)
             {
                 WriteOnce.Verbosity = saveVerbosity;
-                throw e;
-            }
-
-            //restore
-            WriteOnce.Verbosity = saveVerbosity;
-
-            if (result == AnalyzeCommand.ExitCode.CriticalError)
-            {
-                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_CRITICAL_FILE_ERR));
-            }
-            else if (result == AnalyzeCommand.ExitCode.NoMatches)
-            {
-                //results
-                WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
-                if (_arg_tagTestType == TagTestType.RulesPresent)
-                    WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+                if (analyzeCmdResult == AnalyzeCommand.ExitCode.Success) //then error was not previously logged
+                    WriteOnce.Error(e.Message);
                 else
-                    WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
+                    WriteOnce.Error(e.Message, true, WriteOnce.ConsoleVerbosity.Low, false);
 
-                WriteOnce.FlushAll();
-                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagtest"));
-
-                return (int)ExitCode.CriticalError;
+                //exit normaly for CLI callers and throw for DLL callers
+                if (Utils.CLIExecutionContext)
+                    return (int)ExitCode.CriticalError;
+                else
+                    throw e;
             }
-
-            #endregion
-
-            //assumed (result == AnalyzeCommand.ExitCode.MatchesFound)
-            string file1TagsJson = File.ReadAllText(tmp1);
-            var file1Tags = JsonConvert.DeserializeObject<TagsFile>(file1TagsJson);
-            File.Delete(tmp1);
-
-            foreach (Rule r in _rulesSet)
+            finally
             {
-                //supports both directions by generalizing 
-                string[] testList1 = _arg_tagTestType == TagTestType.RulesNotPresent ?
-                    r.Tags : file1Tags.Tags;
-
-                string[] testList2 = _arg_tagTestType == TagTestType.RulesNotPresent ?
-                    file1Tags.Tags : r.Tags;
-
-                foreach (string t in testList2)
+                if (_arg_close_log_on_exit)
                 {
-                    if (TagTest(testList1, t))
-                        WriteOnce.Result(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TAGS_FOUND, t), true, WriteOnce.ConsoleVerbosity.High);
-                    else
-                    {
-                        testSuccess = false;
-                        WriteOnce.Result(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TAGS_MISSING, t), true, WriteOnce.ConsoleVerbosity.High);
-                    }
+                    Utils.Logger = null;
+                    WriteOnce.Log = null;
                 }
             }
 
-            //results
-            WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
-            if (testSuccess)
-                WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
-            else
-                WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
-
-            WriteOnce.FlushAll();
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Tagtest"));
-
-            return testSuccess ? (int)ExitCode.NoDiff : (int)ExitCode.DiffFound;
+            return (int)exitCode;
         }
 
 

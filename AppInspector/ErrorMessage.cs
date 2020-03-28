@@ -55,13 +55,15 @@ namespace Microsoft.ApplicationInspector.Commands
             VERIFY_RULE_FAILED,
             VERIFY_RULES_RESULTS_FAIL,
             VERIFY_RULES_RESULTS_SUCCESS,
+            VERIFY_RULES_NO_CLI_DEFAULT,
             RUNTIME_ERROR_NAMED,
             RUNTIME_ERROR_UNNAMED,
             RUNTIME_ERROR_PRELOG,
             BROWSER_ENVIRONMENT_VAR,
             BROWSER_START_FAIL,
             BROWSER_START_SUCCESS,
-            PACK_MISSING_OUTPUT_ARG
+            PACK_MISSING_OUTPUT_ARG,
+            PACK_RULES_NO_CLI_DEFAULT
         };
 
         public static string GetString(ErrMsg.ID id)

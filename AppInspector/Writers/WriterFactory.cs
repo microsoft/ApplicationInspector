@@ -26,7 +26,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 case "html":
                     return new LiquidWriter();
                 default:
-                    throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-f")));
+                    throw new Exception((ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-f")));
             }
         }
     }

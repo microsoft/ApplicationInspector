@@ -12,21 +12,19 @@ namespace Microsoft.ApplicationInspector.CLI
 {
     class Program
     {
-
-        static public Logger Logger { get; set; }
-
         /// <summary>
         /// CLI program entry point which defines command verbs and options to running
         /// </summary>
         /// <param name="args"></param>
         static int Main(string[] args)
         {
-            int finalResult = -1;
+            int finalResult = (int)Utils.ExitCode.CriticalError;
+
+            Utils.CLIExecutionContext = true;//set manually at start from CLI 
 
             WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Medium;
             try
             {
-                WriteOnce.Info(Utils.GetVersionString());
                 var argsResult = Parser.Default.ParseArguments<AnalyzeCommandOptions,
                     TagDiffCommandOptions,
                     TagTestCommandOptions,
@@ -46,26 +44,24 @@ namespace Microsoft.ApplicationInspector.CLI
                 finalResult = argsResult;
 
             }
-            catch (OpException e)
+            catch (Exception) //a controlled exit; details not req but written out in command to ensure NuGet+CLI both can console write and log the error
             {
-                if (Logger != null)
-                {
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_NAMED, e.Message, Utils.LogFilePath));
-                    Logger.Error($"Runtime error: {e.StackTrace}");
-                }
+                if (!String.IsNullOrEmpty(Utils.LogFilePath))
+                    WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_NAMED, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
                 else
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_PRELOG, e.Message));
+                    WriteOnce.Info(ErrMsg.GetString(ErrMsg.ID.RUNTIME_ERROR_PRELOG), true, WriteOnce.ConsoleVerbosity.Medium, false);
+
+                return finalResult;//avoid double reporting
             }
-            catch (Exception e)
+
+            if (finalResult == (int)Utils.ExitCode.CriticalError) //case where exception not thrown but result was still a failure; Run() vs constructor exception etc.
             {
-                if (Logger != null)
-                {
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_UNNAMED, Utils.LogFilePath));
-                    Logger.Error($"Runtime error: {e.Message} {e.StackTrace}");
-                }
+                if (!String.IsNullOrEmpty(Utils.LogFilePath))
+                    WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_UNNAMED, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
                 else
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_PRELOG, e.Message));
+                    WriteOnce.Info(ErrMsg.GetString(ErrMsg.ID.RUNTIME_ERROR_PRELOG), true, WriteOnce.ConsoleVerbosity.Medium, false);
             }
+
 
             return finalResult;
         }
@@ -73,45 +69,45 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunAnalyzeCommand(AnalyzeCommandOptions opts)
         {
-            Logger = Utils.SetupLogging(opts);
-            WriteOnce.Log = Logger;
-            opts.Log = Logger;
+            Logger logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = logger;
+            opts.Log = logger;
 
             return new AnalyzeCommand(opts).Run();
         }
 
         private static int RunTagDiffCommand(TagDiffCommandOptions opts)
         {
-            Logger = Utils.SetupLogging(opts);
-            WriteOnce.Log = Logger;
-            opts.Log = Logger;
+            Logger logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = logger;
+            opts.Log = logger;
 
             return new TagDiffCommand(opts).Run();
         }
 
         private static int RunTagTestCommand(TagTestCommandOptions opts)
         {
-            Logger = Utils.SetupLogging(opts);
-            WriteOnce.Log = Logger;
-            opts.Log = Logger;
+            Logger logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = logger;
+            opts.Log = logger;
 
             return new TagTestCommand(opts).Run();
         }
 
         private static int RunExportTagsCommand(ExportTagsCommandOptions opts)
         {
-            Logger = Utils.SetupLogging(opts);
-            WriteOnce.Log = Logger;
-            opts.Log = Logger;
+            Logger logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = logger;
+            opts.Log = logger;
 
             return new ExportTagsCommand(opts).Run();
         }
 
         private static int RunVerifyRulesCommand(VerifyRulesCommandOptions opts)
         {
-            Logger = Utils.SetupLogging(opts);
-            WriteOnce.Log = Logger;
-            opts.Log = Logger;
+            Logger logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = logger;
+            opts.Log = logger;
 
             return new VerifyRulesCommand(opts).Run();
         }
@@ -119,9 +115,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunPackRulesCommand(PackRulesCommandOptions opts)
         {
-            Logger = Utils.SetupLogging(opts);
-            WriteOnce.Log = Logger;
-            opts.Log = Logger;
+            Logger logger = Utils.SetupLogging(opts);
+            WriteOnce.Log = logger;
+            opts.Log = logger;
 
             return new PackRulesCommand(opts).Run();
         }

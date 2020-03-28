@@ -15,6 +15,8 @@ namespace Microsoft.ApplicationInspector.Commands
         [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Debug|Info|Warn|Error|Trace|Fatal|Off]", Default = "Error")]
         public string LogFileLevel { get; set; }
 
+        public bool CloseLogOnCommandExit { get; set; }
+
     }
     /// <summary>
     /// Command option classes for each command verb
@@ -129,6 +131,8 @@ namespace Microsoft.ApplicationInspector.Commands
     [Verb("verifyrules", HelpText = "Verify custom rules syntax is valid")]
     public class VerifyRulesCommandOptions : AllCommandOptions
     {
+        [Option('d', "verify-default-rules", Required = false, HelpText = "Verify default rules")]
+        public bool VerifyDefaultRules { get; set; }
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 

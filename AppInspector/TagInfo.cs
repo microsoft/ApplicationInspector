@@ -12,7 +12,6 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Root parent for tag group preferences file
     /// </summary>
-    [Serializable]
     public class TagCategory
     {
         public enum tagInfoType { uniqueTags, allTags };
@@ -32,7 +31,6 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Used to read customizable preference for Profile page e.g. rules\profile\profile.json
     /// </summary>
-    [Serializable]
     public class TagGroup : Drop
     {
         [JsonProperty(PropertyName = "title")]
@@ -51,7 +49,6 @@ namespace Microsoft.ApplicationInspector.Commands
     }
 
 
-    [Serializable]
     public class TagSearchPattern : Drop
     {
         [JsonProperty(PropertyName = "searchPattern")]
@@ -140,7 +137,7 @@ namespace Microsoft.ApplicationInspector.Commands
     }
 
 
-    [Serializable]
+
     public class TagException
     {
         [JsonProperty(PropertyName = "tag")]

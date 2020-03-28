@@ -342,7 +342,16 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}.  Please see log file at {1} for more details.
+        ///   Looks up a localized string similar to Pack default rules request from outside CLI call not supported.  Use custom rules option..
+        /// </summary>
+        internal static string PACK_RULES_NO_CLI_DEFAULT {
+            get {
+                return ResourceManager.GetString("PACK_RULES_NO_CLI_DEFAULT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Additional details may be found in log file at {0}.
         /// </summary>
         internal static string RUNTIME_ERROR_NAMED {
             get {
@@ -351,7 +360,7 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}.  No additional information available.
+        ///   Looks up a localized string similar to No additional information or log available.
         /// </summary>
         internal static string RUNTIME_ERROR_PRELOG {
             get {
@@ -360,7 +369,7 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A runtime error has occured.  Please see log file at {0} for more details..
+        ///   Looks up a localized string similar to Additional details may be found in log file at {0}.
         /// </summary>
         internal static string RUNTIME_ERROR_UNNAMED {
             get {
@@ -491,6 +500,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         internal static string VERIFY_RULE_FAILED {
             get {
                 return ResourceManager.GetString("VERIFY_RULE_FAILED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verify default rules request from outside CLI call not supported.  Use custom rules option..
+        /// </summary>
+        internal static string VERIFY_RULES_NO_CLI_DEFAULT {
+            get {
+                return ResourceManager.GetString("VERIFY_RULES_NO_CLI_DEFAULT", resourceCulture);
             }
         }
         

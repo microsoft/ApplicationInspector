@@ -21,19 +21,18 @@ namespace Microsoft.ApplicationInspector.Commands
     public class WriteOnce
     {
         public enum ConsoleVerbosity { High, Medium, Low, None }
-
         public static ConsoleVerbosity Verbosity { get; set; }
-
         public static Logger Log { get; set; } //use SafeLog or check for null before use
 
         public static TextWriter Writer { get; set; }
+        //default colors
         private static ConsoleColor _infoColor = ConsoleColor.Magenta;
         private static ConsoleColor _errorColor = ConsoleColor.Red;
         private static ConsoleColor _generalColor = ConsoleColor.Gray;
         private static ConsoleColor _resultColor = ConsoleColor.Yellow;
         private static ConsoleColor _opColor = ConsoleColor.Cyan;
         private static ConsoleColor _sysColor = ConsoleColor.Magenta;
-
+        //change default colors
         public ConsoleColor InfoForeColor { set { _infoColor = value; } }
         public ConsoleColor ErrorForeColor { set { _errorColor = value; } }
         public ConsoleColor OperationForeColor { set { _opColor = value; } }
@@ -64,37 +63,50 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
-        public static void Info(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
+        public static void Info(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Medium, bool addToLog = true)
         {
-            if (Log != null && Log.Name != "Console")
-                Log.Info(msg);
+            //log but special check for CLI final exit to avoid duplication of hint to check log in the log
+            if (addToLog)
+                SafeLog(msg, LogLevel.Info);
 
+            //output writer if specified
             if (Writer != null && Writer != Console.Out)
                 Writer.WriteLine(msg);
 
+            //console if applicable
             SafeConsoleWrite(msg, writeLine, _infoColor, verbosity);
+        }
+
+
+
+        public static void Error(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Low, bool addToLog = true)
+        {
+            //log but special check for CLI final exit to avoid duplication of hint to check log in the log
+            if (addToLog)
+                SafeLog(msg, LogLevel.Error);
+
+            //output writer if specified
+            if (Writer != null && Writer != Console.Out)
+                Writer.WriteLine(msg);
+
+            //console if applicable
+            SafeConsoleWrite(msg, writeLine, _errorColor, verbosity);
         }
 
 
         public static void Any(string msg, bool writeLine = true, ConsoleColor foreColor = ConsoleColor.Gray, ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
         {
+            //log
+            SafeLog(msg, LogLevel.Trace);
+
+            //output writer if specified
             if (Writer != null && Writer != Console.Out)
                 Writer.WriteLine(msg);
 
+            //console if applicable
             SafeConsoleWrite(msg, writeLine, foreColor, verbosity);
         }
 
-
-        public static void Error(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Low)
-        {
-            if (Log != null && Log.Name != "Console")
-                Log.Error(msg);
-
-            if (Writer != null && Writer != Console.Out)
-                Writer.WriteLine(msg);
-
-            SafeConsoleWrite(msg, writeLine, _errorColor, verbosity);
-        }
 
 
         public static void NewLine(ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
@@ -104,6 +116,14 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
+        /// <summary>
+        /// Console commands are only effected from CLI 
+        /// Filters verbosity based on settings and given call
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="writeLine"></param>
+        /// <param name="foreground"></param>
+        /// <param name="verbosity"></param>
         static void SafeConsoleWrite(string msg, bool writeLine, ConsoleColor foreground, ConsoleVerbosity verbosity)
         {
             if (verbosity >= Verbosity)
@@ -121,6 +141,11 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
+        /// <summary>
+        /// Attempts to initialize default log if not already setup and writes to log
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="logLevel"></param>
         static public void SafeLog(string message, NLog.LogLevel logLevel)
         {
             if (Log == null)

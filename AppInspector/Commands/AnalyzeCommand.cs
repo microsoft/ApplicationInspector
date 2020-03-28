@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -18,17 +17,16 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     public class AnalyzeCommand : Command
     {
-        readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files 
-        readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
-        readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
-
         public enum ExitCode
         {
             Success = 0,
             NoMatches = 1,
-            CriticalError = 2
+            CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
         }
 
+        readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files 
+        readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
+        readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
         IEnumerable<string> _srcfileList;
         AppProfile _appProfile;
@@ -54,22 +52,20 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
         //cmdline arguments
-        private string _arg_sourcePath;
-        private string _arg_outputFile;
-        private string _arg_fileFormat;
-        private string _arg_outputTextFormat;
-        private string _arg_customRulesPath;
-        private bool _arg_ignoreDefaultRules;
-        private bool _arg_outputUniqueTagsOnly;
-        private bool _arg_autoBrowserOpen;
-        private string _arg_confidenceFilters;
-        private bool _arg_simpleTagsOnly;
-        private Confidence _arg_confidence;
-        private string _arg_consoleVerbosityLevel;
-
+        string _arg_sourcePath;
+        string _arg_outputFile;
+        string _arg_fileFormat;
+        string _arg_outputTextFormat;
+        string _arg_customRulesPath;
+        bool _arg_ignoreDefaultRules;
+        bool _arg_outputUniqueTagsOnly;
+        bool _arg_autoBrowserOpen;
+        string _arg_confidenceFilters;
+        bool _arg_simpleTagsOnly;
+        Confidence _arg_confidence;
+        string _arg_consoleVerbosityLevel;
 
         List<string> _fileExclusionList;//see exclusion list
-
 
         public AnalyzeCommand(AnalyzeCommandOptions opt)
         {
@@ -85,10 +81,11 @@ namespace Microsoft.ApplicationInspector.Commands
             _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
             _arg_simpleTagsOnly = opt.SimpleTagsOnly;
             _arg_logger = opt.Log;
+            _arg_log_file_path = opt.LogFilePath;
+            _arg_log_level = opt.LogFileLevel;
+            _arg_close_log_on_exit = Utils.CLIExecutionContext ? true : opt.CloseLogOnCommandExit;
 
-            //if not called via CLI set default
-            opt.FilePathExclusions = opt.FilePathExclusions ?? "sample,example,test,docs,.vs,.git";
-
+            opt.FilePathExclusions ??= "sample,example,test,docs,.vs,.git";
             if (!string.IsNullOrEmpty(opt.FilePathExclusions))
             {
                 _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").ToList<string>();
@@ -96,25 +93,91 @@ namespace Microsoft.ApplicationInspector.Commands
                     _fileExclusionList.Clear();
             }
 
-            WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-            if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
-                throw new OpException(String.Format(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x")));
-            WriteOnce.Verbosity = verbosity;
-
+            _arg_logger ??= Utils.SetupLogging(opt);
+            WriteOnce.Log ??= _arg_logger;
 
             LastUpdated = DateTime.MinValue;
             DateScanned = DateTime.Now;
 
-            ConfigOutput();
-            ConfigSourcetoScan();
-            ConfigConfidenceFilters();
-            ConfigRules();
+            try
+            {
+                ConfigureConsoleOutput();
+                ConfigFileOutput();
+                ConfigSourcetoScan();
+                ConfigConfidenceFilters();
+                ConfigRules();
+            }
+            catch (Exception e) //group error handling
+            {
+                WriteOnce.Error(e.Message);
+                if (_arg_close_log_on_exit)
+                {
+                    Utils.Logger = null;
+                    WriteOnce.Log = null;
+                }
+                throw e;
+            }
 
             _uniqueTagsControl = new HashSet<string>();
         }
 
 
         #region configureMethods
+
+
+
+        /// <summary>
+        /// Establish console verbosity
+        /// For NuGet DLL use, console is muted overriding any arguments sent
+        /// </summary>
+        void ConfigureConsoleOutput()
+        {
+            WriteOnce.SafeLog("AnalyzeCommand::ConfigureConsoleOutput", LogLevel.Trace);
+
+            //Set console verbosity based on run context (none for DLL use) and caller arguments
+            if (!Utils.CLIExecutionContext)
+                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
+            else
+            {
+                WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
+                if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
+                {
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
+                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
+                }
+                else
+                    WriteOnce.Verbosity = verbosity;
+            }
+        }
+
+
+        /// <summary>
+        /// Note that WriteOnce.Writer is not used for AnalyzeCommand which has specific Writer classes for formattig to html, json, text unlike
+        /// other command classes to writting to a file here is handled by the AnalyzeCommand FlushAll() method 
+        /// </summary>
+        void ConfigFileOutput()
+        {
+            WriteOnce.SafeLog("AnalyzeCommand::ConfigOutput", LogLevel.Trace);
+
+            //Set output type, format and outstream
+            _outputWriter = WriterFactory.GetWriter(_arg_fileFormat ?? "text", (string.IsNullOrEmpty(_arg_outputFile)) ? null : "text", _arg_outputTextFormat);
+            if (_arg_fileFormat == "html")
+            {
+                if (!string.IsNullOrEmpty(_arg_outputFile))
+                    WriteOnce.Info("output file ignored for html format");
+                _outputWriter.TextWriter = Console.Out;
+            }
+            else if (!string.IsNullOrEmpty(_arg_outputFile))
+            {
+                _outputWriter.TextWriter = File.CreateText(_arg_outputFile);//not needed if html output since application controlled
+            }
+            else
+            {
+                _outputWriter.TextWriter = Console.Out;
+            }
+
+        }
+
 
         /// <summary>
         /// Expects user to supply all that apply
@@ -134,12 +197,42 @@ namespace Microsoft.ApplicationInspector.Commands
                     if (Enum.TryParse(confidence, true, out single))
                         _arg_confidence |= single;
                     else
-                        throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "x"));
+                        throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "x"));
                 }
             }
         }
 
 
+        /// <summary>
+        /// Simple validation on source path provided for scanning and preparation
+        /// </summary>
+        void ConfigSourcetoScan()
+        {
+            WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
+
+            if (String.IsNullOrEmpty(_arg_sourcePath))
+                throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
+
+            if (Directory.Exists(_arg_sourcePath))
+            {
+                try
+                {
+                    _srcfileList = Directory.EnumerateFiles(_arg_sourcePath, "*.*", SearchOption.AllDirectories);
+                    if (_srcfileList.Count() == 0)
+                        throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
+
+                }
+                catch (Exception)
+                {
+                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
+                }
+            }
+            else if (File.Exists(_arg_sourcePath)) //not a directory but make one for single flow
+                _srcfileList = new List<string>() { _arg_sourcePath };
+            else
+                throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
+
+        }
 
 
         /// <summary>
@@ -171,13 +264,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 else if (File.Exists(_arg_customRulesPath))
                     rulesSet.AddFile(_arg_customRulesPath);
                 else
-                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _arg_customRulesPath));
+                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _arg_customRulesPath));
             }
 
             //error check based on ruleset not path enumeration
             if (rulesSet == null || rulesSet.Count() == 0)
             {
-                throw new OpException(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
+                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
             }
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
@@ -202,62 +295,6 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
-        void ConfigOutput()
-        {
-            WriteOnce.SafeLog("AnalyzeCommand::ConfigOutput", LogLevel.Trace);
-
-            //Set output type, format and outstream
-            _outputWriter = WriterFactory.GetWriter(_arg_fileFormat ?? "text", (string.IsNullOrEmpty(_arg_outputFile)) ? null : "text", _arg_outputTextFormat);
-            if (_arg_fileFormat == "html")
-            {
-                if (!string.IsNullOrEmpty(_arg_outputFile))
-                    WriteOnce.Info("output file ignored for html format");
-                _outputWriter.TextWriter = Console.Out;
-            }
-            else if (!string.IsNullOrEmpty(_arg_outputFile))
-            {
-                _outputWriter.TextWriter = File.CreateText(_arg_outputFile);//not needed if html output since application controlled
-            }
-            else
-            {
-                _outputWriter.TextWriter = Console.Out;
-            }
-
-        }
-
-
-        /// <summary>
-        /// Simple validation on source path provided for scanning and preparation
-        /// </summary>
-        void ConfigSourcetoScan()
-        {
-            WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
-
-            if (String.IsNullOrEmpty(_arg_sourcePath))
-                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
-
-            if (Directory.Exists(_arg_sourcePath))
-            {
-                try
-                {
-                    _srcfileList = Directory.EnumerateFiles(_arg_sourcePath, "*.*", SearchOption.AllDirectories);
-                    if (_srcfileList.Count() == 0)
-                        throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
-
-                }
-                catch (Exception)
-                {
-                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
-                }
-            }
-            else if (File.Exists(_arg_sourcePath)) //not a directory but make one for single flow
-                _srcfileList = new List<string>() { _arg_sourcePath };
-            else
-                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
-
-        }
-
-
         #endregion
 
 
@@ -266,20 +303,13 @@ namespace Microsoft.ApplicationInspector.Commands
         /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added
         /// </summary>
         /// <returns>output results</returns>
-        public string GetResult()
+        public override string GetResult()
         {
-            Assembly assembly = Assembly.GetCallingAssembly();
-            if (!assembly.GetName().Name.Contains("ApplicationInspector.CLI"))
-            {
-                WriteOnce.FlushAll();
-                WriteOnce.Log = _arg_logger;
-            }
-
             _arg_fileFormat ??= "json";
-            _arg_outputFile ??= "output.json";
-            ConfigOutput();
+            _arg_outputFile = Path.GetTempFileName();
+            ConfigFileOutput();
 
-            if ((int)ExitCode.Success == Run())
+            if ((int)Utils.ExitCode.Success == Run())
             {
                 return File.ReadAllText(_arg_outputFile);
             }
@@ -296,58 +326,74 @@ namespace Microsoft.ApplicationInspector.Commands
         public override int Run()
         {
             WriteOnce.SafeLog("AnalyzeCommand::Run", LogLevel.Trace);
-
-            DateTime start = DateTime.Now;
             WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "Analyze"));
 
-            _appProfile.MetaData.TotalFiles = _srcfileList.Count();//updated for zipped files later
-
-            // Iterate through all files and process against rules
-            foreach (string filename in _srcfileList)
+            try
             {
-                ArchiveFileType archiveFileType;
-                try //fix for #146
+                _appProfile.MetaData.TotalFiles = _srcfileList.Count();//updated for zipped files later
+
+                // Iterate through all files and process against rules
+                foreach (string filename in _srcfileList)
                 {
-                    archiveFileType = MiniMagic.DetectFileType(filename);
-                }
-                catch (Exception e)
-                {
-                    WriteOnce.SafeLog(e.Message, LogLevel.Error);
-                    throw new OpException(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILE_TYPE_OPEN, filename));
+                    ArchiveFileType archiveFileType = ArchiveFileType.UNKNOWN;
+                    try //fix for #146
+                    {
+                        archiveFileType = MiniMagic.DetectFileType(filename);
+                    }
+                    catch (Exception e)
+                    {
+                        WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, LogLevel.Error);//log details
+                        Exception f = new Exception(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILE_TYPE_OPEN, filename));//report friendly version
+                        throw f;
+                    }
+
+                    if (archiveFileType == ArchiveFileType.UNKNOWN)//not a known zipped file type
+                        ProcessAsFile(filename);
+                    else
+                        UnZipAndProcess(filename, archiveFileType);
                 }
 
-                if (archiveFileType == ArchiveFileType.UNKNOWN)//not a known zipped file type
-                    ProcessAsFile(filename);
+                WriteOnce.General("\r" + ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
+                WriteOnce.Operation(ErrMsg.GetString(ErrMsg.ID.CMD_PREPARING_REPORT));
+
+                //Prepare report results
+                _appProfile.MetaData.LastUpdated = LastUpdated.ToString();
+                _appProfile.DateScanned = DateScanned.ToString();
+                _appProfile.PrepareReport();
+                FlushAll();
+
+                //wrapup result status
+                if (_appProfile.MetaData.TotalFiles == _appProfile.MetaData.FilesSkipped)
+                    WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOSUPPORTED_FILETYPES));
+                else if (_appProfile.MatchList.Count == 0)
+                    WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOPATTERNS));
                 else
-                    UnZipAndProcess(filename, archiveFileType);
-
+                {
+                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Analyze"));
+                    if (!_arg_autoBrowserOpen)
+                        WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, "output.html"), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
+                }
             }
-
-            WriteOnce.General("\r" + ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
-            WriteOnce.Operation(ErrMsg.GetString(ErrMsg.ID.CMD_PREPARING_REPORT));
-
-            //Prepare report results
-            _appProfile.MetaData.LastUpdated = LastUpdated.ToString();
-            _appProfile.DateScanned = DateScanned.ToString();
-            _appProfile.PrepareReport();
-            TimeSpan timeSpan = start - DateTime.Now;
-            WriteOnce.SafeLog(String.Format("Processing time: seconds:{0}", timeSpan.TotalSeconds * -1), LogLevel.Trace);
-            FlushAll();
-
-            //wrapup result status
-            if (_appProfile.MetaData.TotalFiles == _appProfile.MetaData.FilesSkipped)
-                WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOSUPPORTED_FILETYPES));
-            else if (_appProfile.MatchList.Count == 0)
-                WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOPATTERNS));
-            else
+            catch (Exception e)
             {
-                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "Analyze"));
-                if (!_arg_autoBrowserOpen)
-                    WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, "output.html"), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
+                WriteOnce.Error(e.Message);
+                //exit normaly for CLI callers and throw for DLL callers
+                if (Utils.CLIExecutionContext)
+                    return (int)ExitCode.CriticalError;
+                else
+                    throw e;
+            }
+            finally
+            {
+                if (_arg_close_log_on_exit)
+                {
+                    Utils.Logger = null;
+                    WriteOnce.Log = null;
+                }
             }
 
             return _appProfile.MatchList.Count() == 0 ? (int)ExitCode.NoMatches :
-                (int)ExitCode.Success;
+                (int)Utils.ExitCode.Success;
         }
 
 
@@ -598,15 +644,17 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     _outputWriter.FlushAndClose();//not required for html formal i.e. multiple files already closed
                     _outputWriter = null;
+                    WriteOnce.Writer = null;
 
                     //Special case to avoid writing tmp file path to output file for TagTest,TagDiff or when called as a DLL since unnecessary
                     if (_arg_consoleVerbosityLevel.ToLower() != "none")
                     {
-                        if (!String.IsNullOrEmpty(_arg_outputFile))
+                        if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
                             WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Medium);
                         else
                             WriteOnce.NewLine();
                     }
+
                 }
             }
         }
@@ -666,7 +714,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 string errmsg = ErrMsg.FormatString(ErrMsg.ID.ANALYZE_COMPRESSED_ERROR, filename);
                 WriteOnce.Error(errmsg);
-                throw new Exception(errmsg + e.Message + "\n" + e.StackTrace);
+                throw e;
             }
 
         }
@@ -715,9 +763,10 @@ namespace Microsoft.ApplicationInspector.Commands
                     return false;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new OpException(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, filePath));
+                WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, filePath));
+                throw e;
             }
 
             return true;
