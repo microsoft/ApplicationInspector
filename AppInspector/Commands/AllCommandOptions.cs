@@ -50,7 +50,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool AllowDupTags { get; set; }
 
         [Option('b', "suppress-browser-open", Required = false, HelpText = "Suppress automatic open to HTML output using default browser", Default = false)]
-        public bool AutoBrowserOpen { get; set; }
+        public bool SuppressBrowserOpen { get; set; }
 
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; }

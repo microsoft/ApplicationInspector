@@ -1,0 +1,411 @@
+// Copyright (C) Microsoft. All rights reserved.
+// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+[
+  {
+    "categoryName": "profile",
+    "type": "uniqueTags",
+    "groups": [
+      {
+        "title": "Select Features",
+        "dataRef": "SelectFeatures",
+        "patterns": [
+          {
+            "searchPattern": "Authentication",
+            "displayName": "Authentication",
+            "detectedIcon": "fas fa-user-shield"
+          },
+          {
+            "searchPattern": "Authorization",
+            "displayName": "Authorization",
+            "detectedIcon": "fas fa-user-lock"
+          },
+          {
+            "searchPattern": "Cryptography",
+            "displayName": "Cryptography",
+            "detectedIcon": "fas fa-key"
+          },
+          {
+            "searchPattern": "Deserialization",
+            "displayName": "Data deserialization",
+            "detectedIcon": "far fa-object-ungroup"
+          },
+          {
+            "searchPattern": "Data.Parsing.Media",
+            "displayName": "AV media parsing",
+            "detectedIcon": "fas fa-photo-video"
+          },
+          {
+            "searchPattern": "DynamicExecution",
+            "displayName": "Dynamic command execution",
+            "detectedIcon": "fab fa-audible"
+          }
+        ]
+      },
+      {
+        "title": "General Features",
+        "dataRef": "GeneralFeatures",
+        "patterns": [
+          {
+            "searchPattern": "Network.Connection",
+            "displayName": "Network communications",
+            "detectedIcon": "fas fa-network-wired"
+          },
+          {
+            "searchPattern": "FileOperation.Read",
+            "displayName": "File read",
+            "detectedIcon": "fas fa-file"
+          },
+          {
+            "searchPattern": "FileOperation.Write",
+            "displayName": "File write",
+            "detectedIcon": "far fa-edit"
+          },
+          {
+            "searchPattern": "FileOperation.Delete",
+            "displayName": "File delete",
+            "detectedIcon": "fas fa-trash"
+          },
+          {
+            "searchPattern": "Multiprocessing",
+            "displayName": "Multi-threaded processing",
+            "detectedIcon": "fas fa-code-branch"
+          },
+          {
+            "searchPattern": "Logging",
+            "displayName": "Logging",
+            "detectedIcon": "far fa-clock"
+          },
+          {
+            "searchPattern": "Data.Parsing.XML",
+            "displayName": "Processes XML",
+            "detectedIcon": "far fa-file-code"
+          },
+          {
+            "searchPattern": "Data.Parsing.JSON",
+            "displayName": "Processes JSON",
+            "detectedIcon": "far fa-file-alt"
+          }
+        ]
+      },
+      {
+        "title": "Development",
+        "dataRef": "Development",
+        "patterns": [
+          {
+            "searchPattern": ".Build",
+            "displayName": "Build",
+            "detectedIcon": "fas fa-building"
+          },
+          {
+            "searchPattern": "Code.Repo",
+            "displayName": "Sourcecode Repository",
+            "detectedIcon": "fas fa-archive"
+          },
+          {
+            "searchPattern": "Code.CI",
+            "displayName": "Continuous integration",
+            "detectedIcon": "fas fa-vials"
+          },
+          {
+            "searchPattern": "Framework.Development",
+            "displayName": "Development framework",
+            "detectedIcon": "fab fa-dev"
+          },
+          {
+            "searchPattern": "Framework.Testing",
+            "displayName": "Testing framework",
+            "detectedIcon": "fas fa-vial"
+          },
+          {
+            "searchPattern": "OpenSourceLicense",
+            "displayName": "Open source",
+            "detectedIcon": "fab fa-github"
+          },
+          {
+            "searchPattern": "Framework.CMS",
+            "displayName": "Content management system",
+            "detectedIcon": "fab fa-wordpress"
+          }
+        ]
+      },
+      {
+        "title": "Active Content",
+        "dataRef": "ActiveContent",
+        "patterns": [
+          {
+            "searchPattern": ".Flash",
+            "displayName": "Adobe Flash",
+            "detectedIcon": "fab fa-adobe"
+          },
+          {
+            "searchPattern": ".ActiveX",
+            "displayName": "Microsoft ActiveX",
+            "detectedIcon": "fas fa-file-invoice"
+          },
+          {
+            "searchPattern": ".Microsoft.COM",
+            "displayName": "Microsoft COM",
+            "detectedIcon": "fab fa-hubspot"
+          },
+          {
+            "searchPattern": ".Silverlight",
+            "displayName": "Microsoft Silverlight",
+            "detectedIcon": "fas fa-bolt"
+          },
+          {
+            "searchPattern": ".PDF",
+            "displayName": "Adobe PDF",
+            "detectedIcon": "far fa-file-pdf"
+          },
+          {
+            "searchPattern": ".Ajax",
+            "displayName": "Javascript ajax",
+            "detectedIcon": "fas fa-exchange-alt"
+          }        
+        ]
+      },
+      {
+        "title": "Data Storage",
+        "dataRef": "DataStorage",
+        "patterns": [
+          {
+            "searchPattern": "DBMS.SQLite",
+            "displayName": "SQLite database",
+            "detectedIcon": "fas fa-table"
+          },
+          {
+            "searchPattern": "DBMS.SQL",
+            "displayName": "SQL database",
+            "detectedIcon": "fas fa-database"
+          },
+          {
+            "searchPattern": "DBMS.NOSQL",
+            "displayName": "NOSQL database",
+            "detectedIcon": "fab fa-mdb"
+          },
+          {
+            "searchPattern": "DBMS.PostgreSQL",
+            "displayName": "PostgreSQL Database",
+            "detectedIcon": "fas fa-archive"
+          },
+          {
+            "searchPattern": "DBMS.Oracle",
+            "displayName": "Database ORM",
+            "detectedIcon": "fas fa-map"
+          },
+          {
+            "searchPattern": "DBMS.General",
+            "displayName": "General database",
+            "detectedIcon": "fas fa-save"
+          }       
+        ]
+      },
+      {
+        "title": "Sensitive Data",
+        "dataRef": "SensitiveData",
+        "patterns": [
+          {
+            "searchPattern": "Sensitive.Identification",
+            "displayName": "Personally identifiable data",
+            "detectedIcon": "far fa-address-card"
+          },
+          {
+            "searchPattern": "Sensitive.Medical",
+            "displayName": "Medical data",
+            "detectedIcon": "fas fa-stethoscope"
+          },
+          {
+            "searchPattern": "Sensitive.Credentials",
+            "displayName": "Credentials",
+            "detectedIcon": "fas fa-user-secret"
+          },
+          {
+            "searchPattern": "Sensitive.UserAccount",
+            "displayName": "Account or membership",
+            "detectedIcon": "fas fa-user-circle"
+          },
+          {
+            "searchPattern": "Sensitive.ProductKey",
+            "displayName": "Product key",
+            "detectedIcon": "fas fa-compact-disc"
+          },
+          {
+            "searchPattern": "CryptoCurrency",
+            "displayName": "Crypto currency",
+            "detectedIcon": "fab fa-bitcoin"
+          },
+          {
+            "searchPattern": "Sensitive.Secret",
+            "displayName": "Senstive secret",
+            "detectedIcon": "fab fa-keycdn"
+          },
+          {
+            "searchPattern": "Sensitive.Financial",
+            "displayName": "Financial data",
+            "detectedIcon": "fas fa-money-bill"
+          }
+        ]
+      },
+      {
+        "title": "Cloud Services",
+        "dataRef": "CloudServices",
+        "patterns": [
+          {
+            "searchPattern": "CloudServices.Hosting",
+            "displayName": "Hosting",
+            "detectedIcon": "fab fa-microsoft"
+          },
+          {
+            "searchPattern": "CloudServices.Application",
+            "displayName": "Cloud application",
+            "detectedIcon": "fas fa-globe"
+          },
+          {
+            "searchPattern": "CloudServices.DataStorage",
+            "displayName": "Cloud data storage",
+            "detectedIcon": "fas fa-cloud-upload-alt"
+          },
+          {
+            "searchPattern": "CloudServices.BigData",
+            "displayName": "Big data",
+            "detectedIcon": "fas fa-warehouse"
+          },
+          {
+            "searchPattern": "CloudServices.SocialMedia",
+            "displayName": "Social media",
+            "detectedIcon": "fab fa-facebook-square"
+          },
+          {
+            "searchPattern": "CloudServices.Finance.eCommerce",
+            "displayName": "eCommerce",
+            "detectedIcon": "fas fa-shopping-cart"
+          },
+          {
+            "searchPattern": "Web.Analytics",
+            "displayName": "Web Analytics",
+            "detectedIcon": "fas fa-flag-checkered"
+          },
+          {
+            "searchPattern": ".AdvertisingNetwork",
+            "displayName": "Advertising network",
+            "detectedIcon": "fas fa-ad"
+          }
+        ]
+      },
+      {
+        "title": "OS Integration",
+        "dataRef": "OSIntegration",
+        "patterns": [
+          {
+            "searchPattern": "Metadata.Platform.OS",
+            "displayName": "OS platform",
+            "detectedIcon": "fab fa-linux"
+          },
+          {
+            "searchPattern": "Application.Container",
+            "displayName": "App container",
+            "detectedIcon": "fas fa-box"
+          },
+          {
+            "searchPattern": "OS.Environment",
+            "displayName": "Environment variable read",
+            "detectedIcon": "fas fa-tree"
+          },
+          {
+            "searchPattern": "Process.ListRequest",
+            "displayName": "OS process scan",
+            "detectedIcon": "fas fa-binoculars"
+          },
+          {
+            "searchPattern": "OS.SystemRegistry.Read",
+            "displayName": "Windows registry read",
+            "detectedIcon": "fas fa-cubes"
+          },
+          {
+            "searchPattern": "Application.Type.Client.Service",
+            "displayName": "Local system service",
+            "detectedIcon": "fas fa-door-open"
+          }
+        ]
+      },
+      {
+        "title": "OS System Changes",
+        "dataRef": "OSSystemChanges",
+        "patterns": [
+          {
+            "searchPattern": "OS.UserAccount.Write",
+            "displayName": "System user write",
+            "detectedIcon": "fas fa-user-plus"
+          },
+          {
+            "searchPattern": "ACL.Write",
+            "displayName": "Permissions write",
+            "detectedIcon": "fas fa-file-signature"
+          },
+          {
+            "searchPattern": "SystemToken.Write",
+            "displayName": "System token write",
+            "detectedIcon": "fab fa-bandcamp"
+          },
+          {
+            "searchPattern": "Environment.Write",
+            "displayName": "Environment variable write",
+            "detectedIcon": "fas fa-tree"
+          },
+          {
+            "searchPattern": "SystemRegistry.Write",
+            "displayName": "Windows registry write",
+            "detectedIcon": "fas fa-tools"
+          },
+          {
+            "searchPattern": "SystemRegistry.ACL",
+            "displayName": "Windows registry ACL",
+            "detectedIcon": "fas fa-unlock"
+          }
+
+        ]
+      },
+      {
+        "title": "Other",
+        "dataRef": "Other",
+        "patterns": [
+          {
+            "searchPattern": "Data.Media",
+            "displayName": "AV media",
+            "detectedIcon": "fas fa-play-circle"
+          },
+          {
+            "searchPattern": "Data.Zipfile",
+            "displayName": "Zip file processing",
+            "detectedIcon": "far fa-file-archive"
+          },
+          {
+            "searchPattern": "HTMLForm.Defined",
+            "displayName": "HTML form",
+            "detectedIcon": "far fa-window-maximize"
+          },
+          {
+            "searchPattern": "Exception.Caught",
+            "displayName": "Exception caught",
+            "detectedIcon": "fas fa-meteor"
+          },
+          {
+            "searchPattern": "Hardware",
+            "displayName": "Specialized hardware",
+            "detectedIcon": "far fa-keyboard"
+          },
+          {
+            "searchPattern": "Comment.Fix",
+            "displayName": "Fix comments",
+            "detectedIcon": "fas fa-toolbox"           
+          },
+          {
+            "searchPattern": "Comment.Suspicious",
+            "displayName": "Suspicious comments",
+            "detectedIcon": "fas fa-burn"
+          }
+        ]
+      }
+    ]
+  }
+]

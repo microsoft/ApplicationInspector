@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Data: Parses JSON",
+    "id": "AI013600",
+    "description": "Data: Parses JSON",
+    "applies_to": null,
+    "tags": [
+      "Data.Parsing.JSON"
+    ],
+    "severity": "moderate",
+    "overrides": null,
+    "patterns": [
+      {
+        "pattern": "\\b(JSON\\.Parse)\\b",
+        "type": "regex",
+        "modifiers": null,
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "conditions": []
+  }
+]

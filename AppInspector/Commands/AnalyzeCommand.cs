@@ -59,7 +59,7 @@ namespace Microsoft.ApplicationInspector.Commands
         string _arg_customRulesPath;
         bool _arg_ignoreDefaultRules;
         bool _arg_outputUniqueTagsOnly;
-        bool _arg_autoBrowserOpen;
+        bool _arg_suppressBrowserOpen;
         string _arg_confidenceFilters;
         bool _arg_simpleTagsOnly;
         Confidence _arg_confidence;
@@ -71,13 +71,13 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _arg_sourcePath = opt.SourcePath;
             _arg_outputFile = opt.OutputFilePath;
-            _arg_fileFormat = opt.OutputFileFormat;
+            _arg_fileFormat = opt.OutputFileFormat ?? "html";
             _arg_outputTextFormat = opt.TextOutputFormat;
             _arg_outputUniqueTagsOnly = !opt.AllowDupTags;
             _arg_customRulesPath = opt.CustomRulesPath;
             _arg_confidenceFilters = opt.ConfidenceFilters ?? "high,medium";
             _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
-            _arg_autoBrowserOpen = !opt.AutoBrowserOpen;
+            _arg_suppressBrowserOpen = opt.SuppressBrowserOpen;
             _arg_ignoreDefaultRules = opt.IgnoreDefaultRules;
             _arg_simpleTagsOnly = opt.SimpleTagsOnly;
             _arg_logger = opt.Log;
@@ -169,6 +169,10 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 if (!_arg_outputUniqueTagsOnly) //fix #183
                     throw new Exception(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
+
+                if (_arg_simpleTagsOnly) //won't work for html that expects full data
+                    throw new Exception(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
+
             }
             else if (!string.IsNullOrEmpty(_arg_outputFile))
             {
@@ -292,7 +296,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
 
-            _appProfile = new AppProfile(_arg_sourcePath, rulePaths, false, _arg_simpleTagsOnly, _arg_outputUniqueTagsOnly, _arg_autoBrowserOpen);
+            _appProfile = new AppProfile(_arg_sourcePath, rulePaths, false, _arg_simpleTagsOnly, _arg_outputUniqueTagsOnly, _arg_suppressBrowserOpen);
             _appProfile.Args = "analyze -f " + _arg_fileFormat + " -u " + _arg_outputUniqueTagsOnly.ToString().ToLower() + " -v " +
                 WriteOnce.Verbosity.ToString() + " -x " + _arg_confidence + " -i " + _arg_ignoreDefaultRules.ToString().ToLower();
         }
@@ -373,7 +377,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 else
                 {
                     WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "analyze"));
-                    if (!_arg_autoBrowserOpen)
+                    if (!_arg_suppressBrowserOpen)
                         WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, "output.html"), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
                 }
             }
@@ -668,7 +672,7 @@ namespace Microsoft.ApplicationInspector.Commands
         void UnZipAndProcess(string filename, ArchiveFileType archiveFileType)
         {
             // zip itself may be in excluded list i.e. sample, test or similar unless ignore filter requested
-            if (_fileExclusionList.Any(v => filename.ToLower().Contains(v)))
+            if (_fileExclusionList != null && _fileExclusionList.Any(v => filename.ToLower().Contains(v)))
             {
                 WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
                 _appProfile.MetaData.FilesSkipped++;
@@ -748,7 +752,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _appProfile.MetaData.AddLanguage(languageInfo.Name);
 
             // 2. Skip excluded files i.e. sample, test or similar unless ignore filter requested
-            if (_fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
+            if (_fileExclusionList != null && _fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
             {
                 WriteOnce.SafeLog(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filePath), LogLevel.Warn);
                 _appProfile.MetaData.FilesSkipped++;

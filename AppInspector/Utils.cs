@@ -59,7 +59,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     result = Path.GetFullPath(Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "rules", "default"));//used to ref project folder
                     break;
                 case AppPath.defaultRulesPackedFile://Packrules default output use
-                    result = Path.Combine(System.AppContext.BaseDirectory, "..", "..", "..", "..", "AppInspector", "Resources", "defaultRulesPkd.json");//packed default file in project resources
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "Resources", "defaultRulesPkd.json");//packed default file in project resources
                     break;
                 case AppPath.tagGroupPref://CLI use only
                     result = Path.Combine(GetBaseAppPath(), "preferences", "tagreportgroups.json");
@@ -240,7 +240,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public static Logger SetupLogging(AllCommandOptions opts)
+        public static Logger SetupLogging(AllCommandOptions opts, bool onErrorConsole = false)
         {
             //prevent being called again if already set unless closed first
             if (Logger != null)
@@ -262,6 +262,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 file.Close();
                 if (line.Contains("AppInsLog"))//safety to prevent file path other than our logs from deletion
                     File.Delete(opts.LogFilePath);
+                else
+                {
+                    if (Utils.CLIExecutionContext && onErrorConsole)
+                        WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_LOG_PATH, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+
+                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_LOG_PATH, opts.LogFilePath));
+                }
             }
 
             LogLevel log_level = LogLevel.Error;//default
@@ -274,6 +281,9 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             catch (Exception)
             {
+                if (Utils.CLIExecutionContext && onErrorConsole)
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_LOG_PATH, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+
                 throw new Exception((ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v")));
             }
 

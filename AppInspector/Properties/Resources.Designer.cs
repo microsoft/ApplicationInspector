@@ -187,6 +187,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Simple tags only argument not supported for html output format.  Select a different output format or remove the argument.
+        /// </summary>
+        internal static string ANALYZE_SIMPLETAGS_HTML_FORMAT {
+            get {
+                return ResourceManager.GetString("ANALYZE_SIMPLETAGS_HTML_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to uncompressed.
         /// </summary>
         internal static string ANALYZE_UNCOMPRESSED_FILETYPE {
@@ -264,6 +273,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         internal static string CMD_INVALID_FILE_OR_DIR {
             get {
                 return ResourceManager.GetString("CMD_INVALID_FILE_OR_DIR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The log path provided {0} can not be used overwrite an existing file that is not recognized.  Use a different file path or remove the file manually and try again..
+        /// </summary>
+        internal static string CMD_INVALID_LOG_PATH {
+            get {
+                return ResourceManager.GetString("CMD_INVALID_LOG_PATH", resourceCulture);
             }
         }
         

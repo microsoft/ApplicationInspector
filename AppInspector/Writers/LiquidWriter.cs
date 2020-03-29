@@ -72,7 +72,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.Info(ErrMsg.GetString(ErrMsg.ID.ANALYZE_REPORTSIZE_WARN));
             }
 
-            if (app.AutoBrowserOpen)
+            if (!app.SuppressBrowserOpen)
                 Utils.OpenBrowser(htmlOutputFilePath);
         }
 

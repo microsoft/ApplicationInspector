@@ -48,7 +48,7 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonIgnore]
         public bool UniqueTagsOnly { get; }
         [JsonIgnore]
-        public bool AutoBrowserOpen { get; set; }
+        public bool SuppressBrowserOpen { get; set; }
 
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Microsoft.ApplicationInspector.Commands
             ExcludeRollup = excludeRollup;
             SimpleTagsOnly = simpleTagsOnly;
             UniqueTagsOnly = uniqueTagsOnly;
-            AutoBrowserOpen = autoOpenBrowser;
+            SuppressBrowserOpen = autoOpenBrowser;
 
             MetaData = new AppMetaData(sourcePath, rulePaths)
             {

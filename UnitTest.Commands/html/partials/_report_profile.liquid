@@ -1,0 +1,106 @@
+﻿<div class="section">
+  <h2>Application Features</h2>
+
+  <div>
+    View key characteristics organized by Feature Groups. Click any active icon below or expand a feature group to view 
+    additional details. A disabled icon indicates a 'not found' status.  Click a Rule name on the right to view 
+    where a specific feature was found.  The full set of unique identified features can be found under the Summary menu.
+  </div>
+</div>
+<br>
+  <div class="section">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <h3>Feature Groups</h3>
+          <table class="table table-sm" style="width:600px">
+            {% for group in groups -%}
+            <tr>
+              <td style="width:160px;line-height:30px;vertical-align:top">
+                <img id="{{group.title}}-toggleBtn" src="html/resources/images/toggleBtn-none.png" height="20" width="20" onclick="toggleSelectFeatures('{{group.title}}');"/>&nbsp;{{group.title}}
+              </td>
+              <td style="line-height:30px;;vertical-align:top">
+                <div id="{{group.title}}-summary" style="display:block">
+                  {% for searchPattern in group.patterns -%}
+                  <div class="grid-1">
+                    <a href="#" class="feature_icon" title="{{searchPattern.display_name}}" data-target="{{searchPattern.search_pattern}}">
+                      <i class="{{searchPattern.detected_icon}}"></i>
+                    </a>
+                  </div>
+                  {% endfor -%}
+                </div>
+                <div id="{{group.title}}-detailed" style="display:none">
+                  <table>
+                    <tr>
+                      <td></td>
+                      <td style="width:300px;font-size:14px;text-align:left">
+                        <strong>Feature</strong>
+                      </td>
+                      <td style="width:135px;text-align:center;font-size:14px;">
+                        <strong>Confidence</strong>
+                      </td>
+                      <td style="font-size:14px;">
+                        <strong>Details</strong>
+                      </td>
+                    </tr>
+
+                    {% for pattern in group.patterns -%}
+                    <tr>
+                      <td style="line-height:30px">
+                        <div class="grid-1">
+                          <a href="#" class="feature_icon" title="{{pattern.display_name}}" data-target="{{pattern.search_pattern}}">
+                            <i class="{{pattern.detected_icon}}"></i>
+                          </a>
+                        </div>
+                      </td>
+                      <td style="font-size:14px;text-align:left;line-height:30px;">{{pattern.display_name}}</td>
+                      <td style="text-align:center;font-size:14px;line-height:30px;">
+                        <img src="html/resources/images/{{pattern.confidence}}-guage.png" height="23" width="43" title="{{pattern.confidence}}">
+                      </td>
+                      <td style="text-align:center;font-size:14px;line-height:30px;">
+                        <a href="#" class="feature_icon" title="{{pattern.display_name}}" data-target="{{pattern.search_pattern}}">{{pattern.details}}</a>
+                      </td>
+                    </tr>
+                    {% endfor -%}
+                  </table>
+                </div>
+              </td>
+            </tr>
+            {% endfor -%}
+          </table>
+        </div>
+
+        <div class="col">
+          <h3>Associated Rules</h3>
+          <div id="features">
+            <table class="table table-sm table-hover">
+              <thead>
+                <tr>
+                  <th style="font-size:14px;line-height:34px;">Name<span style="font-size:11px;line-height:34px;">&nbsp;(click to view source)</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Hint: Select feature on left</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script type="text/javascript">
+    function toggleSelectFeatures(divname)
+    {
+        var toggleValue1 = document.getElementById(divname+'-summary').style.display;
+        var toggleValue2 = document.getElementById(divname+'-detailed').style.display;
+
+        document.getElementById(divname+'-summary').style.display = toggleValue2;
+        document.getElementById(divname+'-detailed').style.display = toggleValue1;
+        document.getElementById(divname+'-toggleBtn').src = "html/resources/images/toggleBtn-"+toggleValue1+".png";
+    }
+
+  </script>

@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Data: Parses Goober",
+    "id": "AI013600",
+    "description": "Data: Parses Goober",
+    "applies_to": null,
+    "tags": [
+      "Data.Parsing.Goober"
+    ],
+    "severity": "moderate",
+    "overrides": null,
+    "patterns": [
+      {
+        "pattern": "goober",
+        "type": "string",
+        "modifiers": null,
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "conditions": []
+  }
+]
