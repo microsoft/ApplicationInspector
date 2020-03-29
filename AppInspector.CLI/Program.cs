@@ -69,7 +69,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunAnalyzeCommand(AnalyzeCommandOptions opts)
         {
-            Logger logger = Utils.SetupLogging(opts);
+            Logger logger = Utils.SetupLogging(opts, true);
             WriteOnce.Log = logger;
             opts.Log = logger;
 
@@ -78,7 +78,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunTagDiffCommand(TagDiffCommandOptions opts)
         {
-            Logger logger = Utils.SetupLogging(opts);
+            Logger logger = Utils.SetupLogging(opts, true);
             WriteOnce.Log = logger;
             opts.Log = logger;
 
@@ -87,7 +87,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunTagTestCommand(TagTestCommandOptions opts)
         {
-            Logger logger = Utils.SetupLogging(opts);
+            Logger logger = Utils.SetupLogging(opts, true);
             WriteOnce.Log = logger;
             opts.Log = logger;
 
@@ -96,7 +96,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunExportTagsCommand(ExportTagsCommandOptions opts)
         {
-            Logger logger = Utils.SetupLogging(opts);
+            Logger logger = Utils.SetupLogging(opts, true);
             WriteOnce.Log = logger;
             opts.Log = logger;
 
@@ -105,7 +105,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunVerifyRulesCommand(VerifyRulesCommandOptions opts)
         {
-            Logger logger = Utils.SetupLogging(opts);
+            Logger logger = Utils.SetupLogging(opts, true);
             WriteOnce.Log = logger;
             opts.Log = logger;
 
@@ -115,7 +115,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunPackRulesCommand(PackRulesCommandOptions opts)
         {
-            Logger logger = Utils.SetupLogging(opts);
+            Logger logger = Utils.SetupLogging(opts, true);
             WriteOnce.Log = logger;
             opts.Log = logger;
 

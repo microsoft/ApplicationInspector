@@ -1,0 +1,68 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" href="html/resources/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="html/resources/css/all.css" />
+    <link rel="stylesheet" href="html/resources/css/c3.min.css" />
+    <link rel="stylesheet" type="text/css" href="html/resources/css/appinspector.css" />
+
+    <title>{{ application_version }}</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-light navbar-lg">
+        <span class="navbar-brand">
+            <img src="html/resources/images/Microsoft_logo.svg" width="32" height="32" class="d-inline-block align-top" alt="">
+            Application Inspector
+        </span>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li><a class="nav-button" href="#" data-target="#page__report_overview">Overview</a></li>
+                <li><a class="nav-button" href="#" data-target="#page__report_summary">Summary</a></li>
+                <li><a class="nav-button" href="#" data-target="#page__report_profile">Features</a></li>
+                <li><a class="nav-button" href="https://github.com/Microsoft/ApplicationInspector/wiki" data-target="#page__report_profile" target="_blank" rel="noopener">About</a></li>
+            </ul>
+            <ul class="navbar-nav ml-auto" style="margin-right: 80px">
+                <li>
+                    <a class="nav-button" href="https://github.com/Microsoft/ApplicationInspector" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-github" style="font-size: 1.8em; color: #888"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container-fluid">
+        <div class="row">
+            <div class="col col-lg-1"></div>
+            <div class="col" id="page__report_overview">
+                {% include "report_overview" %}
+            </div>
+            <div class="col d-none" id="page__report_summary">
+                {% include "report_summary" %}
+            </div>
+            <div class="col d-none" id="page__report_profile">
+                {% include "report_profile" %}
+            </div>
+            <div class="col col-lg-2"></div>
+        </div>
+    </main>
+
+    {% include "file_listing" %}
+
+    <script src="html/resources/js/jquery.min.js"></script>
+    <script src="html/resources/js/popper.min.js"></script>
+    <script src="html/resources/js/bootstrap.min.js"></script>
+    <script src="html/resources/js/ace.js"></script>
+    <script src="html/resources/js/ext-settings_menu.js"></script>
+    <script src="html/resources/js/ext-modelist.js"></script>
+    <script src="html/resources/js/ext-beautify.js"></script>
+    <script src="html/resources/js/d3.min.js"></script>
+    <script src="html/resources/js/c3.min.js"></script>
+    <script type="text/javascript" src="html/resources/js/appinspector.js"></script>
+    <script type="text/javascript">
+        let data = {{ json }};
+    </script>
+</body>
+</html>
