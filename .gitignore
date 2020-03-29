@@ -269,3 +269,4 @@ __pycache__/
 /AppInspector/linux/ApplicationInspector
 /Microsoft.DevSkim/linux/ApplicationInspector
 /AppInspector/Resources/defaultRules.json
+/UnitTest.Commands/output

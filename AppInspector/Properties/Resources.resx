@@ -189,7 +189,7 @@
   <data name="CMD_INVALID_FILE_OR_DIR" xml:space="preserve">
     <value>Invalid file or directory {0}</value>
   </data>
-  <data name="CMD_INVALID_LOG_PATH" xml:space="preserve">
+  <data name="CMD_INVALID_REPLACE_LOG_PATH" xml:space="preserve">
     <value>The log path provided {0} can not be used overwrite an existing file that is not recognized.  Use a different file path or remove the file manually and try again.</value>
   </data>
   <data name="CMD_INVALID_RULE_PATH" xml:space="preserve">
@@ -197,6 +197,9 @@
   </data>
   <data name="CMD_NORULES_SPECIFIED" xml:space="preserve">
     <value>No rules specified.  At least one valid rules path required</value>
+  </data>
+  <data name="CMD_NO_OUTPUT" xml:space="preserve">
+    <value>No output file was specified and console verbosity is set to none.  Raise the console verbosity or specify an output file for the results</value>
   </data>
   <data name="CMD_PREPARING_REPORT" xml:space="preserve">
     <value>Preparing report</value>

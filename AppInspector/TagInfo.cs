@@ -84,11 +84,14 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class TagInfo : Drop
     {
+        [JsonProperty(PropertyName = "tag")]
         public string Tag { get; set; }
+        [JsonProperty(PropertyName = "displayName")]
         public string ShortTag { get; set; }
         [JsonIgnore]
         public string StatusIcon { get; set; }
         private string _confidence;
+        [JsonProperty(PropertyName = "confidence")]
         public string Confidence
         {
             get { return _confidence; }
@@ -107,7 +110,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
             }
         }
+        [JsonProperty(PropertyName = "severity")]
         public string Severity { get; set; }
+        [JsonProperty(PropertyName = "detected")]
         public bool Detected { get; set; }
 
     }

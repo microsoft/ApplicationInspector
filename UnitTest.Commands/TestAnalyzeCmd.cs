@@ -1,13 +1,15 @@
 ﻿using Microsoft.ApplicationInspector.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ApplicationInspector.UnitTest.Commands
 {
     /// <summary>
     /// Test class for Analyze Commands
-    /// Each method really needs to be complete i.e.options and command objects created and checked for exceptions etc. based on inputs so 
+    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so 
     /// doesn't create a set of shared objects
     /// 
     /// </summary>
@@ -20,7 +22,7 @@ namespace ApplicationInspector.UnitTest.Commands
             AnalyzeCommandOptions options = new AnalyzeCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                FilePathExclusions = "",
+                FilePathExclusions = "", //allow source under unittest path
                 SuppressBrowserOpen = true
             };
 
@@ -28,7 +30,7 @@ namespace ApplicationInspector.UnitTest.Commands
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-                exitCode = (AnalyzeCommand.ExitCode)command.Run(); //alternate to send output to named file, console or browser
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
             }
             catch (Exception)
             {
@@ -45,7 +47,7 @@ namespace ApplicationInspector.UnitTest.Commands
             AnalyzeCommandOptions options = new AnalyzeCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                FilePathExclusions = "",
+                FilePathExclusions = "", //allow source under unittest path
                 SimpleTagsOnly = true,
                 SuppressBrowserOpen = true
             };
@@ -54,7 +56,7 @@ namespace ApplicationInspector.UnitTest.Commands
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-                exitCode = (AnalyzeCommand.ExitCode)command.Run(); //alternate to send output to named file, console or browser
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
             }
             catch (Exception)
             {
@@ -70,7 +72,7 @@ namespace ApplicationInspector.UnitTest.Commands
             AnalyzeCommandOptions options = new AnalyzeCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                FilePathExclusions = "",
+                FilePathExclusions = "", //allow source under unittest path
                 AllowDupTags = true,
                 SuppressBrowserOpen = true
             };
@@ -79,7 +81,7 @@ namespace ApplicationInspector.UnitTest.Commands
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-                exitCode = (AnalyzeCommand.ExitCode)command.Run(); //alternate to send output to named file, console or browser
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
             }
             catch (Exception)
             {
@@ -95,7 +97,7 @@ namespace ApplicationInspector.UnitTest.Commands
             AnalyzeCommandOptions options = new AnalyzeCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\mainx.zip"),
-                FilePathExclusions = "",
+                FilePathExclusions = "", //allow source under unittest path
                 SuppressBrowserOpen = true
             };
 
@@ -103,7 +105,7 @@ namespace ApplicationInspector.UnitTest.Commands
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-                exitCode = (AnalyzeCommand.ExitCode)command.Run(); //alternate to send output to named file, console or browser
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
             }
             catch (Exception)
             {
@@ -115,48 +117,64 @@ namespace ApplicationInspector.UnitTest.Commands
 
 
         [TestMethod]
-        public void NoDefaultNoCustomRules_Fail()
+        public void SimpleTagsText_Pass()
         {
             AnalyzeCommandOptions options = new AnalyzeCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                FilePathExclusions = "",
-                IgnoreDefaultRules = true,
-                SuppressBrowserOpen = true
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                SimpleTagsOnly = true,
+                OutputFileFormat = "text"
             };
 
             AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-                exitCode = (AnalyzeCommand.ExitCode)command.Run(); //alternate to send output to named file, console or browser
+                string contentResult = command.GetResult();
+                if (String.IsNullOrEmpty(contentResult))
+                {
+                    exitCode = AnalyzeCommand.ExitCode.NoMatches;
+                }
+                else if (contentResult.Contains("Authentication.General"))
+                {
+                    exitCode = AnalyzeCommand.ExitCode.Success;
+                }
             }
             catch (Exception)
             {
                 //check for specific error if desired
             }
 
-            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.CriticalError);
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.Success);
         }
 
-
         [TestMethod]
-        public void NoDefaultCustomRules_Pass()
+        public void SimpleTagsJsonJS_Pass()
         {
             AnalyzeCommandOptions options = new AnalyzeCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                FilePathExclusions = "",
-                IgnoreDefaultRules = true,
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                SuppressBrowserOpen = true
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\onetag.js"),
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                SimpleTagsOnly = true,
+                OutputFileFormat = "json"
             };
 
             AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-                exitCode = (AnalyzeCommand.ExitCode)command.Run(); //alternate to send output to named file, console or browser
+                string contentResult = command.GetResult();
+                if (String.IsNullOrEmpty(contentResult))
+                {
+                    exitCode = AnalyzeCommand.ExitCode.NoMatches;
+                }
+                else if (contentResult.Contains("Data.Parsing.JSON"))
+                {
+                    exitCode = AnalyzeCommand.ExitCode.Success;
+                }
             }
             catch (Exception)
             {
@@ -168,21 +186,30 @@ namespace ApplicationInspector.UnitTest.Commands
 
 
         [TestMethod]
-        public void DefaultWithCustomRules_Pass()
+        public void SimpleTagsJsonCPP_Pass()
         {
             AnalyzeCommandOptions options = new AnalyzeCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                FilePathExclusions = "",
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                SuppressBrowserOpen = true
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                SimpleTagsOnly = true,
+                OutputFileFormat = "json"
             };
 
             AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-                exitCode = (AnalyzeCommand.ExitCode)command.Run(); //alternate to send output to named file, console or browser
+                string contentResult = command.GetResult();
+                if (String.IsNullOrEmpty(contentResult))
+                {
+                    exitCode = AnalyzeCommand.ExitCode.NoMatches;
+                }
+                else if (contentResult.Contains("Authentication.General"))
+                {
+                    exitCode = AnalyzeCommand.ExitCode.Success;
+                }
             }
             catch (Exception)
             {
@@ -191,6 +218,7 @@ namespace ApplicationInspector.UnitTest.Commands
 
             Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.Success);
         }
+
 
 
         [TestMethod]
@@ -199,7 +227,7 @@ namespace ApplicationInspector.UnitTest.Commands
             AnalyzeCommandOptions options = new AnalyzeCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                FilePathExclusions = "",
+                FilePathExclusions = "", //allow source under unittest path
                 OutputFileFormat = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"badir\noway"),
                 SuppressBrowserOpen = false
             };
@@ -207,7 +235,7 @@ namespace ApplicationInspector.UnitTest.Commands
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-                exitCode = (AnalyzeCommand.ExitCode)command.Run(); //alternate to send output to named file, console or browser
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
             }
             catch (Exception)
             {
@@ -223,7 +251,7 @@ namespace ApplicationInspector.UnitTest.Commands
             AnalyzeCommandOptions options = new AnalyzeCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"baddir\main.cpp"),
-                FilePathExclusions = "",
+                FilePathExclusions = "", //allow source under unittest path
                 SuppressBrowserOpen = false
             };
 
@@ -231,7 +259,7 @@ namespace ApplicationInspector.UnitTest.Commands
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-                exitCode = (AnalyzeCommand.ExitCode)command.Run(); //alternate to send output to named file, console or browser
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
             }
             catch (Exception)
             {
@@ -248,7 +276,7 @@ namespace ApplicationInspector.UnitTest.Commands
             AnalyzeCommandOptions options = new AnalyzeCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                FilePathExclusions = "",
+                FilePathExclusions = "", //allow source under unittest path
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"notfound.json"),
                 SuppressBrowserOpen = false
             };
@@ -257,7 +285,7 @@ namespace ApplicationInspector.UnitTest.Commands
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-                exitCode = (AnalyzeCommand.ExitCode)command.Run(); //alternate to send output to named file, console or browser
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
             }
             catch (Exception)
             {
@@ -269,110 +297,485 @@ namespace ApplicationInspector.UnitTest.Commands
 
 
         [TestMethod]
-        [Ignore]
-        public void SimpleTagsText_Pass()
+        public void NoDefaultNoCustomRules_Fail()
         {
-            throw new NotImplementedException("Please create a test first.");
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                IgnoreDefaultRules = true,
+                SuppressBrowserOpen = true
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.CriticalError);
         }
 
+
         [TestMethod]
-        [Ignore]
-        public void SimpleTagsJson_Pass()
+        public void NoDefaultCustomRules_Pass()
         {
-            throw new NotImplementedException("Please create a test first.");
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                IgnoreDefaultRules = true,
+                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                SuppressBrowserOpen = true
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.Success);
         }
 
+
         [TestMethod]
-        [Ignore]
-        public void ExclusionFilterByPass_Pass()
+        public void DefaultWithCustomRules_Pass()
         {
-            throw new NotImplementedException("Please create a test first.");
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                SuppressBrowserOpen = true
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.Success);
         }
 
 
         [TestMethod]
-        [Ignore]
+        public void DefaultAndCustomRulesMatched_Pass()
+        {
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                SuppressBrowserOpen = true,
+                SimpleTagsOnly = true,
+                OutputFileFormat = "text"
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                string contentResult = command.GetResult();
+                if (String.IsNullOrEmpty(contentResult))
+                {
+                    exitCode = AnalyzeCommand.ExitCode.NoMatches;
+                }
+                else if (contentResult.Contains("Custom1") && contentResult.Contains("Authentication.General")) //from default and custom rules
+                {
+                    exitCode = AnalyzeCommand.ExitCode.Success;
+                }
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.Success);
+        }
+
+
+
+        [TestMethod]
         public void ExclusionFilterByPass_Fail()
         {
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                //FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                OutputFileFormat = "text"
+            };
 
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                string contentResult = command.GetResult();
+                if (String.IsNullOrEmpty(contentResult))
+                {
+                    exitCode = AnalyzeCommand.ExitCode.NoMatches;
+                }
+                else if (contentResult.Contains("Data.Parse.JSON")) //from default and custom rules
+                {
+                    exitCode = AnalyzeCommand.ExitCode.Success;
+                }
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.NoMatches);
         }
 
+
+
         [TestMethod]
-        [Ignore]
-        public void DefaultLogByLevel_Pass()
+        public void ExpectedTagCountDupsAllowed_Pass()
         {
-            throw new NotImplementedException("Please create a test first.");
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                AllowDupTags = true,
+                OutputFileFormat = "text",
+                OutputFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
+                if (exitCode == AnalyzeCommand.ExitCode.Success)
+                {
+                    string[] lines = File.ReadAllLines(options.OutputFilePath);
+                    List<string> tags = Helper.GetTagsFromFile(lines);
+                    exitCode = tags.Count == 34 ? AnalyzeCommand.ExitCode.Success : AnalyzeCommand.ExitCode.NoMatches;
+                }
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.Success);
         }
 
+
         [TestMethod]
-        [Ignore]
-        public void CustomLogByLevel_Pass()
+        public void ExpectedTagCountNoDupsAllowed_Pass()
         {
-            throw new NotImplementedException("Please create a test first.");
-        }
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                AllowDupTags = false,
+                SimpleTagsOnly = true,
+                OutputFileFormat = "json"
+            };
 
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                string contentResult = command.GetResult();
+                if (String.IsNullOrEmpty(contentResult))
+                {
+                    exitCode = AnalyzeCommand.ExitCode.NoMatches;
+                }
+                else
+                {
+                    var file1Tags = JsonConvert.DeserializeObject<TagsFile>(contentResult);
+                    exitCode = file1Tags.Tags.Length == 21 ? AnalyzeCommand.ExitCode.Success : AnalyzeCommand.ExitCode.NoMatches;
+                }
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
 
-        [TestMethod]
-        [Ignore]
-        public void ExpectedTagFound_Pass()
-        {
-            throw new NotImplementedException("Please create a test first.");
-        }
-
-
-
-        [TestMethod]
-        [Ignore]
-        public void ExpectedTagCountFound_Pass()
-        {
-            throw new NotImplementedException("Please create a test first.");
-        }
-
-
-
-
-        [TestMethod]
-        [Ignore]
-        public void InvalidLogPath_Fail()
-        {
-            throw new NotImplementedException("Please create a test first.");
-        }
-
-
-
-        [TestMethod]
-        [Ignore]
-        public void LowConsoleOutput_Pass()
-        {
-            throw new NotImplementedException("Please create a test first.");
-        }
-
-
-
-        [TestMethod]
-        [Ignore]
-        public void HighConsoleOutput_Pass()
-        {
-            throw new NotImplementedException("Please create a test first.");
-        }
-
-
-
-        [TestMethod]
-        [Ignore]
-        public void NoUncontrolledExits()
-        {
-            throw new NotImplementedException("Please create a test first.");
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.Success);
         }
 
 
 
 
         [TestMethod]
-        [Ignore]
         public void NoMatchesFound_Pass()
         {
-            throw new NotImplementedException("Please create a test first.");
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.NoMatches);
+        }
+
+
+        [TestMethod]
+        public void LogTraceLevel_Pass()
+        {
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                LogFileLevel = "trace",
+                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logtrace.txt"),
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
+                string testLogContent = File.ReadAllText(options.LogFilePath);
+                if (String.IsNullOrEmpty(testLogContent))
+                    exitCode = AnalyzeCommand.ExitCode.CriticalError;
+                else if (!testLogContent.ToLower().Contains("trace"))
+                    exitCode = AnalyzeCommand.ExitCode.NoMatches;
+
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.NoMatches);
+        }
+
+
+
+        [TestMethod]
+        public void LogErrorLevel_Pass()
+        {
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                LogFileLevel = "error",
+                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logerror.txt"),
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                command.Run();
+            }
+            catch (Exception)
+            {
+                string testLogContent = File.ReadAllText(options.LogFilePath);
+                if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
+                    exitCode = AnalyzeCommand.ExitCode.Success;
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.Success);
+        }
+
+
+
+        [TestMethod]
+        public void LogDebugLevel_Pass()
+        {
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                LogFileLevel = "debug",
+                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logdebug.txt"),
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
+                string testLogContent = File.ReadAllText(options.LogFilePath);
+                if (String.IsNullOrEmpty(testLogContent))
+                    exitCode = AnalyzeCommand.ExitCode.CriticalError;
+                else if (!testLogContent.ToLower().Contains("debug"))
+                    exitCode = AnalyzeCommand.ExitCode.NoMatches;
+
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.NoMatches);
+        }
+
+
+
+        [TestMethod]
+        public void InvalidLogPath_Fail()
+        {
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\logdebug.txt"),
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.CriticalError);
+        }
+
+
+
+
+        [TestMethod]
+        public void InsecureLogPath_Fail()
+        {
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"nosuchfile.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                SuppressBrowserOpen = true,
+                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.CriticalError);
+        }
+
+
+
+        [TestMethod]
+        public void NoConsoleOutput_Pass()
+        {
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                OutputFileFormat = "text",
+                OutputFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
+                SuppressBrowserOpen = true,
+                ConsoleVerbosityLevel = "none"
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                // Attempt to open output file.
+                using (var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt")))
+                {
+
+                    // Redirect standard output from the console to the output file.
+                    Console.SetOut(writer);
+
+                    AnalyzeCommand command = new AnalyzeCommand(options);
+                    exitCode = (AnalyzeCommand.ExitCode)command.Run();
+                    try
+                    {
+                        string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                        if (String.IsNullOrEmpty(testContent))
+                            exitCode = AnalyzeCommand.ExitCode.Success;
+                        else
+                            exitCode = AnalyzeCommand.ExitCode.NoMatches;
+                    }
+                    catch (Exception)
+                    {
+                        exitCode = AnalyzeCommand.ExitCode.Success;//no console output file found
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            //reset to normal
+            var standardOutput = new StreamWriter(Console.OpenStandardOutput());
+            standardOutput.AutoFlush = true;
+            Console.SetOut(standardOutput);
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.Success);
+        }
+
+
+        [TestMethod]
+        public void NoConsoleOutput_Fail()
+        {
+            AnalyzeCommandOptions options = new AnalyzeCommandOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                FilePathExclusions = "", //allow source under unittest path
+                OutputFileFormat = "text",
+                SuppressBrowserOpen = true,
+                //OutputFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"), 
+                ConsoleVerbosityLevel = "none" //together with no output file = no output at all which is a fail
+            };
+
+            AnalyzeCommand.ExitCode exitCode = AnalyzeCommand.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                exitCode = (AnalyzeCommand.ExitCode)command.Run();
+            }
+            catch (Exception)
+            {
+                //check for specific error if desired
+            }
+
+            Assert.IsTrue(exitCode == AnalyzeCommand.ExitCode.CriticalError);
         }
     }
 }

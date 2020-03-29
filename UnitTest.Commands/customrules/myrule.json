@@ -1,18 +1,18 @@
 [
   {
-    "name": "Data: Parses JSON",
-    "id": "AI013600",
-    "description": "Data: Parses JSON",
+    "name": "Data: Custom1",
+    "id": "CI10000",
+    "description": "Data: Custom1",
     "applies_to": null,
     "tags": [
-      "Data.Parsing.JSON"
+      "Data.Custom1"
     ],
     "severity": "moderate",
     "overrides": null,
     "patterns": [
       {
-        "pattern": "\\b(JSON\\.Parse)\\b",
-        "type": "regex",
+        "pattern": "Custom1",
+        "type": "string",
         "modifiers": null,
         "scopes": [
           "code"

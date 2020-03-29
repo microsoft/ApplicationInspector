@@ -279,9 +279,9 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The log path provided {0} can not be used overwrite an existing file that is not recognized.  Use a different file path or remove the file manually and try again..
         /// </summary>
-        internal static string CMD_INVALID_LOG_PATH {
+        internal static string CMD_INVALID_REPLACE_LOG_PATH {
             get {
-                return ResourceManager.GetString("CMD_INVALID_LOG_PATH", resourceCulture);
+                return ResourceManager.GetString("CMD_INVALID_REPLACE_LOG_PATH", resourceCulture);
             }
         }
         
@@ -291,6 +291,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         internal static string CMD_INVALID_RULE_PATH {
             get {
                 return ResourceManager.GetString("CMD_INVALID_RULE_PATH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No output file was specified and console verbosity is set to none.  Raise the console verbosity or specify an output file for the results.
+        /// </summary>
+        internal static string CMD_NO_OUTPUT {
+            get {
+                return ResourceManager.GetString("CMD_NO_OUTPUT", resourceCulture);
             }
         }
         

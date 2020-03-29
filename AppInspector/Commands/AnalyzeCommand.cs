@@ -159,23 +159,32 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigOutput", LogLevel.Trace);
 
+            WriteOnce.FlushAll();//in case called more than once
+
             //Set output type, format and outstream
             _outputWriter = WriterFactory.GetWriter(_arg_fileFormat ?? "text", (string.IsNullOrEmpty(_arg_outputFile)) ? null : "text", _arg_outputTextFormat);
             if (_arg_fileFormat == "html")
             {
-                if (!string.IsNullOrEmpty(_arg_outputFile))
-                    WriteOnce.Info("output file ignored for html format");
-                _outputWriter.TextWriter = Console.Out;
+                if (!string.IsNullOrEmpty(_arg_outputFile)) //dependent local files won't be there; TODO look into dir copy to target!
+                {
+                    _arg_outputFile = String.Empty;
+                    WriteOnce.Info("output file argument ignored for html format");
+                }
 
                 if (!_arg_outputUniqueTagsOnly) //fix #183
                     throw new Exception(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
 
                 if (_arg_simpleTagsOnly) //won't work for html that expects full data
-                    throw new Exception(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
+                    throw new Exception(ErrMsg.GetString(ErrMsg.ID.ANALYZE_SIMPLETAGS_HTML_FORMAT));
             }
-            else if (!string.IsNullOrEmpty(_arg_outputFile))
+
+            if (!string.IsNullOrEmpty(_arg_outputFile))
             {
                 _outputWriter.TextWriter = File.CreateText(_arg_outputFile);//not needed if html output since application controlled
+            }
+            else if (_arg_consoleVerbosityLevel.ToLower() == "none")
+            {
+                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NO_OUTPUT));
             }
             else
             {
@@ -376,8 +385,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 else
                 {
                     WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "analyze"));
-                    if (!_arg_suppressBrowserOpen)
-                        WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, "output.html"), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
                 }
             }
             catch (Exception e)
@@ -495,6 +502,8 @@ namespace Microsoft.ApplicationInspector.Commands
                         continue;
                     else if (addAsFeatureMatch)
                         _appProfile.MatchList.Add(record);
+                    else
+                        _appProfile.MetaData.TotalMatchesCount -= 1;//reduce e.g. tag counters only as per preferences file
                 }
             }
             else
@@ -646,21 +655,28 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 _outputWriter.WriteApp(_appProfile);
 
-                if (_outputWriter.TextWriter != null && _arg_fileFormat != "html")
+                if (_outputWriter.TextWriter != null)
                 {
-                    _outputWriter.FlushAndClose();//not required for html formal i.e. multiple files already closed
-                    _outputWriter = null;
-                    WriteOnce.Writer = null;
-
-                    //Special case to avoid writing tmp file path to output file for TagTest,TagDiff or when called as a DLL since unnecessary
-                    if (_arg_consoleVerbosityLevel.ToLower() != "none")
+                    if (_arg_fileFormat != "html")
                     {
-                        if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
-                            WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, WriteOnce.ConsoleVerbosity.Medium, false);
-                        else
-                            WriteOnce.NewLine();
-                    }
+                        _outputWriter.FlushAndClose();//not required for htmt formal i.e. already closed
+                        _outputWriter = null;
+                        WriteOnce.Writer = null;
 
+                        //Special case to avoid writing tmp file path to output file for TagTest,TagDiff or when called as a DLL since unnecessary
+                        if (_arg_consoleVerbosityLevel.ToLower() != "none")
+                        {
+                            if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
+                                WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, WriteOnce.ConsoleVerbosity.Medium, false);
+                            else
+                                WriteOnce.NewLine();
+                        }
+                    }
+                    else
+                    {
+                        if (!_arg_suppressBrowserOpen && Utils.CLIExecutionContext)
+                            WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, "output.html"), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
+                    }
                 }
             }
         }

@@ -30,12 +30,13 @@ namespace Microsoft.ApplicationInspector.Commands
         public HashSet<string> RulePaths { get { return MetaData.RulePaths; } }
         public AppMetaData MetaData { get; set; }
         //has to be public to be visible to htmlwriter
-        [JsonProperty(PropertyName = "TagReportGroupLists")]
+        [JsonProperty(PropertyName = "tagReportGroupLists")]
         public Dictionary<string, List<TagInfo>> KeyedTagInfoLists { get; }//dynamic lists for grouping tag properties in reporting
         [JsonIgnore]
         public Dictionary<string, List<TagInfo>> KeyedSortedTagInfoLists { get; } //split to avoid json serialization with others
         [JsonIgnore]
         public List<MatchRecord> MatchList { get; set; }//list of MatchRecords that wrap and augment Issues class during processing
+        [JsonProperty(PropertyName = "matchDetailsList")]
         public List<LimitedMatchRecord> FormattedMatchList { get; set; }//lighter formatted list structure more suited for json output to limit extraneous fieldo in Issues class
         [JsonIgnore]
         public List<TagCategory> TagGroupPreferences { get; set; }//read preferred list of groups and tags for profile page
@@ -586,7 +587,7 @@ namespace Microsoft.ApplicationInspector.Commands
         //Wrapper getters for serialzation and easy reference of standard properties found in dynamic lists
         [JsonIgnore]
         public List<TagCounterUI> TagCountersUI { get; set; }
-        [JsonProperty(PropertyName = "TagCounters")]
+        [JsonProperty(PropertyName = "tagCounters")]
         public List<TagCounter> TagCounters { get; }
         [JsonProperty(PropertyName = "packageTypes")]
         public HashSet<string> PackageTypes { get { return KeyedPropertyLists["strGrpPackageTypes"]; } }

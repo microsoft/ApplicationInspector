@@ -260,14 +260,31 @@ namespace Microsoft.ApplicationInspector.Commands
                 System.IO.StreamReader file = new System.IO.StreamReader(opts.LogFilePath);
                 String line = file.ReadLine();
                 file.Close();
-                if (line.Contains("AppInsLog"))//safety to prevent file path other than our logs from deletion
-                    File.Delete(opts.LogFilePath);
-                else
+                if (!String.IsNullOrEmpty(line))
+                {
+                    if (line.Contains("AppInsLog"))//prevent file other than our logs from deletion
+                        File.Delete(opts.LogFilePath);
+                    else
+                    {
+                        if (Utils.CLIExecutionContext && onErrorConsole)
+                            WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_REPLACE_LOG_PATH, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+
+                        throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_REPLACE_LOG_PATH, opts.LogFilePath));
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    File.WriteAllText(opts.LogFilePath, "");//verify log file path is writable
+                }
+                catch (Exception e)
                 {
                     if (Utils.CLIExecutionContext && onErrorConsole)
-                        WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_LOG_PATH, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                        WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
 
-                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_LOG_PATH, opts.LogFilePath));
+                    throw new Exception((ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, opts.LogFilePath)));
                 }
             }
 
@@ -282,7 +299,7 @@ namespace Microsoft.ApplicationInspector.Commands
             catch (Exception)
             {
                 if (Utils.CLIExecutionContext && onErrorConsole)
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_LOG_PATH, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v"), true, WriteOnce.ConsoleVerbosity.Low, false);
 
                 throw new Exception((ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v")));
             }
