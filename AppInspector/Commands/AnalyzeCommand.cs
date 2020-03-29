@@ -172,6 +172,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 if (_arg_simpleTagsOnly) //won't work for html that expects full data
                     throw new Exception(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
+
             }
             else if (!string.IsNullOrEmpty(_arg_outputFile))
             {
