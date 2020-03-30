@@ -89,14 +89,20 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("ExportTagsCommand::ConfigOutput", LogLevel.Trace);
 
-            //setup output                       
-            TextWriter outputWriter;
+            WriteOnce.FlushAll();//in case called more than once
 
-            if (!string.IsNullOrEmpty(_arg_outputFile))
+            if (string.IsNullOrEmpty(_arg_outputFile) && _arg_consoleVerbosityLevel.ToLower() == "none")
             {
-                outputWriter = File.CreateText(_arg_outputFile);
-                outputWriter.WriteLine(Utils.GetVersionString());
-                WriteOnce.Writer = outputWriter;
+                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NO_OUTPUT));
+            }
+            else if (!string.IsNullOrEmpty(_arg_outputFile))
+            {
+                WriteOnce.Writer = File.CreateText(_arg_outputFile);
+                WriteOnce.Writer.WriteLine(Utils.GetVersionString());
+            }
+            else
+            {
+                WriteOnce.Writer = Console.Out;
             }
         }
 

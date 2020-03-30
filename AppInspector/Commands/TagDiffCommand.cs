@@ -39,6 +39,7 @@ namespace Microsoft.ApplicationInspector.Commands
         string _arg_test_type_raw;
         TagTestType _arg_tagTestType;
         string _arg_consoleVerbosityLevel;
+        string _arg_fileExclusionList;//see exclusion list
 
         public TagDiffCommand(TagDiffCommandOptions opt)
         {
@@ -52,6 +53,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _arg_logger = opt.Log;
             _arg_log_file_path = opt.LogFilePath;
             _arg_close_log_on_exit = Utils.CLIExecutionContext ? true : opt.CloseLogOnCommandExit;
+            _arg_fileExclusionList = opt.FilePathExclusions;
 
             _arg_logger ??= Utils.SetupLogging(opt);
             WriteOnce.Log ??= _arg_logger;
@@ -79,6 +81,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <summary>
         /// Establish console verbosity
         /// For NuGet DLL use, console is muted overriding any arguments sent
+        /// Pre: Always call again after ConfigureFileOutput
         /// </summary>
         void ConfigureConsoleOutput()
         {
@@ -115,7 +118,22 @@ namespace Microsoft.ApplicationInspector.Commands
         void ConfigureFileOutput()
         {
             WriteOnce.SafeLog("TagDiff::ConfigOutput", LogLevel.Trace);
-            //intentionally empty as this is put in Run() for this command; see note
+
+            WriteOnce.FlushAll();//in case called more than once
+
+            if (string.IsNullOrEmpty(_arg_outputFile) && _arg_consoleVerbosityLevel.ToLower() == "none")
+            {
+                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NO_OUTPUT));
+            }
+            else if (!string.IsNullOrEmpty(_arg_outputFile))
+            {
+                WriteOnce.Writer = File.CreateText(_arg_outputFile);
+                WriteOnce.Writer.WriteLine(Utils.GetVersionString());
+            }
+            else
+            {
+                WriteOnce.Writer = Console.Out;
+            }
         }
 
 
@@ -183,6 +201,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     OutputFileFormat = "json",
                     CustomRulesPath = _arg_customRulesPath,
                     IgnoreDefaultRules = _arg_ignoreDefault,
+                    FilePathExclusions = _arg_fileExclusionList,
                     SimpleTagsOnly = true,
                     ConsoleVerbosityLevel = "none",
                     Log = _arg_logger
@@ -194,6 +213,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     OutputFileFormat = "json",
                     CustomRulesPath = _arg_customRulesPath,
                     IgnoreDefaultRules = _arg_ignoreDefault,
+                    FilePathExclusions = _arg_fileExclusionList,
                     SimpleTagsOnly = true,
                     ConsoleVerbosityLevel = "none",
                     Log = _arg_logger
@@ -229,13 +249,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.Success)
                 {
                     //setup output here rather than top to avoid analyze command output in this command output                   
-                    TextWriter outputWriter;
-                    if (!string.IsNullOrEmpty(_arg_outputFile))
-                    {
-                        outputWriter = File.CreateText(_arg_outputFile);
-                        outputWriter.WriteLine(Utils.GetVersionString());
-                        WriteOnce.Writer = outputWriter;
-                    }
+                    ConfigureFileOutput();
+                    ConfigureConsoleOutput();//recheck
 
                     string file1TagsJson = File.ReadAllText(tmp1);
                     string file2TagsJson = File.ReadAllText(tmp2);

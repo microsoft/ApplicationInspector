@@ -1,11 +1,11 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using NLog;
 
 [assembly: CLSCompliant(true)]
 namespace Microsoft.ApplicationInspector.RulesEngine
@@ -25,8 +25,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Creates instance of RuleProcessor
         /// </summary>
-        public RuleProcessor(bool uniqueTagMatches=false, bool stopAfterFirstPatternMatch=false, Logger logger = null)
-        {            
+        public RuleProcessor(bool uniqueTagMatches = false, bool stopAfterFirstPatternMatch = false, Logger logger = null)
+        {
             _rulesCache = new Dictionary<string, IEnumerable<Rule>>();
             EnableSuppressions = false;
             EnableCache = true;
@@ -56,7 +56,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             _logger = logger;
 
             ConfidenceLevelFilter = confidence;
-        }       
+        }
 
         #region Public Methods
 
@@ -129,7 +129,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             bool passedConditions = true;
                             foreach (SearchCondition condition in rule.Conditions)
                             {
-                                bool res = textContainer.MatchPattern(condition.Pattern, match, condition);                                
+                                bool res = textContainer.MatchPattern(condition.Pattern, match, condition);
                                 if (res && condition.NegateFinding)
                                 {
                                     passedConditions = false;
@@ -145,7 +145,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     passedConditions = false;
                                     break;
                                 }
-                               
+
                             }
 
                             //do not accept features from build type files (only metadata) to avoid false positives that are not part of the executable program
@@ -163,7 +163,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     Confidence = pattern.Confidence,
                                     Rule = rule
                                 };
-                              
+
                                 //check at pattern level to avoid adding duplicates 
                                 if (_uniqueTagMatchesOnly && !UniqueTagsCheck(rule.Tags))
                                     break;
@@ -171,7 +171,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 AddRuleTagHashes(rule.Tags);
                                 matchList.Add(issue);
                             }
-                        }                     
+                        }
                     }
 
                 }
@@ -192,7 +192,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
                         // Otherwise add the suppression info instead
                         else
-                        {                            
+                        {
                             Boundary bound = textContainer.GetLineBoundary(result.Boundary.Index);
                             bound.Index += supissue.Boundary.Index;
                             bound.Length = supissue.Boundary.Length;
@@ -207,9 +207,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 Rule = result.Rule
                             };
 
-                            // Add info only if it's not exists on the same location
+                            // Add info only if it's not on the same location
                             if (resultsList.FirstOrDefault(x => x.Rule.Id == info.Rule.Id && x.Boundary.Index == info.Boundary.Index) == null)
                                 resultsList.Add(info);
+                            else if (_logger != null)
+                                _logger.Debug("Not added due to proximity to another rule");
+
                         }
                     }
 
@@ -220,20 +223,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     resultsList.AddRange(matchList);
                 }
             }
-            
+
             // Deal with overrides 
             List<Issue> removes = new List<Issue>();
             foreach (Issue m in resultsList)
             {
                 if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
                 {
-                    foreach(string ovrd in m.Rule.Overrides)
+                    foreach (string ovrd in m.Rule.Overrides)
                     {
                         // Find all overriden rules and mark them for removal from issues list   
-                        foreach(Issue om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                        foreach (Issue om in resultsList.FindAll(x => x.Rule.Id == ovrd))
                         {
-                            if (om.Boundary.Index >= m.Boundary.Index && 
-                                om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length )
+                            if (om.Boundary.Index >= m.Boundary.Index &&
+                                om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
                                 removes.Add(om);
                         }
                     }
@@ -269,12 +272,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 if (_rulesCache.ContainsKey(langid))
                     return _rulesCache[langid];
             }
-            
+
             IEnumerable<Rule> filteredRules = _ruleset.ByLanguages(languages);
 
             // Add the list to the cache so we save time on the next call
             if (EnableCache && filteredRules.Count() > 0)
-            {             
+            {
                 _rulesCache.Add(langid, filteredRules);
             }
 
@@ -310,6 +313,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                     break;
                 }
+                else if (_logger != null)
+                    _logger.Debug(String.Format("Duplicate tag {0} not added", tag));
             }
 
             return approved;

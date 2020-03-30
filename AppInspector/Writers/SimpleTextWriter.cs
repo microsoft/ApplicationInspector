@@ -132,8 +132,8 @@ namespace Microsoft.ApplicationInspector.Commands
             TextWriter.WriteLine("Files analyzed: {0}", app.MetaData.FilesAnalyzed);
             TextWriter.WriteLine("Files skipped: {0}", app.MetaData.FilesSkipped);
             TextWriter.WriteLine("Total files: {0}", app.MetaData.TotalFiles);
-            TextWriter.WriteLine("Detections: {0} in {1} file(s)", app.MetaData.TotalMatchesCount, app.MetaData.FilesAffected);
-            TextWriter.WriteLine("Unique detections: {0}", app.MetaData.UniqueMatchesCount);
+            TextWriter.WriteLine("Total matches: {0} in {1} file(s)", app.MetaData.TotalMatchesCount, app.MetaData.FilesAffected);
+            TextWriter.WriteLine("Unique matches: {0}", app.MetaData.UniqueMatchesCount);
 
             TextWriter.WriteLine(MakeHeading("UniqueTags"));
             List<string> tags = new List<string>();
