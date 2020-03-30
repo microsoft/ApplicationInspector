@@ -147,7 +147,6 @@
   <ItemGroup>
     <Folder Include="customrules\" />
     <Folder Include="output\" />
-    <Folder Include="source\" />
   </ItemGroup>
 
 </Project>

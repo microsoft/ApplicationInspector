@@ -76,6 +76,9 @@ namespace Microsoft.ApplicationInspector.Commands
         [Option('t', "test-type", Required = false, HelpText = "Type of test to run [equality|inequality]", Default = "equality")]
         public string TestType { get; set; }
 
+        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files (none|default: sample,example,test,docs,.vs,.git)", Default = "sample,example,test,docs,.vs,.git")]
+        public string FilePathExclusions { get; set; }
+
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
@@ -102,6 +105,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
+
+        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files (none|default: sample,example,test,docs,.vs,.git)", Default = "sample,example,test,docs,.vs,.git")]
+        public string FilePathExclusions { get; set; }
 
         [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string OutputFilePath { get; set; }

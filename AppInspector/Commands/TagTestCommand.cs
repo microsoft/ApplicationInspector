@@ -20,8 +20,8 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         public enum ExitCode
         {
-            TagsTestSuccess = 0,
-            SomeTagsFailed = 1,
+            TestPassed = 0,
+            TestFailed = 1,
             CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
         }
 
@@ -34,6 +34,7 @@ namespace Microsoft.ApplicationInspector.Commands
         TagTestType _arg_tagTestType;
         RuleSet _rulesSet;
         string _arg_consoleVerbosityLevel;
+        string _arg_fileExclusionList;//see exclusion list
 
         /// Compares a set of rules against a source path...
         /// Used for both RulesPresent and RulesNotePresent options
@@ -49,6 +50,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _arg_log_file_path = opt.LogFilePath;
             _arg_log_level = opt.LogFileLevel;
             _arg_close_log_on_exit = Utils.CLIExecutionContext ? true : opt.CloseLogOnCommandExit;
+            _arg_fileExclusionList = opt.FilePathExclusions;
 
             _arg_logger ??= Utils.SetupLogging(opt);
             WriteOnce.Log ??= _arg_logger;
@@ -105,15 +107,20 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("TagTestCommand::ConfigOutput", LogLevel.Trace);
 
-            WriteOnce.FlushAll();
+            WriteOnce.FlushAll();//in case called more than once
 
-            //setup output                       
-            TextWriter outputWriter;
-            if (!string.IsNullOrEmpty(_arg_outputFile))
+            if (string.IsNullOrEmpty(_arg_outputFile) && _arg_consoleVerbosityLevel.ToLower() == "none")
             {
-                outputWriter = File.CreateText(_arg_outputFile);
-                outputWriter.WriteLine(Utils.GetVersionString());
-                WriteOnce.Writer = outputWriter;
+                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NO_OUTPUT));
+            }
+            else if (!string.IsNullOrEmpty(_arg_outputFile))
+            {
+                WriteOnce.Writer = File.CreateText(_arg_outputFile);
+                WriteOnce.Writer.WriteLine(Utils.GetVersionString());
+            }
+            else
+            {
+                WriteOnce.Writer = Console.Out;
             }
         }
 
@@ -211,6 +218,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     OutputFileFormat = "json",
                     IgnoreDefaultRules = true,
                     CustomRulesPath = _arg_customRulesPath,
+                    FilePathExclusions = _arg_fileExclusionList,
                     SimpleTagsOnly = true,
                     ConsoleVerbosityLevel = "None",
                     Log = _arg_logger
@@ -240,7 +248,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "tagtest"));
 
-                    exitCode = _arg_tagTestType == TagTestType.RulesPresent ? ExitCode.SomeTagsFailed : ExitCode.TagsTestSuccess;
+                    exitCode = _arg_tagTestType == TagTestType.RulesPresent ? ExitCode.TestFailed : ExitCode.TestPassed;
                 }
                 else //assumed (result == AnalyzeCommand.ExitCode.MatchesFound)
                 {
@@ -248,7 +256,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     var file1Tags = JsonConvert.DeserializeObject<TagsFile>(file1TagsJson);
                     File.Delete(tmp1);
 
-                    exitCode = ExitCode.TagsTestSuccess;
+                    exitCode = ExitCode.TestPassed;
                     foreach (Rule r in _rulesSet)
                     {
                         //supports both directions by generalizing 
@@ -264,22 +272,22 @@ namespace Microsoft.ApplicationInspector.Commands
                                 WriteOnce.Result(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TAGS_FOUND, t), true, WriteOnce.ConsoleVerbosity.High);
                             else
                             {
-                                exitCode = ExitCode.SomeTagsFailed;
+                                exitCode = ExitCode.TestFailed;
                                 WriteOnce.Result(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TAGS_MISSING, t), true, WriteOnce.ConsoleVerbosity.High);
                             }
 
-                            if (exitCode != ExitCode.TagsTestSuccess)
+                            if (exitCode != ExitCode.TestPassed)
                                 break;
                         }
 
-                        if (exitCode != ExitCode.TagsTestSuccess)
+                        if (exitCode != ExitCode.TestPassed)
                             break;
                     }
 
                     //results
                     WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
 
-                    if (exitCode == ExitCode.SomeTagsFailed)
+                    if (exitCode == ExitCode.TestFailed)
                         WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
                     else
                         WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
