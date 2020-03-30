@@ -100,7 +100,7 @@ ERROR(S):
 
   -d, --allow-dup-tags           Output contains unique and non-unique tag matches
 
-  -b, --suppress-browser-open    Suppress automatic open to HTML output using default browser
+  -b, --suppress-browser-open    Suppress automatically opening HTML output using default browser
 
   -c, --confidence-filters       Output only matches with specified confidence <value>,<value> [high|medium|low]
 
@@ -150,6 +150,8 @@ Use to analyze and report on differences in tags (features) between two project 
 
   -o, --output-file-path        Output file path
 
+  -k, --file-path-exclusions     Exclude source files (none|default: sample,example,test,docs,.vs,.git)
+
   -x, --console-verbosity       Console verbosity [high|medium|low|none]
 
   -l, --log-file-path           Log file path
@@ -191,6 +193,8 @@ will likely yield a false or fail result in most cases.
   -r, --custom-rules-path    Custom rules file or directory path
 
   -o, --output-file-path     Output file path
+
+  -k, --file-path-exclusions     Exclude source files (none|default: sample,example,test,docs,.vs,.git)
 
   -x, --console-verbosity    Console verbosity [high|medium|low|none]
 
@@ -251,6 +255,9 @@ verified as part of the Build process and does not normally require a separate v
   Usage: dotnet ApplicationInspector.CLI.dll verifyrules [arguments]
 
   Arguments:
+
+  -d, --verify-default-rules Verify default rules
+
   -r, --custom-rules-path    Custom rules file or directory path
 
   -o, --output-file-path     Output file path
