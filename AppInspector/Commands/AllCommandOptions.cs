@@ -49,7 +49,7 @@ namespace Microsoft.ApplicationInspector.Commands
         [Option('d', "allow-dup-tags", Required = false, HelpText = "Output contains unique and non-unique tag matches", Default = false)]
         public bool AllowDupTags { get; set; }
 
-        [Option('b', "suppress-browser-open", Required = false, HelpText = "Suppress automatic open to HTML output using default browser", Default = false)]
+        [Option('b', "suppress-browser-open", Required = false, HelpText = "Suppress automatically opening HTML output using default browser", Default = false)]
         public bool SuppressBrowserOpen { get; set; }
 
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
@@ -139,6 +139,7 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         [Option('d', "verify-default-rules", Required = false, HelpText = "Verify default rules")]
         public bool VerifyDefaultRules { get; set; }
+
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 

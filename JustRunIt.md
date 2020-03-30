@@ -17,14 +17,17 @@ using the decompression utility of choice e.g. WinZip, 7zip, Gzip etc. Or if you
 
 That's it.  Start using the application by selecting and downloading the source code you want to scan to a local directory then run Application Inspector against it either from the source code directory or the Application Inspector install directory using the instructions found on this site on the home page or Readme.md file.  
 
+Note there are two main components for invoking the application, the ApplicationInspector.Commands.dll containing the core logic and ApplicationInspector.CLI.dll and .exe (Windows) containing the launch entry point for command line use which uses the other.
+The ApplicationInspector.Commands.dll is most likely of help in using the functionaly programmatically and can most easily be installed via www.nuget.com.  See the project wiki for more on use.  To just use the application as-is, follow the help below.
+
 ## Getting Help
 
 You can also get help directly from the application by simply typing in the application name without a command
 or with a command to get the required and optional arguments for a given command.
 
-Windows: just run the .exe i.e. applicationinspector.exe
-Other: run as dotnet applicationinspector.dll
+Windows: just run the .exe i.e. applicationinspector.cli.exe
+Other: run as dotnet applicationinspector.cli.dll
 
-* applicationinspector <no arguments> - to get a list of available top level commands
-* applicationinspector [command] < no arguments> - to get a list of required and optional arguments to supply with the selected command
-* applicationinspector [command] [arguments] -to run a given command with the required or optional parameters
+* applicationinspector.cli <no arguments> - to get a list of available top level commands
+* applicationinspector.cli [command] < no arguments> - to get a list of required and optional arguments to supply with the selected command
+* applicationinspector.cli [command] [arguments] -to run a given command with the required or optional parameters
