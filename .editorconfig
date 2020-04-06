@@ -1,0 +1,7 @@
+﻿[*.{cs,vb}]
+
+# IDE0044: Add readonly modifier
+dotnet_style_readonly_field = true:suggestion
+
+# IDE0051: Remove unused private members
+dotnet_diagnostic.IDE0051.severity = none

@@ -1,0 +1,797 @@
+{
+  "appVersion": "Microsoft Application Inspector 1.1.30+a2c4b240b2",
+  "resultCode": 0,
+  "metaData": {
+    "languages": {
+      "cpp": 1
+    },
+    "applicationName": "main",
+    "sourcePath": "c:\\temp\\main.cpp",
+    "sourceVersion": null,
+    "authors": null,
+    "description": null,
+    "lastUpdated": "3/28/2020 11:13:02 AM",
+    "dateScanned": "4/5/2020 9:41:39 PM",
+    "filesAnalyzed": 1,
+    "totalFiles": 1,
+    "filesSkipped": 0,
+    "filesAffected": 1,
+    "totalMatchesCount": 22,
+    "uniqueMatchesCount": 22,
+    "packageTypes": [
+      "uncompressed"
+    ],
+    "appTypes": [],
+    "uniqueTags": [
+      "OS.SystemRegistry.Write",
+      "OS.FileOperation.Write",
+      "Cryptography.Protocol.TLS.WeakSSL",
+      "Cryptography.Protocol.TLS",
+      "Metadata.CloudServices.Hosting.Microsoft.Azure",
+      "CloudServices.Finance.eCommerce",
+      "CloudServices.SocialMedia.Facebook",
+      "Cryptography.X509Certificates.Use",
+      "Cryptography.Encryption.General",
+      "Cryptography.HashAlgorithm.Legacy",
+      "Data.Sensitive.Financial.CreditCard",
+      "Data.Sensitive.Financial.Payroll",
+      "Miscellaneous.CodeHygiene.Comment.Todo",
+      "Miscellaneous.CodeHygiene.Comment.Suspicious",
+      "Metadata.Platform.OS.Google.Android",
+      "Metadata.Platform.OS.Microsoft.WindowsStandard",
+      "Metadata.Platform.OS.Linux.Distro",
+      "OS.Network.Connection.Socket",
+      "OS.Process.Multiprocessing",
+      "Authentication.General",
+      "Authorization.Microsoft.Azuze.SAS",
+      "Authorization.RBAC"
+    ],
+    "uniqueDependencies": [],
+    "outputs": [],
+    "targets": [],
+    "OSTargets": [
+      "android",
+      "windows",
+      "linux"
+    ],
+    "fileExtensions": [
+      "cpp"
+    ],
+    "cloudTargets": [
+      "azure"
+    ],
+    "CPUTargets": [],
+    "tagCounters": [
+      {
+        "tag": "Metric.Code.Class.Defined",
+        "displayName": "Defined",
+        "count": 1,
+        "includeAsMatch": false
+      },
+      {
+        "tag": "Metric.Code.Function.Defined",
+        "displayName": "Defined",
+        "count": 1,
+        "includeAsMatch": false
+      },
+      {
+        "tag": "Metric.Code.Exception.Caught",
+        "displayName": "Caught",
+        "count": 1,
+        "includeAsMatch": false
+      },
+      {
+        "tag": "Metric.Code.Logging.Call",
+        "displayName": "Call",
+        "count": 1,
+        "includeAsMatch": false
+      }
+    ],
+    "detailedMatchList": [
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI038000",
+        "ruleName": "OS Operation: Windows Registry (Write)",
+        "ruleDescription": "OS Operation: Windows Registry (Write)",
+        "pattern": "\\b(RegSetValueEx|RegOpenKeyEx|RegCreateKeyEx)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "OS.SystemRegistry.Write"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "RegSetValueEx",
+        "excerpt": "bG9naW4gYg0KDQoNClJlZ1NldFZhbHVlRXgoImZvbyIpOw0KDQoNCmludCBtYWluKGludCBhcmdjKQ0Kew0KDQo=",
+        "startLocationLine": 63,
+        "startLocationColumn": 1,
+        "endLocationLine": 63,
+        "endLocationColumn": 14,
+        "boundaryIndex": 479,
+        "boundaryLength": 13
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI036600",
+        "ruleName": "File Operation (Write)",
+        "ruleDescription": "File Operation (Write)",
+        "pattern": "fstream|fwrite|fprintf|sprintf|fput",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "OS.FileOperation.Write"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "fwrite",
+        "excerpt": "DQogICB3ZWJjbGllbnQgdzsNCg0KICAgZndyaXRlICBrOw0KDQogICBmd3JpdGUgbDsNCg0KICAgZndyaXRlIGo7DQoNCg==",
+        "startLocationLine": 133,
+        "startLocationColumn": 4,
+        "endLocationLine": 133,
+        "endLocationColumn": 10,
+        "boundaryIndex": 1153,
+        "boundaryLength": 6
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI010500",
+        "ruleName": "Detect Weak Cryptography",
+        "ruleDescription": "Detect use of cryptography",
+        "pattern": "SECURITY_FLAG_IGNORE_",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Critical",
+        "tags": [
+          "Cryptography.Protocol.TLS.WeakSSL"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "SECURITY_FLAG_IGNORE_",
+        "excerpt": "DQpTRUNVUklUWV9GTEFHX0NBDQoNClNFQ1VSSVRZX0ZMQUdfSUdOT1JFX0NBDQoNCjxPdXRwdXRUeXBlPmV4ZTwvT3V0cHV0VHlwZT4NCg0KSlNPTi5QYXJzZQ0KDQo=",
+        "startLocationLine": 9,
+        "startLocationColumn": 1,
+        "endLocationLine": 9,
+        "endLocationColumn": 22,
+        "boundaryIndex": 116,
+        "boundaryLength": 21
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI009700",
+        "ruleName": "Cryptography: SSL/TLS Protocol",
+        "ruleDescription": "Cryptography: SSL/TLS Protocol",
+        "pattern": "SECURITY_FLAG_",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "Cryptography.Protocol.TLS"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "SECURITY_FLAG_",
+        "excerpt": "aW5jbHVkZSAic29tZWhlYWRlci5oIg0KaW5jbHVkZSAic29tZWhlYWRlcjIuaCINCg0KU0VDVVJJVFlfRkxBR19DQQ0KDQpTRUNVUklUWV9GTEFHX0lHTk9SRV9DQQ0KDQo8T3V0cHV0VHlwZT5leGU8L091dHB1dFR5cGU+DQoNCg==",
+        "startLocationLine": 7,
+        "startLocationColumn": 1,
+        "endLocationLine": 7,
+        "endLocationColumn": 15,
+        "boundaryIndex": 96,
+        "boundaryLength": 14
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI000700",
+        "ruleName": "Cloud Service: Hosting (Microsoft Azure)",
+        "ruleDescription": "Cloud Service: Hosting (Microsoft Azure)",
+        "pattern": "\\b(azure)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "Metadata.CloudServices.Hosting.Microsoft.Azure"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "azure",
+        "excerpt": "ICAgYW5kcm9pZA0KDQoNCgkgICBhenVyZQ0KDQoJICAgV2luZG93cw0KDQoNCiAgIGNoYXIgc3JjWzQwXTsNCg==",
+        "startLocationLine": 114,
+        "startLocationColumn": 5,
+        "endLocationLine": 114,
+        "endLocationColumn": 10,
+        "boundaryIndex": 974,
+        "boundaryLength": 5
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI003600",
+        "ruleName": "CloudServices: Financial (eCommerce)",
+        "ruleDescription": "Data: Financial (eCommerce)",
+        "pattern": "paypal|google pay|ebay|google\\.com/pay/api",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Critical",
+        "tags": [
+          "CloudServices.Finance.eCommerce"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "paypal",
+        "excerpt": "DQoJCSAgIHdlYmNsaWVudA0KDQoJCSAgIHBheXBhbDsNCg0KCSAgIHNhbGFyeTsNCg0KCSAgIHNzbnVtYmVyOw0KDQo=",
+        "startLocationLine": 149,
+        "startLocationColumn": 6,
+        "endLocationLine": 149,
+        "endLocationColumn": 12,
+        "boundaryIndex": 1279,
+        "boundaryLength": 6
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI003700",
+        "ruleName": "Social Media: Facebook",
+        "ruleDescription": "Social Media Facebook",
+        "pattern": "\\b(facebook)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "CloudServices.SocialMedia.Facebook"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "facebook",
+        "excerpt": "DQoJICAgc3NudW1iZXI7DQoNCgkgICBmYWNlYm9vazsNCg0KCSAgIGNsYXNzIGZvbzsNCg0KCSAgIC8vaGlnaCByaXNrDQoNCg==",
+        "startLocationLine": 155,
+        "startLocationColumn": 5,
+        "endLocationLine": 155,
+        "endLocationColumn": 13,
+        "boundaryIndex": 1326,
+        "boundaryLength": 8
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI006200",
+        "ruleName": "Cryptography: x.509 Certificate Use",
+        "ruleDescription": "Cryptography: x.509 Certificate Use",
+        "pattern": "PKCS|PaddingMode|SubjectIdentifier|Certificate",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "Cryptography.X509Certificates.Use"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "certificate",
+        "excerpt": "DQpsaW51eA0KDQpjZXJ0aWZpY2F0ZQ0KDQpzaGFyZWRBY2Nlc3NQb2xpY3kNCg0KY2xhc3MgU1NMdjMNCg0K",
+        "startLocationLine": 23,
+        "startLocationColumn": 1,
+        "endLocationLine": 23,
+        "endLocationColumn": 12,
+        "boundaryIndex": 231,
+        "boundaryLength": 11
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI007600",
+        "ruleName": "Cryptography: Encryption (General)",
+        "ruleDescription": "Cryptography: Encryption",
+        "pattern": "encrypt|decrypt|cipher|crypt|symmmetric",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "Cryptography.Encryption.General"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "crypt",
+        "excerpt": "CQkgICBzbGVlcCg0KTsNCgkgICB9DQoNCgkgICAvL21jcnlwdCBkOw0KCSAgIC8vQUVTIGQ7DQoNCgkgICBTU0x2MyAgRDsNCgkgICBUTFN2MSAgZDsNCg0K",
+        "startLocationLine": 182,
+        "startLocationColumn": 8,
+        "endLocationLine": 182,
+        "endLocationColumn": 13,
+        "boundaryIndex": 1577,
+        "boundaryLength": 5
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI008800",
+        "ruleName": "Cryptography: Hash Algorithm (Legacy)",
+        "ruleDescription": "Cryptography: Hash Algorithm (Legacy)",
+        "pattern": "\\b(MD2|MD4|MD5|SHA-*(0|1))\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "Cryptography.HashAlgorithm.Legacy"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "MD5",
+        "excerpt": "TUQ1DQppbmNsdWRlIDxzeXN0ZW0uaD4NCmluY2x1ZGUgPGFzc2VydC5oPg0KaW5jbHVkZSAic29tZWhlYWRlci5oIg0KaW5jbHVkZSAic29tZWhlYWRlcjIuaCINCg0K",
+        "startLocationLine": 1,
+        "startLocationColumn": 1,
+        "endLocationLine": 1,
+        "endLocationColumn": 3,
+        "boundaryIndex": 0,
+        "boundaryLength": 3
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI015300",
+        "ruleName": "Data: Financial (Credit Card)",
+        "ruleDescription": "Data: Financial (Credit Card)",
+        "pattern": "\\b(visa|americanexpress|amex|(master|discover|credit|debit)\\s*card)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Critical",
+        "tags": [
+          "Data.Sensitive.Financial.CreditCard"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "creditcard",
+        "excerpt": "DQpiYW5rDQoNCmNyZWRpdGNhcmQNCg0Kc3NudW1iZXINCg0KQXBhY2hlDQoNCg==",
+        "startLocationLine": 54,
+        "startLocationColumn": 1,
+        "endLocationLine": 54,
+        "endLocationColumn": 11,
+        "boundaryIndex": 430,
+        "boundaryLength": 10
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI015400",
+        "ruleName": "Data: Financial (Payroll)",
+        "ruleDescription": "Data: Financial (Payroll)",
+        "pattern": "\\b(pay-*roll|salary|salaries|stock)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Important",
+        "tags": [
+          "Data.Sensitive.Financial.Payroll"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "salary",
+        "excerpt": "DQppcnMNCg0Kc2FsYXJ5DQoNCmJhbmsNCg0KY3JlZGl0Y2FyZA0KDQo=",
+        "startLocationLine": 50,
+        "startLocationColumn": 1,
+        "endLocationLine": 50,
+        "endLocationColumn": 7,
+        "boundaryIndex": 412,
+        "boundaryLength": 6
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI027300",
+        "ruleName": "Hygiene: Todo Comment",
+        "ruleDescription": "Hygiene: Todo Comment",
+        "pattern": "todo",
+        "type": "Regex",
+        "confidence": "Medium",
+        "severity": "Moderate",
+        "tags": [
+          "Miscellaneous.CodeHygiene.Comment.Todo"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "TODO",
+        "excerpt": "DQoJICAgLy9oaWdoIHJpc2sNCg0KCSAgIC8vVE9ETw0KCSAgIFRPRE8NCg0KCSAgIGNsYXNzIHg7DQoJICAgY2xhc3MgeTsNCgkgICBmdW5jdGlvbiB3Ow0K",
+        "startLocationLine": 163,
+        "startLocationColumn": 7,
+        "endLocationLine": 163,
+        "endLocationColumn": 11,
+        "boundaryIndex": 1401,
+        "boundaryLength": 4
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI027500",
+        "ruleName": "Hygiene: Suspicious Comment",
+        "ruleDescription": "Hygiene: Suspicious Comment",
+        "pattern": "hack|insecure|black magic|high risk|risky|riskiest|obfuscation|obfuscate|obfuscated",
+        "type": "Regex",
+        "confidence": "Medium",
+        "severity": "Moderate",
+        "tags": [
+          "Miscellaneous.CodeHygiene.Comment.Suspicious"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "high risk",
+        "excerpt": "DQoJICAgY2xhc3MgZm9vOw0KDQoJICAgLy9oaWdoIHJpc2sNCg0KCSAgIC8vaGlnaCByaXNrDQoNCgkgICAvL1RPRE8NCgkgICBUT0RPDQo=",
+        "startLocationLine": 159,
+        "startLocationColumn": 7,
+        "endLocationLine": 159,
+        "endLocationColumn": 16,
+        "boundaryIndex": 1363,
+        "boundaryLength": 9
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI028800",
+        "ruleName": "Platform: Google Android",
+        "ruleDescription": "Platform: Google Android",
+        "pattern": "\\b(android)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "Metadata.Platform.OS.Google.Android"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "android",
+        "excerpt": "DQp3aW5kb3dzDQoNCmFuZHJvaWQNCg0KbGludXgNCg0KY2VydGlmaWNhdGUNCg0K",
+        "startLocationLine": 19,
+        "startLocationColumn": 1,
+        "endLocationLine": 19,
+        "endLocationColumn": 8,
+        "boundaryIndex": 211,
+        "boundaryLength": 7
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI029200",
+        "ruleName": "Platform: Microsoft Windows",
+        "ruleDescription": "Platform: Microsoft Windows",
+        "pattern": "windows",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "Metadata.Platform.OS.Microsoft.WindowsStandard"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "Windows",
+        "excerpt": "DQpKU09OLlBhcnNlDQoNCldpbmRvd3MNCg0Kd2luZG93cw0KDQphbmRyb2lkDQoNCg==",
+        "startLocationLine": 15,
+        "startLocationColumn": 1,
+        "endLocationLine": 15,
+        "endLocationColumn": 8,
+        "boundaryIndex": 189,
+        "boundaryLength": 7
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI029500",
+        "ruleName": "Platform: Linux",
+        "ruleDescription": "Platform: Linux",
+        "pattern": "\\b(linux|xubuntu|ubuntu|coreos|manjaro|archlinux|debian|mint|gentoo|opensuse|redhat|mandrake|mandriva|slackware)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "Metadata.Platform.OS.Linux.Distro"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "linux",
+        "excerpt": "DQphbmRyb2lkDQoNCmxpbnV4DQoNCmNlcnRpZmljYXRlDQoNCnNoYXJlZEFjY2Vzc1BvbGljeQ0KDQo=",
+        "startLocationLine": 21,
+        "startLocationColumn": 1,
+        "endLocationLine": 21,
+        "endLocationColumn": 6,
+        "boundaryIndex": 222,
+        "boundaryLength": 5
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI032100",
+        "ruleName": "Network Connection: Socket",
+        "ruleDescription": "Network Socket",
+        "pattern": "\\b(socket)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "OS.Network.Connection.Socket"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "socket",
+        "excerpt": "ICAgTmV0OjpIVFRQIGs7DQoNCg0KICAgc29ja2V0IGYNCg0KDQogICB3ZWJjbGllbnQgdzsNCg0KICAgZndyaXRlICBrOw0K",
+        "startLocationLine": 128,
+        "startLocationColumn": 4,
+        "endLocationLine": 128,
+        "endLocationColumn": 10,
+        "boundaryIndex": 1115,
+        "boundaryLength": 6
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI036700",
+        "ruleName": "OS: Multiprocessing / Multithreading",
+        "ruleDescription": "OS: Multiprocessing / Multithreading",
+        "pattern": "\\b(mutex|semaphore|thread|lock|fork)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Moderate",
+        "tags": [
+          "OS.Process.Multiprocessing"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "mutex",
+        "excerpt": "DQoJCVNlbGVjdCAqIGZyb20gdGFibGUNCg0KCQltdXRleA0KDQoJCU1GQw0KDQoJCVdDRg0KDQo=",
+        "startLocationLine": 80,
+        "startLocationColumn": 3,
+        "endLocationLine": 80,
+        "endLocationColumn": 8,
+        "boundaryIndex": 682,
+        "boundaryLength": 5
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI040000",
+        "ruleName": "Authentication: General",
+        "ruleDescription": "Authentication: General",
+        "pattern": "\\b(principal|identity|auth|authenticated|authentication|log(in|on)|log(off|out)|signin|sign-?in|signout|sign-?out|networkcredential)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Critical",
+        "tags": [
+          "Authentication.General"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "login",
+        "excerpt": "DQpBcGFjaGUNCg0KbG9naW4gYg0KDQoNClJlZ1NldFZhbHVlRXgoImZvbyIpOw0KDQoNCg==",
+        "startLocationLine": 60,
+        "startLocationColumn": 1,
+        "endLocationLine": 60,
+        "endLocationColumn": 6,
+        "boundaryIndex": 466,
+        "boundaryLength": 5
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI040200",
+        "ruleName": "Authorization: Microsoft Azure SAS",
+        "ruleDescription": "Authorization: Microsoft Azure SAS",
+        "pattern": "\\b(sharedAccessPolicy|storageAccessKey|sharedAccessAccountPolicy|storageAccountOrConnectionString)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Critical",
+        "tags": [
+          "Authorization.Microsoft.Azuze.SAS"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "sharedAccessPolicy",
+        "excerpt": "DQpjZXJ0aWZpY2F0ZQ0KDQpzaGFyZWRBY2Nlc3NQb2xpY3kNCg0KY2xhc3MgU1NMdjMNCg0KY2xhc3MNCnRyeQ0K",
+        "startLocationLine": 25,
+        "startLocationColumn": 1,
+        "endLocationLine": 25,
+        "endLocationColumn": 19,
+        "boundaryIndex": 246,
+        "boundaryLength": 18
+      },
+      {
+        "Language": {
+          "name": "cpp",
+          "extensions": [
+            ".cpp",
+            ".hpp",
+            ".cxx"
+          ],
+          "type": 0
+        },
+        "fileName": "c:\\temp\\main.cpp",
+        "ruleId": "AI040300",
+        "ruleName": "Authorization: Roles Based Access (RBAC)",
+        "ruleDescription": "Authorization: Roles Based Access (RBAC)",
+        "pattern": "\\b(rbac|userrole*s|roles*)\\b",
+        "type": "Regex",
+        "confidence": "High",
+        "severity": "Critical",
+        "tags": [
+          "Authorization.RBAC"
+        ],
+        "sourceLabel": null,
+        "sourceType": null,
+        "sample": "Roles",
+        "excerpt": "CQlmbGFzaA0KDQoNCiAgIFJvbGVzIHc7DQoNCiAgIDxPdXRwdXRUeXBlPkV4ZTwvT3V0cHV0VHlwZT4NCg0KCSAgIDxDb25maWd1cmF0aW9uVHlwZT5EeW5hbWljTGlicmFyeTwvQ29uZmlndXJhdGlvblR5cGU+DQoNCg==",
+        "startLocationLine": 103,
+        "startLocationColumn": 4,
+        "endLocationLine": 103,
+        "endLocationColumn": 9,
+        "boundaryIndex": 830,
+        "boundaryLength": 5
+      }
+    ]
+  }
+}

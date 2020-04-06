@@ -4,24 +4,53 @@
 using Newtonsoft.Json;
 using NLog;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
-    /// <summary>
-    /// simple wrapper for serializing results for simple tags only during processing
-    /// </summary>
-    public class TagsFile
+    public class TagDiffOptions : CommandOptions
     {
-        [JsonProperty(PropertyName = "tags")]
-        public string[] Tags { get; set; }
+        public string SourcePath1 { get; set; }
+        public string SourcePath2 { get; set; }
+        public string TestType { get; set; }
+        public string FilePathExclusions { get; set; }
+        public string CustomRulesPath { get; set; }
+        public bool IgnoreDefaultRules { get; set; }
+
+        public TagDiffOptions()
+        {
+            TestType = "equality";
+            IgnoreDefaultRules = false;
+            FilePathExclusions = "sample,example,test,docs,.vs,.git";
+        }
     }
 
+
     /// <summary>
-    /// Used to compare two source paths and report tag differences
+    /// Contains a tag that was detected missing in source1 or source2
     /// </summary>
-    public class TagDiffCommand : Command
+    public class TagDiff
+    {
+        public enum DiffSource
+        {
+            Source1 = 1,
+            Source2 = 2
+        }
+
+        [JsonProperty(PropertyName = "tag")]
+        public string Tag { get; set; }
+
+        [JsonProperty(PropertyName = "source")]
+        public DiffSource Source { get; set; }
+
+    }
+
+
+    /// <summary>
+    /// Result wrapping list of tags not found in one of the sources scanned
+    /// </summary>
+    public class TagDiffResult : Result
     {
         public enum ExitCode
         {
@@ -30,48 +59,47 @@ namespace Microsoft.ApplicationInspector.Commands
             CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
         }
 
+        [JsonProperty(Order = 2, PropertyName = "resultCode")]
+        public ExitCode ResultCode { get; set; }
+
+        [JsonProperty(Order = 3, PropertyName = "tagDiffList")]
+        public List<TagDiff> TagDiffList;
+
+        public TagDiffResult()
+        {
+            TagDiffList = new List<TagDiff>();
+        }
+
+    }
+
+
+    /// <summary>
+    /// Used to compare two source paths and report tag differences
+    /// </summary>
+    public class TagDiffCommand
+    {
         enum TagTestType { Equality, Inequality }
 
-        string _arg_src1, _arg_src2;
-        string _arg_customRulesPath;
-        string _arg_outputFile;
-        bool _arg_ignoreDefault;
-        string _arg_test_type_raw;
+        TagDiffOptions _options;
         TagTestType _arg_tagTestType;
-        string _arg_consoleVerbosityLevel;
-        string _arg_fileExclusionList;//see exclusion list
 
-        public TagDiffCommand(TagDiffCommandOptions opt)
+        public TagDiffCommand(TagDiffOptions opt)
         {
-            _arg_src1 = opt.SourcePath1;
-            _arg_src2 = opt.SourcePath2;
-            _arg_customRulesPath = opt.CustomRulesPath;
-            _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
-            _arg_ignoreDefault = opt.IgnoreDefaultRules;
-            _arg_outputFile = opt.OutputFilePath;
-            _arg_test_type_raw = opt.TestType ?? "Equality";
-            _arg_logger = opt.Log;
-            _arg_log_file_path = opt.LogFilePath;
-            _arg_close_log_on_exit = Utils.CLIExecutionContext ? true : opt.CloseLogOnCommandExit;
-            _arg_fileExclusionList = opt.FilePathExclusions;
-
-            _arg_logger ??= Utils.SetupLogging(opt);
-            WriteOnce.Log ??= _arg_logger;
+            _options = opt;
+            _options.TestType ??= "equality";
 
             try
             {
+                _options.Log ??= Utils.SetupLogging(_options);
+                WriteOnce.Log ??= _options.Log;
+
                 ConfigureConsoleOutput();
                 ConfigureCompareType();
                 ConfigSourceToScan();
             }
-            catch (Exception e) //group error handling
+            catch (OpException e) //group error handling
             {
                 WriteOnce.Error(e.Message);
-                if (_arg_close_log_on_exit)
-                {
-                    Utils.Logger = null;
-                    WriteOnce.Log = null;
-                }
                 throw;
             }
         }
@@ -93,10 +121,9 @@ namespace Microsoft.ApplicationInspector.Commands
             else
             {
                 WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
+                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out verbosity))
                 {
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
-                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
                 else
                     WriteOnce.Verbosity = verbosity;
@@ -107,68 +134,31 @@ namespace Microsoft.ApplicationInspector.Commands
 
         void ConfigureCompareType()
         {
-            if (!Enum.TryParse(_arg_test_type_raw, true, out _arg_tagTestType))
+            if (!Enum.TryParse(_options.TestType, true, out _arg_tagTestType))
             {
-                WriteOnce.Error((ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, _arg_test_type_raw)));
-                throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, _arg_test_type_raw));
+                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, _options.TestType));
             }
         }
 
-
-        void ConfigureFileOutput()
-        {
-            WriteOnce.SafeLog("TagDiff::ConfigOutput", LogLevel.Trace);
-
-            WriteOnce.FlushAll();//in case called more than once
-
-            if (string.IsNullOrEmpty(_arg_outputFile) && _arg_consoleVerbosityLevel.ToLower() == "none")
-            {
-                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NO_OUTPUT));
-            }
-            else if (!string.IsNullOrEmpty(_arg_outputFile))
-            {
-                WriteOnce.Writer = File.CreateText(_arg_outputFile);
-                WriteOnce.Writer.WriteLine(Utils.GetVersionString());
-            }
-            else
-            {
-                WriteOnce.Writer = Console.Out;
-            }
-        }
 
 
         void ConfigSourceToScan()
         {
             WriteOnce.SafeLog("TagDiff::ConfigRules", LogLevel.Trace);
 
-            if (_arg_src1 == _arg_src2)
+            if (_options.SourcePath1 == _options.SourcePath2)
             {
-                throw new Exception(ErrMsg.GetString(ErrMsg.ID.TAGDIFF_SAME_FILE_ARG));
+                throw new OpException(MsgHelp.GetString(MsgHelp.ID.TAGDIFF_SAME_FILE_ARG));
             }
-            else if (string.IsNullOrEmpty(_arg_src1) || string.IsNullOrEmpty(_arg_src2))
+            else if (string.IsNullOrEmpty(_options.SourcePath1) || string.IsNullOrEmpty(_options.SourcePath2))
             {
-                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_INVALID_ARG_VALUE));
+                throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_INVALID_ARG_VALUE));
             }
         }
 
         #endregion
 
 
-        /// <summary>
-        /// Option for DLL use as alternate to Run which only outputs a file to return results as string
-        /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added
-        /// </summary>
-        /// <returns>output results</returns>
-        public override string GetResult()
-        {
-            _arg_outputFile = Path.GetTempFileName();
-            if ((int)ExitCode.CriticalError != Run())
-            {
-                return File.ReadAllText(_arg_outputFile);
-            }
-
-            return string.Empty;
-        }
 
 
 
@@ -176,54 +166,42 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Main entry from CLI
         /// </summary>
         /// <returns></returns>
-        public override int Run()
+        public TagDiffResult GetResult()
         {
             WriteOnce.SafeLog("TagDiffCommand::Run", LogLevel.Trace);
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "tagdiff"));
+            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Tag Diff"));
 
-            ExitCode exitCode = ExitCode.CriticalError;
+            TagDiffResult tagDiffResult = new TagDiffResult() { AppVersion = Utils.GetVersionString() };
+
             //save to quiet analyze cmd and restore
             WriteOnce.ConsoleVerbosity saveVerbosity = WriteOnce.Verbosity;
-            AnalyzeCommand.ExitCode analyzeCmdResult1 = AnalyzeCommand.ExitCode.CriticalError;
-            AnalyzeCommand.ExitCode analyzeCmdResult2 = AnalyzeCommand.ExitCode.CriticalError;
 
             try
             {
                 #region setup analyze calls
 
-                string tmp1 = Path.GetTempFileName();
-                string tmp2 = Path.GetTempFileName();
-
-                AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeCommandOptions
+                AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeOptions
                 {
-                    SourcePath = _arg_src1,
-                    OutputFilePath = tmp1,
-                    OutputFileFormat = "json",
-                    CustomRulesPath = _arg_customRulesPath,
-                    IgnoreDefaultRules = _arg_ignoreDefault,
-                    FilePathExclusions = _arg_fileExclusionList,
-                    SimpleTagsOnly = true,
+                    SourcePath = _options.SourcePath1,
+                    CustomRulesPath = _options.CustomRulesPath,
+                    IgnoreDefaultRules = _options.IgnoreDefaultRules,
+                    FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
-                    Log = _arg_logger
+                    Log = _options.Log
                 });
-                AnalyzeCommand cmd2 = new AnalyzeCommand(new AnalyzeCommandOptions
+                AnalyzeCommand cmd2 = new AnalyzeCommand(new AnalyzeOptions
                 {
-                    SourcePath = _arg_src2,
-                    OutputFilePath = tmp2,
-                    OutputFileFormat = "json",
-                    CustomRulesPath = _arg_customRulesPath,
-                    IgnoreDefaultRules = _arg_ignoreDefault,
-                    FilePathExclusions = _arg_fileExclusionList,
-                    SimpleTagsOnly = true,
+                    SourcePath = _options.SourcePath2,
+                    CustomRulesPath = _options.CustomRulesPath,
+                    IgnoreDefaultRules = _options.IgnoreDefaultRules,
+                    FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
-                    Log = _arg_logger
+                    Log = _options.Log
                 });
 
 
-                analyzeCmdResult1 = (AnalyzeCommand.ExitCode)cmd1.Run();
-                analyzeCmdResult2 = (AnalyzeCommand.ExitCode)cmd2.Run();
-
-                ConfigureFileOutput();
+                AnalyzeResult analyze1 = cmd1.GetResult();
+                AnalyzeResult analyze2 = cmd2.GetResult();
 
                 //restore
                 WriteOnce.Verbosity = saveVerbosity;
@@ -234,98 +212,66 @@ namespace Microsoft.ApplicationInspector.Commands
                 bool equalTagsCompare2 = true;
 
                 //process results for each analyze call before comparing results
-                if (analyzeCmdResult1 == AnalyzeCommand.ExitCode.CriticalError)
+                if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
-                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_CRITICAL_FILE_ERR, _arg_src1));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options.SourcePath1));
                 }
-                else if (analyzeCmdResult2 == AnalyzeCommand.ExitCode.CriticalError)
+                else if (analyze2.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
-                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_CRITICAL_FILE_ERR, _arg_src2));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options.SourcePath2));
                 }
-                else if (analyzeCmdResult1 == AnalyzeCommand.ExitCode.NoMatches || analyzeCmdResult2 == AnalyzeCommand.ExitCode.NoMatches)
+                else if (analyze1.ResultCode == AnalyzeResult.ExitCode.NoMatches || analyze2.ResultCode == AnalyzeResult.ExitCode.NoMatches)
                 {
-                    throw new Exception(ErrMsg.GetString(ErrMsg.ID.TAGDIFF_NO_TAGS_FOUND));
+                    throw new OpException(MsgHelp.GetString(MsgHelp.ID.TAGDIFF_NO_TAGS_FOUND));
                 }
                 else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.Success)
                 {
-                    //setup output here rather than top to avoid analyze command output in this command output                   
-                    ConfigureFileOutput();
-                    ConfigureConsoleOutput();//recheck
+                    int count1 = 0;
+                    int sizeTags1 = analyze1.MetaData.UniqueTags.Count;
+                    string[] file1Tags = new string[sizeTags1];
 
-                    string file1TagsJson = File.ReadAllText(tmp1);
-                    string file2TagsJson = File.ReadAllText(tmp2);
+                    foreach (string tag in analyze1.MetaData.UniqueTags.ToList<string>())
+                        file1Tags[count1++] = tag;
 
-                    var file1Tags = JsonConvert.DeserializeObject<TagsFile>(file1TagsJson);
-                    var file2Tags = JsonConvert.DeserializeObject<TagsFile>(file2TagsJson);
+
+                    int count2 = 0;
+                    int sizeTags2 = analyze2.MetaData.UniqueTags.Count;
+                    string[] file2Tags = new string[sizeTags2];
+
+                    foreach (string tag in analyze2.MetaData.UniqueTags.ToList<string>())
+                        file2Tags[count2++] = tag;
 
                     //can't simply compare counts as content may differ; must compare both in directions in two passes a->b; b->a
-                    WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGDIFF_RESULTS_GAP, Path.GetFileName(_arg_src1), Path.GetFileName(_arg_src2)),
-                            true, WriteOnce.ConsoleVerbosity.High);
-                    equalTagsCompare1 = CompareTags(file1Tags.Tags, file2Tags.Tags);
+                    equalTagsCompare1 = CompareTags(file1Tags, file2Tags, ref tagDiffResult, TagDiff.DiffSource.Source1);
 
                     //reverse order for second pass
-                    WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGDIFF_RESULTS_GAP, Path.GetFileName(_arg_src2), Path.GetFileName(_arg_src1)),
-                            true, WriteOnce.ConsoleVerbosity.High);
-                    equalTagsCompare2 = CompareTags(file2Tags.Tags, file1Tags.Tags);
+                    equalTagsCompare2 = CompareTags(file2Tags, file1Tags, ref tagDiffResult, TagDiff.DiffSource.Source2);
 
                     //final results
                     bool resultsDiffer = !(equalTagsCompare1 && equalTagsCompare2);
                     if (_arg_tagTestType == TagTestType.Inequality && !resultsDiffer)
-                        exitCode = ExitCode.TestFailed;
+                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
                     else if (_arg_tagTestType == TagTestType.Equality && resultsDiffer)
-                        exitCode = ExitCode.TestFailed;
+                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
                     else
-                        exitCode = ExitCode.TestPassed;
-
-                    WriteOnce.General(ErrMsg.FormatString(ErrMsg.ID.TAGDIFF_RESULTS_DIFFER), false);
-                    WriteOnce.Result(resultsDiffer.ToString());
-                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "tagdiff"));
-                    if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
-                        WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, WriteOnce.ConsoleVerbosity.Low, false);
-
-                    WriteOnce.FlushAll();
+                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestPassed;
                 }
 
-                //cleanup
-                try
-                {
-                    File.Delete(tmp1);
-                    File.Delete(tmp2);
-                }
-                catch
-                {
-                    //no action needed; 
-                }
             }
-            catch (Exception e)
+            catch (OpException e)
             {
                 WriteOnce.Verbosity = saveVerbosity;
-                if (analyzeCmdResult1 == AnalyzeCommand.ExitCode.Success && analyzeCmdResult2 == AnalyzeCommand.ExitCode.Success) //error not previously logged
-                    WriteOnce.Error(e.Message);
-                else
-                    WriteOnce.Error(e.Message, true, WriteOnce.ConsoleVerbosity.Low, false);//console but don't log again
-
-                //exit normaly for CLI callers and throw for DLL callers
-                if (Utils.CLIExecutionContext)
-                    return (int)ExitCode.CriticalError;
-                else
-                    throw;
-            }
-            finally
-            {
-                if (_arg_close_log_on_exit)
-                {
-                    Utils.Logger = null;
-                    WriteOnce.Log = null;
-                }
+                WriteOnce.Error(e.Message);
+                //caught for CLI callers with final exit msg about checking log or throws for DLL callers
+                throw;
             }
 
-            return (int)exitCode;
+            return tagDiffResult;
         }
 
 
 
-        bool CompareTags(string[] fileTags1, string[] fileTags2)
+        bool CompareTags(string[] fileTags1, string[] fileTags2, ref TagDiffResult tagDiffResult, TagDiff.DiffSource source)
         {
             bool found = true;
             //are all tags in file1 found in file2
@@ -334,13 +280,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (!fileTags2.Contains(s1))
                 {
                     found = false;
-                    WriteOnce.Result(s1, true, WriteOnce.ConsoleVerbosity.High);
+                    tagDiffResult.TagDiffList.Add(new TagDiff() { Tag = s1, Source = source });
                 }
             }
-
-            //none missing
-            if (found)
-                WriteOnce.Result(ErrMsg.GetString(ErrMsg.ID.TAGTEST_RESULTS_NONE), true, WriteOnce.ConsoleVerbosity.High);
 
             return found;
         }

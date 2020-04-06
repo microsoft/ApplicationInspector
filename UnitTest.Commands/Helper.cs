@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace ApplicationInspector.UnitTest.Commands
+namespace ApplicationInspector.UnitTest.Misc
 {
     public static class Helper
     {
-        public enum AppPath { basePath, testSource, testRules, testOutput };
+        public enum AppPath { basePath, testSource, testRules, testOutput, defaultRules, appInspectorCLI };
 
         static string _basePath;
         static private string GetBaseAppPath()
@@ -37,6 +37,16 @@ namespace ApplicationInspector.UnitTest.Commands
 
                 case AppPath.testOutput://Packrules default output use
                     result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "UnitTest.Commands", "output");
+                    break;
+                case AppPath.defaultRules:
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "rules");
+                    break;
+                case AppPath.appInspectorCLI:
+#if DEBUG
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "debug", "netcoreapp3.1", "applicationinspector.cli.exe");
+#else
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector".CLI", "bin", "release", "netcoreapp3.1", "applicationinspector.cli.exe");
+#endif
                     break;
             }
 

@@ -2,17 +2,36 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.ApplicationInspector.RulesEngine;
+using Newtonsoft.Json;
 using NLog;
 using System;
-using System.IO;
+using System.Collections.Generic;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
-    /// <summary>
-    /// Used to verify user custom ruleset.  Default ruleset has no need for support outside of PackRulesCommand for verification
-    /// since each build performs a verification already and the output is added to the binary manifest
-    /// </summary>
-    public class VerifyRulesCommand : Command
+    public class VerifyRulesOptions : CommandOptions
+    {
+        public bool VerifyDefaultRules { get; set; }
+        public string CustomRulesPath { get; set; }
+        public bool Failfast { get; set; }
+
+        public VerifyRulesOptions()
+        {
+            Failfast = false;
+        }
+    }
+
+
+    public class RuleStatus
+    {
+        public string RulesId { get; set; }
+        public string RulesName { get; set; }
+        public bool Verified { get; set; }
+    }
+
+
+
+    public class VerifyRulesResult : Result
     {
         public enum ExitCode
         {
@@ -21,45 +40,48 @@ namespace Microsoft.ApplicationInspector.Commands
             CriticalError = Utils.ExitCode.CriticalError
         }
 
-        string _rules_path;
-        string _arg_custom_rules_path;
-        string _arg_outputFile;
-        bool _arg_verify_default_rules;
-        string _arg_consoleVerbosityLevel;
+        [JsonProperty(Order = 2, PropertyName = "resultCode")]
+        public ExitCode ResultCode { get; set; }
 
-        public VerifyRulesCommand(VerifyRulesCommandOptions opt)
+        [JsonProperty(Order = 3, PropertyName = "ruleStatusList")]
+        public List<RuleStatus> RuleStatusList { get; set; }
+
+        public VerifyRulesResult()
         {
-            _arg_verify_default_rules = opt.VerifyDefaultRules;
-            _arg_custom_rules_path = opt.CustomRulesPath;
-            _arg_outputFile = opt.OutputFilePath;
-            _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
-            _arg_logger = opt.Log;
-            _arg_log_file_path = opt.LogFilePath;
-            _arg_log_level = opt.LogFileLevel;
-            _arg_close_log_on_exit = Utils.CLIExecutionContext ? true : opt.CloseLogOnCommandExit;
+            RuleStatusList = new List<RuleStatus>();
+        }
+    }
 
-            _rules_path = _arg_verify_default_rules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _arg_custom_rules_path;
 
-            _arg_logger ??= Utils.SetupLogging(opt);
-            WriteOnce.Log ??= _arg_logger;
+    /// <summary>
+    /// Used to verify user custom ruleset.  Default ruleset has no need for support outside of PackRulesCommand for verification
+    /// since each build performs a verification already and the output is added to the binary manifest
+    /// </summary>
+    public class VerifyRulesCommand
+    {
+        VerifyRulesOptions _options;
+        string _rules_path;
+
+        public VerifyRulesCommand(VerifyRulesOptions opt)
+        {
+            _options = opt;
 
             try
             {
+                _options.Log ??= Utils.SetupLogging(_options);
+                WriteOnce.Log ??= _options.Log;
+
                 ConfigureConsoleOutput();
-                ConfigFileOutput();
                 ConfigRules();
             }
-            catch (Exception e) //group error handling
+            catch (OpException e) //group error handling
             {
                 WriteOnce.Error(e.Message);
-                if (_arg_close_log_on_exit)
-                {
-                    Utils.Logger = null;
-                    WriteOnce.Log = null;
-                }
                 throw;
             }
         }
+
+        #region configure
 
         /// <summary>
         /// Establish console verbosity
@@ -75,10 +97,10 @@ namespace Microsoft.ApplicationInspector.Commands
             else
             {
                 WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
+                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out verbosity))
                 {
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
-                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
+                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
                 else
                     WriteOnce.Verbosity = verbosity;
@@ -86,38 +108,22 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
-        private void ConfigFileOutput()
-        {
-            WriteOnce.SafeLog("VerifyRulesCommand::ConfigOutput", LogLevel.Trace);
-
-            WriteOnce.FlushAll();//in case called more than once
-
-            if (string.IsNullOrEmpty(_arg_outputFile) && _arg_consoleVerbosityLevel.ToLower() == "none")
-            {
-                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NO_OUTPUT));
-            }
-            else if (!string.IsNullOrEmpty(_arg_outputFile))
-            {
-                WriteOnce.Writer = File.CreateText(_arg_outputFile);
-                WriteOnce.Writer.WriteLine(Utils.GetVersionString());
-            }
-            else
-            {
-                WriteOnce.Writer = Console.Out;
-            }
-        }
-
 
         void ConfigRules()
         {
             WriteOnce.SafeLog("VerifyRulesCommand::ConfigRules", LogLevel.Trace);
 
-            if (_arg_verify_default_rules && !Utils.CLIExecutionContext)
-                throw new Exception(ErrMsg.GetString(ErrMsg.ID.VERIFY_RULES_NO_CLI_DEFAULT));
+            if (_options.VerifyDefaultRules && !Utils.CLIExecutionContext)
+                throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NO_CLI_DEFAULT));
 
-            if (!_arg_verify_default_rules && string.IsNullOrEmpty(_arg_custom_rules_path))
-                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
+            if (!_options.VerifyDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath))
+                throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
+
+            _rules_path = _options.VerifyDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
+
         }
+
+        #endregion
 
 
         /// <summary>
@@ -125,70 +131,40 @@ namespace Microsoft.ApplicationInspector.Commands
         /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added
         /// </summary>
         /// <returns>output results</returns>
-        public override string GetResult()
-        {
-            _arg_outputFile = Path.GetTempFileName();
-            ConfigFileOutput();
-
-            if ((int)ExitCode.CriticalError != Run())
-            {
-                return File.ReadAllText(_arg_outputFile);
-            }
-
-            return string.Empty;
-        }
-
-
-        /// <summary>
-        /// Main entry from CLI
-        /// </summary>
-        /// <returns></returns>
-        public override int Run()
+        public VerifyRulesResult GetResult()
         {
             WriteOnce.SafeLog("VerifyRulesCommand::Run", LogLevel.Trace);
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "verifyrules"));
+            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Verify Rules"));
 
-            ExitCode exitCode = ExitCode.CriticalError;
+            VerifyRulesResult verifyRulesResult = new VerifyRulesResult() { AppVersion = Utils.GetVersionString() };
 
             try
             {
-                RulesVerifier verifier = new RulesVerifier(_rules_path);
-                verifier.Verify();
-                exitCode = ExitCode.Verified;
+                RulesVerifier verifier = new RulesVerifier(_rules_path, _options.Log);
+                verifier.Verify(_options.Failfast);
+                verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
 
                 RuleSet rules = verifier.CompiledRuleset;
 
-                //report each add to console if desired
                 foreach (Rule rule in rules)
                 {
-                    WriteOnce.Result(string.Format("Rule {0}-{1} verified", rule.Id, rule.Name), true, WriteOnce.ConsoleVerbosity.High);
-                }
+                    verifyRulesResult.RuleStatusList.Add(new RuleStatus()
+                    {
+                        RulesId = rule.Id,
+                        RulesName = rule.Name,
+                        Verified = true
+                    });
 
-                WriteOnce.Any(ErrMsg.GetString(ErrMsg.ID.VERIFY_RULES_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
-                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "verifyrules"));
-                if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
-                    WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
-                WriteOnce.FlushAll();
+                }
             }
-            catch (Exception e)
+            catch (OpException e)
             {
                 WriteOnce.Error(e.Message);
-                //exit normaly for CLI callers and throw for DLL callers
-                if (Utils.CLIExecutionContext)
-                    return (int)ExitCode.CriticalError;
-                else
-                    throw;
-            }
-            finally
-            {
-                if (_arg_close_log_on_exit)
-                {
-                    Utils.Logger = null;
-                    WriteOnce.Log = null;
-                }
+                //caught for CLI callers with final exit msg about checking log or throws for DLL callers
+                throw; ;
             }
 
-            return (int)exitCode;
+            return verifyRulesResult;
         }
 
     }

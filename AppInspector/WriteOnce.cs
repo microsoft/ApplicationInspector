@@ -8,23 +8,19 @@ using System.IO;
 namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
-    /// Wraps Console, Output and Log Writes for convenience to write once from calling
-    /// code to increase readability and for allowing replacement of console print
-    /// functionality in conjunction logger which may have console configuration enabled
-    /// Allows a Write once feature and protects code from console/log changes to standard out
-    /// Use: call to write to console, file output and log in one call OR for log file only 
-    /// output call logger directly
+    /// Wraps Console, TextWriter and Log Writes for convenience to write "once" from calling
+    /// code to increase readability and support verbosity and color support conveniently
     /// 
     /// Note: NLOG is not consistent writing to standard out console making it impossible
     /// to predict when it will be visible thus it is largely used for file log output only
     /// </summary>
     public class WriteOnce
     {
+        public static TextWriter TextWriter { get; set; }
         public enum ConsoleVerbosity { High, Medium, Low, None }
         public static ConsoleVerbosity Verbosity { get; set; }
         public static Logger Log { get; set; } //use SafeLog or check for null before use
 
-        public static TextWriter Writer { get; set; }
         //default colors
         private static ConsoleColor _infoColor = ConsoleColor.Magenta;
         private static ConsoleColor _errorColor = ConsoleColor.Red;
@@ -69,9 +65,8 @@ namespace Microsoft.ApplicationInspector.Commands
             if (addToLog)
                 SafeLog(msg, LogLevel.Info);
 
-            //output writer if specified
-            if (Writer != null && Writer != Console.Out)
-                Writer.WriteLine(msg);
+            //file if applicable
+            SafeTextWriterWrite(msg, writeLine, verbosity);
 
             //console if applicable
             SafeConsoleWrite(msg, writeLine, _infoColor, verbosity);
@@ -85,9 +80,8 @@ namespace Microsoft.ApplicationInspector.Commands
             if (addToLog)
                 SafeLog(msg, LogLevel.Error);
 
-            //output writer if specified
-            if (Writer != null && Writer != Console.Out)
-                Writer.WriteLine(msg);
+            //file if applicable
+            SafeTextWriterWrite(msg, writeLine, verbosity); SafeTextWriterWrite(msg, writeLine, verbosity);
 
             //console if applicable
             SafeConsoleWrite(msg, writeLine, _errorColor, verbosity);
@@ -99,9 +93,8 @@ namespace Microsoft.ApplicationInspector.Commands
             //log
             SafeLog(msg, LogLevel.Trace);
 
-            //output writer if specified
-            if (Writer != null && Writer != Console.Out)
-                Writer.WriteLine(msg);
+            //file if applicable
+            SafeTextWriterWrite(msg, writeLine, verbosity);
 
             //console if applicable
             SafeConsoleWrite(msg, writeLine, foreColor, verbosity);
@@ -112,7 +105,11 @@ namespace Microsoft.ApplicationInspector.Commands
         public static void NewLine(ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
         {
             if (verbosity >= Verbosity)
+            {
                 Console.WriteLine();
+            }
+
+            SafeTextWriterWrite("", true, verbosity);
         }
 
 
@@ -126,6 +123,9 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="verbosity"></param>
         static void SafeConsoleWrite(string msg, bool writeLine, ConsoleColor foreground, ConsoleVerbosity verbosity)
         {
+            if (TextWriter != null && TextWriter != Console.Out)
+                return;
+
             if (verbosity >= Verbosity)
             {
                 ConsoleColor lastForecolor = Console.ForegroundColor;
@@ -137,6 +137,21 @@ namespace Microsoft.ApplicationInspector.Commands
                     Console.Write(msg);
 
                 Console.ForegroundColor = lastForecolor;
+            }
+        }
+
+
+        static void SafeTextWriterWrite(string msg, bool writeLine, ConsoleVerbosity verbosity)
+        {
+            if (TextWriter == null || TextWriter == Console.Out)
+                return;
+
+            if (verbosity >= Verbosity)
+            {
+                if (writeLine)
+                    TextWriter.WriteLine(msg);
+                else
+                    TextWriter.Write(msg);
             }
         }
 
@@ -175,17 +190,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-
-        public static void FlushAll()
-        {
-            if (Writer != null)
-            {
-                //cleanup
-                Writer.Flush();
-                Writer.Close();
-                Writer = null;
-            }
-        }
 
     }
 
