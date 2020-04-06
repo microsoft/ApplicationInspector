@@ -21,7 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AppInspector.CLI\AppInspector.CLI.csproj" />
     <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
+    <ProjectReference Include="..\MultiExtractor\MultiExtractor.csproj" />
+    <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -147,6 +150,10 @@
   <ItemGroup>
     <Folder Include="customrules\" />
     <Folder Include="output\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.1.74" />
   </ItemGroup>
 
 </Project>

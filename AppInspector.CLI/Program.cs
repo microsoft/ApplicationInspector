@@ -5,8 +5,9 @@ using CommandLine;
 using Microsoft.ApplicationInspector.Commands;
 using NLog;
 using System;
-
-
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
@@ -25,41 +26,43 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Medium;
             try
             {
-                var argsResult = Parser.Default.ParseArguments<AnalyzeCommandOptions,
-                    TagDiffCommandOptions,
-                    TagTestCommandOptions,
-                    ExportTagsCommandOptions,
-                    VerifyRulesCommandOptions,
-                    PackRulesCommandOptions>(args)
+                var argsResult = Parser.Default.ParseArguments<CLIAnalyzeCmdOptions,
+                    CLITagDiffCmdOptions,
+                    CLITagTestCmdOptions,
+                    CLIExportTagsCmdOptions,
+                    CLIVerifyRulesCmdOptions,
+                    CLIPackRulesCmdOptions>(args)
                   .MapResult(
-                    (AnalyzeCommandOptions opts) => RunAnalyzeCommand(opts),
-                    (TagDiffCommandOptions opts) => RunTagDiffCommand(opts),
-                    (TagTestCommandOptions opts) => RunTagTestCommand(opts),
-                    (ExportTagsCommandOptions opts) => RunExportTagsCommand(opts),
-                    (VerifyRulesCommandOptions opts) => RunVerifyRulesCommand(opts),
-                    (PackRulesCommandOptions opts) => RunPackRulesCommand(opts),
+                    (CLIAnalyzeCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
+                    (CLITagDiffCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
+                    (CLITagTestCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
+                    (CLIExportTagsCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
+                    (CLIVerifyRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
+                    (CLIPackRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     errs => 1
                   );
 
                 finalResult = argsResult;
 
             }
-            catch (Exception) //a controlled exit; details not req but written out in command to ensure NuGet+CLI both can console write and log the error
+            catch (OpException)
             {
-                if (!String.IsNullOrEmpty(Utils.LogFilePath))
-                    WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_NAMED, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
-                else
-                    WriteOnce.Info(ErrMsg.GetString(ErrMsg.ID.RUNTIME_ERROR_PRELOG), true, WriteOnce.ConsoleVerbosity.Medium, false);
-
-                return finalResult;//avoid double reporting
+                //log, output file and console have already been written to ensure all are updated for NuGet and CLI callers
+                //that may exit at different call points
+            }
+            catch (Exception e)
+            {
+                //unlogged exception so report out for CLI callers
+                WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, NLog.LogLevel.Error);
             }
 
-            if (finalResult == (int)Utils.ExitCode.CriticalError) //case where exception not thrown but result was still a failure; Run() vs constructor exception etc.
+            //final exit msg to review log
+            if (finalResult == (int)Utils.ExitCode.CriticalError)
             {
                 if (!String.IsNullOrEmpty(Utils.LogFilePath))
-                    WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.RUNTIME_ERROR_UNNAMED, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.RUNTIME_ERROR_UNNAMED, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
                 else
-                    WriteOnce.Info(ErrMsg.GetString(ErrMsg.ID.RUNTIME_ERROR_PRELOG), true, WriteOnce.ConsoleVerbosity.Medium, false);
+                    WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.RUNTIME_ERROR_PRELOG), true, WriteOnce.ConsoleVerbosity.Medium, false);
             }
 
 
@@ -67,61 +70,320 @@ namespace Microsoft.ApplicationInspector.CLI
         }
 
 
-        private static int RunAnalyzeCommand(AnalyzeCommandOptions opts)
+
+        #region OutputArgsCheckandRun
+
+        //idea is to check output args which are not applicable to NuGet callers before the command operation is run for max efficiency
+
+        private static int VerifyOutputArgsRun(CLITagDiffCmdOptions options)
         {
-            Logger logger = Utils.SetupLogging(opts, true);
+            Logger logger = Utils.SetupLogging(options, true);
             WriteOnce.Log = logger;
-            opts.Log = logger;
+            options.Log = logger;
 
-            return new AnalyzeCommand(opts).Run();
-        }
-
-        private static int RunTagDiffCommand(TagDiffCommandOptions opts)
-        {
-            Logger logger = Utils.SetupLogging(opts, true);
-            WriteOnce.Log = logger;
-            opts.Log = logger;
-
-            return new TagDiffCommand(opts).Run();
-        }
-
-        private static int RunTagTestCommand(TagTestCommandOptions opts)
-        {
-            Logger logger = Utils.SetupLogging(opts, true);
-            WriteOnce.Log = logger;
-            opts.Log = logger;
-
-            return new TagTestCommand(opts).Run();
-        }
-
-        private static int RunExportTagsCommand(ExportTagsCommandOptions opts)
-        {
-            Logger logger = Utils.SetupLogging(opts, true);
-            WriteOnce.Log = logger;
-            opts.Log = logger;
-
-            return new ExportTagsCommand(opts).Run();
-        }
-
-        private static int RunVerifyRulesCommand(VerifyRulesCommandOptions opts)
-        {
-            Logger logger = Utils.SetupLogging(opts, true);
-            WriteOnce.Log = logger;
-            opts.Log = logger;
-
-            return new VerifyRulesCommand(opts).Run();
+            CommonOutputChecks(options);
+            return RunTagDiffCommand(options);
         }
 
 
-        private static int RunPackRulesCommand(PackRulesCommandOptions opts)
+        private static int VerifyOutputArgsRun(CLITagTestCmdOptions options)
         {
-            Logger logger = Utils.SetupLogging(opts, true);
+            Logger logger = Utils.SetupLogging(options, true);
             WriteOnce.Log = logger;
-            opts.Log = logger;
+            options.Log = logger;
 
-            return new PackRulesCommand(opts).Run();
+            CommonOutputChecks(options);
+            return RunTagTestCommand(options);
         }
 
+
+        private static int VerifyOutputArgsRun(CLIExportTagsCmdOptions options)
+        {
+            Logger logger = Utils.SetupLogging(options, true);
+            WriteOnce.Log = logger;
+            options.Log = logger;
+
+            CommonOutputChecks(options);
+            return RunExportTagsCommand(options);
+        }
+
+
+        private static int VerifyOutputArgsRun(CLIVerifyRulesCmdOptions options)
+        {
+            Logger logger = Utils.SetupLogging(options, true);
+            WriteOnce.Log = logger;
+            options.Log = logger;
+
+            CommonOutputChecks(options);
+            return RunVerifyRulesCommand(options);
+        }
+
+
+        private static int VerifyOutputArgsRun(CLIPackRulesCmdOptions options)
+        {
+            Logger logger = Utils.SetupLogging(options, true);
+            WriteOnce.Log = logger;
+            options.Log = logger;
+
+            if (options.RepackDefaultRules && !string.IsNullOrEmpty(options.OutputFilePath)) //dependent local files won't be there; TODO look into dir copy to target!
+            {
+                WriteOnce.Info("output file argument ignored for -d option");
+            }
+
+            options.OutputFileFormat = "json"; //ignore any other format; fix for CLIPackRulesCmdOptions constructor not working
+
+            options.OutputFilePath = options.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesPackedFile) : options.OutputFilePath;
+            if (String.IsNullOrEmpty(options.OutputFilePath))
+            {
+                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.PACK_MISSING_OUTPUT_ARG));
+                throw new OpException(MsgHelp.GetString(MsgHelp.ID.PACK_MISSING_OUTPUT_ARG));
+            }
+            else
+            {
+                CommonOutputChecks(options);
+            }
+
+            return RunPackRulesCommand(options);
+        }
+
+
+        private static int VerifyOutputArgsRun(CLIAnalyzeCmdOptions options)
+        {
+            Logger logger = Utils.SetupLogging(options, true);
+            WriteOnce.Log = logger;
+            options.Log = logger;
+
+            //analyze with html format limit checks
+            if (options.OutputFileFormat == "html")
+            {
+                if (!string.IsNullOrEmpty(options.OutputFilePath)) //dependent local files won't be there; TODO look into dir copy to target!
+                {
+                    WriteOnce.Info("output file argument ignored for html format");
+                }
+
+                if (options.AllowDupTags) //fix #183; duplicates results for html format is not supported which causes filedialog issues
+
+                {
+                    WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
+                    throw new OpException(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
+                }
+
+                if (options.SimpleTagsOnly) //won't work for html that expects full data for UI
+                {
+                    WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_SIMPLETAGS_HTML_FORMAT));
+                    throw new Exception(MsgHelp.GetString(MsgHelp.ID.ANALYZE_SIMPLETAGS_HTML_FORMAT));
+                }
+            }
+            else
+            {
+                CommonOutputChecks((CLICommandOptions)options);
+            }
+
+            return RunAnalyzeCommand(options);
+        }
+
+
+        /// <summary>
+        /// Checks that either output filepath is valid or console verbosity is not visible to ensure
+        /// some output can be achieved...other command specific inputs that are relevant to both CLI
+        /// and NuGet callers are checked by the commands themselves
+        /// </summary>
+        /// <param name="options"></param>
+        static void CommonOutputChecks(CLICommandOptions options)
+        {
+            //validate requested format
+            string fileFormatArgs = options.OutputFileFormat;
+            List<string> validFormats = new List<string>();
+            validFormats.Add("json");
+            validFormats.Add("text");
+
+            if (options is CLIAnalyzeCmdOptions)
+            {
+                fileFormatArgs = ((CLIAnalyzeCmdOptions)options).OutputFileFormat;
+            }
+
+            bool isValidFormat = validFormats.Any(v => v.Contains(fileFormatArgs));
+            if (!isValidFormat)
+            {
+                WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
+                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
+            }
+
+            //validate output is not empty if not file output specified
+            if (string.IsNullOrEmpty(options.OutputFilePath))
+            {
+                if (options.ConsoleVerbosityLevel.ToLower() == "none")
+                {
+                    WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.CMD_NO_OUTPUT));
+                    throw new Exception(MsgHelp.GetString(MsgHelp.ID.CMD_NO_OUTPUT));
+                }
+                else if (options.ConsoleVerbosityLevel.ToLower() == "low")
+                {
+                    WriteOnce.SafeLog("Verbosity set low.  Detailed output limited.", NLog.LogLevel.Info);
+                }
+            }
+            else
+            {
+                ValidFilePath(options.OutputFilePath);
+            }
+        }
+
+
+        /// <summary>
+        /// Ensure output file path can be written to
+        /// </summary>
+        /// <param name="filePath"></param>
+        static void ValidFilePath(string filePath)
+        {
+            try
+            {
+                File.WriteAllText(filePath, "");//verify ability to write to location
+            }
+            catch (Exception)
+            {
+                WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, filePath));
+                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, filePath));
+            }
+
+        }
+
+
+        #endregion
+
+
+        #region RunCmdsWriteResults
+
+        private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
+        {
+            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+
+            AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
+            {
+                SourcePath = cliOptions.SourcePath,
+                CustomRulesPath = cliOptions.CustomRulesPath,
+                IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
+                AllowDupTags = cliOptions.AllowDupTags,
+                ConfidenceFilters = cliOptions.ConfidenceFilters,
+                MatchDepth = cliOptions.MatchDepth,
+                FilePathExclusions = cliOptions.FilePathExclusions,
+                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                Log = cliOptions.Log
+            }); ;
+
+            AnalyzeResult analyzeResult = command.GetResult();
+            exitCode = analyzeResult.ResultCode;
+            ResultsWriter.Write(analyzeResult, cliOptions);
+
+            return (int)exitCode;
+        }
+
+
+
+        private static int RunTagDiffCommand(CLITagDiffCmdOptions cliOptions)
+        {
+            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
+
+            TagDiffCommand command = new TagDiffCommand(new TagDiffOptions()
+            {
+                SourcePath1 = cliOptions.SourcePath1,
+                SourcePath2 = cliOptions.SourcePath2,
+                CustomRulesPath = cliOptions.CustomRulesPath,
+                IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
+                FilePathExclusions = cliOptions.FilePathExclusions,
+                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                TestType = cliOptions.TestType,
+                Log = cliOptions.Log
+            });
+
+            TagDiffResult tagDiffResult = command.GetResult();
+            exitCode = tagDiffResult.ResultCode;
+            ResultsWriter.Write(tagDiffResult, cliOptions);
+
+            return (int)exitCode;
+        }
+
+        private static int RunTagTestCommand(CLITagTestCmdOptions cliOptions)
+        {
+            TagTestResult.ExitCode exitCode = TagTestResult.ExitCode.CriticalError;
+
+            TagTestCommand command = new TagTestCommand(new TagTestOptions()
+            {
+                SourcePath = cliOptions.SourcePath,
+                CustomRulesPath = cliOptions.CustomRulesPath,
+                FilePathExclusions = cliOptions.FilePathExclusions,
+                TestType = cliOptions.TestType,
+                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                Log = cliOptions.Log
+            });
+
+            TagTestResult tagTestCommand = command.GetResult();
+            exitCode = tagTestCommand.ResultCode;
+            ResultsWriter.Write(tagTestCommand, cliOptions);
+
+            return (int)exitCode;
+        }
+
+        private static int RunExportTagsCommand(CLIExportTagsCmdOptions cliOptions)
+        {
+            ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
+
+            ExportTagsCommand command = new ExportTagsCommand(new ExportTagsOptions()
+            {
+                IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
+                CustomRulesPath = cliOptions.CustomRulesPath,
+                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                Log = cliOptions.Log
+            });
+
+            ExportTagsResult exportTagsResult = command.GetResult();
+            exitCode = exportTagsResult.ResultCode;
+            ResultsWriter.Write(exportTagsResult, cliOptions);
+
+            return (int)exitCode;
+        }
+
+        private static int RunVerifyRulesCommand(CLIVerifyRulesCmdOptions cliOptions)
+        {
+            VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
+
+            VerifyRulesCommand command = new VerifyRulesCommand(new VerifyRulesOptions()
+            {
+                VerifyDefaultRules = cliOptions.VerifyDefaultRules,
+                CustomRulesPath = cliOptions.CustomRulesPath,
+                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                Failfast = cliOptions.Failfast,
+                Log = cliOptions.Log
+            });
+
+            VerifyRulesResult exportTagsResult = command.GetResult();
+            exitCode = exportTagsResult.ResultCode;
+            ResultsWriter.Write(exportTagsResult, cliOptions);
+
+            return (int)exitCode;
+        }
+
+
+        private static int RunPackRulesCommand(CLIPackRulesCmdOptions cliOptions)
+        {
+            PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
+
+            PackRulesCommand command = new PackRulesCommand(new PackRulesOptions()
+            {
+                RepackDefaultRules = cliOptions.RepackDefaultRules,
+                CustomRulesPath = cliOptions.CustomRulesPath,
+                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                Log = cliOptions.Log
+            });
+
+            PackRulesResult exportTagsResult = command.GetResult();
+            exitCode = exportTagsResult.ResultCode;
+            ResultsWriter.Write(exportTagsResult, cliOptions);
+
+            return (int)exitCode;
+        }
+
+
+        #endregion
 
     }
 }

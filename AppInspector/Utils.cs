@@ -8,7 +8,6 @@ using NLog.Targets;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -105,74 +104,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
 
 
-        /// <summary>
-        /// Attempt to map application type tags or file type or language to identify
-        /// WebApplications, Windows Services, Client Apps, WebServices, Azure Functions etc.
-        /// </summary>
-        /// <param name="match"></param>
-        static public String DetectSolutionType(MatchRecord match)
-        {
-            string result = "";
-            if (match.Issue.Rule.Tags.Any(s => s.Contains("Application.Type")))
-            {
-                foreach (string tag in match.Issue.Rule.Tags)
-                {
-                    int index = tag.IndexOf("Application.Type");
-                    if (-1 != index)
-                    {
-                        result = tag.Substring(index + 17);
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                switch (match.Filename)
-                {
-                    case "web.config":
-                        result = "Web.Application";
-                        break;
-                    case "app.config":
-                        result = ".NETclient";
-                        break;
-                    default:
-                        switch (Path.GetExtension(match.Filename))
-                        {
-                            case ".cshtml":
-                                result = "Web.Application";
-                                break;
-                            case ".htm":
-                            case ".html":
-                            case ".js":
-                            case ".ts":
-                                result = "Web.Application";
-                                break;
-                            case "powershell":
-                            case "shellscript":
-                            case "wincmdscript":
-                                result = "script";
-                                break;
-                            default:
-                                switch (match.Language.Name)
-                                {
-                                    case "ruby":
-                                    case "perl":
-                                    case "php":
-                                        result = "Web.Application";
-                                        break;
-                                }
-                                break;
-                        }
-                        break;
-                }
-
-            }
-
-            return result.ToLower();
-        }
-
-
-
         public static void OpenBrowser(string url)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -181,11 +112,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 try
                 {
                     Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
-                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_SUCCESS));
+                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_SUCCESS));
                 }
                 catch (Exception)
                 {
-                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_FAIL));//soft error
+                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_FAIL));//soft error
                 }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -195,16 +126,16 @@ namespace Microsoft.ApplicationInspector.Commands
                     try
                     {
                         Process.Start("xdg-open", "\"" + url + "\"");
-                        WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_SUCCESS));
+                        WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_SUCCESS));
                     }
                     catch (Exception)
                     {
-                        WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_FAIL));//soft error
+                        WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_FAIL));//soft error
                     }
                 }
                 else
                 {
-                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_ENVIRONMENT_VAR));
+                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_ENVIRONMENT_VAR));
                 }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
@@ -212,11 +143,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 try
                 {
                     Process.Start("open", "\"" + url + "\"");
-                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_SUCCESS));
+                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_SUCCESS));
                 }
                 catch (Exception)
                 {
-                    WriteOnce.General(ErrMsg.GetString(ErrMsg.ID.BROWSER_START_FAIL));//soft error
+                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_FAIL));//soft error
                 }
             }
         }
@@ -228,7 +159,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         public static Logger SetupLogging()
         {
-            AllCommandOptions opts = new AllCommandOptions();//defaults used
+            CommandOptions opts = new CommandOptions();//defaults used
 
             return SetupLogging(opts);
         }
@@ -240,7 +171,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public static Logger SetupLogging(AllCommandOptions opts, bool onErrorConsole = false)
+        public static Logger SetupLogging(CommandOptions opts, bool onErrorConsole = false)
         {
             //prevent being called again if already set unless closed first
             if (Logger != null)
@@ -267,9 +198,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     else
                     {
                         if (Utils.CLIExecutionContext && onErrorConsole)
-                            WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_REPLACE_LOG_PATH, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                            WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_LOG_PATH, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
 
-                        throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_REPLACE_LOG_PATH, opts.LogFilePath));
+                        throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_LOG_PATH, opts.LogFilePath));
                     }
                 }
             }
@@ -281,10 +212,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch (Exception e)
                 {
+                    WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, NLog.LogLevel.Error);
                     if (Utils.CLIExecutionContext && onErrorConsole)
-                        WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                        WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
 
-                    throw new Exception((ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, opts.LogFilePath)));
+                    throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, opts.LogFilePath)));
                 }
             }
 
@@ -299,16 +231,16 @@ namespace Microsoft.ApplicationInspector.Commands
             catch (Exception)
             {
                 if (Utils.CLIExecutionContext && onErrorConsole)
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v"), true, WriteOnce.ConsoleVerbosity.Low, false);
+                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-v"), true, WriteOnce.ConsoleVerbosity.Low, false);
 
-                throw new Exception((ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-v")));
+                throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-v")));
             }
 
             using (var fileTarget = new FileTarget()
             {
                 Name = "LogFile",
                 FileName = opts.LogFilePath,
-                Layout = @"${date:universalTime=true:format=s} ${threadid} ${level:uppercase=true} - AppInsLog - ${message}",
+                Layout = @"${date:format=yyyy-MM-dd HH\:mm\:ss} ${threadid} ${level:uppercase=true} - AppInsLog - ${message}",
                 ForceMutexConcurrentWrites = true
 
             })

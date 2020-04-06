@@ -9,7 +9,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "x509|\\.(crt|cer|spc|p7b|p7s|p7r|ca-bundle)|certificate",
+        "pattern": "x509|\\.(crt|cer|spc|p7b|p7s|p7r|ca-bundle)",
         "type": "regex-word",
         "scopes": [
           "code"

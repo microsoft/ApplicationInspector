@@ -17,7 +17,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class RuleSet : IEnumerable<Rule>
     {
+        private List<Rule> _rules;
         private Logger _logger;
+        HashSet<string> _uniqueRuleIds;
 
         /// <summary>
         /// Delegate for deserialization error handler
@@ -25,7 +27,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="sender">Sender object</param>
         /// <param name="e">Error arguments</param>
         public delegate void DeserializationError(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs e);
-        
+
         /// <summary>
         /// Event raised if deserialization error is encoutered while loading JSON rules
         /// </summary>
@@ -34,10 +36,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Creates instance of Ruleset
         /// </summary>
-        public RuleSet(Logger logger=null)
+        public RuleSet(Logger logger = null)
         {
             _logger = logger;
             _rules = new List<Rule>();
+            _uniqueRuleIds = new HashSet<string>();
         }
 
         /// <summary>
@@ -54,34 +57,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return result;
         }
 
-        /// <summary>
-        /// Load rules from a file
-        /// </summary>
-        /// <param name="filename">Filename with rules</param>
-        /// <param name="tag">Tag for the rules</param>
-        /// <returns>Ruleset</returns>
-        public static RuleSet FromFile(string filename, string tag = null)
-        {
-            RuleSet result = new RuleSet();
-            result.AddFile(filename, tag);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Load rules from JSON string
-        /// </summary>
-        /// <param name="jsonstring">JSON string</param>
-        /// <param name="sourcename">Name of the source (file, stream, etc..)</param>
-        /// <param name="tag">Tag for the rules</param>
-        /// <returns>Ruleset</returns>
-        public static RuleSet FromString(string jsonstring, string sourcename = "string", string tag = null)
-        {
-            RuleSet result = new RuleSet();
-            result.AddString(jsonstring, sourcename, tag);
-
-            return result;
-        }
 
         /// <summary>
         /// Parse a directory with rule files and loads the rules
@@ -116,7 +91,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 throw new FileNotFoundException(filename);
 
             if (_logger != null)
-                _logger.Debug("rulefile to read: " + filename);
+                _logger.Debug("Attempting to read: " + filename);
 
             using (StreamReader file = File.OpenText(filename))
             {
@@ -132,7 +107,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="tag">Tag for the rules</param>
         public void AddString(string jsonstring, string sourcename, string tag = null)
         {
-            HashSet<string> dupRuleIds = new HashSet<string>();
             List<Rule> ruleList = new List<Rule>();
             JsonSerializerSettings settings = new JsonSerializerSettings()
             {
@@ -143,8 +117,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 ruleList = JsonConvert.DeserializeObject<List<Rule>>(jsonstring, settings);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                if (_logger != null)
+                {
+                    _logger.Error($"Error parsing {sourcename}: {ex.Message}");
+                    _logger.Debug($"Error parsing {sourcename}: {ex.Message} + {ex.StackTrace}");
+                }
                 throw new Exception($"Error parsing {sourcename}: {ex.Message}");
             }
 
@@ -152,7 +131,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 foreach (Rule r in ruleList)
                 {
-                    if (dupRuleIds.Add(r.Id))
+                    if (_uniqueRuleIds.Add(r.Id))
                     {
                         r.Source = sourcename;
                         r.RuntimeTag = tag;
@@ -174,10 +153,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
 
                         if (_logger != null)
-                            _logger.Info(string.Format("Rule added: {0},{1},{2}", r.Id, r.Name, r.Description));
+                            _logger.Trace(string.Format("Rule added: {0},{1},{2}", r.Id, r.Name, r.Description));
                     }
                     else
                     {
+                        if (_logger != null)
+                            _logger.Error(string.Format("Duplicate ruleId {0} found.", r.Id));
+
                         throw new Exception(string.Format("Duplicate ruleId {0} found.", r.Id));
                     }
 
@@ -187,23 +169,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
-        /// <summary>
-        /// Add rule into Ruleset
-        /// </summary>
-        /// <param name="rule"></param>
-        public void AddRule(Rule rule)
-        {
-            _rules.Add(rule);
-        }
-
-        /// <summary>
-        /// Adds the elements of the collection to the Ruleset
-        /// </summary>
-        /// <param name="collection">Collection of rules</param>
-        public void AddRange(IEnumerable<Rule> collection)
-        {
-            _rules.AddRange(collection);
-        }
 
         /// <summary>
         /// Filters rules within Ruleset by languages
@@ -312,11 +277,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         #endregion
 
-        #region Fields
-
-        private List<Rule> _rules;
-        
-        #endregion
     }
 
 }

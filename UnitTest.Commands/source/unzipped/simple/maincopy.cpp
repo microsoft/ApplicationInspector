@@ -9,7 +9,6 @@ SECURITY_FLAG_IGNORE_CA
 
 <OutputType>exe</OutputType>
 
-JSON.Parse
 
 Windows
 
@@ -30,19 +29,6 @@ class SSLv3
 class
 try
 
-//hello
-//boo
-//adasfd
-
-catdog ff;
-
-catdog fgg;
-
-cattydog;
-
-frog b;
-
-dogcat  l;
 
 sleep(d);
 
