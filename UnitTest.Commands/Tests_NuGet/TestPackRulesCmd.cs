@@ -136,7 +136,7 @@ namespace ApplicationInspector.UnitTest.Commands
             PackRulesOptions options = new PackRulesOptions()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"empty.json")
+                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.json")
             };
 
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;

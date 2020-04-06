@@ -343,7 +343,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = String.Format(@"packrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                        Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"empty.cpp"));
+                        Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"));
 
                 Process test = new Process();
                 test.StartInfo.FileName = appInspectorPath;
