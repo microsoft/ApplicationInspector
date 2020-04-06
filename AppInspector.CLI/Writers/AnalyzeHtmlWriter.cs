@@ -23,9 +23,8 @@ namespace Microsoft.ApplicationInspector.CLI
 
         public List<TagCategory> TagGroupPreferences { get; set; }//read preferred list of groups and tags for profile page
 
-        MetaData _appMetaData;
-
-        AnalyzeResult _analyzeResult;
+        private MetaData _appMetaData;
+        private AnalyzeResult _analyzeResult;
 
         public AnalyzeHtmlWriter()
         {
@@ -51,9 +50,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteHtmlResult();
         }
 
-
-
-        void WriteHtmlResult()
+        private void WriteHtmlResult()
         {
             //Prepare html template merge
             var htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
@@ -75,7 +72,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
             //add summary values for sorted tags lists of taginfo
             foreach (string outerKey in KeyedSortedTagInfoLists.Keys)
+            {
                 hashData.Add(outerKey, KeyedSortedTagInfoLists[outerKey]);
+            }
 
             //add summary metadata lists TODO remove all these as we already passed metadata obj
             hashData["cputargets"] = _appMetaData.CPUTargets;
@@ -93,8 +92,7 @@ namespace Microsoft.ApplicationInspector.CLI
             FlushAndClose();
         }
 
-
-        void WriteJsonResult()
+        private void WriteJsonResult()
         {
             //writes out json report for convenient link from report summary page(s)
             CLIAnalyzeCmdOptions jsonOptions = new CLIAnalyzeCmdOptions()
@@ -138,9 +136,13 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             //read default/user preferences on what tags to report presence on and groupings
             if (File.Exists(Utils.GetPath(Utils.AppPath.tagGroupPref)))
+            {
                 TagGroupPreferences = JsonConvert.DeserializeObject<List<TagCategory>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagGroupPref)));
+            }
             else
+            {
                 TagGroupPreferences = new List<TagCategory>();
+            }
 
             //for each preferred group of tag patterns determine if at least one instance was detected
             foreach (TagCategory tagCategory in TagGroupPreferences)
@@ -209,7 +211,9 @@ namespace Microsoft.ApplicationInspector.CLI
             foreach (MatchRecord match in _appMetaData.MatchList)
             {
                 foreach (string tag in match.Tags)
+                {
                     results.Add(tag);
+                }
             }
 
             return results;
@@ -457,6 +461,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                 Enum.TryParse(match.PatternConfidence, out matchConfidence);
 
                                 if (matchConfidence == test && dupCheck.Add(tag))
+                                {
                                     result.Add(new TagInfo
                                     {
                                         Tag = testTag,
@@ -464,6 +469,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                         Severity = match.Severity.ToString(),
                                         ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
                                     });
+                                }
                             }
                         }
                     }
@@ -499,6 +505,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                 Enum.TryParse(match.Severity, out matchSeverity);
 
                                 if (matchSeverity == test && dupCheck.Add(tag))
+                                {
                                     result.Add(new TagInfo
                                     {
                                         Tag = testTag,
@@ -506,6 +513,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                         Severity = test.ToString(),
                                         ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
                                     });
+                                }
                             }
                         }
                     }
@@ -525,11 +533,13 @@ namespace Microsoft.ApplicationInspector.CLI
             //TagCountersUI is liquid compatible while TagCounters is not to support json serialization; the split prevents exception
             //not fixable via json iteration disabling
             foreach (MetricTagCounter counter in metricTagCounters)
+            {
                 result.Add(new TagCounterUI
                 {
                     Tag = counter.Tag,
                     Count = counter.Count
                 });
+            }
 
             return result;
         }
@@ -552,6 +562,6 @@ namespace Microsoft.ApplicationInspector.CLI
         [JsonProperty(PropertyName = "count")]
         public int Count { get; set; }
         [JsonProperty(PropertyName = "includeAsMatch")]
-        public bool IncludeAsMatch { get { return false; } }
+        public bool IncludeAsMatch => false;
     }
 }

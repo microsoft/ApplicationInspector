@@ -94,14 +94,16 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(PropertyName = "confidence")]
         public string Confidence
         {
-            get { return _confidence; }
+            get => _confidence;
             set
             {
                 RulesEngine.Confidence test;
                 try
                 {
                     if (Enum.TryParse(value, true, out test))
+                    {
                         this._confidence = value;
+                    }
                 }
                 catch (Exception)//control error description
                 {

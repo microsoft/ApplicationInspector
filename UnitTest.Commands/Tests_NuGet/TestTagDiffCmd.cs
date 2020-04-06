@@ -438,10 +438,13 @@ namespace ApplicationInspector.UnitTest.Commands
                 exitCode = result.ResultCode;
                 string testLogContent = File.ReadAllText(options.LogFilePath);
                 if (String.IsNullOrEmpty(testLogContent))
+                {
                     exitCode = TagDiffResult.ExitCode.CriticalError;
+                }
                 else if (testLogContent.ToLower().Contains("trace"))
+                {
                     exitCode = TagDiffResult.ExitCode.TestPassed;
-
+                }
             }
             catch (Exception)
             {
@@ -480,9 +483,13 @@ namespace ApplicationInspector.UnitTest.Commands
             {
                 string testLogContent = File.ReadAllText(options.LogFilePath);
                 if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
+                {
                     exitCode = TagDiffResult.ExitCode.TestPassed;
+                }
                 else
+                {
                     exitCode = TagDiffResult.ExitCode.CriticalError;
+                }
             }
 
             //because these are static and each test is meant to be indpendent null assign the references to create the log
@@ -515,10 +522,13 @@ namespace ApplicationInspector.UnitTest.Commands
                 exitCode = result.ResultCode;
                 string testLogContent = File.ReadAllText(options.LogFilePath);
                 if (String.IsNullOrEmpty(testLogContent))
+                {
                     exitCode = TagDiffResult.ExitCode.CriticalError;
+                }
                 else if (testLogContent.ToLower().Contains("debug"))
+                {
                     exitCode = TagDiffResult.ExitCode.TestPassed;
-
+                }
             }
             catch (Exception)
             {
@@ -627,9 +637,13 @@ namespace ApplicationInspector.UnitTest.Commands
                     {
                         string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
                         if (String.IsNullOrEmpty(testContent))
+                        {
                             exitCode = TagDiffResult.ExitCode.TestPassed;
+                        }
                         else
+                        {
                             exitCode = TagDiffResult.ExitCode.TestFailed;
+                        }
                     }
                     catch (Exception)
                     {

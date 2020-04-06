@@ -21,18 +21,28 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(MsgHelp.FormatString(MsgHelp.ID.TAGTEST_RESULTS_TEST_TYPE, cLITagTestCmdOptions.TestType), false, WriteOnce.ConsoleVerbosity.Low);
 
             if (tagTestResult.ResultCode == TagTestResult.ExitCode.TestFailed)
+            {
                 WriteOnce.Any(MsgHelp.GetString(MsgHelp.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+            }
             else
+            {
                 WriteOnce.Any(MsgHelp.GetString(MsgHelp.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
+            }
 
             if (tagTestResult.TagsStatusList.Count > 0)
+            {
                 WriteOnce.Result("Result details:");
+            }
 
             foreach (TagStatus tag in tagTestResult.TagsStatusList)
+            {
                 WriteOnce.General(String.Format("Tag: {0}, Detected: {1}", tag.Tag, tag.Detected));
+            }
 
             if (autoClose)
+            {
                 FlushAndClose();
+            }
         }
 
         public override void FlushAndClose()

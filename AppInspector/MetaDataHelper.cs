@@ -50,26 +50,53 @@ namespace Microsoft.ApplicationInspector.Commands
 
             // single standard properties we capture from any supported file type; others just captured as general tag matches...
             if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Author")))
-                Metadata.Authors = ExtractValue(matchRecord.Sample);
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Publisher")))
-                Metadata.Authors = ExtractValue(matchRecord.Sample);
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Description")))
-                Metadata.Description = ExtractValue(matchRecord.Sample);
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Name")))
-                Metadata.ApplicationName = ExtractValue(matchRecord.Sample);
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Version")))
-                Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Target.Processor")))
-                Metadata.CPUTargets.Add(ExtractValue(matchRecord.Sample).ToLower());
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Output.Type")))
-                Metadata.Outputs.Add(ExtractValue(matchRecord.Sample).ToLower());
-            if (matchRecord.Tags.Any(v => v.Contains("Platform.OS")))
-                Metadata.OSTargets.Add(ExtractValue(matchRecord.Sample).ToLower());
-            if (matchRecord.Tags.Any(v => v.Contains("Metric."))) Metadata.TagCounters.Add(new MetricTagCounter()
             {
-                Tag = matchRecord.Tags[0],
-                Count = 0
-            });
+                Metadata.Authors = ExtractValue(matchRecord.Sample);
+            }
+
+            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Publisher")))
+            {
+                Metadata.Authors = ExtractValue(matchRecord.Sample);
+            }
+
+            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Description")))
+            {
+                Metadata.Description = ExtractValue(matchRecord.Sample);
+            }
+
+            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Name")))
+            {
+                Metadata.ApplicationName = ExtractValue(matchRecord.Sample);
+            }
+
+            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Version")))
+            {
+                Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
+            }
+
+            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Target.Processor")))
+            {
+                Metadata.CPUTargets.Add(ExtractValue(matchRecord.Sample).ToLower());
+            }
+
+            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Output.Type")))
+            {
+                Metadata.Outputs.Add(ExtractValue(matchRecord.Sample).ToLower());
+            }
+
+            if (matchRecord.Tags.Any(v => v.Contains("Platform.OS")))
+            {
+                Metadata.OSTargets.Add(ExtractValue(matchRecord.Sample).ToLower());
+            }
+
+            if (matchRecord.Tags.Any(v => v.Contains("Metric.")))
+            {
+                Metadata.TagCounters.Add(new MetricTagCounter()
+                {
+                    Tag = matchRecord.Tags[0],
+                    Count = 0
+                });
+            }
 
             //safeguard sample output blocking browser xss
             matchRecord.Sample = System.Net.WebUtility.HtmlEncode(matchRecord.Sample);
@@ -77,7 +104,9 @@ namespace Microsoft.ApplicationInspector.Commands
             //Special handling; attempt to detect app types...review for multiple pattern rule limitation
             String solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
+            {
                 Metadata.AppTypes.Add(solutionType);
+            }
 
             //Update metric counters for default or user specified tags; don't add as match detail
             bool counterOnlyTag = false;
@@ -96,7 +125,9 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 //update list of unique tags as we go
                 foreach (string tag in matchRecord.Tags)
+                {
                     Metadata.UniqueTags.Add(tag);
+                }
 
                 Metadata.MatchList.Add(matchRecord);
             }
@@ -115,15 +146,16 @@ namespace Microsoft.ApplicationInspector.Commands
         public void AddLanguage(string language)
         {
             if (Metadata.Languages.ContainsKey(language))
+            {
                 Metadata.Languages[language]++;
+            }
             else
+            {
                 Metadata.Languages.Add(language, 1);
-
+            }
         }
 
-
-
-        string GetDefaultProjectName(string sourcePath)
+        private string GetDefaultProjectName(string sourcePath)
         {
             string applicationName = "";
 
@@ -226,9 +258,13 @@ namespace Microsoft.ApplicationInspector.Commands
         private string ExtractValue(string s)
         {
             if (s.ToLower().Contains("</"))
+            {
                 return ExtractXMLValue(s);
+            }
             else
+            {
                 return ExtractJSONValue(s);
+            }
         }
 
         private static string ExtractJSONValue(string s)

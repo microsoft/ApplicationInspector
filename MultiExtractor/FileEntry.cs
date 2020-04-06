@@ -3,9 +3,7 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace MultiExtractor
 {
@@ -38,7 +36,7 @@ namespace MultiExtractor
         public string Name { get; set; }
         public MemoryStream Content { get; set; }
 
-      
+
 
     }
 }

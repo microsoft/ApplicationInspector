@@ -6,7 +6,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// <summary>
     /// Class holds information about suppressed issue
     /// </summary>
-    public class SuppressedIssue
+    public class SuppressedMatch
     {
         public Boundary Boundary { get; set; }
         public string ID { get; set; }

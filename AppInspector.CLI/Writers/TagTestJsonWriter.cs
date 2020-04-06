@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.CLI.Writers
 {
-    class TagTestJsonWriter : CommandResultsWriter
+    internal class TagTestJsonWriter : CommandResultsWriter
     {
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
@@ -16,7 +16,9 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
             WriteOnce.NewLine();
 
             if (autoClose)
+            {
                 FlushAndClose();
+            }
         }
 
         public override void FlushAndClose()

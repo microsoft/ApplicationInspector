@@ -60,7 +60,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //find all; arg not currently supported
 
             if (rules == null)
+            {
                 throw new Exception("Null object.  No rules specified");
+            }
 
             this.Rules = rules;
         }
@@ -86,15 +88,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             foreach (Rule rule in rules)
             {
                 if (_logger != null)
+                {
                     _logger.Debug("Processing for rule: " + rule.Id);
+                }
 
                 // Skip rules that don't apply based on settings
                 if (rule.Disabled || !SeverityLevel.HasFlag(rule.Severity))
+                {
                     continue;
+                }
 
                 // Skip further processing of rule for efficiency if user requested first match only (speed/quality)
                 if (_stopAfterFirstPatternMatch && _uniqueTagMatchesOnly && !UniqueTagsCheck(rule.Tags))
+                {
                     continue;
+                }
 
                 List<ScanResult> matchList = new List<ScanResult>();
 
@@ -103,7 +111,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     //Skill patterns that don't apply based on settings
                     if (!ConfidenceLevelFilter.HasFlag(pattern.Confidence))
+                    {
                         continue;
+                    }
 
                     // Get all matches for the patttern
                     List<Boundary> matches = textContainer.MatchPattern(pattern);
@@ -136,7 +146,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                             //restrict tags from build files to tags with "metadata" to avoid false feature positives that are not part of executable code
                             if (languageInfo.Type == LanguageInfo.LangFileType.Build && rule.Tags.Any(v => !v.Contains("Metadata")))
+                            {
                                 passedConditions = false;
+                            }
 
                             if (passedConditions)
                             {
@@ -164,7 +176,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                             passedConditions = BestMatch(matchList, newMatch); //; check all patterns in current rule
 
                                             if (passedConditions)
+                                            {
                                                 passedConditions = BestMatch(resultsList, newMatch);//check all rules in permanent list                                         
+                                            }
                                         }
                                     }
                                 }
@@ -188,7 +202,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         supp = new Suppression(textContainer.GetLineContent(result.StartLocation.Line));
                         // If rule is NOT being suppressed then report it
-                        SuppressedIssue supissue = supp.GetSuppressedIssue(result.Rule.Id);
+                        SuppressedMatch supissue = supp.GetSuppressedIssue(result.Rule.Id);
                         if (supissue == null)
                         {
                             resultsList.Add(result);
@@ -211,10 +225,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                             // Add info only if it's not on the same location
                             if (resultsList.FirstOrDefault(x => x.Rule.Id == info.Rule.Id && x.Boundary.Index == info.Boundary.Index) == null)
+                            {
                                 resultsList.Add(info);
+                            }
                             else if (_logger != null)
+                            {
                                 _logger.Debug("Not added due to proximity to another rule");
-
+                            }
                         }
                     }
 
@@ -241,7 +258,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             {
                                 if (om.Boundary.Index >= m.Boundary.Index &&
                                     om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
+                                {
                                     removes.Add(om);
+                                }
                             }
                         }
                     }
@@ -262,7 +281,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         public RuleSet Rules
         {
-            get { return _ruleset; }
+            get => _ruleset;
             set
             {
                 _ruleset = value;
@@ -273,13 +292,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         #region Private Methods    
 
-        bool BestMatch(List<ScanResult> scanResults, ScanResult compareResult, bool removeOld = true)
+        private bool BestMatch(List<ScanResult> scanResults, ScanResult compareResult, bool removeOld = true)
         {
             bool betterMatch = false;
 
             //if list is empty the new match is the best match
             if (scanResults != null && scanResults.Count == 0)
+            {
                 return true;
+            }
 
             foreach (ScanResult priorResult in scanResults)
             {
@@ -303,11 +324,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
 
                     if (betterMatch)
+                    {
                         break;
+                    }
                 }
 
                 if (betterMatch)
+                {
                     break;
+                }
             }
 
             return betterMatch;
@@ -334,7 +359,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 langid = string.Join(":", languages);
                 // Do we have the ruleset alrady in cache? If so return it
                 if (_rulesCache.ContainsKey(langid))
+                {
                     return _rulesCache[langid];
+                }
             }
 
             IEnumerable<Rule> filteredRules = _ruleset.ByLanguages(languages);
@@ -371,19 +398,25 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         {
                             approved = tag.Contains(tagException);
                             if (approved)
+                            {
                                 break;
+                            }
                         }
                     }
 
                     if (_logger != null && !approved)
+                    {
                         _logger.Debug(String.Format("Duplicate tag {0} not added", tag));
+                    }
 
                     break;
                 }
                 else
                 {
                     if (_logger != null)
+                    {
                         _logger.Debug(String.Format("Unique tag {0} added", tag));
+                    }
                 }
             }
 
@@ -400,8 +433,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private void AddRuleTagHashes(string[] ruleTags)
         {
             foreach (string t in ruleTags)
+            {
                 _uniqueTagHashes.Add(t);
-
+            }
         }
 
         #endregion

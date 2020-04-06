@@ -47,8 +47,8 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class PackRulesCommand
     {
-        PackRulesOptions _options;
-        string _rules_path;
+        private PackRulesOptions _options;
+        private string _rules_path;
 
         public PackRulesCommand(PackRulesOptions opt)
         {
@@ -75,13 +75,15 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Establish console verbosity
         /// For NuGet DLL use, console is muted overriding any arguments sent
         /// </summary>
-        void ConfigureConsoleOutput()
+        private void ConfigureConsoleOutput()
         {
             WriteOnce.SafeLog("PackRulesCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
             if (!Utils.CLIExecutionContext)
+            {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
+            }
             else
             {
                 WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
@@ -90,21 +92,25 @@ namespace Microsoft.ApplicationInspector.Commands
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
                 else
+                {
                     WriteOnce.Verbosity = verbosity;
+                }
             }
         }
 
-
-
-        void ConfigRules()
+        private void ConfigRules()
         {
             WriteOnce.SafeLog("PackRulesCommand::ConfigRules", LogLevel.Trace);
 
             if (_options.RepackDefaultRules && !Utils.CLIExecutionContext)
+            {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NO_CLI_DEFAULT));
+            }
 
             if (!_options.RepackDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath))
+            {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
+            }
 
             _rules_path = _options.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
         }

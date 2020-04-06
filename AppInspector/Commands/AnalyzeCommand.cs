@@ -68,34 +68,37 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class AnalyzeCommand
     {
-        readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files 
-        readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
-        readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
+        private readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files 
+        private readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
+        private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
-        IEnumerable<string> _srcfileList;
-        MetaDataHelper _metaDataHelper; //wrapper containing MetaData object to be assigned to result
-        RuleProcessor _rulesProcessor;
+        private IEnumerable<string> _srcfileList;
+        private MetaDataHelper _metaDataHelper; //wrapper containing MetaData object to be assigned to result
+        private RuleProcessor _rulesProcessor;
 
-        DateTime DateScanned { get; set; }
-        DateTime _lastUpdated;
+        private DateTime DateScanned { get; set; }
+
+        private DateTime _lastUpdated;
 
         /// <summary>
         /// Updated dynamically to more recent file in source
         /// </summary>
         public DateTime LastUpdated
         {
-            get { return _lastUpdated; }
+            get => _lastUpdated;
             set
             {
                 //find last updated file in solution
                 if (_lastUpdated < value)
+                {
                     _lastUpdated = value;
+                }
             }
         }
 
-        List<string> _fileExclusionList;
-        Confidence _confidence;
-        AnalyzeOptions _options; //copy of incoming caller options
+        private List<string> _fileExclusionList;
+        private Confidence _confidence;
+        private AnalyzeOptions _options; //copy of incoming caller options
 
         public AnalyzeCommand(AnalyzeOptions opt)
         {
@@ -106,7 +109,9 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").ToList<string>();
                 if (_fileExclusionList != null && (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None")))
+                {
                     _fileExclusionList.Clear();
+                }
             }
 
             LastUpdated = DateTime.MinValue;
@@ -138,13 +143,15 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Establish console verbosity
         /// For NuGet DLL use, console is automatically muted overriding any arguments sent
         /// </summary>
-        void ConfigureConsoleOutput()
+        private void ConfigureConsoleOutput()
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
             if (!Utils.CLIExecutionContext)
+            {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
+            }
             else
             {
                 WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
@@ -153,7 +160,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
                 else
+                {
                     WriteOnce.Verbosity = verbosity;
+                }
             }
         }
 
@@ -162,12 +171,14 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <summary>
         /// Expects user to supply all that apply impacting which rule pattern matches are returned
         /// </summary>
-        void ConfigConfidenceFilters()
+        private void ConfigConfidenceFilters()
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigConfidenceFilters", LogLevel.Trace);
             //parse and verify confidence values
             if (String.IsNullOrEmpty(_options.ConfidenceFilters))
+            {
                 _confidence = Confidence.High | Confidence.Medium; //excludes low by default
+            }
             else
             {
                 string[] confidences = _options.ConfidenceFilters.Split(',');
@@ -175,9 +186,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     Confidence single;
                     if (Enum.TryParse(confidence, true, out single))
+                    {
                         _confidence |= single;
+                    }
                     else
+                    {
                         throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "x"));
+                    }
                 }
             }
         }
@@ -186,12 +201,14 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <summary>
         /// Simple validation on source path provided for scanning and preparation
         /// </summary>
-        void ConfigSourcetoScan()
+        private void ConfigSourcetoScan()
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
 
             if (String.IsNullOrEmpty(_options.SourcePath))
+            {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
+            }
 
             if (Directory.Exists(_options.SourcePath))
             {
@@ -199,8 +216,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     _srcfileList = Directory.EnumerateFiles(_options.SourcePath, "*.*", SearchOption.AllDirectories);
                     if (_srcfileList.Count() == 0)
+                    {
                         throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, _options.SourcePath));
-
+                    }
                 }
                 catch (Exception)
                 {
@@ -208,10 +226,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
             else if (File.Exists(_options.SourcePath)) //not a directory but make one for single flow
+            {
                 _srcfileList = new List<string>() { _options.SourcePath };
+            }
             else
+            {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, _options.SourcePath));
-
+            }
         }
 
 
@@ -219,7 +240,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Add default and/or custom rules paths
         /// Iterate paths and add to ruleset
         /// </summary>
-        void ConfigRules()
+        private void ConfigRules()
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigRules", LogLevel.Trace);
 
@@ -235,16 +256,24 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!string.IsNullOrEmpty(_options.CustomRulesPath))
             {
                 if (rulesSet == null)
+                {
                     rulesSet = new RuleSet(_options.Log);
+                }
 
                 rulePaths.Add(_options.CustomRulesPath);
 
                 if (Directory.Exists(_options.CustomRulesPath))
+                {
                     rulesSet.AddDirectory(_options.CustomRulesPath);
+                }
                 else if (File.Exists(_options.CustomRulesPath))
+                {
                     rulesSet.AddFile(_options.CustomRulesPath);
+                }
                 else
+                {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, _options.CustomRulesPath));
+                }
             }
 
             //error check based on ruleset not path enumeration
@@ -301,9 +330,13 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
 
                     if (archiveFileType == ArchiveFileType.UNKNOWN)//not a known zipped file type
+                    {
                         ProcessAsFile(filename);
+                    }
                     else
+                    {
                         UnZipAndProcess(filename, archiveFileType);
+                    }
                 }
 
                 WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
@@ -345,7 +378,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// scan evaluation for use by decompression methods as well
         /// </summary>
         /// <param name="filename"></param>
-        void ProcessAsFile(string filename)
+        private void ProcessAsFile(string filename)
         {
             //check for supported language
             LanguageInfo languageInfo = new LanguageInfo();
@@ -367,7 +400,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="fileText"></param>
-        void ProcessInMemory(string filePath, string fileText, LanguageInfo languageInfo)
+        private void ProcessInMemory(string filePath, string fileText, LanguageInfo languageInfo)
         {
             #region minorRollupTrackingAndProgress
 
@@ -379,10 +412,14 @@ namespace Microsoft.ApplicationInspector.Commands
             int percentCompleted = (int)((float)totalFilesReviewed / (float)_metaDataHelper.Metadata.TotalFiles * 100);
             //earlier issue now resolved so app handles mixed zipped/zipped and unzipped/zipped directories but catch all for non-critical UI
             if (percentCompleted > 100)
+            {
                 percentCompleted = 100;
+            }
 
             if (percentCompleted < 100) //caller already reports @100% so avoid 2x for file output
+            {
                 WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted), false);
+            }
 
             #endregion
 
@@ -405,9 +442,13 @@ namespace Microsoft.ApplicationInspector.Commands
                     String textMatch = string.Empty;
 
                     if (scanResult.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))
+                    {
                         textMatch = ExtractDependency(fileText, scanResult.Boundary.Index, scanResult.PatternMatch, languageInfo.Name);
+                    }
                     else
+                    {
                         textMatch = ExtractTextSample(fileText, scanResult.Boundary.Index, scanResult.Boundary.Length);
+                    }
 
                     MatchRecord matchRecord = new MatchRecord()
                     {
@@ -448,14 +489,16 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Simple wrapper but keeps calling code consistent
         /// Do not html code result which is accomplished later before out put to report
         /// </summary>
-        string ExtractTextSample(string fileText, int index, int length)
+        private string ExtractTextSample(string fileText, int index, int length)
         {
             string result = "";
             try
             {
                 //some js file results may be too long for practical display
                 if (length > MAX_TEXT_SAMPLE_LENGTH)
+                {
                     length = MAX_TEXT_SAMPLE_LENGTH;
+                }
 
                 result = fileText.Substring(index, length).Trim();
             }
@@ -486,8 +529,15 @@ namespace Microsoft.ApplicationInspector.Commands
             var distance = (int)((length - 1.0) / 2.0);
 
             // Sanity check
-            if (startLineNumber < 0) startLineNumber = 0;
-            if (startLineNumber >= lines.Length) startLineNumber = lines.Length - 1;
+            if (startLineNumber < 0)
+            {
+                startLineNumber = 0;
+            }
+
+            if (startLineNumber >= lines.Length)
+            {
+                startLineNumber = lines.Length - 1;
+            }
 
             var excerptStartLine = Math.Max(0, startLineNumber - distance);
             var excerptEndLine = Math.Min(lines.Length - 1, startLineNumber + distance);
@@ -525,7 +575,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Helper to special case additional processing to just get the values without the import keywords etc.
         /// and encode for html output
         /// </summary>
-        string ExtractDependency(string text, int startIndex, SearchPattern pattern, string language)
+        private string ExtractDependency(string text, int startIndex, SearchPattern pattern, string language)
         {
             // import value; load value; include value; 
             string rawResult = "";
@@ -547,12 +597,18 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             string[] parseValues = match.Groups[0].Value.Split(' ');
                             if (parseValues.Length == 1)
+                            {
                                 rawResult = parseValues[0].Trim();
+                            }
                             else if (parseValues.Length > 1)
+                            {
                                 rawResult = parseValues[1].Trim(); //should be value; time will tell if fullproof
+                            }
                         }
                         else if (match.Groups.Count > 1)//handles cases like include <stdio.h>
+                        {
                             rawResult = match.Groups[1].Value.Trim();
+                        }
                         //else if > 2 too hard to match; do nothing
 
                         break;//only designed to expect one match per line i.e. not include value include value
@@ -573,7 +629,7 @@ namespace Microsoft.ApplicationInspector.Commands
         #endregion
 
 
-        void UnZipAndProcess(string filename, ArchiveFileType archiveFileType)
+        private void UnZipAndProcess(string filename, ArchiveFileType archiveFileType)
         {
             // zip itself may be in excluded list i.e. sample, test or similar unless ignore filter requested
             if (_fileExclusionList != null && _fileExclusionList.Any(v => filename.ToLower().Contains(v)))
@@ -639,7 +695,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="languageInfo"></param>
         /// <param name="fileLength">should be > zero if called from unzip method</param>
         /// <returns></returns>
-        bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
+        private bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
         {
             _metaDataHelper.Metadata.FileExtensions.Add(Path.GetExtension(filePath).Replace('.', ' ').TrimStart());
 

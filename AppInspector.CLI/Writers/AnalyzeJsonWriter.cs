@@ -52,7 +52,9 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.NewLine();
 
             if (autoClose)
+            {
                 FlushAndClose();
+            }
         }
 
 

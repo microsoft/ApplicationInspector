@@ -11,13 +11,13 @@ using System.Linq;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
-    class Program
+    internal class Program
     {
         /// <summary>
         /// CLI program entry point which defines command verbs and options to running
         /// </summary>
         /// <param name="args"></param>
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
             int finalResult = (int)Utils.ExitCode.CriticalError;
 
@@ -60,9 +60,13 @@ namespace Microsoft.ApplicationInspector.CLI
             if (finalResult == (int)Utils.ExitCode.CriticalError)
             {
                 if (!String.IsNullOrEmpty(Utils.LogFilePath))
+                {
                     WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.RUNTIME_ERROR_UNNAMED, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                }
                 else
+                {
                     WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.RUNTIME_ERROR_PRELOG), true, WriteOnce.ConsoleVerbosity.Medium, false);
+                }
             }
 
 
@@ -189,7 +193,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// and NuGet callers are checked by the commands themselves
         /// </summary>
         /// <param name="options"></param>
-        static void CommonOutputChecks(CLICommandOptions options)
+        private static void CommonOutputChecks(CLICommandOptions options)
         {
             //validate requested format
             string fileFormatArgs = options.OutputFileFormat;
@@ -233,7 +237,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// Ensure output file path can be written to
         /// </summary>
         /// <param name="filePath"></param>
-        static void ValidFileWritePath(string filePath)
+        private static void ValidFileWritePath(string filePath)
         {
             try
             {

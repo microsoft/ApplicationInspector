@@ -62,11 +62,11 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class TagTestCommand
     {
-        enum TagTestType { RulesPresent, RulesNotPresent }
+        private enum TagTestType { RulesPresent, RulesNotPresent }
 
-        TagTestOptions _options;
-        TagTestType _arg_tagTestType;
-        RuleSet _rulesSet;
+        private TagTestOptions _options;
+        private TagTestType _arg_tagTestType;
+        private RuleSet _rulesSet;
 
         /// Compares a set of rules against a source path...
         /// Used for both RulesPresent and RulesNotePresent options
@@ -101,13 +101,15 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Establish console verbosity
         /// For NuGet DLL use, console is muted overriding any arguments sent
         /// </summary>
-        void ConfigureConsoleOutput()
+        private void ConfigureConsoleOutput()
         {
             WriteOnce.SafeLog("TagTestCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
             if (!Utils.CLIExecutionContext)
+            {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
+            }
             else
             {
                 WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
@@ -116,13 +118,13 @@ namespace Microsoft.ApplicationInspector.Commands
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
                 else
+                {
                     WriteOnce.Verbosity = verbosity;
+                }
             }
         }
 
-
-
-        void ConfigureCompareTest()
+        private void ConfigureCompareTest()
         {
             if (!Enum.TryParse(_options.TestType, true, out _arg_tagTestType))
             {
@@ -143,7 +145,9 @@ namespace Microsoft.ApplicationInspector.Commands
             List<string> rulePaths = new List<string>();
 
             if (!string.IsNullOrEmpty(_options.CustomRulesPath))
+            {
                 rulePaths.Add(_options.CustomRulesPath);
+            }
 
             try
             {
@@ -229,7 +233,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     string[] tagsFound = new string[sizeTags];
 
                     foreach (string tag in analyze1.MetaData.UniqueTags.ToList<string>())
+                    {
                         tagsFound[count++] = tag;
+                    }
 
                     foreach (Rule rule in _rulesSet)
                     {
@@ -266,13 +272,16 @@ namespace Microsoft.ApplicationInspector.Commands
             return tagTestResult;
         }
 
-
-        bool TagTest(string[] list, string test)
+        private bool TagTest(string[] list, string test)
         {
             if (_arg_tagTestType == TagTestType.RulesNotPresent)
+            {
                 return (!list.Any(v => v.Equals(test)));
+            }
             else
+            {
                 return (list.Any(v => v.Equals(test)));
+            }
         }
     }
 }

@@ -205,9 +205,13 @@ namespace ApplicationInspector.UnitTest.CLICommands
                 {
                     string testLogContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
                     if (String.IsNullOrEmpty(testLogContent))
+                    {
                         exitCode = PackRulesResult.ExitCode.CriticalError;
+                    }
                     else if (testLogContent.ToLower().Contains("trace"))
+                    {
                         exitCode = PackRulesResult.ExitCode.Success;
+                    }
                 }
                 else
                 {
@@ -248,9 +252,13 @@ namespace ApplicationInspector.UnitTest.CLICommands
                 {
                     string testLogContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
                     if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
+                    {
                         exitCode = PackRulesResult.ExitCode.Success;
+                    }
                     else
+                    {
                         exitCode = PackRulesResult.ExitCode.CriticalError;
+                    }
                 }
 
 
@@ -289,9 +297,13 @@ namespace ApplicationInspector.UnitTest.CLICommands
                 {
                     string testLogContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
                     if (String.IsNullOrEmpty(testLogContent))
+                    {
                         exitCode = PackRulesResult.ExitCode.CriticalError;
+                    }
                     else if (testLogContent.ToLower().Contains("debug"))
+                    {
                         exitCode = PackRulesResult.ExitCode.Success;
+                    }
                 }
             }
             catch (Exception)

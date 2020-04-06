@@ -12,12 +12,12 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Common helper used by VerifyRulesCommand and PackRulesCommand classes to reduce duplication
     /// </summary>
-    class RulesVerifier
+    internal class RulesVerifier
     {
-        bool fail_fast;
+        private bool fail_fast;
         private RuleSet _rules;
         private string _rulesPath;
-        Logger _logger;
+        private Logger _logger;
 
         public RulesVerifier(string rulePath, Logger logger)
         {
@@ -32,9 +32,13 @@ namespace Microsoft.ApplicationInspector.Commands
             fail_fast = failFast;
 
             if (Directory.Exists(_rulesPath))
+            {
                 LoadDirectory(_rulesPath);
+            }
             else if (File.Exists(_rulesPath))
+            {
                 LoadFile(_rulesPath);
+            }
             else
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, _rulesPath));
@@ -65,17 +69,16 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 //allow caller to specify whether to continue
                 if (fail_fast)
+                {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_FAILED, file));
+                }
             }
 
         }
 
 
 
-        public RuleSet CompiledRuleset
-        {
-            get { return _rules; }
-        }
+        public RuleSet CompiledRuleset => _rules;
 
     }
 }

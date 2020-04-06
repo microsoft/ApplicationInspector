@@ -121,9 +121,13 @@ namespace ApplicationInspector.UnitTest.Commands
 
                     string testLogContent = File.ReadAllText(options.LogFilePath);
                     if (String.IsNullOrEmpty(testLogContent))
+                    {
                         exitCode = VerifyRulesResult.ExitCode.CriticalError;
+                    }
                     else if (testLogContent.ToLower().Contains("trace"))
+                    {
                         exitCode = VerifyRulesResult.ExitCode.Verified;
+                    }
                 }
 
             }
@@ -162,9 +166,13 @@ namespace ApplicationInspector.UnitTest.Commands
             {
                 string testLogContent = File.ReadAllText(options.LogFilePath);
                 if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
+                {
                     exitCode = VerifyRulesResult.ExitCode.Verified;
+                }
                 else
+                {
                     exitCode = VerifyRulesResult.ExitCode.CriticalError;
+                }
             }
 
             //because these are static and each test is meant to be indpendent null assign the references to create the log
@@ -197,9 +205,13 @@ namespace ApplicationInspector.UnitTest.Commands
                 {
                     string testLogContent = File.ReadAllText(options.LogFilePath);
                     if (String.IsNullOrEmpty(testLogContent))
+                    {
                         exitCode = VerifyRulesResult.ExitCode.CriticalError;
+                    }
                     else if (testLogContent.ToLower().Contains("debug"))
+                    {
                         exitCode = VerifyRulesResult.ExitCode.Verified;
+                    }
                 }
 
             }

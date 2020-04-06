@@ -26,17 +26,29 @@ namespace Microsoft.ApplicationInspector.CLI
 
             //allocate the right writer by cmd (options) type
             if (options is CLIAnalyzeCmdOptions)
+            {
                 writer = GetAnalyzeWriter(options);
+            }
             else if (options is CLITagTestCmdOptions)
+            {
                 writer = GetTagTestWriter(options);
+            }
             else if (options is CLITagDiffCmdOptions)
+            {
                 writer = GetTagDiffWriter(options);
+            }
             else if (options is CLIExportTagsCmdOptions)
+            {
                 writer = GetExportWriter(options);
+            }
             else if (options is CLIVerifyRulesCmdOptions)
+            {
                 writer = GetVerifyRulesWriter(options);
+            }
             else if (options is CLIPackRulesCmdOptions)
+            {
                 writer = GetPackRulesWriter(options);
+            }
 
             return writer;
         }
@@ -47,7 +59,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        static CommandResultsWriter GetAnalyzeWriter(CLICommandOptions options)
+        private static CommandResultsWriter GetAnalyzeWriter(CLICommandOptions options)
         {
             CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions = (CLIAnalyzeCmdOptions)options;
             CommandResultsWriter writer = null;
@@ -108,8 +120,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         }
 
-
-        static CommandResultsWriter GetTagTestWriter(CLICommandOptions options)
+        private static CommandResultsWriter GetTagTestWriter(CLICommandOptions options)
         {
             CLITagTestCmdOptions cLIAnalyzeCmdOptions = (CLITagTestCmdOptions)options;
             CommandResultsWriter writer = null;
@@ -137,7 +148,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return writer;
         }
 
-        static CommandResultsWriter GetTagDiffWriter(CLICommandOptions options)
+        private static CommandResultsWriter GetTagDiffWriter(CLICommandOptions options)
         {
             CLITagDiffCmdOptions cLIAnalyzeCmdOptions = (CLITagDiffCmdOptions)options;
             CommandResultsWriter writer = null;
@@ -165,8 +176,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return writer;
         }
 
-
-        static CommandResultsWriter GetVerifyRulesWriter(CLICommandOptions options)
+        private static CommandResultsWriter GetVerifyRulesWriter(CLICommandOptions options)
         {
             CLIVerifyRulesCmdOptions cLIAnalyzeCmdOptions = (CLIVerifyRulesCmdOptions)options;
             CommandResultsWriter writer = null;
@@ -194,8 +204,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return writer;
         }
 
-
-        static CommandResultsWriter GetPackRulesWriter(CLICommandOptions options)
+        private static CommandResultsWriter GetPackRulesWriter(CLICommandOptions options)
         {
             CLIPackRulesCmdOptions cLIAnalyzeCmdOptions = (CLIPackRulesCmdOptions)options;
             CommandResultsWriter writer = null;
@@ -219,10 +228,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return writer;
         }
 
-
-
-
-        static TextWriter GetTextWriter(string outputFileName)
+        private static TextWriter GetTextWriter(string outputFileName)
         {
             TextWriter textWriter;
             if (String.IsNullOrEmpty(outputFileName))

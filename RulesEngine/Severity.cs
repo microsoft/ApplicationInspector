@@ -10,8 +10,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// Issue severity
     /// </summary>
     [Flags]
-    public enum Severity 
-    {        
+    public enum Severity
+    {
         /// <summary>
         /// Critical issues
         /// </summary>
@@ -37,7 +37,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// <summary>
     /// Json Converter for Severity
     /// </summary>
-    class SeverityConverter : JsonConverter
+    internal class SeverityConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {

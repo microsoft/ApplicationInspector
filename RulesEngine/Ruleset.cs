@@ -19,7 +19,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     {
         private List<Rule> _rules;
         private Logger _logger;
-        HashSet<string> _uniqueRuleIds;
+        private HashSet<string> _uniqueRuleIds;
 
         /// <summary>
         /// Delegate for deserialization error handler
@@ -66,10 +66,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public void AddDirectory(string path, string tag = null)
         {
             if (path == null)
+            {
                 throw new ArgumentNullException("path");
+            }
 
             if (!Directory.Exists(path))
+            {
                 throw new DirectoryNotFoundException();
+            }
 
             foreach (string filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
             {
@@ -85,13 +89,19 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public void AddFile(string filename, string tag = null)
         {
             if (string.IsNullOrEmpty(filename))
+            {
                 throw new ArgumentException(filename);
+            }
 
             if (!File.Exists(filename))
+            {
                 throw new FileNotFoundException(filename);
+            }
 
             if (_logger != null)
+            {
                 _logger.Debug("Attempting to read: " + filename);
+            }
 
             using (StreamReader file = File.OpenText(filename))
             {
@@ -137,7 +147,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         r.RuntimeTag = tag;
 
                         if (r.Patterns == null)
+                        {
                             r.Patterns = new SearchPattern[] { };
+                        }
 
                         foreach (SearchPattern pattern in r.Patterns)
                         {
@@ -145,7 +157,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
 
                         if (r.Conditions == null)
+                        {
                             r.Conditions = new SearchCondition[] { };
+                        }
 
                         foreach (SearchCondition condition in r.Conditions)
                         {
@@ -153,12 +167,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
 
                         if (_logger != null)
+                        {
                             _logger.Trace(string.Format("Rule added: {0},{1},{2}", r.Id, r.Name, r.Description));
+                        }
                     }
                     else
                     {
                         if (_logger != null)
+                        {
                             _logger.Error(string.Format("Duplicate ruleId {0} found.", r.Id));
+                        }
 
                         throw new Exception(string.Format("Duplicate ruleId {0} found.", r.Id));
                     }
@@ -241,7 +259,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             foreach (string c in comps)
             {
                 if (source.Contains(c))
+                {
                     return true;
+                }
             }
 
             return false;

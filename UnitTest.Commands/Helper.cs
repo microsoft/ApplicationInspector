@@ -8,11 +8,13 @@ namespace ApplicationInspector.UnitTest.Misc
     {
         public enum AppPath { basePath, testSource, testRules, testOutput, defaultRules, appInspectorCLI };
 
-        static string _basePath;
+        private static string _basePath;
         static private string GetBaseAppPath()
         {
             if (!String.IsNullOrEmpty(_basePath))
+            {
                 return _basePath;
+            }
 
             _basePath = Path.GetFullPath(System.AppContext.BaseDirectory);
             return _basePath;
@@ -64,7 +66,9 @@ namespace ApplicationInspector.UnitTest.Misc
             for (i = 0; i < contentLines.Length; i++)
             {
                 if (contentLines[i].Contains("[UniqueTags]"))
+                {
                     break;
+                }
             }
 
             i++;//get past marker
@@ -72,7 +76,9 @@ namespace ApplicationInspector.UnitTest.Misc
             {
                 results.Add(contentLines[i++]);
                 if (i > contentLines.Length)
+                {
                     break;
+                }
             }
 
             return results;

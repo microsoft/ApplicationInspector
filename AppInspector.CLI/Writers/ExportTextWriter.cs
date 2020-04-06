@@ -16,13 +16,19 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.Result("Result details:");
 
             if (exportTagsResult.TagsList.Count > 0)
+            {
                 WriteOnce.General("Tags");
+            }
 
             foreach (string tag in exportTagsResult.TagsList)
+            {
                 WriteOnce.General(tag);
+            }
 
             if (autoClose)
+            {
                 FlushAndClose();
+            }
         }
 
         public override void FlushAndClose()

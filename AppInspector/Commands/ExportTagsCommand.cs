@@ -54,8 +54,8 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class ExportTagsCommand
     {
-        ExportTagsOptions _options;
-        RuleSet _rules;
+        private ExportTagsOptions _options;
+        private RuleSet _rules;
 
         public ExportTagsCommand(ExportTagsOptions opt)
         {
@@ -84,13 +84,15 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Establish console verbosity
         /// For NuGet DLL use, console is muted overriding any arguments sent
         /// </summary>
-        void ConfigureConsoleOutput()
+        private void ConfigureConsoleOutput()
         {
             WriteOnce.SafeLog("ExportTagsCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
             if (!Utils.CLIExecutionContext)
+            {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
+            }
             else
             {
                 WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
@@ -99,12 +101,13 @@ namespace Microsoft.ApplicationInspector.Commands
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
                 else
+                {
                     WriteOnce.Verbosity = verbosity;
+                }
             }
         }
 
-
-        void ConfigRules()
+        private void ConfigRules()
         {
             WriteOnce.SafeLog("ExportTagsCommand::ConfigRules", LogLevel.Trace);
 
@@ -116,14 +119,22 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!string.IsNullOrEmpty(_options.CustomRulesPath))
             {
                 if (_rules == null)
+                {
                     _rules = new RuleSet(_options.Log);
+                }
 
                 if (Directory.Exists(_options.CustomRulesPath))
+                {
                     _rules.AddDirectory(_options.CustomRulesPath);
+                }
                 else if (File.Exists(_options.CustomRulesPath))
+                {
                     _rules.AddFile(_options.CustomRulesPath);
+                }
                 else
+                {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, _options.CustomRulesPath));
+                }
             }
 
             //error check based on ruleset not path enumeration
@@ -157,9 +168,13 @@ namespace Microsoft.ApplicationInspector.Commands
                     foreach (string t in r.Tags)
                     {
                         if (uniqueTags.ContainsKey(t))
+                        {
                             continue;
+                        }
                         else
+                        {
                             uniqueTags.Add(t, t);
+                        }
                     }
                 }
 

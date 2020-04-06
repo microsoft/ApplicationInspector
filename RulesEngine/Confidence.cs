@@ -11,7 +11,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// <summary>
     /// Json converter for Pattern Type
     /// </summary>
-    class ConfidenceConverter : JsonConverter
+    internal class ConfidenceConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {

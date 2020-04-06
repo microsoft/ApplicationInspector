@@ -12,7 +12,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Class to handle text as a searchable container
     /// </summary>
-    class AnalyzeTextContainer
+    internal class AnalyzeTextContainer
     {
         /// <summary>
         /// Creates new instance
@@ -37,7 +37,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
             // Text can end with \n or not
             if (_lineEnds[_lineEnds.Count - 1] == -1)
+            {
                 _lineEnds[_lineEnds.Count - 1] = (_content.Length > 0) ? content.Length - 1 : 0;
+            }
         }
 
         /// <summary>
@@ -66,7 +68,9 @@ namespace Microsoft.ApplicationInspector.Commands
             string text = _content.Substring(scope.Index, scope.Length);
             List<Boundary> macthes = MatchPattern(pattern, text);
             if (macthes.Count > 0)
+            {
                 result = true;
+            }
 
             return result;
         }
@@ -161,7 +165,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     Boundary bound = new Boundary() { Index = m.Index, Length = m.Length };
                     if (ScopeMatch(pattern, bound, text))
+                    {
                         matchList.Add(bound);
+                    }
                 }
             }
 
@@ -182,7 +188,9 @@ namespace Microsoft.ApplicationInspector.Commands
             string inline = Language.GetCommentInline(_language);
 
             if (pattern.Scopes.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
+            {
                 return true;
+            }
 
             bool isInComment = (IsBetween(text, boundary.Index, prefix, suffix)
                                || IsBetween(text, boundary.Index, inline, "\n"));
@@ -208,7 +216,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 preText = preText.Substring(lastPreffix);
                 int lastSuffix = preText.IndexOf(suffix, StringComparison.Ordinal);
                 if (lastSuffix < 0)
+                {
                     result = true;
+                }
             }
 
             return result;
@@ -226,12 +236,19 @@ namespace Microsoft.ApplicationInspector.Commands
 
             // We need the begining of the line when going up
             if (offset < 0)
+            {
                 index--;
+            }
 
             if (index < 0)
+            {
                 index = 0;
+            }
+
             if (index >= _lineEnds.Count)
+            {
                 index = _lineEnds.Count - 1;
+            }
 
             return _lineEnds[index];
         }

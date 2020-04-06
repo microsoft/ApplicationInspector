@@ -19,19 +19,29 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(MsgHelp.FormatString(MsgHelp.ID.TAGTEST_RESULTS_TEST_TYPE, cLITagDiffCmdOptions.TestType), false, WriteOnce.ConsoleVerbosity.Low);
 
             if (tagDiffResult.ResultCode == TagDiffResult.ExitCode.TestFailed)
+            {
                 WriteOnce.Any(MsgHelp.GetString(MsgHelp.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+            }
             else
+            {
                 WriteOnce.Any(MsgHelp.GetString(MsgHelp.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
+            }
 
             //Results list
             if (tagDiffResult.TagDiffList.Count > 0)
+            {
                 WriteOnce.Result("Result details:");
+            }
 
             foreach (TagDiff tagDiff in tagDiffResult.TagDiffList)
+            {
                 WriteOnce.General(String.Format("Tag: {0}, Only found in file: {1}", tagDiff.Tag, tagDiff.Source));
+            }
 
             if (autoClose)
+            {
                 FlushAndClose();
+            }
         }
 
         public override void FlushAndClose()

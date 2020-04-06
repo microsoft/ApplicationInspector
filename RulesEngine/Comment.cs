@@ -8,18 +8,18 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// <summary>
     /// Comment class to hold information about comment for each language
     /// </summary>
-    class Comment
+    internal class Comment
     {
-        [JsonProperty(PropertyName ="language")]
+        [JsonProperty(PropertyName = "language")]
         public string[] Languages { get; set; }
 
-        [JsonProperty(PropertyName ="inline")]
-        public string Inline{ get; set; }
+        [JsonProperty(PropertyName = "inline")]
+        public string Inline { get; set; }
 
         [JsonProperty(PropertyName = "preffix")]
         public string Preffix { get; set; }
 
-        [JsonProperty(PropertyName ="suffix")]
+        [JsonProperty(PropertyName = "suffix")]
         public string Suffix { get; set; }
     }
 }

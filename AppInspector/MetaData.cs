@@ -46,36 +46,35 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(PropertyName = "totalMatchesCount")]
         public int TotalMatchesCount { get; set; }
         [JsonProperty(PropertyName = "uniqueMatchesCount")]
-        public int UniqueMatchesCount { get { return UniqueTags.Count; } } //for liquid use
+        public int UniqueMatchesCount => UniqueTags.Count;  //for liquid use
 
         //convenience getters for serialzation and easy reference of standard properties found in dynamic lists
         [JsonProperty(PropertyName = "packageTypes")]
-        public HashSet<string> PackageTypes { get { return KeyedPropertyLists["strGrpPackageTypes"]; } }
+        public HashSet<string> PackageTypes => KeyedPropertyLists["strGrpPackageTypes"];
         [JsonProperty(PropertyName = "appTypes")]
-        public HashSet<string> AppTypes { get { return KeyedPropertyLists["strGrpAppTypes"]; } }
+        public HashSet<string> AppTypes => KeyedPropertyLists["strGrpAppTypes"];
         [JsonIgnore]
-        public HashSet<string> RulePaths { get { return KeyedPropertyLists["strGrpRulePaths"]; } set { KeyedPropertyLists["strGrpRulePaths"] = value; } }
+        public HashSet<string> RulePaths { get => KeyedPropertyLists["strGrpRulePaths"]; set => KeyedPropertyLists["strGrpRulePaths"] = value; }
         [JsonIgnore]
-        public HashSet<string> FileNames { get { return KeyedPropertyLists["strGrpFileNames"]; } }
+        public HashSet<string> FileNames => KeyedPropertyLists["strGrpFileNames"];
         [JsonProperty(PropertyName = "uniqueTags")]
-        public HashSet<string> UniqueTags { get { return KeyedPropertyLists["strGrpUniqueTags"]; } set { KeyedPropertyLists["strGrpUniqueTags"] = value; } }
+        public HashSet<string> UniqueTags { get => KeyedPropertyLists["strGrpUniqueTags"]; set => KeyedPropertyLists["strGrpUniqueTags"] = value; }
         [JsonProperty(PropertyName = "uniqueDependencies")]
-        public HashSet<string> UniqueDependencies { get { return KeyedPropertyLists["strGrpUniqueDependencies"]; } }
+        public HashSet<string> UniqueDependencies => KeyedPropertyLists["strGrpUniqueDependencies"];
         [JsonProperty(PropertyName = "outputs")]
-        public HashSet<string> Outputs { get { return KeyedPropertyLists["strGrpOutputs"]; } }
+        public HashSet<string> Outputs => KeyedPropertyLists["strGrpOutputs"];
         [JsonProperty(PropertyName = "targets")]
-        public HashSet<string> Targets { get { return KeyedPropertyLists["strGrpTargets"]; } }
+        public HashSet<string> Targets => KeyedPropertyLists["strGrpTargets"];
         [JsonProperty(PropertyName = "languages")]
         public Dictionary<string, int> Languages;
         [JsonProperty(PropertyName = "OSTargets")]
-        public HashSet<string> OSTargets { get { return KeyedPropertyLists["strGrpOSTargets"]; } }
+        public HashSet<string> OSTargets => KeyedPropertyLists["strGrpOSTargets"];
         [JsonProperty(PropertyName = "fileExtensions")]
-        public HashSet<string> FileExtensions
-        { get { return KeyedPropertyLists["strGrpFileExtensions"]; } }
+        public HashSet<string> FileExtensions => KeyedPropertyLists["strGrpFileExtensions"];
         [JsonProperty(PropertyName = "cloudTargets")]
-        public HashSet<string> CloudTargets { get { return KeyedPropertyLists["strGrpCloudTargets"]; } }
+        public HashSet<string> CloudTargets => KeyedPropertyLists["strGrpCloudTargets"];
         [JsonProperty(PropertyName = "CPUTargets")]
-        public HashSet<string> CPUTargets { get { return KeyedPropertyLists["strGrpCPUTargets"]; } }
+        public HashSet<string> CPUTargets => KeyedPropertyLists["strGrpCPUTargets"];
 
         //other data types
         [JsonProperty(PropertyName = "tagCounters")]

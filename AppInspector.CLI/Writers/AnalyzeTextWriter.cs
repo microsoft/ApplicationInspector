@@ -11,7 +11,7 @@ namespace Microsoft.ApplicationInspector.CLI
 {
     public class AnalyzeTextWriter : CommandResultsWriter
     {
-        readonly int COLUMN_MAX = 80;
+        private readonly int COLUMN_MAX = 80;
 
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
@@ -28,7 +28,9 @@ namespace Microsoft.ApplicationInspector.CLI
                 keys.Sort();
 
                 foreach (string tag in keys)
+                {
                     WriteOnce.General(tag);
+                }
             }
             else
             {
@@ -37,11 +39,15 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteOnce.General(MakeHeading("Match Details"));
 
                 foreach (MatchRecord match in analyzeResult.MetaData.MatchList)
+                {
                     WriteMatch(match);
+                }
             }
 
             if (autoClose)
+            {
                 FlushAndClose();
+            }
         }
 
 
@@ -49,9 +55,13 @@ namespace Microsoft.ApplicationInspector.CLI
         public AnalyzeTextWriter(string formatString)
         {
             if (string.IsNullOrEmpty(formatString))
+            {
                 _formatString = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,SourceLabel:%l,SourceType:%tLine:%L,Sample:%m";
+            }
             else
+            {
                 _formatString = formatString;
+            }
         }
 
 
@@ -63,7 +73,9 @@ namespace Microsoft.ApplicationInspector.CLI
             StringBuilder build = new StringBuilder();
 
             foreach (string s in data)
+            {
                 build.Append(" ");
+            }
 
             return build.ToString();
         }
@@ -107,7 +119,9 @@ namespace Microsoft.ApplicationInspector.CLI
             StringBuilder build = new StringBuilder();
             build.Append(string.Format("[{0}]", header));
             for (int i = header.Length; i < COLUMN_MAX; i++)
+            {
                 build.Append("-");
+            }
 
             return build.ToString();
         }
@@ -148,7 +162,9 @@ namespace Microsoft.ApplicationInspector.CLI
             orderedTags.Sort();
 
             foreach (string tag in orderedTags)
+            {
                 WriteOnce.General(tag);
+            }
 
             WriteOnce.General(MakeHeading("Select Counters"));
             foreach (MetricTagCounter tagCounter in metaData.TagCounters)
@@ -187,7 +203,9 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(MakeHeading("Dependencies"));
 
             foreach (string s in metaData.UniqueDependencies)
+            {
                 WriteOnce.General(s);
+            }
         }
 
 
@@ -199,6 +217,6 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.TextWriter = null;
         }
 
-        string _formatString;
+        private string _formatString;
     }
 }

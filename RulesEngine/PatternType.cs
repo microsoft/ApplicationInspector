@@ -20,7 +20,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// <summary>
     /// Json converter for Pattern Type
     /// </summary>
-    class PatternTypeConverter : JsonConverter
+    internal class PatternTypeConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {

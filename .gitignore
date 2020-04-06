@@ -270,3 +270,4 @@ __pycache__/
 /Microsoft.DevSkim/linux/ApplicationInspector
 /AppInspector/Resources/defaultRules.json
 /UnitTest.Commands/output
+/RulesPacker/log.txt

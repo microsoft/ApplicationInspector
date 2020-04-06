@@ -42,7 +42,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public static bool FromFileName(string fileName, ref LanguageInfo info)
         {
             if (fileName == null)
+            {
                 return false;
+            }
 
             bool result = false;
 
@@ -89,7 +91,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 foreach (Comment comment in Instance.Comments)
                 {
                     if (comment.Languages.Contains(language))
+                    {
                         return comment.Inline;
+                    }
                 }
             }
 
@@ -110,7 +114,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 foreach (Comment comment in Instance.Comments)
                 {
                     if (comment.Languages.Contains(language))
+                    {
                         return comment.Preffix;
+                    }
                 }
             }
 
@@ -131,7 +137,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 foreach (Comment comment in Instance.Comments)
                 {
                     if (comment.Languages.Contains(language))
+                    {
                         return comment.Suffix;
+                    }
                 }
             }
 
@@ -156,7 +164,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             get
             {
                 if (_instance == null)
+                {
                     _instance = new Language();
+                }
 
                 return _instance;
             }

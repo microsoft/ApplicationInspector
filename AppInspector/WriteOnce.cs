@@ -29,11 +29,11 @@ namespace Microsoft.ApplicationInspector.Commands
         private static ConsoleColor _opColor = ConsoleColor.Cyan;
         private static ConsoleColor _sysColor = ConsoleColor.Magenta;
         //change default colors
-        public ConsoleColor InfoForeColor { set { _infoColor = value; } }
-        public ConsoleColor ErrorForeColor { set { _errorColor = value; } }
-        public ConsoleColor OperationForeColor { set { _opColor = value; } }
-        public ConsoleColor ResultForeColor { set { _resultColor = value; } }
-        public ConsoleColor GeneralForeColor { set { _generalColor = value; } }
+        public ConsoleColor InfoForeColor { set => _infoColor = value; }
+        public ConsoleColor ErrorForeColor { set => _errorColor = value; }
+        public ConsoleColor OperationForeColor { set => _opColor = value; }
+        public ConsoleColor ResultForeColor { set => _resultColor = value; }
+        public ConsoleColor GeneralForeColor { set => _generalColor = value; }
 
 
         public static void Operation(string msg, bool writeLine = true, ConsoleVerbosity verbosity = ConsoleVerbosity.Low)
@@ -63,7 +63,9 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             //log but special check for CLI final exit to avoid duplication of hint to check log in the log
             if (addToLog)
+            {
                 SafeLog(msg, LogLevel.Info);
+            }
 
             //file if applicable
             SafeTextWriterWrite(msg, writeLine, verbosity);
@@ -78,7 +80,9 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             //log but special check for CLI final exit to avoid duplication of hint to check log in the log
             if (addToLog)
+            {
                 SafeLog(msg, LogLevel.Error);
+            }
 
             //file if applicable
             SafeTextWriterWrite(msg, writeLine, verbosity); SafeTextWriterWrite(msg, writeLine, verbosity);
@@ -121,10 +125,12 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="writeLine"></param>
         /// <param name="foreground"></param>
         /// <param name="verbosity"></param>
-        static void SafeConsoleWrite(string msg, bool writeLine, ConsoleColor foreground, ConsoleVerbosity verbosity)
+        private static void SafeConsoleWrite(string msg, bool writeLine, ConsoleColor foreground, ConsoleVerbosity verbosity)
         {
             if (TextWriter != null && TextWriter != Console.Out)
+            {
                 return;
+            }
 
             if (verbosity >= Verbosity)
             {
@@ -132,26 +138,35 @@ namespace Microsoft.ApplicationInspector.Commands
                 Console.ForegroundColor = foreground;
 
                 if (writeLine)
+                {
                     Console.WriteLine(msg);
+                }
                 else
+                {
                     Console.Write(msg);
+                }
 
                 Console.ForegroundColor = lastForecolor;
             }
         }
 
-
-        static void SafeTextWriterWrite(string msg, bool writeLine, ConsoleVerbosity verbosity)
+        private static void SafeTextWriterWrite(string msg, bool writeLine, ConsoleVerbosity verbosity)
         {
             if (TextWriter == null || TextWriter == Console.Out)
+            {
                 return;
+            }
 
             if (verbosity >= Verbosity)
             {
                 if (writeLine)
+                {
                     TextWriter.WriteLine(msg);
+                }
                 else
+                {
                     TextWriter.Write(msg);
+                }
             }
         }
 
@@ -164,7 +179,9 @@ namespace Microsoft.ApplicationInspector.Commands
         static public void SafeLog(string message, NLog.LogLevel logLevel)
         {
             if (Log == null)
+            {
                 Log = Utils.SetupLogging();
+            }
 
             if (Log != null && Log.Name != "Console")
             {

@@ -23,7 +23,7 @@ namespace Microsoft.ApplicationInspector.Commands
             CriticalError = 2
         }
 
-        static string _basePath;
+        private static string _basePath;
         static public string LogFilePath { get; set; } //used to capture and report log path for console messages
         static public Logger Logger { get; set; }
 
@@ -76,7 +76,9 @@ namespace Microsoft.ApplicationInspector.Commands
         static private string GetBaseAppPath()
         {
             if (!String.IsNullOrEmpty(_basePath))
+            {
                 return _basePath;
+            }
 
             _basePath = Path.GetFullPath(System.AppContext.BaseDirectory);
             return _basePath;
@@ -175,7 +177,9 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             //prevent being called again if already set unless closed first
             if (Logger != null)
+            {
                 return Logger;
+            }
 
             var config = new NLog.Config.LoggingConfiguration();
 
@@ -194,11 +198,15 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (!String.IsNullOrEmpty(line))
                 {
                     if (line.Contains("AppInsLog"))//prevent file other than our logs from deletion
+                    {
                         File.Delete(opts.LogFilePath);
+                    }
                     else
                     {
                         if (Utils.CLIExecutionContext && onErrorConsole)
+                        {
                             WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_LOG_PATH, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                        }
 
                         throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_LOG_PATH, opts.LogFilePath));
                     }
@@ -214,7 +222,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, NLog.LogLevel.Error);
                     if (Utils.CLIExecutionContext && onErrorConsole)
+                    {
                         WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, opts.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                    }
 
                     throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, opts.LogFilePath)));
                 }
@@ -222,7 +232,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
             LogLevel log_level = LogLevel.Error;//default
             if (String.IsNullOrEmpty(opts.LogFileLevel))
+            {
                 opts.LogFileLevel = "Error";
+            }
 
             try
             {
@@ -231,7 +243,9 @@ namespace Microsoft.ApplicationInspector.Commands
             catch (Exception)
             {
                 if (Utils.CLIExecutionContext && onErrorConsole)
+                {
                     WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-v"), true, WriteOnce.ConsoleVerbosity.Low, false);
+                }
 
                 throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-v")));
             }

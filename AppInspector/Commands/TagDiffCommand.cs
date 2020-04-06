@@ -78,10 +78,10 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class TagDiffCommand
     {
-        enum TagTestType { Equality, Inequality }
+        private enum TagTestType { Equality, Inequality }
 
-        TagDiffOptions _options;
-        TagTestType _arg_tagTestType;
+        private TagDiffOptions _options;
+        private TagTestType _arg_tagTestType;
 
         public TagDiffCommand(TagDiffOptions opt)
         {
@@ -111,13 +111,15 @@ namespace Microsoft.ApplicationInspector.Commands
         /// For NuGet DLL use, console is muted overriding any arguments sent
         /// Pre: Always call again after ConfigureFileOutput
         /// </summary>
-        void ConfigureConsoleOutput()
+        private void ConfigureConsoleOutput()
         {
             WriteOnce.SafeLog("TagDiffCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
             if (!Utils.CLIExecutionContext)
+            {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
+            }
             else
             {
                 WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
@@ -126,13 +128,14 @@ namespace Microsoft.ApplicationInspector.Commands
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
                 else
+                {
                     WriteOnce.Verbosity = verbosity;
+                }
             }
 
         }
 
-
-        void ConfigureCompareType()
+        private void ConfigureCompareType()
         {
             if (!Enum.TryParse(_options.TestType, true, out _arg_tagTestType))
             {
@@ -140,9 +143,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-
-
-        void ConfigSourceToScan()
+        private void ConfigSourceToScan()
         {
             WriteOnce.SafeLog("TagDiff::ConfigRules", LogLevel.Trace);
 
@@ -231,15 +232,18 @@ namespace Microsoft.ApplicationInspector.Commands
                     string[] file1Tags = new string[sizeTags1];
 
                     foreach (string tag in analyze1.MetaData.UniqueTags.ToList<string>())
+                    {
                         file1Tags[count1++] = tag;
-
+                    }
 
                     int count2 = 0;
                     int sizeTags2 = analyze2.MetaData.UniqueTags.Count;
                     string[] file2Tags = new string[sizeTags2];
 
                     foreach (string tag in analyze2.MetaData.UniqueTags.ToList<string>())
+                    {
                         file2Tags[count2++] = tag;
+                    }
 
                     //can't simply compare counts as content may differ; must compare both in directions in two passes a->b; b->a
                     equalTagsCompare1 = CompareTags(file1Tags, file2Tags, ref tagDiffResult, TagDiff.DiffSource.Source1);
@@ -250,11 +254,17 @@ namespace Microsoft.ApplicationInspector.Commands
                     //final results
                     bool resultsDiffer = !(equalTagsCompare1 && equalTagsCompare2);
                     if (_arg_tagTestType == TagTestType.Inequality && !resultsDiffer)
+                    {
                         tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
+                    }
                     else if (_arg_tagTestType == TagTestType.Equality && resultsDiffer)
+                    {
                         tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
+                    }
                     else
+                    {
                         tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestPassed;
+                    }
                 }
 
             }
@@ -269,9 +279,7 @@ namespace Microsoft.ApplicationInspector.Commands
             return tagDiffResult;
         }
 
-
-
-        bool CompareTags(string[] fileTags1, string[] fileTags2, ref TagDiffResult tagDiffResult, TagDiff.DiffSource source)
+        private bool CompareTags(string[] fileTags1, string[] fileTags2, ref TagDiffResult tagDiffResult, TagDiff.DiffSource source)
         {
             bool found = true;
             //are all tags in file1 found in file2

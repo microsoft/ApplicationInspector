@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Microsoft.ApplicationInspector.CLI.Writers
 {
-    class PackRulesJsonWriter : CommandResultsWriter
+    internal class PackRulesJsonWriter : CommandResultsWriter
     {
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
@@ -19,7 +19,9 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
             jsonSerializer.Serialize(TextWriter, packRulesResult.Rules);
 
             if (autoClose)
+            {
                 FlushAndClose();
+            }
         }
 
         public override void FlushAndClose()

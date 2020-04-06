@@ -15,6 +15,6 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(PropertyName = "count")]
         public int Count { get; set; }
         [JsonProperty(PropertyName = "includeAsMatch")]
-        public bool IncludeAsMatch { get { return false; } }
+        public bool IncludeAsMatch => false;
     }
 }

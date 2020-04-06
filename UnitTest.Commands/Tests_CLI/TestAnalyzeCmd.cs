@@ -154,7 +154,9 @@ namespace ApplicationInspector.UnitTest.CLICommands
                      Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
                 if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")))
+                {
                     File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                }
 
                 Process test = new Process();
                 test.StartInfo.FileName = appInspectorPath;
@@ -189,7 +191,9 @@ namespace ApplicationInspector.UnitTest.CLICommands
                      Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
                 if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")))
+                {
                     File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                }
 
                 Process test = new Process();
                 test.StartInfo.FileName = appInspectorPath;
@@ -225,7 +229,9 @@ namespace ApplicationInspector.UnitTest.CLICommands
                      Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
                 if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")))
+                {
                     File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                }
 
                 Process test = new Process();
                 test.StartInfo.FileName = appInspectorPath;
