@@ -209,7 +209,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
             }
 
-            //validate output is not empty if not file output specified
+            //validate output is not empty if no file output specified
             if (string.IsNullOrEmpty(options.OutputFilePath))
             {
                 if (options.ConsoleVerbosityLevel.ToLower() == "none")
@@ -224,7 +224,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
             else
             {
-                ValidFilePath(options.OutputFilePath);
+                ValidFileWritePath(options.OutputFilePath);
             }
         }
 
@@ -233,7 +233,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// Ensure output file path can be written to
         /// </summary>
         /// <param name="filePath"></param>
-        static void ValidFilePath(string filePath)
+        static void ValidFileWritePath(string filePath)
         {
             try
             {

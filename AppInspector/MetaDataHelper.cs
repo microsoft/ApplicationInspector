@@ -102,7 +102,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else
             {
-                Metadata.TotalMatchesCount -= 1;//reduce e.g. tag counters only as per preferences file
+                Metadata.TotalMatchesCount -= 1;//reduce e.g. tag counters not included as detailed match
             }
 
         }
