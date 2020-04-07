@@ -249,9 +249,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 List<ScanResult> removes = new List<ScanResult>();
                 foreach (ScanResult m in resultsList)
                 {
-                    if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
+                    if (m.Rule.Overrides is List<string> overrides)
                     {
-                        foreach (string ovrd in m.Rule.Overrides)
+                        foreach (string ovrd in overrides)
                         {
                             // Find all overriden rules and mark them for removal from issues list   
                             foreach (ScanResult om in resultsList.FindAll(x => x.Rule.Id == ovrd))
@@ -442,4 +442,3 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
     }
 }
-
