@@ -25,12 +25,14 @@ namespace ApplicationInspector.UnitTest.CLICommands
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = String.Format(@"analyze -b -s {0} -f html -k none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (AnalyzeResult.ExitCode)test.ExitCode;
+                using (Process test = new Process())
+                {
+                    test.StartInfo.FileName = appInspectorPath;
+                    test.StartInfo.Arguments = args;
+                    bool started = test.Start();
+                    test.WaitForExit();
+                    exitCode = (AnalyzeResult.ExitCode)test.ExitCode;
+                }
             }
             catch (Exception)
             {

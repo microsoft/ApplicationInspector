@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 namespace Microsoft.ApplicationInspector.CLI.Writers
 {
 
-
     internal class JsonWriter : CommandResultsWriter
     {
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
@@ -30,7 +29,7 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
             {
                 jsonSerializer.Serialize(TextWriter, (PackRulesResult)result);
             }
-            else if (result is AnalyzeResult analyzeResult)
+            else
             {
                 throw new System.Exception("Unexpected object type for json writer");
             }

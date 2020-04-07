@@ -74,6 +74,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             foreach (string s in data)
             {
+                build.Append(s);
                 build.Append(" ");
             }
 

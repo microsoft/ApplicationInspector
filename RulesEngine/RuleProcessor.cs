@@ -297,7 +297,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             bool betterMatch = false;
 
             //if list is empty the new match is the best match
-            if (scanResults != null && scanResults.Count == 0)
+            if (scanResults == null || scanResults.Count == 0)
             {
                 return true;
             }

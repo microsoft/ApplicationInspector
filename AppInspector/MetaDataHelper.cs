@@ -155,32 +155,30 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
+
+        /// <summary>
+        /// Initial best guess to deduce project name; if scanned metadata from project solution value is replaced later
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <returns></returns>
         private string GetDefaultProjectName(string sourcePath)
         {
             string applicationName = "";
 
-            //test effort to deduce project name
-            try
+            if (Directory.Exists(sourcePath))
             {
-                if (Directory.Exists(sourcePath))
+                try
                 {
-                    try
-                    {
-                        applicationName = sourcePath.Substring(sourcePath.LastIndexOf(Path.DirectorySeparatorChar)).Replace(Path.DirectorySeparatorChar, ' ').Trim();
-                    }
-                    catch (Exception)
-                    {
-                        applicationName = Path.GetFileNameWithoutExtension(sourcePath);
-                    }
+                    applicationName = sourcePath.Substring(sourcePath.LastIndexOf(Path.DirectorySeparatorChar)).Replace(Path.DirectorySeparatorChar, ' ').Trim();
                 }
-                else
+                catch (Exception)
                 {
                     applicationName = Path.GetFileNameWithoutExtension(sourcePath);
                 }
             }
-            catch (Exception)
+            else
             {
-
+                applicationName = Path.GetFileNameWithoutExtension(sourcePath);
             }
 
             return applicationName;

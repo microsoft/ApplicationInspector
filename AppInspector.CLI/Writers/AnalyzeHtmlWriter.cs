@@ -87,7 +87,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             //final render and close
             var htmlResult = htmlTemplate.Render(hashData);
-            string htmlOutputFilePath = Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "output.html");
             TextWriter.Write(htmlResult);
             FlushAndClose();
         }
@@ -106,7 +105,6 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
             AnalyzeJsonWriter jsonWriter = (AnalyzeJsonWriter)WriterFactory.GetWriter(jsonOptions);
             jsonWriter.WriteResults(_analyzeResult, jsonOptions);
-            jsonWriter = null;
             WriteOnce.Verbosity = saveVerbosity;
         }
 

@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
@@ -142,13 +141,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
 
-            List<string> rulePaths = new List<string>();
-
-            if (!string.IsNullOrEmpty(_options.CustomRulesPath))
-            {
-                rulePaths.Add(_options.CustomRulesPath);
-            }
-
             try
             {
                 RulesVerifier verifier = new RulesVerifier(_options.CustomRulesPath, _options.Log);
@@ -194,8 +186,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                //one file vs ruleset
-                string tmp1 = Path.GetTempFileName();
 
                 //setup analyze call with silent option
                 AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeOptions
