@@ -67,9 +67,13 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             OutputFileFormat = "html";
             MatchDepth = "best";
+            FilePathExclusions = "sample,example,test,docs,.vs,.git";
+            ConfidenceFilters = "high,medium";
+            TextOutputFormat = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";
             IgnoreDefaultRules = false;
             SimpleTagsOnly = false;
             AllowDupTags = false;
+            SuppressBrowserOpen = false;
         }
 
     }
