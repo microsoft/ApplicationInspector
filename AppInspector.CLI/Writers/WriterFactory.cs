@@ -25,29 +25,33 @@ namespace Microsoft.ApplicationInspector.CLI
             CommandResultsWriter writer = null;
 
             //allocate the right writer by cmd (options) type
-            if (options is CLIAnalyzeCmdOptions)
+            if (options is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)
             {
-                writer = GetAnalyzeWriter(options);
+                writer = GetAnalyzeWriter(cLIAnalyzeCmdOptions);
             }
-            else if (options is CLITagTestCmdOptions)
+            else if (options is CLITagTestCmdOptions cLITagTestCmdOptions)
             {
-                writer = GetTagTestWriter(options);
+                writer = GetTagTestWriter(cLITagTestCmdOptions);
             }
-            else if (options is CLITagDiffCmdOptions)
+            else if (options is CLITagDiffCmdOptions cLITagDiffCmdOptions)
             {
-                writer = GetTagDiffWriter(options);
+                writer = GetTagDiffWriter(cLITagDiffCmdOptions);
             }
-            else if (options is CLIExportTagsCmdOptions)
+            else if (options is CLIExportTagsCmdOptions cLIExportTagsCmdOptions)
             {
-                writer = GetExportWriter(options);
+                writer = GetExportWriter(cLIExportTagsCmdOptions);
             }
-            else if (options is CLIVerifyRulesCmdOptions)
+            else if (options is CLIVerifyRulesCmdOptions cLIVerifyRulesCmdOptions)
             {
-                writer = GetVerifyRulesWriter(options);
+                writer = GetVerifyRulesWriter(cLIVerifyRulesCmdOptions);
             }
-            else if (options is CLIPackRulesCmdOptions)
+            else if (options is CLIPackRulesCmdOptions cLIPackRulesCmdOptions)
             {
-                writer = GetPackRulesWriter(options);
+                writer = GetPackRulesWriter(cLIPackRulesCmdOptions);
+            }
+            else
+            {
+                throw new Exception("Unrecognized object type in writer request");
             }
 
             return writer;
@@ -59,12 +63,11 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        private static CommandResultsWriter GetAnalyzeWriter(CLICommandOptions options)
+        private static CommandResultsWriter GetAnalyzeWriter(CLIAnalyzeCmdOptions options)
         {
-            CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions = (CLIAnalyzeCmdOptions)options;
             CommandResultsWriter writer = null;
 
-            switch (cLIAnalyzeCmdOptions.OutputFileFormat.ToLower())
+            switch (options.OutputFileFormat.ToLower())
             {
                 case "_dummy":
                     writer = new AnalyzeDummyWriter();
@@ -73,7 +76,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     writer = new AnalyzeJsonWriter();
                     break;
                 case "text":
-                    writer = new AnalyzeTextWriter(cLIAnalyzeCmdOptions.TextOutputFormat);
+                    writer = new AnalyzeTextWriter(options.TextOutputFormat);
                     break;
                 case "html":
                     writer = new AnalyzeHtmlWriter();
@@ -84,19 +87,18 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             //assign the stream as a file or console
-            writer.OutputFileName = cLIAnalyzeCmdOptions.OutputFilePath;
+            writer.OutputFileName = options.OutputFilePath;
             writer.TextWriter = GetTextWriter(writer.OutputFileName);
 
             return writer;
         }
 
 
-        public static CommandResultsWriter GetExportWriter(CLICommandOptions options)
+        public static CommandResultsWriter GetExportWriter(CLIExportTagsCmdOptions options)
         {
-            CLIExportTagsCmdOptions cLIAnalyzeCmdOptions = (CLIExportTagsCmdOptions)options;
             CommandResultsWriter writer = null;
 
-            switch (cLIAnalyzeCmdOptions.OutputFileFormat.ToLower())
+            switch (options.OutputFileFormat.ToLower())
             {
                 case "_dummy":
                     writer = new ExportDummyWriter();
@@ -113,19 +115,18 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             //assign the stream as a file or console
-            writer.OutputFileName = cLIAnalyzeCmdOptions.OutputFilePath;
+            writer.OutputFileName = options.OutputFilePath;
             writer.TextWriter = GetTextWriter(writer.OutputFileName);
 
             return writer;
 
         }
 
-        private static CommandResultsWriter GetTagTestWriter(CLICommandOptions options)
+        private static CommandResultsWriter GetTagTestWriter(CLITagTestCmdOptions options)
         {
-            CLITagTestCmdOptions cLIAnalyzeCmdOptions = (CLITagTestCmdOptions)options;
             CommandResultsWriter writer = null;
 
-            switch (cLIAnalyzeCmdOptions.OutputFileFormat.ToLower())
+            switch (options.OutputFileFormat.ToLower())
             {
                 case "_dummy":
                     writer = new TagTestDummyWriter();
@@ -142,18 +143,17 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             //assign the stream as a file or console
-            writer.OutputFileName = cLIAnalyzeCmdOptions.OutputFilePath;
+            writer.OutputFileName = options.OutputFilePath;
             writer.TextWriter = GetTextWriter(writer.OutputFileName);
 
             return writer;
         }
 
-        private static CommandResultsWriter GetTagDiffWriter(CLICommandOptions options)
+        private static CommandResultsWriter GetTagDiffWriter(CLITagDiffCmdOptions options)
         {
-            CLITagDiffCmdOptions cLIAnalyzeCmdOptions = (CLITagDiffCmdOptions)options;
             CommandResultsWriter writer = null;
 
-            switch (cLIAnalyzeCmdOptions.OutputFileFormat.ToLower())
+            switch (options.OutputFileFormat.ToLower())
             {
                 case "_dummy":
                     writer = new TagDiffDummyWriter();
@@ -170,18 +170,17 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             //assign the stream as a file or console
-            writer.OutputFileName = cLIAnalyzeCmdOptions.OutputFilePath;
+            writer.OutputFileName = options.OutputFilePath;
             writer.TextWriter = GetTextWriter(writer.OutputFileName);
 
             return writer;
         }
 
-        private static CommandResultsWriter GetVerifyRulesWriter(CLICommandOptions options)
+        private static CommandResultsWriter GetVerifyRulesWriter(CLIVerifyRulesCmdOptions options)
         {
-            CLIVerifyRulesCmdOptions cLIAnalyzeCmdOptions = (CLIVerifyRulesCmdOptions)options;
             CommandResultsWriter writer = null;
 
-            switch (cLIAnalyzeCmdOptions.OutputFileFormat.ToLower())
+            switch (options.OutputFileFormat.ToLower())
             {
                 case "_dummy":
                     writer = new VerifyRulesDummyWriter();
@@ -198,18 +197,17 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             //assign the stream as a file or console
-            writer.OutputFileName = cLIAnalyzeCmdOptions.OutputFilePath;
+            writer.OutputFileName = options.OutputFilePath;
             writer.TextWriter = GetTextWriter(writer.OutputFileName);
 
             return writer;
         }
 
-        private static CommandResultsWriter GetPackRulesWriter(CLICommandOptions options)
+        private static CommandResultsWriter GetPackRulesWriter(CLIPackRulesCmdOptions options)
         {
-            CLIPackRulesCmdOptions cLIAnalyzeCmdOptions = (CLIPackRulesCmdOptions)options;
             CommandResultsWriter writer = null;
 
-            switch (cLIAnalyzeCmdOptions.OutputFileFormat.ToLower())
+            switch (options.OutputFileFormat.ToLower())
             {
                 case "_dummy":
                     writer = new PackRulesDummyWriter();
@@ -223,7 +221,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             //assign the stream as a file or console
-            writer.OutputFileName = cLIAnalyzeCmdOptions.OutputFilePath;
+            writer.OutputFileName = options.OutputFilePath;
             writer.TextWriter = GetTextWriter(writer.OutputFileName);
             return writer;
         }
