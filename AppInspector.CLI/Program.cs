@@ -203,7 +203,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             if (options is CLIAnalyzeCmdOptions cliAnalyzeOptions)
             {
-                fileFormatArgs = ((CLIAnalyzeCmdOptions)options).OutputFileFormat;
+                fileFormatArgs = cliAnalyzeOptions.OutputFileFormat;
             }
 
             bool isValidFormat = validFormats.Any(v => v.Equals(fileFormatArgs.ToLower()));
