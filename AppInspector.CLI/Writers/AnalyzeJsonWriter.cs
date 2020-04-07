@@ -63,6 +63,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             TextWriter.Flush();
             TextWriter.Close();
+            WriteOnce.TextWriter = null;
         }
 
 

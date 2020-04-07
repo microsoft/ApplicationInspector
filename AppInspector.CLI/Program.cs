@@ -43,7 +43,6 @@ namespace Microsoft.ApplicationInspector.CLI
                   );
 
                 finalResult = argsResult;
-
             }
             catch (OpException)
             {
@@ -68,7 +67,6 @@ namespace Microsoft.ApplicationInspector.CLI
                     WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.RUNTIME_ERROR_PRELOG), true, WriteOnce.ConsoleVerbosity.Medium, false);
                 }
             }
-
 
             return finalResult;
         }
@@ -201,9 +199,9 @@ namespace Microsoft.ApplicationInspector.CLI
             validFormats.Add("json");
             validFormats.Add("text");
 
-            if (options is CLIAnalyzeCmdOptions)
+            if (options is CLIAnalyzeCmdOptions cliAnalyzeOptions)
             {
-                fileFormatArgs = ((CLIAnalyzeCmdOptions)options).OutputFileFormat;
+                fileFormatArgs = cliAnalyzeOptions.OutputFileFormat;
             }
 
             bool isValidFormat = validFormats.Any(v => v.Equals(fileFormatArgs.ToLower()));
@@ -248,12 +246,9 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, filePath));
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, filePath));
             }
-
         }
 
-
         #endregion
-
 
         #region RunCmdsWriteResults
 
@@ -386,8 +381,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return (int)exitCode;
         }
 
-
         #endregion
-
     }
 }

@@ -102,7 +102,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     writer = new ExportDummyWriter();
                     break;
                 case "json":
-                    writer = new ExportJsonWriter();
+                    writer = new JsonWriter();
                     break;
                 case "text":
                     writer = new ExportTextWriter();
@@ -131,7 +131,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     writer = new TagTestDummyWriter();
                     break;
                 case "json":
-                    writer = new TagTestJsonWriter();
+                    writer = new JsonWriter();
                     break;
                 case "text":
                     writer = new TagTestTextWriter();
@@ -159,7 +159,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     writer = new TagDiffDummyWriter();
                     break;
                 case "json":
-                    writer = new TagDiffJsonWriter();
+                    writer = new JsonWriter();
                     break;
                 case "text":
                     writer = new TagDiffTextWriter();
@@ -187,7 +187,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     writer = new VerifyRulesDummyWriter();
                     break;
                 case "json":
-                    writer = new VerifyRulesJsonWriter();
+                    writer = new JsonWriter();
                     break;
                 case "text":
                     writer = new VerifyRulesTextWriter();
@@ -215,7 +215,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     writer = new PackRulesDummyWriter();
                     break;
                 case "json":
-                    writer = new PackRulesJsonWriter();
+                    writer = new JsonWriter();
                     break;
                 default:
                     WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));

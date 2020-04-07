@@ -13,79 +13,73 @@ namespace Microsoft.ApplicationInspector.CLI
     /// </summary>
     public static class ResultsWriter
     {
-        public static void Write(TagDiffResult tagDiffResult, CLITagDiffCmdOptions options)
+        public static void Write(Result result, CLICommandOptions options)
         {
             CommandResultsWriter writer = WriterFactory.GetWriter(options);
-            writer.WriteResults(tagDiffResult, options);
-            Finalize(writer, "Tag Diff");
-        }
+            string commandCompletedMsg = "Unknown";
 
-        public static void Write(TagTestResult tagTestResult, CLITagTestCmdOptions options)
-        {
-            CommandResultsWriter writer = WriterFactory.GetWriter(options);
-            writer.WriteResults(tagTestResult, options);
-            Finalize(writer, "Tag Test");
-        }
-
-        public static void Write(ExportTagsResult exportTagResult, CLIExportTagsCmdOptions options)
-        {
-            CommandResultsWriter writer = WriterFactory.GetWriter(options);
-            writer.WriteResults(exportTagResult, options);
-            Finalize(writer, "Export Tags");
-        }
-
-        public static void Write(VerifyRulesResult verifyRulesResult, CLIVerifyRulesCmdOptions options)
-        {
-            CommandResultsWriter writer = WriterFactory.GetWriter(options);
-            writer.WriteResults(verifyRulesResult, options);
-            Finalize(writer, "Verify Rules");
-        }
-
-        public static void Write(PackRulesResult packRulesResult, CLIPackRulesCmdOptions options)
-        {
-            CommandResultsWriter writer = WriterFactory.GetWriter(options);
-            writer.WriteResults(packRulesResult, options);
-            Finalize(writer, "Pack Rules");
-        }
-
-
-        /// <summary>
-        /// The only Write method that doesn't take a result object due to HTML needs which require more than 
-        /// </summary>
-        /// <param name="appProfile"></param>
-        /// <param name="options"></param>
-        public static void Write(AnalyzeResult analyzeResult, CLIAnalyzeCmdOptions options)
-        {
-            int MAX_HTML_REPORT_FILE_SIZE = 1024 * 1000 * 3;  //warn about potential slow rendering
-
-            //analyze with html format limit checks
-            if (options.OutputFileFormat == "html")
+            //perform type checking and assign final msg string
+            if (result is TagTestResult)
             {
-                options.OutputFilePath = "output.html";
-
-                AnalyzeHtmlWriter analyzeHtmlWriter = (AnalyzeHtmlWriter)WriterFactory.GetWriter(options);
-                analyzeHtmlWriter.WriteResults(analyzeResult, options);
-
-                //html report size warning
-                if (File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
+                commandCompletedMsg = "Tag Test";
+            }
+            else if (result is TagDiffResult)
+            {
+                commandCompletedMsg = "Tag Diff";
+            }
+            else if (result is ExportTagsResult)
+            {
+                commandCompletedMsg = "Export Tags";
+            }
+            else if (result is VerifyRulesResult)
+            {
+                commandCompletedMsg = "Verify Rules";
+            }
+            else if (result is PackRulesResult)
+            {
+                commandCompletedMsg = "Pack Rules";
+            }
+            else if (result is AnalyzeResult analyzeResult && options is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)
+            {
+                //additional prechecks required for analyze html format
+                if (cLIAnalyzeCmdOptions.OutputFileFormat == "html")
                 {
-                    WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_REPORTSIZE_WARN));
-                }
+                    int MAX_HTML_REPORT_FILE_SIZE = 1024 * 1000 * 3;  //warn about potential slow rendering
 
-                WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_COMPLETED, "Analyze"));
+                    //prechecks
+                    if (!string.IsNullOrEmpty(cLIAnalyzeCmdOptions.OutputFilePath))
+                    {
+                        WriteOnce.General(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-o ignored when html format specified"));
+                    }
 
-                if (options.OutputFileFormat == "html" && !options.SuppressBrowserOpen)
-                {
-                    Utils.OpenBrowser(options.OutputFilePath);
+                    //override output file path ensuring local availability of dependent files for html format
+                    options.OutputFilePath = "output.html";
+                    cLIAnalyzeCmdOptions.OutputFilePath = "output.html";
+                    writer.WriteResults(analyzeResult, cLIAnalyzeCmdOptions);
+
+                    //post checks
+                    if (File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
+                    {
+                        WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_REPORTSIZE_WARN));
+                    }
+
+                    if (!cLIAnalyzeCmdOptions.SuppressBrowserOpen)
+                    {
+                        Utils.OpenBrowser(cLIAnalyzeCmdOptions.OutputFilePath);
+                    }
+
+                    Finalize(writer, "Analyze");
+                    return;
                 }
             }
             else
             {
-                CommandResultsWriter writer = WriterFactory.GetWriter(options);
-                writer.WriteResults(analyzeResult, options);
-                Finalize(writer, "Analyze");
+                throw new Exception("Unrecognized object types for write results");
             }
 
+            //general for all but analyze html format
+            writer.WriteResults(result, options);
+            Finalize(writer, commandCompletedMsg);
         }
 
 
