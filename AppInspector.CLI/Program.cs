@@ -201,7 +201,7 @@ namespace Microsoft.ApplicationInspector.CLI
             validFormats.Add("json");
             validFormats.Add("text");
 
-            if (options is CLIAnalyzeCmdOptions)
+            if (options is CLIAnalyzeCmdOptions cliAnalyzeOptions)
             {
                 fileFormatArgs = ((CLIAnalyzeCmdOptions)options).OutputFileFormat;
             }
