@@ -25,6 +25,28 @@ pr:
     - RulesEngine/*
 
 stages:
+- stage: Test
+  jobs:
+  - job: build_test
+    displayName: Run Tests
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '3.1.x'
+    - task: DotNetCoreCLI@2
+      displayName: 'Build Tests'
+      inputs:
+        projects: 'UnitTest.Commands/UnitTest.Commands.csproj'
+        arguments: '-c $(BuildConfiguration) -o $(build.binariesdirectory)\Tests'
+    - task: VSTest@2
+      displayName: 'Run Tests'
+      inputs:
+        testAssemblyVer2: UnitTest.Commands.dll
+        searchFolder: '$(build.binariesdirectory)\Tests'
+
 - stage: Build
   jobs:
   - job: build_nix
