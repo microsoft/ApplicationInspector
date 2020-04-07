@@ -249,7 +249,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 List<ScanResult> removes = new List<ScanResult>();
                 foreach (ScanResult m in resultsList)
                 {
-                    if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
+                    if (m.Rule.Overrides is List<string> overrides)
                     {
                         foreach (string ovrd in m.Rule.Overrides)
                         {
@@ -442,4 +442,3 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
     }
 }
-
