@@ -47,7 +47,7 @@ namespace ApplicationInspector.UnitTest.Misc
 #if DEBUG
                     result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "debug", "netcoreapp3.1", "applicationinspector.cli.exe");
 #else
-                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector".CLI", "bin", "release", "netcoreapp3.1", "applicationinspector.cli.exe");
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "release", "netcoreapp3.1", "applicationinspector.cli.exe");
 #endif
                     break;
             }
