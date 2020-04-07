@@ -251,7 +251,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     if (m.Rule.Overrides is List<string> overrides)
                     {
-                        foreach (string ovrd in m.Rule.Overrides)
+                        foreach (string ovrd in overrides)
                         {
                             // Find all overriden rules and mark them for removal from issues list   
                             foreach (ScanResult om in resultsList.FindAll(x => x.Rule.Id == ovrd))
