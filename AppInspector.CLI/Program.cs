@@ -206,7 +206,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 fileFormatArgs = ((CLIAnalyzeCmdOptions)options).OutputFileFormat;
             }
 
-            bool isValidFormat = validFormats.Any(v => v.Contains(fileFormatArgs));
+            bool isValidFormat = validFormats.Any(v => v.Equals(fileFormatArgs.ToLower()));
             if (!isValidFormat)
             {
                 WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));

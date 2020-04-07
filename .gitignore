@@ -271,3 +271,4 @@ __pycache__/
 /AppInspector/Resources/defaultRules.json
 /UnitTest.Commands/output
 /RulesPacker/log.txt
+/UnitTest.Commands/source/output.txt
