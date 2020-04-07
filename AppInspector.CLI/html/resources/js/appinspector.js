@@ -52,7 +52,6 @@ class TemplateInsertion {
     constructor(data) {
         this.mt = data.MetaData;
         this.md = this.mt.detailedMatchList;
-        //this.tagCounters = this.mt.tagCounters;
     }
 
     processSummaryPage() {
@@ -246,36 +245,15 @@ class TemplateInsertion {
             // Now we iterate through all of the rules that relate to this icon
             for (let [rule, confidence] of Object.entries(identifiedRules))
             {
-                // I'm sorry, this is pretty ugly. If you'd like to clean this up, I'd be
-                // happy to take a pull request.
-
                 let $tr = $('<tr>');
                 $tr.on('click', 'td', { 'obj': this }, this.show_file_listing);
                 let $td0 = $('<td>');
                 let $td0a = $('<a>');
                 $td0a.attr('href', '#');
-                $td0a.data('ruleId', rule);    // BUG: This should be the rule id, not the name
+                $td0a.data('ruleId', rule); 
                 $td0a.text(rule);
-                //$td0a.on('click', {'obj': this }, this.show_file_listing);
                 $td0.append($td0a);
-
-                //let $td1 = $('<td>');
-                //let $td1d = $('<div>');
-                //$td1d.addClass('progress');
-                //$td1d.css('width', '120px');
-                //let $td1dp = $('<div>');
-                //$td1dp.addClass('progress-bar')
-                //    .addClass('bg-info')
-                //    .attr('role', 'progressbar')
-                //    .css('width', '100%')
-                //    .attr('aria-valuenow', 100)
-                //    .attr('aria-valuemin', 0)
-                //    .attr('aria-valuemax', 100)
-                //    .text('High');
-                //$td1d.append($td1dp);
-                //$td1.append($td1d);
                 $tr.append($td0);
-                //$tr.append($td1);
                 $tbody.append($tr);
             }
         });
