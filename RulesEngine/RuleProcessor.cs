@@ -34,15 +34,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public Severity SeverityLevel { get; set; }
 
         /// <summary>
-        /// Enable suppresion syntax checking during analysis
-        /// </summary>
-        public bool EnableSuppressions { get; set; }
-
-        /// <summary>
         /// Enables caching of rules queries if multiple reuses per instance
         /// </summary>
         public bool EnableCache { get; set; }
-
 
         /// <summary>
         /// Creates instance of RuleProcessor
@@ -55,7 +49,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             _logger = logger;
 
             EnableCache = false;
-            EnableSuppressions = false;
             ConfidenceLevelFilter = confidence;
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //find all; arg not currently supported
 
@@ -162,7 +155,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     Rule = rule
                                 };
 
-
                                 if (_uniqueTagMatchesOnly)
                                 {
                                     if (!UniqueTagsCheck(newMatch.Rule.Tags)) //tag(s) previously seen
@@ -193,71 +185,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
                     }
                 }
-
-                // We got matching rule and suppression are enabled, let's see if we have a supression on the line
-                if (EnableSuppressions && matchList.Count > 0)
-                {
-                    Suppression supp;
-                    foreach (ScanResult result in matchList)
-                    {
-                        supp = new Suppression(textContainer.GetLineContent(result.StartLocation.Line));
-                        // If rule is NOT being suppressed then report it
-                        SuppressedMatch supissue = supp.GetSuppressedIssue(result.Rule.Id);
-                        if (supissue == null)
-                        {
-                            resultsList.Add(result);
-                        }
-                        // Otherwise add the suppression info instead
-                        else
-                        {
-                            Boundary bound = textContainer.GetLineBoundary(result.Boundary.Index);
-                            bound.Index += supissue.Boundary.Index;
-                            bound.Length = supissue.Boundary.Length;
-
-                            ScanResult info = new ScanResult()
-                            {
-                                IsSuppressionInfo = true,
-                                Boundary = bound,
-                                StartLocation = textContainer.GetLocation(bound.Index),
-                                EndLocation = textContainer.GetLocation(bound.Index + bound.Length),
-                                Rule = result.Rule
-                            };
-
-                            // Add info only if it's not on the same location
-                            if (resultsList.FirstOrDefault(x => x.Rule.Id == info.Rule.Id && x.Boundary.Index == info.Boundary.Index) == null)
-                            {
-                                resultsList.Add(info);
-                            }
-                            else if (_logger != null)
-                            {
-                                _logger.Debug("Not added due to proximity to another rule");
-                            }
-                        }
-                    }
-
-                }
-                // Otherwise put matchlist to resultlist 
-                else
-                {
-                    resultsList.AddRange(matchList);
-                }
             }
 
             if (_checkForOverRides)
             {
                 // Deal with overrides 
                 List<ScanResult> removes = new List<ScanResult>();
-                foreach (ScanResult m in resultsList)
+                foreach (ScanResult scanResult in resultsList)
                 {
-                    if (m.Rule.Overrides is List<string> overrides)
+                    if (scanResult.Rule.Overrides is string[] overrides)
                     {
-                        foreach (string ovrd in overrides)
+                        foreach (string @override in overrides)
                         {
                             // Find all overriden rules and mark them for removal from issues list   
-                            foreach (ScanResult om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                            foreach (ScanResult om in resultsList.FindAll(x => x.Rule.Id == @override))
                             {
-                                if (om.Boundary.Index >= m.Boundary.Index &&
-                                    om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
+                                if (om.Boundary.Index >= scanResult.Boundary.Index &&
+                                    om.Boundary.Index <= scanResult.Boundary.Index + scanResult.Boundary.Length)
                                 {
                                     removes.Add(om);
                                 }
@@ -269,8 +213,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 // Remove overriden rules
                 resultsList.RemoveAll(x => removes.Contains(x));
             }
-
-
 
             return resultsList.ToArray();
         }
@@ -336,7 +278,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
 
             return betterMatch;
-
         }
 
 
@@ -439,6 +380,5 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         #endregion
-
     }
 }

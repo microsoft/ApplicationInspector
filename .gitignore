@@ -261,14 +261,6 @@ __pycache__/
 *.pyc
 
 # App Inspector artifacts
-/AppInspector/htmlReport
-/AppInspectorLog.txt
-/AppInspector/Log.txt
-/AppInspector/LogB4.txt
-/AppInspector/wip.txt
-/AppInspector/linux/ApplicationInspector
-/Microsoft.DevSkim/linux/ApplicationInspector
-/AppInspector/Resources/defaultRules.json
+/AppInspector/Resources/defaultRulesPkd.json
 /UnitTest.Commands/output
 /RulesPacker/log.txt
-/UnitTest.Commands/source/output.txt

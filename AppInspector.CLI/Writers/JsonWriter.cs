@@ -25,6 +25,10 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
             {
                 jsonSerializer.Serialize(TextWriter, (VerifyRulesResult)result);
             }
+            else if (result is ExportTagsResult)
+            {
+                jsonSerializer.Serialize(TextWriter, (ExportTagsResult)result);
+            }
             else if (result is PackRulesResult)
             {
                 jsonSerializer.Serialize(TextWriter, (PackRulesResult)result);

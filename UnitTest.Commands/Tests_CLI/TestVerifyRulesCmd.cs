@@ -410,7 +410,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = String.Format(@"verifyrules -r {0} -f text -x none -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                        Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"output.txt"),
+                        Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
                 Process p = new Process();
