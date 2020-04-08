@@ -5,4 +5,3 @@ define("ace/ext/beautify",["require","exports","module","ace/token_iterator"],fu
                         }
                     });
                 })();
-            

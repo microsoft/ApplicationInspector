@@ -17,7 +17,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool NotIndented { get; set; }
     }
 
-
     public class PackRulesResult : Result
     {
         public enum ExitCode
@@ -33,7 +32,6 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(Order = 3)]
         public List<Rule> Rules { get; set; }
     }
-
 
     /// <summary>
     /// Used to combine validated rules into one json for ease in distribution of this
@@ -109,7 +107,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _rules_path = _options.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
         }
 
-        #endregion
+        #endregion configure
 
         /// <summary>
         /// Intentional as no identified value in calling from DLL at this time
@@ -148,6 +146,5 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return packRulesResult;
         }
-
     }
 }

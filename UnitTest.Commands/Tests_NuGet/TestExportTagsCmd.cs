@@ -9,7 +9,6 @@ namespace ApplicationInspector.Unitprocess.Commands
     [TestClass]
     public class TestExportTagsCmd
     {
-
         [TestMethod]
         public void Export_Pass()
         {
@@ -37,7 +36,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
 
-
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
@@ -64,7 +62,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void NoDefaultCustomRules_Pass()
@@ -94,7 +91,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
 
-
         [TestMethod]
         public void DefaultWithCustomRules_Pass()
         {
@@ -121,8 +117,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void LogTraceLevel_Pass()
@@ -153,7 +147,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                         exitCode = ExportTagsResult.ExitCode.Success;
                     }
                 }
-
             }
             catch (Exception)
             {
@@ -166,8 +159,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void LogErrorLevel_Pass()
@@ -205,8 +196,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void LogDebugLevel_Pass()
@@ -247,8 +236,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
 
-
-
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
@@ -277,9 +264,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
 
-
-
-
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
@@ -307,7 +291,5 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);
         }
-
-
     }
 }

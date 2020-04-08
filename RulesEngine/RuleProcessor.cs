@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 [assembly: CLSCompliant(true)]
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
@@ -58,9 +59,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             this.Rules = rules;
         }
-
-
-
 
         /// <summary>
         /// Analyzes given line of code
@@ -133,7 +131,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     passedConditions = false;
                                     break;
                                 }
-
                             }
 
                             //restrict tags from build files to tags with "metadata" to avoid false feature positives that are not part of executable code
@@ -168,7 +165,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                             if (passedConditions)
                                             {
-                                                passedConditions = BestMatch(resultsList, newMatch);//check all rules in permanent list                                         
+                                                passedConditions = BestMatch(resultsList, newMatch);//check all rules in permanent list
                                             }
                                         }
                                     }
@@ -188,7 +185,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 resultsList.AddRange(matchList);
             }
 
-            // Deal with overrides 
+            // Deal with overrides
             List<ScanResult> removes = new List<ScanResult>();
             foreach (ScanResult scanResult in resultsList)
             {
@@ -196,7 +193,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     foreach (string @override in overrides)
                     {
-                        // Find all overriden rules and mark them for removal from issues list   
+                        // Find all overriden rules and mark them for removal from issues list
                         foreach (ScanResult overRideMatch in resultsList.FindAll(x => x.Rule.Id == @override))
                         {
                             if (overRideMatch.Boundary.Index >= scanResult.Boundary.Index &&
@@ -218,7 +215,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList.ToArray();
         }
 
-
         /// <summary>
         /// Ruleset to be used for analysis
         /// </summary>
@@ -232,8 +228,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
-
-        #region Private Methods    
+        #region Private Methods
 
         private bool BestMatch(List<ScanResult> scanResults, ScanResult compareResult, bool removeOld = true)
         {
@@ -281,9 +276,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return betterMatch;
         }
 
-
-
-
         /// <summary>
         /// Filters the rules for those matching the content type.
         /// Resolves all the overrides
@@ -297,7 +289,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (EnableCache)
             {
                 Array.Sort(languages);
-                // Make language id for cache purposes                
+                // Make language id for cache purposes
                 langid = string.Join(":", languages);
                 // Do we have the ruleset alrady in cache? If so return it
                 if (_rulesCache.ContainsKey(langid))
@@ -317,10 +309,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return filteredRules;
         }
 
-
-
         /// <summary>
-        /// Check if rule tags have already been seen or if exception exists 
+        /// Check if rule tags have already been seen or if exception exists
         /// Assumes that _uniqueTagsOnly == true has been checked first for relevance
         /// </summary>
         /// <param name="ruleTags"></param>
@@ -365,8 +355,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return approved;
         }
 
-
-
         /// <summary>
         /// Supports unique tags option to not process if seen before
         /// No harm in being called again for same value; will not be added...
@@ -380,6 +368,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
-        #endregion
+        #endregion Private Methods
     }
 }

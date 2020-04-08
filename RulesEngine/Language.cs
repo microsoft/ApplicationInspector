@@ -79,7 +79,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         /// <summary>
         /// Gets comment inline for given language
-        /// </summary>        
+        /// </summary>
         /// <param name="language">Language</param>
         /// <returns>Commented string</returns>
         public static string GetCommentInline(string language)
@@ -102,7 +102,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         /// <summary>
         /// Gets comment preffix for given language
-        /// </summary>        
+        /// </summary>
         /// <param name="language">Language</param>
         /// <returns>Commented string</returns>
         public static string GetCommentPrefix(string language)
@@ -125,7 +125,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         /// <summary>
         /// Gets comment suffix for given language
-        /// </summary>        
+        /// </summary>
         /// <param name="language">Language</param>
         /// <returns>Commented string</returns>
         public static string GetCommentSuffix(string language)
@@ -159,6 +159,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         private static Language _instance;
+
         private static Language Instance
         {
             get
@@ -176,4 +177,3 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly List<LanguageInfo> Languages;
     }
 }
-

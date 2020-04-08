@@ -7,18 +7,15 @@ namespace Microsoft.ApplicationInspector.CLI
 {
     public class AnalyzeDummyWriter : CommandResultsWriter
     {
-
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
             throw new System.NotImplementedException();
         }
 
-
         public override void FlushAndClose()
         {
             throw new System.NotImplementedException();
         }
-
     }
 
     public class ExportDummyWriter : CommandResultsWriter

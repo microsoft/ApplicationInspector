@@ -84,7 +84,8 @@
     "id": "AI005010",
     "description": "Component: Active-X",
     "applies_to": [
-      "javascript", "typescript"
+      "javascript",
+      "typescript"
     ],
     "tags": [
       "Component.Executable.Microsoft.ActiveX"

@@ -7,11 +7,9 @@ using System.IO;
 
 namespace ApplicationInspector.Unitprocess.CLICommands
 {
-
     [TestClass]
     public class CLITestExportTagsCmd
     {
-
         [TestMethod]
         public void BasicTxtOutput_Pass()
         {
@@ -31,8 +29,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void BasicJsonOutput_Pass()
@@ -54,7 +50,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
 
-
         [TestMethod]
         public void ExportHTML_Fail()
         {
@@ -74,7 +69,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void ExportUnknownFormat_Fail()
@@ -96,7 +90,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
@@ -116,8 +109,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void NoDefaultCustomRules_Pass()
@@ -140,7 +131,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
 
-
         [TestMethod]
         public void DefaultWithCustomRules_Pass()
         {
@@ -162,7 +152,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
 
-
         [TestMethod]
         public void ExportNoRules_Fail()
         {
@@ -182,7 +171,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void ExportToTextFilePath_Pass()
@@ -215,7 +203,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
-
 
         [TestMethod]
         public void ExportToJsonFilePath_Pass()
@@ -250,8 +237,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
 
-
-
         [TestMethod]
         public void ExportToBadOutFilePath_Fail()
         {
@@ -273,9 +258,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);
         }
 
-
-
-
         [TestMethod]
         public void LogTraceLevel_Pass()
         {
@@ -294,13 +276,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void LogErrorLevel_Pass()
@@ -320,13 +299,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void LogDebugLevel_Pass()
@@ -347,13 +323,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void InvalidLogPath_Fail()
@@ -370,14 +343,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
-
-
-
 
         [TestMethod]
         public void InsecureLogPath_Fail()
@@ -393,13 +362,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void NoConsoleOutput_Pass()
@@ -420,12 +386,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
         }
-
 
         [TestMethod]
         public void NoConsoleNoFileOutput_Fail()
@@ -441,7 +405,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);

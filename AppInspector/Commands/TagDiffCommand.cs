@@ -19,7 +19,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool IgnoreDefaultRules { get; set; }
     }
 
-
     /// <summary>
     /// Contains a tag that was detected missing in source1 or source2
     /// </summary>
@@ -37,7 +36,6 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(PropertyName = "source")]
         public DiffSource Source { get; set; }
     }
-
 
     /// <summary>
     /// Result wrapping list of tags not found in one of the sources scanned
@@ -62,7 +60,6 @@ namespace Microsoft.ApplicationInspector.Commands
             TagDiffList = new List<TagDiff>();
         }
     }
-
 
     /// <summary>
     /// Used to compare two source paths and report tag differences
@@ -147,11 +144,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        #endregion
-
-
-
-
+        #endregion config
 
         /// <summary>
         /// Main entry from CLI
@@ -190,14 +183,13 @@ namespace Microsoft.ApplicationInspector.Commands
                     Log = _options.Log
                 });
 
-
                 AnalyzeResult analyze1 = cmd1.GetResult();
                 AnalyzeResult analyze2 = cmd2.GetResult();
 
                 //restore
                 WriteOnce.Verbosity = saveVerbosity;
 
-                #endregion
+                #endregion setup analyze calls
 
                 bool equalTagsCompare1 = true;
                 bool equalTagsCompare2 = true;

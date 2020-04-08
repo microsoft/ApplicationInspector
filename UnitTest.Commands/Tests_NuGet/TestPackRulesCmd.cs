@@ -6,11 +6,9 @@ using System.IO;
 
 namespace ApplicationInspector.Unitprocess.Commands
 {
-
     [TestClass]
     public class TestPackRulesCmd
     {
-
         [TestMethod]
         public void DefaultRules_Fail()
         {
@@ -38,13 +36,11 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
             PackRulesOptions options = new PackRulesOptions()
             {
-
             };
 
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
@@ -65,8 +61,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void CustomRulesNoOutputFilePath_Fail()
@@ -95,10 +89,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
 
-
-
-
-
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
@@ -126,9 +116,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
-
-
-
 
         [TestMethod]
         public void InsecureLogPath_Fail()
@@ -159,4 +146,3 @@ namespace ApplicationInspector.Unitprocess.Commands
         }
     }
 }
-

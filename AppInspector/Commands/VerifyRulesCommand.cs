@@ -16,15 +16,12 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool Failfast { get; set; }
     }
 
-
     public class RuleStatus
     {
         public string RulesId { get; set; }
         public string RulesName { get; set; }
         public bool Verified { get; set; }
     }
-
-
 
     public class VerifyRulesResult : Result
     {
@@ -46,7 +43,6 @@ namespace Microsoft.ApplicationInspector.Commands
             RuleStatusList = new List<RuleStatus>();
         }
     }
-
 
     /// <summary>
     /// Used to verify user custom ruleset.  Default ruleset has no need for support outside of PackRulesCommand for verification
@@ -121,11 +117,9 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             _rules_path = _options.VerifyDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
-
         }
 
-        #endregion
-
+        #endregion configure
 
         /// <summary>
         /// Option for DLL use as alternate to Run which only outputs a file to return results as string
@@ -155,7 +149,6 @@ namespace Microsoft.ApplicationInspector.Commands
                         RulesName = rule.Name,
                         Verified = true
                     });
-
                 }
             }
             catch (OpException e)
@@ -167,7 +160,5 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return verifyRulesResult;
         }
-
     }
-
 }

@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-
 namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
@@ -15,10 +14,13 @@ namespace Microsoft.ApplicationInspector.Commands
     public class TagCategory
     {
         public enum tagInfoType { uniqueTags, allTags };
+
         [JsonProperty(PropertyName = "type")]
         public tagInfoType Type;
+
         [JsonProperty(PropertyName = "categoryName")]
         public String Name { get; set; }
+
         [JsonProperty(PropertyName = "groups")]
         public List<TagGroup> Groups { get; set; }
 
@@ -35,10 +37,13 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
+
         [JsonIgnore]
         public string IconURL { get; set; }
+
         [JsonProperty(PropertyName = "dataRef")]
         public string DataRef { get; set; }
+
         [JsonProperty(PropertyName = "patterns")]
         public List<TagSearchPattern> Patterns { get; set; }
 
@@ -48,19 +53,23 @@ namespace Microsoft.ApplicationInspector.Commands
         }
     }
 
-
     public class TagSearchPattern : Drop
     {
         [JsonProperty(PropertyName = "searchPattern")]
         public string SearchPattern { get; set; }
+
         [JsonProperty(PropertyName = "displayName")]
         public string DisplayName { get; set; }
+
         [JsonProperty(PropertyName = "detectedIcon")]
         public string DetectedIcon { get; set; }
+
         [JsonProperty(PropertyName = "notDetectedIcon")]
         public string NotDetectedIcon { get; set; }
+
         [JsonProperty(PropertyName = "detected")]
         public bool Detected { get; set; }
+
         [JsonProperty(PropertyName = "details")]
         public string Details
         {
@@ -70,6 +79,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 return result;
             }
         }
+
         [JsonProperty(PropertyName = "confidence")]
         public string Confidence { get; set; }
 
@@ -86,11 +96,15 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         [JsonProperty(PropertyName = "tag")]
         public string Tag { get; set; }
+
         [JsonProperty(PropertyName = "displayName")]
         public string ShortTag { get; set; }
+
         [JsonIgnore]
         public string StatusIcon { get; set; }
+
         private string _confidence;
+
         [JsonProperty(PropertyName = "confidence")]
         public string Confidence
         {
@@ -109,24 +123,19 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     throw new Exception("Invalid argument value set attempt for Confidence");
                 }
-
             }
         }
+
         [JsonProperty(PropertyName = "severity")]
         public string Severity { get; set; }
+
         [JsonProperty(PropertyName = "detected")]
         public bool Detected { get; set; }
-
     }
-
-
 
     public class TagException
     {
         [JsonProperty(PropertyName = "tag")]
         public string Tag { get; set; }
     }
-
 }
-
-

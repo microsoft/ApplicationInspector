@@ -25,6 +25,7 @@ namespace MultiExtractor
             using var memoryStream = new MemoryStream(File.ReadAllBytes(filename));
             return ExtractFile(new FileEntry(filename, "", memoryStream));
         }
+
         public static IEnumerable<FileEntry> ExtractFile(string filename, ArchiveFileType archiveFileType)
         {
             using var memoryStream = new MemoryStream(File.ReadAllBytes(filename));
@@ -43,7 +44,6 @@ namespace MultiExtractor
         {
             return ExtractFile(fileEntry, MiniMagic.DetectFileType(fileEntry));
         }
-
 
         private static IEnumerable<FileEntry> ExtractFile(FileEntry fileEntry, ArchiveFileType archiveFileType)
         {
@@ -88,7 +88,6 @@ namespace MultiExtractor
             return results;
         }
 
-
         private static IEnumerable<FileEntry> ExtractZipFile(FileEntry fileEntry)
         {
             List<FileEntry> files = new List<FileEntry>();
@@ -118,7 +117,6 @@ namespace MultiExtractor
             }
 
             return files;
-
         }
 
         private static IEnumerable<FileEntry> ExtractGZipFile(FileEntry fileEntry)
@@ -142,7 +140,6 @@ namespace MultiExtractor
             }
 
             return files;
-
         }
 
         private static IEnumerable<FileEntry> ExtractTarFile(FileEntry fileEntry)
@@ -167,7 +164,6 @@ namespace MultiExtractor
             }
 
             return files;
-
         }
 
         private static IEnumerable<FileEntry> ExtractXZFile(FileEntry fileEntry)
@@ -185,7 +181,6 @@ namespace MultiExtractor
             }
 
             return files;
-
         }
 
         private static IEnumerable<FileEntry> ExtractBZip2File(FileEntry fileEntry)
@@ -248,6 +243,5 @@ namespace MultiExtractor
         }
     }
 
-    #endregion
-
+    #endregion internal
 }

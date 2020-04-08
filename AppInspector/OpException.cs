@@ -13,7 +13,6 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         public OpException(string msg) : base(msg)
         {
-
         }
     }
 }

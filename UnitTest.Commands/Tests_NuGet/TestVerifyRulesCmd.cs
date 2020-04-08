@@ -6,11 +6,9 @@ using System.IO;
 
 namespace ApplicationInspector.Unitprocess.Commands
 {
-
     [TestClass]
     public class TestVerifyRulesCmd
     {
-
         [TestMethod]
         [Ignore] //default option won't find rules unless run from CLI; todo to look at addressed
         public void DefaultRules_Pass()
@@ -39,13 +37,11 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
 
-
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
             VerifyRulesOptions options = new VerifyRulesOptions()
             {
-
             };
 
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
@@ -66,8 +62,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void CustomRules_Pass()
@@ -96,9 +90,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
 
-
-
-
         [TestMethod]
         public void LogTraceLevel_Pass()
         {
@@ -118,7 +109,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
                 if (exitCode == VerifyRulesResult.ExitCode.Verified)
                 {
-
                     string testLogContent = File.ReadAllText(options.LogFilePath);
                     if (String.IsNullOrEmpty(testLogContent))
                     {
@@ -129,7 +119,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                         exitCode = VerifyRulesResult.ExitCode.Verified;
                     }
                 }
-
             }
             catch (Exception)
             {
@@ -142,8 +131,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
-
-
 
         [TestMethod]
         public void LogErrorLevel_Pass()
@@ -182,8 +169,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
 
-
-
         [TestMethod]
         public void LogDebugLevel_Pass()
         {
@@ -213,7 +198,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                         exitCode = VerifyRulesResult.ExitCode.Verified;
                     }
                 }
-
             }
             catch (Exception)
             {
@@ -226,8 +210,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
-
-
 
         [TestMethod]
         public void InvalidLogPath_Fail()
@@ -257,9 +239,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
 
-
-
-
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
@@ -287,9 +266,5 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);
         }
-
-
     }
-
-
 }

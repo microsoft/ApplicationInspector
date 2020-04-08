@@ -12,8 +12,10 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         [JsonProperty(PropertyName = "tag")]
         public string Tag { get; set; }
+
         [JsonProperty(PropertyName = "count")]
         public int Count { get; set; }
+
         [JsonProperty(PropertyName = "includeAsMatch")]
         public bool IncludeAsMatch => false;
     }

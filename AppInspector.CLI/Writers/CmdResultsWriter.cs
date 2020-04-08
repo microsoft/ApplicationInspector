@@ -13,8 +13,9 @@ namespace Microsoft.ApplicationInspector.CLI
     {
         public TextWriter TextWriter { get; set; }
         public string OutputFileName { get; set; }
+
         public abstract void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true);
+
         public abstract void FlushAndClose();
     }
-
 }

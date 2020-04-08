@@ -9,18 +9,18 @@ namespace Microsoft.ApplicationInspector.CLI
     /// <summary>
     /// CLI command option classes add output arguments to common properties for each command verb
     /// </summary>
-    /// 
+    ///
     public class CLICommandOptions : CommandOptions
     {
         [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string OutputFilePath { get; set; }
+
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [json|text]", Default = "text")]
         public string OutputFileFormat { get; set; } = "text";
     }
 
-
     /// <summary>
-    /// CLI command distinct arguments 
+    /// CLI command distinct arguments
     /// </summary>
     [Verb("analyze", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics")]
     public class CLIAnalyzeCmdOptions : CLICommandOptions
@@ -59,7 +59,6 @@ namespace Microsoft.ApplicationInspector.CLI
         public bool SimpleTagsOnly { get; set; }
     }
 
-
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]
     public class CLITagDiffCmdOptions : CLICommandOptions
     {
@@ -81,7 +80,6 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
     }
-
 
     [Verb("tagtest", HelpText = "Test (T/F) for presence of custom rule set in source")]
     public class CLITagTestCmdOptions : CLICommandOptions
@@ -109,7 +107,6 @@ namespace Microsoft.ApplicationInspector.CLI
         public bool IgnoreDefaultRules { get; set; }
     }
 
-
     [Verb("verifyrules", HelpText = "Verify custom rules syntax is valid")]
     public class CLIVerifyRulesCmdOptions : CLICommandOptions
     {
@@ -122,7 +119,6 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('a', "fail-fast", Required = false, HelpText = "Fail fast", Default = false)]
         public bool Failfast { get; set; }
     }
-
 
     [Verb("packrules", HelpText = "Combine multiple rule files into one file for ease in distribution")]
     public class CLIPackRulesCmdOptions : CLICommandOptions
@@ -139,5 +135,4 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('i', "not-indented", Required = false, HelpText = "Remove indentation from json output", Default = false)]
         public bool NotIndented { get; set; }
     }
-
 }

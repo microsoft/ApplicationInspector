@@ -50,6 +50,5 @@ namespace Microsoft.ApplicationInspector.CLI
             TextWriter.Close();
             WriteOnce.TextWriter = null;
         }
-
     }
 }

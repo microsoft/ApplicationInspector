@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.CLI.Writers
 {
-
     internal class JsonWriter : CommandResultsWriter
     {
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)

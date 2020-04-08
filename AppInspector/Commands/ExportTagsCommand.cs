@@ -11,7 +11,7 @@ using System.IO;
 namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class ExportTagsOptions : CommandOptions
     {
@@ -70,7 +70,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 throw;
             }
         }
-
 
         #region ConfigMethods
 
@@ -138,8 +137,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        #endregion
-
+        #endregion ConfigMethods
 
         public ExportTagsResult GetResult()
         {
@@ -155,7 +153,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-
                 foreach (Rule r in _rules)
                 {
                     //builds a list of unique tags

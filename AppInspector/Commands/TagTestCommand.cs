@@ -18,13 +18,11 @@ namespace Microsoft.ApplicationInspector.Commands
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
     }
 
-
     public class TagStatus
     {
         public string Tag { get; set; }
         public bool Detected { get; set; }
     }
-
 
     public class TagTestResult : Result
     {
@@ -47,9 +45,8 @@ namespace Microsoft.ApplicationInspector.Commands
         }
     }
 
-
     /// <summary>
-    /// Used to test a specific set of rules were all found in target source; Pass/Fail as well as inverse option to test if a set of rules is not 
+    /// Used to test a specific set of rules were all found in target source; Pass/Fail as well as inverse option to test if a set of rules is not
     /// found in source code
     /// </summary>
     public class TagTestCommand
@@ -85,9 +82,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-
         #region configure
-
 
         /// <summary>
         /// Establish console verbosity
@@ -124,7 +119,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-
         public void ConfigureRules()
         {
             WriteOnce.SafeLog("TagTestCommand::ConfigRules", LogLevel.Trace);
@@ -154,10 +148,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        #endregion
-
-
-
+        #endregion configure
 
         /// <summary>
         /// Main entry from CLI
@@ -178,7 +169,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-
                 //setup analyze call with silent option
                 AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeOptions
                 {
@@ -189,7 +179,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     ConsoleVerbosityLevel = "none",
                     Log = _options.Log
                 });
-
 
                 //get and perform initial analyze on results
                 AnalyzeResult analyze1 = cmd1.GetResult();
@@ -221,7 +210,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     foreach (Rule rule in _rulesSet)
                     {
-                        //supports both directions by generalizing 
+                        //supports both directions by generalizing
                         string[] testList1 = _arg_tagTestType == TagTestType.RulesNotPresent ?
                             rule.Tags : tagsFound;
 

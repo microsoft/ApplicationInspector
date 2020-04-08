@@ -8,8 +8,6 @@ namespace Microsoft.ApplicationInspector.CLI
 {
     public class TagTestTextWriter : CommandResultsWriter
     {
-
-
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
             CLITagTestCmdOptions cLITagTestCmdOptions = (CLITagTestCmdOptions)commandOptions;
@@ -51,7 +49,5 @@ namespace Microsoft.ApplicationInspector.CLI
             TextWriter.Close();
             WriteOnce.TextWriter = null;
         }
-
-
     }
 }

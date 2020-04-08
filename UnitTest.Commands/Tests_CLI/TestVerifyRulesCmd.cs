@@ -30,7 +30,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
 
-
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
@@ -50,8 +49,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void CustomRules_Pass()
@@ -73,8 +70,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
-
-
 
         [TestMethod]
         public void VerifyRulesToTxtFile_Pass()
@@ -98,8 +93,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
 
-
-
         [TestMethod]
         public void VerifyRulesToJsonFile_Pass()
         {
@@ -121,7 +114,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
-
 
         [TestMethod]
         public void VerifyRulesToUnknownFile_Fail()
@@ -145,7 +137,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void VerifyRulesToBadFile_Fail()
         {
@@ -167,8 +158,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void LogTraceLevel_Pass()
@@ -208,8 +197,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
 
-
-
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
@@ -243,8 +230,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
-
-
 
         [TestMethod]
         public void LogDebugLevel_Pass()
@@ -280,8 +265,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
 
-
-
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
@@ -297,12 +280,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
-
 
         [TestMethod]
         public void InsecureLogPath_Fail()
@@ -319,12 +300,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void NoConsoleOutput_Pass()
@@ -347,12 +326,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
-
 
         [TestMethod]
         public void NoConsoleNoFileOutput_Fail()
@@ -369,7 +346,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);

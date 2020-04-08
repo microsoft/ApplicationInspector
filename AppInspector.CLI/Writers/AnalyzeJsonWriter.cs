@@ -16,7 +16,6 @@ namespace Microsoft.ApplicationInspector.CLI
     /// </summary>
     public class AnalyzeJsonWriter : CommandResultsWriter
     {
-
         /// <summary>
         /// simple wrapper for serializing results for simple tags only during processing
         /// </summary>
@@ -25,7 +24,6 @@ namespace Microsoft.ApplicationInspector.CLI
             [JsonProperty(PropertyName = "tags")]
             public string[] Tags { get; set; }
         }
-
 
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
@@ -57,15 +55,11 @@ namespace Microsoft.ApplicationInspector.CLI
             }
         }
 
-
-
         public override void FlushAndClose()
         {
             TextWriter.Flush();
             TextWriter.Close();
             WriteOnce.TextWriter = null;
         }
-
-
     }
 }

@@ -84,7 +84,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             return result;
-
         }
 
         public static string FormatString(MsgHelp.ID id, params object[] parameters)
@@ -96,6 +95,5 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             return String.Format(GetString(id), value);
         }
-
     }
 }

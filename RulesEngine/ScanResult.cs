@@ -3,13 +3,13 @@
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
-
     /// <summary>
     /// Analysis Issue
     /// </summary>
     public class ScanResult
     {
         private Confidence _confidence;
+
         /// <summary>
         /// Creates new instance of Issue
         /// </summary>
@@ -59,7 +59,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public Rule Rule { get; set; }
 
         /// <summary>
-        /// True if Issue refers to suppression information 
+        /// True if Issue refers to suppression information
         /// </summary>
         public bool IsSuppressionInfo { get; set; }
 

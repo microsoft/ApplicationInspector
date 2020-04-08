@@ -7,7 +7,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     [JsonConverter(typeof(ConfidenceConverter))]
     public enum Confidence { Low = 1, Medium = 2, High = 4 }
 
-
     /// <summary>
     /// Json converter for Pattern Type
     /// </summary>
@@ -19,7 +18,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             string svrstr = svr.ToString().ToLower();
 
             writer.WriteValue(svrstr);
-
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

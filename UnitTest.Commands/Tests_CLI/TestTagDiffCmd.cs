@@ -7,12 +7,11 @@ using System.IO;
 
 namespace ApplicationInspector.Unitprocess.CLICommands
 {
-
     /// <summary>
     /// Test class for Analyze Commands
-    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so 
+    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so
     /// doesn't create a set of shared objects
-    /// 
+    ///
     /// </summary>
     [TestClass]
     public class CLITestTagDiffCmd
@@ -33,12 +32,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
         }
-
 
         [TestMethod]
         public void Equality_Fail()
@@ -56,13 +53,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
         }
-
-
 
         [TestMethod]
         public void ZipReadDiff_Pass()
@@ -80,12 +74,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
         }
-
 
         [TestMethod]
         public void InEquality_Pass()
@@ -104,13 +96,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
         }
-
-
 
         [TestMethod]
         public void InEquality_Fail()
@@ -128,13 +117,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
         }
-
-
 
         [TestMethod]
         public void SameSrcFile_Fail()
@@ -158,7 +144,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void OneSrcResult_Fail()
         {
@@ -180,7 +165,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void InvalidSourcePath_Fail()
@@ -204,7 +188,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void NoResults_Fail()
         {
@@ -227,7 +210,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
@@ -249,7 +231,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void NoDefaultCustomRules_Pass()
@@ -274,7 +255,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
         }
 
-
         [TestMethod]
         public void DefaultWithCustomRules_Pass()
         {
@@ -297,8 +277,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
         }
-
-
 
         [TestMethod]
         public void TagdiffToTextFilePath_Pass()
@@ -337,7 +315,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
         }
 
-
         [TestMethod]
         public void TagdiffToJsonFilePath_Pass()
         {
@@ -373,7 +350,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void TagdiffToUnknownFormatFilePath_Fail()
         {
@@ -402,8 +378,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
 
-
-
         [TestMethod]
         public void TagdiffToOutFilePath_Fail()
         {
@@ -426,9 +400,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
-
-
-
 
         [TestMethod]
         public void LogTraceLevel_Pass()
@@ -454,8 +425,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
         }
 
-
-
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
@@ -479,8 +448,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
         }
-
-
 
         [TestMethod]
         public void LogDebugLevel_Pass()
@@ -510,8 +477,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
         }
 
-
-
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
@@ -528,14 +493,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
-
-
-
 
         [TestMethod]
         public void InsecureLogPath_Fail()
@@ -553,13 +514,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void NoConsoleOutput_Pass()
@@ -579,7 +537,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 {
                     exitCode = String.IsNullOrEmpty(testContent) ? TagDiffResult.ExitCode.TestPassed : TagDiffResult.ExitCode.CriticalError;
                 }
-
             }
             catch (Exception)
             {
@@ -588,7 +545,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
         }
-
 
         [TestMethod]
         public void NoConsoleNoFileOutput_Fail()
@@ -606,7 +562,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);

@@ -26,7 +26,6 @@ namespace Microsoft.ApplicationInspector.Commands
             _rulesPath = rulePath;
         }
 
-
         public void Verify(bool failFast = true)
         {
             fail_fast = failFast;
@@ -45,8 +44,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-
-
         private void LoadDirectory(string path)
         {
             foreach (string filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
@@ -54,7 +51,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 LoadFile(filename);
             }
         }
-
 
         private void LoadFile(string file)
         {
@@ -73,12 +69,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_FAILED, file));
                 }
             }
-
         }
 
-
-
         public RuleSet CompiledRuleset => _rules;
-
     }
 }

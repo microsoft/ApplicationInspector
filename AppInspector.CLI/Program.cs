@@ -21,7 +21,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             int finalResult = (int)Utils.ExitCode.CriticalError;
 
-            Utils.CLIExecutionContext = true;//set manually at start from CLI 
+            Utils.CLIExecutionContext = true;//set manually at start from CLI
 
             WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Medium;
             try
@@ -71,8 +71,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return finalResult;
         }
 
-
-
         #region OutputArgsCheckandRun
 
         //idea is to check output args which are not applicable to NuGet callers before the command operation is run for max efficiency
@@ -87,7 +85,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return RunTagDiffCommand(options);
         }
 
-
         private static int VerifyOutputArgsRun(CLITagTestCmdOptions options)
         {
             Logger logger = Utils.SetupLogging(options, true);
@@ -97,7 +94,6 @@ namespace Microsoft.ApplicationInspector.CLI
             CommonOutputChecks(options);
             return RunTagTestCommand(options);
         }
-
 
         private static int VerifyOutputArgsRun(CLIExportTagsCmdOptions options)
         {
@@ -109,7 +105,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return RunExportTagsCommand(options);
         }
 
-
         private static int VerifyOutputArgsRun(CLIVerifyRulesCmdOptions options)
         {
             Logger logger = Utils.SetupLogging(options, true);
@@ -119,7 +114,6 @@ namespace Microsoft.ApplicationInspector.CLI
             CommonOutputChecks(options);
             return RunVerifyRulesCommand(options);
         }
-
 
         private static int VerifyOutputArgsRun(CLIPackRulesCmdOptions options)
         {
@@ -147,7 +141,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             return RunPackRulesCommand(options);
         }
-
 
         private static int VerifyOutputArgsRun(CLIAnalyzeCmdOptions options)
         {
@@ -183,7 +176,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             return RunAnalyzeCommand(options);
         }
-
 
         /// <summary>
         /// Checks that either output filepath is valid or console verbosity is not visible to ensure
@@ -230,7 +222,6 @@ namespace Microsoft.ApplicationInspector.CLI
             }
         }
 
-
         /// <summary>
         /// Ensure output file path can be written to
         /// </summary>
@@ -248,7 +239,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
         }
 
-        #endregion
+        #endregion OutputArgsCheckandRun
 
         #region RunCmdsWriteResults
 
@@ -275,8 +266,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             return (int)exitCode;
         }
-
-
 
         private static int RunTagDiffCommand(CLITagDiffCmdOptions cliOptions)
         {
@@ -361,7 +350,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return (int)exitCode;
         }
 
-
         private static int RunPackRulesCommand(CLIPackRulesCmdOptions cliOptions)
         {
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
@@ -381,6 +369,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return (int)exitCode;
         }
 
-        #endregion
+        #endregion RunCmdsWriteResults
     }
 }

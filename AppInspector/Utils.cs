@@ -51,22 +51,26 @@ namespace Microsoft.ApplicationInspector.Commands
                 case AppPath.basePath:
                     result = GetBaseAppPath();
                     break;
+
                 case AppPath.defaultLog:
                     result = Path.Combine(GetBaseAppPath(), "log.txt");
                     break;
+
                 case AppPath.defaultRulesSrc://Packrules source use
                     result = Path.GetFullPath(Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "rules", "default"));//used to ref project folder
                     break;
+
                 case AppPath.defaultRulesPackedFile://Packrules default output use
                     result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "Resources", "defaultRulesPkd.json");//packed default file in project resources
                     break;
+
                 case AppPath.tagGroupPref://CLI use only
                     result = Path.Combine(GetBaseAppPath(), "preferences", "tagreportgroups.json");
                     break;
+
                 case AppPath.tagCounterPref://CLI use only
                     result = Path.Combine(GetBaseAppPath(), "preferences", "tagcounters.json");
                     break;
-
             }
 
             result = Path.GetFullPath(result);
@@ -83,7 +87,6 @@ namespace Microsoft.ApplicationInspector.Commands
             _basePath = Path.GetFullPath(System.AppContext.BaseDirectory);
             return _basePath;
         }
-
 
         /// <summary>
         /// Common method of retrieving rules from AppInspector.Commands manifest
@@ -104,13 +107,10 @@ namespace Microsoft.ApplicationInspector.Commands
             return ruleSet;
         }
 
-
-
         public static void OpenBrowser(string url)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-
                 try
                 {
                     Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
@@ -154,7 +154,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-
         /// <summary>
         /// For use when logging is needed and was not called via CLI
         /// </summary>
@@ -165,8 +164,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return SetupLogging(opts);
         }
-
-
 
         /// <summary>
         /// Setup application inspector logging; 1 file per process
@@ -191,7 +188,7 @@ namespace Microsoft.ApplicationInspector.Commands
             //clean up previous for convenience in reading
             if (File.Exists(opts.LogFilePath))
             {
-                // Read the file and display it line by line.  
+                // Read the file and display it line by line.
                 System.IO.StreamReader file = new System.IO.StreamReader(opts.LogFilePath);
                 String line = file.ReadLine();
                 file.Close();
@@ -256,7 +253,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 FileName = opts.LogFilePath,
                 Layout = @"${date:format=yyyy-MM-dd HH\:mm\:ss} ${threadid} ${level:uppercase=true} - AppInsLog - ${message}",
                 ForceMutexConcurrentWrites = true
-
             })
             {
                 config.AddTarget(fileTarget);
@@ -269,7 +265,5 @@ namespace Microsoft.ApplicationInspector.Commands
             Logger = LogManager.GetLogger("CST.ApplicationInspector");
             return Logger;
         }
-
     }
-
 }

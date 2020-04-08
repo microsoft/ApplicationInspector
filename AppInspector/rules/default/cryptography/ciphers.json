@@ -144,7 +144,8 @@
         "pattern": "RSA.*encrypt|RSA.*decrypt|public.?key|private.?key|privkey|pubkey",
         "type": "regex",
         "scopes": [
-          "code", "comment"
+          "code",
+          "comment"
         ],
         "confidence": "high"
       },

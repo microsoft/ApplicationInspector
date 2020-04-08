@@ -57,12 +57,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return result;
         }
 
-
         /// <summary>
         /// Parse a directory with rule files and loads the rules
         /// </summary>
         /// <param name="path">Path to rules folder</param>
-        /// <param name="tag">Tag for the rules</param>        
+        /// <param name="tag">Tag for the rules</param>
         public void AddDirectory(string path, string tag = null)
         {
             if (path == null)
@@ -180,13 +179,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                         throw new Exception(string.Format("Duplicate ruleId {0} found.", r.Id));
                     }
-
                 }
 
                 _rules.AddRange(ruleList);
             }
         }
-
 
         /// <summary>
         /// Filters rules within Ruleset by languages
@@ -271,7 +268,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         /// <summary>
         /// Count of rules in the ruleset
-        /// </summary>        
+        /// </summary>
         public int Count()
         {
             return _rules.Count();
@@ -295,8 +292,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return this._rules.GetEnumerator();
         }
 
-        #endregion
-
+        #endregion IEnumerable interface
     }
-
 }

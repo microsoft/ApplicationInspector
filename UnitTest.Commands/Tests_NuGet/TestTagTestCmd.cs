@@ -6,12 +6,11 @@ using System.IO;
 
 namespace ApplicationInspector.Unitprocess.Commands
 {
-
     /// <summary>
     /// Test class for Analyze Commands
-    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so 
+    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so
     /// doesn't create a set of shared objects
-    /// 
+    ///
     /// </summary>
     [TestClass]
     public class TestTagTestCmd
@@ -45,7 +44,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
 
-
         [TestMethod]
         public void RulesPresent_Fail()
         {
@@ -75,8 +73,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestFailed);
         }
 
-
-
         [TestMethod]
         public void BasicZipReadDiff_Pass()
         {
@@ -105,7 +101,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
-
 
         [TestMethod]
         public void RulesNotPresent_Pass()
@@ -138,8 +133,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
 
-
-
         [TestMethod]
         public void RulesNotPresent_Fail()
         {
@@ -170,8 +163,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestFailed);
         }
 
-
-
         [TestMethod]
         public void InvalidSourcePath_Fail()
         {
@@ -201,7 +192,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void RulesPresentNoResults_Fail()
         {
@@ -230,7 +220,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestFailed);
         }
-
 
         [TestMethod]
         public void RulesNotPresentNoResults_Success()
@@ -262,7 +251,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
 
-
         [TestMethod]
         public void RulesNotPresentNoResults_Fail()
         {
@@ -293,7 +281,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestFailed);
         }
 
-
         [TestMethod]
         public void NoRules_Fail()
         {
@@ -321,8 +308,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void LogTraceLevel_Pass()
@@ -365,8 +350,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
 
-
-
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
@@ -405,8 +388,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
-
-
 
         [TestMethod]
         public void LogDebugLevel_Pass()
@@ -449,8 +430,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
 
-
-
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
@@ -481,9 +460,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
 
-
-
-
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
@@ -504,7 +480,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             }
             catch (Exception)
             {
-
             }
 
             //because these are static and each test is meant to be indpendent null assign the references to create the log
@@ -513,8 +488,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void NoConsoleOutput_Pass()
@@ -533,7 +506,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 // Attempt to open output file.
                 using (var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt")))
                 {
-
                     // Redirect standard output from the console to the output file.
                     Console.SetOut(writer);
 
@@ -574,8 +546,5 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
-
     }
-
 }
-

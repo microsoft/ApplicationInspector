@@ -50,8 +50,6 @@ namespace Microsoft.ApplicationInspector.CLI
             }
         }
 
-
-
         public AnalyzeTextWriter(string formatString)
         {
             if (string.IsNullOrEmpty(formatString))
@@ -63,8 +61,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 _formatString = formatString;
             }
         }
-
-
 
         #region helpers
 
@@ -81,7 +77,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return build.ToString();
         }
 
-
         private string StringList(Dictionary<string, int> data)
         {
             StringBuilder build = new StringBuilder();
@@ -95,7 +90,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return build.ToString();
         }
 
-
         private string StringList(SortedDictionary<string, string> data)
         {
             StringBuilder build = new StringBuilder();
@@ -108,7 +102,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             return build.ToString();
         }
-
 
         /// <summary>
         /// even out delineator for headings
@@ -127,8 +120,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return build.ToString();
         }
 
-        #endregion
-
+        #endregion helpers
 
         public void WriteAppMeta(MetaData metaData)
         {
@@ -174,7 +166,6 @@ namespace Microsoft.ApplicationInspector.CLI
             }
         }
 
-
         public void WriteMatch(MatchRecord match)
         {
             string output = _formatString.Replace("%F", match.FileName);
@@ -195,9 +186,7 @@ namespace Microsoft.ApplicationInspector.CLI
             output = output.Replace("%T", string.Join(',', match.Tags));
 
             WriteOnce.General(output);
-
         }
-
 
         private void WriteDependencies(MetaData metaData)
         {
@@ -208,8 +197,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteOnce.General(s);
             }
         }
-
-
 
         public override void FlushAndClose()
         {

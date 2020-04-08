@@ -231,7 +231,7 @@
         "pattern": "ASP\\.NET|\\b\\.MVC\\b",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": ["i"],
+        "modifiers": [ "i" ],
         "_comment": ""
       }
     ]

@@ -9,14 +9,13 @@ namespace ApplicationInspector.Unitprocess.Commands
 {
     /// <summary>
     /// Test class for Analyze Commands
-    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so 
+    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so
     /// doesn't create a set of shared objects
     /// Note: in order to avoid log reuse, include the optional parameter CloseLogOnCommandExit = true
     /// </summary>
     [TestClass]
     public class TestAnalyzeCmd
     {
-
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
@@ -27,7 +26,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\log.txt")
             };
 
-
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
@@ -37,7 +35,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             }
             catch (Exception)
             {
-
             }
 
             //because these are static and each test is meant to be indpendent null assign the references to create the log
@@ -46,7 +43,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
-
 
         [TestMethod]
         public void BasicAnalyze_Pass()
@@ -76,8 +72,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
-
-
         [TestMethod]
         public void BasicZipRead_Pass()
         {
@@ -103,12 +97,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             WriteOnce.Log = null;
             Utils.Logger = null;
 
-
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
-
 
         [TestMethod]
         public void InvalidSourcePath_Fail()
@@ -137,7 +127,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void InvalidRulesPath_Fail()
@@ -171,7 +160,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
@@ -200,7 +188,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void NoDefaultCustomRules_Pass()
@@ -232,7 +219,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
-
         [TestMethod]
         public void DefaultWithCustomRules_Pass()
         {
@@ -261,7 +247,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
 
         [TestMethod]
         public void DefaultAndCustomRulesMatched_Pass()
@@ -296,8 +281,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
-
-
         [TestMethod]
         public void ExclusionFilter_Fail()
         {
@@ -325,8 +308,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
         }
-
-
 
         [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
@@ -361,7 +342,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
-
         [TestMethod]
         public void ExpectedTagCountNoDupsAllowed_Pass()
         {
@@ -395,8 +375,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
-
-
         [TestMethod]
         public void NoMatchesFound_Pass()
         {
@@ -420,7 +398,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
         }
-
 
         [TestMethod]
         public void LogTraceLevel_Pass()
@@ -462,8 +439,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
-
-
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
@@ -480,7 +455,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
-
             }
             catch (Exception)
             {
@@ -501,8 +475,6 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void LogDebugLevel_Pass()
@@ -544,8 +516,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
-
-
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
@@ -575,8 +545,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
 
-
-
         [TestMethod]
         public void NoConsoleOutput_Pass()
         {
@@ -593,7 +561,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 // Attempt to open output file.
                 using (var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt")))
                 {
-
                     // Redirect standard output from the console to the output file.
                     Console.SetOut(writer);
 
@@ -634,8 +601,5 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
-
     }
 }

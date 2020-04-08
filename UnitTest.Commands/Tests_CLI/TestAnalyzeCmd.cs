@@ -9,9 +9,9 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 {
     /// <summary>
     /// Test class for Analyze Commands
-    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so 
+    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so
     /// doesn't create a set of shared objects
-    /// 
+    ///
     /// </summary>
     [TestClass]
     public class CLITestAnalyzeCmd
@@ -28,12 +28,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
 
         [TestMethod]
         public void SimpleTagsHTMLOutput_Fail() //simple tags not supported for html format
@@ -53,7 +51,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void DupTagsHTMLOutput_Fail() //dupliacte tags not supported for html format
         {
@@ -71,7 +68,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void UnknownFormat_Fail() //dupliacte tags not supported for html format
@@ -91,7 +87,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
 
-
         [TestMethod]
         public void ZipReadHTMLOutput_Pass()
         {
@@ -107,13 +102,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void SimpleTagsTextOutput_Pass()
@@ -137,13 +129,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void SimpleTagsJsonOutput_JSSrc_Pass()
@@ -167,14 +156,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
-
 
         [TestMethod]
         public void SimpleTagsJsonOutput_CPPSrc_Pass()
@@ -198,13 +183,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void InvalidOutputfilePath_Fail()
@@ -221,12 +203,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void InvalidSourcePath_Fail()
@@ -243,12 +223,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void InvalidRulesPath_Fail()
@@ -265,12 +243,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
@@ -287,12 +263,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void NoDefaultCustomRules_Pass()
@@ -310,12 +284,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
 
         [TestMethod]
         public void DefaultWithCustomRules_Pass()
@@ -333,12 +305,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
 
         [TestMethod]
         public void DefaultAndCustomRulesPosMatches_Pass()
@@ -357,17 +327,13 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
                 exitCode = testContent.Contains("Data.Parsing.JSON") ? AnalyzeResult.ExitCode.Success : exitCode;
                 exitCode = testContent.Contains("Data.Custom1") ? AnalyzeResult.ExitCode.Success : exitCode;
-
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void ExclusionFilter_Fail()
@@ -385,13 +351,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
         }
-
-
 
         [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
@@ -415,12 +378,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
 
         [TestMethod]
         public void ExpectedTagCountNoDupsAllowed_Pass()
@@ -444,13 +405,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void NoMatchesFound_Pass()
@@ -467,12 +425,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
         }
-
 
         [TestMethod]
         public void LogTraceLevel_Pass()
@@ -492,13 +448,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void LogErrorLevel_Pass()
@@ -518,13 +471,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void LogDebugLevel_Pass()
@@ -544,13 +494,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void InvalidLogPath_Fail()
@@ -567,14 +514,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
-
-
-
 
         [TestMethod]
         public void InsecureLogPath_Fail()
@@ -591,13 +534,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void NoConsoleOutput_Pass()
@@ -617,15 +557,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                     exitCode = String.IsNullOrEmpty(testContent) ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.CriticalError;
                 }
             }
-
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
-
 
         [TestMethod]
         public void NoConsoleNoFileOutput_Fail()
@@ -642,12 +579,9 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
     }
 }
-
-

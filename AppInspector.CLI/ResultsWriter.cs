@@ -8,8 +8,8 @@ using System.IO;
 namespace Microsoft.ApplicationInspector.CLI
 {
     /// <summary>
-    /// Wrapper for CLI only output arg validation which may be unique to a command 
-    /// and for allocating the correct writter type and format writter object 
+    /// Wrapper for CLI only output arg validation which may be unique to a command
+    /// and for allocating the correct writter type and format writter object
     /// </summary>
     public static class ResultsWriter
     {
@@ -82,7 +82,6 @@ namespace Microsoft.ApplicationInspector.CLI
             Finalize(writer, commandCompletedMsg);
         }
 
-
         /// <summary>
         /// Allow for final actions if even and common file path notice to console
         /// Most Writer.Write operations flushandclose the stream automatically but .Flush
@@ -101,6 +100,5 @@ namespace Microsoft.ApplicationInspector.CLI
                 }
             }
         }
-
     }
 }

@@ -21,7 +21,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Creates new instance of Supressor
         /// </summary>
-        /// <param name="text">Text to work with</param>        
+        /// <param name="text">Text to work with</param>
         public Suppression(string text)
         {
             if (text == null)
@@ -94,7 +94,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                 }
 
-                // Parse Ids                
+                // Parse Ids
                 if (idString == KeywordAll)
                 {
                     _issues.Add(new SuppressedMatch()
@@ -113,7 +113,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     int index = IssuesListIndex;
                     foreach (string id in ids)
                     {
-
                         _issues.Add(new SuppressedMatch()
                         {
                             ID = id,

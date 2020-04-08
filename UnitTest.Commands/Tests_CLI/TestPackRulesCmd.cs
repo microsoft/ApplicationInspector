@@ -9,12 +9,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
     [TestClass]
     public class CLITestPackRulesCmd
     {
-
         [TestMethod]
         [Ignore] //default option won't find rules unless run from CLI; todo to look at addressed
         public void DefaultRules_Pass()
         {
-
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
@@ -31,7 +29,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.Success);
         }
-
 
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
@@ -52,8 +49,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void CustomRules_Pass()
@@ -76,8 +71,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         [Ignore] //overide in command to force json due to unresolved failure in options constr
@@ -102,8 +95,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
 
-
-
         [TestMethod]
         public void PackRulesToJsonFile_Pass()
         {
@@ -126,7 +117,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.Success);
         }
 
-
         [TestMethod]
         public void PackRulesToBadFile_Fail()
         {
@@ -148,8 +138,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
-
-
 
         [TestMethod]
         public void LogTraceLevel_Pass()
@@ -190,8 +178,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.Success);
         }
 
-
-
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
@@ -225,8 +211,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.Success);
         }
-
-
 
         [TestMethod]
         public void LogDebugLevel_Pass()
@@ -263,8 +247,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.Success);
         }
 
-
-
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
@@ -286,11 +268,9 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
 
-
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
-
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
@@ -308,7 +288,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
-
 
         [TestMethod]
         public void NoConsoleOutput_Pass()
@@ -339,7 +318,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.Success);
         }
 
-
         [TestMethod]
         public void NoConsoleNoFileOutput_Fail()
         {
@@ -355,11 +333,9 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch (Exception)
             {
-
             }
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
-
     }
 }

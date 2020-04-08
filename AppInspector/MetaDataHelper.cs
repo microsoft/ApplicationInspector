@@ -30,9 +30,8 @@ namespace Microsoft.ApplicationInspector.Commands
             _propertyTagSearchPatterns.Add("strGrpCPUTargets", ".CPU");
         }
 
-
         /// <summary>
-        /// Assist in aggregating reporting properties of matches as they are added 
+        /// Assist in aggregating reporting properties of matches as they are added
         /// Keeps helpers isolated from MetaData class which is used as a result object to keep pure
         /// </summary>
         /// <param name="matchRecord"></param>
@@ -135,9 +134,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 Metadata.TotalMatchesCount -= 1;//reduce e.g. tag counters not included as detailed match
             }
-
         }
-
 
         /// <summary>
         /// Defined here to isolate MetaData from data processing methods and keep as pure data
@@ -154,7 +151,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 Metadata.Languages.Add(language, 1);
             }
         }
-
 
         /// <summary>
         /// Initial best guess to deduce project name; if scanned metadata from project solution value is replaced later
@@ -184,7 +180,6 @@ namespace Microsoft.ApplicationInspector.Commands
             return applicationName;
         }
 
-
         /// <summary>
         /// Attempt to map application type tags or file type or language to identify
         /// WebApplications, Windows Services, Client Apps, WebServices, Azure Functions etc.
@@ -212,26 +207,31 @@ namespace Microsoft.ApplicationInspector.Commands
                     case "web.config":
                         result = "Web.Application";
                         break;
+
                     case "app.config":
                         result = ".NETclient";
                         break;
+
                     default:
                         switch (Path.GetExtension(match.FileName))
                         {
                             case ".cshtml":
                                 result = "Web.Application";
                                 break;
+
                             case ".htm":
                             case ".html":
                             case ".js":
                             case ".ts":
                                 result = "Web.Application";
                                 break;
+
                             case "powershell":
                             case "shellscript":
                             case "wincmdscript":
                                 result = "script";
                                 break;
+
                             default:
                                 switch (match.Language.Name)
                                 {
@@ -245,13 +245,10 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         break;
                 }
-
             }
 
             return result.ToLower();
         }
-
-
 
         private string ExtractValue(string s)
         {
@@ -274,7 +271,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 var value = parts[1];
                 value = value.Replace("\"", "");
                 result = value.Trim();
-
             }
             catch (Exception)
             {
@@ -283,7 +279,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return System.Net.WebUtility.HtmlEncode(result);
         }
-
 
         private string ExtractXMLValue(string s)
         {
@@ -302,8 +297,5 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return System.Net.WebUtility.HtmlEncode(result);
         }
-
-
     }
-
 }

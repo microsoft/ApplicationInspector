@@ -32,7 +32,6 @@ namespace Microsoft.ApplicationInspector.CLI
             KeyedSortedTagInfoLists = new Dictionary<string, List<TagInfo>>();
         }
 
-
         /// <summary>
         /// Pre: AnalyzeCommand GetResults created and populated from RulesEngine
         /// </summary>
@@ -108,8 +107,6 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.Verbosity = saveVerbosity;
         }
 
-
-
         public override void FlushAndClose()
         {
             TextWriter.Flush();
@@ -122,8 +119,6 @@ namespace Microsoft.ApplicationInspector.CLI
             Template.RegisterSafeType(type, (t) => t.ToString());
             Template.RegisterSafeType(type, type.GetMembers(BindingFlags.Instance).Select((e) => e.Name).ToArray());
         }
-
-
 
         #region UIAndReportResultsHelp
 
@@ -165,13 +160,10 @@ namespace Microsoft.ApplicationInspector.CLI
             KeyedSortedTagInfoLists["tagGrpAllTagsByConfidence"] = GetTagInfoListByConfidence();
             KeyedSortedTagInfoLists["tagGrpAllTagsBySeverity"] = GetTagInfoListBySeverity();
             KeyedSortedTagInfoLists["tagGrpAllTagsByName"] = GetTagInfoListByName();
-
         }
 
-
-
         /// <summary>
-        /// Get a list of TagGroup for a given category section name e.g. profile 
+        /// Get a list of TagGroup for a given category section name e.g. profile
         /// </summary>
         /// <param name="category"></param>
         /// <returns></returns>
@@ -196,7 +188,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             return result;
         }
-
 
         /// <summary>
         /// MetaData.UniqueTags should already exists and be created incrementally but here in case
@@ -256,7 +247,6 @@ namespace Microsoft.ApplicationInspector.CLI
                                     hashSet.Add(pattern.SearchPattern);
 
                                     pattern.Confidence = match.PatternConfidence;
-
                                 }
                                 else
                                 {
@@ -307,14 +297,10 @@ namespace Microsoft.ApplicationInspector.CLI
                     result.Add(tagInfo);
                     hashSet.Add(tagInfo.Tag);
                 }
-
             }
-
 
             return result;
         }
-
-
 
         /// <summary>
         /// Gets a set of matching tags for a set of patterns, returning for all matches
@@ -385,12 +371,10 @@ namespace Microsoft.ApplicationInspector.CLI
                         }
                     }
                 }
-
             }
 
             return result;
         }
-
 
         /// <summary>
         /// List of taginfo items ordered by name
@@ -430,8 +414,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             return result;
         }
-
-
 
         /// <summary>
         /// Tags sorted by confidence
@@ -477,7 +459,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return result;
         }
 
-
         /// <summary>
         /// Sorted by Severity
         /// </summary>
@@ -521,7 +502,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return result;
         }
 
-
         /// <summary>
         /// Opportunity for any final data prep before report gen
         /// </summary>
@@ -542,23 +522,23 @@ namespace Microsoft.ApplicationInspector.CLI
             return result;
         }
 
-
-        #endregion
-
+        #endregion UIAndReportResultsHelp
     }
 
-
     /// <summary>
-    /// Compatible for liquid; used to avoid use in MetaData as it adds unwanted properties to json serialization 
+    /// Compatible for liquid; used to avoid use in MetaData as it adds unwanted properties to json serialization
     /// </summary>
     public class TagCounterUI : Drop
     {
         [JsonProperty(PropertyName = "tag")]
         public string Tag { get; set; }
+
         [JsonProperty(PropertyName = "displayName")]
         public string ShortTag { get; set; }
+
         [JsonProperty(PropertyName = "count")]
         public int Count { get; set; }
+
         [JsonProperty(PropertyName = "includeAsMatch")]
         public bool IncludeAsMatch => false;
     }

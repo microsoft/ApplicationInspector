@@ -15,8 +15,8 @@ namespace Microsoft.ApplicationInspector.CLI
         /// Responsible for returning the correct cmd and format writer for output of cmd results.  An an output
         /// file will be opened as a stream if provided otherwise the console.out stream is used
         /// A downcast is expected as the input param containing the common output format and filepath for simplifying
-        /// the allocation to a single method and serves as a type selector but is also recast for command specific 
-        /// options in the writer as needed 
+        /// the allocation to a single method and serves as a type selector but is also recast for command specific
+        /// options in the writer as needed
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
@@ -57,7 +57,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return writer;
         }
 
-
         /// <summary>
         /// Only AnalyzeResultsWriter supports an html option
         /// </summary>
@@ -72,15 +71,19 @@ namespace Microsoft.ApplicationInspector.CLI
                 case "_dummy":
                     writer = new AnalyzeDummyWriter();
                     break;
+
                 case "json":
                     writer = new AnalyzeJsonWriter();
                     break;
+
                 case "text":
                     writer = new AnalyzeTextWriter(options.TextOutputFormat);
                     break;
+
                 case "html":
                     writer = new AnalyzeHtmlWriter();
                     break;
+
                 default:
                     WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
                     throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
@@ -93,7 +96,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return writer;
         }
 
-
         public static CommandResultsWriter GetExportWriter(CLIExportTagsCmdOptions options)
         {
             CommandResultsWriter writer = null;
@@ -103,12 +105,15 @@ namespace Microsoft.ApplicationInspector.CLI
                 case "_dummy":
                     writer = new ExportDummyWriter();
                     break;
+
                 case "json":
                     writer = new JsonWriter();
                     break;
+
                 case "text":
                     writer = new ExportTextWriter();
                     break;
+
                 default:
                     WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
                     throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
@@ -119,7 +124,6 @@ namespace Microsoft.ApplicationInspector.CLI
             writer.TextWriter = GetTextWriter(writer.OutputFileName);
 
             return writer;
-
         }
 
         private static CommandResultsWriter GetTagTestWriter(CLITagTestCmdOptions options)
@@ -131,12 +135,15 @@ namespace Microsoft.ApplicationInspector.CLI
                 case "_dummy":
                     writer = new TagTestDummyWriter();
                     break;
+
                 case "json":
                     writer = new JsonWriter();
                     break;
+
                 case "text":
                     writer = new TagTestTextWriter();
                     break;
+
                 default:
                     WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
                     throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
@@ -158,12 +165,15 @@ namespace Microsoft.ApplicationInspector.CLI
                 case "_dummy":
                     writer = new TagDiffDummyWriter();
                     break;
+
                 case "json":
                     writer = new JsonWriter();
                     break;
+
                 case "text":
                     writer = new TagDiffTextWriter();
                     break;
+
                 default:
                     WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
                     throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
@@ -185,12 +195,15 @@ namespace Microsoft.ApplicationInspector.CLI
                 case "_dummy":
                     writer = new VerifyRulesDummyWriter();
                     break;
+
                 case "json":
                     writer = new JsonWriter();
                     break;
+
                 case "text":
                     writer = new VerifyRulesTextWriter();
                     break;
+
                 default:
                     WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
                     throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
@@ -212,9 +225,11 @@ namespace Microsoft.ApplicationInspector.CLI
                 case "_dummy":
                     writer = new PackRulesDummyWriter();
                     break;
+
                 case "json":
                     writer = new JsonWriter();
                     break;
+
                 default:
                     WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
                     throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
@@ -247,8 +262,6 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             return textWriter;
-
         }
-
     }
 }

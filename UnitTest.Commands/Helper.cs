@@ -10,6 +10,7 @@ namespace ApplicationInspector.Unitprocess.Misc
         public enum AppPath { basePath, testSource, testRules, testOutput, defaultRules, appInspectorCLI };
 
         private static string _basePath;
+
         private static string GetBaseAppPath()
         {
             if (!String.IsNullOrEmpty(_basePath))
@@ -21,8 +22,6 @@ namespace ApplicationInspector.Unitprocess.Misc
             return _basePath;
         }
 
-
-
         public static string GetPath(AppPath pathType)
         {
             string result = "";
@@ -31,9 +30,11 @@ namespace ApplicationInspector.Unitprocess.Misc
                 case AppPath.basePath:
                     result = GetBaseAppPath();
                     break;
+
                 case AppPath.testSource:
                     result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "UnitTest.Commands", "source");
                     break;
+
                 case AppPath.testRules://Packrules default output use
                     result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "UnitTest.Commands", "customrules");
                     break;
@@ -41,9 +42,11 @@ namespace ApplicationInspector.Unitprocess.Misc
                 case AppPath.testOutput://Packrules default output use
                     result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "UnitTest.Commands", "output");
                     break;
+
                 case AppPath.defaultRules:
                     result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "rules");
                     break;
+
                 case AppPath.appInspectorCLI:
 #if DEBUG
                     result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "debug", "netcoreapp3.1", "applicationinspector.cli.exe");
@@ -56,8 +59,6 @@ namespace ApplicationInspector.Unitprocess.Misc
             result = Path.GetFullPath(result);
             return result;
         }
-
-
 
         public static List<string> GetTagsFromFile(string[] contentLines)
         {
@@ -84,7 +85,6 @@ namespace ApplicationInspector.Unitprocess.Misc
 
             return results;
         }
-
 
         public static int RunProcess(string appFilePath, string arguments)
         {

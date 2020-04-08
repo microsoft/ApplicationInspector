@@ -47,6 +47,4 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             Confidence = Confidence.Medium;
         }
     }
-
-
 }

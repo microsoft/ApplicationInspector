@@ -1,10 +1,8 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-
 using System.Collections.Generic;
 using System.IO;
-
 
 namespace MultiExtractor
 {
@@ -22,7 +20,6 @@ namespace MultiExtractor
 
     public static class MiniMagic
     {
-
         private static readonly Dictionary<string, ArchiveFileType> FileExtensionMap = new Dictionary<string, ArchiveFileType>()
         {
             {"zip", ArchiveFileType.ZIP },
@@ -45,16 +42,13 @@ namespace MultiExtractor
             {"rar", ArchiveFileType.RAR },
 
             {"7z", ArchiveFileType.P7ZIP }
-
         };
-
 
         public static ArchiveFileType DetectFileType(string filename)
         {
             using var memoryStream = new MemoryStream(File.ReadAllBytes(filename));
             return MiniMagic.DetectFileType(new FileEntry(filename, "", memoryStream));
         }
-
 
         public static ArchiveFileType DetectFileType(FileEntry fileEntry)
         {
@@ -125,4 +119,3 @@ namespace MultiExtractor
         }
     }
 }
-

@@ -3,7 +3,6 @@
     $('[data-toggle="popover"]').popover();
     $('[data-toggle="tooltip"]').tooltip();
 
-
     /* Main Navigation Links: These are links that change the
      * visible section to something else, specified by the
      * `data-target` attribute of the link, which should usually
@@ -96,7 +95,7 @@ class TemplateInsertion {
         });
 
         c3.generate({
-            bindto: '#s_pi_languages_chart', 
+            bindto: '#s_pi_languages_chart',
             size: {
                 width: 200
             },
@@ -118,7 +117,6 @@ class TemplateInsertion {
         $('#s_pi_source_path').html(this.mt.sourcePath);
         $('#s_pi_author').html(this.mt.authors || 'No author found.');
         $('#s_pi_date_scanned').html(this.mt.dateScanned);
-
     }
 
     combineConfidence(a, b) {
@@ -204,7 +202,7 @@ class TemplateInsertion {
                 $(elt).addClass('disabled');
             }
         });
-       
+
         // Process each icon with the 'feature_icon' class.
         $('a.confidence_image').each((idx, elt) => {
             const confidenceValue = $(elt).data('target');
@@ -219,7 +217,6 @@ class TemplateInsertion {
 
             $(elt).src = src;
         })
-
 
         // Event handler for visible icons
         $('a.feature_icon').on('click', (e) => {
@@ -241,7 +238,7 @@ class TemplateInsertion {
 
             const $tbody = $('#features table tbody');
             $tbody.empty();
-            
+
             // Now we iterate through all of the rules that relate to this icon
             for (let [rule, confidence] of Object.entries(identifiedRules))
             {
@@ -250,7 +247,7 @@ class TemplateInsertion {
                 let $td0 = $('<td>');
                 let $td0a = $('<a>');
                 $td0a.attr('href', '#');
-                $td0a.data('ruleId', rule); 
+                $td0a.data('ruleId', rule);
                 $td0a.text(rule);
                 $td0.append($td0a);
                 $tr.append($td0);
