@@ -1,4 +1,13 @@
 # Azure Pipelines
+- task: VSTest@2
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*test*.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    vsTestVersion: '16.0'
 # https://aka.ms/yaml
 
 name: ApplicationInspector_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
