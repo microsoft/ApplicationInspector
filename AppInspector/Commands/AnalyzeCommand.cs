@@ -454,9 +454,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.SafeLog("No pattern matches detected for file: " + filePath, LogLevel.Trace);
             }
         }
-
+      
         #region ProcessingAssist
-
+      
         /// <summary>
         /// Simple wrapper but keeps calling code consistent
         /// Do not html code result which is accomplished later before out put to report
