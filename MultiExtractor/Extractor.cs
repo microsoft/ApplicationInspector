@@ -129,7 +129,14 @@ namespace MultiExtractor
             var newFilename = Path.GetFileNameWithoutExtension(fileEntry.Name);
             if (fileEntry.Name.EndsWith(".tgz", System.StringComparison.CurrentCultureIgnoreCase))
             {
-                newFilename = newFilename[0..^4] + ".tar";
+                if (newFilename.Length >= 3) //fix #191 short names e.g. a.tgz exception
+                {
+                    newFilename = newFilename[0..^4] + ".tar";
+                }
+                else
+                {
+                    newFilename += ".tar";
+                }
             }
 
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);

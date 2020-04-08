@@ -47,6 +47,12 @@ namespace Microsoft.ApplicationInspector.CLI
                     int MAX_HTML_REPORT_FILE_SIZE = 1024 * 1000 * 3;  //warn about potential slow rendering
 
                     //prechecks
+                    if (analyzeResult.ResultCode != AnalyzeResult.ExitCode.Success)
+                    {
+                        Finalize(writer, "Analyze");
+                        return;
+                    }
+
                     if (!string.IsNullOrEmpty(cLIAnalyzeCmdOptions.OutputFilePath))
                     {
                         WriteOnce.General(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-o ignored when html format specified"));
