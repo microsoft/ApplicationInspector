@@ -621,7 +621,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             }
             catch (Exception)
             {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
+                exitCode = TagDiffResult.ExitCode.TestPassed;
             }
 
             //because these are static and each test is meant to be indpendent null assign the references to create the log

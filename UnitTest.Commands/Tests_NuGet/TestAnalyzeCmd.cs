@@ -62,7 +62,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+
             }
 
             //because these are static and each test is meant to be indpendent null assign the references to create the log
@@ -90,7 +90,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+
             }
 
             //because these are static and each test is meant to be indpendent null assign the references to create the log
@@ -395,6 +395,10 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 exitCode = AnalyzeResult.ExitCode.CriticalError;
             }
+
+            //because these are static and each test is meant to be indpendent null assign the references to create the log
+            WriteOnce.Log = null;
+            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
         }
