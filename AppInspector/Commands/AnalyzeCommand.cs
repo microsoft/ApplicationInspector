@@ -24,48 +24,50 @@ namespace Microsoft.ApplicationInspector.Commands
             CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
         }
 
-        readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files 
-        readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
-        readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
+        private readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files 
+        private readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
+        private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
-        IEnumerable<string> _srcfileList;
-        AppProfile _appProfile;
-        RuleProcessor _rulesProcessor;
-        HashSet<string> _uniqueTagsControl;
-        Writer _outputWriter;
+        private IEnumerable<string> _srcfileList;
+        private AppProfile _appProfile;
+        private RuleProcessor _rulesProcessor;
+        private readonly HashSet<string> _uniqueTagsControl;
+        private Writer _outputWriter;
 
-        DateTime DateScanned { get; set; }
-        DateTime _lastUpdated;
+        private DateTime DateScanned { get; set; }
+
+        private DateTime _lastUpdated;
 
         /// <summary>
         /// Updated dynamically to more recent file in source
         /// </summary>
         public DateTime LastUpdated
         {
-            get { return _lastUpdated; }
+            get => _lastUpdated;
             set
             {
                 //find last updated file in solution
                 if (_lastUpdated < value)
+                {
                     _lastUpdated = value;
+                }
             }
         }
 
         //cmdline arguments
-        string _arg_sourcePath;
-        string _arg_outputFile;
-        string _arg_fileFormat;
-        string _arg_outputTextFormat;
-        string _arg_customRulesPath;
-        bool _arg_ignoreDefaultRules;
-        bool _arg_outputUniqueTagsOnly;
-        bool _arg_suppressBrowserOpen;
-        string _arg_confidenceFilters;
-        bool _arg_simpleTagsOnly;
-        Confidence _arg_confidence;
-        string _arg_consoleVerbosityLevel;
-
-        List<string> _fileExclusionList;//see exclusion list
+        private readonly string _arg_sourcePath;
+        private string _arg_outputFile;
+        private string _arg_fileFormat;
+        private readonly string _arg_outputTextFormat;
+        private readonly string _arg_customRulesPath;
+        private readonly bool _arg_ignoreDefaultRules;
+        private readonly bool _arg_outputUniqueTagsOnly;
+        private readonly bool _arg_suppressBrowserOpen;
+        private readonly string _arg_confidenceFilters;
+        private readonly bool _arg_simpleTagsOnly;
+        private Confidence _arg_confidence;
+        private readonly string _arg_consoleVerbosityLevel;
+        private readonly List<string> _fileExclusionList;//see exclusion list
 
         public AnalyzeCommand(AnalyzeCommandOptions opt)
         {
@@ -90,7 +92,9 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").ToList<string>();
                 if (_fileExclusionList != null && (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None")))
+                {
                     _fileExclusionList.Clear();
+                }
             }
 
             _arg_logger ??= Utils.SetupLogging(opt);
@@ -130,13 +134,15 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Establish console verbosity
         /// For NuGet DLL use, console is muted overriding any arguments sent
         /// </summary>
-        void ConfigureConsoleOutput()
+        private void ConfigureConsoleOutput()
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
             if (!Utils.CLIExecutionContext)
+            {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
+            }
             else
             {
                 WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
@@ -146,7 +152,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
                 else
+                {
                     WriteOnce.Verbosity = verbosity;
+                }
             }
         }
 
@@ -155,7 +163,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Note that WriteOnce.Writer is not used for AnalyzeCommand which has specific Writer classes for formattig to html, json, text unlike
         /// other command classes to writting to a file here is handled by the AnalyzeCommand FlushAll() method 
         /// </summary>
-        void ConfigFileOutput()
+        private void ConfigFileOutput()
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigOutput", LogLevel.Trace);
 
@@ -176,10 +184,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
 
                 if (!_arg_outputUniqueTagsOnly) //fix #183
+                {
                     throw new Exception(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
+                }
 
                 if (_arg_simpleTagsOnly) //won't work for html that expects full data
+                {
                     throw new Exception(ErrMsg.GetString(ErrMsg.ID.ANALYZE_SIMPLETAGS_HTML_FORMAT));
+                }
             }
 
             //Set outstream
@@ -199,12 +211,14 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <summary>
         /// Expects user to supply all that apply
         /// </summary>
-        void ConfigConfidenceFilters()
+        private void ConfigConfidenceFilters()
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigConfidenceFilters", LogLevel.Trace);
             //parse and verify confidence values
             if (String.IsNullOrEmpty(_arg_confidenceFilters))
+            {
                 _arg_confidence = Confidence.High | Confidence.Medium; //excludes low by default
+            }
             else
             {
                 string[] confidences = _arg_confidenceFilters.Split(',');
@@ -212,9 +226,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     Confidence single;
                     if (Enum.TryParse(confidence, true, out single))
+                    {
                         _arg_confidence |= single;
+                    }
                     else
+                    {
                         throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "x"));
+                    }
                 }
             }
         }
@@ -223,12 +241,14 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <summary>
         /// Simple validation on source path provided for scanning and preparation
         /// </summary>
-        void ConfigSourcetoScan()
+        private void ConfigSourcetoScan()
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
 
             if (String.IsNullOrEmpty(_arg_sourcePath))
+            {
                 throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
+            }
 
             if (Directory.Exists(_arg_sourcePath))
             {
@@ -236,8 +256,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     _srcfileList = Directory.EnumerateFiles(_arg_sourcePath, "*.*", SearchOption.AllDirectories);
                     if (_srcfileList.Count() == 0)
+                    {
                         throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
-
+                    }
                 }
                 catch (Exception)
                 {
@@ -245,10 +266,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
             else if (File.Exists(_arg_sourcePath)) //not a directory but make one for single flow
+            {
                 _srcfileList = new List<string>() { _arg_sourcePath };
+            }
             else
+            {
                 throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_FILE_OR_DIR, _arg_sourcePath));
-
+            }
         }
 
 
@@ -256,7 +280,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Add default and/or custom rules paths
         /// Iterate paths and add to ruleset
         /// </summary>
-        void ConfigRules()
+        private void ConfigRules()
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigRules", LogLevel.Trace);
 
@@ -272,16 +296,24 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!string.IsNullOrEmpty(_arg_customRulesPath))
             {
                 if (rulesSet == null)
+                {
                     rulesSet = new RuleSet(_arg_logger);
+                }
 
                 rulePaths.Add(_arg_customRulesPath);
 
                 if (Directory.Exists(_arg_customRulesPath))
+                {
                     rulesSet.AddDirectory(_arg_customRulesPath);
+                }
                 else if (File.Exists(_arg_customRulesPath))
+                {
                     rulesSet.AddFile(_arg_customRulesPath);
+                }
                 else
+                {
                     throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _arg_customRulesPath));
+                }
             }
 
             //error check based on ruleset not path enumeration
@@ -301,7 +333,10 @@ namespace Microsoft.ApplicationInspector.Commands
                     tagExceptions = JsonConvert.DeserializeObject<List<TagException>>(File.ReadAllText(Utils.GetPath(Utils.AppPath.tagCounterPref)));
                     string[] exceptions = new string[tagExceptions.Count];
                     for (int i = 0; i < tagExceptions.Count; i++)
+                    {
                         exceptions[i] = tagExceptions[i].Tag;
+                    }
+
                     _rulesProcessor.UniqueTagExceptions = exceptions;
                 }
             }
@@ -365,9 +400,13 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
 
                     if (archiveFileType == ArchiveFileType.UNKNOWN)//not a known zipped file type
+                    {
                         ProcessAsFile(filename);
+                    }
                     else
+                    {
                         UnZipAndProcess(filename, archiveFileType);
+                    }
                 }
 
                 WriteOnce.General("\r" + ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
@@ -376,27 +415,36 @@ namespace Microsoft.ApplicationInspector.Commands
                 //Prepare report results
                 _appProfile.MetaData.LastUpdated = LastUpdated.ToString();
                 _appProfile.DateScanned = DateScanned.ToString();
-                _appProfile.PrepareReport();
-                FlushAll();
 
                 //wrapup result status
                 if (_appProfile.MetaData.TotalFiles == _appProfile.MetaData.FilesSkipped)
+                {
                     WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOSUPPORTED_FILETYPES));
+                }
                 else if (_appProfile.MatchList.Count == 0)
+                {
                     WriteOnce.Error(ErrMsg.GetString(ErrMsg.ID.ANALYZE_NOPATTERNS));
+                }
                 else
                 {
-                    WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "analyze"));
+                    _appProfile.PrepareReport();
+                    FlushAll();
                 }
+
+                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "analyze"));
             }
             catch (Exception e)
             {
                 WriteOnce.Error(e.Message);
                 //exit normaly for CLI callers and throw for DLL callers
                 if (Utils.CLIExecutionContext)
+                {
                     return (int)ExitCode.CriticalError;
+                }
                 else
+                {
                     throw;
+                }
             }
             finally
             {
@@ -418,7 +466,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// scan evaluation for use by decompression methods as well
         /// </summary>
         /// <param name="filename"></param>
-        void ProcessAsFile(string filename)
+        private void ProcessAsFile(string filename)
         {
             //check for supported language
             LanguageInfo languageInfo = new LanguageInfo();
@@ -440,7 +488,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="fileText"></param>
-        void ProcessInMemory(string filePath, string fileText, LanguageInfo languageInfo)
+        private void ProcessInMemory(string filePath, string fileText, LanguageInfo languageInfo)
         {
             #region minorRollupTrackingAndProgress
 
@@ -452,9 +500,13 @@ namespace Microsoft.ApplicationInspector.Commands
             int percentCompleted = (int)((float)totalFilesReviewed / (float)_appProfile.MetaData.TotalFiles * 100);
             //earlier issue now resolved so app handles mixed zipped/zipped and unzipped/zipped directories but catch all for non-critical UI
             if (percentCompleted > 100)
+            {
                 percentCompleted = 100;
+            }
             else if (percentCompleted < 100) //caller already reports @100% so avoid 2x for file output
+            {
                 WriteOnce.General("\r" + ErrMsg.FormatString(ErrMsg.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted), false);
+            }
 
             #endregion
 
@@ -475,15 +527,21 @@ namespace Microsoft.ApplicationInspector.Commands
                     //maintain a list of unique tags; multi-purpose but primarily for filtering -d option
                     bool dupTagFound = false;
                     foreach (string t in match.Rule.Tags)
+                    {
                         dupTagFound = !_uniqueTagsControl.Add(t);
+                    }
 
                     //save all unique dependencies even if Dependency tag pattern is not-unique
                     var tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
                     String textMatch;
                     if (match.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))
+                    {
                         textMatch = ExtractDependency(fileText, match.Boundary.Index, match.PatternMatch, languageInfo.Name);
+                    }
                     else
+                    {
                         textMatch = ExtractTextSample(fileText, match.Boundary.Index, match.Boundary.Length);
+                    }
 
                     //wrap rule issue result to add metadata
                     MatchRecord record = new MatchRecord()
@@ -501,11 +559,17 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     //bail after extracting any dependency unique items IF user requested
                     if (_arg_outputUniqueTagsOnly && dupTagFound)
+                    {
                         continue;
+                    }
                     else if (addAsFeatureMatch)
+                    {
                         _appProfile.MatchList.Add(record);
+                    }
                     else
+                    {
                         _appProfile.MetaData.TotalMatchesCount -= 1;//reduce e.g. tag counters only as per preferences file
+                    }
                 }
             }
             else
@@ -525,14 +589,16 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="index"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        string ExtractTextSample(string fileText, int index, int length)
+        private string ExtractTextSample(string fileText, int index, int length)
         {
             string result = "";
             try
             {
                 //some js file results may be too long for practical display
                 if (length > MAX_TEXT_SAMPLE_LENGTH)
+                {
                     length = MAX_TEXT_SAMPLE_LENGTH;
+                }
 
                 result = fileText.Substring(index, length).Trim();
             }
@@ -552,7 +618,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="text"></param>
         /// <param name="language"></param>
         /// <returns></returns>
-        string ExtractDependency(string text, int startIndex, SearchPattern pattern, string language)
+        private string ExtractDependency(string text, int startIndex, SearchPattern pattern, string language)
         {
             // import value; load value; include value; 
             string rawResult = "";
@@ -574,12 +640,18 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             string[] parseValues = match.Groups[0].Value.Split(' ');
                             if (parseValues.Length == 1)
+                            {
                                 rawResult = parseValues[0].Trim();
+                            }
                             else if (parseValues.Length > 1)
+                            {
                                 rawResult = parseValues[1].Trim(); //should be value; time will tell if fullproof
+                            }
                         }
                         else if (match.Groups.Count > 1)//handles cases like include <stdio.h>
+                        {
                             rawResult = match.Groups[1].Value.Trim();
+                        }
                         //else if > 2 too hard to match; do nothing
 
                         break;//only designed to expect one match per line i.e. not include value include value
@@ -615,8 +687,15 @@ namespace Microsoft.ApplicationInspector.Commands
             var distance = (int)((length - 1.0) / 2.0);
 
             // Sanity check
-            if (startLineNumber < 0) startLineNumber = 0;
-            if (startLineNumber >= lines.Length) startLineNumber = lines.Length - 1;
+            if (startLineNumber < 0)
+            {
+                startLineNumber = 0;
+            }
+
+            if (startLineNumber >= lines.Length)
+            {
+                startLineNumber = lines.Length - 1;
+            }
 
             var excerptStartLine = Math.Max(0, startLineNumber - distance);
             var excerptEndLine = Math.Min(lines.Length - 1, startLineNumber + distance);
@@ -669,15 +748,14 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (_arg_consoleVerbosityLevel.ToLower() != "none")
                         {
                             if (!String.IsNullOrEmpty(_arg_outputFile) && Utils.CLIExecutionContext)
+                            {
                                 WriteOnce.Info(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputFile), true, WriteOnce.ConsoleVerbosity.Medium, false);
+                            }
                             else
+                            {
                                 WriteOnce.NewLine();
+                            }
                         }
-                    }
-                    else
-                    {
-                        if (!_arg_suppressBrowserOpen && Utils.CLIExecutionContext)
-                            WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, "output.html"), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Low);
                     }
                 }
             }
@@ -686,7 +764,7 @@ namespace Microsoft.ApplicationInspector.Commands
         #endregion
 
 
-        void UnZipAndProcess(string filename, ArchiveFileType archiveFileType)
+        private void UnZipAndProcess(string filename, ArchiveFileType archiveFileType)
         {
             // zip itself may be in excluded list i.e. sample, test or similar unless ignore filter requested
             if (_fileExclusionList != null && _fileExclusionList.Any(v => filename.ToLower().Contains(v)))
@@ -754,7 +832,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="languageInfo"></param>
         /// <param name="fileLength">should be > zero if called from unzip method</param>
         /// <returns></returns>
-        bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
+        private bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
         {
             _appProfile.MetaData.FileExtensions.Add(Path.GetExtension(filePath).Replace('.', ' ').TrimStart());
 
