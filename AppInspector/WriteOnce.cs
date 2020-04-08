@@ -27,7 +27,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private static ConsoleColor _generalColor = ConsoleColor.Gray;
         private static ConsoleColor _resultColor = ConsoleColor.Yellow;
         private static ConsoleColor _opColor = ConsoleColor.Cyan;
-        private static ConsoleColor _sysColor = ConsoleColor.Magenta;
+        private static readonly ConsoleColor _sysColor = ConsoleColor.Magenta;
         //change default colors
         public ConsoleColor InfoForeColor { set => _infoColor = value; }
         public ConsoleColor ErrorForeColor { set => _errorColor = value; }
@@ -176,7 +176,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="message"></param>
         /// <param name="logLevel"></param>
-        static public void SafeLog(string message, NLog.LogLevel logLevel)
+        public static void SafeLog(string message, NLog.LogLevel logLevel)
         {
             if (Log == null)
             {

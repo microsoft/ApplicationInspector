@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 namespace Microsoft.ApplicationInspector.Commands
 {
     //Miscellenous common methods needed from several places throughout
-    static public class Utils
+    public static class Utils
     {
         public enum ExitCode
         {
@@ -24,8 +24,8 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
         private static string _basePath;
-        static public string LogFilePath { get; set; } //used to capture and report log path for console messages
-        static public Logger Logger { get; set; }
+        public static string LogFilePath { get; set; } //used to capture and report log path for console messages
+        public static Logger Logger { get; set; }
 
         public enum AppPath { basePath, defaultRulesSrc, defaultRulesPackedFile, defaultLog, tagGroupPref, tagCounterPref };
 
@@ -41,9 +41,9 @@ namespace Microsoft.ApplicationInspector.Commands
             return fileVersionInfo.ProductVersion;
         }
 
-        static public bool CLIExecutionContext { get; set; }
+        public static bool CLIExecutionContext { get; set; }
 
-        static public string GetPath(AppPath pathType)
+        public static string GetPath(AppPath pathType)
         {
             string result = "";
             switch (pathType)
@@ -73,7 +73,7 @@ namespace Microsoft.ApplicationInspector.Commands
             return result;
         }
 
-        static private string GetBaseAppPath()
+        private static string GetBaseAppPath()
         {
             if (!String.IsNullOrEmpty(_basePath))
             {
@@ -90,7 +90,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="logger"></param>
         /// <returns></returns>
-        static public RuleSet GetDefaultRuleSet(Logger logger = null)
+        public static RuleSet GetDefaultRuleSet(Logger logger = null)
         {
             RuleSet ruleSet = new RuleSet(logger);
             Assembly assembly = Assembly.GetExecutingAssembly();

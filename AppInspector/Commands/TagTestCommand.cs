@@ -13,15 +13,9 @@ namespace Microsoft.ApplicationInspector.Commands
     public class TagTestOptions : CommandOptions
     {
         public string SourcePath { get; set; }
-        public string TestType { get; set; }
+        public string TestType { get; set; } = "rulespresent";
         public string CustomRulesPath { get; set; }
-        public string FilePathExclusions { get; set; }
-
-        public TagTestOptions()
-        {
-            TestType = "rulespresent";
-            FilePathExclusions = "sample,example,test,docs,.vs,.git";
-        }
+        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
     }
 
 
@@ -51,7 +45,6 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             TagsStatusList = new List<TagStatus>();
         }
-
     }
 
 
@@ -63,7 +56,7 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         private enum TagTestType { RulesPresent, RulesNotPresent }
 
-        private TagTestOptions _options;
+        private readonly TagTestOptions _options;
         private TagTestType _arg_tagTestType;
         private RuleSet _rulesSet;
 
@@ -159,7 +152,6 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
-
         }
 
         #endregion
@@ -219,10 +211,10 @@ namespace Microsoft.ApplicationInspector.Commands
                     tagTestResult.ResultCode = TagTestResult.ExitCode.TestPassed;
 
                     int count = 0;
-                    int sizeTags = analyze1.MetaData.UniqueTags.Count;
+                    int sizeTags = analyze1.Metadata.UniqueTags.Count;
                     string[] tagsFound = new string[sizeTags];
 
-                    foreach (string tag in analyze1.MetaData.UniqueTags.ToList<string>())
+                    foreach (string tag in analyze1.Metadata.UniqueTags.ToList<string>())
                     {
                         tagsFound[count++] = tag;
                     }

@@ -15,11 +15,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     public class RuleProcessor
     {
         private Confidence ConfidenceLevelFilter { get; set; }
-        private bool _stopAfterFirstPatternMatch;
-        private bool _uniqueTagMatchesOnly;
-        private readonly bool _checkForOverRides = false; //not currently supported
-        private HashSet<string> _uniqueTagHashes;
-        private Logger _logger;
+        private readonly bool _stopAfterFirstPatternMatch;
+        private readonly bool _uniqueTagMatchesOnly;
+        private readonly HashSet<string> _uniqueTagHashes;
+        private readonly Logger _logger;
         private RuleSet _ruleset;
         private Dictionary<string, IEnumerable<Rule>> _rulesCache;
 
@@ -185,31 +184,33 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
                     }
                 }
+
+                resultsList.AddRange(matchList);
             }
 
-            if (_checkForOverRides)
+            // Deal with overrides 
+            List<ScanResult> removes = new List<ScanResult>();
+            foreach (ScanResult scanResult in resultsList)
             {
-                // Deal with overrides 
-                List<ScanResult> removes = new List<ScanResult>();
-                foreach (ScanResult scanResult in resultsList)
+                if (scanResult.Rule.Overrides is string[] overrides)
                 {
-                    if (scanResult.Rule.Overrides is string[] overrides)
+                    foreach (string @override in overrides)
                     {
-                        foreach (string @override in overrides)
+                        // Find all overriden rules and mark them for removal from issues list   
+                        foreach (ScanResult overRideMatch in resultsList.FindAll(x => x.Rule.Id == @override))
                         {
-                            // Find all overriden rules and mark them for removal from issues list   
-                            foreach (ScanResult om in resultsList.FindAll(x => x.Rule.Id == @override))
+                            if (overRideMatch.Boundary.Index >= scanResult.Boundary.Index &&
+                                overRideMatch.Boundary.Index <= scanResult.Boundary.Index + scanResult.Boundary.Length)
                             {
-                                if (om.Boundary.Index >= scanResult.Boundary.Index &&
-                                    om.Boundary.Index <= scanResult.Boundary.Index + scanResult.Boundary.Length)
-                                {
-                                    removes.Add(om);
-                                }
+                                removes.Add(overRideMatch);
                             }
                         }
                     }
                 }
+            }
 
+            if (removes.Count > 0)
+            {
                 // Remove overriden rules
                 resultsList.RemoveAll(x => removes.Contains(x));
             }

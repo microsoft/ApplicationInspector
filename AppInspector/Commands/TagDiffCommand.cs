@@ -13,17 +13,10 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         public string SourcePath1 { get; set; }
         public string SourcePath2 { get; set; }
-        public string TestType { get; set; }
-        public string FilePathExclusions { get; set; }
+        public string TestType { get; set; } = "equality";
+        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
         public string CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
-
-        public TagDiffOptions()
-        {
-            TestType = "equality";
-            IgnoreDefaultRules = false;
-            FilePathExclusions = "sample,example,test,docs,.vs,.git";
-        }
     }
 
 
@@ -43,7 +36,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
         [JsonProperty(PropertyName = "source")]
         public DiffSource Source { get; set; }
-
     }
 
 
@@ -69,7 +61,6 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             TagDiffList = new List<TagDiff>();
         }
-
     }
 
 
@@ -80,7 +71,7 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         private enum TagTestType { Equality, Inequality }
 
-        private TagDiffOptions _options;
+        private readonly TagDiffOptions _options;
         private TagTestType _arg_tagTestType;
 
         public TagDiffCommand(TagDiffOptions opt)
@@ -132,7 +123,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     WriteOnce.Verbosity = verbosity;
                 }
             }
-
         }
 
         private void ConfigureCompareType()
@@ -228,19 +218,19 @@ namespace Microsoft.ApplicationInspector.Commands
                 else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.Success)
                 {
                     int count1 = 0;
-                    int sizeTags1 = analyze1.MetaData.UniqueTags.Count;
+                    int sizeTags1 = analyze1.Metadata.UniqueTags.Count;
                     string[] file1Tags = new string[sizeTags1];
 
-                    foreach (string tag in analyze1.MetaData.UniqueTags.ToList<string>())
+                    foreach (string tag in analyze1.Metadata.UniqueTags.ToList<string>())
                     {
                         file1Tags[count1++] = tag;
                     }
 
                     int count2 = 0;
-                    int sizeTags2 = analyze2.MetaData.UniqueTags.Count;
+                    int sizeTags2 = analyze2.Metadata.UniqueTags.Count;
                     string[] file2Tags = new string[sizeTags2];
 
-                    foreach (string tag in analyze2.MetaData.UniqueTags.ToList<string>())
+                    foreach (string tag in analyze2.Metadata.UniqueTags.ToList<string>())
                     {
                         file2Tags[count2++] = tag;
                     }
@@ -266,7 +256,6 @@ namespace Microsoft.ApplicationInspector.Commands
                         tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestPassed;
                     }
                 }
-
             }
             catch (OpException e)
             {
@@ -294,7 +283,5 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return found;
         }
-
-
     }
 }

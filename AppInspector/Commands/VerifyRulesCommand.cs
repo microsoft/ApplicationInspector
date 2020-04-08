@@ -14,11 +14,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool VerifyDefaultRules { get; set; }
         public string CustomRulesPath { get; set; }
         public bool Failfast { get; set; }
-
-        public VerifyRulesOptions()
-        {
-            Failfast = false;
-        }
     }
 
 
@@ -59,7 +54,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class VerifyRulesCommand
     {
-        private VerifyRulesOptions _options;
+        private readonly VerifyRulesOptions _options;
         private string _rules_path;
 
         public VerifyRulesCommand(VerifyRulesOptions opt)

@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
-namespace ApplicationInspector.UnitTest.Misc
+namespace ApplicationInspector.Unitprocess.Misc
 {
     public static class Helper
     {
         public enum AppPath { basePath, testSource, testRules, testOutput, defaultRules, appInspectorCLI };
 
         private static string _basePath;
-        static private string GetBaseAppPath()
+        private static string GetBaseAppPath()
         {
             if (!String.IsNullOrEmpty(_basePath))
             {
@@ -22,7 +23,7 @@ namespace ApplicationInspector.UnitTest.Misc
 
 
 
-        static public string GetPath(AppPath pathType)
+        public static string GetPath(AppPath pathType)
         {
             string result = "";
             switch (pathType)
@@ -58,7 +59,7 @@ namespace ApplicationInspector.UnitTest.Misc
 
 
 
-        static public List<string> GetTagsFromFile(string[] contentLines)
+        public static List<string> GetTagsFromFile(string[] contentLines)
         {
             List<string> results = new List<string>();
 
@@ -82,6 +83,44 @@ namespace ApplicationInspector.UnitTest.Misc
             }
 
             return results;
+        }
+
+
+        public static int RunProcess(string appFilePath, string arguments)
+        {
+            int result = 2;
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = appFilePath;
+                process.StartInfo.Arguments = arguments;
+                process.Start();
+                process.WaitForExit();
+                result = process.ExitCode;
+            }
+
+            return result;
+        }
+
+        public static int RunProcess(string appFilePath, string arguments, out string consoleContent)
+        {
+            int result = 2;
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = appFilePath;
+                process.StartInfo.Arguments = arguments;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.Start();
+                consoleContent = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                result = process.ExitCode;
+
+                //reset to normal
+                var standardOutput = new StreamWriter(Console.OpenStandardOutput());
+                standardOutput.AutoFlush = true;
+                Console.SetOut(standardOutput);
+            }
+
+            return result;
         }
     }
 }

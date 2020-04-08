@@ -317,8 +317,8 @@ namespace Microsoft.ApplicationInspector.Commands
             return result;
         }
 
-        private string _content;
-        private List<int> _lineEnds;
-        private string _language;
+        private readonly string _content;
+        private readonly List<int> _lineEnds;
+        private readonly string _language;
     }
 }

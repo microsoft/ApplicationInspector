@@ -1,11 +1,11 @@
-﻿using ApplicationInspector.UnitTest.Misc;
+﻿using ApplicationInspector.Unitprocess.Misc;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
 
-namespace ApplicationInspector.UnitTest.Commands
+namespace ApplicationInspector.Unitprocess.Commands
 {
     /// <summary>
     /// Test class for Analyze Commands
@@ -83,7 +83,7 @@ namespace ApplicationInspector.UnitTest.Commands
         {
             AnalyzeOptions options = new AnalyzeOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\mainx.zip"),
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\main.zip"),
                 FilePathExclusions = "none", //allow source under unittest path
             };
 
@@ -278,8 +278,8 @@ namespace ApplicationInspector.UnitTest.Commands
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
                 AnalyzeResult result = command.GetResult();
-                if (result.MetaData.UniqueTags.Any(v => v.Contains("Authentication.General")) &&
-                    result.MetaData.UniqueTags.Any(v => v.Contains("Data.Custom1")))
+                if (result.Metadata.UniqueTags.Any(v => v.Contains("Authentication.General")) &&
+                    result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")))
                 {
                     exitCode = AnalyzeResult.ExitCode.Success;
                 }
@@ -346,7 +346,7 @@ namespace ApplicationInspector.UnitTest.Commands
                 exitCode = result.ResultCode;
                 if (exitCode == AnalyzeResult.ExitCode.Success)
                 {
-                    exitCode = result.MetaData.TotalMatchesCount == 11 && result.MetaData.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
@@ -380,7 +380,7 @@ namespace ApplicationInspector.UnitTest.Commands
                 exitCode = result.ResultCode;
                 if (exitCode == AnalyzeResult.ExitCode.Success)
                 {
-                    exitCode = result.MetaData.TotalMatchesCount == 7 && result.MetaData.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.TotalMatchesCount == 7 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)

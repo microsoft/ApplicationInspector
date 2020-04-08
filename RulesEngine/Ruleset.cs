@@ -17,9 +17,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class RuleSet : IEnumerable<Rule>
     {
-        private List<Rule> _rules;
-        private Logger _logger;
-        private HashSet<string> _uniqueRuleIds;
+        private readonly List<Rule> _rules;
+        private readonly Logger _logger;
+        private readonly HashSet<string> _uniqueRuleIds;
 
         /// <summary>
         /// Delegate for deserialization error handler

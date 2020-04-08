@@ -12,7 +12,6 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class MetaData
     {
-
         [JsonIgnore]
         public Dictionary<string, HashSet<string>> KeyedPropertyLists { get; } //dynamic keyed list of properties with more than one value
 
@@ -27,7 +26,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string Authors { get; set; }
         [JsonProperty(PropertyName = "description")]
         public string Description { get; set; }
-        private DateTime _lastUpdated = DateTime.MinValue;
+        private readonly DateTime _lastUpdated = DateTime.MinValue;
         [JsonProperty(PropertyName = "lastUpdated")]
         public string LastUpdated { get; set; }
         [JsonProperty(PropertyName = "dateScanned")]

@@ -1,7 +1,6 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-
 using Microsoft.ApplicationInspector.RulesEngine;
 using MultiExtractor;
 using Newtonsoft.Json;
@@ -24,17 +23,9 @@ namespace Microsoft.ApplicationInspector.Commands
         public string CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
         public bool AllowDupTags { get; set; }
-        public string MatchDepth { get; set; }
-        public string ConfidenceFilters { get; set; }
-        public string FilePathExclusions { get; set; }
-
-        public AnalyzeOptions()
-        {
-            IgnoreDefaultRules = false;
-            ConfidenceFilters = "high,medium";
-            MatchDepth = "best";
-            FilePathExclusions = "sample,example,test,docs,.vs,.git";
-        }
+        public string MatchDepth { get; set; } = "best";
+        public string ConfidenceFilters { get; set; } = "high,medium";
+        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
     }
 
     /// <summary>
@@ -53,22 +44,20 @@ namespace Microsoft.ApplicationInspector.Commands
         public ExitCode ResultCode { get; set; }
 
         [JsonProperty(Order = 3, PropertyName = "metaData")]
-        public MetaData MetaData { get; set; }
+        public MetaData Metadata { get; set; }
 
         public AnalyzeResult()
         {
-            MetaData = new MetaData("", "");//replaced later
+            Metadata = new MetaData("", "");//needed for serialization; replaced later
         }
-
     }
-
 
     /// <summary>
     /// Analyze operation for setup and processing of results from Rulesengine
     /// </summary>
     public class AnalyzeCommand
     {
-        private readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files 
+        private readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files
         private readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
         private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
@@ -96,9 +85,9 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        private List<string> _fileExclusionList;
+        private readonly List<string> _fileExclusionList;
         private Confidence _confidence;
-        private AnalyzeOptions _options; //copy of incoming caller options
+        private readonly AnalyzeOptions _options; //copy of incoming caller options
 
         public AnalyzeCommand(AnalyzeOptions opt)
         {
@@ -132,12 +121,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.Error(e.Message);
                 throw;
             }
-
         }
 
-
         #region configureMethods
-
 
         /// <summary>
         /// Establish console verbosity
@@ -165,8 +151,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
         }
-
-
 
         /// <summary>
         /// Expects user to supply all that apply impacting which rule pattern matches are returned
@@ -196,7 +180,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
         }
-
 
         /// <summary>
         /// Simple validation on source path provided for scanning and preparation
@@ -234,7 +217,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, _options.SourcePath));
             }
         }
-
 
         /// <summary>
         /// Add default and/or custom rules paths
@@ -287,12 +269,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
             //create metadata helper to wrap and help populate metadata from scan
             _metaDataHelper = new MetaDataHelper(_options.SourcePath, !_options.AllowDupTags);
-
         }
 
-
-        #endregion
-
+        #endregion configureMethods
 
         /// <summary>
         /// Main entry point to start analysis from CLI; handles setting up rules, directory enumeration
@@ -356,10 +335,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     _metaDataHelper.Metadata.LastUpdated = LastUpdated.ToString();
                     _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
-                    analyzeResult.MetaData = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
+                    analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
                     analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
                 }
-
             }
             catch (OpException e)
             {
@@ -370,8 +348,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return analyzeResult;
         }
-
-
 
         /// <summary>
         /// Wrapper for files that are on disk and ready to read vs unzipped files which are not to allow separation of core
@@ -391,9 +367,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 ProcessInMemory(filename, fileText, languageInfo);
             }
         }
-
-
-
 
         /// <summary>
         /// Main WORKHORSE for analyzing file; called from file based or decompression functions
@@ -421,7 +394,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted), false);
             }
 
-            #endregion
+            #endregion minorRollupTrackingAndProgress
 
             //process file against rules returning unique or duplicate matches as configured
             ScanResult[] scanResults = _rulesProcessor.Analyze(fileText, languageInfo);
@@ -432,7 +405,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 _metaDataHelper.Metadata.FilesAffected++;
                 _metaDataHelper.Metadata.TotalMatchesCount += scanResults.Count();
 
-                // Iterate through each match issue 
+                // Iterate through each match issue
                 foreach (ScanResult scanResult in scanResults)
                 {
                     WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", scanResult.Rule.Id, scanResult.Rule.Name, filePath), LogLevel.Trace);
@@ -480,7 +453,6 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 WriteOnce.SafeLog("No pattern matches detected for file: " + filePath, LogLevel.Trace);
             }
-
         }
 
         #region ProcessingAssist
@@ -510,7 +482,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return result;
         }
-
 
         /// <summary>
         /// Located here to include during Match creation to avoid a call later or putting in constructor
@@ -570,14 +541,13 @@ namespace Microsoft.ApplicationInspector.Commands
             return System.Convert.ToBase64String(Encoding.UTF8.GetBytes(sb.ToString()));
         }
 
-
         /// <summary>
         /// Helper to special case additional processing to just get the values without the import keywords etc.
         /// and encode for html output
         /// </summary>
         private string ExtractDependency(string text, int startIndex, SearchPattern pattern, string language)
         {
-            // import value; load value; include value; 
+            // import value; load value; include value;
             string rawResult = "";
             int endIndex = text.IndexOf('\n', startIndex);
             if (-1 != startIndex && -1 != endIndex)
@@ -588,7 +558,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 Regex regex = new Regex(pattern.Pattern);
                 MatchCollection matches = regex.Matches(rawResult);
 
-                //remove surrounding import or trailing comments 
+                //remove surrounding import or trailing comments
                 if (matches.Count > 0)
                 {
                     foreach (Match match in matches)
@@ -624,10 +594,7 @@ namespace Microsoft.ApplicationInspector.Commands
             return rawResult;
         }
 
-
-
-        #endregion
-
+        #endregion ProcessingAssist
 
         private void UnZipAndProcess(string filename, ArchiveFileType archiveFileType)
         {
@@ -662,7 +629,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     foreach (FileEntry file in files)
                     {
-                        //check uncompressed file passes standard checks 
+                        //check uncompressed file passes standard checks
                         LanguageInfo languageInfo = new LanguageInfo();
                         if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                         {
@@ -675,7 +642,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     WriteOnce.SafeLog(string.Format("Decompression found no files in {0}", filename), LogLevel.Warn);//zero results can be valid
                 }
-
             }
             catch (Exception)
             {
@@ -683,10 +649,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.Error(errmsg);
                 throw;
             }
-
         }
-
-
 
         /// <summary>
         /// Common validation called by ProcessAsFile and UnzipAndProcess to ensure same order and checks made
@@ -735,11 +698,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             return true;
-
         }
     }
-
 }
-
-
-

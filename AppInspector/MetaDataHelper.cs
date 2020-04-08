@@ -15,7 +15,7 @@ namespace Microsoft.ApplicationInspector.Commands
     public class MetaDataHelper
     {
         //inhouse common properties to capture
-        private Dictionary<string, string> _propertyTagSearchPatterns;
+        private readonly Dictionary<string, string> _propertyTagSearchPatterns;
 
         public MetaData Metadata { get; set; }
 

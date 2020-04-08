@@ -17,12 +17,6 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         public string CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
-
-        public ExportTagsOptions()
-        {
-            IgnoreDefaultRules = false;
-        }
-
     }
 
     /// <summary>
@@ -54,7 +48,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class ExportTagsCommand
     {
-        private ExportTagsOptions _options;
+        private readonly ExportTagsOptions _options;
         private RuleSet _rules;
 
         public ExportTagsCommand(ExportTagsOptions opt)

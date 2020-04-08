@@ -89,7 +89,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         /// <param name="_outputWriter"></param>
         /// <param name="options"></param>
-        static public void Finalize(CommandResultsWriter outputWriter, string commandName)
+        public static void Finalize(CommandResultsWriter outputWriter, string commandName)
         {
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_COMPLETED, commandName));
 

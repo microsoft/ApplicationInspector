@@ -43,7 +43,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             //recover metadata results from prior analyzecommand GetResults()
             _analyzeResult = (AnalyzeResult)result;
-            _appMetaData = _analyzeResult.MetaData;
+            _appMetaData = _analyzeResult.Metadata;
 
             PopulateTagGroups();
             WriteJsonResult();//dep link from html content

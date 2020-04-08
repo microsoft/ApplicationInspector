@@ -1,10 +1,10 @@
-﻿using ApplicationInspector.UnitTest.Misc;
+﻿using ApplicationInspector.Unitprocess.Misc;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 
-namespace ApplicationInspector.UnitTest.Commands
+namespace ApplicationInspector.Unitprocess.Commands
 {
 
     [TestClass]
@@ -136,7 +136,7 @@ namespace ApplicationInspector.UnitTest.Commands
             PackRulesOptions options = new PackRulesOptions()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.json")
+                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt")
             };
 
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;

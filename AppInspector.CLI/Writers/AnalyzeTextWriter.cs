@@ -24,7 +24,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
             {
-                List<string> keys = new List<string>(analyzeResult.MetaData.UniqueTags);
+                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags);
                 keys.Sort();
 
                 foreach (string tag in keys)
@@ -34,11 +34,11 @@ namespace Microsoft.ApplicationInspector.CLI
             }
             else
             {
-                WriteAppMeta(analyzeResult.MetaData);
-                WriteDependencies(analyzeResult.MetaData);
+                WriteAppMeta(analyzeResult.Metadata);
+                WriteDependencies(analyzeResult.Metadata);
                 WriteOnce.General(MakeHeading("Match Details"));
 
-                foreach (MatchRecord match in analyzeResult.MetaData.MatchList)
+                foreach (MatchRecord match in analyzeResult.Metadata.MatchList)
                 {
                     WriteMatch(match);
                 }
@@ -218,6 +218,6 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.TextWriter = null;
         }
 
-        private string _formatString;
+        private readonly string _formatString;
     }
 }

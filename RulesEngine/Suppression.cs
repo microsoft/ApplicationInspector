@@ -171,9 +171,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         public int IssuesListIndex { get; set; } = -1;
 
-        private List<SuppressedMatch> _issues = new List<SuppressedMatch>();
+        private readonly List<SuppressedMatch> _issues = new List<SuppressedMatch>();
         private DateTime _expirationDate = DateTime.MaxValue;
-        private string _text = string.Empty;
+        private readonly string _text = string.Empty;
 
         private int _suppressStart = -1;
         private int _suppressLength = -1;

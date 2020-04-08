@@ -1,12 +1,11 @@
-﻿using ApplicationInspector.UnitTest.Misc;
+﻿using ApplicationInspector.Unitprocess.Misc;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System;
-using System.Diagnostics;
 using System.IO;
 
-namespace ApplicationInspector.UnitTest.CLICommands
+namespace ApplicationInspector.Unitprocess.CLICommands
 {
 
     /// <summary>
@@ -30,16 +29,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
@@ -58,16 +52,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
@@ -87,16 +76,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\mainx.zip"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
@@ -116,16 +100,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
@@ -145,16 +124,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
@@ -174,12 +148,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -188,6 +157,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
+
 
         [TestMethod]
         public void OneSrcResult_Fail()
@@ -201,12 +171,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -215,6 +180,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
+
 
         [TestMethod]
         public void InvalidSourcePath_Fail()
@@ -228,12 +194,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -256,12 +217,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -284,12 +240,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -313,13 +264,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -343,12 +288,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -378,12 +318,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
                 }
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
 
                 if (exitCode == TagDiffResult.ExitCode.TestFailed)//looking for diff list
                 {
@@ -396,7 +331,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
             }
             catch (Exception)
             {
-                //check for specific error if desired
+                exitCode = TagDiffResult.ExitCode.CriticalError;
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
@@ -421,12 +356,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
                 }
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
 
                 if (exitCode == TagDiffResult.ExitCode.TestPassed)
                 {
@@ -434,11 +364,10 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     var result = JsonConvert.DeserializeObject<TagDiffResult>(content);
                     exitCode = result.TagDiffList.Count > 0 ? TagDiffResult.ExitCode.TestPassed : TagDiffResult.ExitCode.CriticalError;
                 }
-
             }
             catch (Exception)
             {
-                //check for specific error if desired
+                exitCode = TagDiffResult.ExitCode.CriticalError;
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
@@ -463,13 +392,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
                 }
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
-
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -494,12 +417,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                      Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\badir\tagdiffout.txt"),
                      Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -524,14 +442,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
-
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
                 string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
                 exitCode = testContent.ToLower().Contains("trace") ? TagDiffResult.ExitCode.TestPassed : TagDiffResult.ExitCode.CriticalError;
             }
@@ -552,19 +463,12 @@ namespace ApplicationInspector.UnitTest.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagdiff --src1 {0} --src2 {1} -k none -v -l {2}",
+                string args = String.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
-
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
                 string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
                 exitCode = testContent.ToLower().Contains("error") ? TagDiffResult.ExitCode.TestPassed : TagDiffResult.ExitCode.CriticalError;
             }
@@ -591,13 +495,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"mybadrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
-
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
                 if (exitCode == TagDiffResult.ExitCode.CriticalError)
                 {
                     string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -626,18 +524,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\log.txt"));
 
-
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
-
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
@@ -658,17 +549,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)test.ExitCode;
-
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
@@ -688,15 +573,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
-                Process p = new Process();
-                p.StartInfo.FileName = appInspectorPath;
-                p.StartInfo.Arguments = args;
-                p.StartInfo.RedirectStandardOutput = true;
-                bool started = p.Start();
-
-                string testContent = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)p.ExitCode;
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args, out string testContent);
 
                 if (exitCode == TagDiffResult.ExitCode.TestPassed)
                 {
@@ -708,11 +585,6 @@ namespace ApplicationInspector.UnitTest.CLICommands
             {
                 exitCode = TagDiffResult.ExitCode.CriticalError;
             }
-
-            //reset to normal
-            var standardOutput = new StreamWriter(Console.OpenStandardOutput());
-            standardOutput.AutoFlush = true;
-            Console.SetOut(standardOutput);
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
         }
@@ -730,29 +602,14 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process p = new Process();
-                p.StartInfo.FileName = appInspectorPath;
-                p.StartInfo.Arguments = args;
-                p.StartInfo.RedirectStandardOutput = true;
-                bool started = p.Start();
-
-                string testContent = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();
-                exitCode = (TagDiffResult.ExitCode)p.ExitCode;
-
+                exitCode = (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
 
             }
 
-            //reset to normal
-            var standardOutput = new StreamWriter(Console.OpenStandardOutput());
-            standardOutput.AutoFlush = true;
-            Console.SetOut(standardOutput);
-
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
         }
-
     }
 }

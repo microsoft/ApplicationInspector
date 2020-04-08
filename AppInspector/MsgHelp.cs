@@ -6,7 +6,7 @@ using System;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
-    static public class MsgHelp
+    public static class MsgHelp
     {
         /// <summary>
         /// Maps enum values to resource strings for ensuring values exists at compile time

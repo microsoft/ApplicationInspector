@@ -322,9 +322,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return result;
         }
 
-        private string _content;
-        private List<int> _lineEnds;
-        private string _language;
-        private bool _stopAfterFirstMatch;
+        private readonly string _content;
+        private readonly List<int> _lineEnds;
+        private readonly string _language;
+        private readonly bool _stopAfterFirstMatch;
     }
 }

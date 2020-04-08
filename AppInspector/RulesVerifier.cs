@@ -15,9 +15,9 @@ namespace Microsoft.ApplicationInspector.Commands
     internal class RulesVerifier
     {
         private bool fail_fast;
-        private RuleSet _rules;
-        private string _rulesPath;
-        private Logger _logger;
+        private readonly RuleSet _rules;
+        private readonly string _rulesPath;
+        private readonly Logger _logger;
 
         public RulesVerifier(string rulePath, Logger logger)
         {

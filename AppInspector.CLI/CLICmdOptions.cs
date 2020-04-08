@@ -15,12 +15,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string OutputFilePath { get; set; }
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [json|text]", Default = "text")]
-        public string OutputFileFormat { get; set; }
-
-        public CLICommandOptions()
-        {
-            OutputFileFormat = "text";
-        }
+        public string OutputFileFormat { get; set; } = "text";
     }
 
 
@@ -37,7 +32,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public string CustomRulesPath { get; set; }
 
         [Option('h', "match-depth", Required = false, HelpText = "First match or best match based on confidence level (first|best)", Default = "best")]
-        public string MatchDepth { get; set; }
+        public string MatchDepth { get; set; } = "best";
 
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
@@ -49,33 +44,19 @@ namespace Microsoft.ApplicationInspector.CLI
         public bool SuppressBrowserOpen { get; set; }
 
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
-        public string ConfidenceFilters { get; set; }
+        public string ConfidenceFilters { get; set; } = "high,medium";
 
         [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files (none|default: sample,example,test,docs,.vs,.git)", Default = "sample,example,test,docs,.vs,.git")]
-        public string FilePathExclusions { get; set; }
+        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
 
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [html|json|text]", Default = "html")]
-        public new string OutputFileFormat { get; set; }
+        public new string OutputFileFormat { get; set; } = "html";
 
         [Option('e', "text-format", Required = false, HelpText = "Match text format specifiers", Default = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m")]
-        public string TextOutputFormat { get; set; }
+        public string TextOutputFormat { get; set; } = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";
 
         [Option('t', "tag-output-only", Required = false, HelpText = "Output only identified tags", Default = false)]
         public bool SimpleTagsOnly { get; set; }
-
-        public CLIAnalyzeCmdOptions()
-        {
-            OutputFileFormat = "html";
-            MatchDepth = "best";
-            FilePathExclusions = "sample,example,test,docs,.vs,.git";
-            ConfidenceFilters = "high,medium";
-            TextOutputFormat = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";
-            IgnoreDefaultRules = false;
-            SimpleTagsOnly = false;
-            AllowDupTags = false;
-            SuppressBrowserOpen = false;
-        }
-
     }
 
 
@@ -89,23 +70,16 @@ namespace Microsoft.ApplicationInspector.CLI
         public string SourcePath2 { get; set; }
 
         [Option('t', "test-type", Required = false, HelpText = "Type of test to run [equality|inequality]", Default = "equality")]
-        public string TestType { get; set; }
+        public string TestType { get; set; } = "equality";
 
         [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files (none|default: sample,example,test,docs,.vs,.git)", Default = "sample,example,test,docs,.vs,.git")]
-        public string FilePathExclusions { get; set; }
+        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
-
-        public CLITagDiffCmdOptions()
-        {
-            OutputFileFormat = "text";
-            TestType = "equality";
-            IgnoreDefaultRules = false;
-        }
     }
 
 
@@ -116,20 +90,13 @@ namespace Microsoft.ApplicationInspector.CLI
         public string SourcePath { get; set; }
 
         [Option('t', "test-type", Required = false, HelpText = "Test to perform [rulespresent|rulesnotpresent] ", Default = "rulespresent")]
-        public string TestType { get; set; }
+        public string TestType { get; set; } = "rulespresent";
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
         [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files (none|default: sample,example,test,docs,.vs,.git)", Default = "sample,example,test,docs,.vs,.git")]
-        public string FilePathExclusions { get; set; }
-
-        public CLITagTestCmdOptions()
-        {
-            OutputFileFormat = "text";
-            TestType = "rulespresent";
-        }
-
+        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
     }
 
     [Verb("exporttags", HelpText = "Export unique rule tags to view what code features may be detected")]
@@ -140,12 +107,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
-
-        public CLIExportTagsCmdOptions()
-        {
-            OutputFileFormat = "text";
-            IgnoreDefaultRules = false;
-        }
     }
 
 
@@ -160,12 +121,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('a', "fail-fast", Required = false, HelpText = "Fail fast", Default = false)]
         public bool Failfast { get; set; }
-
-        public CLIVerifyRulesCmdOptions()
-        {
-            OutputFileFormat = "text";
-            Failfast = false;
-        }
     }
 
 
@@ -178,13 +133,11 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
+        [Option('f', "output-file-format", Required = false, HelpText = "Output format [json|text]", Default = "json")]
+        public new string OutputFileFormat { get; set; } = "json";
+
         [Option('i', "not-indented", Required = false, HelpText = "Remove indentation from json output", Default = false)]
         public bool NotIndented { get; set; }
-
-        public CLIPackRulesCmdOptions()
-        {
-            OutputFileFormat = "json";
-        }
     }
 
 }

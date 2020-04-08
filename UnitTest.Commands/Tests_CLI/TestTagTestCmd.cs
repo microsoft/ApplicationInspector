@@ -1,11 +1,10 @@
-﻿using ApplicationInspector.UnitTest.Misc;
+﻿using ApplicationInspector.Unitprocess.Misc;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
 using System.IO;
 
-namespace ApplicationInspector.UnitTest.CLICommands
+namespace ApplicationInspector.Unitprocess.CLICommands
 {
 
     /// <summary>
@@ -30,12 +29,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -59,12 +53,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -89,16 +78,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
@@ -118,16 +102,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
@@ -148,16 +127,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestFailed);
@@ -168,7 +142,6 @@ namespace ApplicationInspector.UnitTest.CLICommands
         [TestMethod]
         public void InvalidSourcePath_Fail()
         {
-
             TagTestResult.ExitCode exitCode = TagTestResult.ExitCode.CriticalError;
 
             try
@@ -179,12 +152,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -208,12 +176,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -227,14 +190,6 @@ namespace ApplicationInspector.UnitTest.CLICommands
         [TestMethod]
         public void RulesNotPresentNoResults_Success()
         {
-            TagTestOptions options = new TagTestOptions()
-            {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                TestType = "RulesNotPresent",
-                FilePathExclusions = "none", //allow source under unittest path
-            };
-
             TagTestResult.ExitCode exitCode = TagTestResult.ExitCode.CriticalError;
 
             try
@@ -245,12 +200,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -274,12 +224,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myfakerule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -304,16 +249,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -k none -l {2}",
+                string args = String.Format(@"tagtest -s {0} -k none -l {1}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -338,16 +278,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
@@ -368,16 +303,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
@@ -398,12 +328,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -428,13 +353,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"mybadrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
 
                 if (exitCode == TagTestResult.ExitCode.CriticalError)
                 {
@@ -445,7 +364,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
@@ -466,12 +385,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
 
                 if (exitCode == TagTestResult.ExitCode.CriticalError)
                 {
@@ -481,7 +395,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
@@ -501,12 +415,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
 
                 if (exitCode == TagTestResult.ExitCode.CriticalError)
                 {
@@ -516,7 +425,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
@@ -536,18 +445,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\log.txt"));
 
-
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
-
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
@@ -568,17 +470,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)test.ExitCode;
-
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);
@@ -598,15 +494,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
-                Process p = new Process();
-                p.StartInfo.FileName = appInspectorPath;
-                p.StartInfo.Arguments = args;
-                p.StartInfo.RedirectStandardOutput = true;
-                bool started = p.Start();
-
-                string testContent = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)p.ExitCode;
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args, out string testContent);
 
                 if (exitCode == TagTestResult.ExitCode.TestPassed)
                 {
@@ -616,13 +504,8 @@ namespace ApplicationInspector.UnitTest.CLICommands
             }
             catch (Exception)
             {
-                exitCode = TagTestResult.ExitCode.CriticalError;
-            }
 
-            //reset to normal
-            var standardOutput = new StreamWriter(Console.OpenStandardOutput());
-            standardOutput.AutoFlush = true;
-            Console.SetOut(standardOutput);
+            }
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
@@ -640,30 +523,15 @@ namespace ApplicationInspector.UnitTest.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process p = new Process();
-                p.StartInfo.FileName = appInspectorPath;
-                p.StartInfo.Arguments = args;
-                p.StartInfo.RedirectStandardOutput = true;
-                bool started = p.Start();
-
-                string testContent = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();
-                exitCode = (TagTestResult.ExitCode)p.ExitCode;
-
+                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
 
             }
 
-            //reset to normal
-            var standardOutput = new StreamWriter(Console.OpenStandardOutput());
-            standardOutput.AutoFlush = true;
-            Console.SetOut(standardOutput);
-
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);
         }
     }
-
 }
 

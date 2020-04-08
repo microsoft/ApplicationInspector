@@ -1,25 +1,18 @@
-﻿using ApplicationInspector.UnitTest.Misc;
+﻿using ApplicationInspector.Unitprocess.Misc;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Diagnostics;
 using System.IO;
 
-namespace ApplicationInspector.UnitTest.CLICommands
+namespace ApplicationInspector.Unitprocess.CLICommands
 {
     [TestClass]
     public class CLITestVerifyRulesCmd
     {
-
         [TestMethod]
         [Ignore] //default option won't find rules unless run from CLI; todo to look at addressed
         public void DefaultRules_Pass()
         {
-            VerifyRulesOptions options = new VerifyRulesOptions()
-            {
-                VerifyDefaultRules = true
-            };
-
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
@@ -27,12 +20,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                 string args = String.Format(@"verifyrules -d -f text -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -53,12 +41,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                 string args = String.Format(@"verifyrules -f text -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -81,12 +64,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -110,12 +88,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -139,12 +112,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -167,12 +135,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -195,12 +158,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
@@ -223,12 +181,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
 
                 if (exitCode == VerifyRulesResult.ExitCode.Verified)
                 {
@@ -246,7 +199,6 @@ namespace ApplicationInspector.UnitTest.CLICommands
                 {
                     exitCode = VerifyRulesResult.ExitCode.CriticalError;
                 }
-
             }
             catch (Exception)
             {
@@ -261,7 +213,6 @@ namespace ApplicationInspector.UnitTest.CLICommands
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
-
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
@@ -270,12 +221,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"\badir\myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
 
                 if (exitCode == VerifyRulesResult.ExitCode.CriticalError)
                 {
@@ -289,12 +235,10 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         exitCode = VerifyRulesResult.ExitCode.CriticalError;
                     }
                 }
-
-
             }
             catch (Exception)
             {
-
+                exitCode = VerifyRulesResult.ExitCode.CriticalError;
             }
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
@@ -305,7 +249,6 @@ namespace ApplicationInspector.UnitTest.CLICommands
         [TestMethod]
         public void LogDebugLevel_Pass()
         {
-
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
@@ -314,12 +257,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.defaultRules)),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
 
                 if (exitCode == VerifyRulesResult.ExitCode.Verified)
                 {
@@ -336,7 +274,7 @@ namespace ApplicationInspector.UnitTest.CLICommands
             }
             catch (Exception)
             {
-                //check for specific error if desired
+                exitCode = VerifyRulesResult.ExitCode.CriticalError;
             }
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
@@ -347,7 +285,6 @@ namespace ApplicationInspector.UnitTest.CLICommands
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
-
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
@@ -356,17 +293,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\badir\log.txt"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
-
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = VerifyRulesResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
@@ -384,17 +315,11 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"));
 
-                Process test = new Process();
-                test.StartInfo.FileName = appInspectorPath;
-                test.StartInfo.Arguments = args;
-                bool started = test.Start();
-                test.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)test.ExitCode;
-
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
-                exitCode = VerifyRulesResult.ExitCode.CriticalError;
+
             }
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);
@@ -413,31 +338,17 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process p = new Process();
-                p.StartInfo.FileName = appInspectorPath;
-                p.StartInfo.Arguments = args;
-                p.StartInfo.RedirectStandardOutput = true;
-                bool started = p.Start();
-
-                string testContent = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)p.ExitCode;
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args, out string testContent);
 
                 if (exitCode == VerifyRulesResult.ExitCode.Verified)
                 {
                     exitCode = String.IsNullOrEmpty(testContent) ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.CriticalError;
                 }
-
             }
             catch (Exception)
             {
-                exitCode = VerifyRulesResult.ExitCode.CriticalError;
-            }
 
-            //reset to normal
-            var standardOutput = new StreamWriter(Console.OpenStandardOutput());
-            standardOutput.AutoFlush = true;
-            Console.SetOut(standardOutput);
+            }
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
@@ -454,29 +365,14 @@ namespace ApplicationInspector.UnitTest.CLICommands
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Process p = new Process();
-                p.StartInfo.FileName = appInspectorPath;
-                p.StartInfo.Arguments = args;
-                p.StartInfo.RedirectStandardOutput = true;
-                bool started = p.Start();
-
-                string testContent = p.StandardOutput.ReadToEnd();
-                p.WaitForExit();
-                exitCode = (VerifyRulesResult.ExitCode)p.ExitCode;
-
+                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
             }
             catch (Exception)
             {
 
             }
 
-            //reset to normal
-            var standardOutput = new StreamWriter(Console.OpenStandardOutput());
-            standardOutput.AutoFlush = true;
-            Console.SetOut(standardOutput);
-
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);
         }
-
     }
 }

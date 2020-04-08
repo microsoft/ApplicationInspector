@@ -1,10 +1,10 @@
-﻿using ApplicationInspector.UnitTest.Misc;
+﻿using ApplicationInspector.Unitprocess.Misc;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 
-namespace ApplicationInspector.UnitTest.Commands
+namespace ApplicationInspector.Unitprocess.Commands
 {
 
     [TestClass]

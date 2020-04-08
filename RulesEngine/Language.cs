@@ -172,8 +172,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
-        private List<Comment> Comments;
-        private List<LanguageInfo> Languages;
+        private readonly List<Comment> Comments;
+        private readonly List<LanguageInfo> Languages;
     }
 }
 

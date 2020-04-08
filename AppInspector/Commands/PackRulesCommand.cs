@@ -15,12 +15,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool RepackDefaultRules { get; set; }
         public string CustomRulesPath { get; set; }
         public bool NotIndented { get; set; }
-
-        public PackRulesOptions()
-        {
-            NotIndented = false;
-        }
-
     }
 
 
@@ -47,7 +41,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class PackRulesCommand
     {
-        private PackRulesOptions _options;
+        private readonly PackRulesOptions _options;
         private string _rules_path;
 
         public PackRulesCommand(PackRulesOptions opt)
