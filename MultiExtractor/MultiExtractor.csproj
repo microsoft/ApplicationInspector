@@ -17,8 +17,12 @@
 
   <ItemGroup>
     <PackageReference Include="MediaTypeMap.Core" Version="2.3.3" />
-    <PackageReference Include="sharpcompress" Version="0.24.0" />
+    <PackageReference Include="sharpcompress" Version="0.25.0" />
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.1.74" />
   </ItemGroup>
 
 </Project>
