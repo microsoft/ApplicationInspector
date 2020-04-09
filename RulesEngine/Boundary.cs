@@ -12,6 +12,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// Starting position
         /// </summary>
         public int Index { get; set; }
+
         /// <summary>
         /// Length of boundary
         /// </summary>

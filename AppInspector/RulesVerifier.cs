@@ -2,42 +2,47 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.ApplicationInspector.RulesEngine;
+using NLog;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
     /// Common helper used by VerifyRulesCommand and PackRulesCommand classes to reduce duplication
     /// </summary>
-    class RulesVerifier
+    internal class RulesVerifier
     {
-        private RuleSet _rules;
-        private string _rulesPath;
+        private bool fail_fast;
+        private readonly RuleSet _rules;
+        private readonly string _rulesPath;
+        private readonly Logger _logger;
 
-        public RulesVerifier(string rulePath)
+        public RulesVerifier(string rulePath, Logger logger)
         {
-            _rules = new RuleSet();
+            _logger = logger;
+            _rules = new RuleSet(logger);
             _rulesPath = rulePath;
         }
 
-
-        public void Verify()
+        public void Verify(bool failFast = true)
         {
+            fail_fast = failFast;
+
             if (Directory.Exists(_rulesPath))
+            {
                 LoadDirectory(_rulesPath);
+            }
             else if (File.Exists(_rulesPath))
+            {
                 LoadFile(_rulesPath);
+            }
             else
             {
-                throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_RULE_PATH, _rulesPath));
+                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, _rulesPath));
             }
-
         }
-
-
 
         private void LoadDirectory(string path)
         {
@@ -49,28 +54,23 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private void LoadFile(string file)
         {
-            RuleSet rules = new RuleSet();
-
             try
             {
-                rules.AddFile(file, null);
+                _rules.AddFile(file, null);
             }
             catch (Exception e)
             {
                 Debug.Write(e.Message);//Ensure console message indicates problem for Build process
                 WriteOnce.SafeLog(e.Message, NLog.LogLevel.Error);
-                throw new Exception(ErrMsg.FormatString(ErrMsg.ID.VERIFY_RULE_FAILED, file));
+
+                //allow caller to specify whether to continue
+                if (fail_fast)
+                {
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_FAILED, file));
+                }
             }
-
-            _rules.AddRange(rules.AsEnumerable());
         }
 
-
-
-        public RuleSet CompiledRuleset
-        {
-            get { return _rules; }
-        }
-
+        public RuleSet CompiledRuleset => _rules;
     }
 }

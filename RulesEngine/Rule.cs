@@ -10,11 +10,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class Rule
     {
-
         public Rule()
         {
             Severity = Severity.Moderate;//default
         }
+
         /// <summary>
         /// Name of the source where the rule definition came from.
         /// Typically file, database or other storage.
@@ -61,8 +61,5 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         [JsonProperty(PropertyName = "conditions")]
         public SearchCondition[] Conditions { get; set; }
-
     }
-
-
 }

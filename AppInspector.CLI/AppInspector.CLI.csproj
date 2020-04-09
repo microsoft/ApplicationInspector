@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
+    <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -147,9 +148,6 @@
     <None Update="html\resources\webfonts\fa-solid-900.woff2">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="preferences\tagcounters.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="preferences\tagreportgroups.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -159,4 +157,10 @@
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\icon-128.png" Pack="true" PackagePath="" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="DotLiquid" Version="2.0.325" />
+    <PackageReference Include="NLog" Version="4.7.0" />
+  </ItemGroup>
+  
 </Project>

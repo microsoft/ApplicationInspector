@@ -8,9 +8,7 @@ SECURITY_FLAG_CA
 
 SECURITY_FLAG_IGNORE_CA
 
-<OutputType>exe</OutputType>
-
-JSON.Parse
+<OutputType>exe< / OutputType>
 
 Windows
 
@@ -28,24 +26,10 @@ sharedAccessPolicy
 
 class SSLv3
 
-class
-try
+	class
+	try
 
-//hello
-//boo
-//adasfd
-
-catdog ff;
-
-catdog fgg;
-
-cattydog;
-
-frog b;
-
-dogcat  l;
-
-sleep(d);
+	sleep(d);
 
 irs
 
@@ -61,14 +45,10 @@ Apache
 
 login b
 
-
 RegSetValueEx("foo");
-
 
 int main(int argc)
 {
-	
-
 	JsonConvert.DeserializeObject<List<FileTagGroup>>(File.ReadAllText(filePath));
 
 	libtiff
@@ -77,7 +57,7 @@ int main(int argc)
 
 		SQL
 
-		Select * from table
+		Select* from table
 
 		mutex
 
@@ -95,115 +75,107 @@ int main(int argc)
 
 		Mocking
 
-	xml.load
+		xml.load
 
 		json deserialize
 
 		flash
-   
 
-   Roles w;
+		Roles w;
 
-   <OutputType>Exe</OutputType>
+	<OutputType>Exe< / OutputType>
 
-	   <ConfigurationType>DynamicLibrary</ConfigurationType>
+		<ConfigurationType>DynamicLibrary< / ConfigurationType>
 
-	   // Win64
+		// Win64
 
-   android
+		android
 
+		azure
 
-	   azure
+		Windows
 
-	   Windows
+		char src[40];
+	char dest[100];
 
+	Deserialize e;
+	unserialize("something");
 
-   char src[40];
-   char dest[100];
+	Net::HTTP k;
 
-   Deserialize e;
-   unserialize("something");
+	socket f
 
-   Net::HTTP k;
+		webclient w;
 
+	fwrite  k;
 
-   socket f
-  
+	fwrite l;
 
-   webclient w;
+	fwrite j;
 
-   fwrite  k;
+	eval(src)
 
-   fwrite l;
+		socket j;
 
-   fwrite j;
+	ajax.post
 
- 
+		webclient
 
-	   eval(src)
+		paypal;
 
-	   socket j;
-	
-	   ajax.post
+	salary;
 
-		   webclient
+	ssnumber;
 
-		   paypal;
+	facebook;
 
-	   salary;
+	class foo;
 
-	   ssnumber;
+	//high risk
 
-	   facebook;
+	//high risk
 
-	   class foo;
+	//TODO
+	TODO
 
-	   //high risk
+		class x;
+	class y;
+	function w;
 
-	   //high risk
+	form tt;
+	form gg;
 
-	   //TODO
-	   TODO
+	try
+	{
+	}
+	exception()
+	{
+		sleep(4);
+	}
 
-	   class x;
-	   class y;
-	   function w;
+	//mcrypt d;
+	//AES d;
 
-	   form tt;
-	   form gg;
+	SSLv3  D;
+	TLSv1  d;
 
-	   try
-	   {
+	log ff;
+	log
 
-	   }
-	   exception()
-	   {
-		   sleep(4);
-	   }
+		MFC
 
-	   //mcrypt d;
-	   //AES d;
+		//DESCryptoServiceProvider x = new DESCryptoServiceProvider();
+		//DES y; //works
+		//DESEngine eng;
+		//TODO.*crypt
+		//InitializeSecurityContext z;
+		MD5 hh;
 
-	   SSLv3  D;
-	   TLSv1  d;
+	MD2 TT;
 
-	   log ff;
-	   log
+	MVC l;
 
-MFC 
+	socket p
 
-   //DESCryptoServiceProvider x = new DESCryptoServiceProvider();
-   //DES y; //works
-   //DESEngine eng;
-   //TODO.*crypt
-   //InitializeSecurityContext z;
-   MD5 hh;
-
-   MD2 TT;
-
-   MVC l;
-
-   socket p
-
-   digest
+		digest
 }

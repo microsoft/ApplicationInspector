@@ -161,7 +161,7 @@
             "searchPattern": ".Ajax",
             "displayName": "Javascript ajax",
             "detectedIcon": "fas fa-exchange-alt"
-          }        
+          }
         ]
       },
       {
@@ -197,7 +197,7 @@
             "searchPattern": "DBMS.General",
             "displayName": "General database",
             "detectedIcon": "fas fa-save"
-          }       
+          }
         ]
       },
       {
@@ -397,7 +397,7 @@
           {
             "searchPattern": "Comment.Fix",
             "displayName": "Fix comments",
-            "detectedIcon": "fas fa-toolbox"           
+            "detectedIcon": "fas fa-toolbox"
           },
           {
             "searchPattern": "Comment.Suspicious",

@@ -1,11 +1,8 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace MultiExtractor
 {
@@ -37,8 +34,5 @@ namespace MultiExtractor
         public string FullPath { get; set; }
         public string Name { get; set; }
         public MemoryStream Content { get; set; }
-
-      
-
     }
 }

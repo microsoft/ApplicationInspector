@@ -10,7 +10,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class SearchPattern
     {
-        Confidence _confidence;
+        private Confidence _confidence;
 
         [JsonProperty(PropertyName = "pattern")]
         public string Pattern { get; set; }
@@ -32,15 +32,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
 #pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
                 if (_confidence == null)//possible from serialiation
+                {
 #pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
                     _confidence = Confidence.Medium;
+                }
 
                 return _confidence;
             }
-            set
-            {
-                _confidence = value;
-            }
+            set => _confidence = value;
         }
 
         public SearchPattern()
@@ -48,6 +47,4 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             Confidence = Confidence.Medium;
         }
     }
-
-
 }

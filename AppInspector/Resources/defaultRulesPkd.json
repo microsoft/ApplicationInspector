@@ -1842,7 +1842,7 @@
     "overrides": null,
     "patterns": [
       {
-        "pattern": "\\b(x509|\\.(crt|cer|spc|p7b|p7s|p7r|ca-bundle)|certificate)\\b",
+        "pattern": "\\b(x509|\\.(crt|cer|spc|p7b|p7s|p7r|ca-bundle))\\b",
         "type": "regex",
         "modifiers": [
           "i"
@@ -4986,7 +4986,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium"
+        "confidence": "high"
       }
     ],
     "conditions": []
@@ -5011,7 +5011,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium"
+        "confidence": "high"
       }
     ],
     "conditions": []
@@ -5034,7 +5034,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium"
+        "confidence": "high"
       }
     ],
     "conditions": []

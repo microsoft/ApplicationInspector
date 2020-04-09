@@ -6,64 +6,57 @@ using Newtonsoft.Json;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
+    public class PackRulesOptions : CommandOptions
+    {
+        public bool RepackDefaultRules { get; set; }
+        public string CustomRulesPath { get; set; }
+        public bool NotIndented { get; set; }
+    }
+
+    public class PackRulesResult : Result
+    {
+        public enum ExitCode
+        {
+            Success = 0,
+            Error = 1,
+            CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
+        }
+
+        [JsonProperty(Order = 2)]
+        public ExitCode ResultCode { get; set; }
+
+        [JsonProperty(Order = 3)]
+        public List<Rule> Rules { get; set; }
+    }
+
     /// <summary>
     /// Used to combine validated rules into one json for ease in distribution of this
     /// application
     /// </summary>
-    public class PackRulesCommand : Command
+    public class PackRulesCommand
     {
-        public enum ExitCode
-        {
-            NoIssues = 0,
-            NotVerified = 1,
-            CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
-        }
-
+        private readonly PackRulesOptions _options;
         private string _rules_path;
-        private string _arg_custom_rules_path;
-        private string _arg_outputfile;
-        private bool _arg_repack_default_rules;
-        private bool _arg_indent;
-        private string _arg_consoleVerbosityLevel;
 
-        public PackRulesCommand(PackRulesCommandOptions opt)
+        public PackRulesCommand(PackRulesOptions opt)
         {
-            _arg_repack_default_rules = opt.RepackDefaultRules;
-            _arg_indent = !opt.NotIndented;
-            _arg_custom_rules_path = opt.CustomRulesPath;
-            _arg_outputfile = opt.OutputFilePath;
-            _arg_consoleVerbosityLevel = opt.ConsoleVerbosityLevel ?? "medium";
-            _arg_logger = opt.Log;
-            _arg_log_file_path = opt.LogFilePath;
-            _arg_log_level = opt.LogFileLevel;
-            _arg_close_log_on_exit = Utils.CLIExecutionContext ? true : opt.CloseLogOnCommandExit;
-
-            _rules_path = _arg_repack_default_rules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _arg_custom_rules_path;
-            _arg_outputfile = _arg_repack_default_rules && String.IsNullOrEmpty(_arg_custom_rules_path) ?
-                Utils.GetPath(Utils.AppPath.defaultRulesPackedFile) : _arg_outputfile;
-
-            _arg_logger ??= Utils.SetupLogging(opt);
-            WriteOnce.Log ??= _arg_logger;
-            ConfigureConsoleOutput();
+            _options = opt;
 
             try
             {
-                ConfigFileOutput();
+                _options.Log ??= Utils.SetupLogging(_options);
+                WriteOnce.Log ??= _options.Log;
+
+                ConfigureConsoleOutput();
                 ConfigRules();
             }
-            catch (Exception e)
+            catch (OpException e)
             {
                 WriteOnce.Error(e.Message);
-                if (_arg_close_log_on_exit)
-                {
-                    Utils.Logger = null;
-                    WriteOnce.Log = null;
-                }
                 throw;
             }
         }
@@ -74,110 +67,84 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Establish console verbosity
         /// For NuGet DLL use, console is muted overriding any arguments sent
         /// </summary>
-        void ConfigureConsoleOutput()
+        private void ConfigureConsoleOutput()
         {
             WriteOnce.SafeLog("PackRulesCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
             if (!Utils.CLIExecutionContext)
+            {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
+            }
             else
             {
                 WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_arg_consoleVerbosityLevel, true, out verbosity))
+                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out verbosity))
                 {
-                    WriteOnce.Error(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
-                    throw new Exception(ErrMsg.FormatString(ErrMsg.ID.CMD_INVALID_ARG_VALUE, "-x"));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
                 else
+                {
                     WriteOnce.Verbosity = verbosity;
+                }
             }
         }
 
-        void ConfigFileOutput()
-        {
-            WriteOnce.SafeLog("PackRulesCommand::ConfigOutput", LogLevel.Trace);
-
-            if (string.IsNullOrEmpty(_arg_outputfile))
-                throw new Exception(ErrMsg.FormatString(ErrMsg.ID.PACK_MISSING_OUTPUT_ARG));
-        }
-
-
-        void ConfigRules()
+        private void ConfigRules()
         {
             WriteOnce.SafeLog("PackRulesCommand::ConfigRules", LogLevel.Trace);
 
-            if (_arg_repack_default_rules && !Utils.CLIExecutionContext)
-                throw new Exception(ErrMsg.GetString(ErrMsg.ID.VERIFY_RULES_NO_CLI_DEFAULT));
+            if (_options.RepackDefaultRules && !Utils.CLIExecutionContext)
+            {
+                throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NO_CLI_DEFAULT));
+            }
 
-            if (!_arg_repack_default_rules && string.IsNullOrEmpty(_arg_custom_rules_path))
-                throw new Exception(ErrMsg.GetString(ErrMsg.ID.CMD_NORULES_SPECIFIED));
+            if (!_options.RepackDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath))
+            {
+                throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
+            }
+
+            _rules_path = _options.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
         }
 
-        #endregion
+        #endregion configure
 
         /// <summary>
         /// Intentional as no identified value in calling from DLL at this time
         /// </summary>
         /// <returns></returns>
-        public override string GetResult()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// After verifying rules are valid syntax and load; combines into a single .json file 
-        /// for ease in distribution including this application's defaultset which are
-        /// added to the manifest as an embedded resource (see AppInspector.Commands.csproj)
-        /// </summary>
-        /// <returns></returns>
-        public override int Run()
+        public PackRulesResult GetResult()
         {
             WriteOnce.SafeLog("PackRules::Run", LogLevel.Trace);
-            WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_RUNNING, "packrules"));
+            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Pack Rules"));
+
+            if (!Utils.CLIExecutionContext)
+            { //requires output format and filepath only supported via CLI use
+                WriteOnce.Error("Command not supported for DLL calls");
+                throw new Exception("Command not supported for DLL calls");
+            }
+
+            PackRulesResult packRulesResult = new PackRulesResult()
+            {
+                AppVersion = Utils.GetVersionString()
+            };
 
             try
             {
-                RulesVerifier verifier = new RulesVerifier(_rules_path);
+                RulesVerifier verifier = new RulesVerifier(_rules_path, _options.Log);
                 verifier.Verify();
+                packRulesResult.Rules = new List<Rule>(verifier.CompiledRuleset.AsEnumerable());
 
-                List<Rule> list = new List<Rule>(verifier.CompiledRuleset.AsEnumerable());
-
-                JsonSerializerSettings settings = new JsonSerializerSettings();
-                settings.Formatting = (_arg_indent) ? Formatting.Indented : Formatting.None;
-
-                using (FileStream fs = File.Open(_arg_outputfile, FileMode.Create, FileAccess.Write))
-                {
-                    StreamWriter sw = new StreamWriter(fs);
-                    sw.Write(JsonConvert.SerializeObject(list, settings));
-                    sw.Close();
-                    fs.Close();
-                }
-
-                WriteOnce.Operation(ErrMsg.FormatString(ErrMsg.ID.CMD_COMPLETED, "packrules"));
-                WriteOnce.Any(ErrMsg.FormatString(ErrMsg.ID.ANALYZE_OUTPUT_FILE, _arg_outputfile), true, ConsoleColor.Gray, WriteOnce.ConsoleVerbosity.Medium);
-                WriteOnce.FlushAll();
+                packRulesResult.ResultCode = PackRulesResult.ExitCode.Success;
             }
-            catch (Exception e)
+            catch (OpException e)
             {
                 WriteOnce.Error(e.Message);
-                //exit normaly for CLI callers and throw for DLL callers
-                if (Utils.CLIExecutionContext)
-                    return (int)ExitCode.CriticalError;
-                else
-                    throw;
-            }
-            finally
-            {
-                if (_arg_close_log_on_exit)
-                {
-                    Utils.Logger = null;
-                    WriteOnce.Log = null;
-                }
+                //caught for CLI callers with final exit msg about checking log or throws for DLL callers
+                throw;
             }
 
-            return (int)ExitCode.NoIssues;
+            return packRulesResult;
         }
-
     }
 }

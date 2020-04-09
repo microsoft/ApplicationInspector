@@ -42,7 +42,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public static bool FromFileName(string fileName, ref LanguageInfo info)
         {
             if (fileName == null)
+            {
                 return false;
+            }
 
             bool result = false;
 
@@ -77,7 +79,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         /// <summary>
         /// Gets comment inline for given language
-        /// </summary>        
+        /// </summary>
         /// <param name="language">Language</param>
         /// <returns>Commented string</returns>
         public static string GetCommentInline(string language)
@@ -89,7 +91,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 foreach (Comment comment in Instance.Comments)
                 {
                     if (comment.Languages.Contains(language))
+                    {
                         return comment.Inline;
+                    }
                 }
             }
 
@@ -98,7 +102,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         /// <summary>
         /// Gets comment preffix for given language
-        /// </summary>        
+        /// </summary>
         /// <param name="language">Language</param>
         /// <returns>Commented string</returns>
         public static string GetCommentPrefix(string language)
@@ -110,7 +114,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 foreach (Comment comment in Instance.Comments)
                 {
                     if (comment.Languages.Contains(language))
+                    {
                         return comment.Preffix;
+                    }
                 }
             }
 
@@ -119,7 +125,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         /// <summary>
         /// Gets comment suffix for given language
-        /// </summary>        
+        /// </summary>
         /// <param name="language">Language</param>
         /// <returns>Commented string</returns>
         public static string GetCommentSuffix(string language)
@@ -131,7 +137,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 foreach (Comment comment in Instance.Comments)
                 {
                     if (comment.Languages.Contains(language))
+                    {
                         return comment.Suffix;
+                    }
                 }
             }
 
@@ -151,19 +159,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         private static Language _instance;
+
         private static Language Instance
         {
             get
             {
                 if (_instance == null)
+                {
                     _instance = new Language();
+                }
 
                 return _instance;
             }
         }
 
-        private List<Comment> Comments;
-        private List<LanguageInfo> Languages;
+        private readonly List<Comment> Comments;
+        private readonly List<LanguageInfo> Languages;
     }
 }
-

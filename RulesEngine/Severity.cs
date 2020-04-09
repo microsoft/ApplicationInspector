@@ -10,24 +10,28 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// Issue severity
     /// </summary>
     [Flags]
-    public enum Severity 
-    {        
+    public enum Severity
+    {
         /// <summary>
         /// Critical issues
         /// </summary>
         Critical = 1,
+
         /// <summary>
         /// Important issues
         /// </summary>
         Important = 2,
+
         /// <summary>
         /// Moderate issues
         /// </summary>
         Moderate = 4,
+
         /// <summary>
-        /// Best Practice 
+        /// Best Practice
         /// </summary>
         BestPractice = 8,
+
         /// <summary>
         /// Issues that require manual review
         /// </summary>
@@ -37,7 +41,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// <summary>
     /// Json Converter for Severity
     /// </summary>
-    class SeverityConverter : JsonConverter
+    internal class SeverityConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
@@ -49,6 +53,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 case Severity.BestPractice:
                     svrstr = "best-practice";
                     break;
+
                 case Severity.ManualReview:
                     svrstr = "manual-review";
                     break;

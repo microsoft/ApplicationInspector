@@ -25,6 +25,33 @@ pr:
     - RulesEngine/*
 
 stages:
+- stage: Test
+  jobs:
+  - job: build_test
+    displayName: Run Tests
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '3.1.x'
+    - task: NuGetToolInstaller@1
+      displayName: Install Nuget Tool
+      inputs:
+        versionSpec: '5.4.x'
+    - task: DotNetCoreCLI@2
+      displayName: Dotnet Restore
+      inputs:
+        command: 'restore'
+        projects: 'UnitTest.Commands/UnitTest.Commands.csproj'
+        verbosityRestore: 'Normal'
+    - task: DotNetCoreCLI@2
+      displayName: Dotnet Test
+      inputs:
+        command: 'test'
+        projects: 'UnitTest.Commands/UnitTest.Commands.csproj'
+
 - stage: Build
   jobs:
   - job: build_nix

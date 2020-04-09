@@ -11,22 +11,22 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// <summary>
     /// Class to handle text as a searchable container
     /// </summary>
-    class TextContainer
+    internal class TextContainer
     {
         /// <summary>
         /// Creates new instance
         /// </summary>
         /// <param name="content">Text to work with</param>
-        public TextContainer(string content, string language, bool stopAfterFirstMatch=false)
+        public TextContainer(string content, string language, bool stopAfterFirstMatch = false)
         {
             _content = content;
             _language = language;
             _stopAfterFirstMatch = stopAfterFirstMatch;
-            _lineEnds = new List<int>(){ 0 };            
+            _lineEnds = new List<int>() { 0 };
 
             // Find line end in the text
             int pos = 0;
-            while(pos > -1 && pos < _content.Length)
+            while (pos > -1 && pos < _content.Length)
             {
                 if (++pos < _content.Length)
                 {
@@ -37,7 +37,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             // Text can end with \n or not
             if (_lineEnds[_lineEnds.Count - 1] == -1)
+            {
                 _lineEnds[_lineEnds.Count - 1] = (_content.Length > 0) ? content.Length - 1 : 0;
+            }
         }
 
         /// <summary>
@@ -66,7 +68,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             string text = _content.Substring(scope.Index, scope.Length);
             List<Boundary> macthes = MatchPattern(pattern, text);
             if (macthes.Count > 0)
+            {
                 result = true;
+            }
 
             return result;
         }
@@ -110,8 +114,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public Boundary GetLineBoundary(int index)
         {
             Boundary result = new Boundary();
-            
-            for(int i=0; i < _lineEnds.Count; i++)
+
+            for (int i = 0; i < _lineEnds.Count; i++)
             {
                 if (_lineEnds[i] >= index)
                 {
@@ -122,7 +126,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
 
             return result;
-        }        
+        }
 
         /// <summary>
         /// Return content of the line
@@ -189,9 +193,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             string inline = Language.GetCommentInline(_language);
 
             if (pattern.Scopes.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
+            {
                 return true;
+            }
 
-            bool isInComment = (  IsBetween(text, boundary.Index, prefix, suffix)
+            bool isInComment = (IsBetween(text, boundary.Index, prefix, suffix)
                                || IsBetween(text, boundary.Index, inline, "\n"));
 
             return !(isInComment && !pattern.Scopes.Contains(PatternScope.Comment));
@@ -215,7 +221,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 preText = preText.Substring(lastPreffix);
                 int lastSuffix = preText.IndexOf(suffix, StringComparison.Ordinal);
                 if (lastSuffix < 0)
+                {
                     result = true;
+                }
             }
 
             return result;
@@ -233,12 +241,19 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             // We need the begining of the line when going up
             if (offset < 0)
+            {
                 index--;
+            }
 
             if (index < 0)
+            {
                 index = 0;
+            }
+
             if (index >= _lineEnds.Count)
+            {
                 index = _lineEnds.Count - 1;
+            }
 
             return _lineEnds[index];
         }
@@ -289,7 +304,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (m.Success)
             {
                 result = true;
-                for (int i=1; i < m.Groups.Count; i++)
+                for (int i = 1; i < m.Groups.Count; i++)
                 {
                     if (int.TryParse(m.Groups[i].Value, out int value))
                     {
@@ -307,9 +322,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return result;
         }
 
-        private string _content;
-        private List<int> _lineEnds;
-        private string _language;
-        private bool _stopAfterFirstMatch;
+        private readonly string _content;
+        private readonly List<int> _lineEnds;
+        private readonly string _language;
+        private readonly bool _stopAfterFirstMatch;
     }
 }

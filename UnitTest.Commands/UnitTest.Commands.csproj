@@ -7,8 +7,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.0-preview-20200318-01" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.1" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
   </ItemGroup>
@@ -21,7 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AppInspector.CLI\AppInspector.CLI.csproj" />
     <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
+    <ProjectReference Include="..\MultiExtractor\MultiExtractor.csproj" />
+    <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -149,4 +152,4 @@
     <Folder Include="output\" />
   </ItemGroup>
 
-</Project>
+ </Project>

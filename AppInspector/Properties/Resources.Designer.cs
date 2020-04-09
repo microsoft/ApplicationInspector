@@ -169,15 +169,6 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to See output file at {0}.
-        /// </summary>
-        internal static string ANALYZE_OUTPUT_FILE {
-            get {
-                return ResourceManager.GetString("ANALYZE_OUTPUT_FILE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The output.html file size is large and may render slowly.  Consider running using alternate output format options as needed..
         /// </summary>
         internal static string ANALYZE_REPORTSIZE_WARN {
@@ -277,7 +268,7 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The log path provided {0} can not be used overwrite an existing file that is not recognized.  Use a different file path or remove the file manually and try again..
+        ///   Looks up a localized string similar to The requested log file {0}) exist but is not recognized as an application log. Provide a different value or delete the file and try again..
         /// </summary>
         internal static string CMD_INVALID_LOG_PATH {
             get {
@@ -291,6 +282,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         internal static string CMD_INVALID_RULE_PATH {
             get {
                 return ResourceManager.GetString("CMD_INVALID_RULE_PATH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No output specified.  Raise the console versosity or provide an output file argument..
+        /// </summary>
+        internal static string CMD_NO_OUTPUT {
+            get {
+                return ResourceManager.GetString("CMD_NO_OUTPUT", resourceCulture);
             }
         }
         
@@ -336,6 +336,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         internal static string CMD_RUNNING {
             get {
                 return ResourceManager.GetString("CMD_RUNNING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to See output file at {0}.
+        /// </summary>
+        internal static string CMD_VIEW_OUTPUT_FILE {
+            get {
+                return ResourceManager.GetString("CMD_VIEW_OUTPUT_FILE", resourceCulture);
             }
         }
         

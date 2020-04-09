@@ -3,7 +3,6 @@
     $('[data-toggle="popover"]').popover();
     $('[data-toggle="tooltip"]').tooltip();
 
-
     /* Main Navigation Links: These are links that change the
      * visible section to something else, specified by the
      * `data-target` attribute of the link, which should usually
@@ -50,9 +49,8 @@
 
 class TemplateInsertion {
     constructor(data) {
-        this.ap = data.AppProfile;
-        this.mt = this.ap.MetaData;
-        this.md = this.ap.FormattedMatchList;
+        this.mt = data.MetaData;
+        this.md = this.mt.detailedMatchList;
     }
 
     processSummaryPage() {
@@ -97,7 +95,7 @@ class TemplateInsertion {
         });
 
         c3.generate({
-            bindto: '#s_pi_languages_chart', 
+            bindto: '#s_pi_languages_chart',
             size: {
                 width: 200
             },
@@ -116,9 +114,9 @@ class TemplateInsertion {
         $('#s_pi_application_name').html(this.mt.applicationName);
         $('#s_pi_version').html(this.mt.sourceVersion);
         $('#s_pi_description').html(this.mt.description || 'No description available.');
-        $('#s_pi_source_path').html(this.ap.sourcePath);
+        $('#s_pi_source_path').html(this.mt.sourcePath);
         $('#s_pi_author').html(this.mt.authors || 'No author found.');
-        $('#s_pi_date_scanned').html(this.ap.dateScanned);
+        $('#s_pi_date_scanned').html(this.mt.dateScanned);
     }
 
     combineConfidence(a, b) {
@@ -135,22 +133,22 @@ class TemplateInsertion {
 
     show_file_listing(e) {
         let $_tr = e.target.nodeName == 'TR' ? $(e.target) : $(e.target).closest('tr');
-        let ruleid = $_tr.find('a').data('ruleid');
+        let ruleId = $_tr.find('a').data('ruleId');
         let $this = e.data.obj;
 
         $('#file_listing_modal ul').empty();
         $('editor-container').addClass('d-none');
 
         const removePrefix = (fn) => {
-            if (!fn.startsWith($this.ap.sourcePath)) {
+            if (!fn.startsWith($this.mt.sourcePath)) {
                 return fn;
             }
-            return fn.slice($this.ap.sourcePath.length);
+            return fn.slice($this.mt.sourcePath.length);
         };
 
         for (let match of $this.md) {
             let excerpt = atob(match.excerpt || '') || match.sample;
-            if (match.ruleId === ruleid || match.ruleName === ruleid) {
+            if (match.ruleId === ruleId || match.ruleName === ruleId) {
                 let $li = $('<li>');
                 let $a = $('<a>');
                 let $l = match.startLocationLine-3;
@@ -181,7 +179,7 @@ class TemplateInsertion {
         $('a.feature_icon').each((idx, elt) => {
             const targetRegexValue = $(elt).data('target');
             if (!targetRegexValue) {
-                $(elt).addClass('disabled');        // Disable icon if no target exists
+                $(elt).addClass('disabled'); // Disable icon if no target exists
                 return;
             }
 
@@ -204,22 +202,21 @@ class TemplateInsertion {
                 $(elt).addClass('disabled');
             }
         });
-       
+
         // Process each icon with the 'feature_icon' class.
         $('a.confidence_image').each((idx, elt) => {
             const confidenceValue = $(elt).data('target');
 
             var src;
-            if (confidenceValue == "High")
+            if (confidenceValue.ToLower() == "high")
                 src = "html/conf-high.png";
-            else if (confidenceValue == "Medium")
+            else if (confidenceValue.ToLower() == "medium")
                 src = "html/conf-medium.png";
             else
                 src = "html/conf-low.png";
 
             $(elt).src = src;
         })
-
 
         // Event handler for visible icons
         $('a.feature_icon').on('click', (e) => {
@@ -241,40 +238,19 @@ class TemplateInsertion {
 
             const $tbody = $('#features table tbody');
             $tbody.empty();
-            
+
             // Now we iterate through all of the rules that relate to this icon
             for (let [rule, confidence] of Object.entries(identifiedRules))
             {
-                // I'm sorry, this is pretty ugly. If you'd like to clean this up, I'd be
-                // happy to take a pull request.
-
                 let $tr = $('<tr>');
                 $tr.on('click', 'td', { 'obj': this }, this.show_file_listing);
                 let $td0 = $('<td>');
                 let $td0a = $('<a>');
                 $td0a.attr('href', '#');
-                $td0a.data('ruleid', rule);    // BUG: This should be the rule id, not the name
+                $td0a.data('ruleId', rule);
                 $td0a.text(rule);
-                //$td0a.on('click', {'obj': this }, this.show_file_listing);
                 $td0.append($td0a);
-
-                //let $td1 = $('<td>');
-                //let $td1d = $('<div>');
-                //$td1d.addClass('progress');
-                //$td1d.css('width', '120px');
-                //let $td1dp = $('<div>');
-                //$td1dp.addClass('progress-bar')
-                //    .addClass('bg-info')
-                //    .attr('role', 'progressbar')
-                //    .css('width', '100%')
-                //    .attr('aria-valuenow', 100)
-                //    .attr('aria-valuemin', 0)
-                //    .attr('aria-valuemax', 100)
-                //    .text('High');
-                //$td1d.append($td1dp);
-                //$td1.append($td1d);
                 $tr.append($td0);
-                //$tr.append($td1);
                 $tbody.append($tr);
             }
         });

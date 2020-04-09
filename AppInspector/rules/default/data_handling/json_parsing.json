@@ -11,6 +11,7 @@
     "patterns": [
       {
         "pattern": "JSON.Parse",
+        "confidence": "high",
         "type": "string",
         "scopes": [
           "code"
@@ -30,6 +31,7 @@
     "patterns": [
       {
         "pattern": "JSON\\.createParser|JObject\\.Parse",
+        "confidence": "high",
         "type": "regex",
         "scopes": [
           "code"
@@ -48,6 +50,7 @@
     "patterns": [
       {
         "pattern": "json.*parser",
+        "confidence": "high",
         "type": "regex",
         "scopes": [
           "code"
@@ -55,4 +58,4 @@
       }
     ]
   }
-] 
+]

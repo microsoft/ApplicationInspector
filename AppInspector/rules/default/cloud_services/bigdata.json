@@ -1,22 +1,22 @@
 [
-	{
-		"name": "Cloud Service: Azure (DataBricks)",
-		"id": "AI000400",
-		"description": "Cloud Service: DataBricks",
-		"tags": [
-			"CloudServices.BigData.Analytics.DataBricks",
-			"CloudServices.Hosting.Microsoft.Azure"
-		],
-		"severity": "moderate",
-		"patterns": [
-			{
-				"pattern": ".cloud.databricks.com",
-				"type": "string",
-				"scopes": [ "code" ],
-				"modifiers": [ "i" ],
-				"confidence": "high",
-				"_comment": ""
-			}
-		]
-	}
+  {
+    "name": "Cloud Service: Azure (DataBricks)",
+    "id": "AI000400",
+    "description": "Cloud Service: DataBricks",
+    "tags": [
+      "CloudServices.BigData.Analytics.DataBricks",
+      "CloudServices.Hosting.Microsoft.Azure"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".cloud.databricks.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
 ]

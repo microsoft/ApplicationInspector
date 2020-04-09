@@ -36,4 +36,5 @@
     <EmbeddedResource Include="Resources\comments.json" />
     <EmbeddedResource Include="Resources\languages.json" />
   </ItemGroup>
+
 </Project>

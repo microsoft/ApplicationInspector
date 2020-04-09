@@ -17,7 +17,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class RuleSet : IEnumerable<Rule>
     {
-        private Logger _logger;
+        private readonly List<Rule> _rules;
+        private readonly Logger _logger;
+        private readonly HashSet<string> _uniqueRuleIds;
 
         /// <summary>
         /// Delegate for deserialization error handler
@@ -25,7 +27,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="sender">Sender object</param>
         /// <param name="e">Error arguments</param>
         public delegate void DeserializationError(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs e);
-        
+
         /// <summary>
         /// Event raised if deserialization error is encoutered while loading JSON rules
         /// </summary>
@@ -34,10 +36,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Creates instance of Ruleset
         /// </summary>
-        public RuleSet(Logger logger=null)
+        public RuleSet(Logger logger = null)
         {
             _logger = logger;
             _rules = new List<Rule>();
+            _uniqueRuleIds = new HashSet<string>();
         }
 
         /// <summary>
@@ -55,46 +58,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        /// Load rules from a file
-        /// </summary>
-        /// <param name="filename">Filename with rules</param>
-        /// <param name="tag">Tag for the rules</param>
-        /// <returns>Ruleset</returns>
-        public static RuleSet FromFile(string filename, string tag = null)
-        {
-            RuleSet result = new RuleSet();
-            result.AddFile(filename, tag);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Load rules from JSON string
-        /// </summary>
-        /// <param name="jsonstring">JSON string</param>
-        /// <param name="sourcename">Name of the source (file, stream, etc..)</param>
-        /// <param name="tag">Tag for the rules</param>
-        /// <returns>Ruleset</returns>
-        public static RuleSet FromString(string jsonstring, string sourcename = "string", string tag = null)
-        {
-            RuleSet result = new RuleSet();
-            result.AddString(jsonstring, sourcename, tag);
-
-            return result;
-        }
-
-        /// <summary>
         /// Parse a directory with rule files and loads the rules
         /// </summary>
         /// <param name="path">Path to rules folder</param>
-        /// <param name="tag">Tag for the rules</param>        
+        /// <param name="tag">Tag for the rules</param>
         public void AddDirectory(string path, string tag = null)
         {
             if (path == null)
+            {
                 throw new ArgumentNullException("path");
+            }
 
             if (!Directory.Exists(path))
+            {
                 throw new DirectoryNotFoundException();
+            }
 
             foreach (string filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
             {
@@ -110,13 +88,19 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public void AddFile(string filename, string tag = null)
         {
             if (string.IsNullOrEmpty(filename))
+            {
                 throw new ArgumentException(filename);
+            }
 
             if (!File.Exists(filename))
+            {
                 throw new FileNotFoundException(filename);
+            }
 
             if (_logger != null)
-                _logger.Debug("rulefile to read: " + filename);
+            {
+                _logger.Debug("Attempting to read: " + filename);
+            }
 
             using (StreamReader file = File.OpenText(filename))
             {
@@ -132,7 +116,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="tag">Tag for the rules</param>
         public void AddString(string jsonstring, string sourcename, string tag = null)
         {
-            HashSet<string> dupRuleIds = new HashSet<string>();
             List<Rule> ruleList = new List<Rule>();
             JsonSerializerSettings settings = new JsonSerializerSettings()
             {
@@ -143,8 +126,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 ruleList = JsonConvert.DeserializeObject<List<Rule>>(jsonstring, settings);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
+                if (_logger != null)
+                {
+                    _logger.Error($"Error parsing {sourcename}: {ex.Message}");
+                    _logger.Debug($"Error parsing {sourcename}: {ex.Message} + {ex.StackTrace}");
+                }
                 throw new Exception($"Error parsing {sourcename}: {ex.Message}");
             }
 
@@ -152,13 +140,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 foreach (Rule r in ruleList)
                 {
-                    if (dupRuleIds.Add(r.Id))
+                    if (_uniqueRuleIds.Add(r.Id))
                     {
                         r.Source = sourcename;
                         r.RuntimeTag = tag;
 
                         if (r.Patterns == null)
+                        {
                             r.Patterns = new SearchPattern[] { };
+                        }
 
                         foreach (SearchPattern pattern in r.Patterns)
                         {
@@ -166,7 +156,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
 
                         if (r.Conditions == null)
+                        {
                             r.Conditions = new SearchCondition[] { };
+                        }
 
                         foreach (SearchCondition condition in r.Conditions)
                         {
@@ -174,35 +166,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
 
                         if (_logger != null)
-                            _logger.Info(string.Format("Rule added: {0},{1},{2}", r.Id, r.Name, r.Description));
+                        {
+                            _logger.Trace(string.Format("Rule added: {0},{1},{2}", r.Id, r.Name, r.Description));
+                        }
                     }
                     else
                     {
+                        if (_logger != null)
+                        {
+                            _logger.Error(string.Format("Duplicate ruleId {0} found.", r.Id));
+                        }
+
                         throw new Exception(string.Format("Duplicate ruleId {0} found.", r.Id));
                     }
-
                 }
 
                 _rules.AddRange(ruleList);
             }
-        }
-
-        /// <summary>
-        /// Add rule into Ruleset
-        /// </summary>
-        /// <param name="rule"></param>
-        public void AddRule(Rule rule)
-        {
-            _rules.Add(rule);
-        }
-
-        /// <summary>
-        /// Adds the elements of the collection to the Ruleset
-        /// </summary>
-        /// <param name="collection">Collection of rules</param>
-        public void AddRange(IEnumerable<Rule> collection)
-        {
-            _rules.AddRange(collection);
         }
 
         /// <summary>
@@ -276,7 +256,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             foreach (string c in comps)
             {
                 if (source.Contains(c))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -286,7 +268,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         /// <summary>
         /// Count of rules in the ruleset
-        /// </summary>        
+        /// </summary>
         public int Count()
         {
             return _rules.Count();
@@ -310,13 +292,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return this._rules.GetEnumerator();
         }
 
-        #endregion
-
-        #region Fields
-
-        private List<Rule> _rules;
-        
-        #endregion
+        #endregion IEnumerable interface
     }
-
 }

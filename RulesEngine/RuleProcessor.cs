@@ -5,9 +5,9 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 [assembly: CLSCompliant(true)]
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
@@ -16,70 +16,49 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     public class RuleProcessor
     {
         private Confidence ConfidenceLevelFilter { get; set; }
-        private bool _stopAfterFirstPatternMatch;
-        private bool _uniqueTagMatchesOnly;
-        private HashSet<string> _uniqueTagHashes;
-        private Logger _logger;
+        private readonly bool _stopAfterFirstPatternMatch;
+        private readonly bool _uniqueTagMatchesOnly;
+        private readonly HashSet<string> _uniqueTagHashes;
+        private readonly Logger _logger;
+        private RuleSet _ruleset;
+        private Dictionary<string, IEnumerable<Rule>> _rulesCache;
+
+        /// <summary>
+        /// Support to exlude list of tags from unique restrictions
+        /// </summary>
         public string[] UniqueTagExceptions { get; set; }
 
         /// <summary>
-        /// Creates instance of RuleProcessor
+        /// Sets severity levels for analysis
         /// </summary>
-        public RuleProcessor(bool uniqueTagMatches = false, bool stopAfterFirstPatternMatch = false, Logger logger = null)
-        {
-            _rulesCache = new Dictionary<string, IEnumerable<Rule>>();
-            EnableSuppressions = false;
-            EnableCache = true;
-            _stopAfterFirstPatternMatch = stopAfterFirstPatternMatch;
+        public Severity SeverityLevel { get; set; }
 
-            _uniqueTagMatchesOnly = uniqueTagMatches;
-            _uniqueTagHashes = new HashSet<string>();
-
-            _logger = logger;
-
-            SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice;
-            ConfidenceLevelFilter = Confidence.High | Confidence.Medium | Confidence.Low;
-        }
+        /// <summary>
+        /// Enables caching of rules queries if multiple reuses per instance
+        /// </summary>
+        public bool EnableCache { get; set; }
 
         /// <summary>
         /// Creates instance of RuleProcessor
         /// </summary>
-        public RuleProcessor(RuleSet rules, Confidence confidence, bool uniqueTagMatches = false, bool stopAfterFirstPatternMatch = false, Logger logger = null) : this()
+        public RuleProcessor(RuleSet rules, Confidence confidence, bool uniqueTagMatches = false, bool stopAfterFirstPatternMatch = false, Logger logger = null)
         {
-            this.Rules = rules;
+            _uniqueTagHashes = new HashSet<string>();
+            _stopAfterFirstPatternMatch = stopAfterFirstPatternMatch;
+            _uniqueTagMatchesOnly = uniqueTagMatches;
+            _logger = logger;
+
             EnableCache = false;
-            EnableSuppressions = false;
-            _stopAfterFirstPatternMatch = stopAfterFirstPatternMatch;
-
-            _uniqueTagMatchesOnly = uniqueTagMatches;
-            _uniqueTagHashes = new HashSet<string>();
-            _logger = logger;
-
             ConfidenceLevelFilter = confidence;
-        }
+            SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //find all; arg not currently supported
 
-        #region Public Methods
-
-        /// <summary>
-        /// Applies given fix on the provided source code line
-        /// </summary>
-        /// <param name="text">Source code line</param>
-        /// <param name="fixRecord">Fix record to be applied</param>
-        /// <returns>Fixed source code line</returns>
-        public static string Fix(string text, CodeFix fixRecord)
-        {
-            string result = string.Empty;
-
-            if (fixRecord.FixType == FixType.RegexReplace)
+            if (rules == null)
             {
-                //TODO: Better pattern search and modifiers
-                Regex regex = new Regex(fixRecord.Pattern.Pattern);
-                result = regex.Replace(text, fixRecord.Replacement);
+                throw new Exception("Null object.  No rules specified");
             }
 
-            return result;
+            this.Rules = rules;
         }
-
 
         /// <summary>
         /// Analyzes given line of code
@@ -87,37 +66,44 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="text">Source code</param>
         /// <param name="languages">List of languages</param>
         /// <returns>Array of matches</returns>
-        public Issue[] Analyze(string text, LanguageInfo languageInfo)
+        public ScanResult[] Analyze(string text, LanguageInfo languageInfo)
         {
             string[] languages = new string[] { languageInfo.Name };
             // Get rules for the given content type
             IEnumerable<Rule> rules = GetRulesForLanguages(languages);
-            List<Issue> resultsList = new List<Issue>();
+            List<ScanResult> resultsList = new List<ScanResult>();
             TextContainer textContainer = new TextContainer(text, (languages.Length > 0) ? languages[0] : string.Empty, _stopAfterFirstPatternMatch);
 
             // Go through each rule
             foreach (Rule rule in rules)
             {
                 if (_logger != null)
+                {
                     _logger.Debug("Processing for rule: " + rule.Id);
-
-                // Skip pattern matching this rule if uniquetag option and not in exceptions list
-                bool multipleMatchesOk = !_uniqueTagMatchesOnly || UniqueTagsCheck(rule.Tags);
-                if (!multipleMatchesOk)
-                    continue;
-
-                List<Issue> matchList = new List<Issue>();
+                }
 
                 // Skip rules that don't apply based on settings
                 if (rule.Disabled || !SeverityLevel.HasFlag(rule.Severity))
+                {
                     continue;
+                }
+
+                // Skip further processing of rule for efficiency if user requested first match only (speed/quality)
+                if (_stopAfterFirstPatternMatch && _uniqueTagMatchesOnly && !UniqueTagsCheck(rule.Tags))
+                {
+                    continue;
+                }
+
+                List<ScanResult> matchList = new List<ScanResult>();
 
                 // Go through each matching pattern of the rule
                 foreach (SearchPattern pattern in rule.Patterns)
                 {
                     //Skill patterns that don't apply based on settings
                     if (!ConfidenceLevelFilter.HasFlag(pattern.Confidence))
+                    {
                         continue;
+                    }
 
                     // Get all matches for the patttern
                     List<Boundary> matches = textContainer.MatchPattern(pattern);
@@ -145,16 +131,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     passedConditions = false;
                                     break;
                                 }
-
                             }
 
-                            //do not accept features from build type files (only metadata) to avoid false positives that are not part of the executable program
+                            //restrict tags from build files to tags with "metadata" to avoid false feature positives that are not part of executable code
                             if (languageInfo.Type == LanguageInfo.LangFileType.Build && rule.Tags.Any(v => !v.Contains("Metadata")))
+                            {
                                 passedConditions = false;
+                            }
 
                             if (passedConditions)
                             {
-                                Issue issue = new Issue()
+                                ScanResult newMatch = new ScanResult()
                                 {
                                     Boundary = match,
                                     StartLocation = textContainer.GetLocation(match.Index),
@@ -164,94 +151,130 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     Rule = rule
                                 };
 
-                                //check at pattern level to avoid adding duplicates 
-                                if (_uniqueTagMatchesOnly && !UniqueTagsCheck(rule.Tags))
-                                    break;
+                                if (_uniqueTagMatchesOnly)
+                                {
+                                    if (!UniqueTagsCheck(newMatch.Rule.Tags)) //tag(s) previously seen
+                                    {
+                                        if (_stopAfterFirstPatternMatch) //recheck stop at pattern level also within same rule
+                                        {
+                                            passedConditions = false; //user performance option i.e. only wants to identify if tag is detected nothing more
+                                        }
+                                        else if (newMatch.Confidence > Confidence.Low) //user prefers highest confidence match over first match
+                                        {
+                                            passedConditions = BestMatch(matchList, newMatch); //; check all patterns in current rule
+
+                                            if (passedConditions)
+                                            {
+                                                passedConditions = BestMatch(resultsList, newMatch);//check all rules in permanent list
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (passedConditions)
+                                {
+                                    matchList.Add(newMatch);
+                                }
 
                                 AddRuleTagHashes(rule.Tags);
-                                matchList.Add(issue);
                             }
                         }
                     }
-
                 }
 
-                // We got matching rule and suppression are enabled,
-                // let's see if we have a supression on the line
-                if (EnableSuppressions && matchList.Count > 0)
-                {
-                    Suppression supp;
-                    foreach (Issue result in matchList)
-                    {
-                        supp = new Suppression(textContainer.GetLineContent(result.StartLocation.Line));
-                        // If rule is NOT being suppressed then report it
-                        SuppressedIssue supissue = supp.GetSuppressedIssue(result.Rule.Id);
-                        if (supissue == null)
-                        {
-                            resultsList.Add(result);
-                        }
-                        // Otherwise add the suppression info instead
-                        else
-                        {
-                            Boundary bound = textContainer.GetLineBoundary(result.Boundary.Index);
-                            bound.Index += supissue.Boundary.Index;
-                            bound.Length = supissue.Boundary.Length;
-
-                            //resultsList.Add();
-                            Issue info = new Issue()
-                            {
-                                IsSuppressionInfo = true,
-                                Boundary = bound,
-                                StartLocation = textContainer.GetLocation(bound.Index),
-                                EndLocation = textContainer.GetLocation(bound.Index + bound.Length),
-                                Rule = result.Rule
-                            };
-
-                            // Add info only if it's not on the same location
-                            if (resultsList.FirstOrDefault(x => x.Rule.Id == info.Rule.Id && x.Boundary.Index == info.Boundary.Index) == null)
-                                resultsList.Add(info);
-                            else if (_logger != null)
-                                _logger.Debug("Not added due to proximity to another rule");
-
-                        }
-                    }
-
-                }
-                // Otherwise put matchlist to resultlist 
-                else
-                {
-                    resultsList.AddRange(matchList);
-                }
+                resultsList.AddRange(matchList);
             }
 
-            // Deal with overrides 
-            List<Issue> removes = new List<Issue>();
-            foreach (Issue m in resultsList)
+            // Deal with overrides
+            List<ScanResult> removes = new List<ScanResult>();
+            foreach (ScanResult scanResult in resultsList)
             {
-                if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
+                if (scanResult.Rule.Overrides is string[] overrides)
                 {
-                    foreach (string ovrd in m.Rule.Overrides)
+                    foreach (string @override in overrides)
                     {
-                        // Find all overriden rules and mark them for removal from issues list   
-                        foreach (Issue om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                        // Find all overriden rules and mark them for removal from issues list
+                        foreach (ScanResult overRideMatch in resultsList.FindAll(x => x.Rule.Id == @override))
                         {
-                            if (om.Boundary.Index >= m.Boundary.Index &&
-                                om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
-                                removes.Add(om);
+                            if (overRideMatch.Boundary.Index >= scanResult.Boundary.Index &&
+                                overRideMatch.Boundary.Index <= scanResult.Boundary.Index + scanResult.Boundary.Length)
+                            {
+                                removes.Add(overRideMatch);
+                            }
                         }
                     }
                 }
             }
 
-            // Remove overriden rules
-            resultsList.RemoveAll(x => removes.Contains(x));
+            if (removes.Count > 0)
+            {
+                // Remove overriden rules
+                resultsList.RemoveAll(x => removes.Contains(x));
+            }
 
             return resultsList.ToArray();
         }
 
-        #endregion
+        /// <summary>
+        /// Ruleset to be used for analysis
+        /// </summary>
+        public RuleSet Rules
+        {
+            get => _ruleset;
+            set
+            {
+                _ruleset = value;
+                _rulesCache = new Dictionary<string, IEnumerable<Rule>>();
+            }
+        }
 
-        #region Private Methods      
+        #region Private Methods
+
+        private bool BestMatch(List<ScanResult> scanResults, ScanResult compareResult, bool removeOld = true)
+        {
+            bool betterMatch = false;
+
+            //if list is empty the new match is the best match
+            if (scanResults == null || scanResults.Count == 0)
+            {
+                return true;
+            }
+
+            foreach (ScanResult priorResult in scanResults)
+            {
+                foreach (string priorResultTag in priorResult.Rule.Tags)
+                {
+                    foreach (string newMatchTag in compareResult.Rule.Tags)
+                    {
+                        if (priorResultTag == newMatchTag)
+                        {
+                            if (compareResult.Confidence > priorResult.Confidence)
+                            {
+                                if (removeOld)
+                                {
+                                    scanResults.Remove(priorResult);
+                                }
+
+                                betterMatch = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (betterMatch)
+                    {
+                        break;
+                    }
+                }
+
+                if (betterMatch)
+                {
+                    break;
+                }
+            }
+
+            return betterMatch;
+        }
 
         /// <summary>
         /// Filters the rules for those matching the content type.
@@ -266,11 +289,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (EnableCache)
             {
                 Array.Sort(languages);
-                // Make language id for cache purposes                
+                // Make language id for cache purposes
                 langid = string.Join(":", languages);
                 // Do we have the ruleset alrady in cache? If so return it
                 if (_rulesCache.ContainsKey(langid))
+                {
                     return _rulesCache[langid];
+                }
             }
 
             IEnumerable<Rule> filteredRules = _ruleset.ByLanguages(languages);
@@ -284,10 +309,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return filteredRules;
         }
 
-
-
         /// <summary>
-        /// Check if rule tags have already been seen or if exception exists 
+        /// Check if rule tags have already been seen or if exception exists
         /// Assumes that _uniqueTagsOnly == true has been checked first for relevance
         /// </summary>
         /// <param name="ruleTags"></param>
@@ -307,20 +330,30 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         {
                             approved = tag.Contains(tagException);
                             if (approved)
+                            {
                                 break;
+                            }
                         }
+                    }
+
+                    if (_logger != null && !approved)
+                    {
+                        _logger.Debug(String.Format("Duplicate tag {0} not added", tag));
                     }
 
                     break;
                 }
-                else if (_logger != null)
-                    _logger.Debug(String.Format("Duplicate tag {0} not added", tag));
+                else
+                {
+                    if (_logger != null)
+                    {
+                        _logger.Debug(String.Format("Unique tag {0} added", tag));
+                    }
+                }
             }
 
             return approved;
         }
-
-
 
         /// <summary>
         /// Supports unique tags option to not process if seen before
@@ -330,52 +363,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private void AddRuleTagHashes(string[] ruleTags)
         {
             foreach (string t in ruleTags)
-                _uniqueTagHashes.Add(t);
-
-        }
-
-        #endregion
-
-        #region Properties
-
-        /// <summary>
-        /// Ruleset to be used for analysis
-        /// </summary>
-        public RuleSet Rules
-        {
-            get { return _ruleset; }
-            set
             {
-                _ruleset = value;
-                _rulesCache = new Dictionary<string, IEnumerable<Rule>>();
+                _uniqueTagHashes.Add(t);
             }
         }
 
-        /// <summary>
-        /// Sets severity levels for analysis
-        /// </summary>
-        public Severity SeverityLevel { get; set; }
-
-        /// <summary>
-        /// Enable suppresion syntax checking during analysis
-        /// </summary>
-        public bool EnableSuppressions { get; set; }
-
-        /// <summary>
-        /// Enables caching of rules queries.
-        /// Increases performance and memory use!
-        /// </summary>
-        public bool EnableCache { get; set; }
-        #endregion
-
-        #region Fields 
-
-        private RuleSet _ruleset;
-
-        /// <summary>
-        /// Cache for rules filtered by content type
-        /// </summary>
-        private Dictionary<string, IEnumerable<Rule>> _rulesCache;
-        #endregion
+        #endregion Private Methods
     }
 }
