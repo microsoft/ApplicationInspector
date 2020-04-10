@@ -85,6 +85,8 @@ ERROR(S):
 
   Arguments:
   -s, --source-path              Source file or directory to inspect
+  
+  -m, --match-depth              First match or best match based on confidence level (first|best)
 
   -o, --output-file-path         Output file path
 
