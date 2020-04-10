@@ -51,9 +51,9 @@
     ]
   },
   {
-    "name": "Testing Framework: ",
+    "name": "Testing Framework: JSUnit",
     "id": "AI042000",
-    "description": "Testing Framework: ",
+    "description": "Testing Framework: JSUnit",
     "applies_to": [
       "javascript"
     ],

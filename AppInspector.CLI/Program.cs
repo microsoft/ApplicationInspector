@@ -5,7 +5,6 @@ using CommandLine;
 using Microsoft.ApplicationInspector.Commands;
 using NLog;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -126,8 +125,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteOnce.Info("output file argument ignored for -d option");
             }
 
-            options.OutputFileFormat = "json"; //ignore any other format; fix for CLIPackRulesCmdOptions constructor not working
-
             options.OutputFilePath = options.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesPackedFile) : options.OutputFilePath;
             if (String.IsNullOrEmpty(options.OutputFilePath))
             {
@@ -153,8 +150,10 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 if (!string.IsNullOrEmpty(options.OutputFilePath)) //dependent local files won't be there; TODO look into dir copy to target!
                 {
-                    WriteOnce.Info("output file argument ignored for html format");
+                    WriteOnce.Info("-o output file argument ignored for html format");
                 }
+
+                options.OutputFilePath = "output.html";
 
                 if (options.AllowDupTags) //fix #183; duplicates results for html format is not supported which causes filedialog issues
 
@@ -169,11 +168,8 @@ namespace Microsoft.ApplicationInspector.CLI
                     throw new Exception(MsgHelp.GetString(MsgHelp.ID.ANALYZE_SIMPLETAGS_HTML_FORMAT));
                 }
             }
-            else
-            {
-                CommonOutputChecks((CLICommandOptions)options);
-            }
 
+            CommonOutputChecks((CLICommandOptions)options);
             return RunAnalyzeCommand(options);
         }
 
@@ -186,17 +182,31 @@ namespace Microsoft.ApplicationInspector.CLI
         private static void CommonOutputChecks(CLICommandOptions options)
         {
             //validate requested format
-            string fileFormatArgs = options.OutputFileFormat;
-            List<string> validFormats = new List<string>();
-            validFormats.Add("json");
-            validFormats.Add("text");
+            string fileFormatArg = options.OutputFileFormat;
+            string[] validFormats =
+            {
+                "html",
+                "text",
+                "json"
+            };
 
+            string[] checkFormats;
             if (options is CLIAnalyzeCmdOptions cliAnalyzeOptions)
             {
-                fileFormatArgs = cliAnalyzeOptions.OutputFileFormat;
+                checkFormats = validFormats;
+                fileFormatArg = cliAnalyzeOptions.OutputFileFormat;
+            }
+            else if (options is CLIPackRulesCmdOptions cliPackRulesOptions)
+            {
+                checkFormats = validFormats.Skip(2).Take(1).ToArray();
+                fileFormatArg = cliPackRulesOptions.OutputFileFormat;
+            }
+            else
+            {
+                checkFormats = validFormats.Skip(1).Take(2).ToArray();
             }
 
-            bool isValidFormat = validFormats.Any(v => v.Equals(fileFormatArgs.ToLower()));
+            bool isValidFormat = checkFormats.Any(v => v.Equals(fileFormatArg.ToLower()));
             if (!isValidFormat)
             {
                 WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));

@@ -44,7 +44,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\defaultRules.json" />
     <None Remove="Resources\defaultRulesPkd.json" />
   </ItemGroup>
 

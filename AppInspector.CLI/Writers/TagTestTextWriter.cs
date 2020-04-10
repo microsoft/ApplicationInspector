@@ -13,9 +13,14 @@ namespace Microsoft.ApplicationInspector.CLI
             CLITagTestCmdOptions cLITagTestCmdOptions = (CLITagTestCmdOptions)commandOptions;
             TagTestResult tagTestResult = (TagTestResult)result;
 
-            //For text output, update write once for same results to console or file
+            //For console output, update write once for same results to console or file
             WriteOnce.TextWriter = TextWriter;
-            WriteOnce.Result("Result status");
+
+            if (string.IsNullOrEmpty(commandOptions.OutputFilePath))
+            {
+                WriteOnce.Result("Results");
+            }
+
             WriteOnce.General(MsgHelp.FormatString(MsgHelp.ID.TAGTEST_RESULTS_TEST_TYPE, cLITagTestCmdOptions.TestType), false, WriteOnce.ConsoleVerbosity.Low);
 
             if (tagTestResult.ResultCode == TagTestResult.ExitCode.TestFailed)
@@ -29,13 +34,15 @@ namespace Microsoft.ApplicationInspector.CLI
 
             if (tagTestResult.TagsStatusList.Count > 0)
             {
-                WriteOnce.Result("Result details:");
+                WriteOnce.Result("Test results:");
+
+                foreach (TagStatus tag in tagTestResult.TagsStatusList)
+                {
+                    WriteOnce.General(String.Format("Tag: {0}, Detected: {1}", tag.Tag, tag.Detected));
+                }
             }
 
-            foreach (TagStatus tag in tagTestResult.TagsStatusList)
-            {
-                WriteOnce.General(String.Format("Tag: {0}, Detected: {1}", tag.Tag, tag.Detected));
-            }
+            WriteOnce.NewLine();
 
             if (autoClose)
             {

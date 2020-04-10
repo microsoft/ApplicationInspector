@@ -97,7 +97,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 });
             }
 
-            //safeguard sample output blocking browser xss
+            //safeguard sample output now that we've matched properties for blocking browser xss
             matchRecord.Sample = System.Net.WebUtility.HtmlEncode(matchRecord.Sample);
 
             //Special handling; attempt to detect app types...review for multiple pattern rule limitation
@@ -128,7 +128,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     Metadata.UniqueTags.Add(tag);
                 }
 
-                Metadata.MatchList.Add(matchRecord);
+                Metadata.Matches.Add(matchRecord);
             }
             else
             {

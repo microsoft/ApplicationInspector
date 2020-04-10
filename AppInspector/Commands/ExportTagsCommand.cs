@@ -34,6 +34,9 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(Order = 2, PropertyName = "resultCode")]
         public ExitCode ResultCode { get; set; }
 
+        /// <summary>
+        /// List of tags exported from specified ruleset
+        /// </summary>
         [JsonProperty(Order = 3, PropertyName = "tagsList")]
         public List<String> TagsList { get; set; }
 

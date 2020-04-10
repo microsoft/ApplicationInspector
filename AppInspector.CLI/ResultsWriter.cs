@@ -39,8 +39,10 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 commandCompletedMsg = "Pack Rules";
             }
-            else if (result is AnalyzeResult analyzeResult && options is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)
+            else if (result is AnalyzeResult analyzeResult && options is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions) //special handling for html format
             {
+                commandCompletedMsg = "Analyze";
+
                 //additional prechecks required for analyze html format
                 if (cLIAnalyzeCmdOptions.OutputFileFormat == "html")
                 {
@@ -49,18 +51,10 @@ namespace Microsoft.ApplicationInspector.CLI
                     //prechecks
                     if (analyzeResult.ResultCode != AnalyzeResult.ExitCode.Success)
                     {
-                        Finalize(writer, "Analyze");
+                        Finalize(writer, commandCompletedMsg);
                         return;
                     }
 
-                    if (!string.IsNullOrEmpty(cLIAnalyzeCmdOptions.OutputFilePath))
-                    {
-                        WriteOnce.General(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-o ignored when html format specified"));
-                    }
-
-                    //override output file path ensuring local availability of dependent files for html format
-                    options.OutputFilePath = "output.html";
-                    cLIAnalyzeCmdOptions.OutputFilePath = "output.html";
                     writer.WriteResults(analyzeResult, cLIAnalyzeCmdOptions);
 
                     //post checks

@@ -16,53 +16,99 @@ namespace Microsoft.ApplicationInspector.Commands
         public Dictionary<string, HashSet<string>> KeyedPropertyLists { get; } //dynamic keyed list of properties with more than one value
 
         //simple properties
+        /// <summary>
+        /// Detected or derived project name
+        /// </summary>
         [JsonProperty(PropertyName = "applicationName")]
         public string ApplicationName { get; set; }
 
+        /// <summary>
+        /// Source path provided argument
+        /// </summary>
         [JsonProperty(PropertyName = "sourcePath")]
         public string SourcePath { get; set; }
 
+        /// <summary>
+        /// Detected project source version
+        /// </summary>
         [JsonProperty(PropertyName = "sourceVersion")]
         public string SourceVersion { get; set; }
 
+        /// <summary>
+        /// Detected source authors
+        /// </summary>
         [JsonProperty(PropertyName = "authors")]
         public string Authors { get; set; }
 
+        /// <summary>
+        /// Detected source description
+        /// </summary>
         [JsonProperty(PropertyName = "description")]
         public string Description { get; set; }
 
         private readonly DateTime _lastUpdated = DateTime.MinValue;
 
+        /// <summary>
+        /// Last modified date for source code scanned
+        /// </summary>
         [JsonProperty(PropertyName = "lastUpdated")]
         public string LastUpdated { get; set; }
 
+        /// <summary>
+        /// Date of analyze scan
+        /// </summary>
         [JsonProperty(PropertyName = "dateScanned")]
         public string DateScanned { get; set; }
 
         //stats
+
+        /// <summary>
+        /// Total number of files scanned successfully
+        /// </summary>
         [JsonProperty(PropertyName = "filesAnalyzed")]
         public int FilesAnalyzed { get; set; }
 
+        /// <summary>
+        /// Total number of files in source path
+        /// </summary>
         [JsonProperty(PropertyName = "totalFiles")]
         public int TotalFiles { get; set; }
 
+        /// <summary>
+        /// Total number of skipped files based on supported formats
+        /// </summary>
         [JsonProperty(PropertyName = "filesSkipped")]
         public int FilesSkipped { get; set; }
 
+        /// <summary>
+        /// Total files with at least one result
+        /// </summary>
         [JsonProperty(PropertyName = "filesAffected")]
         public int FilesAffected { get; set; }
 
-        //following "counter" methods can not use enumeration on matches list which are unique by default
+        /// <summary>
+        /// Total matches with supplied argument settings
+        /// </summary>
         [JsonProperty(PropertyName = "totalMatchesCount")]
         public int TotalMatchesCount { get; set; }
 
+        /// <summary>
+        /// Total unique matches by tag
+        /// </summary>
         [JsonProperty(PropertyName = "uniqueMatchesCount")]
         public int UniqueMatchesCount => UniqueTags.Count;  //for liquid use
 
         //convenience getters for serialzation and easy reference of standard properties found in dynamic lists
+
+        /// <summary>
+        /// List of detected package types 
+        /// </summary>
         [JsonProperty(PropertyName = "packageTypes")]
         public HashSet<string> PackageTypes => KeyedPropertyLists["strGrpPackageTypes"];
 
+        /// <summary>
+        /// List of detected application types
+        /// </summary>
         [JsonProperty(PropertyName = "appTypes")]
         public HashSet<string> AppTypes => KeyedPropertyLists["strGrpAppTypes"];
 
@@ -72,39 +118,73 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonIgnore]
         public HashSet<string> FileNames => KeyedPropertyLists["strGrpFileNames"];
 
+        /// <summary>
+        /// List of detected unique tags 
+        /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
         public HashSet<string> UniqueTags { get => KeyedPropertyLists["strGrpUniqueTags"]; set => KeyedPropertyLists["strGrpUniqueTags"] = value; }
 
+        /// <summary>
+        /// List of detected unique code dependency includes
+        /// </summary>
         [JsonProperty(PropertyName = "uniqueDependencies")]
         public HashSet<string> UniqueDependencies => KeyedPropertyLists["strGrpUniqueDependencies"];
 
+        /// <summary>
+        /// List of detected output types
+        /// </summary>
         [JsonProperty(PropertyName = "outputs")]
         public HashSet<string> Outputs => KeyedPropertyLists["strGrpOutputs"];
 
+        /// <summary>
+        /// List of detected target types
+        /// </summary>
         [JsonProperty(PropertyName = "targets")]
         public HashSet<string> Targets => KeyedPropertyLists["strGrpTargets"];
 
+        /// <summary>
+        /// List of detected programming languages used
+        /// </summary>
         [JsonProperty(PropertyName = "languages")]
         public Dictionary<string, int> Languages;
 
+        /// <summary>
+        /// List of detected OS targets
+        /// </summary>
         [JsonProperty(PropertyName = "OSTargets")]
         public HashSet<string> OSTargets => KeyedPropertyLists["strGrpOSTargets"];
 
+        /// <summary>
+        /// LIst of detected file types (extension based)
+        /// </summary>
         [JsonProperty(PropertyName = "fileExtensions")]
         public HashSet<string> FileExtensions => KeyedPropertyLists["strGrpFileExtensions"];
 
+        /// <summary>
+        /// List of detected cloud host targets
+        /// </summary>
         [JsonProperty(PropertyName = "cloudTargets")]
         public HashSet<string> CloudTargets => KeyedPropertyLists["strGrpCloudTargets"];
 
+        /// <summary>
+        /// List of detected cpu targets
+        /// </summary>
         [JsonProperty(PropertyName = "CPUTargets")]
         public HashSet<string> CPUTargets => KeyedPropertyLists["strGrpCPUTargets"];
 
         //other data types
+
+        /// <summary>
+        /// List of detected tag counters i.e. metrics
+        /// </summary>
         [JsonProperty(PropertyName = "tagCounters")]
         public List<MetricTagCounter> TagCounters { get; set; }
 
+        /// <summary>
+        /// List of detailed MatchRecords from scan
+        /// </summary>
         [JsonProperty(PropertyName = "detailedMatchList")]
-        public List<MatchRecord> MatchList { get; }//lighter formatted list structure more suited for json output to limit extraneous fieldo in Issues class
+        public List<MatchRecord> Matches { get; }//lighter formatted list structure more suited for json output to limit extraneous fieldo in Issues class
 
         public MetaData(string applicationName, string sourcePath)
         {
@@ -113,7 +193,7 @@ namespace Microsoft.ApplicationInspector.Commands
             SourcePath = sourcePath;
 
             //Initial value for ApplicationName may be replaced if rule pattern match found later
-            MatchList = new List<MatchRecord>();
+            Matches = new List<MatchRecord>();
 
             //initialize standard set groups using dynamic lists variables that may have more than one value
             KeyedPropertyLists = new Dictionary<string, HashSet<string>>

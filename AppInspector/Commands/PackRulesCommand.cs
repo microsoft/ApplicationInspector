@@ -29,6 +29,9 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(Order = 2)]
         public ExitCode ResultCode { get; set; }
 
+        /// <summary>
+        /// List of Rules to pack as specified in pack command
+        /// </summary>
         [JsonProperty(Order = 3)]
         public List<Rule> Rules { get; set; }
     }

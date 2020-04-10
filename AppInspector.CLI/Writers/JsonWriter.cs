@@ -7,10 +7,16 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
     {
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
-            WriteOnce.Result("Result");
-
             JsonSerializer jsonSerializer = new JsonSerializer();
             jsonSerializer.Formatting = Formatting.Indented;
+
+            //For console output, update write once for same results to console or file
+            WriteOnce.TextWriter = TextWriter;
+
+            if (string.IsNullOrEmpty(commandOptions.OutputFilePath))
+            {
+                WriteOnce.Result("Results");
+            }
 
             if (result is TagTestResult)
             {

@@ -197,7 +197,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             HashSet<string> results = new HashSet<string>();
 
-            foreach (MatchRecord match in _appMetaData.MatchList)
+            foreach (MatchRecord match in _appMetaData.Matches)
             {
                 foreach (string tag in match.Tags)
                 {
@@ -226,7 +226,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     var tagPatternRegex = new Regex(pattern.SearchPattern, RegexOptions.IgnoreCase);
 
-                    foreach (var match in _appMetaData.MatchList)
+                    foreach (var match in _appMetaData.Matches)
                     {
                         foreach (var tagItem in match.Tags)
                         {
@@ -319,7 +319,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     var tagPatternRegex = new Regex(pattern.SearchPattern, RegexOptions.IgnoreCase);
 
-                    foreach (var match in _appMetaData.MatchList)
+                    foreach (var match in _appMetaData.Matches)
                     {
                         foreach (var tagItem in match.Tags)
                         {
@@ -389,7 +389,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             foreach (string tag in orderedTags)
             {
-                foreach (var match in _appMetaData.MatchList)
+                foreach (var match in _appMetaData.Matches)
                 {
                     foreach (string testTag in match.Tags)
                     {
@@ -431,7 +431,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 foreach (string tag in _appMetaData.UniqueTags)
                 {
                     var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
-                    foreach (var match in _appMetaData.MatchList)
+                    foreach (var match in _appMetaData.Matches)
                     {
                         foreach (string testTag in match.Tags)
                         {
@@ -474,7 +474,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 foreach (string tag in _appMetaData.UniqueTags)
                 {
                     var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
-                    foreach (var match in _appMetaData.MatchList)
+                    foreach (var match in _appMetaData.Matches)
                     {
                         foreach (string testTag in match.Tags)
                         {

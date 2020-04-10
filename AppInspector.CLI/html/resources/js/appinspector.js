@@ -147,7 +147,7 @@ class TemplateInsertion {
         };
 
         for (let match of $this.md) {
-            let excerpt = atob(match.excerpt || '') || match.sample;
+            let excerpt = (match.excerpt || '') || match.sample;
             if (match.ruleId === ruleId || match.ruleName === ruleId) {
                 let $li = $('<li>');
                 let $a = $('<a>');

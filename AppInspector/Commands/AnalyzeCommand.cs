@@ -43,6 +43,9 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(Order = 2, PropertyName = "resultCode")]
         public ExitCode ResultCode { get; set; }
 
+        /// <summary>
+        /// Analyze command result object containing scan properties
+        /// </summary>
         [JsonProperty(Order = 3, PropertyName = "metaData")]
         public MetaData Metadata { get; set; }
 
@@ -326,7 +329,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                     analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
                 }
-                else if (_metaDataHelper.Metadata.MatchList.Count == 0)
+                else if (_metaDataHelper.Metadata.Matches.Count == 0)
                 {
                     WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                     analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
@@ -431,8 +434,6 @@ namespace Microsoft.ApplicationInspector.Commands
                         StartLocationColumn = scanResult.StartLocation.Column,
                         EndLocationLine = scanResult.EndLocation.Line,
                         EndLocationColumn = scanResult.EndLocation.Column,
-                        BoundaryIndex = scanResult.Boundary.Index,
-                        BoundaryLength = scanResult.Boundary.Length,
                         RuleId = scanResult.Rule.Id,
                         Severity = scanResult.Rule.Severity.ToString(),
                         RuleName = scanResult.Rule.Name,
@@ -454,9 +455,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.SafeLog("No pattern matches detected for file: " + filePath, LogLevel.Trace);
             }
         }
-      
+
         #region ProcessingAssist
-      
+
         /// <summary>
         /// Simple wrapper but keeps calling code consistent
         /// Do not html code result which is accomplished later before out put to report
@@ -513,10 +514,9 @@ namespace Microsoft.ApplicationInspector.Commands
             var excerptStartLine = Math.Max(0, startLineNumber - distance);
             var excerptEndLine = Math.Min(lines.Length - 1, startLineNumber + distance);
 
-            /* This is a little wacky, but if the code snippet we're viewing is already
-             * indented 16 characters minimum, we don't want to show all that extra white-
-             * space, so we'll find the smallest number of spaces at the beginning of
-             * each line and use that.
+            /* If the code snippet we're viewing is already indented 16 characters minimum,
+             * we don't want to show all that extra white-space, so we'll find the smallest
+             * number of spaces at the beginning of each line and use that.
              */
 
             var minSpaces = -1;
@@ -534,11 +534,10 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 string line = lines[i].Substring(minSpaces).TrimEnd();
                 sb.AppendLine(line);
-                //string line = System.Net.WebUtility.HtmlEncode(lines[i].Substring(minSpaces).TrimEnd());
-                //sb.AppendFormat("{0}  {1}\n", (i + 1).ToString().PadLeft(n, ' '), line);
+
             }
 
-            return System.Convert.ToBase64String(Encoding.UTF8.GetBytes(sb.ToString()));
+            return System.Net.WebUtility.HtmlEncode(sb.ToString());
         }
 
         /// <summary>

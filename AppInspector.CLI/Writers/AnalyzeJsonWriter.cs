@@ -30,7 +30,13 @@ namespace Microsoft.ApplicationInspector.CLI
             CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions = (CLIAnalyzeCmdOptions)commandOptions;
             AnalyzeResult analyzeResult = (AnalyzeResult)result;
 
-            WriteOnce.Result("Result");
+            //For console output, update write once for same results to console or file
+            WriteOnce.TextWriter = TextWriter;
+
+            if (string.IsNullOrEmpty(commandOptions.OutputFilePath))
+            {
+                WriteOnce.Result("Results");
+            }
 
             if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
             {

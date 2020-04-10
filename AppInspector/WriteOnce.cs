@@ -69,7 +69,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //file if applicable
-            SafeTextWriterWrite(msg, writeLine, verbosity);
+            SafeTextFileWriterWrite(msg, writeLine, verbosity);
 
             //console if applicable
             SafeConsoleWrite(msg, writeLine, _infoColor, verbosity);
@@ -84,7 +84,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //file if applicable
-            SafeTextWriterWrite(msg, writeLine, verbosity); SafeTextWriterWrite(msg, writeLine, verbosity);
+            SafeTextFileWriterWrite(msg, writeLine, verbosity); SafeTextFileWriterWrite(msg, writeLine, verbosity);
 
             //console if applicable
             SafeConsoleWrite(msg, writeLine, _errorColor, verbosity);
@@ -96,20 +96,26 @@ namespace Microsoft.ApplicationInspector.Commands
             SafeLog(msg, LogLevel.Trace);
 
             //file if applicable
-            SafeTextWriterWrite(msg, writeLine, verbosity);
+            SafeTextFileWriterWrite(msg, writeLine, verbosity);
 
             //console if applicable
             SafeConsoleWrite(msg, writeLine, foreColor, verbosity);
         }
 
-        public static void NewLine(ConsoleVerbosity verbosity = ConsoleVerbosity.Medium)
+        public static void NewLine(ConsoleVerbosity verbosity = ConsoleVerbosity.Medium, bool ConsoleOnly = true)
         {
-            if (verbosity >= Verbosity)
+            if (TextWriter != null && TextWriter == Console.Out)
             {
-                Console.WriteLine();
+                if (verbosity >= Verbosity)
+                {
+                    Console.WriteLine();
+                }
             }
 
-            SafeTextWriterWrite("", true, verbosity);
+            if (!ConsoleOnly)
+            {
+                SafeTextFileWriterWrite("", true, verbosity);
+            }
         }
 
         /// <summary>
@@ -145,7 +151,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        private static void SafeTextWriterWrite(string msg, bool writeLine, ConsoleVerbosity verbosity)
+        private static void SafeTextFileWriterWrite(string msg, bool writeLine, ConsoleVerbosity verbosity)
         {
             if (TextWriter == null || TextWriter == Console.Out)
             {

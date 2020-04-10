@@ -18,9 +18,10 @@ namespace Microsoft.ApplicationInspector.CLI
             CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions = (CLIAnalyzeCmdOptions)commandOptions;
             AnalyzeResult analyzeResult = (AnalyzeResult)result;
 
-            //For text output, update write once for same results to console or file
+            //For console output, update write once for same results to console or file
             WriteOnce.TextWriter = TextWriter;
-            WriteOnce.Result("Result details:");
+
+            WriteOnce.Result("Results");
 
             if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
             {
@@ -38,7 +39,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteDependencies(analyzeResult.Metadata);
                 WriteOnce.General(MakeHeading("Match Details"));
 
-                foreach (MatchRecord match in analyzeResult.Metadata.MatchList)
+                foreach (MatchRecord match in analyzeResult.Metadata.Matches)
                 {
                     WriteMatch(match);
                 }
@@ -54,7 +55,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             if (string.IsNullOrEmpty(formatString))
             {
-                _formatString = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,SourceLabel:%l,SourceType:%tLine:%L,Sample:%m";
+                _formatString = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Language:%l,SourceType:%tLine:%L,%C,Sample:%m";
             }
             else
             {
@@ -175,14 +176,12 @@ namespace Microsoft.ApplicationInspector.CLI
             output = output.Replace("%C", match.StartLocationColumn.ToString());
             output = output.Replace("%l", match.EndLocationLine.ToString());
             output = output.Replace("%c", match.EndLocationColumn.ToString());
-            output = output.Replace("%I", match.BoundaryIndex.ToString());
-            output = output.Replace("%i", match.BoundaryLength.ToString());
             output = output.Replace("%R", match.RuleId);
             output = output.Replace("%N", match.RuleName);
             output = output.Replace("%S", match.Severity);
-            output = output.Replace("%X", match.PatternConfidence);//override rule confidence because of unstructured text vs source
+            output = output.Replace("%X", match.PatternConfidence);
             output = output.Replace("%D", match.RuleDescription);
-            output = output.Replace("%m", match.Sample);//readability for non-browser format type
+            output = output.Replace("%m", match.Sample);
             output = output.Replace("%T", string.Join(',', match.Tags));
 
             WriteOnce.General(output);

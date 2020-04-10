@@ -11,18 +11,21 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             ExportTagsResult exportTagsResult = (ExportTagsResult)result;
 
-            //For text output, update write once for same results to console or file
+            //For console output, update write once for same results to console or file
             WriteOnce.TextWriter = TextWriter;
-            WriteOnce.Result("Result details:");
 
             if (exportTagsResult.TagsList.Count > 0)
             {
-                WriteOnce.General("Tags");
-            }
+                WriteOnce.Result("Results");
 
-            foreach (string tag in exportTagsResult.TagsList)
+                foreach (string tag in exportTagsResult.TagsList)
+                {
+                    WriteOnce.General(tag);
+                }
+            }
+            else
             {
-                WriteOnce.General(tag);
+                WriteOnce.General("No tags found");
             }
 
             if (autoClose)

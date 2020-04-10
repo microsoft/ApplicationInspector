@@ -30,9 +30,15 @@ namespace Microsoft.ApplicationInspector.Commands
             Source2 = 2
         }
 
+        /// <summary>
+        /// Tag value from rule used in comparison
+        /// </summary>
         [JsonProperty(PropertyName = "tag")]
         public string Tag { get; set; }
 
+        /// <summary>
+        /// Source file (src1/src2) from the command option arguments
+        /// </summary>
         [JsonProperty(PropertyName = "source")]
         public DiffSource Source { get; set; }
     }
@@ -52,6 +58,9 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(Order = 2, PropertyName = "resultCode")]
         public ExitCode ResultCode { get; set; }
 
+        /// <summary>
+        /// List of tags which differ between src1 and src2
+        /// </summary>
         [JsonProperty(Order = 3, PropertyName = "tagDiffList")]
         public List<TagDiff> TagDiffList;
 

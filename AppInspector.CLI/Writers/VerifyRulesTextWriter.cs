@@ -12,10 +12,15 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             VerifyRulesResult verifyRulesResult = (VerifyRulesResult)result;
 
-            //For text output, update write once for same results to console or file
+            //For console output, update write once for same results to console or file
             WriteOnce.TextWriter = TextWriter;
-            WriteOnce.Result("Result status:");
-            if (verifyRulesResult.ResultCode == VerifyRulesResult.ExitCode.Verified)
+
+            if (string.IsNullOrEmpty(commandOptions.OutputFilePath))
+            {
+                WriteOnce.Result("Results");
+            }
+
+            if (verifyRulesResult.ResultCode != VerifyRulesResult.ExitCode.Verified)
             {
                 WriteOnce.Any(MsgHelp.GetString(MsgHelp.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
             }
@@ -26,12 +31,11 @@ namespace Microsoft.ApplicationInspector.CLI
 
             if (verifyRulesResult.RuleStatusList.Count > 0)
             {
-                WriteOnce.Result("Result details:");
-            }
-
-            foreach (RuleStatus ruleStatus in verifyRulesResult.RuleStatusList)
-            {
-                WriteOnce.General(String.Format("Ruleid: {0}, Rulename: {1}, Status: {2}", ruleStatus.RulesId, ruleStatus.RulesName, ruleStatus.Verified));
+                WriteOnce.Result("Rule status");
+                foreach (RuleStatus ruleStatus in verifyRulesResult.RuleStatusList)
+                {
+                    WriteOnce.General(String.Format("Ruleid: {0}, Rulename: {1}, Status: {2}", ruleStatus.RulesId, ruleStatus.RulesName, ruleStatus.Verified));
+                }
             }
 
             if (autoClose)

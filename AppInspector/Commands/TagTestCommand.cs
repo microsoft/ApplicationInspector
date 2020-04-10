@@ -20,7 +20,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
     public class TagStatus
     {
+        /// <summary>
+        /// Tag name from the applicable rule
+        /// </summary>
         public string Tag { get; set; }
+
+        /// <summary>
+        /// True/false indicator of test status for given tag
+        /// </summary>
         public bool Detected { get; set; }
     }
 
@@ -36,6 +43,9 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(Order = 2, PropertyName = "resultCode")]
         public ExitCode ResultCode { get; set; }
 
+        /// <summary>
+        /// List of tags from test and detection status of each
+        /// </summary>
         [JsonProperty(Order = 3, PropertyName = "tagsStatusList")]
         public List<TagStatus> TagsStatusList { get; set; }
 

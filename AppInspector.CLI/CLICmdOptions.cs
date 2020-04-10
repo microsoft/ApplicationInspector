@@ -129,7 +129,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string CustomRulesPath { get; set; }
 
-        [Option('f', "output-file-format", Required = false, HelpText = "Output format [json|text]", Default = "json")]
+        [Option('f', "output-file-format", Required = false, HelpText = "Output format [json]", Default = "json")]
         public new string OutputFileFormat { get; set; } = "json";
 
         [Option('i', "not-indented", Required = false, HelpText = "Remove indentation from json output", Default = false)]
