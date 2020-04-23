@@ -264,3 +264,4 @@ __pycache__/
 /AppInspector/Resources/defaultRulesPkd.json
 /UnitTest.Commands/output
 /RulesPacker/log.txt
+/AppInspector/ApplicationInspector.Commands.xml

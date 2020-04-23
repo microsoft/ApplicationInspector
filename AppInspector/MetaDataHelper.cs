@@ -21,6 +21,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         public MetaDataHelper(string sourcePath, bool uniqueMatchesOnly)
         {
+            sourcePath = Path.GetFullPath(sourcePath);//normalize for .\ and similar
             Metadata = new MetaData(GetDefaultProjectName(sourcePath), sourcePath);
 
             _propertyTagSearchPatterns = new Dictionary<string, string>();
@@ -163,9 +164,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (Directory.Exists(sourcePath))
             {
+                if (sourcePath[sourcePath.Length - 1] == Path.DirectorySeparatorChar) //in case path ends with dir separator; remove
+                {
+                    applicationName = sourcePath.Substring(0, sourcePath.Length - 1);
+                }
+
                 try
                 {
-                    applicationName = sourcePath.Substring(sourcePath.LastIndexOf(Path.DirectorySeparatorChar)).Replace(Path.DirectorySeparatorChar, ' ').Trim();
+                    applicationName = applicationName.Substring(applicationName.LastIndexOf(Path.DirectorySeparatorChar)).Replace(Path.DirectorySeparatorChar, ' ').Trim();
                 }
                 catch (Exception)
                 {
