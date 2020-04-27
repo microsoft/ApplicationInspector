@@ -53,7 +53,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     break;
 
                 case AppPath.defaultLog:
-                    result = Path.Combine(GetBaseAppPath(), "log.txt");
+                    result = Path.Combine(GetBaseAppPath(), "appinspector.log.txt");
                     break;
 
                 case AppPath.defaultRulesSrc://Packrules source use
@@ -178,7 +178,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 return Logger;
             }
 
-            var config = new NLog.Config.LoggingConfiguration();
+            LoggingConfiguration config = LogManager.Configuration;
+            if (config == null)//fix #179 to prevent overwrite of caller config...i.e. just add ours
+            {
+                config = new LoggingConfiguration();
+            }
 
             if (String.IsNullOrEmpty(opts.LogFilePath))
             {
@@ -256,13 +260,13 @@ namespace Microsoft.ApplicationInspector.Commands
             })
             {
                 config.AddTarget(fileTarget);
-                config.LoggingRules.Add(new LoggingRule("CST.ApplicationInspector", log_level, fileTarget));
+                config.LoggingRules.Add(new LoggingRule("Microsoft.CST.ApplicationInspector", log_level, fileTarget));
             }
 
             LogFilePath = opts.LogFilePath;//preserve for console path msg
 
             LogManager.Configuration = config;
-            Logger = LogManager.GetLogger("CST.ApplicationInspector");
+            Logger = LogManager.GetLogger("Microsoft.CST.ApplicationInspector");
             return Logger;
         }
     }
