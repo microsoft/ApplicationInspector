@@ -26,7 +26,7 @@ namespace MultiExtractor
             {
                 if (!File.OpenRead(filename).CanRead)
                 {
-                    throw new IOException("ExtractFile called, but {0} cannot be read.", filename);
+                    throw new IOException($"ExtractFile called, but {filename} cannot be read.");
                 }
             }
             catch (Exception)
@@ -45,7 +45,7 @@ namespace MultiExtractor
             {
                 if (!File.OpenRead(filename).CanRead)
                 {
-                    throw new IOException("ExtractFile called, but {0} cannot be read.", filename);
+                    throw new IOException($"ExtractFile called, but {filename} cannot be read.");
                 }
             }
             catch (Exception)
