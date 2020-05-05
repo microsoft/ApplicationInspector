@@ -7,6 +7,7 @@ using SharpCompress.Compressors.BZip2;
 using SharpCompress.Compressors.Xz;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace MultiExtractor
 {
@@ -31,7 +32,7 @@ namespace MultiExtractor
             }
             catch (Exception)
             {
-                Logger.Trace("File {0} cannot be read, ignoring.", filename);
+                //Logger.Trace("File {0} cannot be read, ignoring.", filename);
                 return Array.Empty<FileEntry>();
             }
             
@@ -50,7 +51,7 @@ namespace MultiExtractor
             }
             catch (Exception)
             {
-                Logger.Trace("File {0} cannot be read, ignoring.", filename);
+                //Logger.Trace("File {0} cannot be read, ignoring.", filename);
                 return Array.Empty<FileEntry>();
             }
             
