@@ -13,6 +13,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     internal class TextContainer
     {
+        private static readonly int MAX_PATTERN_MATCHES = 10;
         /// <summary>
         /// Creates new instance
         /// </summary>
@@ -161,6 +162,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             MatchCollection matches = patRegx.Matches(text);
             if (matches.Count > 0)
             {
+                int matchCount = 0;
                 foreach (Match m in matches)
                 {
                     Boundary bound = new Boundary() { Index = m.Index, Length = m.Length };
@@ -173,7 +175,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         break;
                     }
+
+                    //firewall in case the pattern match count is exceedingly high
+                    if (matchCount++ > MAX_PATTERN_MATCHES)
+                    {
+                        break;
+                    }
                 }
+
+
             }
 
             return matchList;
