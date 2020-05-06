@@ -46,7 +46,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; } = "high,medium";
 
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files (none|default: sample,example,test,docs,.vs,.git)", Default = "sample,example,test,docs,.vs,.git")]
+        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files (none|default: sample,example,test,docs,lib,.vs,.git)", Default = "sample,example,test,docs,lib,.vs,.git")]
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
 
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [html|json|text]", Default = "html")]
