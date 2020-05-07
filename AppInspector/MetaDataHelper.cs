@@ -143,14 +143,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="language"></param>
         public void AddLanguage(string language)
         {
-            if (Metadata.Languages.ContainsKey(language))
-            {
-                Metadata.Languages[language]++;
-            }
-            else
-            {
-                Metadata.Languages.Add(language, 1);
-            }
+            Metadata.Languages.AddOrUpdate(language, 1, (language, count) => count + 1);
         }
 
         /// <summary>

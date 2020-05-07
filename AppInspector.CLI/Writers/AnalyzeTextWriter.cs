@@ -3,6 +3,7 @@
 
 using Microsoft.ApplicationInspector.Commands;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -79,6 +80,19 @@ namespace Microsoft.ApplicationInspector.CLI
         }
 
         private string StringList(Dictionary<string, int> data)
+        {
+            StringBuilder build = new StringBuilder();
+
+            foreach (string s in data.Keys)
+            {
+                build.Append(s);
+                build.Append(" ");
+            }
+
+            return build.ToString();
+        }
+
+        private string StringList(ConcurrentDictionary<string, int> data)
         {
             StringBuilder build = new StringBuilder();
 

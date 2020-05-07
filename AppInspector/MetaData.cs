@@ -3,6 +3,7 @@
 
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -157,7 +158,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected programming languages used
         /// </summary>
         [JsonProperty(PropertyName = "languages")]
-        public Dictionary<string, int> Languages;
+        public ConcurrentDictionary<string, int> Languages;
 
         /// <summary>
         /// List of detected OS targets
@@ -223,7 +224,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 ["strGrpUniqueDependencies"] = new HashSet<string>()
             };
 
-            Languages = new Dictionary<string, int>();
+            Languages = new ConcurrentDictionary<string, int>();
             TagCounters = new List<MetricTagCounter>();
         }
 
