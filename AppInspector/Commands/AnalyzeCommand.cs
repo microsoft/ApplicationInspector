@@ -26,6 +26,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string MatchDepth { get; set; } = "best";
         public string ConfidenceFilters { get; set; } = "high,medium";
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
+        public bool SingleThread { get; set; } = false;
     }
 
     /// <summary>
@@ -191,7 +192,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
 
-            if (String.IsNullOrEmpty(_options.SourcePath))
+            if (string.IsNullOrEmpty(_options.SourcePath))
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
             }
@@ -296,14 +297,13 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 _metaDataHelper.Metadata.TotalFiles = _srcfileList.Count();//updated for zipped files later
 
-                // Iterate through all files and process against rules
-                foreach (string filename in _srcfileList)
+                Action<string> ProcessFile = filename =>
                 {
                     if (new FileInfo(filename).Length == 0)
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
                         _metaDataHelper.Metadata.FilesSkipped++;
-                        continue;
+                        return;
                     }
 
                     ArchiveFileType archiveFileType = ArchiveFileType.UNKNOWN;
@@ -314,8 +314,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     catch (Exception e)
                     {
                         WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, LogLevel.Error);//log details
-                        Exception f = new Exception(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILE_TYPE_OPEN, filename));//report friendly version
-                        throw f;
+                        //Exception f = new Exception(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILE_TYPE_OPEN, filename));//report friendly version
+                        //throw f;
                     }
 
                     if (archiveFileType == ArchiveFileType.UNKNOWN)//not a known zipped file type
@@ -326,7 +326,21 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         UnZipAndProcess(filename, archiveFileType, _srcfileList.Count() == 1);
                     }
+                };
+
+                if (_options.SingleThread)
+                {
+                    // Iterate through all files and process against rules
+                    foreach (string filename in _srcfileList)
+                    {
+                        ProcessFile(filename);
+                    }
                 }
+                else
+                {
+                    _srcfileList.AsParallel().ForAll(filename => ProcessFile(filename));
+                }
+                
 
                 WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
 
@@ -422,7 +436,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     //save all unique dependencies even if Dependency tag pattern is not-unique
                     var tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
-                    String textMatch = string.Empty;
+                    string textMatch = string.Empty;
 
                     if (scanResult.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))
                     {
@@ -643,19 +657,35 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 IEnumerable<FileEntry> files = Extractor.ExtractFile(filename);
 
-                if (files.Count() > 0)
+                if (files.Any())
                 {
                     _metaDataHelper.Metadata.TotalFiles += files.Count();//additive in case additional child zip files processed
 
-                    foreach (FileEntry file in files)
+                    if (_options.SingleThread)
                     {
-                        //check uncompressed file passes standard checks
-                        LanguageInfo languageInfo = new LanguageInfo();
-                        if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                        foreach (FileEntry file in files)
                         {
-                            byte[] streamByteArray = file.Content.ToArray();
-                            ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                            //check uncompressed file passes standard checks
+                            LanguageInfo languageInfo = new LanguageInfo();
+                            if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                            {
+                                byte[] streamByteArray = file.Content.ToArray();
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                            }
                         }
+                    }
+                    else
+                    {
+                        files.AsParallel().ForAll(file =>
+                        {
+                            //check uncompressed file passes standard checks
+                            LanguageInfo languageInfo = new LanguageInfo();
+                            if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                            {
+                                byte[] streamByteArray = file.Content.ToArray();
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                            }
+                        });
                     }
                 }
                 else
