@@ -74,45 +74,33 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractFile(FileEntry fileEntry, ArchiveFileType archiveFileType)
         {
-            IEnumerable<FileEntry> results = new List<FileEntry>();
-
             switch (archiveFileType)
             {
                 case ArchiveFileType.ZIP:
-                    results = ExtractZipFile(fileEntry);
-                    break;
+                    return ExtractZipFile(fileEntry);
 
                 case ArchiveFileType.GZIP:
-                    results = ExtractGZipFile(fileEntry);
-                    break;
+                    return ExtractGZipFile(fileEntry);
 
                 case ArchiveFileType.TAR:
-                    results = ExtractTarFile(fileEntry);
-                    break;
+                    return ExtractTarFile(fileEntry);
 
                 case ArchiveFileType.XZ:
-                    results = ExtractXZFile(fileEntry);
-                    break;
+                    return ExtractXZFile(fileEntry);
 
                 case ArchiveFileType.BZIP2:
-                    results = ExtractBZip2File(fileEntry);
-                    break;
+                    return ExtractBZip2File(fileEntry);
 
                 case ArchiveFileType.RAR:
-                    results = ExtractRarFile(fileEntry);
-                    break;
+                    return ExtractRarFile(fileEntry);
 
                 case ArchiveFileType.P7ZIP:
-                    results = Extract7ZipFile(fileEntry);
-                    break;
+                    return Extract7ZipFile(fileEntry);
 
                 case ArchiveFileType.UNKNOWN:
                 default:
-                    results = new[] { fileEntry };
-                    break;
+                    return new[] { fileEntry };
             }
-
-            return results;
         }
 
         private static IEnumerable<FileEntry> ExtractZipFile(FileEntry fileEntry)
