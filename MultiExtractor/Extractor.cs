@@ -139,11 +139,9 @@ namespace MultiExtractor
                 var newFileEntry = new FileEntry(zipEntry.Name, fileEntry.FullPath, memoryStream);
                 foreach (var extractedFile in ExtractFile(newFileEntry))
                 {
-                    files.Add(extractedFile);
+                    yield return extractedFile;
                 }
             }
-
-            return files;
         }
 
         private static IEnumerable<FileEntry> ExtractGZipFile(FileEntry fileEntry)
@@ -170,10 +168,8 @@ namespace MultiExtractor
 
             foreach (var extractedFile in ExtractFile(newFileEntry))
             {
-                files.Add(extractedFile);
+                yield return extractedFile;
             }
-
-            return files;
         }
 
         private static IEnumerable<FileEntry> ExtractTarFile(FileEntry fileEntry)
@@ -193,11 +189,9 @@ namespace MultiExtractor
                 var newFileEntry = new FileEntry(tarEntry.Name, fileEntry.FullPath, memoryStream);
                 foreach (var extractedFile in ExtractFile(newFileEntry))
                 {
-                    files.Add(extractedFile);
+                    yield return extractedFile;
                 }
             }
-
-            return files;
         }
 
         private static IEnumerable<FileEntry> ExtractXZFile(FileEntry fileEntry)
@@ -211,10 +205,8 @@ namespace MultiExtractor
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
             foreach (var extractedFile in ExtractFile(newFileEntry))
             {
-                files.Add(extractedFile);
+                yield return extractedFile;
             }
-
-            return files;
         }
 
         private static IEnumerable<FileEntry> ExtractBZip2File(FileEntry fileEntry)
@@ -228,10 +220,8 @@ namespace MultiExtractor
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
             foreach (var extractedFile in ExtractFile(newFileEntry))
             {
-                files.Add(extractedFile);
+                yield return extractedFile;
             }
-
-            return files;
         }
 
         private static IEnumerable<FileEntry> ExtractRarFile(FileEntry fileEntry)
@@ -248,11 +238,9 @@ namespace MultiExtractor
                 var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
                 foreach (var extractedFile in ExtractFile(newFileEntry))
                 {
-                    files.Add(extractedFile);
+                    yield return extractedFile;
                 }
             }
-
-            return files;
         }
 
         private static IEnumerable<FileEntry> Extract7ZipFile(FileEntry fileEntry)
@@ -269,11 +257,9 @@ namespace MultiExtractor
                 var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
                 foreach (var extractedFile in ExtractFile(newFileEntry))
                 {
-                    files.Add(extractedFile);
+                    yield return extractedFile;
                 }
             }
-
-            return files;
         }
     }
 
