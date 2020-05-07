@@ -5,6 +5,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using SharpCompress.Archives.Rar;
 using SharpCompress.Compressors.BZip2;
 using SharpCompress.Compressors.Xz;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System;
@@ -35,7 +36,7 @@ namespace MultiExtractor
                 //Logger.Trace("File {0} cannot be read, ignoring.", filename);
                 return Array.Empty<FileEntry>();
             }
-            
+
             using var memoryStream = new MemoryStream(File.ReadAllBytes(filename));
             return ExtractFile(new FileEntry(filename, "", memoryStream));
         }
@@ -54,7 +55,7 @@ namespace MultiExtractor
                 //Logger.Trace("File {0} cannot be read, ignoring.", filename);
                 return Array.Empty<FileEntry>();
             }
-            
+
             using var memoryStream = new MemoryStream(File.ReadAllBytes(filename));
             return ExtractFile(new FileEntry(filename, "", memoryStream), archiveFileType);
         }

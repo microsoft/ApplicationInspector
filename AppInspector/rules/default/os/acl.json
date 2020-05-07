@@ -178,7 +178,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "WindowsImpersonationContext|WindowsIdentity\\.Impersonate|WindowsIdentity\\.RunImpersonated||ImpersonateIdentity",
+        "pattern": "WindowsImpersonationContext|WindowsIdentity\\.Impersonate|WindowsIdentity\\.RunImpersonated|ImpersonateIdentity",
         "type": "regex-word",
         "scopes": [
           "code"

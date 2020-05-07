@@ -299,6 +299,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 // Iterate through all files and process against rules
                 foreach (string filename in _srcfileList)
                 {
+                    if (new FileInfo(filename).Length == 0)
+                    {
+                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
+                        _metaDataHelper.Metadata.FilesSkipped++;
+                        continue;
+                    }
+
                     ArchiveFileType archiveFileType = ArchiveFileType.UNKNOWN;
                     try //fix for #146
                     {
@@ -317,7 +324,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     else
                     {
-                        UnZipAndProcess(filename, archiveFileType);
+                        UnZipAndProcess(filename, archiveFileType, _srcfileList.Count() == 1);
                     }
                 }
 
@@ -595,7 +602,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion ProcessingAssist
 
-        private void UnZipAndProcess(string filename, ArchiveFileType archiveFileType)
+        private void UnZipAndProcess(string filename, ArchiveFileType archiveFileType, bool topLevel = true)
         {
             // zip itself may be in excluded list i.e. sample, test or similar unless ignore filter requested
             if (_fileExclusionList != null && _fileExclusionList.Any(v => filename.ToLower().Contains(v)))
@@ -608,11 +615,25 @@ namespace Microsoft.ApplicationInspector.Commands
             //zip itself may be too huge for timely processing
             if (new FileInfo(filename).Length > WARN_ZIP_FILE_SIZE)
             {
-                WriteOnce.General(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_COMPRESSED_FILESIZE_WARN));
+                if (topLevel)
+                {
+                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILESIZE_WARN));
+                }
+                else
+                {
+                    WriteOnce.SafeLog("Decompressing large file " + filename, LogLevel.Warn);
+                }
             }
             else
             {
-                WriteOnce.General(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_COMPRESSED_PROCESSING));
+                if (topLevel)
+                {
+                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_PROCESSING));
+                }
+                else
+                {
+                    WriteOnce.SafeLog("Decompressing file " + filename, LogLevel.Warn);
+                }
             }
 
             LastUpdated = File.GetLastWriteTime(filename);
