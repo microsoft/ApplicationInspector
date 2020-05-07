@@ -36,8 +36,8 @@ namespace MultiExtractor
                 return Array.Empty<FileEntry>();
             }
 
-            using var memoryStream = new MemoryStream(File.ReadAllBytes(filename));
-            return ExtractFile(new FileEntry(filename, "", memoryStream));
+            using var fileStream = new FileStream(filename,FileMode.Open);
+            return ExtractFile(new FileEntry(filename, "", fileStream));
         }
 
         public static IEnumerable<FileEntry> ExtractFile(string filename, ArchiveFileType archiveFileType)
@@ -55,7 +55,7 @@ namespace MultiExtractor
                 return Array.Empty<FileEntry>();
             }
 
-            using var memoryStream = new MemoryStream(File.ReadAllBytes(filename));
+            using var memoryStream = new FileStream(filename, FileMode.Open);
             return ExtractFile(new FileEntry(filename, "", memoryStream), archiveFileType);
         }
 
