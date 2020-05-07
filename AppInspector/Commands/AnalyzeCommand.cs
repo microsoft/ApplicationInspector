@@ -299,6 +299,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 // Iterate through all files and process against rules
                 foreach (string filename in _srcfileList)
                 {
+                    if (new FileInfo(filename).Length == 0)
+                    {
+                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
+                        _metaDataHelper.Metadata.FilesSkipped++;
+                        continue;
+                    }
+
                     ArchiveFileType archiveFileType = ArchiveFileType.UNKNOWN;
                     try //fix for #146
                     {
