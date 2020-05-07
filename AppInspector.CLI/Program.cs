@@ -267,7 +267,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 MatchDepth = cliOptions.MatchDepth,
                 FilePathExclusions = cliOptions.FilePathExclusions,
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
-                Log = cliOptions.Log
+                Log = cliOptions.Log,
+                SingleThread = cliOptions.SingleThread
             }); ;
 
             AnalyzeResult analyzeResult = command.GetResult();
