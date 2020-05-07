@@ -57,6 +57,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('t', "tag-output-only", Required = false, HelpText = "Output only identified tags", Default = false)]
         public bool SimpleTagsOnly { get; set; }
+
+        [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
+        public bool SingleThread { get; set; }
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]
