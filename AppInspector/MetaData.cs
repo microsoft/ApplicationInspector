@@ -4,6 +4,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -66,31 +67,41 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Total number of files scanned successfully
         /// </summary>
         [JsonProperty(PropertyName = "filesAnalyzed")]
-        public int FilesAnalyzed { get; set; }
+        public int FilesAnalyzed { get { return _FilesAnalyzed; } }
+
+        private int _FilesAnalyzed;
 
         /// <summary>
         /// Total number of files in source path
         /// </summary>
         [JsonProperty(PropertyName = "totalFiles")]
-        public int TotalFiles { get; set; }
+        public int TotalFiles { get { return _TotalFiles; } }
+
+        private int _TotalFiles;
 
         /// <summary>
         /// Total number of skipped files based on supported formats
         /// </summary>
         [JsonProperty(PropertyName = "filesSkipped")]
-        public int FilesSkipped { get; set; }
+        public int FilesSkipped { get { return _FilesSkipped; } }
+
+        private int _FilesSkipped;
 
         /// <summary>
         /// Total files with at least one result
         /// </summary>
         [JsonProperty(PropertyName = "filesAffected")]
-        public int FilesAffected { get; set; }
+        public int FilesAffected { get { return _FilesAffected; } }
+
+        private int _FilesAffected;
 
         /// <summary>
         /// Total matches with supplied argument settings
         /// </summary>
         [JsonProperty(PropertyName = "totalMatchesCount")]
-        public int TotalMatchesCount { get; set; }
+        public int TotalMatchesCount { get { return _TotalMatchesCount; } }
+
+        private int _TotalMatchesCount;
 
         /// <summary>
         /// Total unique matches by tag
@@ -214,6 +225,31 @@ namespace Microsoft.ApplicationInspector.Commands
 
             Languages = new Dictionary<string, int>();
             TagCounters = new List<MetricTagCounter>();
+        }
+
+        internal void IncrementFilesAnalyzed(int amount = 1)
+        {
+            Interlocked.Add(ref _FilesAnalyzed, amount);
+        }
+
+        internal void IncrementTotalFiles(int amount = 1)
+        {
+            Interlocked.Add(ref _TotalFiles, amount);
+        }
+
+        internal void IncrementTotalMatchesCount(int amount = 1)
+        {
+            Interlocked.Add(ref _TotalMatchesCount, amount);
+        }
+
+        internal void IncrementFilesAffected(int amount = 1)
+        {
+            Interlocked.Add(ref _FilesAffected, amount);
+        }
+
+        internal void IncrementFilesSkipped(int amount = 1)
+        {
+            Interlocked.Add(ref _FilesSkipped, amount);
         }
     }
 }

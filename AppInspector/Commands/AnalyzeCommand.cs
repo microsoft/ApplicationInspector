@@ -295,14 +295,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                _metaDataHelper.Metadata.TotalFiles = _srcfileList.Count();//updated for zipped files later
+                _metaDataHelper.Metadata.IncrementTotalFiles(_srcfileList.Count());//updated for zipped files later
 
                 Action<string> ProcessFile = filename =>
                 {
                     if (new FileInfo(filename).Length == 0)
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
-                        _metaDataHelper.Metadata.FilesSkipped++;
+                        _metaDataHelper.Metadata.IncrementFilesSkipped();
                         return;
                     }
 
@@ -403,7 +403,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             WriteOnce.SafeLog("Preparing to process file: " + filePath, LogLevel.Trace);
 
-            _metaDataHelper.Metadata.FilesAnalyzed++;
+            _metaDataHelper.Metadata.IncrementFilesAnalyzed();
 
             int totalFilesReviewed = _metaDataHelper.Metadata.FilesAnalyzed + _metaDataHelper.Metadata.FilesSkipped;
             int percentCompleted = (int)((float)totalFilesReviewed / (float)_metaDataHelper.Metadata.TotalFiles * 100);
@@ -426,8 +426,8 @@ namespace Microsoft.ApplicationInspector.Commands
             //if any matches found for this file...
             if (scanResults.Count() > 0)
             {
-                _metaDataHelper.Metadata.FilesAffected++;
-                _metaDataHelper.Metadata.TotalMatchesCount += scanResults.Count();
+                _metaDataHelper.Metadata.IncrementFilesAffected();
+                _metaDataHelper.Metadata.IncrementTotalMatchesCount(scanResults.Count());
 
                 // Iterate through each match issue
                 foreach (ScanResult scanResult in scanResults)
@@ -622,7 +622,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_fileExclusionList != null && _fileExclusionList.Any(v => filename.ToLower().Contains(v)))
             {
                 WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
-                _metaDataHelper.Metadata.FilesSkipped++;
+                _metaDataHelper.Metadata.IncrementFilesSkipped();
                 return;
             }
 
@@ -659,8 +659,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 if (files.Any())
                 {
-                    _metaDataHelper.Metadata.TotalFiles += files.Count();//additive in case additional child zip files processed
-
                     if (_options.SingleThread)
                     {
                         foreach (FileEntry file in files)
@@ -687,6 +685,9 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                         });
                     }
+
+                    // Do this at the end so we don't force the IEnumerable to populate before we walk it
+                    _metaDataHelper.Metadata.IncrementTotalFiles(files.Count());//additive in case additional child zip files processed
                 }
                 else
                 {
@@ -716,7 +717,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!Language.FromFileName(filePath, ref languageInfo))
             {
                 WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_LANGUAGE_NOTFOUND, filePath), LogLevel.Warn);
-                _metaDataHelper.Metadata.FilesSkipped++;
+                _metaDataHelper.Metadata.IncrementFilesSkipped();
                 return false;
             }
 
@@ -726,7 +727,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_fileExclusionList != null && _fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
             {
                 WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filePath), LogLevel.Warn);
-                _metaDataHelper.Metadata.FilesSkipped++;
+                _metaDataHelper.Metadata.IncrementFilesSkipped();
                 return false;
             }
 
@@ -737,7 +738,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (fileLength > MAX_FILESIZE)
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILESIZE_SKIPPED, filePath), LogLevel.Warn);
-                    _metaDataHelper.Metadata.FilesSkipped++;
+                    _metaDataHelper.Metadata.IncrementFilesSkipped();
                     return false;
                 }
             }
