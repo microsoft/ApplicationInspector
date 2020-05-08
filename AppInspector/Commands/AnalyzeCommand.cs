@@ -314,8 +314,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     catch (Exception e)
                     {
                         WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, LogLevel.Error);//log details
-                        //Exception f = new Exception(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILE_TYPE_OPEN, filename));//report friendly version
-                        //throw f;
                     }
 
                     if (archiveFileType == ArchiveFileType.UNKNOWN)//not a known zipped file type
