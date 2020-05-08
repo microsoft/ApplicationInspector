@@ -102,7 +102,7 @@ namespace Microsoft.ApplicationInspector.Commands
             matchRecord.Sample = System.Net.WebUtility.HtmlEncode(matchRecord.Sample);
 
             //Special handling; attempt to detect app types...review for multiple pattern rule limitation
-            String solutionType = DetectSolutionType(matchRecord);
+            string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
             {
                 Metadata.AppTypes.Add(solutionType);
@@ -184,7 +184,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// WebApplications, Windows Services, Client Apps, WebServices, Azure Functions etc.
         /// </summary>
         /// <param name="match"></param>
-        public String DetectSolutionType(MatchRecord match)
+        public string DetectSolutionType(MatchRecord match)
         {
             string result = "";
             if (match.Tags.Any(s => s.Contains("Application.Type")))
