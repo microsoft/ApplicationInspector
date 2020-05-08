@@ -38,7 +38,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of tags exported from specified ruleset
         /// </summary>
         [JsonProperty(Order = 3, PropertyName = "tagsList")]
-        public List<String> TagsList { get; set; }
+        public List<string> TagsList { get; set; }
 
         public ExportTagsResult()
         {

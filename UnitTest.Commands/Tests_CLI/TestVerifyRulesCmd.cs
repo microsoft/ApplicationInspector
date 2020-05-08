@@ -17,7 +17,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -d -f text -l {0}",
+                string args = string.Format(@"verifyrules -d -f text -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
                 exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
@@ -37,7 +37,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -f text -l {0}",
+                string args = string.Format(@"verifyrules -f text -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
                 exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
@@ -57,7 +57,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -78,7 +78,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f json -o {1} -l {2}",
+                string args = string.Format(@"verifyrules -r {0} -f json -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -100,7 +100,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f json -o {1} -l {2}",
+                string args = string.Format(@"verifyrules -r {0} -f json -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -122,7 +122,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f unknown -o {1} -l {2}",
+                string args = string.Format(@"verifyrules -r {0} -f unknown -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -144,7 +144,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -166,7 +166,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -v trace -f text -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -v trace -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -204,7 +204,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"\badir\myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -238,7 +238,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -v debug -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -v debug -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.defaultRules)),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -272,7 +272,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\badir\log.txt"));
 
@@ -292,7 +292,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"));
 
@@ -312,7 +312,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -x none -o {1} -l {2}",
+                string args = string.Format(@"verifyrules -r {0} -f text -x none -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -338,7 +338,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -x none -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -x none -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 

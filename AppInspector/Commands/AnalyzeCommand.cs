@@ -512,7 +512,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private string ExtractExcerpt(string text, int startLineNumber, int length = 10)
         {
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
             {
                 return "";
             }

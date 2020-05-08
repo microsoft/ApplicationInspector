@@ -88,12 +88,12 @@ namespace Microsoft.ApplicationInspector.Commands
 
         public static string FormatString(MsgHelp.ID id, params object[] parameters)
         {
-            return String.Format(GetString(id), parameters);
+            return string.Format(GetString(id), parameters);
         }
 
         public static string FormatString(MsgHelp.ID id, int value)
         {
-            return String.Format(GetString(id), value);
+            return string.Format(GetString(id), value);
         }
     }
 }

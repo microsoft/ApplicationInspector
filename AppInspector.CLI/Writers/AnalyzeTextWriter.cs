@@ -140,30 +140,30 @@ namespace Microsoft.ApplicationInspector.CLI
         public void WriteAppMeta(MetaData metaData)
         {
             //write predefined characteristics
-            WriteOnce.General(String.Format(MakeHeading("Project Info")));
-            WriteOnce.General(String.Format("Name: {0}", metaData.ApplicationName + " " + metaData.SourceVersion));
-            WriteOnce.General(String.Format("Description: {0}", metaData.Description));
-            WriteOnce.General(String.Format("Source path: {0}", metaData.SourcePath));
-            WriteOnce.General(String.Format("Authors: {0}", metaData.Authors));
-            WriteOnce.General(String.Format("Last Updated: {0}", metaData.LastUpdated));
-            WriteOnce.General(String.Format("Languages: {0}", StringList(metaData.Languages)));
-            WriteOnce.General(String.Format(MakeHeading("Scan Settings")));
-            WriteOnce.General(String.Format("Date scanned: {0}", metaData.DateScanned));
-            WriteOnce.General(String.Format(MakeHeading("Source Info")));
-            WriteOnce.General(String.Format("Application type: {0}", StringList(metaData.AppTypes)));
-            WriteOnce.General(String.Format("Package types: {0}", StringList(metaData.PackageTypes)));
-            WriteOnce.General(String.Format("File extensions: {0}", StringList(metaData.FileExtensions)));
-            WriteOnce.General(String.Format(MakeHeading("Detetected Targets")));
-            WriteOnce.General(String.Format("Output types: {0}", StringList(metaData.Outputs)));
-            WriteOnce.General(String.Format("OS Targets: {0}", StringList(metaData.OSTargets)));
-            WriteOnce.General(String.Format("CPU Targets: {0}", StringList(metaData.CPUTargets)));
-            WriteOnce.General(String.Format("Cloud targets: {0}", StringList(metaData.CloudTargets)));
-            WriteOnce.General(String.Format(MakeHeading("Stats")));
-            WriteOnce.General(String.Format("Files analyzed: {0}", metaData.FilesAnalyzed));
-            WriteOnce.General(String.Format("Files skipped: {0}", metaData.FilesSkipped));
-            WriteOnce.General(String.Format("Total files: {0}", metaData.TotalFiles));
-            WriteOnce.General(String.Format("Total matches: {0} in {1} file(s)", metaData.TotalMatchesCount, metaData.FilesAffected));
-            WriteOnce.General(String.Format("Unique matches: {0}", metaData.UniqueMatchesCount));
+            WriteOnce.General(string.Format(MakeHeading("Project Info")));
+            WriteOnce.General(string.Format("Name: {0}", metaData.ApplicationName + " " + metaData.SourceVersion));
+            WriteOnce.General(string.Format("Description: {0}", metaData.Description));
+            WriteOnce.General(string.Format("Source path: {0}", metaData.SourcePath));
+            WriteOnce.General(string.Format("Authors: {0}", metaData.Authors));
+            WriteOnce.General(string.Format("Last Updated: {0}", metaData.LastUpdated));
+            WriteOnce.General(string.Format("Languages: {0}", StringList(metaData.Languages)));
+            WriteOnce.General(string.Format(MakeHeading("Scan Settings")));
+            WriteOnce.General(string.Format("Date scanned: {0}", metaData.DateScanned));
+            WriteOnce.General(string.Format(MakeHeading("Source Info")));
+            WriteOnce.General(string.Format("Application type: {0}", StringList(metaData.AppTypes)));
+            WriteOnce.General(string.Format("Package types: {0}", StringList(metaData.PackageTypes)));
+            WriteOnce.General(string.Format("File extensions: {0}", StringList(metaData.FileExtensions)));
+            WriteOnce.General(string.Format(MakeHeading("Detetected Targets")));
+            WriteOnce.General(string.Format("Output types: {0}", StringList(metaData.Outputs)));
+            WriteOnce.General(string.Format("OS Targets: {0}", StringList(metaData.OSTargets)));
+            WriteOnce.General(string.Format("CPU Targets: {0}", StringList(metaData.CPUTargets)));
+            WriteOnce.General(string.Format("Cloud targets: {0}", StringList(metaData.CloudTargets)));
+            WriteOnce.General(string.Format(MakeHeading("Stats")));
+            WriteOnce.General(string.Format("Files analyzed: {0}", metaData.FilesAnalyzed));
+            WriteOnce.General(string.Format("Files skipped: {0}", metaData.FilesSkipped));
+            WriteOnce.General(string.Format("Total files: {0}", metaData.TotalFiles));
+            WriteOnce.General(string.Format("Total matches: {0} in {1} file(s)", metaData.TotalMatchesCount, metaData.FilesAffected));
+            WriteOnce.General(string.Format("Unique matches: {0}", metaData.UniqueMatchesCount));
 
             WriteOnce.General(MakeHeading("UniqueTags"));
             List<string> orderedTags = metaData.UniqueTags.ToList<string>();
@@ -177,7 +177,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(MakeHeading("Select Counters"));
             foreach (MetricTagCounter tagCounter in metaData.TagCounters)
             {
-                WriteOnce.General(String.Format("Tagname: {0}, Count: {1}", tagCounter.Tag, tagCounter.Count));
+                WriteOnce.General(string.Format("Tagname: {0}, Count: {1}", tagCounter.Tag, tagCounter.Count));
             }
         }
 

@@ -17,7 +17,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -d -l {0}",
+                string args = string.Format(@"packrules -d -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
                 exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
@@ -37,7 +37,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -l {0}",
+                string args = string.Format(@"packrules -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
                 exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
@@ -57,7 +57,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -o {1} -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"packedrules.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -80,7 +80,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f text -o {1} -l {2}",
+                string args = string.Format(@"packrules -r {0} -f text -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -102,7 +102,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -o {1} -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -124,7 +124,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -o {1} -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -146,7 +146,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -o {1} -v trace -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -o {1} -v trace -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -185,7 +185,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f text -l {1}",
+                string args = string.Format(@"packrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"\badir\myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -219,7 +219,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -o {1} -v debug -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -o {1} -v debug -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -254,7 +254,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f text -l {1}",
+                string args = string.Format(@"packrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\badir\log.txt"));
 
@@ -275,7 +275,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f text -l {1}",
+                string args = string.Format(@"packrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"));
 
@@ -296,7 +296,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -x none -o {1} -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -x none -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"packedrules.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -325,7 +325,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f text -x none -l {1}",
+                string args = string.Format(@"packrules -r {0} -f text -x none -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
