@@ -359,28 +359,53 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
         {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            AnalyzeResult.ExitCode exitCodeSingleThread = AnalyzeResult.ExitCode.CriticalError;
+
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"analyze -s {0} -d -f json -o {1} -k none",
+                string args = string.Format(@"analyze -s {0} -d -f json -o {1} -k none --single-threaded",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
-                exitCode = (AnalyzeResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCodeSingleThread = (AnalyzeResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
 
-                if (exitCode == AnalyzeResult.ExitCode.Success)
+                if (exitCodeSingleThread == AnalyzeResult.ExitCode.Success)
                 {
                     string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
                     var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
-                    exitCode = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCodeSingleThread = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
             {
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCodeSingleThread == AnalyzeResult.ExitCode.Success);
+
+            AnalyzeResult.ExitCode exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
+
+            try
+            {
+                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
+                string args = string.Format(@"analyze -s {0} -d -f json -o {1} -k none",
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+
+                exitCodeMultiThread = (AnalyzeResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+
+                if (exitCodeMultiThread == AnalyzeResult.ExitCode.Success)
+                {
+                    string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                    var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
+                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            Assert.IsTrue(exitCodeMultiThread == AnalyzeResult.ExitCode.Success);
         }
 
         [TestMethod]
