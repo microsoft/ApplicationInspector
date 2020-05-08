@@ -54,7 +54,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "serilog",
+        "pattern": "Serilog",
         "type": "string",
         "scopes": [ "code" ],
         "confidence": "high",
