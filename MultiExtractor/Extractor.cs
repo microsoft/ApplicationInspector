@@ -75,7 +75,6 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractFile(FileEntry fileEntry, ArchiveFileType archiveFileType)
         {
-            Console.WriteLine($"Extracting file {fileEntry.FullPath}");
             switch (archiveFileType)
             {
                 case ArchiveFileType.ZIP:
@@ -173,18 +172,26 @@ namespace MultiExtractor
         {
             List<FileEntry> files = new List<FileEntry>();
             TarEntry tarEntry;
-            using var tarStream = new TarInputStream(fileEntry.Content);
-            while ((tarEntry = tarStream.GetNextEntry()) != null)
+            try
             {
-                if (!tarEntry.IsDirectory)
+                using var tarStream = new TarInputStream(fileEntry.Content);
+                while ((tarEntry = tarStream.GetNextEntry()) != null)
                 {
-                    using var memoryStream = new MemoryStream();
-                    tarStream.CopyEntryContents(memoryStream);
+                    if (!tarEntry.IsDirectory)
+                    {
+                        using var memoryStream = new MemoryStream();
+                        tarStream.CopyEntryContents(memoryStream);
 
-                    var newFileEntry = new FileEntry(tarEntry.Name, fileEntry.FullPath, memoryStream);
-                    files.AddRange(ExtractFile(newFileEntry));
+                        var newFileEntry = new FileEntry(tarEntry.Name, fileEntry.FullPath, memoryStream);
+                        files.AddRange(ExtractFile(newFileEntry));
+                    }
                 }
             }
+            catch (Exception)
+            {
+                Console.WriteLine($"Failed to extract {fileEntry.FullPath}");
+            }
+            
             return files;
         }
 
@@ -198,7 +205,7 @@ namespace MultiExtractor
             }
             catch (Exception)
             {
-                //
+                Console.WriteLine($"Failed to extract {fileEntry.FullPath}");
             }
             var newFilename = Path.GetFileNameWithoutExtension(fileEntry.Name);
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
@@ -219,16 +226,23 @@ namespace MultiExtractor
         private static IEnumerable<FileEntry> ExtractRarFile(FileEntry fileEntry)
         {
             List<FileEntry> files = new List<FileEntry>();
-            using var rarArchive = RarArchive.Open(fileEntry.Content);
-
-            Parallel.ForEach(rarArchive.Entries, entry =>
+            try
             {
-                if (!entry.IsDirectory)
+                using var rarArchive = RarArchive.Open(fileEntry.Content);
+
+                Parallel.ForEach(rarArchive.Entries, entry =>
                 {
-                    var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
-                    files.AddRange(ExtractFile(newFileEntry));
-                }
-            });
+                    if (!entry.IsDirectory)
+                    {
+                        var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
+                        files.AddRange(ExtractFile(newFileEntry));
+                    }
+                });
+            }
+            catch (Exception)
+            {
+                Console.WriteLine($"Failed to extract {fileEntry.FullPath}");
+            }
 
             return files;
         }

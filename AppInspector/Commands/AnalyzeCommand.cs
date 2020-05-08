@@ -660,7 +660,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     if (_options.SingleThread)
                     {
-                        foreach (FileEntry file in files)
+                        foreach (FileEntry file in files.Where(x => x != null))
                         {
                             try
                             {
@@ -680,7 +680,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     else
                     {
-                        files.AsParallel().ForAll(file =>
+                        files.Where(x => x != null).AsParallel().ForAll(file =>
                         {
                             try
                             {
