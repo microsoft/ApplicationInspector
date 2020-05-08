@@ -36,7 +36,7 @@ namespace MultiExtractor
                 return Array.Empty<FileEntry>();
             }
 
-            return ExtractFile(new FileEntry(filename, "", new FileStream(filename,FileMode.Open)));
+            return ExtractFile(new FileEntry(filename, "", new MemoryStream(File.ReadAllBytes(filename))));
         }
 
         public static IEnumerable<FileEntry> ExtractFile(string filename, ArchiveFileType archiveFileType)
@@ -191,11 +191,16 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractXZFile(FileEntry fileEntry)
         {
-            List<FileEntry> files = new List<FileEntry>();
-            using var xzStream = new XZStream(fileEntry.Content);
             using var memoryStream = new MemoryStream();
-            xzStream.CopyTo(memoryStream);
-
+            try
+            {
+                using var xzStream = new XZStream(fileEntry.Content);
+                xzStream.CopyTo(memoryStream);
+            }
+            catch (Exception)
+            {
+                //
+            }
             var newFilename = Path.GetFileNameWithoutExtension(fileEntry.Name);
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
             foreach (var extractedFile in ExtractFile(newFileEntry))
