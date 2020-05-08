@@ -66,6 +66,14 @@ namespace Microsoft.ApplicationInspector.CLI
                     WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.RUNTIME_ERROR_PRELOG), true, WriteOnce.ConsoleVerbosity.Medium, false);
                 }
             }
+            else
+            {
+                var fileInfo = new FileInfo(Utils.LogFilePath);
+                if (fileInfo.Length > 0)
+                {
+                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                }
+            }
 
             return finalResult;
         }
