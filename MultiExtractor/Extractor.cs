@@ -146,9 +146,16 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractGZipFile(FileEntry fileEntry)
         {
-            using var gzipStream = new GZipInputStream(fileEntry.Content);
             using var memoryStream = new MemoryStream();
-            gzipStream.CopyTo(memoryStream);
+
+            try{
+                using var gzipStream = new GZipInputStream(fileEntry.Content);
+                gzipStream.CopyTo(memoryStream);
+            }
+            catch(Exception)
+            {
+                Console.WriteLine($"Failed to extract {fileEntry.FullPath}");
+            }
 
             var newFilename = Path.GetFileNameWithoutExtension(fileEntry.Name);
             if (fileEntry.Name.EndsWith(".tgz", System.StringComparison.CurrentCultureIgnoreCase))
@@ -213,10 +220,16 @@ namespace MultiExtractor
         }
 
         private static IEnumerable<FileEntry> ExtractBZip2File(FileEntry fileEntry)
-        {
-            using var bzip2Stream = new BZip2Stream(fileEntry.Content, SharpCompress.Compressors.CompressionMode.Decompress, false);
+        {            
             using var memoryStream = new MemoryStream();
-            bzip2Stream.CopyTo(memoryStream);
+            try{
+                using var bzip2Stream = new BZip2Stream(fileEntry.Content, SharpCompress.Compressors.CompressionMode.Decompress, false);
+                bzip2Stream.CopyTo(memoryStream);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine($"Failed to extract {fileEntry.FullPath}");
+            }
 
             var newFilename = Path.GetFileNameWithoutExtension(fileEntry.Name);
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
@@ -250,16 +263,22 @@ namespace MultiExtractor
         private static IEnumerable<FileEntry> Extract7ZipFile(FileEntry fileEntry)
         {
             List<FileEntry> files = new List<FileEntry>();
-            using var rarArchive = RarArchive.Open(fileEntry.Content);
+            try {
+                using var rarArchive = RarArchive.Open(fileEntry.Content);
 
-            Parallel.ForEach(rarArchive.Entries, entry =>
-            {
-                if (!entry.IsDirectory)
+                Parallel.ForEach(rarArchive.Entries, entry =>
                 {
-                    var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
-                    files.AddRange(ExtractFile(newFileEntry));
-                }
-            });
+                    if (!entry.IsDirectory)
+                    {
+                        var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
+                        files.AddRange(ExtractFile(newFileEntry));
+                    }
+                });
+            }
+            catch(Exception)
+            {
+                Console.WriteLine($"Failed to extract {fileEntry.FullPath}");
+            }
 
             return files;
         }
