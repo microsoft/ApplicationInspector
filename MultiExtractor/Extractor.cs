@@ -36,8 +36,7 @@ namespace MultiExtractor
                 return Array.Empty<FileEntry>();
             }
 
-            using var fileStream = new FileStream(filename,FileMode.Open);
-            return ExtractFile(new FileEntry(filename, "", fileStream));
+            return ExtractFile(new FileEntry(filename, "", new FileStream(filename,FileMode.Open)));
         }
 
         public static IEnumerable<FileEntry> ExtractFile(string filename, ArchiveFileType archiveFileType)
@@ -74,6 +73,7 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractFile(FileEntry fileEntry, ArchiveFileType archiveFileType)
         {
+            Console.WriteLine($"Extracting file {fileEntry.FullPath}");
             switch (archiveFileType)
             {
                 case ArchiveFileType.ZIP:
@@ -105,36 +105,44 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractZipFile(FileEntry fileEntry)
         {
-            List<FileEntry> files = new List<FileEntry>();
-            //Console.WriteLine("Extracting from Zip");
+            Console.WriteLine($"Extracting from Zip {fileEntry.FullPath}");
             //Console.WriteLine("Content Size => {0}", fileEntry.Content.Length);
-            using var zipFile = new ZipFile(fileEntry.Content);
-            foreach (ZipEntry zipEntry in zipFile)
+            ZipFile zipFile = null;
+            try
             {
-                //Console.WriteLine("Found {0}", zipEntry.Name);
-                if (zipEntry.IsDirectory ||
-                    zipEntry.IsCrypted ||
-                    !zipEntry.CanDecompress)
+                zipFile = new ZipFile(fileEntry.Content);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Failed to read from {fileEntry.FullPath} {e.Message} {e.StackTrace}");
+            }
+            if (zipFile != null)
+            {
+                foreach (ZipEntry zipEntry in zipFile)
                 {
-                    continue;
-                }
+                    if (zipEntry.IsDirectory ||
+                        zipEntry.IsCrypted ||
+                        !zipEntry.CanDecompress)
+                    {
+                        continue;
+                    }
 
-                using var memoryStream = new MemoryStream();
-                byte[] buffer = new byte[BUFFER_SIZE];
-                var zipStream = zipFile.GetInputStream(zipEntry);
-                StreamUtils.Copy(zipStream, memoryStream, buffer);
+                    using var memoryStream = new MemoryStream();
+                    byte[] buffer = new byte[BUFFER_SIZE];
+                    var zipStream = zipFile.GetInputStream(zipEntry);
+                    StreamUtils.Copy(zipStream, memoryStream, buffer);
 
-                var newFileEntry = new FileEntry(zipEntry.Name, fileEntry.FullPath, memoryStream);
-                foreach (var extractedFile in ExtractFile(newFileEntry))
-                {
-                    yield return extractedFile;
+                    var newFileEntry = new FileEntry(zipEntry.Name, fileEntry.FullPath, memoryStream);
+                    foreach (var extractedFile in ExtractFile(newFileEntry))
+                    {
+                        yield return extractedFile;
+                    }
                 }
             }
         }
 
         private static IEnumerable<FileEntry> ExtractGZipFile(FileEntry fileEntry)
         {
-            List<FileEntry> files = new List<FileEntry>();
             using var gzipStream = new GZipInputStream(fileEntry.Content);
             using var memoryStream = new MemoryStream();
             gzipStream.CopyTo(memoryStream);
@@ -162,7 +170,6 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractTarFile(FileEntry fileEntry)
         {
-            List<FileEntry> files = new List<FileEntry>();
             TarEntry tarEntry;
             using var tarStream = new TarInputStream(fileEntry.Content);
             while ((tarEntry = tarStream.GetNextEntry()) != null)

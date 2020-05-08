@@ -340,7 +340,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     _srcfileList.AsParallel().ForAll(filename => ProcessFile(filename));
                 }
-                
 
                 WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
 
@@ -605,7 +604,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                 }
 
-                String finalResult = rawResult.Replace(";", "");
+                string finalResult = rawResult.Replace(";", "");
                 _metaDataHelper.Metadata.UniqueDependencies.Add(finalResult);
 
                 return System.Net.WebUtility.HtmlEncode(finalResult);
@@ -663,12 +662,19 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         foreach (FileEntry file in files)
                         {
-                            //check uncompressed file passes standard checks
-                            LanguageInfo languageInfo = new LanguageInfo();
-                            if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                            try
                             {
-                                byte[] streamByteArray = file.Content.ToArray();
-                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                                //check uncompressed file passes standard checks
+                                LanguageInfo languageInfo = new LanguageInfo();
+                                if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                                {
+                                    byte[] streamByteArray = file.Content.ToArray();
+                                    ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine($"Failed to parse {file.FullPath}");
                             }
                         }
                     }
@@ -676,12 +682,19 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         files.AsParallel().ForAll(file =>
                         {
-                            //check uncompressed file passes standard checks
-                            LanguageInfo languageInfo = new LanguageInfo();
-                            if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                            try
                             {
-                                byte[] streamByteArray = file.Content.ToArray();
-                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                                //check uncompressed file passes standard checks
+                                LanguageInfo languageInfo = new LanguageInfo();
+                                if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                                {
+                                    byte[] streamByteArray = file.Content.ToArray();
+                                    ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine($"Failed to parse {file.FullPath}");
                             }
                         });
                     }
