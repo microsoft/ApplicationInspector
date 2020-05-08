@@ -73,7 +73,7 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractFile(FileEntry fileEntry, ArchiveFileType archiveFileType)
         {
-            Console.WriteLine($"Extracting file {fileEntry.FullPath}");
+            //Console.WriteLine($"Extracting file {fileEntry.FullPath}");
             switch (archiveFileType)
             {
                 case ArchiveFileType.ZIP:
@@ -105,8 +105,9 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractZipFile(FileEntry fileEntry)
         {
-            Console.WriteLine($"Extracting from Zip {fileEntry.FullPath}");
+            //Console.WriteLine($"Extracting from Zip {fileEntry.FullPath}");
             //Console.WriteLine("Content Size => {0}", fileEntry.Content.Length);
+            List<FileEntry> entries = new List<FileEntry>();
             ZipFile zipFile = null;
             try
             {
@@ -135,10 +136,13 @@ namespace MultiExtractor
                     var newFileEntry = new FileEntry(zipEntry.Name, fileEntry.FullPath, memoryStream);
                     foreach (var extractedFile in ExtractFile(newFileEntry))
                     {
-                        yield return extractedFile;
+                        entries.Add(extractedFile);
+                        // Using yield return here was causing everything to enumerate twice.
+                        // yield return extractedFile;
                     }
                 }
             }
+            return entries;
         }
 
         private static IEnumerable<FileEntry> ExtractGZipFile(FileEntry fileEntry)
