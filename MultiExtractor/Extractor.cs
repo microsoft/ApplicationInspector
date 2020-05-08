@@ -8,6 +8,8 @@ using SharpCompress.Compressors.Xz;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MultiExtractor
 {
@@ -36,7 +38,7 @@ namespace MultiExtractor
                 return Array.Empty<FileEntry>();
             }
 
-            return ExtractFile(new FileEntry(filename, "", new FileStream(filename,FileMode.Open)));
+            return ExtractFile(new FileEntry(filename, "", new MemoryStream(File.ReadAllBytes(filename))));
         }
 
         public static IEnumerable<FileEntry> ExtractFile(string filename, ArchiveFileType archiveFileType)
@@ -73,7 +75,6 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractFile(FileEntry fileEntry, ArchiveFileType archiveFileType)
         {
-            //Console.WriteLine($"Extracting file {fileEntry.FullPath}");
             switch (archiveFileType)
             {
                 case ArchiveFileType.ZIP:
@@ -105,9 +106,8 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractZipFile(FileEntry fileEntry)
         {
-            //Console.WriteLine($"Extracting from Zip {fileEntry.FullPath}");
-            //Console.WriteLine("Content Size => {0}", fileEntry.Content.Length);
-            List<FileEntry> entries = new List<FileEntry>();
+            List<FileEntry> files = new List<FileEntry>();
+
             ZipFile zipFile = null;
             try
             {
@@ -119,30 +119,29 @@ namespace MultiExtractor
             }
             if (zipFile != null)
             {
+                List<ZipEntry> entries = new List<ZipEntry>();
                 foreach (ZipEntry zipEntry in zipFile)
                 {
-                    if (zipEntry.IsDirectory ||
-                        zipEntry.IsCrypted ||
-                        !zipEntry.CanDecompress)
-                    {
-                        continue;
-                    }
-
-                    using var memoryStream = new MemoryStream();
-                    byte[] buffer = new byte[BUFFER_SIZE];
-                    var zipStream = zipFile.GetInputStream(zipEntry);
-                    StreamUtils.Copy(zipStream, memoryStream, buffer);
-
-                    var newFileEntry = new FileEntry(zipEntry.Name, fileEntry.FullPath, memoryStream);
-                    foreach (var extractedFile in ExtractFile(newFileEntry))
-                    {
-                        entries.Add(extractedFile);
-                        // Using yield return here was causing everything to enumerate twice.
-                        // yield return extractedFile;
-                    }
+                    entries.Add(zipEntry);
                 }
+                entries.AsParallel().ForAll(zipEntry =>
+                {
+                    if (!zipEntry.IsDirectory &&
+                        !zipEntry.IsCrypted &&
+                        zipEntry.CanDecompress)
+                    {
+                        using var memoryStream = new MemoryStream();
+                        byte[] buffer = new byte[BUFFER_SIZE];
+                        var zipStream = zipFile.GetInputStream(zipEntry);
+                        StreamUtils.Copy(zipStream, memoryStream, buffer);
+
+                        var newFileEntry = new FileEntry(zipEntry.Name, fileEntry.FullPath, memoryStream);
+                        files.AddRange(ExtractFile(newFileEntry));
+                    }
+                });
             }
-            return entries;
+
+            return files;
         }
 
         private static IEnumerable<FileEntry> ExtractGZipFile(FileEntry fileEntry)
@@ -166,80 +165,86 @@ namespace MultiExtractor
 
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
 
-            foreach (var extractedFile in ExtractFile(newFileEntry))
-            {
-                yield return extractedFile;
-            }
+            return ExtractFile(newFileEntry);
         }
 
         private static IEnumerable<FileEntry> ExtractTarFile(FileEntry fileEntry)
         {
+            List<FileEntry> files = new List<FileEntry>();
             TarEntry tarEntry;
-            using var tarStream = new TarInputStream(fileEntry.Content);
-            while ((tarEntry = tarStream.GetNextEntry()) != null)
+            try
             {
-                if (tarEntry.IsDirectory)
+                using var tarStream = new TarInputStream(fileEntry.Content);
+                while ((tarEntry = tarStream.GetNextEntry()) != null)
                 {
-                    continue;
-                }
-                using var memoryStream = new MemoryStream();
-                tarStream.CopyEntryContents(memoryStream);
+                    if (!tarEntry.IsDirectory)
+                    {
+                        using var memoryStream = new MemoryStream();
+                        tarStream.CopyEntryContents(memoryStream);
 
-                var newFileEntry = new FileEntry(tarEntry.Name, fileEntry.FullPath, memoryStream);
-                foreach (var extractedFile in ExtractFile(newFileEntry))
-                {
-                    yield return extractedFile;
+                        var newFileEntry = new FileEntry(tarEntry.Name, fileEntry.FullPath, memoryStream);
+                        files.AddRange(ExtractFile(newFileEntry));
+                    }
                 }
             }
+            catch (Exception)
+            {
+                Console.WriteLine($"Failed to extract {fileEntry.FullPath}");
+            }
+            
+            return files;
         }
 
         private static IEnumerable<FileEntry> ExtractXZFile(FileEntry fileEntry)
         {
-            List<FileEntry> files = new List<FileEntry>();
-            using var xzStream = new XZStream(fileEntry.Content);
             using var memoryStream = new MemoryStream();
-            xzStream.CopyTo(memoryStream);
-
+            try
+            {
+                using var xzStream = new XZStream(fileEntry.Content);
+                xzStream.CopyTo(memoryStream);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine($"Failed to extract {fileEntry.FullPath}");
+            }
             var newFilename = Path.GetFileNameWithoutExtension(fileEntry.Name);
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
-            foreach (var extractedFile in ExtractFile(newFileEntry))
-            {
-                yield return extractedFile;
-            }
+            return ExtractFile(newFileEntry);
         }
 
         private static IEnumerable<FileEntry> ExtractBZip2File(FileEntry fileEntry)
         {
-            List<FileEntry> files = new List<FileEntry>();
             using var bzip2Stream = new BZip2Stream(fileEntry.Content, SharpCompress.Compressors.CompressionMode.Decompress, false);
             using var memoryStream = new MemoryStream();
             bzip2Stream.CopyTo(memoryStream);
 
             var newFilename = Path.GetFileNameWithoutExtension(fileEntry.Name);
             var newFileEntry = new FileEntry(newFilename, fileEntry.FullPath, memoryStream);
-            foreach (var extractedFile in ExtractFile(newFileEntry))
-            {
-                yield return extractedFile;
-            }
+            return ExtractFile(newFileEntry);
         }
 
         private static IEnumerable<FileEntry> ExtractRarFile(FileEntry fileEntry)
         {
             List<FileEntry> files = new List<FileEntry>();
-            using var rarArchive = RarArchive.Open(fileEntry.Content);
-
-            foreach (var entry in rarArchive.Entries)
+            try
             {
-                if (entry.IsDirectory)
+                using var rarArchive = RarArchive.Open(fileEntry.Content);
+
+                Parallel.ForEach(rarArchive.Entries, entry =>
                 {
-                    continue;
-                }
-                var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
-                foreach (var extractedFile in ExtractFile(newFileEntry))
-                {
-                    yield return extractedFile;
-                }
+                    if (!entry.IsDirectory)
+                    {
+                        var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
+                        files.AddRange(ExtractFile(newFileEntry));
+                    }
+                });
             }
+            catch (Exception)
+            {
+                Console.WriteLine($"Failed to extract {fileEntry.FullPath}");
+            }
+
+            return files;
         }
 
         private static IEnumerable<FileEntry> Extract7ZipFile(FileEntry fileEntry)
@@ -247,18 +252,16 @@ namespace MultiExtractor
             List<FileEntry> files = new List<FileEntry>();
             using var rarArchive = RarArchive.Open(fileEntry.Content);
 
-            foreach (var entry in rarArchive.Entries)
+            Parallel.ForEach(rarArchive.Entries, entry =>
             {
-                if (entry.IsDirectory)
+                if (!entry.IsDirectory)
                 {
-                    continue;
+                    var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
+                    files.AddRange(ExtractFile(newFileEntry));
                 }
-                var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
-                foreach (var extractedFile in ExtractFile(newFileEntry))
-                {
-                    yield return extractedFile;
-                }
-            }
+            });
+
+            return files;
         }
     }
 
