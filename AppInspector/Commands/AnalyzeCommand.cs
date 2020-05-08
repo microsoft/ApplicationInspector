@@ -163,7 +163,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigConfidenceFilters", LogLevel.Trace);
             //parse and verify confidence values
-            if (String.IsNullOrEmpty(_options.ConfidenceFilters))
+            if (string.IsNullOrEmpty(_options.ConfidenceFilters))
             {
                 _confidence = Confidence.High | Confidence.Medium; //excludes low by default
             }
