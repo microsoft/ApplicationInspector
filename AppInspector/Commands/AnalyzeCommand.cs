@@ -656,56 +656,49 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 IEnumerable<FileEntry> files = Extractor.ExtractFile(filename);
 
-                if (files.Any())
+                if (_options.SingleThread)
                 {
-                    if (_options.SingleThread)
+                    foreach (FileEntry file in files)
                     {
-                        foreach (FileEntry file in files)
+                        try
                         {
-                            try
+                            //check uncompressed file passes standard checks
+                            LanguageInfo languageInfo = new LanguageInfo();
+                            if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                             {
-                                //check uncompressed file passes standard checks
-                                LanguageInfo languageInfo = new LanguageInfo();
-                                if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
-                                {
-                                    byte[] streamByteArray = file.Content.ToArray();
-                                    ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                Console.WriteLine($"Failed to parse {file.FullPath}");
+                                byte[] streamByteArray = file.Content.ToArray();
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
                             }
                         }
-                    }
-                    else
-                    {
-                        files.AsParallel().ForAll(file =>
+                        catch (Exception)
                         {
-                            try
-                            {
-                                //check uncompressed file passes standard checks
-                                LanguageInfo languageInfo = new LanguageInfo();
-                                if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
-                                {
-                                    byte[] streamByteArray = file.Content.ToArray();
-                                    ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                Console.WriteLine($"Failed to parse {file.FullPath}");
-                            }
-                        });
+                            Console.WriteLine($"Failed to parse {file.FullPath}");
+                        }
                     }
-
-                    // Do this at the end so we don't force the IEnumerable to populate before we walk it
-                    _metaDataHelper.Metadata.IncrementTotalFiles(files.Count());//additive in case additional child zip files processed
                 }
                 else
                 {
-                    WriteOnce.SafeLog(string.Format("Decompression found no files in {0}", filename), LogLevel.Warn);//zero results can be valid
+                    files.AsParallel().ForAll(file =>
+                    {
+                        try
+                        {
+                            //check uncompressed file passes standard checks
+                            LanguageInfo languageInfo = new LanguageInfo();
+                            if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                            {
+                                byte[] streamByteArray = file.Content.ToArray();
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine($"Failed to parse {file.FullPath}");
+                        }
+                    });
                 }
+
+                // Do this at the end so we don't force the IEnumerable to populate before we walk it
+                _metaDataHelper.Metadata.IncrementTotalFiles(files.Count());//additive in case additional child zip files processed
             }
             catch (Exception)
             {
