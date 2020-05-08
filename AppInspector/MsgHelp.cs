@@ -42,6 +42,7 @@ namespace Microsoft.ApplicationInspector.Commands
             CMD_NORULES_SPECIFIED,
             CMD_INVALID_LOG_PATH,
             CMD_VIEW_OUTPUT_FILE,
+            CMD_REMINDER_CHECK_LOG,
             TAGDIFF_NO_TAGS_FOUND,
             TAGDIFF_RESULTS_DIFFER,
             TAGDIFF_RESULTS_GAP,

@@ -670,7 +670,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         catch (Exception)
                         {
-                            Console.WriteLine($"Failed to parse {file.FullPath}");
+                            WriteOnce.SafeLog($"Failed to Decompress file {file.FullPath}",LogLevel.Info);
                         }
                     }
                 }
