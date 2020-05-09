@@ -38,7 +38,8 @@ namespace MultiExtractor
                 return Array.Empty<FileEntry>();
             }
 
-            return ExtractFile(new FileEntry(filename, "", new MemoryStream(File.ReadAllBytes(filename))));
+            using var stream = new MemoryStream(File.ReadAllBytes(filename));
+            return ExtractFile(new FileEntry(filename, "", stream));
         }
 
         public static IEnumerable<FileEntry> ExtractFile(string filename, ArchiveFileType archiveFileType)
