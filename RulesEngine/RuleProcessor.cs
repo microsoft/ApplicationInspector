@@ -338,7 +338,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                     if (_logger != null && !approved)
                     {
-                        _logger.Debug(String.Format("Duplicate tag {0} not added", tag));
+                        _logger.Debug(string.Format("Duplicate tag {0} not added", tag));
                     }
 
                     break;
@@ -347,7 +347,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     if (_logger != null)
                     {
-                        _logger.Debug(String.Format("Unique tag {0} added", tag));
+                        _logger.Debug(string.Format("Unique tag {0} added", tag));
                     }
                 }
             }

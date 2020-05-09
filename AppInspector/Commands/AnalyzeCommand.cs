@@ -314,8 +314,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     catch (Exception e)
                     {
                         WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, LogLevel.Error);//log details
-                        //Exception f = new Exception(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILE_TYPE_OPEN, filename));//report friendly version
-                        //throw f;
                     }
 
                     if (archiveFileType == ArchiveFileType.UNKNOWN)//not a known zipped file type
@@ -512,7 +510,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private string ExtractExcerpt(string text, int startLineNumber, int length = 10)
         {
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
             {
                 return "";
             }
@@ -672,7 +670,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         catch (Exception)
                         {
-                            Console.WriteLine($"Failed to parse {file.FullPath}");
+                            WriteOnce.SafeLog($"Failed to Decompress file {file.FullPath}",LogLevel.Info);
                         }
                     }
                 }

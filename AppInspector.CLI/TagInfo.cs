@@ -19,7 +19,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public tagInfoType Type;
 
         [JsonProperty(PropertyName = "categoryName")]
-        public String Name { get; set; }
+        public string Name { get; set; }
 
         [JsonProperty(PropertyName = "groups")]
         public List<TagGroup> Groups { get; set; }

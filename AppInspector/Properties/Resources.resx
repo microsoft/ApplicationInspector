@@ -201,6 +201,9 @@
   <data name="CMD_PREPARING_REPORT" xml:space="preserve">
     <value>Preparing report</value>
   </data>
+  <data name="CMD_REMINDER_CHECK_LOG" xml:space="preserve">
+    <value>Additional details may be found in log file at {0}</value>
+  </data>
   <data name="CMD_REPORT_DONE" xml:space="preserve">
     <value>{0} report completed</value>
   </data>

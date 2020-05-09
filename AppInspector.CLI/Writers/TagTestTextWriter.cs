@@ -38,7 +38,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
                 foreach (TagStatus tag in tagTestResult.TagsStatusList)
                 {
-                    WriteOnce.General(String.Format("Tag: {0}, Detected: {1}", tag.Tag, tag.Detected));
+                    WriteOnce.General(string.Format("Tag: {0}, Detected: {1}", tag.Tag, tag.Detected));
                 }
             }
 

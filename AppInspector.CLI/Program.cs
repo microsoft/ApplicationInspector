@@ -57,13 +57,21 @@ namespace Microsoft.ApplicationInspector.CLI
             //final exit msg to review log
             if (finalResult == (int)Utils.ExitCode.CriticalError)
             {
-                if (!String.IsNullOrEmpty(Utils.LogFilePath))
+                if (!string.IsNullOrEmpty(Utils.LogFilePath))
                 {
                     WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.RUNTIME_ERROR_UNNAMED, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
                 }
                 else
                 {
                     WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.RUNTIME_ERROR_PRELOG), true, WriteOnce.ConsoleVerbosity.Medium, false);
+                }
+            }
+            else
+            {
+                var fileInfo = new FileInfo(Utils.LogFilePath);
+                if (fileInfo.Length > 0)
+                {
+                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
                 }
             }
 
@@ -126,7 +134,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             options.OutputFilePath = options.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesPackedFile) : options.OutputFilePath;
-            if (String.IsNullOrEmpty(options.OutputFilePath))
+            if (string.IsNullOrEmpty(options.OutputFilePath))
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.PACK_MISSING_OUTPUT_ARG));
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.PACK_MISSING_OUTPUT_ARG));

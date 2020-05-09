@@ -23,7 +23,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -46,7 +46,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -69,7 +69,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\main.zip"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -91,7 +91,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -t rulesnotpresent -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -t rulesnotpresent -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -113,7 +113,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -t rulesnotpresent -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -t rulesnotpresent -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -135,7 +135,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\badir\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -158,7 +158,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -181,7 +181,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -t rulesnotpresent -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -t rulesnotpresent -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -204,7 +204,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r rulesnotpresent -r {1} -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r rulesnotpresent -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myfakerule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -233,7 +233,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -k none -l {1}",
+                string args = string.Format(@"tagtest -s {0} -k none -l {1}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -255,7 +255,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -f text -k none -o {2} -l {3}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -f text -k none -o {2} -l {3}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
@@ -278,7 +278,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -f json -k none -o {2} -l {3}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -f json -k none -o {2} -l {3}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
@@ -301,7 +301,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -f unknown -k none -o {2} -l {3}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -f unknown -k none -o {2} -l {3}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
@@ -324,7 +324,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -v trace -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -v trace -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"mybadrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -351,7 +351,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -v error -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -v error -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -378,7 +378,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -v debug -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -v debug -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -405,7 +405,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\log.txt"));
@@ -426,7 +426,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp"));
@@ -447,7 +447,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -x none -f text -o {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -x none -f text -o {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
@@ -473,7 +473,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"tagtest -s {0} -r {1} -k none -x none -l {2}",
+                string args = string.Format(@"tagtest -s {0} -r {1} -k none -x none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));

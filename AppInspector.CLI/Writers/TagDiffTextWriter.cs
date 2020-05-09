@@ -38,7 +38,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteOnce.Result("Differences");
                 foreach (TagDiff tagDiff in tagDiffResult.TagDiffList)
                 {
-                    WriteOnce.General(String.Format("Tag: {0}, Only found in file: {1}", tagDiff.Tag, tagDiff.Source));
+                    WriteOnce.General(string.Format("Tag: {0}, Only found in file: {1}", tagDiff.Tag, tagDiff.Source));
                 }
             }
 
