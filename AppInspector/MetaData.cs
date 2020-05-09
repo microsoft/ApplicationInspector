@@ -68,7 +68,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Total number of files scanned successfully
         /// </summary>
         [JsonProperty(PropertyName = "filesAnalyzed")]
-        public int FilesAnalyzed { get { return _FilesAnalyzed; } }
+        public int FilesAnalyzed { get { return _FilesAnalyzed; } set { _FilesAnalyzed = value; } }
 
         private int _FilesAnalyzed;
 
@@ -76,7 +76,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Total number of files in source path
         /// </summary>
         [JsonProperty(PropertyName = "totalFiles")]
-        public int TotalFiles { get { return _TotalFiles; } }
+        public int TotalFiles { get { return _TotalFiles; } set { _TotalFiles = value; } }
 
         private int _TotalFiles;
 
@@ -84,7 +84,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Total number of skipped files based on supported formats
         /// </summary>
         [JsonProperty(PropertyName = "filesSkipped")]
-        public int FilesSkipped { get { return _FilesSkipped; } }
+        public int FilesSkipped { get { return _FilesSkipped; } set { _FilesSkipped = value; } }
 
         private int _FilesSkipped;
 
@@ -92,7 +92,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Total files with at least one result
         /// </summary>
         [JsonProperty(PropertyName = "filesAffected")]
-        public int FilesAffected { get { return _FilesAffected; } }
+        public int FilesAffected { get { return _FilesAffected; } set { _FilesAffected = value; } }
 
         private int _FilesAffected;
 
@@ -100,7 +100,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Total matches with supplied argument settings
         /// </summary>
         [JsonProperty(PropertyName = "totalMatchesCount")]
-        public int TotalMatchesCount { get { return _TotalMatchesCount; } }
+        public int TotalMatchesCount { get { return _TotalMatchesCount; } set { _TotalMatchesCount = value; } }
 
         private int _TotalMatchesCount;
 
