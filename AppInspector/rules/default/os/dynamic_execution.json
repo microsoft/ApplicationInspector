@@ -301,7 +301,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "system\\(",
+        "pattern": " system[ ]*\\(",
         "type": "regex",
         "scopes": [
           "code"
