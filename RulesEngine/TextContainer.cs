@@ -153,13 +153,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             List<Boundary> matchList = new List<Boundary>();
 
-            RegexOptions reopt = RegexOptions.None;
-            if (pattern.Modifiers != null && pattern.Modifiers.Length > 0)
-            {
-                reopt |= (pattern.Modifiers.Contains("i")) ? RegexOptions.IgnoreCase : RegexOptions.None;
-                reopt |= (pattern.Modifiers.Contains("m")) ? RegexOptions.Multiline : RegexOptions.None;
-            }
-
             MatchCollection matches = pattern.Expression.Matches(text);
             if (matches.Count > 0)
             {
