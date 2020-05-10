@@ -13,20 +13,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     public class SearchPattern
     {
         private Confidence _confidence;
-        private Regex _Expression;
-        private string _Pattern;
+        private Regex _expression;
+        private string _pattern;
 
         [JsonProperty(PropertyName = "pattern")]
         public string Pattern {
             get
             {
-                return _Pattern;
+                return _pattern;
             }
             set
             {
-                _Pattern = value;
+                _pattern = value;
                 // Reset expression so it gets regenerated on next request
-                _Expression = null;
+                _expression = null;
             }
         }
 
@@ -61,7 +61,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public Regex Expression {
             get
             {
-                if (_Expression == null)
+                if (_expression == null)
                 {
                     RegexOptions reopt = RegexOptions.None;
                     if (Modifiers != null && Modifiers.Length > 0)
@@ -70,13 +70,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         reopt |= Modifiers.Contains("m") ? RegexOptions.Multiline : RegexOptions.None;
                     }
                     reopt |= RegexOptions.Compiled;
-                    _Expression = new Regex(Pattern, reopt);
+                    _expression = new Regex(Pattern, reopt);
                 }
-                return _Expression;
+                return _expression;
             }
         }
 
-        public SearchPattern(string Pattern)
+        public SearchPattern()
         {
             Confidence = Confidence.Medium;
         }
