@@ -426,12 +426,12 @@ namespace Microsoft.ApplicationInspector.CLI
             HashSet<string> dupCheck = new HashSet<string>();
             RulesEngine.Confidence[] confidences = { Confidence.High, Confidence.Medium, Confidence.Low };
 
-            foreach (Confidence test in confidences)
+            
+            foreach (string tag in _appMetaData.UniqueTags)
             {
-                foreach (string tag in _appMetaData.UniqueTags)
+                var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
+                foreach (Confidence test in confidences)
                 {
-                    // TODO: How frequently are these generated? Cache?
-                    var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
                     foreach (var match in _appMetaData.Matches)
                     {
                         foreach (string testTag in match.Tags)
@@ -456,7 +456,6 @@ namespace Microsoft.ApplicationInspector.CLI
                     }
                 }
             }
-
             return result;
         }
 
