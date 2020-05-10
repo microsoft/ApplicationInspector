@@ -293,7 +293,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "exec",
+        "pattern": " exec[ ]*\\(",
         "type": "string",
         "scopes": [
           "code"
