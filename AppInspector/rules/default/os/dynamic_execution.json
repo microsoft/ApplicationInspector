@@ -285,7 +285,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "shell_exec",
+        "pattern": " shell_exec[ ]*\\(",
         "type": "string",
         "scopes": [
           "code"
