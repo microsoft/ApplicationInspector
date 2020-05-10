@@ -318,7 +318,7 @@
       },
       {
         "pattern": " proc_open[ ]*\\(",
-        "type": "string",
+        "type": "regex",
         "scopes": [
           "code"
         ],
