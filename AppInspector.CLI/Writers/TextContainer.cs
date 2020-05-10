@@ -14,7 +14,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     internal class AnalyzeTextContainer
     {
-        private Regex reg = new Regex(".*\\((.*),(.*)\\)");
+        private Regex reg = new Regex(".*\\((.*),(.*)\\)", RegexOptions.Compiled);
 
         /// <summary>
         /// Creates new instance

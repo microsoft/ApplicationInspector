@@ -15,7 +15,7 @@ namespace Microsoft.ApplicationInspector.Commands
     public class MetaDataHelper
     {
         //inhouse common properties to capture
-        private readonly Dictionary<string, string> _propertyTagSearchPatterns;
+        private readonly Dictionary<string, Regex> _propertyTagSearchPatterns;
 
         public MetaData Metadata { get; set; }
 
@@ -24,11 +24,13 @@ namespace Microsoft.ApplicationInspector.Commands
             sourcePath = Path.GetFullPath(sourcePath);//normalize for .\ and similar
             Metadata = new MetaData(GetDefaultProjectName(sourcePath), sourcePath);
 
-            _propertyTagSearchPatterns = new Dictionary<string, string>();
-            _propertyTagSearchPatterns.Add("strGrpOSTargets", ".OS.Targets");
-            _propertyTagSearchPatterns.Add("strGrpCloudTargets", ".Cloud");
-            _propertyTagSearchPatterns.Add("strGrpOutputs", ".Outputs");
-            _propertyTagSearchPatterns.Add("strGrpCPUTargets", ".CPU");
+            _propertyTagSearchPatterns = new Dictionary<string, Regex>()
+            {
+                { "strGrpOSTargets", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) },
+                { "strGrpCloudTargets", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) },
+                { "strGrpOutputs", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) },
+                { "strGrpCPUTargets", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) }
+            };
         }
 
         /// <summary>
@@ -41,9 +43,7 @@ namespace Microsoft.ApplicationInspector.Commands
             //aggregate lists of matches against standard set of properties to report on
             foreach (string key in _propertyTagSearchPatterns.Keys)
             {
-                // TODO: Cache and compile these regexes
-                var tagPatternRegex = new Regex(_propertyTagSearchPatterns[key], RegexOptions.IgnoreCase);
-                if (matchRecord.Tags.Any(v => tagPatternRegex.IsMatch(v)))
+                if (matchRecord.Tags.Any(v => _propertyTagSearchPatterns[key].IsMatch(v)))
                 {
                     Metadata.KeyedPropertyLists[key].Add(matchRecord.Sample);
                 }
