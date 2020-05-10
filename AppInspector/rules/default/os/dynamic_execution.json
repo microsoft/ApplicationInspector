@@ -309,7 +309,7 @@
         "confidence": "medium"
       },
       {
-        "pattern": "passthru",
+        "pattern": " passthru[ ]*\\(",
         "type": "string",
         "scopes": [
           "code"
