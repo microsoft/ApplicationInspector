@@ -286,7 +286,7 @@
     "patterns": [
       {
         "pattern": " shell_exec[ ]*\\(",
-        "type": "string",
+        "type": "regex",
         "scopes": [
           "code"
         ],
