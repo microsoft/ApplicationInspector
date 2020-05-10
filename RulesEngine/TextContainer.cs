@@ -14,6 +14,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     internal class TextContainer
     {
         private static readonly int MAX_PATTERN_MATCHES = 10;
+        private Regex reg = new Regex(".*\\((.*),(.*)\\)", RegexOptions.Compiled);
+
         /// <summary>
         /// Creates new instance
         /// </summary>
@@ -308,7 +310,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             bool result = false;
             List<int> arglist = new List<int>();
 
-            Regex reg = new Regex(".*\\((.*),(.*)\\)");
             Match m = reg.Match(searchIn);
             if (m.Success)
             {
