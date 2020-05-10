@@ -317,7 +317,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "proc_open",
+        "pattern": " proc_open[ ]*\\(",
         "type": "string",
         "scopes": [
           "code"
