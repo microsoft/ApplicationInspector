@@ -469,12 +469,13 @@ namespace Microsoft.ApplicationInspector.CLI
             HashSet<string> dupCheck = new HashSet<string>();
             RulesEngine.Severity[] severities = { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview };
 
-            foreach (Severity test in severities)
+
+            foreach (string tag in _appMetaData.UniqueTags)
             {
-                foreach (string tag in _appMetaData.UniqueTags)
+                // TODO: How frequently are these generated? Cache?
+                var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
+                foreach (Severity test in severities)
                 {
-                    // TODO: How frequently are these generated? Cache?
-                    var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
                     foreach (var match in _appMetaData.Matches)
                     {
                         foreach (string testTag in match.Tags)
