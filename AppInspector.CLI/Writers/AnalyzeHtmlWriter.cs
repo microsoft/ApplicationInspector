@@ -224,7 +224,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 if (pattern.Detected)//set at program.RollUp already so don't search for again
                 {
-                    var tagPatternRegex = new Regex(pattern.SearchPattern, RegexOptions.IgnoreCase);
+                    var tagPatternRegex = pattern.Expression;
 
                     foreach (var match in _appMetaData.Matches)
                     {
@@ -317,7 +317,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 if (pattern.Detected)
                 {
-                    var tagPatternRegex = new Regex(pattern.SearchPattern, RegexOptions.IgnoreCase);
+                    var tagPatternRegex = pattern.Expression;
 
                     foreach (var match in _appMetaData.Matches)
                     {
@@ -430,6 +430,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 foreach (string tag in _appMetaData.UniqueTags)
                 {
+                    // TODO: How frequently are these generated? Cache?
                     var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
                     foreach (var match in _appMetaData.Matches)
                     {
@@ -473,6 +474,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 foreach (string tag in _appMetaData.UniqueTags)
                 {
+                    // TODO: How frequently are these generated? Cache?
                     var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
                     foreach (var match in _appMetaData.Matches)
                     {

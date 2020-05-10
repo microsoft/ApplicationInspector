@@ -5,6 +5,7 @@ using DotLiquid;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -55,8 +56,34 @@ namespace Microsoft.ApplicationInspector.Commands
 
     public class TagSearchPattern : Drop
     {
+        private string _searchPattern;
+        private Regex _expression;
+
         [JsonProperty(PropertyName = "searchPattern")]
-        public string SearchPattern { get; set; }
+        public string SearchPattern
+        {
+            get
+            {
+                return _searchPattern;
+            }
+            set
+            {
+                _searchPattern = value;
+                _expression = null;
+            }
+        }
+
+        public Regex Expression
+        {
+            get
+            {
+                if (_expression == null)
+                {
+                    _expression = new Regex(SearchPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                }
+                return _expression;
+            }
+        }
 
         [JsonProperty(PropertyName = "displayName")]
         public string DisplayName { get; set; }

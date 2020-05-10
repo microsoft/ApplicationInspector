@@ -41,6 +41,7 @@ namespace Microsoft.ApplicationInspector.Commands
             //aggregate lists of matches against standard set of properties to report on
             foreach (string key in _propertyTagSearchPatterns.Keys)
             {
+                // TODO: Cache and compile these regexes
                 var tagPatternRegex = new Regex(_propertyTagSearchPatterns[key], RegexOptions.IgnoreCase);
                 if (matchRecord.Tags.Any(v => tagPatternRegex.IsMatch(v)))
                 {

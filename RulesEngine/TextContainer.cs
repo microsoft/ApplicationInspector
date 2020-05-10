@@ -158,8 +158,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 reopt |= (pattern.Modifiers.Contains("m")) ? RegexOptions.Multiline : RegexOptions.None;
             }
 
-            Regex patRegx = new Regex(pattern.Pattern, reopt);
-            MatchCollection matches = patRegx.Matches(text);
+            MatchCollection matches = pattern.Expression.Matches(text);
             if (matches.Count > 0)
             {
                 int matchCount = 0;

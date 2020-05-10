@@ -1,6 +1,8 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
@@ -11,9 +13,22 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     public class SearchPattern
     {
         private Confidence _confidence;
+        private Regex _Expression;
+        private string _Pattern;
 
         [JsonProperty(PropertyName = "pattern")]
-        public string Pattern { get; set; }
+        public string Pattern {
+            get
+            {
+                return _Pattern;
+            }
+            set
+            {
+                _Pattern = value;
+                // Reset expression so it gets regenerated on next request
+                _Expression = null;
+            }
+        }
 
         [JsonProperty(PropertyName = "type")]
         [JsonConverter(typeof(PatternTypeConverter))]
@@ -42,7 +57,26 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             set => _confidence = value;
         }
 
-        public SearchPattern()
+        // Generate and cache the regex
+        public Regex Expression {
+            get
+            {
+                if (_Expression == null)
+                {
+                    RegexOptions reopt = RegexOptions.None;
+                    if (Modifiers != null && Modifiers.Length > 0)
+                    {
+                        reopt |= Modifiers.Contains("i") ? RegexOptions.IgnoreCase : RegexOptions.None;
+                        reopt |= Modifiers.Contains("m") ? RegexOptions.Multiline : RegexOptions.None;
+                    }
+                    reopt |= RegexOptions.Compiled;
+                    _Expression = new Regex(Pattern, reopt);
+                }
+                return _Expression;
+            }
+        }
+
+        public SearchPattern(string Pattern)
         {
             Confidence = Confidence.Medium;
         }

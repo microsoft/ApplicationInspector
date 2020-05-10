@@ -14,6 +14,8 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     internal class AnalyzeTextContainer
     {
+        private Regex reg = new Regex(".*\\((.*),(.*)\\)");
+
         /// <summary>
         /// Creates new instance
         /// </summary>
@@ -150,15 +152,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             List<Boundary> matchList = new List<Boundary>();
 
-            RegexOptions reopt = RegexOptions.None;
-            if (pattern.Modifiers != null && pattern.Modifiers.Length > 0)
-            {
-                reopt |= (pattern.Modifiers.Contains("i")) ? RegexOptions.IgnoreCase : RegexOptions.None;
-                reopt |= (pattern.Modifiers.Contains("m")) ? RegexOptions.Multiline : RegexOptions.None;
-            }
-
-            Regex patRegx = new Regex(pattern.Pattern, reopt);
-            MatchCollection matches = patRegx.Matches(text);
+            MatchCollection matches = pattern.Expression.Matches(text);
             if (matches.Count > 0)
             {
                 foreach (Match m in matches)
@@ -294,7 +288,6 @@ namespace Microsoft.ApplicationInspector.Commands
             bool result = false;
             List<int> arglist = new List<int>();
 
-            Regex reg = new Regex(".*\\((.*),(.*)\\)");
             Match m = reg.Match(searchIn);
             if (m.Success)
             {

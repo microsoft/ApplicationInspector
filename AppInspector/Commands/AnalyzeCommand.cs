@@ -73,6 +73,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private DateTime _lastUpdated;
 
+        //save all unique dependencies even if Dependency tag pattern is not-unique
+        private Regex tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
+
         /// <summary>
         /// Updated dynamically to more recent file in source
         /// </summary>
@@ -431,8 +434,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", scanResult.Rule.Id, scanResult.Rule.Name, filePath), LogLevel.Trace);
 
-                    //save all unique dependencies even if Dependency tag pattern is not-unique
-                    var tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
                     string textMatch = string.Empty;
 
                     if (scanResult.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))
@@ -571,9 +572,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 rawResult = text.Substring(startIndex, endIndex - startIndex).Trim();
 
-                //recreate regex used to find entire value
-                Regex regex = new Regex(pattern.Pattern);
-                MatchCollection matches = regex.Matches(rawResult);
+                MatchCollection matches = pattern.Expression.Matches(rawResult);
 
                 //remove surrounding import or trailing comments
                 if (matches.Count > 0)
