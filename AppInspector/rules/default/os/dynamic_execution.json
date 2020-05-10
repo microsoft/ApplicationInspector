@@ -310,7 +310,7 @@
       },
       {
         "pattern": " passthru[ ]*\\(",
-        "type": "string",
+        "type": "regex",
         "scopes": [
           "code"
         ],
