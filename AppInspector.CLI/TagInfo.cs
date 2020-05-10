@@ -73,6 +73,11 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
+        public static bool ShouldSerializeExpression()
+        {
+            return false;
+        }
+
         public Regex Expression
         {
             get

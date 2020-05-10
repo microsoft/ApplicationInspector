@@ -57,6 +57,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             set => _confidence = value;
         }
 
+        public static bool ShouldSerializeExpression()
+        {
+            return false;
+        }
+
         // Generate and cache the regex
         public Regex Expression {
             get
