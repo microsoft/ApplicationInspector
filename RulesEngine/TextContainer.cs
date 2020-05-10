@@ -176,8 +176,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         break;
                     }
                 }
-
-
             }
 
             return matchList;
