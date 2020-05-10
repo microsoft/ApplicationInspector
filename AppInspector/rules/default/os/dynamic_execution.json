@@ -294,7 +294,7 @@
       },
       {
         "pattern": " exec[ ]*\\(",
-        "type": "string",
+        "type": "regex",
         "scopes": [
           "code"
         ],
