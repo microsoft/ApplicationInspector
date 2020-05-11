@@ -10,13 +10,13 @@ using System.Linq;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
-    internal class Program
+    public class Program
     {
         /// <summary>
         /// CLI program entry point which defines command verbs and options to running
         /// </summary>
         /// <param name="args"></param>
-        private static int Main(string[] args)
+        public static int Main(string[] args)
         {
             int finalResult = (int)Utils.ExitCode.CriticalError;
 

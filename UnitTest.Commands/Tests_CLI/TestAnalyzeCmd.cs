@@ -22,9 +22,8 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"analyze -b -s {0} -f html -k none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
-                exitCode = (AnalyzeResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
