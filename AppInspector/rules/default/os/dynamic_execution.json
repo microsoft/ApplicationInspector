@@ -271,5 +271,59 @@
         "confidence": "high"
       }
     ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035520",
+    "description": "OS: Dynamic Execution",
+    "applies_to": [
+      "php"
+    ],
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": " shell_exec[ ]*\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": " exec[ ]*\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": " system[ ]*\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium"
+      },
+      {
+        "pattern": " passthru[ ]*\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": " proc_open[ ]*\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
   }
 ]
