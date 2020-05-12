@@ -22,13 +22,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -45,13 +44,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -68,13 +66,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\main.zip"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -90,13 +87,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -t rulesnotpresent -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -112,13 +108,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -t rulesnotpresent -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -134,13 +129,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\badir\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -157,13 +151,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -180,13 +173,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -t rulesnotpresent -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -203,13 +195,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r rulesnotpresent -r {1} -k none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myfakerule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -232,12 +223,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -k none -l {1}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -254,14 +244,13 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -f text -k none -o {2} -l {3}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -277,14 +266,13 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -f json -k none -o {2} -l {3}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -307,7 +295,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -323,13 +311,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -v trace -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"mybadrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == TagTestResult.ExitCode.CriticalError)
                 {
@@ -350,13 +337,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagTestResult.ExitCode exitCode = TagTestResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -v error -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == TagTestResult.ExitCode.CriticalError)
                 {
@@ -377,13 +363,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagTestResult.ExitCode exitCode = TagTestResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -v debug -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == TagTestResult.ExitCode.CriticalError)
                 {
@@ -404,13 +389,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagTestResult.ExitCode exitCode = TagTestResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -425,13 +409,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagTestResult.ExitCode exitCode = TagTestResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -472,13 +455,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagTestResult.ExitCode exitCode = TagTestResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -k none -x none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagTestResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (TagTestResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
