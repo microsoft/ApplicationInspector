@@ -68,10 +68,13 @@ namespace Microsoft.ApplicationInspector.CLI
             }
             else
             {
-                var fileInfo = new FileInfo(Utils.LogFilePath);
-                if (fileInfo.Length > 0)
+                if (File.Exists(Utils.LogFilePath))
                 {
-                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                    var fileInfo = new FileInfo(Utils.LogFilePath);
+                    if (fileInfo.Length > 0)
+                    {
+                        WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                    }
                 }
             }
 

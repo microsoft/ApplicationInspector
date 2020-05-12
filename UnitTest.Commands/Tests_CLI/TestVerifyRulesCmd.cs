@@ -9,6 +9,19 @@ namespace ApplicationInspector.Unitprocess.CLICommands
     [TestClass]
     public class CLITestVerifyRulesCmd
     {
+        [TestCleanup]
+        public void CleanOuput()
+        {
+            try
+            {
+                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+            }
+            catch
+            {
+
+            }
+        }
+
         [TestMethod]
         [Ignore] //default option won't find rules unless run from CLI; todo to look at addressed
         public void DefaultRules_Pass()

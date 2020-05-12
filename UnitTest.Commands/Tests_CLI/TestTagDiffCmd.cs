@@ -16,6 +16,19 @@ namespace ApplicationInspector.Unitprocess.CLICommands
     [TestClass]
     public class CLITestTagDiffCmd
     {
+        [TestCleanup]
+        public void CleanOuput()
+        {
+            try
+            {
+                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+            }
+            catch
+            {
+
+            }
+        }
+
         [TestMethod]
         public void Equality_Pass()
         {
