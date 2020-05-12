@@ -288,7 +288,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"tagtest -s {0} -r {1} -f unknown -k none -o {2} -l {3}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),

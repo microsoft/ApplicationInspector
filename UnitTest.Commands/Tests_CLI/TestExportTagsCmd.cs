@@ -357,6 +357,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
+                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
                 string args = string.Format(@"exporttags -x none -f text -o {0}",
                          Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"exporttags.txt"));
 

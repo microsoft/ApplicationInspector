@@ -504,6 +504,8 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
+                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
+
                 string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -x none -f text -k none -o {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
