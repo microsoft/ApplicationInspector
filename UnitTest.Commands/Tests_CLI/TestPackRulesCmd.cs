@@ -9,6 +9,28 @@ namespace ApplicationInspector.Unitprocess.CLICommands
     [TestClass]
     public class CLITestPackRulesCmd
     {
+        [TestInitialize]
+        public void InitOutput()
+        {
+            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+        }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            try
+            {
+                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+            }
+            catch
+            {
+            }
+
+            //because these are static and each test is meant to be indpendent null assign the references to create the log
+            WriteOnce.Log = null;
+            Utils.Logger = null;
+        }
+
         [TestMethod]
         [Ignore] //default option won't find rules unless run from CLI; todo to look at addressed
         public void DefaultRules_Pass()
@@ -16,11 +38,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -d -l {0}",
+                string args = string.Format(@"packrules -d -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -36,11 +57,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -l {0}",
+                string args = string.Format(@"packrules -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -56,13 +76,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -o {1} -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"packedrules.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -79,13 +98,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f text -o {1} -l {2}",
+                string args = string.Format(@"packrules -r {0} -f text -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -101,13 +119,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -o {1} -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -123,13 +140,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -o {1} -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -145,13 +161,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -o {1} -v trace -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -o {1} -v trace -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == PackRulesResult.ExitCode.Success)
                 {
@@ -184,12 +199,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f text -l {1}",
+                string args = string.Format(@"packrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"\badir\myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == PackRulesResult.ExitCode.CriticalError)
                 {
@@ -218,13 +232,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -o {1} -v debug -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -o {1} -v debug -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == PackRulesResult.ExitCode.Success)
                 {
@@ -253,12 +266,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f text -l {1}",
+                string args = string.Format(@"packrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\badir\log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -274,12 +286,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f text -l {1}",
+                string args = string.Format(@"packrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -296,7 +307,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f json -x none -o {1} -l {2}",
+                string args = string.Format(@"packrules -r {0} -f json -x none -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"packedrules.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -324,12 +335,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"packrules -r {0} -f text -x none -l {1}",
+                string args = string.Format(@"packrules -r {0} -f text -x none -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (PackRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (PackRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {

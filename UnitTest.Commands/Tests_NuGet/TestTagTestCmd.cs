@@ -15,6 +15,28 @@ namespace ApplicationInspector.Unitprocess.Commands
     [TestClass]
     public class TestTagTestCmd
     {
+        [TestInitialize]
+        public void InitOutput()
+        {
+            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+        }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            try
+            {
+                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+            }
+            catch
+            {
+            }
+
+            //because these are static and each test is meant to be indpendent null assign the references to create the log
+            WriteOnce.Log = null;
+            Utils.Logger = null;
+        }
+
         [TestMethod]
         public void RulesPresent_Pass()
         {
@@ -36,10 +58,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 exitCode = TagTestResult.ExitCode.CriticalError;
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
@@ -66,10 +84,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestFailed);
         }
 
@@ -94,10 +108,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 exitCode = TagTestResult.ExitCode.CriticalError;
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
@@ -126,10 +136,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = TagTestResult.ExitCode.CriticalError;
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
 
@@ -156,10 +162,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = TagTestResult.ExitCode.CriticalError;
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestFailed);
         }
 
@@ -185,10 +187,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);
         }
 
@@ -213,10 +211,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 //check for specific error if desired
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestFailed);
         }
@@ -244,10 +238,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
 
@@ -274,10 +264,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestFailed);
         }
 
@@ -301,10 +287,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 //check for specific error if desired
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);
         }
@@ -343,10 +325,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = TagTestResult.ExitCode.CriticalError;
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
 
@@ -381,10 +359,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                     exitCode = TagTestResult.ExitCode.CriticalError;
                 }
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
@@ -423,10 +397,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }
 
@@ -453,10 +423,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = TagTestResult.ExitCode.CriticalError;
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
 
@@ -481,10 +447,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             catch (Exception)
             {
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);
         }
@@ -539,10 +501,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             var standardOutput = new StreamWriter(Console.OpenStandardOutput());
             standardOutput.AutoFlush = true;
             Console.SetOut(standardOutput);
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestPassed);
         }

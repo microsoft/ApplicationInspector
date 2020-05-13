@@ -17,6 +17,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private const string KeywordIgnore = "ignore";
         private const string KeywordAll = "all";
         private const string KeywordUntil = "until";
+        private const string pattern = @"\s*" + KeywordPrefix + @"\s+" + KeywordIgnore + @"\s([a-zA-Z\d,:]+)(\s+" + KeywordUntil + @"\s\d{4}-\d{2}-\d{2}|)";
+
+        private Regex reg = new Regex(pattern,RegexOptions.Compiled);
+        private Regex dateReg = new Regex(@"(\d{4}-\d{2}-\d{2})",RegexOptions.Compiled);
 
         /// <summary>
         /// Creates new instance of Supressor
@@ -70,8 +74,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 return;
             }
 
-            string pattern = @"\s*" + KeywordPrefix + @"\s+" + KeywordIgnore + @"\s([a-zA-Z\d,:]+)(\s+" + KeywordUntil + @"\s\d{4}-\d{2}-\d{2}|)";
-            Regex reg = new Regex(pattern);
             Match match = reg.Match(_text);
 
             if (match.Success)
@@ -86,8 +88,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 if (match.Groups.Count > 2)
                 {
                     string date = match.Groups[2].Value;
-                    reg = new Regex(@"(\d{4}-\d{2}-\d{2})");
-                    Match m = reg.Match(date);
+                    Match m = dateReg.Match(date);
                     if (m.Success)
                     {
                         _expirationDate = DateTime.ParseExact(m.Value, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);

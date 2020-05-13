@@ -10,17 +10,38 @@ namespace ApplicationInspector.Unitprocess.CLICommands
     [TestClass]
     public class CLITestExportTagsCmd
     {
+        [TestInitialize]
+        public void InitOutput()
+        {
+            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+        }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            try
+            {
+                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+            }
+            catch
+            {
+            }
+
+            //because these are static and each test is meant to be indpendent null assign the references to create the log
+            WriteOnce.Log = null;
+            Utils.Logger = null;
+        }
+
         [TestMethod]
         public void BasicTxtOutput_Pass()
         {
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -f text -l {0}",
+                string args = string.Format(@"exporttags -f text -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -36,11 +57,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -f json -l {0}",
+                string args = string.Format(@"exporttags -f json -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -56,11 +76,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -f html -l {0}",
+                string args = string.Format(@"exporttags -f html -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -76,11 +95,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -f unknown -l {0}",
+                string args = string.Format(@"exporttags -f unknown -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -96,11 +114,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -i -f text -l {0}",
+                string args = string.Format(@"exporttags -i -f text -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -116,12 +133,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -i -r {0} -f text  -l {1}",
+                string args = string.Format(@"exporttags -i -r {0} -f text  -l {1}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -137,12 +153,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -r {0} -f text -l {1}",
+                string args = string.Format(@"exporttags -r {0} -f text -l {1}",
                   Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                   Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -158,11 +173,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -i -f text -l {0}",
+                string args = string.Format(@"exporttags -i -f text -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -178,14 +192,13 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -o {0} -f text -l {1}",
+                string args = string.Format(@"exporttags -o {0} -f text -l {1}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"exporttags.txt"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
                 File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"exporttags.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == ExportTagsResult.ExitCode.Success)
                 {
@@ -210,8 +223,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -o {0} -f json -v trace -l {1}",
+                string args = string.Format(@"exporttags -o {0} -f json -v trace -l {1}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -220,7 +232,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                     File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
                 }
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == ExportTagsResult.ExitCode.Success)
                 {
@@ -243,12 +255,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -o {0} -f text -l {1}",
+                string args = string.Format(@"exporttags -o {0} -f text -l {1}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\exporttags.txt"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -264,12 +275,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -o {0} -f json -l {1} -v trace ",
+                string args = string.Format(@"exporttags -o {0} -f json -l {1} -v trace ",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"exporttags.txt"),
                      Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
                 exitCode = testContent.ToLower().Contains("trace") ? ExportTagsResult.ExitCode.Success : ExportTagsResult.ExitCode.CriticalError;
@@ -287,12 +297,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -o {0} -f json -l {1} -v error",
+                string args = string.Format(@"exporttags -o {0} -f json -l {1} -v error",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\exporttags.txt"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
                 exitCode = testContent.ToLower().Contains("error") ? ExportTagsResult.ExitCode.Success : ExportTagsResult.ExitCode.CriticalError;
@@ -310,13 +319,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -o {0} -r {1} -f json -l {2} -v debug",
+                string args = string.Format(@"exporttags -o {0} -r {1} -f json -l {2} -v debug",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"exporttags.txt"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"mybadrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
                 exitCode = testContent.ToLower().Contains("debug") ? ExportTagsResult.ExitCode.Success : ExportTagsResult.ExitCode.CriticalError;
@@ -334,12 +342,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -o {0} -f json -l {1} ",
+                string args = string.Format(@"exporttags -o {0} -f json -l {1} ",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"exporttags.txt"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"badir\log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -354,11 +361,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -f json -l {0}",
+                string args = string.Format(@"exporttags -f json -l {0}",
                      Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -374,7 +380,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -x none -f text -o {0}",
+                string args = string.Format(@"exporttags -x none -f text -o {0}",
                          Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"exporttags.txt"));
 
                 exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args, out string testContent);
@@ -397,11 +403,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"exporttags -x none -f text -l {0}",
+                string args = string.Format(@"exporttags -x none -f text -l {0}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (ExportTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (ExportTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {

@@ -9,6 +9,28 @@ namespace ApplicationInspector.Unitprocess.CLICommands
     [TestClass]
     public class CLITestVerifyRulesCmd
     {
+        [TestInitialize]
+        public void InitOutput()
+        {
+            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+        }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            try
+            {
+                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+            }
+            catch
+            {
+            }
+
+            //because these are static and each test is meant to be indpendent null assign the references to create the log
+            WriteOnce.Log = null;
+            Utils.Logger = null;
+        }
+
         [TestMethod]
         [Ignore] //default option won't find rules unless run from CLI; todo to look at addressed
         public void DefaultRules_Pass()
@@ -16,11 +38,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -d -f text -l {0}",
+                string args = string.Format(@"verifyrules -d -f text -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -36,11 +57,10 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -f text -l {0}",
+                string args = string.Format(@"verifyrules -f text -l {0}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -56,12 +76,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -77,13 +96,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f json -o {1} -l {2}",
+                string args = string.Format(@"verifyrules -r {0} -f json -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -99,13 +117,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f json -o {1} -l {2}",
+                string args = string.Format(@"verifyrules -r {0} -f json -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -121,13 +138,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f unknown -o {1} -l {2}",
+                string args = string.Format(@"verifyrules -r {0} -f unknown -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -143,13 +159,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -165,12 +180,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -v trace -f text -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -v trace -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == VerifyRulesResult.ExitCode.Verified)
                 {
@@ -203,12 +217,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"\badir\myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == VerifyRulesResult.ExitCode.CriticalError)
                 {
@@ -237,12 +250,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -v debug -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -v debug -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.defaultRules)),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
                 if (exitCode == VerifyRulesResult.ExitCode.Verified)
                 {
@@ -271,12 +283,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\badir\log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -291,12 +302,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {
@@ -312,7 +322,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -x none -o {1} -l {2}",
+                string args = string.Format(@"verifyrules -r {0} -f text -x none -o {1} -l {2}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -337,12 +347,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
-                string args = String.Format(@"verifyrules -r {0} -f text -x none -l {1}",
+                string args = string.Format(@"verifyrules -r {0} -f text -x none -l {1}",
                         Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                         Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (VerifyRulesResult.ExitCode)Helper.RunProcess(appInspectorPath, args);
+                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
             {

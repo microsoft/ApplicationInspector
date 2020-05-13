@@ -15,7 +15,7 @@ namespace Microsoft.ApplicationInspector.Commands
     public class MetaDataHelper
     {
         //inhouse common properties to capture
-        private readonly Dictionary<string, string> _propertyTagSearchPatterns;
+        private readonly Dictionary<string, Regex> _propertyTagSearchPatterns;
 
         public MetaData Metadata { get; set; }
 
@@ -24,11 +24,13 @@ namespace Microsoft.ApplicationInspector.Commands
             sourcePath = Path.GetFullPath(sourcePath);//normalize for .\ and similar
             Metadata = new MetaData(GetDefaultProjectName(sourcePath), sourcePath);
 
-            _propertyTagSearchPatterns = new Dictionary<string, string>();
-            _propertyTagSearchPatterns.Add("strGrpOSTargets", ".OS.Targets");
-            _propertyTagSearchPatterns.Add("strGrpCloudTargets", ".Cloud");
-            _propertyTagSearchPatterns.Add("strGrpOutputs", ".Outputs");
-            _propertyTagSearchPatterns.Add("strGrpCPUTargets", ".CPU");
+            _propertyTagSearchPatterns = new Dictionary<string, Regex>()
+            {
+                { "strGrpOSTargets", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) },
+                { "strGrpCloudTargets", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) },
+                { "strGrpOutputs", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) },
+                { "strGrpCPUTargets", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) }
+            };
         }
 
         /// <summary>
@@ -41,8 +43,7 @@ namespace Microsoft.ApplicationInspector.Commands
             //aggregate lists of matches against standard set of properties to report on
             foreach (string key in _propertyTagSearchPatterns.Keys)
             {
-                var tagPatternRegex = new Regex(_propertyTagSearchPatterns[key], RegexOptions.IgnoreCase);
-                if (matchRecord.Tags.Any(v => tagPatternRegex.IsMatch(v)))
+                if (matchRecord.Tags.Any(v => _propertyTagSearchPatterns[key].IsMatch(v)))
                 {
                     Metadata.KeyedPropertyLists[key].Add(matchRecord.Sample);
                 }
@@ -102,7 +103,7 @@ namespace Microsoft.ApplicationInspector.Commands
             matchRecord.Sample = System.Net.WebUtility.HtmlEncode(matchRecord.Sample);
 
             //Special handling; attempt to detect app types...review for multiple pattern rule limitation
-            String solutionType = DetectSolutionType(matchRecord);
+            string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
             {
                 Metadata.AppTypes.Add(solutionType);
@@ -133,7 +134,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else
             {
-                Metadata.TotalMatchesCount -= 1;//reduce e.g. tag counters not included as detailed match
+                Metadata.IncrementTotalMatchesCount(-1);//reduce e.g. tag counters not included as detailed match
             }
         }
 
@@ -143,14 +144,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="language"></param>
         public void AddLanguage(string language)
         {
-            if (Metadata.Languages.ContainsKey(language))
-            {
-                Metadata.Languages[language]++;
-            }
-            else
-            {
-                Metadata.Languages.Add(language, 1);
-            }
+            Metadata.Languages.AddOrUpdate(language, 1, (language, count) => count + 1);
         }
 
         /// <summary>
@@ -191,7 +185,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// WebApplications, Windows Services, Client Apps, WebServices, Azure Functions etc.
         /// </summary>
         /// <param name="match"></param>
-        public String DetectSolutionType(MatchRecord match)
+        public string DetectSolutionType(MatchRecord match)
         {
             string result = "";
             if (match.Tags.Any(s => s.Contains("Application.Type")))

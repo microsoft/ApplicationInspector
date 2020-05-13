@@ -30,7 +30,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "JSON\\.createParser|JObject\\.Parse",
+        "pattern": "JSON\\.createParser|JObject\\.Parse|JsonConvert|JsonSerializer",
         "confidence": "high",
         "type": "regex",
         "scopes": [

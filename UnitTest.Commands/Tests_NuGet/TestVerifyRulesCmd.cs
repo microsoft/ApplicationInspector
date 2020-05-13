@@ -9,6 +9,28 @@ namespace ApplicationInspector.Unitprocess.Commands
     [TestClass]
     public class TestVerifyRulesCmd
     {
+        [TestInitialize]
+        public void InitOutput()
+        {
+            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+        }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            try
+            {
+                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+            }
+            catch
+            {
+            }
+
+            //because these are static and each test is meant to be indpendent null assign the references to create the log
+            WriteOnce.Log = null;
+            Utils.Logger = null;
+        }
+
         [TestMethod]
         [Ignore] //default option won't find rules unless run from CLI; todo to look at addressed
         public void DefaultRules_Pass()

@@ -26,6 +26,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string MatchDepth { get; set; } = "best";
         public string ConfidenceFilters { get; set; } = "high,medium";
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
+        public bool SingleThread { get; set; } = false;
     }
 
     /// <summary>
@@ -71,6 +72,9 @@ namespace Microsoft.ApplicationInspector.Commands
         private DateTime DateScanned { get; set; }
 
         private DateTime _lastUpdated;
+
+        //save all unique dependencies even if Dependency tag pattern is not-unique
+        private Regex tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Updated dynamically to more recent file in source
@@ -162,7 +166,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigConfidenceFilters", LogLevel.Trace);
             //parse and verify confidence values
-            if (String.IsNullOrEmpty(_options.ConfidenceFilters))
+            if (string.IsNullOrEmpty(_options.ConfidenceFilters))
             {
                 _confidence = Confidence.High | Confidence.Medium; //excludes low by default
             }
@@ -191,7 +195,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
 
-            if (String.IsNullOrEmpty(_options.SourcePath))
+            if (string.IsNullOrEmpty(_options.SourcePath))
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
             }
@@ -294,16 +298,15 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                _metaDataHelper.Metadata.TotalFiles = _srcfileList.Count();//updated for zipped files later
+                _metaDataHelper.Metadata.IncrementTotalFiles(_srcfileList.Count());//updated for zipped files later
 
-                // Iterate through all files and process against rules
-                foreach (string filename in _srcfileList)
+                Action<string> ProcessFile = filename =>
                 {
                     if (new FileInfo(filename).Length == 0)
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
-                        _metaDataHelper.Metadata.FilesSkipped++;
-                        continue;
+                        _metaDataHelper.Metadata.IncrementFilesSkipped();
+                        return;
                     }
 
                     ArchiveFileType archiveFileType = ArchiveFileType.UNKNOWN;
@@ -314,8 +317,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     catch (Exception e)
                     {
                         WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, LogLevel.Error);//log details
-                        Exception f = new Exception(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILE_TYPE_OPEN, filename));//report friendly version
-                        throw f;
                     }
 
                     if (archiveFileType == ArchiveFileType.UNKNOWN)//not a known zipped file type
@@ -326,6 +327,19 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         UnZipAndProcess(filename, archiveFileType, _srcfileList.Count() == 1);
                     }
+                };
+
+                if (_options.SingleThread)
+                {
+                    // Iterate through all files and process against rules
+                    foreach (string filename in _srcfileList)
+                    {
+                        ProcessFile(filename);
+                    }
+                }
+                else
+                {
+                    _srcfileList.AsParallel().ForAll(filename => ProcessFile(filename));
                 }
 
                 WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
@@ -389,7 +403,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             WriteOnce.SafeLog("Preparing to process file: " + filePath, LogLevel.Trace);
 
-            _metaDataHelper.Metadata.FilesAnalyzed++;
+            _metaDataHelper.Metadata.IncrementFilesAnalyzed();
 
             int totalFilesReviewed = _metaDataHelper.Metadata.FilesAnalyzed + _metaDataHelper.Metadata.FilesSkipped;
             int percentCompleted = (int)((float)totalFilesReviewed / (float)_metaDataHelper.Metadata.TotalFiles * 100);
@@ -412,17 +426,15 @@ namespace Microsoft.ApplicationInspector.Commands
             //if any matches found for this file...
             if (scanResults.Count() > 0)
             {
-                _metaDataHelper.Metadata.FilesAffected++;
-                _metaDataHelper.Metadata.TotalMatchesCount += scanResults.Count();
+                _metaDataHelper.Metadata.IncrementFilesAffected();
+                _metaDataHelper.Metadata.IncrementTotalMatchesCount(scanResults.Count());
 
                 // Iterate through each match issue
                 foreach (ScanResult scanResult in scanResults)
                 {
                     WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", scanResult.Rule.Id, scanResult.Rule.Name, filePath), LogLevel.Trace);
 
-                    //save all unique dependencies even if Dependency tag pattern is not-unique
-                    var tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
-                    String textMatch = string.Empty;
+                    string textMatch = string.Empty;
 
                     if (scanResult.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))
                     {
@@ -499,7 +511,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private string ExtractExcerpt(string text, int startLineNumber, int length = 10)
         {
-            if (String.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(text))
             {
                 return "";
             }
@@ -560,9 +572,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 rawResult = text.Substring(startIndex, endIndex - startIndex).Trim();
 
-                //recreate regex used to find entire value
-                Regex regex = new Regex(pattern.Pattern);
-                MatchCollection matches = regex.Matches(rawResult);
+                MatchCollection matches = pattern.Expression.Matches(rawResult);
 
                 //remove surrounding import or trailing comments
                 if (matches.Count > 0)
@@ -591,7 +601,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                 }
 
-                String finalResult = rawResult.Replace(";", "");
+                string finalResult = rawResult.Replace(";", "");
                 _metaDataHelper.Metadata.UniqueDependencies.Add(finalResult);
 
                 return System.Net.WebUtility.HtmlEncode(finalResult);
@@ -608,7 +618,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_fileExclusionList != null && _fileExclusionList.Any(v => filename.ToLower().Contains(v)))
             {
                 WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
-                _metaDataHelper.Metadata.FilesSkipped++;
+                _metaDataHelper.Metadata.IncrementFilesSkipped();
                 return;
             }
 
@@ -641,27 +651,51 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                IEnumerable<FileEntry> files = Extractor.ExtractFile(filename);
+                IEnumerable<FileEntry> files = Extractor.ExtractFile(filename).Where(x => x != null);
 
-                if (files.Count() > 0)
+                if (_options.SingleThread)
                 {
-                    _metaDataHelper.Metadata.TotalFiles += files.Count();//additive in case additional child zip files processed
-
                     foreach (FileEntry file in files)
                     {
-                        //check uncompressed file passes standard checks
-                        LanguageInfo languageInfo = new LanguageInfo();
-                        if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                        try
                         {
-                            byte[] streamByteArray = file.Content.ToArray();
-                            ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                            //check uncompressed file passes standard checks
+                            LanguageInfo languageInfo = new LanguageInfo();
+                            if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                            {
+                                byte[] streamByteArray = file.Content.ToArray();
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            WriteOnce.SafeLog($"Failed to Decompress file {file.FullPath}",LogLevel.Info);
                         }
                     }
                 }
                 else
                 {
-                    WriteOnce.SafeLog(string.Format("Decompression found no files in {0}", filename), LogLevel.Warn);//zero results can be valid
+                    files.AsParallel().ForAll(file =>
+                    {
+                        try
+                        {
+                            //check uncompressed file passes standard checks
+                            LanguageInfo languageInfo = new LanguageInfo();
+                            if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                            {
+                                byte[] streamByteArray = file.Content.ToArray();
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine($"Failed to parse {file.FullPath}");
+                        }
+                    });
                 }
+
+                // Do this at the end so we don't force the IEnumerable to populate before we walk it
+                _metaDataHelper.Metadata.IncrementTotalFiles(files.Count());//additive in case additional child zip files processed
             }
             catch (Exception)
             {
@@ -686,7 +720,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!Language.FromFileName(filePath, ref languageInfo))
             {
                 WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_LANGUAGE_NOTFOUND, filePath), LogLevel.Warn);
-                _metaDataHelper.Metadata.FilesSkipped++;
+                _metaDataHelper.Metadata.IncrementFilesSkipped();
                 return false;
             }
 
@@ -696,7 +730,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_fileExclusionList != null && _fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
             {
                 WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filePath), LogLevel.Warn);
-                _metaDataHelper.Metadata.FilesSkipped++;
+                _metaDataHelper.Metadata.IncrementFilesSkipped();
                 return false;
             }
 
@@ -707,7 +741,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (fileLength > MAX_FILESIZE)
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILESIZE_SKIPPED, filePath), LogLevel.Warn);
-                    _metaDataHelper.Metadata.FilesSkipped++;
+                    _metaDataHelper.Metadata.IncrementFilesSkipped();
                     return false;
                 }
             }

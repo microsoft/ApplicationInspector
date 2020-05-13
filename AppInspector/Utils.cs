@@ -31,7 +31,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         public static string GetVersionString()
         {
-            return String.Format("Microsoft Application Inspector {0}", GetVersion());
+            return string.Format("Microsoft Application Inspector {0}", GetVersion());
         }
 
         public static string GetVersion()
@@ -79,7 +79,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private static string GetBaseAppPath()
         {
-            if (!String.IsNullOrEmpty(_basePath))
+            if (!string.IsNullOrEmpty(_basePath))
             {
                 return _basePath;
             }
@@ -184,7 +184,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 config = new LoggingConfiguration();
             }
 
-            if (String.IsNullOrEmpty(opts.LogFilePath))
+            if (string.IsNullOrEmpty(opts.LogFilePath))
             {
                 opts.LogFilePath = Utils.GetPath(Utils.AppPath.defaultLog);
             }
@@ -194,9 +194,9 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 // Read the file and display it line by line.
                 System.IO.StreamReader file = new System.IO.StreamReader(opts.LogFilePath);
-                String line = file.ReadLine();
+                string line = file.ReadLine();
                 file.Close();
-                if (!String.IsNullOrEmpty(line))
+                if (!string.IsNullOrEmpty(line))
                 {
                     if (line.Contains("AppInsLog"))//prevent file other than our logs from deletion
                     {
@@ -232,7 +232,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             LogLevel log_level = LogLevel.Error;//default
-            if (String.IsNullOrEmpty(opts.LogFileLevel))
+            if (string.IsNullOrEmpty(opts.LogFileLevel))
             {
                 opts.LogFileLevel = "Error";
             }

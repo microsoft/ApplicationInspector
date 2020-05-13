@@ -313,6 +313,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Additional details may be found in log file at {0}.
+        /// </summary>
+        internal static string CMD_REMINDER_CHECK_LOG {
+            get {
+                return ResourceManager.GetString("CMD_REMINDER_CHECK_LOG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} report completed.
         /// </summary>
         internal static string CMD_REPORT_DONE {

@@ -14,6 +14,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     internal class TextContainer
     {
         private static readonly int MAX_PATTERN_MATCHES = 10;
+        private Regex reg = new Regex(".*\\((.*),(.*)\\)", RegexOptions.Compiled);
+
         /// <summary>
         /// Creates new instance
         /// </summary>
@@ -151,15 +153,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             List<Boundary> matchList = new List<Boundary>();
 
-            RegexOptions reopt = RegexOptions.None;
-            if (pattern.Modifiers != null && pattern.Modifiers.Length > 0)
-            {
-                reopt |= (pattern.Modifiers.Contains("i")) ? RegexOptions.IgnoreCase : RegexOptions.None;
-                reopt |= (pattern.Modifiers.Contains("m")) ? RegexOptions.Multiline : RegexOptions.None;
-            }
-
-            Regex patRegx = new Regex(pattern.Pattern, reopt);
-            MatchCollection matches = patRegx.Matches(text);
+            MatchCollection matches = pattern.Expression.Matches(text);
             if (matches.Count > 0)
             {
                 int matchCount = 0;
@@ -182,8 +176,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         break;
                     }
                 }
-
-
             }
 
             return matchList;
@@ -309,7 +301,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             bool result = false;
             List<int> arglist = new List<int>();
 
-            Regex reg = new Regex(".*\\((.*),(.*)\\)");
             Match m = reg.Match(searchIn);
             if (m.Success)
             {
