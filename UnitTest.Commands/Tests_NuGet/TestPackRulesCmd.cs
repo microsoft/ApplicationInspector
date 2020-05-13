@@ -9,6 +9,29 @@ namespace ApplicationInspector.Unitprocess.Commands
     [TestClass]
     public class TestPackRulesCmd
     {
+        [TestInitialize]
+        public void InitOutput()
+        {
+            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+        }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            try
+            {
+                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+            }
+            catch
+            {
+            }
+
+            //because these are static and each test is meant to be indpendent null assign the references to create the log
+            WriteOnce.Log = null;
+            Utils.Logger = null;
+        }
+
+        [Ignore]
         [TestMethod]
         public void DefaultRules_Fail()
         {
@@ -28,10 +51,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 //check for specific error if desired
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
@@ -55,39 +74,10 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
 
-        [TestMethod]
-        public void CustomRulesNoOutputFilePath_Fail()
-        {
-            PackRulesOptions options = new PackRulesOptions()
-            {
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-            };
 
-            PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
-            try
-            {
-                PackRulesCommand command = new PackRulesCommand(options);
-                PackRulesResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
-            Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
-        }
 
         [TestMethod]
         public void InvalidLogPath_Fail()
@@ -110,20 +100,17 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = PackRulesResult.ExitCode.CriticalError;
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
 
+        [Ignore]
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
             PackRulesOptions options = new PackRulesOptions()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt")
+                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"main.cpp")
             };
 
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
@@ -137,10 +124,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 exitCode = PackRulesResult.ExitCode.CriticalError;
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }

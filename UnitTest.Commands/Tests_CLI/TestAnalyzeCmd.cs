@@ -16,8 +16,14 @@ namespace ApplicationInspector.Unitprocess.CLICommands
     [TestClass]
     public class CLITestAnalyzeCmd
     {
+        [TestInitialize]
+        public void InitOutput()
+        {
+            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+        }
+
         [TestCleanup]
-        public void CleanOuput()
+        public void CleanUp()
         {
             try
             {
@@ -25,8 +31,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch
             {
-
             }
+
+            //because these are static and each test is meant to be indpendent null assign the references to create the log
+            WriteOnce.Log = null;
+            Utils.Logger = null;
         }
 
 
@@ -457,12 +466,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string args = string.Format(@"analyze -s {0} -f json -l {1} -v trace -k none",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log1.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log1.txt"));
                 exitCode = testContent.ToLower().Contains("trace") ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.CriticalError;
             }
             catch (Exception)
@@ -479,12 +488,12 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
                 string args = string.Format(@"analyze -s {0} -f json -l {1} -v error -k none",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\nofile.cpp"),
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log2.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log2.txt"));
                 exitCode = testContent.ToLower().Contains("error") ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.CriticalError;
             }
             catch (Exception)
@@ -502,11 +511,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             {
                 string args = string.Format(@"analyze -s {0} -f json -l {1} -v debug -k none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log3.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log3.txt"));
                 exitCode = testContent.ToLower().Contains("debug") ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.CriticalError;
             }
             catch (Exception)

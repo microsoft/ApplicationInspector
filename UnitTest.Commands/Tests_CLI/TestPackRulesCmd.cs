@@ -9,8 +9,14 @@ namespace ApplicationInspector.Unitprocess.CLICommands
     [TestClass]
     public class CLITestPackRulesCmd
     {
+        [TestInitialize]
+        public void InitOutput()
+        {
+            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+        }
+
         [TestCleanup]
-        public void CleanOuput()
+        public void CleanUp()
         {
             try
             {
@@ -18,8 +24,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
             catch
             {
-
             }
+
+            //because these are static and each test is meant to be indpendent null assign the references to create the log
+            WriteOnce.Log = null;
+            Utils.Logger = null;
         }
 
         [TestMethod]
