@@ -310,45 +310,36 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        /// Check if rule tags have already been seen or if exception exists
+        /// Check if rule has at least one unique tag not seen before or if exception exists
         /// Assumes that _uniqueTagsOnly == true has been checked first for relevance
         /// </summary>
         /// <param name="ruleTags"></param>
         /// <returns></returns>
         private bool UniqueTagsCheck(string[] ruleTags)
         {
-            bool approved = true;
+            bool approved = false;
 
             foreach (string tag in ruleTags)
             {
-                if (_uniqueTagHashes.Contains(tag))
+                if (!_uniqueTagHashes.Contains(tag))
                 {
-                    approved = false;
-                    if (UniqueTagExceptions != null)
-                    {
-                        foreach (string tagException in UniqueTagExceptions)
-                        {
-                            approved = tag.Contains(tagException);
-                            if (approved)
-                            {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (_logger != null && !approved)
-                    {
-                        _logger.Debug(string.Format("Duplicate tag {0} not added", tag));
-                    }
-
+                    approved = true;
                     break;
                 }
-                else
+                else if (UniqueTagExceptions != null)
                 {
-                    if (_logger != null)
+                    foreach (string tagException in UniqueTagExceptions)
                     {
-                        _logger.Debug(string.Format("Unique tag {0} added", tag));
-                    }
+                        if (tag.Contains(tagException))
+                        {
+                            approved = true;
+                            break;
+                        }
+                    }                   
+                }
+                else if (_logger != null && !approved)
+                {
+                    _logger.Debug(string.Format("Duplicate tag {0} not approved for match", tag));
                 }
             }
 
@@ -364,7 +355,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             foreach (string t in ruleTags)
             {
-                _uniqueTagHashes.Add(t);
+                bool added = _uniqueTagHashes.Add(t);
+                if (_logger != null && added)
+                {
+                    _logger.Debug(string.Format("Unique tag {0} added", t));
+                }
             }
         }
 
