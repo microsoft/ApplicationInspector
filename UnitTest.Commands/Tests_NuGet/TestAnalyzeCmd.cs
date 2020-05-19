@@ -265,12 +265,11 @@ namespace ApplicationInspector.Unitprocess.Commands
         }
 
         [TestMethod]
-        public void ExclusionFilter_Fail()
+        public void ExclusionFilter_Pass()
         {
             AnalyzeOptions options = new AnalyzeOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp")
-                //FilePathExclusions = "none", //allow source under unittest path
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one")
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
