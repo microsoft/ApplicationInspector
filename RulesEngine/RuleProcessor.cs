@@ -337,7 +337,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
                     }                   
                 }
-                else if (_logger != null && !approved)
+                
+                if (_logger != null && !approved)
                 {
                     _logger.Debug(string.Format("Duplicate tag {0} not approved for match", tag));
                 }

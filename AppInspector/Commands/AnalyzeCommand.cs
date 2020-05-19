@@ -612,18 +612,16 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion ProcessingAssist
 
-        private void UnZipAndProcess(string filename, ArchiveFileType archiveFileType, bool topLevel = true)
+        private void UnZipAndProcess(string filePath, ArchiveFileType archiveFileType, bool topLevel = true)
         {
             // zip itself may be in excluded list i.e. sample, test or similar unless ignore filter requested
-            if (_fileExclusionList != null && _fileExclusionList.Any(v => filename.ToLower().Contains(v)))
+            if (ExcludeFileFromScan(filePath))
             {
-                WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
-                _metaDataHelper.Metadata.IncrementFilesSkipped();
                 return;
             }
 
             //zip itself may be too huge for timely processing
-            if (new FileInfo(filename).Length > WARN_ZIP_FILE_SIZE)
+            if (new FileInfo(filePath).Length > WARN_ZIP_FILE_SIZE)
             {
                 if (topLevel)
                 {
@@ -631,7 +629,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    WriteOnce.SafeLog("Decompressing large file " + filename, LogLevel.Warn);
+                    WriteOnce.SafeLog("Decompressing large file " + filePath, LogLevel.Warn);
                 }
             }
             else
@@ -642,16 +640,16 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    WriteOnce.SafeLog("Decompressing file " + filename, LogLevel.Warn);
+                    WriteOnce.SafeLog("Decompressing file " + filePath, LogLevel.Warn);
                 }
             }
 
-            LastUpdated = File.GetLastWriteTime(filename);
+            LastUpdated = File.GetLastWriteTime(filePath);
             _metaDataHelper.Metadata.PackageTypes.Add(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILETYPE));
 
             try
             {
-                IEnumerable<FileEntry> files = Extractor.ExtractFile(filename).Where(x => x != null);
+                IEnumerable<FileEntry> files = Extractor.ExtractFile(filePath).Where(x => x != null);
 
                 if (_options.SingleThread)
                 {
@@ -699,7 +697,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             catch (Exception)
             {
-                string errmsg = MsgHelp.FormatString(MsgHelp.ID.ANALYZE_COMPRESSED_ERROR, filename);
+                string errmsg = MsgHelp.FormatString(MsgHelp.ID.ANALYZE_COMPRESSED_ERROR, filePath);
                 WriteOnce.Error(errmsg);
                 throw;
             }
@@ -726,11 +724,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
             _metaDataHelper.AddLanguage(languageInfo.Name);
 
-            // 2. Skip excluded files i.e. sample, test or similar unless ignore filter requested
-            if (_fileExclusionList != null && _fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
+            // 2. Check for exclusions
+            if (ExcludeFileFromScan(filePath))
             {
-                WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filePath), LogLevel.Warn);
-                _metaDataHelper.Metadata.IncrementFilesSkipped();
                 return false;
             }
 
@@ -752,6 +748,31 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             return true;
+        }
+
+
+        /// <summary>
+        /// Allow callers to exclude files that are not core code files and may otherwise report false positives for matches
+        /// Does not apply to root scan folder which may be named .\test etc. but to subdirectories only
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        private bool ExcludeFileFromScan(string filePath)
+        {
+            string rootScanDirectory = Directory.Exists(_options.SourcePath) ? _options.SourcePath : Path.GetDirectoryName(_options.SourcePath);
+            bool scanningRootFolder = Path.GetDirectoryName(filePath).ToLower() == rootScanDirectory.ToLower();
+            // 2. Skip excluded files i.e. sample, test or similar from sub-directories (not root #210) unless ignore filter requested
+            if (!scanningRootFolder)
+            {
+                if (_fileExclusionList != null && _fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
+                {
+                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filePath), LogLevel.Warn);
+                    _metaDataHelper.Metadata.IncrementFilesSkipped();
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
