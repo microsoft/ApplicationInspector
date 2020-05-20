@@ -2,6 +2,11 @@ name: "Code Scanning - Application Inspector"
 
 on:
   push:
+    paths:
+    - AppInspector/*
+    - AppInspector.CLI/*
+    - MultiExtractor/*
+    - RulesEngine/*
   schedule:
     - cron: '0 7 * * 5'
 
