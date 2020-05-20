@@ -1,7 +1,0 @@
-extraction:
-  csharp:
-    index:
-      solution: "AppInspector.sln"
-      dotnet:
-        arguments: "-c release"
-        version: "3.1.201"
