@@ -650,7 +650,7 @@ namespace Microsoft.ApplicationInspector.Commands
             try
             {
                 var extractor = new Extractor();
-                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath,!_options.SingleThread).Where(x => x != null);
+                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath,!_options.SingleThread);
 
                 if (_options.SingleThread)
                 {
