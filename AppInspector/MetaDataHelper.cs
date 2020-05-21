@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -99,19 +100,16 @@ namespace Microsoft.ApplicationInspector.Commands
                 _ = Metadata.AppTypes.TryAdd(solutionType,0);
             }
 
-            bool counterOnlyTag = false;
-            foreach (MetricTagCounter counter in Metadata.TagCounters)
+            bool CounterOnlyTagSet = false;
+            var selected = Metadata.TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Tag)));
+            foreach (var select in selected)
             {
-                if (matchRecord.Tags.Any(v => v.Contains(counter.Tag)))
-                {
-                    counterOnlyTag = true;
-                    counter.IncrementCount();
-                    break;
-                }
+                CounterOnlyTagSet = true;
+                select.IncrementCount();
             }
 
-            //omit adding if only a counter metric tag
-            if (!counterOnlyTag)
+            //omit adding if ther a counter metric tag
+            if (!CounterOnlyTagSet)
             {
                 //update list of unique tags as we go
                 foreach (string tag in matchRecord.Tags)
