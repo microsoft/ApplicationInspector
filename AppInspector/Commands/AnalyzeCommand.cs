@@ -9,8 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -100,7 +102,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _options = opt;
             _options.MatchDepth ??= "best";
-
+            Console.WriteLine(opt.SingleThread);
             if (!string.IsNullOrEmpty(opt.FilePathExclusions))
             {
                 _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").ToList<string>();
@@ -199,7 +201,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
             }
-
+            
             if (Directory.Exists(_options.SourcePath))
             {
                 try
@@ -289,7 +291,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public AnalyzeResult GetResult()
         {
             WriteOnce.SafeLog("AnalyzeCommand::Run", LogLevel.Trace);
-
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
             AnalyzeResult analyzeResult = new AnalyzeResult()
             {
@@ -339,7 +340,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    _srcfileList.AsParallel().ForAll(filename => ProcessFile(filename));
+                    Parallel.ForEach(_srcfileList, filename => ProcessFile(filename));
                 }
 
                 WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
