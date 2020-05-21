@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -49,6 +50,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
 
+            //Update metric counters for default or user specified tags; don't add as match detail
+            bool counterOnlyTag = false;
+
             foreach (var tag in matchRecord.Tags)
             {
                 switch (tag)
@@ -80,9 +84,17 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             Metadata.TagCounters.Push(new MetricTagCounter()
                             {
-                                Tag = tag,
-                                Count = 0
+                                Tag = tag
                             });
+                        }
+                        else
+                        {
+                            var selectedTagCounters = Metadata.TagCounters.Where(x => tag.Contains(x.Tag));
+                            if (selectedTagCounters.Any() && !counterOnlyTag)
+                            {
+                                counterOnlyTag = true;
+                                selectedTagCounters.First().IncrementCount();
+                            }
                         }
                         break;
                 }
@@ -98,17 +110,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 _ = Metadata.AppTypes.TryAdd(solutionType,0);
             }
 
-            //Update metric counters for default or user specified tags; don't add as match detail
-            bool counterOnlyTag = false;
-            foreach (MetricTagCounter counter in Metadata.TagCounters)
-            {
-                if (matchRecord.Tags.Any(v => v.Contains(counter.Tag)))
-                {
-                    counterOnlyTag = true;
-                    counter.Count++;
-                    break;
-                }
-            }
+
 
             //omit adding if only a counter metric tag
             if (!counterOnlyTag)
