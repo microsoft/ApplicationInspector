@@ -51,8 +51,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //Update metric counters for default or user specified tags; don't add as match detail
-            bool counterOnlyTag = false;
-
             foreach (var tag in matchRecord.Tags)
             {
                 switch (tag)
@@ -87,15 +85,6 @@ namespace Microsoft.ApplicationInspector.Commands
                                 Tag = tag
                             });
                         }
-                        else
-                        {
-                            var selectedTagCounters = Metadata.TagCounters.Where(x => tag.Contains(x.Tag));
-                            if (selectedTagCounters.Any() && !counterOnlyTag)
-                            {
-                                counterOnlyTag = true;
-                                selectedTagCounters.First().IncrementCount();
-                            }
-                        }
                         break;
                 }
             }
@@ -110,7 +99,16 @@ namespace Microsoft.ApplicationInspector.Commands
                 _ = Metadata.AppTypes.TryAdd(solutionType,0);
             }
 
-
+            bool counterOnlyTag = false;
+            foreach (MetricTagCounter counter in Metadata.TagCounters)
+            {
+                if (matchRecord.Tags.Any(v => v.Contains(counter.Tag)))
+                {
+                    counterOnlyTag = true;
+                    counter.IncrementCount();
+                    break;
+                }
+            }
 
             //omit adding if only a counter metric tag
             if (!counterOnlyTag)
