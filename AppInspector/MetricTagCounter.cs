@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -14,9 +15,16 @@ namespace Microsoft.ApplicationInspector.Commands
         public string Tag { get; set; }
 
         [JsonProperty(PropertyName = "count")]
-        public int Count { get; set; }
+        public int Count { get { return _count; } }
 
         [JsonProperty(PropertyName = "includeAsMatch")]
         public bool IncludeAsMatch => false;
+
+        private int _count = 0;
+
+        internal void IncrementCount(int amount = 1)
+        {
+            Interlocked.Add(ref _count, amount);
+        }
     }
 }

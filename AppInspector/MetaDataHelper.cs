@@ -49,54 +49,43 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
 
-            // single standard properties we capture from any supported file type; others just captured as general tag matches...
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Author")))
+            //Update metric counters for default or user specified tags; don't add as match detail
+            foreach (var tag in matchRecord.Tags)
             {
-                Metadata.Authors = ExtractValue(matchRecord.Sample);
-            }
-
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Publisher")))
-            {
-                Metadata.Authors = ExtractValue(matchRecord.Sample);
-            }
-
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Description")))
-            {
-                Metadata.Description = ExtractValue(matchRecord.Sample);
-            }
-
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Name")))
-            {
-                Metadata.ApplicationName = ExtractValue(matchRecord.Sample);
-            }
-
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Version")))
-            {
-                Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
-            }
-
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Target.Processor")))
-            {
-                _ = Metadata.CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
-            }
-
-            if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Output.Type")))
-            {
-                _ = Metadata.Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
-            }
-
-            if (matchRecord.Tags.Any(v => v.Contains("Platform.OS")))
-            {
-                _ = Metadata.OSTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
-            }
-
-            if (matchRecord.Tags.Any(v => v.Contains("Metric.")))
-            {
-                Metadata.TagCounters.Add(new MetricTagCounter()
+                switch (tag)
                 {
-                    Tag = matchRecord.Tags[0],
-                    Count = 0
-                });
+                    case "Metadata.Application.Author":
+                    case "Metadata.Application.Publisher":
+                        Metadata.Authors = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Description":
+                        Metadata.Description = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Name":
+                        Metadata.ApplicationName = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Version":
+                        Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Target.Processor":
+                        _ = Metadata.CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        break;
+                    case "Metadata.Application.Output.Type":
+                        _ = Metadata.Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        break;
+                    case "Platform.OS":
+                        _ = Metadata.OSTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        break;
+                    default:
+                        if (tag.Contains("Metric."))
+                        {
+                            Metadata.TagCounters.Push(new MetricTagCounter()
+                            {
+                                Tag = tag
+                            });
+                        }
+                        break;
+                }
             }
 
             //safeguard sample output now that we've matched properties for blocking browser xss
@@ -109,20 +98,16 @@ namespace Microsoft.ApplicationInspector.Commands
                 _ = Metadata.AppTypes.TryAdd(solutionType,0);
             }
 
-            //Update metric counters for default or user specified tags; don't add as match detail
-            bool counterOnlyTag = false;
-            foreach (MetricTagCounter counter in Metadata.TagCounters)
+            bool CounterOnlyTagSet = false;
+            var selected = Metadata.TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Tag)));
+            foreach (var select in selected)
             {
-                if (matchRecord.Tags.Any(v => v.Contains(counter.Tag)))
-                {
-                    counterOnlyTag = true;
-                    counter.Count++;
-                    break;
-                }
+                CounterOnlyTagSet = true;
+                select.IncrementCount();
             }
 
-            //omit adding if only a counter metric tag
-            if (!counterOnlyTag)
+            //omit adding if ther a counter metric tag
+            if (!CounterOnlyTagSet)
             {
                 //update list of unique tags as we go
                 foreach (string tag in matchRecord.Tags)
