@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.ApplicationInspector.RulesEngine;
-using MultiExtractor;
+using Microsoft.CST.OpenSource.MultiExtractor;
 using Newtonsoft.Json;
 using NLog;
 using System;
@@ -200,7 +200,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
             }
-            
+
             if (Directory.Exists(_options.SourcePath))
             {
                 try
@@ -649,7 +649,8 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                IEnumerable<FileEntry> files = Extractor.ExtractFile(filePath).Where(x => x != null);
+                var extractor = new Extractor();
+                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath,!_options.SingleThread).Where(x => x != null);
 
                 if (_options.SingleThread)
                 {
@@ -661,8 +662,9 @@ namespace Microsoft.ApplicationInspector.Commands
                             LanguageInfo languageInfo = new LanguageInfo();
                             if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                             {
-                                byte[] streamByteArray = file.Content.ToArray();
-                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                                var streamByteArray = new byte[file.Content.Length];
+                                file.Content.Read(streamByteArray);
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
                             }
                         }
                         catch (Exception)
@@ -681,8 +683,9 @@ namespace Microsoft.ApplicationInspector.Commands
                             LanguageInfo languageInfo = new LanguageInfo();
                             if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                             {
-                                byte[] streamByteArray = file.Content.ToArray();
-                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                                var streamByteArray = new byte[file.Content.Length];
+                                file.Content.Read(streamByteArray);
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
                             }
                         }
                         catch (Exception)

@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Microsoft.CST.OpenSource</RootNamespace>
+    <Company>Microsoft Corporation</Company>
+    <Description>OSS Gadget - Recursive Multi-Format Extractor</Description>
+    <Authors>Michael Scovetta</Authors>
+    <RepositoryType>GitHub</RepositoryType>
+    <RepositoryUrl>https://github.com/Microsoft/OSSGadget</RepositoryUrl>
+    <Configurations>Debug;Release</Configurations>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>Enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DiscUtils.Btrfs" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.Core" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.Ext" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.Fat" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.HfsPlus" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.Iso9660" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.Ntfs" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.Vhd" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.Vhdx" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.Vmdk" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.Wim" Version="0.15.1-ci0002" />
+    <PackageReference Include="DiscUtils.Xfs" Version="0.15.1-ci0002" />
+    <PackageReference Include="NLog" Version="4.7.0" />
+    <PackageReference Include="SharpCompress" Version="0.25.0" />
+    <PackageReference Include="SharpZipLib" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.1.91" />
+  </ItemGroup>
+</Project>

@@ -9,10 +9,10 @@ using Microsoft.ApplicationInspector.Commands;
 
 namespace Benchmarks
 {
-    [ConcurrencyVisualizerProfiler]
+    //[ConcurrencyVisualizerProfiler]
     public class AnalyzeBenchmark
     {
-        private const string path = "D:\\GitHub\\ApplicationInspector\\UnitTest.Commands";
+        private const string path = "D:\\GitHub\\ApplicationInspector\\UnitTest.Commands\\source\\unzipped";
 
         public AnalyzeBenchmark()
         {
