@@ -190,7 +190,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected tag counters i.e. metrics
         /// </summary>
         [JsonProperty(PropertyName = "tagCounters")]
-        public List<MetricTagCounter> TagCounters { get; set; }
+        public ConcurrentStack<MetricTagCounter> TagCounters { get; set; }
 
         /// <summary>
         /// List of detailed MatchRecords from scan
@@ -225,7 +225,7 @@ namespace Microsoft.ApplicationInspector.Commands
             };
 
             Languages = new ConcurrentDictionary<string, int>();
-            TagCounters = new List<MetricTagCounter>();
+            TagCounters = new ConcurrentStack<MetricTagCounter>();
         }
 
         internal void IncrementFilesAnalyzed(int amount = 1)
