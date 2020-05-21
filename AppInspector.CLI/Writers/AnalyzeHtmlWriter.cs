@@ -83,7 +83,7 @@ namespace Microsoft.ApplicationInspector.CLI
             hashData["ostargets"] = _appMetaData.OSTargets;
             hashData["outputs"] = _appMetaData.Outputs;
             hashData["filetypes"] = _appMetaData.FileExtensions;
-            hashData["tagcounters"] = ConvertTagCounters(_appMetaData.TagCounters).ToList();
+            hashData["tagcounters"] = ConvertTagCounters(_appMetaData.TagCounters);
 
             //final render and close
             var htmlResult = htmlTemplate.Render(hashData);
@@ -508,17 +508,17 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <summary>
         /// Opportunity for any final data prep before report gen
         /// </summary>
-        public IEnumerable<TagCounterUI> ConvertTagCounters(IEnumerable<MetricTagCounter> metricTagCounters)
+        public List<TagCounterUI> ConvertTagCounters(IEnumerable<MetricTagCounter> metricTagCounters)
         {
-            ConcurrentStack<TagCounterUI> result = new ConcurrentStack<TagCounterUI>();
+            List<TagCounterUI> result = new List<TagCounterUI>();
             //TagCountersUI is liquid compatible while TagCounters is not to support json serialization; the split prevents exception
             //not fixable via json iteration disabling
 
-            result.PushRange(metricTagCounters.Select(counter => new TagCounterUI()
+            result.AddRange(metricTagCounters.Select(counter => new TagCounterUI()
             {
                 Tag = counter.Tag,
                 Count = counter.Count
-            }).ToArray());
+            }));
 
             return result;
         }
