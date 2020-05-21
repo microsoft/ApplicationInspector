@@ -3,6 +3,7 @@
 
 using NLog;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,7 +19,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private Confidence ConfidenceLevelFilter { get; set; }
         private readonly bool _stopAfterFirstPatternMatch;
         private readonly bool _uniqueTagMatchesOnly;
-        private readonly HashSet<string> _uniqueTagHashes;
+        private readonly ConcurrentDictionary<string,byte> _uniqueTagHashes;
         private readonly Logger _logger;
         private RuleSet _ruleset;
         private Dictionary<string, IEnumerable<Rule>> _rulesCache;
@@ -43,7 +44,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         public RuleProcessor(RuleSet rules, Confidence confidence, bool uniqueTagMatches = false, bool stopAfterFirstPatternMatch = false, Logger logger = null)
         {
-            _uniqueTagHashes = new HashSet<string>();
+            _uniqueTagHashes = new ConcurrentDictionary<string,byte>();
             _stopAfterFirstPatternMatch = stopAfterFirstPatternMatch;
             _uniqueTagMatchesOnly = uniqueTagMatches;
             _logger = logger;
@@ -321,7 +322,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (string tag in ruleTags)
             {
-                if (!_uniqueTagHashes.Contains(tag))
+                if (_uniqueTagHashes.TryAdd(tag, 0))
                 {
                     approved = true;
                     break;
@@ -356,8 +357,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             foreach (string t in ruleTags)
             {
-                bool added = _uniqueTagHashes.Add(t);
-                if (_logger != null && added)
+                if (_uniqueTagHashes.TryAdd(t,0) && _logger != null)
                 {
                     _logger.Debug(string.Format("Unique tag {0} added", t));
                 }

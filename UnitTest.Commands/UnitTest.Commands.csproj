@@ -23,7 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\AppInspector.CLI\AppInspector.CLI.csproj" />
     <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
-    <ProjectReference Include="..\MultiExtractor\MultiExtractor.csproj" />
     <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj" />
   </ItemGroup>
 

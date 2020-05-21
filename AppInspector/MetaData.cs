@@ -15,7 +15,7 @@ namespace Microsoft.ApplicationInspector.Commands
     public class MetaData
     {
         [JsonIgnore]
-        public Dictionary<string, HashSet<string>> KeyedPropertyLists { get; } //dynamic keyed list of properties with more than one value
+        public Dictionary<string, ConcurrentDictionary<string,byte>> KeyedPropertyLists { get; } //dynamic keyed list of properties with more than one value
 
         //simple properties
         /// <summary>
@@ -116,43 +116,43 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected package types 
         /// </summary>
         [JsonProperty(PropertyName = "packageTypes")]
-        public HashSet<string> PackageTypes => KeyedPropertyLists["strGrpPackageTypes"];
+        public ConcurrentDictionary<string,byte> PackageTypes => KeyedPropertyLists["strGrpPackageTypes"];
 
         /// <summary>
         /// List of detected application types
         /// </summary>
         [JsonProperty(PropertyName = "appTypes")]
-        public HashSet<string> AppTypes => KeyedPropertyLists["strGrpAppTypes"];
+        public ConcurrentDictionary<string,byte> AppTypes => KeyedPropertyLists["strGrpAppTypes"];
 
         [JsonIgnore]
-        public HashSet<string> RulePaths { get => KeyedPropertyLists["strGrpRulePaths"]; set => KeyedPropertyLists["strGrpRulePaths"] = value; }
+        public ConcurrentDictionary<string,byte> RulePaths { get => KeyedPropertyLists["strGrpRulePaths"]; set => KeyedPropertyLists["strGrpRulePaths"] = value; }
 
         [JsonIgnore]
-        public HashSet<string> FileNames => KeyedPropertyLists["strGrpFileNames"];
+        public ConcurrentDictionary<string,byte> FileNames => KeyedPropertyLists["strGrpFileNames"];
 
         /// <summary>
         /// List of detected unique tags 
         /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
-        public HashSet<string> UniqueTags { get => KeyedPropertyLists["strGrpUniqueTags"]; set => KeyedPropertyLists["strGrpUniqueTags"] = value; }
+        public ConcurrentDictionary<string,byte> UniqueTags { get => KeyedPropertyLists["strGrpUniqueTags"]; set => KeyedPropertyLists["strGrpUniqueTags"] = value; }
 
         /// <summary>
         /// List of detected unique code dependency includes
         /// </summary>
         [JsonProperty(PropertyName = "uniqueDependencies")]
-        public HashSet<string> UniqueDependencies => KeyedPropertyLists["strGrpUniqueDependencies"];
+        public ConcurrentDictionary<string,byte> UniqueDependencies => KeyedPropertyLists["strGrpUniqueDependencies"];
 
         /// <summary>
         /// List of detected output types
         /// </summary>
         [JsonProperty(PropertyName = "outputs")]
-        public HashSet<string> Outputs => KeyedPropertyLists["strGrpOutputs"];
+        public ConcurrentDictionary<string,byte> Outputs => KeyedPropertyLists["strGrpOutputs"];
 
         /// <summary>
         /// List of detected target types
         /// </summary>
         [JsonProperty(PropertyName = "targets")]
-        public HashSet<string> Targets => KeyedPropertyLists["strGrpTargets"];
+        public ConcurrentDictionary<string,byte> Targets => KeyedPropertyLists["strGrpTargets"];
 
         /// <summary>
         /// List of detected programming languages used
@@ -164,25 +164,25 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected OS targets
         /// </summary>
         [JsonProperty(PropertyName = "OSTargets")]
-        public HashSet<string> OSTargets => KeyedPropertyLists["strGrpOSTargets"];
+        public ConcurrentDictionary<string,byte> OSTargets => KeyedPropertyLists["strGrpOSTargets"];
 
         /// <summary>
         /// LIst of detected file types (extension based)
         /// </summary>
         [JsonProperty(PropertyName = "fileExtensions")]
-        public HashSet<string> FileExtensions => KeyedPropertyLists["strGrpFileExtensions"];
+        public ConcurrentDictionary<string,byte> FileExtensions => KeyedPropertyLists["strGrpFileExtensions"];
 
         /// <summary>
         /// List of detected cloud host targets
         /// </summary>
         [JsonProperty(PropertyName = "cloudTargets")]
-        public HashSet<string> CloudTargets => KeyedPropertyLists["strGrpCloudTargets"];
+        public ConcurrentDictionary<string,byte> CloudTargets => KeyedPropertyLists["strGrpCloudTargets"];
 
         /// <summary>
         /// List of detected cpu targets
         /// </summary>
         [JsonProperty(PropertyName = "CPUTargets")]
-        public HashSet<string> CPUTargets => KeyedPropertyLists["strGrpCPUTargets"];
+        public ConcurrentDictionary<string,byte> CPUTargets => KeyedPropertyLists["strGrpCPUTargets"];
 
         //other data types
 
@@ -208,20 +208,20 @@ namespace Microsoft.ApplicationInspector.Commands
             Matches = new List<MatchRecord>();
 
             //initialize standard set groups using dynamic lists variables that may have more than one value
-            KeyedPropertyLists = new Dictionary<string, HashSet<string>>
+            KeyedPropertyLists = new Dictionary<string, ConcurrentDictionary<string,byte>>
             {
-                ["strGrpPackageTypes"] = new HashSet<string>(),
-                ["strGrpAppTypes"] = new HashSet<string>(),
-                ["strGrpFileTypes"] = new HashSet<string>(),
-                ["strGrpUniqueTags"] = new HashSet<string>(),
-                ["strGrpOutputs"] = new HashSet<string>(),
-                ["strGrpTargets"] = new HashSet<string>(),
-                ["strGrpOSTargets"] = new HashSet<string>(),
-                ["strGrpFileExtensions"] = new HashSet<string>(),
-                ["strGrpFileNames"] = new HashSet<string>(),
-                ["strGrpCPUTargets"] = new HashSet<string>(),
-                ["strGrpCloudTargets"] = new HashSet<string>(),
-                ["strGrpUniqueDependencies"] = new HashSet<string>()
+                ["strGrpPackageTypes"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpAppTypes"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpFileTypes"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpUniqueTags"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpOutputs"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpTargets"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpOSTargets"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpFileExtensions"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpFileNames"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpCPUTargets"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpCloudTargets"] = new ConcurrentDictionary<string,byte>(),
+                ["strGrpUniqueDependencies"] = new ConcurrentDictionary<string,byte>()
             };
 
             Languages = new ConcurrentDictionary<string, int>();

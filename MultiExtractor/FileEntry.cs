@@ -1,38 +1,95 @@
-﻿// Copyright (C) Microsoft. All rights reserved.
-// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
 
-namespace MultiExtractor
+namespace Microsoft.CST.OpenSource.MultiExtractor
 {
     public class FileEntry
     {
-        public FileEntry(string name, string parentPath, Stream content)
+        /// <summary>
+        /// Constructs a FileEntry object from a Stream.  
+        /// If passthroughStream is set to true, and the stream is seekable, it will directly use inputStream.
+        /// If passthroughStream is false or it is not seekable, it will copy the full contents of inputStream 
+        ///   to a new internal FileStream and attempt to reset the position of inputstream.
+        /// The finalizer for this class Disposes the contained Stream.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="parentPath"></param>
+        /// <param name="inputStream"></param>
+        /// <param name="parent"></param>
+        /// <param name="passthroughStream"></param>
+        public FileEntry(string name, Stream inputStream, FileEntry? parent = null, bool passthroughStream = false)
         {
+            Parent = parent;
             Name = name;
-            if (string.IsNullOrEmpty(parentPath))
+            Passthrough = passthroughStream;
+
+            if (parent == null)
             {
+                ParentPath = null;
                 FullPath = Name;
             }
             else
             {
-                FullPath = $"{parentPath}:{name}";
+                ParentPath = parent.FullPath;
+                FullPath = $"{ParentPath}:{Name}";
             }
-            if (content == null)
+
+            if (inputStream == null)
             {
-                throw new ArgumentNullException(nameof(content));
+                throw new ArgumentNullException(nameof(inputStream));
             }
-            Content = new MemoryStream();
-            if (content.CanSeek)
+
+            // We want to be able to seek, so ensure any passthrough stream is Seekable
+            if (passthroughStream && inputStream.CanSeek)
             {
-                content.Position = 0;
+                Content = inputStream;
             }
-            content.CopyTo(Content);
+            else
+            {
+                // Back with a temporary filestream, this is optimized to be cached in memory when possible automatically by .NET
+                Content = new FileStream(Path.GetTempFileName(), FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, FileOptions.DeleteOnClose);
+
+                long? initialPosition = null;
+
+                if (inputStream.CanSeek)
+                {
+                    // SharpZipLib doesn't allow you to check .Length, but if .Length is 0 you cannot set position to 0;
+                    initialPosition = inputStream.Position;
+
+                    if (inputStream.Position != 0)
+                    {
+                        inputStream.Position = 0;
+                    }
+                    
+                }
+                inputStream.CopyTo(Content);
+                if (inputStream.CanSeek)
+                {
+                    if (inputStream.Position != 0)
+                    {
+                        inputStream.Position = initialPosition ?? 0;
+                    }
+                }
+            }
+
+            Content.Position = 0;
         }
 
+        public string? ParentPath { get; set; }
         public string FullPath { get; set; }
+        public FileEntry? Parent { get; set; }
         public string Name { get; set; }
-        public MemoryStream Content { get; set; }
+        public Stream Content { get; set; }
+        private bool Passthrough { get; }
+        ~FileEntry()
+        {
+            if (!Passthrough)
+            {
+                Content?.Dispose();
+            }
+        }
     }
 }

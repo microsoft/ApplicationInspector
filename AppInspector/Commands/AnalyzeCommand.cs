@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.ApplicationInspector.RulesEngine;
-using MultiExtractor;
+using Microsoft.CST.OpenSource.MultiExtractor;
 using Newtonsoft.Json;
 using NLog;
 using System;
@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -289,7 +290,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public AnalyzeResult GetResult()
         {
             WriteOnce.SafeLog("AnalyzeCommand::Run", LogLevel.Trace);
-
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
             AnalyzeResult analyzeResult = new AnalyzeResult()
             {
@@ -339,7 +339,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    _srcfileList.AsParallel().ForAll(filename => ProcessFile(filename));
+                    Parallel.ForEach(_srcfileList, filename => ProcessFile(filename));
                 }
 
                 WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
@@ -385,7 +385,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (FileChecksPassed(filename, ref languageInfo))
             {
                 LastUpdated = File.GetLastWriteTime(filename);
-                _metaDataHelper.Metadata.PackageTypes.Add(MsgHelp.GetString(MsgHelp.ID.ANALYZE_UNCOMPRESSED_FILETYPE));
+                _ = _metaDataHelper.Metadata.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_UNCOMPRESSED_FILETYPE),0);
 
                 string fileText = File.ReadAllText(filename);
                 ProcessInMemory(filename, fileText, languageInfo);
@@ -602,7 +602,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
 
                 string finalResult = rawResult.Replace(";", "");
-                _metaDataHelper.Metadata.UniqueDependencies.Add(finalResult);
+                _ = _metaDataHelper.Metadata.UniqueDependencies.TryAdd(finalResult,0);
 
                 return System.Net.WebUtility.HtmlEncode(finalResult);
             }
@@ -645,11 +645,12 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             LastUpdated = File.GetLastWriteTime(filePath);
-            _metaDataHelper.Metadata.PackageTypes.Add(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILETYPE));
+            _ = _metaDataHelper.Metadata.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILETYPE),0);
 
             try
             {
-                IEnumerable<FileEntry> files = Extractor.ExtractFile(filePath).Where(x => x != null);
+                var extractor = new Extractor();
+                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath,!_options.SingleThread);
 
                 if (_options.SingleThread)
                 {
@@ -661,8 +662,9 @@ namespace Microsoft.ApplicationInspector.Commands
                             LanguageInfo languageInfo = new LanguageInfo();
                             if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                             {
-                                byte[] streamByteArray = file.Content.ToArray();
-                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                                var streamByteArray = new byte[file.Content.Length];
+                                file.Content.Read(streamByteArray);
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
                             }
                         }
                         catch (Exception)
@@ -673,7 +675,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    files.AsParallel().ForAll(file =>
+                    Parallel.ForEach(files, file =>
                     {
                         try
                         {
@@ -681,8 +683,9 @@ namespace Microsoft.ApplicationInspector.Commands
                             LanguageInfo languageInfo = new LanguageInfo();
                             if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                             {
-                                byte[] streamByteArray = file.Content.ToArray();
-                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                                var streamByteArray = new byte[file.Content.Length];
+                                file.Content.Read(streamByteArray);
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
                             }
                         }
                         catch (Exception)
@@ -712,7 +715,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
         {
-            _metaDataHelper.Metadata.FileExtensions.Add(Path.GetExtension(filePath).Replace('.', ' ').TrimStart());
+            _ = _metaDataHelper.Metadata.FileExtensions.TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(),0);
 
             // 1. Skip files written in unknown language
             if (!Language.FromFileName(filePath, ref languageInfo))
