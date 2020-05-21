@@ -221,7 +221,7 @@ namespace Microsoft.CST.OpenSource.MultiExtractor
             //https://www.microsoft.com/en-us/download/details.aspx?id=23850 - 'Hard Disk Footer Format'
             // Unlike other formats the magic string is stored in the footer, which is either the last 511 or 512 bytes
             // The magic string is Magic string "conectix" (63 6F 6E 65 63 74 69 78)
-            if (fileEntry.Content.Length > 510)
+            if (fileEntry.Content.Length > 512)
             {
                 Span<byte> vhdFooterCookie = stackalloc byte[] { 0x63, 0x6F, 0x6E, 0x65, 0x63, 0x74, 0x69, 0x78 };
 

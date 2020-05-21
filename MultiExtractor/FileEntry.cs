@@ -46,27 +46,36 @@ namespace Microsoft.CST.OpenSource.MultiExtractor
             if (passthroughStream && inputStream.CanSeek)
             {
                 Content = inputStream;
-                Content.Position = 0;
             }
             else
             {
                 // Back with a temporary filestream, this is optimized to be cached in memory when possible automatically by .NET
                 Content = new FileStream(Path.GetTempFileName(), FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, FileOptions.DeleteOnClose);
+
                 long? initialPosition = null;
 
                 if (inputStream.CanSeek)
                 {
+                    // SharpZipLib doesn't allow you to check .Length, but if .Length is 0 you cannot set position to 0;
                     initialPosition = inputStream.Position;
-                    inputStream.Position = 0;
+
+                    if (inputStream.Position != 0)
+                    {
+                        inputStream.Position = 0;
+                    }
+                    
                 }
                 inputStream.CopyTo(Content);
                 if (inputStream.CanSeek)
                 {
-                    inputStream.Position = initialPosition ?? 0;
+                    if (inputStream.Position != 0)
+                    {
+                        inputStream.Position = initialPosition ?? 0;
+                    }
                 }
-
-                Content.Position = 0;
             }
+
+            Content.Position = 0;
         }
 
         public string? ParentPath { get; set; }
