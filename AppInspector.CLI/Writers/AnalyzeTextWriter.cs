@@ -26,7 +26,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
             {
-                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags);
+                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags.Keys);
                 keys.Sort();
 
                 foreach (string tag in keys)
@@ -66,17 +66,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         #region helpers
 
-        private string StringList(HashSet<string> data)
+        private string StringList(ConcurrentDictionary<string, byte> data)
         {
-            StringBuilder build = new StringBuilder();
-
-            foreach (string s in data)
-            {
-                build.Append(s);
-                build.Append(" ");
-            }
-
-            return build.ToString();
+            return string.Join(' ', data.Keys);
         }
 
         private string StringList(Dictionary<string, int> data)
@@ -166,7 +158,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(string.Format("Unique matches: {0}", metaData.UniqueMatchesCount));
 
             WriteOnce.General(MakeHeading("UniqueTags"));
-            List<string> orderedTags = metaData.UniqueTags.ToList<string>();
+            List<string> orderedTags = metaData.UniqueTags.Keys.ToList<string>();
             orderedTags.Sort();
 
             foreach (string tag in orderedTags)
@@ -205,7 +197,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             WriteOnce.General(MakeHeading("Dependencies"));
 
-            foreach (string s in metaData.UniqueDependencies)
+            foreach (string s in metaData.UniqueDependencies.Keys)
             {
                 WriteOnce.General(s);
             }

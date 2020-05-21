@@ -6,6 +6,7 @@ using SharpCompress.Archives.Rar;
 using SharpCompress.Compressors.BZip2;
 using SharpCompress.Compressors.Xz;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -107,7 +108,7 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractZipFile(FileEntry fileEntry)
         {
-            List<FileEntry> files = new List<FileEntry>();
+            ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
 
             ZipFile zipFile = null;
             try
@@ -137,7 +138,7 @@ namespace MultiExtractor
                         StreamUtils.Copy(zipStream, memoryStream, buffer);
 
                         var newFileEntry = new FileEntry(zipEntry.Name, fileEntry.FullPath, memoryStream);
-                        files.AddRange(ExtractFile(newFileEntry));
+                        files.PushRange(ExtractFile(newFileEntry).ToArray());
                     }
                 });
             }
@@ -178,7 +179,7 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractTarFile(FileEntry fileEntry)
         {
-            List<FileEntry> files = new List<FileEntry>();
+            ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
             TarEntry tarEntry;
             try
             {
@@ -191,7 +192,7 @@ namespace MultiExtractor
                         tarStream.CopyEntryContents(memoryStream);
 
                         var newFileEntry = new FileEntry(tarEntry.Name, fileEntry.FullPath, memoryStream);
-                        files.AddRange(ExtractFile(newFileEntry));
+                        files.PushRange(ExtractFile(newFileEntry).ToArray());
                     }
                 }
             }
@@ -239,7 +240,7 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> ExtractRarFile(FileEntry fileEntry)
         {
-            List<FileEntry> files = new List<FileEntry>();
+            ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
             try
             {
                 using var rarArchive = RarArchive.Open(fileEntry.Content);
@@ -249,7 +250,7 @@ namespace MultiExtractor
                     if (!entry.IsDirectory)
                     {
                         var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
-                        files.AddRange(ExtractFile(newFileEntry));
+                        files.PushRange(ExtractFile(newFileEntry).ToArray());
                     }
                 });
             }
@@ -263,7 +264,7 @@ namespace MultiExtractor
 
         private static IEnumerable<FileEntry> Extract7ZipFile(FileEntry fileEntry)
         {
-            List<FileEntry> files = new List<FileEntry>();
+            ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
             try {
                 using var rarArchive = RarArchive.Open(fileEntry.Content);
 
@@ -272,7 +273,7 @@ namespace MultiExtractor
                     if (!entry.IsDirectory)
                     {
                         var newFileEntry = new FileEntry(entry.Key, fileEntry.FullPath, entry.OpenEntryStream());
-                        files.AddRange(ExtractFile(newFileEntry));
+                        files.PushRange(ExtractFile(newFileEntry).ToArray());
                     }
                 });
             }

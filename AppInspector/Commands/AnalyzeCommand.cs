@@ -102,7 +102,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _options = opt;
             _options.MatchDepth ??= "best";
-            Console.WriteLine(opt.SingleThread);
+
             if (!string.IsNullOrEmpty(opt.FilePathExclusions))
             {
                 _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").ToList<string>();
@@ -386,7 +386,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (FileChecksPassed(filename, ref languageInfo))
             {
                 LastUpdated = File.GetLastWriteTime(filename);
-                _metaDataHelper.Metadata.PackageTypes.Add(MsgHelp.GetString(MsgHelp.ID.ANALYZE_UNCOMPRESSED_FILETYPE));
+                _ = _metaDataHelper.Metadata.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_UNCOMPRESSED_FILETYPE),0);
 
                 string fileText = File.ReadAllText(filename);
                 ProcessInMemory(filename, fileText, languageInfo);
@@ -603,7 +603,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
 
                 string finalResult = rawResult.Replace(";", "");
-                _metaDataHelper.Metadata.UniqueDependencies.Add(finalResult);
+                _ = _metaDataHelper.Metadata.UniqueDependencies.TryAdd(finalResult,0);
 
                 return System.Net.WebUtility.HtmlEncode(finalResult);
             }
@@ -646,7 +646,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             LastUpdated = File.GetLastWriteTime(filePath);
-            _metaDataHelper.Metadata.PackageTypes.Add(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILETYPE));
+            _ = _metaDataHelper.Metadata.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILETYPE),0);
 
             try
             {
@@ -674,7 +674,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    files.AsParallel().ForAll(file =>
+                    Parallel.ForEach(files, file =>
                     {
                         try
                         {
@@ -713,7 +713,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
         {
-            _metaDataHelper.Metadata.FileExtensions.Add(Path.GetExtension(filePath).Replace('.', ' ').TrimStart());
+            _ = _metaDataHelper.Metadata.FileExtensions.TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(),0);
 
             // 1. Skip files written in unknown language
             if (!Language.FromFileName(filePath, ref languageInfo))

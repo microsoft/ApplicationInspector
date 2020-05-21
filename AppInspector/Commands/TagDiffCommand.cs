@@ -222,7 +222,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     int sizeTags1 = analyze1.Metadata.UniqueTags.Count;
                     string[] file1Tags = new string[sizeTags1];
 
-                    foreach (string tag in analyze1.Metadata.UniqueTags.ToList<string>())
+                    foreach (string tag in analyze1.Metadata.UniqueTags.Keys.ToList<string>())
                     {
                         file1Tags[count1++] = tag;
                     }
@@ -231,7 +231,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     int sizeTags2 = analyze2.Metadata.UniqueTags.Count;
                     string[] file2Tags = new string[sizeTags2];
 
-                    foreach (string tag in analyze2.Metadata.UniqueTags.ToList<string>())
+                    foreach (string tag in analyze2.Metadata.UniqueTags.Keys.ToList<string>())
                     {
                         file2Tags[count2++] = tag;
                     }

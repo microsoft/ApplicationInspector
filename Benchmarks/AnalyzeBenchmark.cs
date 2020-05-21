@@ -12,6 +12,8 @@ namespace Benchmarks
     [ConcurrencyVisualizerProfiler]
     public class AnalyzeBenchmark
     {
+        private const string path = "D:\\GitHub\\ApplicationInspector\\UnitTest.Commands\\source\\Nested";
+
         public AnalyzeBenchmark()
         {
         }
@@ -19,7 +21,6 @@ namespace Benchmarks
         [Benchmark(Baseline = true)]
         public void AnalyzeSingleThreaded()
         {
-            var path = "D:\\GitHub\\ApplicationInspector\\UnitTest.Commands";
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
                 SourcePath = path,
@@ -34,7 +35,6 @@ namespace Benchmarks
         [Benchmark]
         public void AnalyzeMultiThread()
         {
-            var path = "D:\\GitHub\\ApplicationInspector\\UnitTest.Commands";
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
                 SourcePath = path,
