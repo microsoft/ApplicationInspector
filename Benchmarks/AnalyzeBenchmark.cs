@@ -12,7 +12,7 @@ namespace Benchmarks
     [ConcurrencyVisualizerProfiler]
     public class AnalyzeBenchmark
     {
-        private const string path = "D:\\GitHub\\ApplicationInspector\\UnitTest.Commands\\source\\Nested";
+        private const string path = "D:\\GitHub\\ApplicationInspector\\UnitTest.Commands";
 
         public AnalyzeBenchmark()
         {

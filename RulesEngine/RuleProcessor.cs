@@ -360,7 +360,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 if (_uniqueTagHashes.TryAdd(t,0) && _logger != null)
                 {
                     _logger.Debug(string.Format("Unique tag {0} added", t));
-                }                
+                }
             }
         }
 
