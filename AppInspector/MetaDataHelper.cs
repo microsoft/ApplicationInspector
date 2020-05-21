@@ -45,7 +45,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 if (matchRecord.Tags.Any(v => _propertyTagSearchPatterns[key].IsMatch(v)))
                 {
-                    Metadata.KeyedPropertyLists[key].Add(matchRecord.Sample);
+                    _ = Metadata.KeyedPropertyLists[key].TryAdd(matchRecord.Sample,0);
                 }
             }
 
@@ -77,17 +77,17 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Target.Processor")))
             {
-                Metadata.CPUTargets.Add(ExtractValue(matchRecord.Sample).ToLower());
+                _ = Metadata.CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
             }
 
             if (matchRecord.Tags.Any(v => v.Contains("Metadata.Application.Output.Type")))
             {
-                Metadata.Outputs.Add(ExtractValue(matchRecord.Sample).ToLower());
+                _ = Metadata.Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
             }
 
             if (matchRecord.Tags.Any(v => v.Contains("Platform.OS")))
             {
-                Metadata.OSTargets.Add(ExtractValue(matchRecord.Sample).ToLower());
+                _ = Metadata.OSTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
             }
 
             if (matchRecord.Tags.Any(v => v.Contains("Metric.")))
@@ -106,7 +106,7 @@ namespace Microsoft.ApplicationInspector.Commands
             string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
             {
-                Metadata.AppTypes.Add(solutionType);
+                _ = Metadata.AppTypes.TryAdd(solutionType,0);
             }
 
             //Update metric counters for default or user specified tags; don't add as match detail
@@ -127,7 +127,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 //update list of unique tags as we go
                 foreach (string tag in matchRecord.Tags)
                 {
-                    Metadata.UniqueTags.Add(tag);
+                    _ = Metadata.UniqueTags.TryAdd(tag,0);
                 }
 
                 Metadata.Matches.Add(matchRecord);

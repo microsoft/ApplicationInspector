@@ -250,8 +250,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
                 AnalyzeResult result = command.GetResult();
-                if (result.Metadata.UniqueTags.Any(v => v.Contains("Authentication.General")) &&
-                    result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")))
+                if (result.Metadata.UniqueTags.Keys.Any(v => v.Contains("Authentication.General")) &&
+                    result.Metadata.UniqueTags.Keys.Any(v => v.Contains("Data.Custom1")))
                 {
                     exitCode = AnalyzeResult.ExitCode.Success;
                 }

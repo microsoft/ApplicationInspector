@@ -125,7 +125,7 @@ namespace MultiExtractor
                 {
                     entries.Add(zipEntry);
                 }
-                entries.AsParallel().ForAll(zipEntry =>
+                Parallel.ForEach(entries, zipEntry =>
                 {
                     if (!zipEntry.IsDirectory &&
                         !zipEntry.IsCrypted &&

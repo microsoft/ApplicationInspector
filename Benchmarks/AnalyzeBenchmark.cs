@@ -4,10 +4,12 @@ using System.Reflection;
 using ApplicationInspector.Unitprocess.Misc;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
+using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using Microsoft.ApplicationInspector.Commands;
 
 namespace Benchmarks
 {
+    [ConcurrencyVisualizerProfiler]
     public class AnalyzeBenchmark
     {
         public AnalyzeBenchmark()
@@ -17,11 +19,11 @@ namespace Benchmarks
         [Benchmark(Baseline = true)]
         public void AnalyzeSingleThreaded()
         {
-            var path = "/Users/gabe/Documents/GitHub/ApplicationInspector/UnitTest.Commands/source";
+            var path = "D:\\GitHub\\ApplicationInspector\\UnitTest.Commands";
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
                 SourcePath = path,
-                AllowDupTags = true,
+                AllowDupTags = false,
                 SingleThread = true,
                 IgnoreDefaultRules = false
             });
@@ -32,11 +34,11 @@ namespace Benchmarks
         [Benchmark]
         public void AnalyzeMultiThread()
         {
-            var path = "/Users/gabe/Documents/GitHub/ApplicationInspector/UnitTest.Commands/source";
+            var path = "D:\\GitHub\\ApplicationInspector\\UnitTest.Commands";
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
                 SourcePath = path,
-                AllowDupTags = true,
+                AllowDupTags = false,
                 SingleThread = false,
                 IgnoreDefaultRules = false
             });
