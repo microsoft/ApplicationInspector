@@ -12,7 +12,8 @@ namespace Benchmarks
     [ConcurrencyVisualizerProfiler]
     public class AnalyzeBenchmark
     {
-        private const string path = "D:\\GitHub\\ApplicationInspector\\UnitTest.Commands";
+        // Manually put the file you want to benchmark. But don't put this in a path with "Test" in the name ;)
+        private const string path = "D:\\runtime-master.zip";
 
         public AnalyzeBenchmark()
         {
