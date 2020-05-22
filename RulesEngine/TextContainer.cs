@@ -50,9 +50,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="pattern">Search pattern</param>
         /// <returns>List of boundaries</returns>
-        public List<Boundary> MatchPattern(SearchPattern pattern)
+        public IEnumerable<Boundary> MatchPattern(SearchPattern pattern)
         {
-            return MatchPattern(pattern, _content);
+            return GetMatchingBoundaries(pattern, _content);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             Boundary scope = ParseSearchBoundary(boundary, condition.SearchIn);
             string text = _content.Substring(scope.Index, scope.Length);
-            return MatchPattern(pattern, text).Any();
+            return GetMatchingBoundaries(pattern, text).Any();
         }
 
         /// <summary>
@@ -140,33 +140,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="pattern">Search pattern</param>
         /// <param name="text">Text</param>
         /// <returns>List of boundaries</returns>
-        private List<Boundary> MatchPattern(SearchPattern pattern, string text)
+        private IEnumerable<Boundary> GetMatchingBoundaries(SearchPattern pattern, string text)
         {
-            List<Boundary> matchList = new List<Boundary>();
-
             MatchCollection matches = pattern.Expression.Matches(text);
-            int matchCount = 0;
+            var matchCount = 0;
             foreach (Match m in matches)
             {
                 Boundary bound = new Boundary() { Index = m.Index, Length = m.Length };
                 if (ScopeMatch(pattern, bound, text))
                 {
-                    matchList.Add(bound);
-                }
-
-                if (_stopAfterFirstMatch)
-                {
-                    break;
-                }
-
-                //firewall in case the pattern match count is exceedingly high
-                if (matchCount++ > MAX_PATTERN_MATCHES)
-                {
-                    break;
+                    yield return bound;
+                    //firewall in case the pattern match count is exceedingly high
+                    if (_stopAfterFirstMatch || matchCount++ > MAX_PATTERN_MATCHES)
+                    {
+                        yield break;
+                    }
                 }
             }
-
-            return matchList;
         }
 
         /// <summary>
