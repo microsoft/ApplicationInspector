@@ -50,9 +50,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="pattern">Search pattern</param>
         /// <returns>List of boundaries</returns>
-        public IEnumerable<Boundary> MatchPattern(SearchPattern pattern)
+        public IEnumerable<Boundary> EnumerateMatchingBoundaries(SearchPattern pattern)
         {
-            return GetMatchingBoundaries(pattern, _content);
+            return EnumerateMatchingBoundaries(pattern, _content);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             Boundary scope = ParseSearchBoundary(boundary, condition.SearchIn);
             string text = _content.Substring(scope.Index, scope.Length);
-            return GetMatchingBoundaries(pattern, text).Any();
+            return EnumerateMatchingBoundaries(pattern, text).Any();
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="pattern">Search pattern</param>
         /// <param name="text">Text</param>
         /// <returns>List of boundaries</returns>
-        private IEnumerable<Boundary> GetMatchingBoundaries(SearchPattern pattern, string text)
+        private IEnumerable<Boundary> EnumerateMatchingBoundaries(SearchPattern pattern, string text)
         {
             MatchCollection matches = pattern.Expression.Matches(text);
             var matchCount = 0;

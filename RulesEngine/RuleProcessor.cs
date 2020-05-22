@@ -107,7 +107,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
 
                     // Process all matches for the patttern (this may be only 1 is _stopAfterFirstMatch is set
-                    foreach (Boundary match in textContainer.MatchPattern(pattern))
+                    foreach (Boundary match in textContainer.EnumerateMatchingBoundaries(pattern))
                     {
                         bool passedConditions = true;
                         foreach (SearchCondition condition in rule.Conditions)
