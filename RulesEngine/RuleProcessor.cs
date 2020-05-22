@@ -116,7 +116,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             bool passedConditions = true;
                             foreach (SearchCondition condition in rule.Conditions)
                             {
-                                bool res = textContainer.MatchPattern(condition.Pattern, match, condition);
+                                bool res = textContainer.IsPatternMatch(condition.Pattern, match, condition);
                                 if (res && condition.NegateFinding)
                                 {
                                     passedConditions = false;

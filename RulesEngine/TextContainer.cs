@@ -61,21 +61,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="pattern">Search pattern</param>
         /// <param name="boundary">Content boundary</param>
         /// <param name="searchIn">Search in command</param>
-        /// <returns></returns>
-        public bool MatchPattern(SearchPattern pattern, Boundary boundary, SearchCondition condition)
+        /// <returns>true iff the pattern is found in the boundary</returns>
+        public bool IsPatternMatch(SearchPattern pattern, Boundary boundary, SearchCondition condition)
         {
-            bool result = false;
-
             Boundary scope = ParseSearchBoundary(boundary, condition.SearchIn);
-
             string text = _content.Substring(scope.Index, scope.Length);
-            List<Boundary> macthes = MatchPattern(pattern, text);
-            if (macthes.Count > 0)
-            {
-                result = true;
-            }
-
-            return result;
+            return MatchPattern(pattern, text).Any();
         }
 
         /// <summary>
@@ -154,27 +145,24 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             List<Boundary> matchList = new List<Boundary>();
 
             MatchCollection matches = pattern.Expression.Matches(text);
-            if (matches.Count > 0)
+            int matchCount = 0;
+            foreach (Match m in matches)
             {
-                int matchCount = 0;
-                foreach (Match m in matches)
+                Boundary bound = new Boundary() { Index = m.Index, Length = m.Length };
+                if (ScopeMatch(pattern, bound, text))
                 {
-                    Boundary bound = new Boundary() { Index = m.Index, Length = m.Length };
-                    if (ScopeMatch(pattern, bound, text))
-                    {
-                        matchList.Add(bound);
-                    }
+                    matchList.Add(bound);
+                }
 
-                    if (_stopAfterFirstMatch)
-                    {
-                        break;
-                    }
+                if (_stopAfterFirstMatch)
+                {
+                    break;
+                }
 
-                    //firewall in case the pattern match count is exceedingly high
-                    if (matchCount++ > MAX_PATTERN_MATCHES)
-                    {
-                        break;
-                    }
+                //firewall in case the pattern match count is exceedingly high
+                if (matchCount++ > MAX_PATTERN_MATCHES)
+                {
+                    break;
                 }
             }
 
