@@ -106,79 +106,74 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         continue;
                     }
 
-                    // Get all matches for the patttern
-                    List<Boundary> matches = textContainer.MatchPattern(pattern);
-
-                    if (matches.Count > 0)
+                    // Process all matches for the patttern (this may be only 1 is _stopAfterFirstMatch is set
+                    foreach (Boundary match in textContainer.EnumerateMatchingBoundaries(pattern))
                     {
-                        foreach (Boundary match in matches)
+                        bool passedConditions = true;
+                        foreach (SearchCondition condition in rule.Conditions)
                         {
-                            bool passedConditions = true;
-                            foreach (SearchCondition condition in rule.Conditions)
-                            {
-                                bool res = textContainer.MatchPattern(condition.Pattern, match, condition);
-                                if (res && condition.NegateFinding)
-                                {
-                                    passedConditions = false;
-                                    break;
-                                }
-                                if (!res && condition.NegateFinding)
-                                {
-                                    passedConditions = true;
-                                    break;
-                                }
-                                if (!res)
-                                {
-                                    passedConditions = false;
-                                    break;
-                                }
-                            }
-
-                            //restrict tags from build files to tags with "metadata" to avoid false feature positives that are not part of executable code
-                            if (languageInfo.Type == LanguageInfo.LangFileType.Build && rule.Tags.Any(v => !v.Contains("Metadata")))
+                            bool res = textContainer.IsPatternMatch(condition.Pattern, match, condition);
+                            if (res && condition.NegateFinding)
                             {
                                 passedConditions = false;
+                                break;
+                            }
+                            if (!res && condition.NegateFinding)
+                            {
+                                passedConditions = true;
+                                break;
+                            }
+                            if (!res)
+                            {
+                                passedConditions = false;
+                                break;
+                            }
+                        }
+
+                        //restrict tags from build files to tags with "metadata" to avoid false feature positives that are not part of executable code
+                        if (languageInfo.Type == LanguageInfo.LangFileType.Build && rule.Tags.Any(v => !v.Contains("Metadata")))
+                        {
+                            passedConditions = false;
+                        }
+
+                        if (passedConditions)
+                        {
+                            ScanResult newMatch = new ScanResult()
+                            {
+                                Boundary = match,
+                                StartLocation = textContainer.GetLocation(match.Index),
+                                EndLocation = textContainer.GetLocation(match.Index + match.Length),
+                                PatternMatch = pattern,
+                                Confidence = pattern.Confidence,
+                                Rule = rule
+                            };
+
+                            if (_uniqueTagMatchesOnly)
+                            {
+                                if (!UniqueTagsCheck(newMatch.Rule.Tags)) //tag(s) previously seen
+                                {
+                                    if (_stopAfterFirstPatternMatch) //recheck stop at pattern level also within same rule
+                                    {
+                                        passedConditions = false; //user performance option i.e. only wants to identify if tag is detected nothing more
+                                    }
+                                    else if (newMatch.Confidence > Confidence.Low) //user prefers highest confidence match over first match
+                                    {
+                                        passedConditions = BestMatch(matchList, newMatch); //; check all patterns in current rule
+
+                                        if (passedConditions)
+                                        {
+                                            passedConditions = BestMatch(resultsList, newMatch);//check all rules in permanent list
+                                        }
+                                    }
+                                }
                             }
 
                             if (passedConditions)
                             {
-                                ScanResult newMatch = new ScanResult()
-                                {
-                                    Boundary = match,
-                                    StartLocation = textContainer.GetLocation(match.Index),
-                                    EndLocation = textContainer.GetLocation(match.Index + match.Length),
-                                    PatternMatch = pattern,
-                                    Confidence = pattern.Confidence,
-                                    Rule = rule
-                                };
-
-                                if (_uniqueTagMatchesOnly)
-                                {
-                                    if (!UniqueTagsCheck(newMatch.Rule.Tags)) //tag(s) previously seen
-                                    {
-                                        if (_stopAfterFirstPatternMatch) //recheck stop at pattern level also within same rule
-                                        {
-                                            passedConditions = false; //user performance option i.e. only wants to identify if tag is detected nothing more
-                                        }
-                                        else if (newMatch.Confidence > Confidence.Low) //user prefers highest confidence match over first match
-                                        {
-                                            passedConditions = BestMatch(matchList, newMatch); //; check all patterns in current rule
-
-                                            if (passedConditions)
-                                            {
-                                                passedConditions = BestMatch(resultsList, newMatch);//check all rules in permanent list
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (passedConditions)
-                                {
-                                    matchList.Add(newMatch);
-                                }
-
-                                AddRuleTagHashes(rule.Tags);
+                                matchList.Add(newMatch);
                             }
+
+                            AddRuleTagHashes(rule.Tags);
                         }
                     }
                 }
