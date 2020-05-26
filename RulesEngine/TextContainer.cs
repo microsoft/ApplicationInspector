@@ -50,9 +50,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="pattern">Search pattern</param>
         /// <returns>List of boundaries</returns>
-        public List<Boundary> MatchPattern(SearchPattern pattern)
+        public IEnumerable<Boundary> EnumerateMatchingBoundaries(SearchPattern pattern)
         {
-            return MatchPattern(pattern, _content);
+            return EnumerateMatchingBoundaries(pattern, _content);
         }
 
         /// <summary>
@@ -61,21 +61,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="pattern">Search pattern</param>
         /// <param name="boundary">Content boundary</param>
         /// <param name="searchIn">Search in command</param>
-        /// <returns></returns>
-        public bool MatchPattern(SearchPattern pattern, Boundary boundary, SearchCondition condition)
+        /// <returns>true iff the pattern is found in the boundary</returns>
+        public bool IsPatternMatch(SearchPattern pattern, Boundary boundary, SearchCondition condition)
         {
-            bool result = false;
-
             Boundary scope = ParseSearchBoundary(boundary, condition.SearchIn);
-
             string text = _content.Substring(scope.Index, scope.Length);
-            List<Boundary> macthes = MatchPattern(pattern, text);
-            if (macthes.Count > 0)
-            {
-                result = true;
-            }
-
-            return result;
+            return EnumerateMatchingBoundaries(pattern, text).Any();
         }
 
         /// <summary>
@@ -149,36 +140,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="pattern">Search pattern</param>
         /// <param name="text">Text</param>
         /// <returns>List of boundaries</returns>
-        private List<Boundary> MatchPattern(SearchPattern pattern, string text)
+        private IEnumerable<Boundary> EnumerateMatchingBoundaries(SearchPattern pattern, string text)
         {
-            List<Boundary> matchList = new List<Boundary>();
-
             MatchCollection matches = pattern.Expression.Matches(text);
-            if (matches.Count > 0)
+            var matchCount = 0;
+            foreach (Match m in matches)
             {
-                int matchCount = 0;
-                foreach (Match m in matches)
+                Boundary bound = new Boundary() { Index = m.Index, Length = m.Length };
+                if (ScopeMatch(pattern, bound, text))
                 {
-                    Boundary bound = new Boundary() { Index = m.Index, Length = m.Length };
-                    if (ScopeMatch(pattern, bound, text))
-                    {
-                        matchList.Add(bound);
-                    }
-
-                    if (_stopAfterFirstMatch)
-                    {
-                        break;
-                    }
-
+                    yield return bound;
                     //firewall in case the pattern match count is exceedingly high
-                    if (matchCount++ > MAX_PATTERN_MATCHES)
+                    if (_stopAfterFirstMatch || matchCount++ > MAX_PATTERN_MATCHES)
                     {
-                        break;
+                        yield break;
                     }
                 }
             }
-
-            return matchList;
         }
 
         /// <summary>
