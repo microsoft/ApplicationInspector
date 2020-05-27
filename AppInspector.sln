@@ -39,7 +39,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest.Commands", "UnitTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{F031887C-EA60-4390-9940-765E99E69B8F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.MultiExtractor", "MultiExtractor\Shared.MultiExtractor.csproj", "{9D6C861B-845F-4ADC-86ED-2F1E7BB4A229}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiExtractor", "MultiExtractor\MultiExtractor.csproj", "{9D6C861B-845F-4ADC-86ED-2F1E7BB4A229}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
