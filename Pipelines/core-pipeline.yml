@@ -478,6 +478,7 @@ stages:
         targetPath: '$(Build.StagingDirectory)'
         artifact: 'Signed_Binaries'
     - task: GitHubRelease@1
+      displayName: Release to GitHub
       inputs:
         gitHubConnection: 'AppInspector'
         repositoryName: 'microsoft/ApplicationInspector'
@@ -492,9 +493,18 @@ stages:
         changeLogCompareToRelease: 'lastNonDraftRelease'
         changeLogType: 'commitBased'
     - task: NuGetCommand@2
+      displayName: Push NuGet Packages
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.StagingDirectory)/*.nupkg, $(Build.StagingDirectory)/*.snupkg'
+        packagesToPush: '$(Build.StagingDirectory)/*.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: 'CST-E Nuget CI'
+        verbosityPush: 'Normal'
+    - task: NuGetCommand@2
+      displayName: Push NuGet Symbols
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.StagingDirectory)/*.snupkg'
         nuGetFeedType: 'external'
         publishFeedCredentials: 'CST-E Nuget CI'
         verbosityPush: 'Normal'
