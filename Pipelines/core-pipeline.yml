@@ -76,7 +76,7 @@ stages:
       displayName: Dotnet Publish Linux x64
       inputs:
         command: 'publish'
-        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/linux/ApplicationInspector_$(ReleaseVersion) -r linux-x64 /p:DebugType=None'
+        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/linux/ApplicationInspector_$(ReleaseVersion) -r linux-x64'
         publishWebProjects: false
         zipAfterPublish: false
         workingDirectory: 'AppInspector.CLI'
@@ -84,7 +84,7 @@ stages:
       displayName: Dotnet Publish MacOS x64
       inputs:
         command: 'publish'
-        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/macos/ApplicationInspector_$(ReleaseVersion) -r osx-x64 /p:DebugType=None'
+        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/macos/ApplicationInspector_$(ReleaseVersion) -r osx-x64'
         publishWebProjects: false
         zipAfterPublish: false
         workingDirectory: 'AppInspector.CLI'
@@ -134,7 +134,7 @@ stages:
       displayName: Dotnet Publish Windows x86
       inputs:
         command: 'publish'
-        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)\windows\ApplicationInspector_$(ReleaseVersion) -r win-x86 /p:DebugType=None'
+        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)\windows\ApplicationInspector_$(ReleaseVersion) -r win-x86'
         publishWebProjects: false
         zipAfterPublish: false
         workingDirectory: 'AppInspector.CLI'
@@ -142,7 +142,7 @@ stages:
       displayName: Dotnet Build .NET Core App
       inputs:
         command: 'build'
-        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)\netcoreapp\ApplicationInspector_$(ReleaseVersion) /p:DebugType=None'
+        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)\netcoreapp\ApplicationInspector_$(ReleaseVersion)'
         publishWebProjects: false
         zipAfterPublish: false
         workingDirectory: 'AppInspector.CLI'
@@ -151,13 +151,13 @@ stages:
       inputs:
         command: 'custom'
         custom: 'pack'
-        arguments: 'AppInspector -c Release -o $(Build.BinariesDirectory)\nuget\ApplicationInspector_$(ReleaseVersion) /p:DebugType=None'
+        arguments: 'AppInspector -c Release -o $(Build.BinariesDirectory)\nuget\ApplicationInspector_$(ReleaseVersion)'
     - task: DotNetCoreCLI@2
       displayName: Pack Nupkg (Dotnet Tool)
       inputs:
         command: 'custom'
         custom: 'pack'
-        arguments: 'AppInspector.CLI -c Release -o $(Build.BinariesDirectory)\nuget\ApplicationInspector_$(ReleaseVersion) /p:DebugType=None'
+        arguments: 'AppInspector.CLI -c Release -o $(Build.BinariesDirectory)\nuget\ApplicationInspector_$(ReleaseVersion)'
     - task: AntiMalware@3
       displayName: Anti-Malware Scan
       inputs:
@@ -395,7 +395,7 @@ stages:
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/nuget/ApplicationInspector_$(ReleaseVersion)'
-        Pattern: '*.nupkg'
+        Pattern: '*.nupkg, *.snupkg'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
@@ -466,6 +466,12 @@ stages:
       inputs:
         targetType: 'inline'
         script: 'mv $env:BUILD_BINARIESDIRECTORY/nuget/ApplicationInspector_$(ReleaseVersion)/*.nupkg $env:BUILD_STAGINGDIRECTORY/'
+    - task: PowerShell@2
+      displayName: Move Symbols Packages
+      inputs:
+        targetType: 'inline'
+        script: 'mv $env:BUILD_BINARIESDIRECTORY/nuget/ApplicationInspector_$(ReleaseVersion)/*.snupkg $env:BUILD_STAGINGDIRECTORY/'
+
     - task: PublishPipelineArtifact@1
       displayName: Publish Signed Artifacts to Pipeline
       inputs:
@@ -488,7 +494,7 @@ stages:
     - task: NuGetCommand@2
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.StagingDirectory)/*.nupkg'
+        packagesToPush: '$(Build.StagingDirectory)/*.nupkg, $(Build.StagingDirectory)/*.snupkg'
         nuGetFeedType: 'external'
         publishFeedCredentials: 'CST-E Nuget CI'
         verbosityPush: 'Normal'
