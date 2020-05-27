@@ -494,7 +494,7 @@ stages:
     - task: NuGetCommand@2
       inputs:
         command: 'push'
-        packagesToPush: '$(Build.StagingDirectory)/*.nupkg'
+        packagesToPush: '$(Build.StagingDirectory)/*.nupkg, $(Build.StagingDirectory)/*.snupkg'
         nuGetFeedType: 'external'
         publishFeedCredentials: 'CST-E Nuget CI'
         verbosityPush: 'Normal'
