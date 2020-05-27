@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Microsoft.CST.OpenSource.MultiExtractor
+namespace Microsoft.ApplicationInspector.MultiExtractor
 {
     /**
      * Gnu Ar file parser.  Supports SystemV style lookup tables in both 32 and 64 bit mode as well as BSD and GNU formatted .ars.
