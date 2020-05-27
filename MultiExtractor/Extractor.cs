@@ -26,7 +26,7 @@ using SharpCompress.Compressors.BZip2;
 using SharpCompress.Compressors.Xz;
 using System.Collections.Concurrent;
 
-namespace Microsoft.CST.OpenSource.MultiExtractor
+namespace Microsoft.ApplicationInspector.MultiExtractor
 {
     public class Extractor
     {
