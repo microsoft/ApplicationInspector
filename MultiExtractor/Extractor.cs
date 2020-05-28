@@ -26,7 +26,7 @@ using SharpCompress.Compressors.BZip2;
 using SharpCompress.Compressors.Xz;
 using System.Collections.Concurrent;
 
-namespace Microsoft.ApplicationInspector.MultiExtractor
+namespace MultiExtractor
 {
     public class Extractor
     {
@@ -92,7 +92,7 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
         /// </summary>
         private readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly string IS_QUINE_STRING = "Detected Quine {0} in {1}. Aborting Extraction.";
-      
+
         /// <summary>
         /// Times extraction operations to avoid denial of service.
         /// </summary>
@@ -749,8 +749,7 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
                         }
                     }
                 }
-
-                foreach (var extractedFile in ExtractFile(newFileEntry, parallel))
+                else
                 {
                     foreach (ZipEntry? zipEntry in zipFile)
                     {
@@ -790,11 +789,6 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
                         }
                     }
                 }
-                bzip2Stream.Dispose();
-            }
-            else
-            {
-                yield return fileEntry;
             }
         }
 
@@ -907,6 +901,7 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
             }
             else
             {
+                // If we couldn't parse it just return it
                 yield return fileEntry;
             }
         }
@@ -1021,63 +1016,6 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
             {
                 Logger.Debug(DEBUG_STRING, ArchiveFileType.RAR, fileEntry.FullPath, string.Empty, e.GetType());
             }
-            if (zipFile != null)
-            {
-                var zipEntries = new List<ZipEntry>();
-                foreach (ZipEntry? zipEntry in zipFile)
-                {
-                    if (zipEntry is null ||
-                        zipEntry.IsDirectory ||
-                        zipEntry.IsCrypted ||
-                        !zipEntry.CanDecompress)
-                    {
-                        continue;
-                    }
-                    zipEntries.Add(zipEntry);
-                }
-
-                while (zipEntries.Count > 0)
-                {
-                    int batchSize = Math.Min(MAX_BATCH_SIZE, zipEntries.Count);
-                    var selectedEntries = zipEntries.GetRange(0, batchSize);
-                    CheckResourceGovernor(selectedEntries.Sum(x => x.Size));
-                    try
-                    {
-                        selectedEntries.AsParallel().ForAll(zipEntry =>
-                        {
-                            try
-                            {
-                                var zipStream = zipFile.GetInputStream(zipEntry);
-                                var newFileEntry = new FileEntry(zipEntry.Name, zipStream, fileEntry);
-                                if (IsQuine(newFileEntry))
-                                {
-                                    Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
-                                    CurrentOperationProcessedBytesLeft = -1;
-                                }
-                                else
-                                {
-                                    files.PushRange(ExtractFile(newFileEntry, true).ToArray());
-                                }
-                            }
-                            catch (Exception e) when (e is OverflowException)
-                            {
-                                Logger.Debug(DEBUG_STRING, ArchiveFileType.ZIP, fileEntry.FullPath, zipEntry.Name, e.GetType());
-                                throw;
-                            }
-                            catch (Exception e)
-                            {
-                                Logger.Debug(DEBUG_STRING, ArchiveFileType.ZIP, fileEntry.FullPath, zipEntry.Name, e.GetType());
-                            }
-                        });
-                    }
-                    catch (Exception e) when (e is AggregateException)
-                    {
-                        if (e.InnerException?.GetType() == typeof(OverflowException))
-                        {
-                            throw e.InnerException;
-                        }
-                        throw;
-                    }
 
             if (rarArchive != null)
             {
@@ -1416,6 +1354,7 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
                     }
                 }
             }
+            
         }
 
         /// <summary>

@@ -4,11 +4,12 @@
 using System;
 using System.IO;
 
-namespace Microsoft.ApplicationInspector.MultiExtractor
+namespace MultiExtractor
 {
     public class FileEntry
     {
-        private readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();\
+        private readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// Constructs a FileEntry object from a Stream.  
         /// If passthroughStream is set to true, and the stream is seekable, it will directly use inputStream.
@@ -65,9 +66,7 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
 
                 if (inputStream.CanSeek)
                 {
-                    // SharpZipLib doesn't allow you to check .Length, but if .Length is 0 you cannot set position to 0;
                     initialPosition = inputStream.Position;
-
                     if (inputStream.Position != 0)
                     {
                         inputStream.Position = 0;
