@@ -649,7 +649,8 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                IEnumerable<FileEntry> files = Extractor.ExtractFile(filePath).Where(x => x != null);
+                var extractor = new Extractor();
+                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath);
 
                 if (_options.SingleThread)
                 {
@@ -661,8 +662,9 @@ namespace Microsoft.ApplicationInspector.Commands
                             LanguageInfo languageInfo = new LanguageInfo();
                             if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                             {
-                                byte[] streamByteArray = file.Content.ToArray();
-                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                                StreamReader reader = new StreamReader(file.Content);
+
+                                ProcessInMemory(file.FullPath, reader.ReadToEnd(), languageInfo);
                             }
                         }
                         catch (Exception)
@@ -681,8 +683,9 @@ namespace Microsoft.ApplicationInspector.Commands
                             LanguageInfo languageInfo = new LanguageInfo();
                             if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                             {
-                                byte[] streamByteArray = file.Content.ToArray();
-                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray, 0, streamByteArray.Length), languageInfo);
+                                StreamReader reader = new StreamReader(file.Content);
+
+                                ProcessInMemory(file.FullPath, reader.ReadToEnd(), languageInfo);
                             }
                         }
                         catch (Exception)
