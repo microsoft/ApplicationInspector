@@ -92,10 +92,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (matchRecord.Tags.Any(v => v.Contains("Metric.")))
             {
-                Metadata.TagCounters.Add(new MetricTagCounter()
+                Metadata.TagCounters.Push(new MetricTagCounter()
                 {
                     Tag = matchRecord.Tags[0],
-                    Count = 0
                 });
             }
 
@@ -116,7 +115,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (matchRecord.Tags.Any(v => v.Contains(counter.Tag)))
                 {
                     counterOnlyTag = true;
-                    counter.Count++;
+                    counter.IncrementCount();
                     break;
                 }
             }

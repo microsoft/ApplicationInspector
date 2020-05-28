@@ -200,7 +200,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
             }
-            
+
             if (Directory.Exists(_options.SourcePath))
             {
                 try
@@ -650,7 +650,7 @@ namespace Microsoft.ApplicationInspector.Commands
             try
             {
                 var extractor = new Extractor();
-                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath);
+                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath,!_options.SingleThread);
 
                 if (_options.SingleThread)
                 {
@@ -662,9 +662,9 @@ namespace Microsoft.ApplicationInspector.Commands
                             LanguageInfo languageInfo = new LanguageInfo();
                             if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                             {
-                                StreamReader reader = new StreamReader(file.Content);
-
-                                ProcessInMemory(file.FullPath, reader.ReadToEnd(), languageInfo);
+                                var streamByteArray = new byte[file.Content.Length];
+                                file.Content.Read(streamByteArray);
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
                             }
                         }
                         catch (Exception)
@@ -683,9 +683,9 @@ namespace Microsoft.ApplicationInspector.Commands
                             LanguageInfo languageInfo = new LanguageInfo();
                             if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
                             {
-                                StreamReader reader = new StreamReader(file.Content);
-
-                                ProcessInMemory(file.FullPath, reader.ReadToEnd(), languageInfo);
+                                var streamByteArray = new byte[file.Content.Length];
+                                file.Content.Read(streamByteArray);
+                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
                             }
                         }
                         catch (Exception)

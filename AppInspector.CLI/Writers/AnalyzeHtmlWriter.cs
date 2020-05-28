@@ -82,7 +82,7 @@ namespace Microsoft.ApplicationInspector.CLI
             hashData["ostargets"] = _appMetaData.OSTargets;
             hashData["outputs"] = _appMetaData.Outputs;
             hashData["filetypes"] = _appMetaData.FileExtensions;
-            hashData["tagcounters"] = ConvertTagCounters(_appMetaData.TagCounters);
+            hashData["tagcounters"] = ConvertTagCounters(_appMetaData.TagCounters.ToList());
 
             //final render and close
             var htmlResult = htmlTemplate.Render(hashData);

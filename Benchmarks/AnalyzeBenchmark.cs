@@ -9,7 +9,7 @@ using Microsoft.ApplicationInspector.Commands;
 
 namespace Benchmarks
 {
-    [ConcurrencyVisualizerProfiler]
+    //[ConcurrencyVisualizerProfiler]
     public class AnalyzeBenchmark
     {
         // Manually put the file you want to benchmark. But don't put this in a path with "Test" in the name ;)
