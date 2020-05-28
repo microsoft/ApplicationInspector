@@ -78,7 +78,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MultiExtractor\MultiExtractor.csproj" />
+    <ProjectReference Include="..\MultiExtractor\MultiExtractor.csproj">
+	    <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+        <IncludeAssets>MultiExtractor.dll</IncludeAssets>
+    </ProjectReference>
+		
     <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj">
         <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
         <IncludeAssets>ApplicationInspector.RulesEngine.dll</IncludeAssets>

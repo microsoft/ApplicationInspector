@@ -26,7 +26,7 @@ using SharpCompress.Compressors.BZip2;
 using SharpCompress.Compressors.Xz;
 using System.Collections.Concurrent;
 
-namespace Microsoft.ApplicationInspector.MultiExtractor
+namespace MultiExtractor
 {
     public class Extractor
     {
@@ -323,14 +323,6 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
         /// <returns></returns>
         private IEnumerable<FileEntry> ExtractWimFile(FileEntry fileEntry, bool parallel)
         {
-            if (parallel)
-            {
-                foreach (var entry in ParallelExtractWimFile(fileEntry))
-                {
-                    yield return entry;
-                }
-                yield break;
-            }
             DiscUtils.Wim.WimFile? baseFile = null;
             try
             {
@@ -342,35 +334,84 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
             }
             if (baseFile != null)
             {
-                for (int i = 0; i < baseFile.ImageCount; i++)
+                if (parallel)
                 {
-                    var image = baseFile.GetImage(i);
-                    var files = image.GetFiles(image.Root.FullName, "*.*", SearchOption.AllDirectories);
-                    foreach (var file in files)
+                    ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
+
+                    for (int i = 0; i < baseFile.ImageCount; i++)
                     {
-                        Stream? stream = null;
-                        try
+                        var image = baseFile.GetImage(i);
+                        var fileList = image.GetFiles(image.Root.FullName, "*.*", SearchOption.AllDirectories).ToList();
+                        while (fileList.Any())
                         {
-                            var info = image.GetFileInfo(file);
-                            CheckResourceGovernor(info.Length);
-                            stream = info.OpenRead();
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Debug("Error reading {0} from WIM {1} ({2}:{3})", file, image.FriendlyName, e.GetType(), e.Message);
-                        }
-                        if (stream != null)
-                        {
-                            var newFileEntry = new FileEntry($"{image.FriendlyName}\\{file}", stream, fileEntry);
-                            var entries = ExtractFile(newFileEntry, parallel);
-                            foreach (var entry in entries)
+                            int batchSize = Math.Min(MAX_BATCH_SIZE, fileList.Count);
+                            var range = fileList.Take(batchSize);
+                            var streamsAndNames = new List<(DiscFileInfo, Stream)>();
+                            foreach (var file in range)
                             {
-                                yield return entry;
+                                try
+                                {
+                                    var info = image.GetFileInfo(file);
+                                    streamsAndNames.Add((info, info.OpenRead()));
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Debug("Error reading {0} from WIM {1} ({2}:{3})", file, image.FriendlyName, e.GetType(), e.Message);
+                                }
                             }
-                            stream.Dispose();
+                            CheckResourceGovernor(streamsAndNames.Sum(x => x.Item1.Length));
+                            streamsAndNames.AsParallel().ForAll(file =>
+                            {
+                                var newFileEntry = new FileEntry($"{image.FriendlyName}\\{file.Item1.FullName}", file.Item2, fileEntry);
+                                var entries = ExtractFile(newFileEntry, true);
+                                files.PushRange(entries.ToArray());
+                            });
+                            fileList.RemoveRange(0, batchSize);
+
+                            while (files.TryPop(out FileEntry? result))
+                            {
+                                if (result != null)
+                                    yield return result;
+                            }
                         }
                     }
                 }
+                else
+                {
+                    for (int i = 0; i < baseFile.ImageCount; i++)
+                    {
+                        var image = baseFile.GetImage(i);
+                        var files = image.GetFiles(image.Root.FullName, "*.*", SearchOption.AllDirectories);
+                        foreach (var file in files)
+                        {
+                            Stream? stream = null;
+                            try
+                            {
+                                var info = image.GetFileInfo(file);
+                                CheckResourceGovernor(info.Length);
+                                stream = info.OpenRead();
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.Debug("Error reading {0} from WIM {1} ({2}:{3})", file, image.FriendlyName, e.GetType(), e.Message);
+                            }
+                            if (stream != null)
+                            {
+                                var newFileEntry = new FileEntry($"{image.FriendlyName}\\{file}", stream, fileEntry);
+                                var entries = ExtractFile(newFileEntry, parallel);
+                                foreach (var entry in entries)
+                                {
+                                    yield return entry;
+                                }
+                                stream.Dispose();
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                yield return fileEntry;
             }
         }
 
@@ -382,14 +423,31 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
         private IEnumerable<FileEntry> ExtractVMDKFile(FileEntry fileEntry, bool parallel)
         {
             using var disk = new DiscUtils.Vmdk.Disk(fileEntry.Content, Ownership.None);
-            var manager = new VolumeManager(disk);
-            var logicalVolumes = manager.GetLogicalVolumes();
-            foreach (var volume in logicalVolumes)
+            LogicalVolumeInfo[]? logicalVolumes = null;
+
+            try
             {
-                foreach (var entry in DumpLogicalVolume(volume, fileEntry.FullPath, parallel, fileEntry))
+                var manager = new VolumeManager(disk);
+                logicalVolumes = manager.GetLogicalVolumes();
+            }
+            catch (Exception e)
+            {
+                Logger.Debug("Error reading {0} disk at {1} ({2}:{3})", disk.GetType(), fileEntry.FullPath, e.GetType(), e.Message);
+            }
+
+            if (logicalVolumes != null)
+            {
+                foreach (var volume in logicalVolumes)
                 {
-                    yield return entry;
+                    foreach (var entry in DumpLogicalVolume(volume, fileEntry.FullPath, parallel, fileEntry))
+                    {
+                        yield return entry;
+                    }
                 }
+            }
+            else
+            {
+                yield return fileEntry;
             }
         }
 
@@ -401,14 +459,33 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
         private IEnumerable<FileEntry> ExtractVHDXFile(FileEntry fileEntry, bool parallel)
         {
             using var disk = new DiscUtils.Vhdx.Disk(fileEntry.Content, Ownership.None);
-            var manager = new VolumeManager(disk);
-            var logicalVolumes = manager.GetLogicalVolumes();
-            foreach(var volume in logicalVolumes)
+            LogicalVolumeInfo[]? logicalVolumes = null;
+
+            try
             {
-                foreach(var entry in DumpLogicalVolume(volume, fileEntry.FullPath, parallel, fileEntry))
+                var manager = new VolumeManager(disk);
+                logicalVolumes = manager.GetLogicalVolumes();
+            }
+            catch (Exception e)
+            {
+                Logger.Debug("Error reading {0} disk at {1} ({2}:{3})", disk.GetType(), fileEntry.FullPath, e.GetType(), e.Message);
+            }
+
+            if (logicalVolumes != null)
+            {
+                foreach (var volume in logicalVolumes)
                 {
-                    yield return entry;
+                    var fsInfos = FileSystemManager.DetectFileSystems(volume);
+
+                    foreach (var entry in DumpLogicalVolume(volume, fileEntry.FullPath, parallel, fileEntry))
+                    {
+                        yield return entry;
+                    }
                 }
+            }
+            else
+            {
+                yield return fileEntry;
             }
         }
 
@@ -420,14 +497,31 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
         private IEnumerable<FileEntry> ExtractVHDFile(FileEntry fileEntry, bool parallel)
         {
             using var disk = new DiscUtils.Vhd.Disk(fileEntry.Content, Ownership.None);
-            var manager = new VolumeManager(disk);
-            var logicalVolumes = manager.GetLogicalVolumes();
-            foreach (var volume in logicalVolumes)
+            LogicalVolumeInfo[]? logicalVolumes = null;
+
+            try
             {
-                foreach (var entry in DumpLogicalVolume(volume, fileEntry.FullPath, parallel, fileEntry))
+                var manager = new VolumeManager(disk);
+                logicalVolumes = manager.GetLogicalVolumes();
+            }
+            catch (Exception e)
+            {
+                Logger.Debug("Error reading {0} disk at {1} ({2}:{3})", disk.GetType(), fileEntry.FullPath, e.GetType(), e.Message);
+            }
+
+            if (logicalVolumes != null)
+            {
+                foreach (var volume in logicalVolumes)
                 {
-                    yield return entry;
+                    foreach (var entry in DumpLogicalVolume(volume, fileEntry.FullPath, parallel, fileEntry))
+                    {
+                        yield return entry;
+                    }
                 }
+            }
+            else
+            {
+                yield return fileEntry;
             }
         }
 
@@ -438,38 +532,78 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
         /// <returns></returns>
         private IEnumerable<FileEntry> ExtractIsoFile(FileEntry fileEntry, bool parallel)
         {
-            if (parallel)
-            {
-                foreach (var entry in ParallelExtractIsoFile(fileEntry))
-                {
-                    yield return entry;
-                }
-                yield break;
-            }
             using CDReader cd = new CDReader(fileEntry.Content, true);
-            
-            foreach(var file in cd.GetFiles(cd.Root.FullName,"*.*", SearchOption.AllDirectories))
+            var entries = cd.GetFiles(cd.Root.FullName, "*.*", SearchOption.AllDirectories);
+            if (entries != null)
             {
-                var fileInfo = cd.GetFileInfo(file);
-                CheckResourceGovernor(fileInfo.Length);
-                Stream? stream = null;
-                try
+                if (parallel)
                 {
-                    stream = fileInfo.OpenRead();
-                }
-                catch (Exception e)
-                {
-                    Logger.Debug("Failed to extract {0} from ISO {1}. ({2}:{3})", fileInfo.Name, fileEntry.FullPath, e.GetType(), e.Message);
-                }
-                if (stream != null)
-                {
-                    var newFileEntry = new FileEntry(fileInfo.Name, stream, fileEntry);
-                    var entries = ExtractFile(newFileEntry, parallel);
-                    foreach (var entry in entries)
+                    ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
+
+                    int batchSize = Math.Min(MAX_BATCH_SIZE, entries.Length);
+                    var selectedFileNames = entries[0..batchSize];
+                    var fileInfoTuples = new List<(DiscFileInfo, Stream)>();
+
+                    foreach (var selectedFileName in selectedFileNames)
                     {
-                        yield return entry;
+                        try
+                        {
+                            var fileInfo = cd.GetFileInfo(selectedFileName);
+                            var stream = fileInfo.OpenRead();
+                            fileInfoTuples.Add((fileInfo, stream));
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Debug("Failed to get FileInfo or OpenStream from {0} in ISO {1} ({2}:{3})", selectedFileName, fileEntry.FullPath, e.GetType(), e.Message);
+                        }
+                    }
+                    CheckResourceGovernor(fileInfoTuples.Sum(x => x.Item1.Length));
+
+                    fileInfoTuples.AsParallel().ForAll(cdFile =>
+                    {
+                        var newFileEntry = new FileEntry(cdFile.Item1.Name, cdFile.Item2, fileEntry);
+                        var entries = ExtractFile(newFileEntry, true);
+                        files.PushRange(entries.ToArray());
+                    });
+
+                    entries = entries[batchSize..];
+
+                    while (files.TryPop(out FileEntry? result))
+                    {
+                        if (result != null)
+                            yield return result;
                     }
                 }
+                else
+                {
+                    foreach (var file in entries)
+                    {
+                        var fileInfo = cd.GetFileInfo(file);
+                        CheckResourceGovernor(fileInfo.Length);
+                        Stream? stream = null;
+                        try
+                        {
+                            stream = fileInfo.OpenRead();
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Debug("Failed to extract {0} from ISO {1}. ({2}:{3})", fileInfo.Name, fileEntry.FullPath, e.GetType(), e.Message);
+                        }
+                        if (stream != null)
+                        {
+                            var newFileEntry = new FileEntry(fileInfo.Name, stream, fileEntry);
+                            var innerEntries = ExtractFile(newFileEntry, parallel);
+                            foreach (var entry in innerEntries)
+                            {
+                                yield return entry;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                yield return fileEntry;
             }
         }
 
@@ -491,14 +625,39 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
             }
             if (fileEntries != null)
             {
-                foreach (var entry in fileEntries)
+                if (parallel)
                 {
-                    CheckResourceGovernor(entry.Content.Length);
-                    foreach (var extractedFile in ExtractFile(entry))
+                    var tempStore = new ConcurrentStack<FileEntry>();
+                    var selectedEntries = fileEntries.Take(MAX_BATCH_SIZE);
+                    CheckResourceGovernor(selectedEntries.Sum(x => x.Content.Length));
+                    selectedEntries.AsParallel().ForAll(arEntry =>
                     {
-                        yield return extractedFile;
+                        tempStore.PushRange(ExtractFile(arEntry, parallel).ToArray());
+                    });
+
+                    fileEntries = fileEntries.Skip(selectedEntries.Count());
+
+                    while (tempStore.TryPop(out FileEntry? result))
+                    {
+                        if (result != null)
+                            yield return result;
                     }
                 }
+                else
+                {
+                    foreach (var entry in fileEntries)
+                    {
+                        CheckResourceGovernor(entry.Content.Length);
+                        foreach (var extractedFile in ExtractFile(entry, parallel))
+                        {
+                            yield return extractedFile;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                yield return fileEntry;
             }
         }
 
@@ -509,14 +668,6 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
         /// <returns>Extracted files</returns>
         private IEnumerable<FileEntry> ExtractZipFile(FileEntry fileEntry, bool parallel)
         {
-            if (parallel)
-            {
-                foreach (var entry in ParallelExtractZipFile(fileEntry))
-                {
-                    yield return entry;
-                }
-                yield break;
-            }
             ZipFile? zipFile = null;
             try
             {
@@ -528,41 +679,114 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
             }
             if (zipFile != null)
             {
-                foreach (ZipEntry? zipEntry in zipFile)
+                if (parallel)
                 {
-                    if (zipEntry is null ||
-                        zipEntry.IsDirectory ||
-                        zipEntry.IsCrypted ||
-                        !zipEntry.CanDecompress)
+                    ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
+
+                    var zipEntries = new List<ZipEntry>();
+                    foreach (ZipEntry? zipEntry in zipFile)
                     {
-                        continue;
+                        if (zipEntry is null ||
+                            zipEntry.IsDirectory ||
+                            zipEntry.IsCrypted ||
+                            !zipEntry.CanDecompress)
+                        {
+                            continue;
+                        }
+                        zipEntries.Add(zipEntry);
                     }
 
-                    CheckResourceGovernor(zipEntry.Size);
-
-                    using var fs = new FileStream(Path.GetTempFileName(), FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, FileOptions.DeleteOnClose);
-                    try
+                    while (zipEntries.Count > 0)
                     {
-                        byte[] buffer = new byte[BUFFER_SIZE];
-                        var zipStream = zipFile.GetInputStream(zipEntry);
-                        StreamUtils.Copy(zipStream, fs, buffer);
+                        int batchSize = Math.Min(MAX_BATCH_SIZE, zipEntries.Count);
+                        var selectedEntries = zipEntries.GetRange(0, batchSize);
+                        CheckResourceGovernor(selectedEntries.Sum(x => x.Size));
+                        try
+                        {
+                            selectedEntries.AsParallel().ForAll(zipEntry =>
+                            {
+                                try
+                                {
+                                    var zipStream = zipFile.GetInputStream(zipEntry);
+                                    var newFileEntry = new FileEntry(zipEntry.Name, zipStream, fileEntry);
+                                    if (IsQuine(newFileEntry))
+                                    {
+                                        Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
+                                        CurrentOperationProcessedBytesLeft = -1;
+                                    }
+                                    else
+                                    {
+                                        files.PushRange(ExtractFile(newFileEntry, true).ToArray());
+                                    }
+                                }
+                                catch (Exception e) when (e is OverflowException)
+                                {
+                                    Logger.Debug(DEBUG_STRING, ArchiveFileType.ZIP, fileEntry.FullPath, zipEntry.Name, e.GetType());
+                                    throw;
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Debug(DEBUG_STRING, ArchiveFileType.ZIP, fileEntry.FullPath, zipEntry.Name, e.GetType());
+                                }
+                            });
+                        }
+                        catch (Exception e) when (e is AggregateException)
+                        {
+                            if (e.InnerException?.GetType() == typeof(OverflowException))
+                            {
+                                throw e.InnerException;
+                            }
+                            throw;
+                        }
+
+                        CheckResourceGovernor(0);
+                        zipEntries.RemoveRange(0, batchSize);
+
+                        while (files.TryPop(out FileEntry? result))
+                        {
+                            if (result != null)
+                                yield return result;
+                        }
                     }
-                    catch (Exception e)
+                }
+                else
+                {
+                    foreach (ZipEntry? zipEntry in zipFile)
                     {
-                        Logger.Debug(DEBUG_STRING, ArchiveFileType.ZIP, fileEntry.FullPath, zipEntry.Name, e.GetType());
-                    }
+                        if (zipEntry is null ||
+                            zipEntry.IsDirectory ||
+                            zipEntry.IsCrypted ||
+                            !zipEntry.CanDecompress)
+                        {
+                            continue;
+                        }
 
-                    var newFileEntry = new FileEntry(zipEntry.Name, fs, fileEntry);
+                        CheckResourceGovernor(zipEntry.Size);
 
-                    if (IsQuine(newFileEntry))
-                    {
-                        Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
-                        throw new OverflowException();
-                    }
+                        using var fs = new FileStream(Path.GetTempFileName(), FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, FileOptions.DeleteOnClose);
+                        try
+                        {
+                            byte[] buffer = new byte[BUFFER_SIZE];
+                            var zipStream = zipFile.GetInputStream(zipEntry);
+                            StreamUtils.Copy(zipStream, fs, buffer);
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Debug(DEBUG_STRING, ArchiveFileType.ZIP, fileEntry.FullPath, zipEntry.Name, e.GetType());
+                        }
 
-                    foreach (var extractedFile in ExtractFile(newFileEntry, parallel))
-                    {
-                        yield return extractedFile;
+                        var newFileEntry = new FileEntry(zipEntry.Name, fs, fileEntry);
+
+                        if (IsQuine(newFileEntry))
+                        {
+                            Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
+                            throw new OverflowException();
+                        }
+
+                        foreach (var extractedFile in ExtractFile(newFileEntry, parallel))
+                        {
+                            yield return extractedFile;
+                        }
                     }
                 }
             }
@@ -783,15 +1007,6 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
         /// <returns>Extracted files</returns>
         private IEnumerable<FileEntry> ExtractRarFile(FileEntry fileEntry, bool parallel)
         {
-            // TODO: This produces unpredictable results when run on Azure Pipelines, but cannot reproduce locally
-            if (parallel)
-            {
-                foreach (var entry in ParallelExtractRarFile(fileEntry))
-                {
-                    yield return entry;
-                }
-                yield break;
-            }
             RarArchive? rarArchive = null;
             try
             {
@@ -804,32 +1019,75 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
 
             if (rarArchive != null)
             {
-                foreach (var entry in rarArchive.Entries)
+                var entries = rarArchive.Entries.Where(x => x.IsComplete && !x.IsDirectory && !x.IsEncrypted);
+                if (parallel)
                 {
-                    if (entry.IsDirectory)
+                    ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
+
+                    while (entries.Any())
                     {
-                        continue;
-                    }
-                    CheckResourceGovernor(entry.Size);
-                    FileEntry? newFileEntry = null;
-                    try
-                    {
-                        newFileEntry = new FileEntry(entry.Key, entry.OpenEntryStream(), fileEntry);
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Debug(DEBUG_STRING, ArchiveFileType.RAR, fileEntry.FullPath, entry.Key, e.GetType());
-                    }
-                    if (newFileEntry != null)
-                    {
-                        if (IsQuine(newFileEntry))
+                        int batchSize = Math.Min(MAX_BATCH_SIZE, entries.Count());
+
+                        var streams = entries.Take(batchSize).Select(entry => (entry, entry.OpenEntryStream())).ToList();
+
+                        CheckResourceGovernor(streams.Sum(x => x.Item2.Length));
+
+                        streams.AsParallel().ForAll(streampair =>
                         {
-                            Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
-                            throw new OverflowException();
+                            try
+                            {
+                                var newFileEntry = new FileEntry(streampair.entry.Key, streampair.Item2, fileEntry);
+                                if (IsQuine(newFileEntry))
+                                {
+                                    Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
+                                    CurrentOperationProcessedBytesLeft = -1;
+                                }
+                                else
+                                {
+                                    files.PushRange(ExtractFile(newFileEntry, true).ToArray());
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.Debug(DEBUG_STRING, ArchiveFileType.RAR, fileEntry.FullPath, streampair.entry.Key, e.GetType());
+                            }
+                        });
+                        CheckResourceGovernor(0);
+
+                        entries = entries.Skip(streams.Count);
+
+                        while (files.TryPop(out FileEntry? result))
+                        {
+                            if (result != null)
+                                yield return result;
                         }
-                        foreach (var extractedFile in ExtractFile(newFileEntry, parallel))
+                    }
+                }
+                else
+                {
+                    foreach (var entry in entries)
+                    {
+                        CheckResourceGovernor(entry.Size);
+                        FileEntry? newFileEntry = null;
+                        try
                         {
-                            yield return extractedFile;
+                            newFileEntry = new FileEntry(entry.Key, entry.OpenEntryStream(), fileEntry);
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Debug(DEBUG_STRING, ArchiveFileType.RAR, fileEntry.FullPath, entry.Key, e.GetType());
+                        }
+                        if (newFileEntry != null)
+                        {
+                            if (IsQuine(newFileEntry))
+                            {
+                                Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
+                                throw new OverflowException();
+                            }
+                            foreach (var extractedFile in ExtractFile(newFileEntry, parallel))
+                            {
+                                yield return extractedFile;
+                            }
                         }
                     }
                 }
@@ -847,14 +1105,6 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
         /// <returns>Extracted files</returns>
         private IEnumerable<FileEntry> Extract7ZipFile(FileEntry fileEntry, bool parallel)
         {
-            if (parallel)
-            {
-                foreach (var entry in ParallelExtract7ZipFile(fileEntry))
-                {
-                    yield return entry;
-                }
-                yield break;
-            }
             SevenZipArchive? sevenZipArchive = null;
             try
             {
@@ -866,24 +1116,72 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
             }
             if (sevenZipArchive != null)
             {
-                foreach (var entry in sevenZipArchive.Entries)
+                var entries = sevenZipArchive.Entries.Where(x => !x.IsDirectory && !x.IsEncrypted && x.IsComplete).ToList();
+
+                if (parallel)
                 {
-                    if (entry.IsDirectory)
+                    ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
+
+                    while (entries.Count() > 0)
                     {
-                        continue;
+                        int batchSize = Math.Min(MAX_BATCH_SIZE, entries.Count());
+                        var selectedEntries = entries.GetRange(0, batchSize).Select(entry => (entry, entry.OpenEntryStream()));
+                        CheckResourceGovernor(selectedEntries.Sum(x => x.entry.Size));
+
+                        try
+                        {
+                            selectedEntries.AsParallel().ForAll(entry =>
+                            {
+                                try
+                                {
+                                    var newFileEntry = new FileEntry(entry.entry.Key, entry.Item2, fileEntry);
+                                    if (IsQuine(newFileEntry))
+                                    {
+                                        Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
+                                        CurrentOperationProcessedBytesLeft = -1;
+                                    }
+                                    else
+                                    {
+                                        files.PushRange(ExtractFile(newFileEntry, true).ToArray());
+                                    }
+                                }
+                                catch (Exception e) when (e is OverflowException)
+                                {
+                                    Logger.Debug(DEBUG_STRING, ArchiveFileType.P7ZIP, fileEntry.FullPath, entry.entry.Key, e.GetType());
+                                    throw;
+                                }
+                                catch (Exception e)
+                                {
+                                    Logger.Debug(DEBUG_STRING, ArchiveFileType.P7ZIP, fileEntry.FullPath, entry.entry.Key, e.GetType());
+                                }
+                            });
+                        }
+                        catch (Exception e) when (e is AggregateException)
+                        {
+                            if (e.InnerException?.GetType() == typeof(OverflowException))
+                            {
+                                throw e.InnerException;
+                            }
+                            throw;
+                        }
+
+                        CheckResourceGovernor(0);
+                        entries.RemoveRange(0, batchSize);
+
+                        while (files.TryPop(out FileEntry? result))
+                        {
+                            if (result != null)
+                                yield return result;
+                        }
                     }
-                    CheckResourceGovernor(entry.Size);
-                    FileEntry? newFileEntry = null;
-                    try
+                }
+                else
+                {
+                    foreach (var entry in entries)
                     {
-                         newFileEntry = new FileEntry(entry.Key, entry.OpenEntryStream(), fileEntry);
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Debug(DEBUG_STRING, ArchiveFileType.P7ZIP, fileEntry.FullPath, entry.Key, e.GetType());
-                    }
-                    if (newFileEntry != null)
-                    {
+                        CheckResourceGovernor(entry.Size);
+                        FileEntry newFileEntry = new FileEntry(entry.Key, entry.OpenEntryStream(), fileEntry);
+                        
                         if (IsQuine(newFileEntry))
                         {
                             Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
@@ -909,271 +1207,51 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
         /// <returns>Extracted files</returns>
         private IEnumerable<FileEntry> ExtractDebFile(FileEntry fileEntry, bool parallel)
         {
-            if (parallel)
-            {
-                foreach (var entry in ParallelExtractDebFile(fileEntry))
-                {
-                    yield return entry;
-                }
-                yield break;
-            }
-            IEnumerable<FileEntry>? fileEntries = null;
+            IEnumerable<FileEntry>? entries = null;
             try
             {
-                fileEntries = DebArchiveFile.GetFileEntries(fileEntry);
+                entries = DebArchiveFile.GetFileEntries(fileEntry).Where(x => x.Name != "control.tar.xz");
             }
             catch (Exception e)
             {
                 Logger.Debug(DEBUG_STRING, ArchiveFileType.DEB, fileEntry.FullPath, string.Empty, e.GetType());
             }
-            if (fileEntries != null)
+            if (entries != null)
             {
-                foreach (var entry in fileEntries)
+                if (parallel)
                 {
-                    if (entry.Name == "control.tar.xz")
+                    ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
+
+                    while (entries.Any())
                     {
-                        // This is control information for debian and not part of the actual files
-                        continue;
-                    }
-                    CheckResourceGovernor(entry.Content.Length);
-                    foreach (var extractedFile in ExtractFile(entry, parallel))
-                    {
-                        yield return extractedFile;
-                    }
-                }
-            }
-            else
-            {
-                yield return fileEntry;
-            }
-        }
+                        int batchSize = Math.Min(MAX_BATCH_SIZE, entries.Count());
+                        var selectedEntries = entries.Take(batchSize);
 
-        /// <summary>
-        /// Extracts a RAR file contained in fileEntry.
-        /// </summary>
-        /// <param name="fileEntry">FileEntry to extract</param>
-        /// <returns>Extracted files</returns>
-        private IEnumerable<FileEntry> ParallelExtractRarFile(FileEntry fileEntry)
-        {
-            ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
-            RarArchive? rarArchive = null;
-            List<RarArchiveEntry> entries = new List<RarArchiveEntry>();
-            try
-            {
-                rarArchive = RarArchive.Open(fileEntry.Content);
-                entries.AddRange(rarArchive.Entries.Where(entry => !entry.IsDirectory && !entry.IsEncrypted && entry.IsComplete));
-            }
-            catch (Exception e)
-            {
-                Logger.Debug(DEBUG_STRING, ArchiveFileType.RAR, fileEntry.FullPath, string.Empty, e.GetType());
-            }
+                        CheckResourceGovernor(selectedEntries.Sum(x => x.Content.Length));
 
-            if (!entries.Any())
-            {
-                yield return fileEntry;
-            }
-            while (entries.Any())
-            {
-                int batchSize = Math.Min(MAX_BATCH_SIZE, entries.Count());
-
-                var streams = entries.Take(batchSize).Select(entry => (entry, entry.OpenEntryStream())).ToList();
-
-                CheckResourceGovernor(streams.Sum(x => x.Item2.Length));
-
-                streams.AsParallel().ForAll(streampair =>
-                {
-                    try
-                    {
-                        var newFileEntry = new FileEntry(streampair.entry.Key, streampair.Item2, fileEntry);
-                        if (IsQuine(newFileEntry))
-                        {
-                            Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
-                            CurrentOperationProcessedBytesLeft = -1;
-                        }
-                        else
-                        {
-                            files.PushRange(ExtractFile(newFileEntry, true).ToArray());
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Debug(DEBUG_STRING, ArchiveFileType.RAR, fileEntry.FullPath, streampair.entry.Key, e.GetType());
-                    }
-                });
-                CheckResourceGovernor(0);
-
-                entries.RemoveRange(0, batchSize);
-
-                while (files.TryPop(out FileEntry? result))
-                {
-                    if (result != null)
-                        yield return result;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Extracts an zip file contained in fileEntry.
-        /// </summary>
-        /// <param name="fileEntry">FileEntry to extract</param>
-        /// <returns>Extracted files</returns>
-        private IEnumerable<FileEntry> ParallelExtractZipFile(FileEntry fileEntry)
-        {
-            ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
-
-            ZipFile? zipFile = null;
-            try
-            {
-                zipFile = new ZipFile(fileEntry.Content);
-            }
-            catch (Exception e)
-            {
-                Logger.Debug(DEBUG_STRING, ArchiveFileType.ZIP, fileEntry.FullPath, string.Empty, e.GetType());
-            }
-            if (zipFile != null)
-            {
-                var zipEntries = new List<ZipEntry>();
-                foreach (ZipEntry? zipEntry in zipFile)
-                {
-                    if (zipEntry is null ||
-                        zipEntry.IsDirectory ||
-                        zipEntry.IsCrypted ||
-                        !zipEntry.CanDecompress)
-                    {
-                        continue;
-                    }
-                    zipEntries.Add(zipEntry);
-                }
-
-                while (zipEntries.Count > 0)
-                {
-                    int batchSize = Math.Min(MAX_BATCH_SIZE, zipEntries.Count);
-                    var selectedEntries = zipEntries.GetRange(0, batchSize);
-                    CheckResourceGovernor(selectedEntries.Sum(x => x.Size));
-                    try
-                    {
-                        selectedEntries.AsParallel().ForAll(zipEntry =>
-                        {
-                            try
-                            {
-                                var zipStream = zipFile.GetInputStream(zipEntry);
-                                var newFileEntry = new FileEntry(zipEntry.Name, zipStream, fileEntry);
-                                if (IsQuine(newFileEntry))
-                                {
-                                    Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
-                                    CurrentOperationProcessedBytesLeft = -1;
-                                }
-                                else
-                                {
-                                    files.PushRange(ExtractFile(newFileEntry, true).ToArray());
-                                }
-                            }
-                            catch (Exception e) when (e is OverflowException)
-                            {
-                                Logger.Debug(DEBUG_STRING, ArchiveFileType.ZIP, fileEntry.FullPath, zipEntry.Name, e.GetType());
-                                throw;
-                            }
-                            catch (Exception e)
-                            {
-                                Logger.Debug(DEBUG_STRING, ArchiveFileType.ZIP, fileEntry.FullPath, zipEntry.Name, e.GetType());
-                            }
-                        });
-                    }
-                    catch (Exception e) when (e is AggregateException)
-                    {
-                        if (e.InnerException?.GetType() == typeof(OverflowException))
-                        {
-                            throw e.InnerException;
-                        }
-                        throw;
-                    }
-
-                    CheckResourceGovernor(0);
-                    zipEntries.RemoveRange(0, batchSize);
-
-                    while (files.TryPop(out FileEntry? result))
-                    {
-                        if (result != null)
-                            yield return result;
-                    }
-                }
-            }
-            else
-            {
-                yield return fileEntry;
-            }
-        }
-
-        /// <summary>
-        /// Extracts a 7-Zip file contained in fileEntry.
-        /// </summary>
-        /// <param name="fileEntry">FileEntry to extract</param>
-        /// <returns>Extracted files</returns>
-        private IEnumerable<FileEntry> ParallelExtract7ZipFile(FileEntry fileEntry)
-        {
-            SevenZipArchive? sevenZipArchive = null;
-            ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
-            try
-            {
-                sevenZipArchive = SevenZipArchive.Open(fileEntry.Content);
-            }
-            catch (Exception e)
-            {
-                Logger.Debug(DEBUG_STRING, ArchiveFileType.P7ZIP, fileEntry.FullPath, string.Empty, e.GetType());
-            }
-            if (sevenZipArchive != null)
-            {
-                var entries = sevenZipArchive.Entries.Where(x => !x.IsDirectory && !x.IsEncrypted && x.IsComplete).ToList();
-                while (entries.Count() > 0)
-                {
-                    int batchSize = Math.Min(MAX_BATCH_SIZE, entries.Count());
-                    var selectedEntries = entries.GetRange(0, batchSize).Select(entry => (entry, entry.OpenEntryStream()));
-                    CheckResourceGovernor(selectedEntries.Sum(x => x.entry.Size));
-
-                    try
-                    {
                         selectedEntries.AsParallel().ForAll(entry =>
                         {
-                            try
-                            {
-                                var newFileEntry = new FileEntry(entry.entry.Key, entry.Item2, fileEntry);
-                                if (IsQuine(newFileEntry))
-                                {
-                                    Logger.Info(IS_QUINE_STRING, fileEntry.Name, fileEntry.FullPath);
-                                    CurrentOperationProcessedBytesLeft = -1;
-                                }
-                                else
-                                {
-                                    files.PushRange(ExtractFile(newFileEntry, true).ToArray());
-                                }
-                            }
-                            catch (Exception e) when (e is OverflowException)
-                            {
-                                Logger.Debug(DEBUG_STRING, ArchiveFileType.P7ZIP, fileEntry.FullPath, entry.entry.Key, e.GetType());
-                                throw;
-                            }
-                            catch (Exception e)
-                            {
-                                Logger.Debug(DEBUG_STRING, ArchiveFileType.P7ZIP, fileEntry.FullPath, entry.entry.Key, e.GetType());
-                            }
+                            files.PushRange(ExtractFile(entry, parallel).ToArray());
                         });
-                    }
-                    catch(Exception e) when (e is AggregateException)
-                    {
-                        if (e.InnerException?.GetType() == typeof(OverflowException))
+
+                        entries = entries.Skip(batchSize);
+
+                        while (files.TryPop(out FileEntry? result))
                         {
-                            throw e.InnerException;
+                            if (result != null)
+                                yield return result;
                         }
-                        throw;
                     }
-                    
-                    CheckResourceGovernor(0);
-                    entries.RemoveRange(0, batchSize);
-
-                    while (files.TryPop(out FileEntry? result))
+                }
+                else
+                {
+                    foreach (var entry in entries)
                     {
-                        if (result != null)
-                            yield return result;
+                        CheckResourceGovernor(entry.Content.Length);
+                        foreach (var extractedFile in ExtractFile(entry, parallel))
+                        {
+                            yield return extractedFile;
+                        }
                     }
                 }
             }
@@ -1183,111 +1261,25 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
             }
         }
 
-        /// <summary>
-        /// Extracts a .deb file contained in fileEntry.
         /// </summary>
-        /// <param name="fileEntry">FileEntry to extract</param>
-        /// <returns>Extracted files</returns>
-        private IEnumerable<FileEntry> ParallelExtractDebFile(FileEntry fileEntry)
-        {
-            ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
-            IEnumerable<FileEntry>? fileEntries = null;
-            try
-            {
-                fileEntries = DebArchiveFile.GetFileEntries(fileEntry);
-            }
-            catch (Exception e)
-            {
-                Logger.Debug(DEBUG_STRING, ArchiveFileType.DEB, fileEntry.FullPath, string.Empty, e.GetType());
-            }
-            if (fileEntries != null)
-            {
-                // This is control information for Debian's installer wizardy and not part of the actual files
-                var entries = fileEntries.Where(x => x.Name != "control.tar.xz");
-                while (entries.Any())
-                {
-                    int batchSize = Math.Min(MAX_BATCH_SIZE, entries.Count());
-                    var selectedEntries = entries.Take(batchSize);
-                    
-                    CheckResourceGovernor(selectedEntries.Sum(x => x.Content.Length));
-
-                    selectedEntries.AsParallel().ForAll(entry =>
-                    {
-                        files.PushRange(ExtractFile(entry, true).ToArray());
-                    });
-
-                    entries = entries.Skip(batchSize);
-
-                    while (files.TryPop(out FileEntry? result))
-                    {
-                        if (result != null)
-                            yield return result;
-                    }
-                }
-            }
-            else
-            {
-                yield return fileEntry;
-            }
-        }
-
-        /// <summary>
-        /// Extracts an iso file contained in fileEntry.
-        /// </summary>
-        /// <param name="fileEntry">FileEntry to extract</param>
-        /// <returns>Extracted files</returns>
-        private IEnumerable<FileEntry> ParallelExtractIsoFile(FileEntry fileEntry)
-        {
-            ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
-
-            using CDReader cd = new CDReader(fileEntry.Content, true);
-            var cdFiles = cd.GetFiles(cd.Root.FullName, "*.*", SearchOption.AllDirectories).ToList();
-            while (cdFiles.Count > 0)
-            {
-                int batchSize = Math.Min(MAX_BATCH_SIZE, cdFiles.Count);
-                var selectedFileNames = cdFiles.GetRange(0, batchSize);
-                var fileInfoTuples = new List<(DiscFileInfo, Stream)>();
-
-                foreach (var selectedFileName in selectedFileNames) {
-                    try
-                    {
-                        var fileInfo = cd.GetFileInfo(selectedFileName);
-                        var stream = fileInfo.OpenRead();
-                        fileInfoTuples.Add((fileInfo, stream));
-                    }
-                    catch(Exception e)
-                    {
-                        Logger.Debug("Failed to get FileInfo or OpenStream from {0} in ISO {1} ({2}:{3})", selectedFileName, fileEntry.FullPath, e.GetType(), e.Message);
-                    }
-                }
-                CheckResourceGovernor(fileInfoTuples.Sum(x => x.Item1.Length));
-
-                fileInfoTuples.AsParallel().ForAll(cdFile =>
-                {
-                    var newFileEntry = new FileEntry(cdFile.Item1.Name, cdFile.Item2, fileEntry);
-                    var entries = ExtractFile(newFileEntry, true);
-                    files.PushRange(entries.ToArray());
-                });
-
-                cdFiles.RemoveRange(0, batchSize);
-
-                while (files.TryPop(out FileEntry? result))
-                {
-                    if (result != null)
-                        yield return result;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="lvi"></param>
+        /// <param name="volume"></param>
+        /// <param name="parentPath"></param>
+        /// <param name="parallel"></param>
+        /// <param name="parent"></param>
         /// <returns></returns>
         private IEnumerable<FileEntry> DumpLogicalVolume(LogicalVolumeInfo volume, string parentPath, bool parallel, FileEntry? parent = null)
         {
-            var fsInfos = FileSystemManager.DetectFileSystems(volume);
-            foreach (var fsInfo in fsInfos)
+            DiscUtils.FileSystemInfo[]? fsInfos = null;
+            try
+            {
+                fsInfos = FileSystemManager.DetectFileSystems(volume);
+            }
+            catch(Exception e)
+            {
+                Logger.Debug("Failed to get file systems from logical volume {0} Image {1} ({2}:{3})", volume.Identity, parentPath, e.GetType(), e.Message);
+            }
+
+            foreach (var fsInfo in fsInfos ?? Array.Empty<DiscUtils.FileSystemInfo>())
             {
                 using var fs = fsInfo.Open(volume);
                 var diskFiles = fs.GetFiles(fs.Root.FullName, "*.*", SearchOption.AllDirectories).ToList();
@@ -1299,7 +1291,7 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
                     {
                         int batchSize = Math.Min(MAX_BATCH_SIZE, diskFiles.Count);
                         var range = diskFiles.GetRange(0, batchSize);
-                        var fileinfos = new List<(DiscFileInfo,Stream)>();
+                        var fileinfos = new List<(DiscFileInfo, Stream)>();
                         long totalLength = 0;
                         foreach (var r in range)
                         {
@@ -1307,7 +1299,7 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
                             {
                                 var fi = fs.GetFileInfo(r);
                                 totalLength += fi.Length;
-                                fileinfos.Add((fi,fi.OpenRead()));
+                                fileinfos.Add((fi, fi.OpenRead()));
                             }
                             catch (Exception e)
                             {
@@ -1362,55 +1354,7 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Extracts an a Wim file
-        /// </summary>
-        /// <param name="fileEntry"></param>
-        /// <returns></returns>
-        private IEnumerable<FileEntry> ParallelExtractWimFile(FileEntry fileEntry)
-        {
-            ConcurrentStack<FileEntry> files = new ConcurrentStack<FileEntry>();
-
-            DiscUtils.Wim.WimFile baseFile = new DiscUtils.Wim.WimFile(fileEntry.Content);
-            for (int i = 0; i < baseFile.ImageCount; i++)
-            {
-                var image = baseFile.GetImage(i);
-                var fileList = image.GetFiles(image.Root.FullName, "*.*", SearchOption.AllDirectories).ToList();
-                while (fileList.Any())
-                {
-                    int batchSize = Math.Min(MAX_BATCH_SIZE, fileList.Count);
-                    var range = fileList.Take(batchSize);
-                    var streamsAndNames = new List<(DiscFileInfo, Stream)>();
-                    foreach(var file in range)
-                    {
-                        try
-                        {
-                            var info = image.GetFileInfo(file);
-                            streamsAndNames.Add((info, info.OpenRead()));
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Debug("Error reading {0} from WIM {1} ({2}:{3})", file, image.FriendlyName, e.GetType(), e.Message);
-                        }
-                    }
-                    CheckResourceGovernor(streamsAndNames.Sum(x => x.Item1.Length));
-                    streamsAndNames.AsParallel().ForAll(file => 
-                    {
-                        var newFileEntry = new FileEntry($"{image.FriendlyName}\\{file.Item1.FullName}", file.Item2, fileEntry);
-                        var entries = ExtractFile(newFileEntry, true);
-                        files.PushRange(entries.ToArray());
-                    });
-                    fileList.RemoveRange(0, batchSize);
-
-                    while (files.TryPop(out FileEntry? result))
-                    {
-                        if (result != null)
-                            yield return result;
-                    }
-                }
-            }
+            
         }
 
         /// <summary>

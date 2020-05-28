@@ -4,10 +4,12 @@
 using System;
 using System.IO;
 
-namespace Microsoft.ApplicationInspector.MultiExtractor
+namespace MultiExtractor
 {
     public class FileEntry
     {
+        private readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// Constructs a FileEntry object from a Stream.  
         /// If passthroughStream is set to true, and the stream is seekable, it will directly use inputStream.
@@ -42,40 +44,51 @@ namespace Microsoft.ApplicationInspector.MultiExtractor
                 throw new ArgumentNullException(nameof(inputStream));
             }
 
+            if (!inputStream.CanRead)
+            {
+                Content = new MemoryStream();
+            }
+
             // We want to be able to seek, so ensure any passthrough stream is Seekable
             if (passthroughStream && inputStream.CanSeek)
             {
                 Content = inputStream;
+                if (Content.Position != 0)
+                {
+                    Content.Position = 0;
+                }
             }
             else
             {
                 // Back with a temporary filestream, this is optimized to be cached in memory when possible automatically by .NET
                 Content = new FileStream(Path.GetTempFileName(), FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, FileOptions.DeleteOnClose);
-
                 long? initialPosition = null;
 
                 if (inputStream.CanSeek)
                 {
-                    // SharpZipLib doesn't allow you to check .Length, but if .Length is 0 you cannot set position to 0;
                     initialPosition = inputStream.Position;
-
                     if (inputStream.Position != 0)
                     {
                         inputStream.Position = 0;
                     }
-                    
                 }
-                inputStream.CopyTo(Content);
-                if (inputStream.CanSeek)
-                {
-                    if (inputStream.Position != 0)
-                    {
-                        inputStream.Position = initialPosition ?? 0;
-                    }
-                }
-            }
 
-            Content.Position = 0;
+                try
+                {
+                    inputStream.CopyTo(Content);
+                }
+                catch(Exception e)
+                {
+                    Logger.Debug("Failed to copy stream from {0} ({1}:{2})", FullPath, e.GetType(), e.Message);
+                }
+
+                if (inputStream.CanSeek && inputStream.Position != 0)
+                {
+                    inputStream.Position = initialPosition ?? 0;
+                }
+
+                Content.Position = 0;
+            }
         }
 
         public string? ParentPath { get; set; }

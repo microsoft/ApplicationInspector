@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Microsoft.ApplicationInspector.MultiExtractor
+namespace MultiExtractor
 {
     /// <summary>
     /// ArchiveTypes are the kinds of archive files that this module can process.

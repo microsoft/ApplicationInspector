@@ -1,14 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Microsoft.CST.OpenSource</RootNamespace>
-    <Company>Microsoft Corporation</Company>
-    <Description>OSS Gadget - Recursive Multi-Format Extractor</Description>
-    <Authors>Michael Scovetta</Authors>
-    <RepositoryType>GitHub</RepositoryType>
-    <RepositoryUrl>https://github.com/Microsoft/OSSGadget</RepositoryUrl>
-    <Configurations>Debug;Release</Configurations>
+    <PackageId>Microsoft.MultiExtractor</PackageId>
+    <Authors>Microsoft</Authors>
+    <Company>Microsoft</Company>
+    <Description>MultiExtractor is a library for performing file extraction from many different types of file archives, recursively.</Description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright> 
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <LangVersion>8.0</LangVersion>
     <Nullable>Enable</Nullable>
   </PropertyGroup>
@@ -31,7 +31,7 @@
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.1.91" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>false</Optimize>
+  </PropertyGroup>
 </Project>
