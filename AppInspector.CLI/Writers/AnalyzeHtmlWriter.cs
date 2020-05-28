@@ -507,19 +507,17 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <summary>
         /// Opportunity for any final data prep before report gen
         /// </summary>
-        public List<TagCounterUI> ConvertTagCounters(List<MetricTagCounter> metricTagCounters)
+        public List<TagCounterUI> ConvertTagCounters(IEnumerable<MetricTagCounter> metricTagCounters)
         {
             List<TagCounterUI> result = new List<TagCounterUI>();
             //TagCountersUI is liquid compatible while TagCounters is not to support json serialization; the split prevents exception
             //not fixable via json iteration disabling
-            foreach (MetricTagCounter counter in metricTagCounters)
+
+            result.AddRange(metricTagCounters.Select(counter => new TagCounterUI()
             {
-                result.Add(new TagCounterUI
-                {
-                    Tag = counter.Tag,
-                    Count = counter.Count
-                });
-            }
+                Tag = counter.Tag,
+                Count = counter.Count
+            }));
 
             return result;
         }
