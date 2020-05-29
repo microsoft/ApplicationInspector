@@ -500,11 +500,3 @@ stages:
         nuGetFeedType: 'external'
         publishFeedCredentials: 'CST-E Nuget CI'
         verbosityPush: 'Normal'
-    - task: NuGetCommand@2
-      displayName: Push NuGet Symbols
-      inputs:
-        command: 'push'
-        packagesToPush: '$(Build.StagingDirectory)/*.snupkg'
-        nuGetFeedType: 'external'
-        publishFeedCredentials: 'CST-E Nuget CI'
-        verbosityPush: 'Normal'
