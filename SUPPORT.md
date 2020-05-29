@@ -8,6 +8,10 @@ and then [New issue](https://github.com/microsoft/ApplicationInspector/issues/ne
 If you need help in how to use this project, please review our [Wiki](https://github.com/microsoft/ApplicationInspector/wiki)
 before opening an issue.
 
+## Security Issues
+
+If you discover a security vulnerability in this project, please see [SECURITY.md](https://github.com/Microsoft/ApplicationInspector/SECURITY.md) for information on how to report it privately.
+
 ## Microsoft Support Policy
 
 Support for this project is limited to the resources listed above.
