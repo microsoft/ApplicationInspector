@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.ApplicationInspector.RulesEngine;
-using MultiExtractor;
+using Microsoft.CST.OpenSource.MultiExtractor;
 using Newtonsoft.Json;
 using NLog;
 using System;
