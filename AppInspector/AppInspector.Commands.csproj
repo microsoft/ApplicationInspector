@@ -59,8 +59,6 @@
     <PackageReference Include="Microsoft.CST.MultiExtractor" Version="0.1.188" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NLog" Version="4.7.0" />
-    <PackageReference Include="sharpcompress" Version="0.25.0" />
-    <PackageReference Include="SharpZipLib" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
