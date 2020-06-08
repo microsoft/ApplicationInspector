@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NLog" Version="4.6.7" />
+    <PackageReference Include="NLog" Version="4.7.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +35,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\comments.json" />
     <EmbeddedResource Include="Resources\languages.json" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.1.91" />
   </ItemGroup>
 
 </Project>
