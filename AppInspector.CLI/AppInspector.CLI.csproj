@@ -161,8 +161,12 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="DotLiquid" Version="2.0.325" />
-    <PackageReference Include="NLog" Version="4.7.0" />
+    <PackageReference Include="DotLiquid" Version="2.0.351" />
+    <PackageReference Include="NLog" Version="4.7.2" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.1.91" />
   </ItemGroup>
   
 </Project>
