@@ -1,0 +1,508 @@
+# Azure Pipelines
+# https://aka.ms/yaml
+
+name: ApplicationInspector_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - AppInspector/*
+    - AppInspector.CLI/*
+    - MultiExtractor/*
+    - RulesEngine/*
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - AppInspector/*
+    - AppInspector.CLI/*
+    - MultiExtractor/*
+    - RulesEngine/*
+
+stages:
+- stage: Test
+  jobs:
+  - job: build_test
+    displayName: Run Tests
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '3.1.x'
+    - task: NuGetToolInstaller@1
+      displayName: Install Nuget Tool
+      inputs:
+        versionSpec: '5.4.x'
+    - task: DotNetCoreCLI@2
+      displayName: Dotnet Restore
+      inputs:
+        command: 'restore'
+        projects: 'UnitTest.Commands/UnitTest.Commands.csproj'
+        verbosityRestore: 'Normal'
+    - task: DotNetCoreCLI@2
+      displayName: Dotnet Test
+      inputs:
+        command: 'test'
+        projects: 'UnitTest.Commands/UnitTest.Commands.csproj'
+
+- stage: Build
+  jobs:
+  - job: build_nix
+    displayName: Build Linux & Mac
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '3.1.x'
+    - script: 'dotnet tool install -g nbgv'
+      displayName: 'Install GitVersioning'
+    - task: PowerShell@2
+      displayName: Set Release Version
+      inputs:
+        targetType: 'inline'
+        script: |
+          $version = (nbgv get-version -v AssemblyInformationalVersion).split('+')[0]
+          Write-Host "##vso[task.setvariable variable=ReleaseVersion;]$version"
+    - task: DotNetCoreCLI@2
+      displayName: Dotnet Publish Linux x64
+      inputs:
+        command: 'publish'
+        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/linux/ApplicationInspector_$(ReleaseVersion) -r linux-x64'
+        publishWebProjects: false
+        zipAfterPublish: false
+        workingDirectory: 'AppInspector.CLI'
+    - task: DotNetCoreCLI@2
+      displayName: Dotnet Publish MacOS x64
+      inputs:
+        command: 'publish'
+        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/macos/ApplicationInspector_$(ReleaseVersion) -r osx-x64'
+        publishWebProjects: false
+        zipAfterPublish: false
+        workingDirectory: 'AppInspector.CLI'
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - Linux
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/linux/'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_linux_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - MacOS
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/macos/'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_macos_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: PublishBuildArtifacts@1
+      displayName: Store Linux & Mac Archives
+      inputs:
+        PathtoPublish: '$(Build.StagingDirectory)'
+        ArtifactName: 'Unsigned_Nix'
+        publishLocation: 'Container'
+
+
+  - job: build_win
+    displayName: Build Windows, NetCoreApp, Nupkg
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '3.1.x'
+    - script: 'dotnet tool install -g nbgv'
+      displayName: 'Install GitVersioning'
+    - task: PowerShell@2
+      displayName: Set Release Version
+      inputs:
+        targetType: 'inline'
+        script: |
+          $version = (nbgv get-version -v AssemblyInformationalVersion).split('+')[0]
+          Write-Host "##vso[task.setvariable variable=ReleaseVersion;]$version"
+    - task: DotNetCoreCLI@2
+      displayName: Dotnet Publish Windows x86
+      inputs:
+        command: 'publish'
+        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)\windows\ApplicationInspector_$(ReleaseVersion) -r win-x86'
+        publishWebProjects: false
+        zipAfterPublish: false
+        workingDirectory: 'AppInspector.CLI'
+    - task: DotNetCoreCLI@2
+      displayName: Dotnet Build .NET Core App
+      inputs:
+        command: 'build'
+        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)\netcoreapp\ApplicationInspector_$(ReleaseVersion)'
+        publishWebProjects: false
+        zipAfterPublish: false
+        workingDirectory: 'AppInspector.CLI'
+    - task: DotNetCoreCLI@2
+      displayName: Pack Nupkg (Lib)
+      inputs:
+        command: 'custom'
+        custom: 'pack'
+        arguments: 'AppInspector -c Release -o $(Build.BinariesDirectory)\nuget\ApplicationInspector_$(ReleaseVersion)'
+    - task: DotNetCoreCLI@2
+      displayName: Pack Nupkg (Dotnet Tool)
+      inputs:
+        command: 'custom'
+        custom: 'pack'
+        arguments: 'AppInspector.CLI -c Release -o $(Build.BinariesDirectory)\nuget\ApplicationInspector_$(ReleaseVersion)'
+    - task: CredScan@3
+      inputs:
+      outputFormat: 'sarif'
+    - task: CodeInspector@2
+      inputs:
+      ProductId: '80207f22-ee58-4fd1-bdd5-4b1ecc3e7c9f'
+    - task: AntiMalware@3
+      displayName: Anti-Malware Scan
+      inputs:
+        InputType: 'Basic'
+        ScanType: 'CustomScan'
+        FileDirPath: '$(Build.BinariesDirectory)'
+        EnableServices: true
+        SupportLogOnError: false
+        TreatSignatureUpdateFailureAs: 'Warning'
+        SignatureFreshness: 'UpToDate'
+        TreatStaleSignatureAs: 'Warning'
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - Windows
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)\windows'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)\ApplicationInspector_windows_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - .NET Core App
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)\netcoreapp'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)\ApplicationInspector_netcoreapp_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - Nupkg
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)\nuget'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)\ApplicationInspector_nuget_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: PublishBuildArtifacts@1
+      displayName: Store Windows, NetCoreApp, Nupkg Archives
+      inputs:
+        PathtoPublish: '$(Build.StagingDirectory)'
+        ArtifactName: 'Unsigned_WinNuget'
+        publishLocation: 'Container'
+
+
+  - job: sign_hash_release
+    displayName: Code Sign, Generate Hashes, Publish Public Releases
+    dependsOn:
+    - build_nix
+    - build_win
+    condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI', 'Manual'))
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '3.1.x'
+    - script: 'dotnet tool install -g nbgv'
+      displayName: 'Install GitVersioning'
+    - task: PowerShell@2
+      displayName: Set Release Version
+      inputs:
+        targetType: 'inline'
+        script: |
+          $version = (nbgv get-version -v AssemblyInformationalVersion).split('+')[0]
+          Write-Host "##vso[task.setvariable variable=ReleaseVersion;]$version"
+    - task: DownloadBuildArtifacts@0
+      displayName: Retrieve Linux & Mac Archives
+      inputs:
+        buildType: 'current'
+        downloadType: 'specific'
+        itemPattern: 'Unsigned_Nix/*.zip'
+        downloadPath: '$(Build.BinariesDirectory)'
+    - task: DownloadBuildArtifacts@0
+      displayName: Retrieve Windows, NetCoreApp, Nupkg Archives
+      inputs:
+        buildType: 'current'
+        downloadType: 'specific'
+        itemPattern: 'Unsigned_WinNuget/*.zip'
+        downloadPath: '$(Build.BinariesDirectory)'
+    - task: ExtractFiles@1
+      displayName: Extract Artifacts for Signing
+      inputs:
+        archiveFilePatterns: '$(Build.BinariesDirectory)\*.zip'
+        destinationFolder: '$(Build.BinariesDirectory)'
+        cleanDestinationFolder: false
+    - task: AntiMalware@3
+      displayName: Anti-Malware Scan
+      inputs:
+        InputType: 'Basic'
+        ScanType: 'CustomScan'
+        FileDirPath: '$(Build.BinariesDirectory)'
+        EnableServices: true
+        SupportLogOnError: false
+        TreatSignatureUpdateFailureAs: 'Warning'
+        SignatureFreshness: 'UpToDate'
+        TreatStaleSignatureAs: 'Warning'
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '2.1.804'
+    - task: EsrpCodeSigning@1
+      displayName: Code Sign Linux
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/linux/ApplicationInspector_$(ReleaseVersion)'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, MultiExtractor.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: Code Sign MacOS
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/macos/ApplicationInspector_$(ReleaseVersion)'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, MultiExtractor.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: Code Sign Windows
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)\windows\ApplicationInspector_$(ReleaseVersion)'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, MultiExtractor.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: Code Sign .NET Core App
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_$(ReleaseVersion)'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, MultiExtractor.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: Code Sign Nuget Packages
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/nuget/ApplicationInspector_$(ReleaseVersion)'
+        Pattern: '*.nupkg, *.snupkg'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-401405",
+                      "OperationCode" : "NuGetSign",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-401405",
+                      "OperationCode" : "NuGetVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - powershell: 'Get-ChildItem -Path ''$(Build.BinariesDirectory)'' -Recurse CodeSign* | foreach { Remove-Item -Path $_.FullName }'
+      displayName: 'Delete Code Sign Summaries'
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - Linux
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/linux/ApplicationInspector_$(ReleaseVersion)'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_linux_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - MacOS
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/macos/ApplicationInspector_$(ReleaseVersion)'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_macos_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - Windows
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/windows/ApplicationInspector_$(ReleaseVersion)'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_windows_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - .NET Core App
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_$(ReleaseVersion)'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_netcoreapp_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: PowerShell@2
+      displayName: Generate Hashes
+      inputs:
+        targetType: 'inline'
+        script: |
+          Get-ChildItem $(Build.StagingDirectory) | Foreach-Object {
+            $name = $_.Name
+            $tmp = (Get-FileHash "$(Build.StagingDirectory)\$name").Hash
+            Add-Content $(Build.StagingDirectory)\HASHES.txt "$tmp`t$name"
+          }
+    - task: PowerShell@2
+      displayName: Move Nuget Packages
+      inputs:
+        targetType: 'inline'
+        script: 'mv $env:BUILD_BINARIESDIRECTORY/nuget/ApplicationInspector_$(ReleaseVersion)/*.nupkg $env:BUILD_STAGINGDIRECTORY/'
+    - task: PowerShell@2
+      displayName: Move Symbols Packages
+      inputs:
+        targetType: 'inline'
+        script: 'mv $env:BUILD_BINARIESDIRECTORY/nuget/ApplicationInspector_$(ReleaseVersion)/*.snupkg $env:BUILD_STAGINGDIRECTORY/'
+
+    - task: PublishPipelineArtifact@1
+      displayName: Publish Signed Artifacts to Pipeline
+      inputs:
+        targetPath: '$(Build.StagingDirectory)'
+        artifact: 'Signed_Binaries'
+    - task: GitHubRelease@1
+      displayName: Release to GitHub
+      inputs:
+        gitHubConnection: 'AppInspector'
+        repositoryName: 'microsoft/ApplicationInspector'
+        action: 'create'
+        target: '$(Build.SourceVersion)'
+        tagSource: 'userSpecifiedTag'
+        tag: 'v$(ReleaseVersion)'
+        title: 'Release v$(ReleaseVersion)'
+        assets: |
+          $(Build.StagingDirectory)/*.zip
+          $(Build.StagingDirectory)/HASHES.txt
+        changeLogCompareToRelease: 'lastNonDraftRelease'
+        changeLogType: 'commitBased'
+    - task: NuGetCommand@2
+      displayName: Push NuGet Packages
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.StagingDirectory)/*.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: 'CST-E Nuget CI'
+        verbosityPush: 'Normal'
