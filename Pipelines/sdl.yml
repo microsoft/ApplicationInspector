@@ -7,6 +7,7 @@ trigger:
   branches:
     include:
     - main
+
   paths:
     include:
     - AppInspector/*
@@ -17,7 +18,8 @@ pr:
   branches:
     include:
     - main
-  paths:
+
+paths:
     include:
     - AppInspector/*
     - AppInspector.CLI/*
