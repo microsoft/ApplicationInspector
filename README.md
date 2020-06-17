@@ -1,6 +1,6 @@
 # Introduction 
 
-Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining **what the software is** or **what it does**.  It has received attention on [ZDNet](https://www.zdnet.com/article/microsoft-application-inspector-is-now-open-source-so-use-it-to-test-code-security/
+Microsoft Application Inspector is a software source code characterization tool that helps **identify coding features of first or third party software components** based on well-known library/API calls and is helpful in security and non-security use cases. It uses hundreds or rules and regex patterns to surface interesting characteristics of source code to aid in determining **what the software is** or **what it does** and received industry attention as a new and valuable contribution to OSS on [ZDNet](https://www.zdnet.com/article/microsoft-application-inspector-is-now-open-source-so-use-it-to-test-code-security/
 ), [SecurityWeek](https://www.securityweek.com/microsoft-introduces-free-source-code-analyzer), [CSOOnline](https://www.csoonline.com/article/3514732/microsoft-s-offers-application-inspector-to-probe-untrusted-open-source-code.html), [Linux.com/news](https://www.linux.com/news/microsoft-application-inspector-is-now-open-source-so-use-it-to-test-code-security/), [HelpNetSecurity](https://www.helpnetsecurity.com/2020/01/17/microsoft-application-inspector/
 ), Twitter and more and was first featured on [Microsoft.com](https://www.microsoft.com/security/blog/2020/01/16/introducing-microsoft-application-inspector/).
 
@@ -16,31 +16,37 @@ Be sure to see our project wiki page for more help https://Github.com/Microsoft/
 
 # Goals
 
-Application Inspector helps **inform you better** for choosing the best components to meet your needs with a smaller footprint of unknowns for keeping your application attack surface smaller.  It helps you to avoid inclusion of components with unexpected features you don't want.  
+Microsoft Application Inspector helps you in securing your applications from start to deployment.
 
-Application Inspector can help **identify feature deltas** or changes between component versions which can be critical for detecting injection of backdoors.
+**Design Choices** - Enables you to choose which components meet your needs with a smaller footprint of unnecessary or unknowns features for keeping your application attack surface smaller as well as help to verify expected ones i.e. industry standard crypto only. 
 
-It can be used to **automate detection of features** of interest to identify components that require additional scrutiny as part of your build pipeline or create a repository of metadata regarding all of your enterprise application.
+**Identifying Feature Deltas** - Detects changes between component versions which can be critical for detecting injection of backdoors.
 
-Basically, we created Application Inspector to help us **identify risky third party software components** based on their specific features, but the tool is helpful in many non-security contexts as well. 
-
-Application Inspector v1.0 is now in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
+**Automating Security Compliance Checks** - Use to identify components with features that require additional security scrutiny, approval or SDL compliance as part of your build pipeline or create a repository of metadata regarding all of your enterprise application.
 
 # Contribute
 
 We have a strong default starting base of Rules for feature detection.  But there are many feature identification patterns yet to be defined and we invite you to **submit ideas** on what you want to see or take a crack at defining a few.  This is a chance to literally impact the open source ecosystem helping provide a tool that everyone can use.  See the [Rules](https://github.com/microsoft/applicationinspector/wiki) section of the wiki for more.  
 
-# Getting Application Inspector
+# Official Releases
 
-To use Application Inspector, download the relevant binary (either platform-specific or the multi-platform .NET Core release) from the Releases page or see the NuGet Support page in our wiki. If you use the .NET Core version, you will need to have .NET Core 3.1 or later installed.  See the [JustRunIt.md](https://github.com/microsoft/ApplicationInspector/blob/main/JustRunIt.md) or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/main/BUILD.md) files for help.
+Application Inspector is in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in contributing, please review the CONTRIBUTING.md.
 
-# Developers 
+Application Inspector is availble as a command line tool or NuGet package and is supported on Windows, Linux, or MacOS. 
 
-It might be valuable to consult the project wiki for additional background on Rules, Tags and more used to identify features.  Tags are used as a systematic hierarchical nomenclature e.g. Cryptography.Protocol.TLS to more easily represent features.  The commands may be used programmatically using just the Microsoft.CST.ApplicationInspector.Commands package.
+Platform specific binaries of the ApplicationInspector CLI are available on our GitHub [releases page](https://github.com/microsoft/ApplicationInspector/releases).
 
-## Usage
+The C# library is available on NuGet as [Microsoft.CST.ApplicationInspector.Commands](https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.Commands/).
 
-Application Inspector is availble as a command line tool or NuGet package and is supported on Windows, Linux, or MacOS.  
+The .NET Global Tool is available on NuGet as [Microsoft.CST.ApplicationInspector.CLI](https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.CLI/).
+
+If you use the .NET Core version, you will need to have .NET Core 3.1 or later installed.  See the [JustRunIt.md](https://github.com/microsoft/ApplicationInspector/blob/master/JustRunIt.md) or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/master/BUILD.md) files for more.
+
+# Customizing Rules
+
+For customizing the rules used, see the project [wiki] (https://github.com/microsoft/ApplicationInspector/wiki) for additional background on Rules, Tags and more used to identify features which use a systematic hierarchical nomenclature e.g. Cryptography.Protocol.TLS to more easily represent features.  
+
+# Basic CLI Usage
 
 ```
 > dotnet ApplicationInspector.CLI.dll or on *Windows* simply ApplicationInspector.exe <command> <options>
@@ -312,15 +318,5 @@ Condense multiple rule files into one for ease in distribution with Application 
 ```
 # Build Instructions
 
-Building from source requires .NET Core 3.0. Standard dotnet build commands can be run from the root source folder.
+See [build.md](https://github.com/microsoft/ApplicationInspector/blob/main/BUILD.md)
 
-### Framework Dependent
-```
-  dotnet build -c Release
-```
-### Platform Targeted Portable
-```
-  dotnet publish -c Release -r win-x86
-  dotnet publish -c Release -r linux-x64
-  dotnet publish -c Release -r osx-x64
-```
