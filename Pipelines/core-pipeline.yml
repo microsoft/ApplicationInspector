@@ -11,7 +11,6 @@ trigger:
     include:
     - AppInspector/*
     - AppInspector.CLI/*
-    - MultiExtractor/*
     - RulesEngine/*
 pr:
   branches:
@@ -21,7 +20,6 @@ pr:
     include:
     - AppInspector/*
     - AppInspector.CLI/*
-    - MultiExtractor/*
     - RulesEngine/*
 
 stages:
@@ -263,7 +261,7 @@ stages:
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/linux/ApplicationInspector_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, MultiExtractor.dll'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
@@ -296,7 +294,7 @@ stages:
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/macos/ApplicationInspector_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, MultiExtractor.dll'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
@@ -329,7 +327,7 @@ stages:
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)\windows\ApplicationInspector_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, MultiExtractor.dll'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
@@ -362,7 +360,7 @@ stages:
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, MultiExtractor.dll'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
