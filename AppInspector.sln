@@ -29,8 +29,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RulesPacker", "RulesPacker"
 		RulesPacker\ApplicationInspector.RulesEngine.pdb = RulesPacker\ApplicationInspector.RulesEngine.pdb
 		RulesPacker\CommandLine.dll = RulesPacker\CommandLine.dll
 		RulesPacker\DotLiquid.dll = RulesPacker\DotLiquid.dll
-		RulesPacker\MultiExtractor.dll = RulesPacker\MultiExtractor.dll
-		RulesPacker\MultiExtractor.pdb = RulesPacker\MultiExtractor.pdb
 		RulesPacker\Newtonsoft.Json.dll = RulesPacker\Newtonsoft.Json.dll
 		RulesPacker\NLog.dll = RulesPacker\NLog.dll
 	EndProjectSection
