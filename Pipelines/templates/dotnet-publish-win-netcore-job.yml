@@ -1,4 +1,8 @@
 parameters:
+# Job Name
+- name: jobName
+  type: string
+  default: 'publish_win'
 # Optional Pre-Build Steps
 - name: 'preBuild'
   type: stepList
@@ -33,7 +37,7 @@ parameters:
   default: 'Unsigned_Binaries'
 
 jobs:
-- job: publish_win
+- job: ${{ parameters.jobName }}
   displayName: Dotnet Publish Win/NetCoreApp
   pool:
     vmImage: 'windows-latest'

@@ -1,4 +1,8 @@
 parameters:
+# Job Name
+- name: jobName
+  type: string
+  default: 'dotnet_test'
 # Version of Dotnet SDK to use
 - name: dotnetVersion
   type: string
@@ -13,7 +17,7 @@ parameters:
   default: ''
 
 jobs:
-- job: dotnet_test
+- job: ${{ parameters.jobName }}
   displayName: Dotnet Test
   pool:
     vmImage: 'windows-latest'

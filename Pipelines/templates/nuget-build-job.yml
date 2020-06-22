@@ -1,4 +1,8 @@
 parameters:
+# Job Name
+- name: jobName
+  type: string
+  default: 'nuget_pack'
 # Version of Dotnet SDK to use
 - name: dotnetVersion
   type: string
@@ -25,7 +29,7 @@ parameters:
   default: 'Unsigned_Binaries'
 
 jobs:
-- job: nuget_pack
+- job: ${{ parameters.jobName }}
   displayName: NuGet Package
   pool:
     vmImage: 'windows-latest'
