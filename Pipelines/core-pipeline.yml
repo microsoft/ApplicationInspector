@@ -76,13 +76,13 @@ stages:
       jobName: 'pack_lib'
       dotnetVersion: '3.1.x'
       projectPath: 'AppInspector/AppInspector.Commands.csproj'
-      projectName: 'ApplicationInspector'
+      projectName: 'ApplicationInspector_Commands'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_cli'
       dotnetVersion: '3.1.x'
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
-      projectName: 'ApplicationInspector'
+      projectName: 'ApplicationInspector_CLI'
 
 - stage: Release
   dependsOn:
