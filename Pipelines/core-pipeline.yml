@@ -18,6 +18,7 @@ pr:
     - main
   paths:
     include:
+    - Pipelines
     - AppInspector/*
     - AppInspector.CLI/*
     - RulesEngine/*
@@ -25,186 +26,70 @@ pr:
 stages:
 - stage: Test
   jobs:
-  - job: build_test
-    displayName: Run Tests
-    pool:
-      vmImage: 'windows-latest'
-    steps:
-    - task: UseDotNet@2
-      inputs:
-        packageType: 'sdk'
-        version: '3.1.x'
-    - task: NuGetToolInstaller@1
-      displayName: Install Nuget Tool
-      inputs:
-        versionSpec: '5.4.x'
-    - task: DotNetCoreCLI@2
-      displayName: Dotnet Restore
-      inputs:
-        command: 'restore'
-        projects: 'UnitTest.Commands/UnitTest.Commands.csproj'
-        verbosityRestore: 'Normal'
-    - task: DotNetCoreCLI@2
-      displayName: Dotnet Test
-      inputs:
-        command: 'test'
-        projects: 'UnitTest.Commands/UnitTest.Commands.csproj'
-
-- stage: Build
+  - template: templates/dotnet-test-job.yml
+    parameters:
+      dotnetVersion: 3.1.x
+      projectPath: 'UnitTest.Commands/UnitTest.Commands.csproj'
+      
+- stage: SDL
+  dependsOn: Test
   jobs:
-  - job: build_nix
-    displayName: Build Linux & Mac
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: UseDotNet@2
-      inputs:
-        packageType: 'sdk'
-        version: '3.1.x'
-    - script: 'dotnet tool install -g nbgv'
-      displayName: 'Install GitVersioning'
-    - task: PowerShell@2
-      displayName: Set Release Version
-      inputs:
-        targetType: 'inline'
-        script: |
-          $version = (nbgv get-version -v AssemblyInformationalVersion).split('+')[0]
-          Write-Host "##vso[task.setvariable variable=ReleaseVersion;]$version"
-    - task: DotNetCoreCLI@2
-      displayName: Dotnet Publish Linux x64
-      inputs:
-        command: 'publish'
-        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/linux/ApplicationInspector_$(ReleaseVersion) -r linux-x64'
-        publishWebProjects: false
-        zipAfterPublish: false
-        workingDirectory: 'AppInspector.CLI'
-    - task: DotNetCoreCLI@2
-      displayName: Dotnet Publish MacOS x64
-      inputs:
-        command: 'publish'
-        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)/macos/ApplicationInspector_$(ReleaseVersion) -r osx-x64'
-        publishWebProjects: false
-        zipAfterPublish: false
-        workingDirectory: 'AppInspector.CLI'
-    - task: ArchiveFiles@2
-      displayName: Archive Artifact - Linux
-      inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/linux/'
-        includeRootFolder: true
-        archiveType: 'zip'
-        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_linux_$(ReleaseVersion).zip'
-        replaceExistingArchive: true
-    - task: ArchiveFiles@2
-      displayName: Archive Artifact - MacOS
-      inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/macos/'
-        includeRootFolder: true
-        archiveType: 'zip'
-        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_macos_$(ReleaseVersion).zip'
-        replaceExistingArchive: true
-    - task: PublishBuildArtifacts@1
-      displayName: Store Linux & Mac Archives
-      inputs:
-        PathtoPublish: '$(Build.StagingDirectory)'
-        ArtifactName: 'Unsigned_Nix'
-        publishLocation: 'Container'
+  - template: templates/sdl-job.yml
+    parameters:
+      serviceTreeID: '80207f22-ee58-4fd1-bdd5-4b1ecc3e7c9f'
+      
+- stage: Build
+  dependsOn: Test
+  jobs:
+  - template: templates/dotnet-publish-nix-job.yml
+    parameters:
+      dotnetVersion: '3.1.x'
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectName: 'ApplicationInspector'
+      preBuild:
+      - script: 'dotnet tool install -g nbgv'
+        displayName: 'Install GitVersioning'
+      - task: PowerShell@2
+        displayName: Set Release Version
+        inputs:
+          targetType: 'inline'
+          script: |
+            $version = (nbgv get-version -v AssemblyInformationalVersion).split('+')[0]
+            Write-Host "##vso[task.setvariable variable=releaseVersion;]$version"
+  - template: templates/dotnet-publish-win-netcore-job.yml
+    parameters:
+      dotnetVersion: '3.1.x'
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectName: 'ApplicationInspector'
+      preBuild:
+      - script: 'dotnet tool install -g nbgv'
+        displayName: 'Install GitVersioning'
+      - task: PowerShell@2
+        displayName: Set Release Version
+        inputs:
+          targetType: 'inline'
+          script: |
+            $version = (nbgv get-version -v AssemblyInformationalVersion).split('+')[0]
+            Write-Host "##vso[task.setvariable variable=releaseVersion;]$version"
+  - template: templates/nuget-build-job.yml
+    parameters:
+      dotnetVersion: '3.1.x'
+      projectPath: 'AppInspector/AppInspector.Commands.csproj'
+      projectName: 'ApplicationInspector'
+  - template: templates/nuget-build-job.yml
+    parameters:
+      dotnetVersion: '3.1.x'
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectName: 'ApplicationInspector'
 
-
-  - job: build_win
-    displayName: Build Windows, NetCoreApp, Nupkg
-    pool:
-      vmImage: 'windows-latest'
-    steps:
-    - task: UseDotNet@2
-      inputs:
-        packageType: 'sdk'
-        version: '3.1.x'
-    - script: 'dotnet tool install -g nbgv'
-      displayName: 'Install GitVersioning'
-    - task: PowerShell@2
-      displayName: Set Release Version
-      inputs:
-        targetType: 'inline'
-        script: |
-          $version = (nbgv get-version -v AssemblyInformationalVersion).split('+')[0]
-          Write-Host "##vso[task.setvariable variable=ReleaseVersion;]$version"
-    - task: DotNetCoreCLI@2
-      displayName: Dotnet Publish Windows x86
-      inputs:
-        command: 'publish'
-        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)\windows\ApplicationInspector_$(ReleaseVersion) -r win-x86'
-        publishWebProjects: false
-        zipAfterPublish: false
-        workingDirectory: 'AppInspector.CLI'
-    - task: DotNetCoreCLI@2
-      displayName: Dotnet Build .NET Core App
-      inputs:
-        command: 'build'
-        arguments: '-c $(BuildConfiguration) -o $(Build.BinariesDirectory)\netcoreapp\ApplicationInspector_$(ReleaseVersion)'
-        publishWebProjects: false
-        zipAfterPublish: false
-        workingDirectory: 'AppInspector.CLI'
-    - task: DotNetCoreCLI@2
-      displayName: Pack Nupkg (Lib)
-      inputs:
-        command: 'custom'
-        custom: 'pack'
-        arguments: 'AppInspector -c Release -o $(Build.BinariesDirectory)\nuget\ApplicationInspector_$(ReleaseVersion)'
-    - task: DotNetCoreCLI@2
-      displayName: Pack Nupkg (Dotnet Tool)
-      inputs:
-        command: 'custom'
-        custom: 'pack'
-        arguments: 'AppInspector.CLI -c Release -o $(Build.BinariesDirectory)\nuget\ApplicationInspector_$(ReleaseVersion)'
-    - task: AntiMalware@3
-      displayName: Anti-Malware Scan
-      inputs:
-        InputType: 'Basic'
-        ScanType: 'CustomScan'
-        FileDirPath: '$(Build.BinariesDirectory)'
-        EnableServices: true
-        SupportLogOnError: false
-        TreatSignatureUpdateFailureAs: 'Warning'
-        SignatureFreshness: 'UpToDate'
-        TreatStaleSignatureAs: 'Warning'
-    - task: ArchiveFiles@2
-      displayName: Archive Artifact - Windows
-      inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)\windows'
-        includeRootFolder: true
-        archiveType: 'zip'
-        archiveFile: '$(Build.StagingDirectory)\ApplicationInspector_windows_$(ReleaseVersion).zip'
-        replaceExistingArchive: true
-    - task: ArchiveFiles@2
-      displayName: Archive Artifact - .NET Core App
-      inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)\netcoreapp'
-        includeRootFolder: true
-        archiveType: 'zip'
-        archiveFile: '$(Build.StagingDirectory)\ApplicationInspector_netcoreapp_$(ReleaseVersion).zip'
-        replaceExistingArchive: true
-    - task: ArchiveFiles@2
-      displayName: Archive Artifact - Nupkg
-      inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)\nuget'
-        includeRootFolder: true
-        archiveType: 'zip'
-        archiveFile: '$(Build.StagingDirectory)\ApplicationInspector_nuget_$(ReleaseVersion).zip'
-        replaceExistingArchive: true
-    - task: PublishBuildArtifacts@1
-      displayName: Store Windows, NetCoreApp, Nupkg Archives
-      inputs:
-        PathtoPublish: '$(Build.StagingDirectory)'
-        ArtifactName: 'Unsigned_WinNuget'
-        publishLocation: 'Container'
-
-
+- stage: Release
+  dependsOn:
+  - SDL
+  - Build
+  condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI'))
+  jobs:
   - job: sign_hash_release
     displayName: Code Sign, Generate Hashes, Publish Public Releases
-    dependsOn:
-    - build_nix
-    - build_win
-    condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI', 'Manual'))
     pool:
       vmImage: 'windows-latest'
     steps:
@@ -222,18 +107,11 @@ stages:
           $version = (nbgv get-version -v AssemblyInformationalVersion).split('+')[0]
           Write-Host "##vso[task.setvariable variable=ReleaseVersion;]$version"
     - task: DownloadBuildArtifacts@0
-      displayName: Retrieve Linux & Mac Archives
+      displayName: Download Unsigned Archives
       inputs:
         buildType: 'current'
         downloadType: 'specific'
-        itemPattern: 'Unsigned_Nix/*.zip'
-        downloadPath: '$(Build.BinariesDirectory)'
-    - task: DownloadBuildArtifacts@0
-      displayName: Retrieve Windows, NetCoreApp, Nupkg Archives
-      inputs:
-        buildType: 'current'
-        downloadType: 'specific'
-        itemPattern: 'Unsigned_WinNuget/*.zip'
+        itemPattern: 'Unsigned_Binaries/*.zip'
         downloadPath: '$(Build.BinariesDirectory)'
     - task: ExtractFiles@1
       displayName: Extract Artifacts for Signing
@@ -248,7 +126,7 @@ stages:
         ScanType: 'CustomScan'
         FileDirPath: '$(Build.BinariesDirectory)'
         EnableServices: true
-        SupportLogOnError: false
+        SupportLogOnError: true
         TreatSignatureUpdateFailureAs: 'Warning'
         SignatureFreshness: 'UpToDate'
         TreatStaleSignatureAs: 'Warning'
@@ -392,7 +270,7 @@ stages:
       displayName: Code Sign Nuget Packages
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
-        FolderPath: '$(Build.BinariesDirectory)/nuget/ApplicationInspector_$(ReleaseVersion)'
+        FolderPath: '$(Build.BinariesDirectory)'
         Pattern: '*.nupkg, *.snupkg'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
@@ -460,16 +338,12 @@ stages:
             Add-Content $(Build.StagingDirectory)\HASHES.txt "$tmp`t$name"
           }
     - task: PowerShell@2
-      displayName: Move Nuget Packages
+      displayName: Move NuGet Packages
       inputs:
         targetType: 'inline'
-        script: 'mv $env:BUILD_BINARIESDIRECTORY/nuget/ApplicationInspector_$(ReleaseVersion)/*.nupkg $env:BUILD_STAGINGDIRECTORY/'
-    - task: PowerShell@2
-      displayName: Move Symbols Packages
-      inputs:
-        targetType: 'inline'
-        script: 'mv $env:BUILD_BINARIESDIRECTORY/nuget/ApplicationInspector_$(ReleaseVersion)/*.snupkg $env:BUILD_STAGINGDIRECTORY/'
-
+        script: |
+          mv $env:BUILD_BINARIESDIRECTORY/*.nupkg $env:BUILD_STAGINGDIRECTORY/
+          mv $env:BUILD_BINARIESDIRECTORY/*.snupkg $env:BUILD_STAGINGDIRECTORY/
     - task: PublishPipelineArtifact@1
       displayName: Publish Signed Artifacts to Pipeline
       inputs:
