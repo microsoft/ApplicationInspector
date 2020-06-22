@@ -1,0 +1,10 @@
+steps:
+- script: 'dotnet tool install -g nbgv'
+  displayName: 'Install GitVersioning'
+- task: PowerShell@2
+  displayName: Set Release Version
+  inputs:
+    targetType: 'inline'
+    script: |
+      $version = (nbgv get-version -v AssemblyInformationalVersion).split('+')[0]
+      Write-Host "##vso[task.setvariable variable=releaseVersion;]$version"
