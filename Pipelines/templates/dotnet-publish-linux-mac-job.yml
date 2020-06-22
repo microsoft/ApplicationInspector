@@ -2,7 +2,7 @@ parameters:
 # Job Name
 - name: jobName
   type: string
-  default: 'publish_nix'
+  default: 'publish_linux_mac'
 # Optional Pre-Build Steps
 - name: 'preBuild'
   type: stepList
