@@ -1,0 +1,44 @@
+parameters:
+# Job Name
+- name: jobName
+  type: string
+  default: 'dotnet_test'
+# Version of Dotnet SDK to use
+- name: dotnetVersion
+  type: string
+  default: '3.1.x'
+# Version of NuGet Tool to use
+- name: nugetVersion
+  type: string
+  default: '5.x'
+# List of paths to .csproj
+- name: projectPath
+  type: string
+  default: ''
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: Dotnet Test
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - task: UseDotNet@2
+    displayName: Install Dotnet SDK
+    inputs:
+      packageType: 'sdk'
+      version: ${{ parameters.dotnetVersion }}
+  - task: NuGetToolInstaller@1
+    displayName: Install Nuget Tool
+    inputs:
+      versionSpec: ${{ parameters.nugetVersion }}
+  - task: DotNetCoreCLI@2
+    displayName: Dotnet Restore
+    inputs:
+      command: 'restore'
+      projects: ${{ parameters.projectPath }}
+      verbosityRestore: 'Normal'
+  - task: DotNetCoreCLI@2
+    displayName: Dotnet Test
+    inputs:
+      command: 'test'
+      projects: ${{ parameters.projectPath }}

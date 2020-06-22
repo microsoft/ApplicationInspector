@@ -1,0 +1,82 @@
+parameters:
+# Job Name
+- name: jobName
+  type: string
+  default: 'nuget_pack'
+# Version of Dotnet SDK to use
+- name: dotnetVersion
+  type: string
+  default: '3.1.x'
+# Version of NuGet Tool to use
+- name: nugetVersion
+  type: string
+  default: '5.x'
+# Path to .csproj or .sln
+- name: projectPath
+  type: string
+  default: ''
+# Build Configuration
+- name: buildConfiguration
+  type: string
+  default: 'Release'
+# Project Name
+- name: projectName
+  type: string
+  default: ''
+# Pipeline Artifact Name
+- name: artifactName
+  type: string
+  default: 'Unsigned_Binaries'
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: NuGet Package
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - task: UseDotNet@2
+    displayName: Install Dotnet SDK
+    inputs:
+      packageType: 'sdk'
+      version: ${{ parameters.dotnetVersion }}
+  - task: NuGetToolInstaller@1
+    displayName: Install Nuget Tool
+    inputs:
+      versionSpec: ${{ parameters.nugetVersion }}
+  - task: DotNetCoreCLI@2
+    displayName: Dotnet Restore
+    inputs:
+      command: 'restore'
+      projects: ${{ parameters.projectPath }}
+      verbosityRestore: 'Normal'
+  - task: DotNetCoreCLI@2
+    displayName: Pack Nupkg
+    inputs:
+      command: 'custom'
+      custom: 'pack'
+      arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o Packages'
+  - task: AntiMalware@3
+    displayName: Anti-Malware Scan
+    inputs:
+      InputType: 'Basic'
+      ScanType: 'CustomScan'
+      FileDirPath: 'Packages'
+      EnableServices: true
+      SupportLogOnError: true
+      TreatSignatureUpdateFailureAs: 'Warning'
+      SignatureFreshness: 'UpToDate'
+      TreatStaleSignatureAs: 'Warning'
+  - task: ArchiveFiles@2
+    displayName: Archive Packages
+    inputs:
+      rootFolderOrFile: 'Packages'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: 'Archives\${{ parameters.projectName }}_NuGet.zip'
+      replaceExistingArchive: true
+  - task: PublishBuildArtifacts@1
+    displayName: Pipeline Publish Archive
+    inputs:
+      PathtoPublish: 'Archives'
+      ArtifactName: '${{ parameters.artifactName }}'
+      publishLocation: 'Container'

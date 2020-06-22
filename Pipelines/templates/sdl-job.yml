@@ -1,0 +1,25 @@
+parameters:
+# Service Tree ID of application
+- name: serviceTreeID
+  type: string
+  default: ''
+
+jobs:
+- job: sdl_tools
+  displayName: SDL Tools
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - task: CodeInspector@2
+    inputs:
+      ProductId: ${{ parameters.serviceTreeID }}
+    continueOnError: true
+  - task: CredScan@3
+    inputs:
+      verboseOutput: true
+  - task: notice@0
+    inputs:
+      outputformat: 'text'
+  - task: SdtReport@2
+    inputs:
+      GdnExportAllTools: true
