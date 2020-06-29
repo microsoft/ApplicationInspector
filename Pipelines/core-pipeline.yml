@@ -190,7 +190,7 @@ stages:
       displayName: Code Sign Windows
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
-        FolderPath: '$(Build.BinariesDirectory)\windows\ApplicationInspector_$(ReleaseVersion)'
+        FolderPath: '$(Build.BinariesDirectory)/win/ApplicationInspector_$(ReleaseVersion)'
         Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
@@ -300,10 +300,10 @@ stages:
     - task: ArchiveFiles@2
       displayName: Archive Artifact - Windows
       inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/windows/ApplicationInspector_$(ReleaseVersion)'
+        rootFolderOrFile: '$(Build.BinariesDirectory)/win/ApplicationInspector_$(ReleaseVersion)'
         includeRootFolder: true
         archiveType: 'zip'
-        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_windows_$(ReleaseVersion).zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_win_$(ReleaseVersion).zip'
         replaceExistingArchive: true
     - task: ArchiveFiles@2
       displayName: Archive Artifact - .NET Core App
