@@ -124,7 +124,7 @@ stages:
       displayName: Code Sign Linux
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
-        FolderPath: '$(Build.BinariesDirectory)/linux/ApplicationInspector_$(ReleaseVersion)'
+        FolderPath: '$(Build.BinariesDirectory)/linux/ApplicationInspector_linux_$(ReleaseVersion)'
         Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
@@ -157,7 +157,7 @@ stages:
       displayName: Code Sign MacOS
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
-        FolderPath: '$(Build.BinariesDirectory)/macos/ApplicationInspector_$(ReleaseVersion)'
+        FolderPath: '$(Build.BinariesDirectory)/macos/ApplicationInspector_macos_$(ReleaseVersion)'
         Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
@@ -190,7 +190,7 @@ stages:
       displayName: Code Sign Windows
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
-        FolderPath: '$(Build.BinariesDirectory)/win/ApplicationInspector_$(ReleaseVersion)'
+        FolderPath: '$(Build.BinariesDirectory)/win/ApplicationInspector_win_$(ReleaseVersion)'
         Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
@@ -223,7 +223,7 @@ stages:
       displayName: Code Sign .NET Core App
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
-        FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_$(ReleaseVersion)'
+        FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_netcoreapp_$(ReleaseVersion)'
         Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
@@ -284,7 +284,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: Archive Artifact - Linux
       inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/linux/ApplicationInspector_$(ReleaseVersion)'
+        rootFolderOrFile: '$(Build.BinariesDirectory)/linux/ApplicationInspector_linux_$(ReleaseVersion)'
         includeRootFolder: true
         archiveType: 'zip'
         archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_linux_$(ReleaseVersion).zip'
@@ -292,7 +292,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: Archive Artifact - MacOS
       inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/macos/ApplicationInspector_$(ReleaseVersion)'
+        rootFolderOrFile: '$(Build.BinariesDirectory)/macos/ApplicationInspector_macos_$(ReleaseVersion)'
         includeRootFolder: true
         archiveType: 'zip'
         archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_macos_$(ReleaseVersion).zip'
@@ -300,7 +300,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: Archive Artifact - Windows
       inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/win/ApplicationInspector_$(ReleaseVersion)'
+        rootFolderOrFile: '$(Build.BinariesDirectory)/win/ApplicationInspector_win_$(ReleaseVersion)'
         includeRootFolder: true
         archiveType: 'zip'
         archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_win_$(ReleaseVersion).zip'
@@ -308,7 +308,7 @@ stages:
     - task: ArchiveFiles@2
       displayName: Archive Artifact - .NET Core App
       inputs:
-        rootFolderOrFile: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_$(ReleaseVersion)'
+        rootFolderOrFile: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_netcoreapp_$(ReleaseVersion)'
         includeRootFolder: true
         archiveType: 'zip'
         archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_netcoreapp_$(ReleaseVersion).zip'

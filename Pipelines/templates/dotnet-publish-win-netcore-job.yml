@@ -62,14 +62,14 @@ jobs:
     displayName: Publish Win x64
     inputs:
       command: 'publish'
-      arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o bin/win/${{ parameters.projectName }}_$(ReleaseVersion) -r win-x64'
+      arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o bin/win/${{ parameters.projectName }}_win_$(ReleaseVersion) -r win-x64'
       publishWebProjects: false
       zipAfterPublish: false
   - task: DotNetCoreCLI@2
     displayName: Build .NET Core App
     inputs:
       command: 'build'
-      arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o bin/netcoreapp/${{ parameters.projectName }}_$(ReleaseVersion)'
+      arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o bin/netcoreapp/${{ parameters.projectName }}_netcoreapp_$(ReleaseVersion)'
       publishWebProjects: false
       zipAfterPublish: false
   - task: AntiMalware@3

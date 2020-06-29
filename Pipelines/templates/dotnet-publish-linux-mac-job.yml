@@ -62,14 +62,14 @@ jobs:
     displayName: Publish Linux x64
     inputs:
       command: 'publish'
-      arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o bin/linux/${{ parameters.projectName }}_$(ReleaseVersion) -r linux-x64'
+      arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o bin/linux/${{ parameters.projectName }}_linux_$(ReleaseVersion) -r linux-x64'
       publishWebProjects: false
       zipAfterPublish: false
   - task: DotNetCoreCLI@2
     displayName: Publish MacOS x64
     inputs:
       command: 'publish'
-      arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o bin/macos/${{ parameters.projectName }}_$(ReleaseVersion) -r osx-x64'
+      arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o bin/macos/${{ parameters.projectName }}_macos_$(ReleaseVersion) -r osx-x64'
       publishWebProjects: false
       zipAfterPublish: false
   - task: ArchiveFiles@2
