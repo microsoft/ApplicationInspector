@@ -78,13 +78,13 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "ServiceContract|using System\\.ServiceModel|WSHttpBinding|[HttpGet]|[HttpPut]",
+        "pattern": "ServiceContract|using System\\.ServiceModel|WSHttpBinding",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ]
       },
       {
-        "pattern": "Controller\\b",
+        "pattern": "Controller\\b|\\[HttpGet\\]|\\[HttpPut\\]",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ]
