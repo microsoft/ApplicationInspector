@@ -49,7 +49,7 @@ For customizing the rules used, see the project [wiki] (https://github.com/micro
 # Basic CLI Usage
 
 ```
-> dotnet ApplicationInspector.CLI.dll or on *Windows* simply ApplicationInspector.exe <command> <options>
+> dotnet ApplicationInspector.CLI.dll or on *Windows* simply ApplicationInspector.CLI.exe <command> <options>
 
 Microsoft Application Inspector
 
