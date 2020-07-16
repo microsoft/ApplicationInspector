@@ -10,7 +10,7 @@ The tool supports scanning various programming languages including C, C++, C#, J
 
 ![AppInspector-Features](https://user-images.githubusercontent.com/47648296/72893326-9c82c700-3ccd-11ea-8944-9831ea17f3e0.png)
 
-Be sure to see our project wiki page for more help https://Github.com/Microsoft/ApplicationInspector/wiki for **illustrations** and additional information and help.
+Be sure to see our complete project wiki page https://Github.com/Microsoft/ApplicationInspector/wiki for additional information and help.
 
 # Goals
 
