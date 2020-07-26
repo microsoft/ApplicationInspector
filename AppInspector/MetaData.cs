@@ -118,64 +118,64 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected package types 
         /// </summary>
         [JsonProperty(PropertyName = "packageTypes")]
-        public ImmutableSortedDictionary<string,byte> PackageTypes => KeyedPropertyLists["strGrpPackageTypes"].ToImmutableSortedDictionary();
+        public List<string> PackageTypes => KeyedPropertyLists["strGrpPackageTypes"].ToImmutableSortedDictionary().Keys.ToList();
 
         /// <summary>
         /// List of detected application types
         /// </summary>
         [JsonProperty(PropertyName = "appTypes")]
-        public ImmutableSortedDictionary<string,byte> AppTypes => KeyedPropertyLists["strGrpAppTypes"].ToImmutableSortedDictionary();
+        public List<string> AppTypes => KeyedPropertyLists["strGrpAppTypes"].ToImmutableSortedDictionary().Keys.ToList();
 
         [JsonIgnore]
-        public ImmutableSortedDictionary<string,byte> FileNames => KeyedPropertyLists["strGrpFileNames"].ToImmutableSortedDictionary();
+        public List<string> FileNames => KeyedPropertyLists["strGrpFileNames"].ToImmutableSortedDictionary().Keys.ToList();
 
         /// <summary>
         /// List of detected unique tags 
         /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
-        public ImmutableSortedDictionary<string,byte> UniqueTags { get => KeyedPropertyLists["strGrpUniqueTags"].ToImmutableSortedDictionary(); }
+        public List<string> UniqueTags { get => KeyedPropertyLists["strGrpUniqueTags"].ToImmutableSortedDictionary().Keys.ToList(); }
 
         /// <summary>
         /// List of detected unique code dependency includes
         /// </summary>
         [JsonProperty(PropertyName = "uniqueDependencies")]
-        public ImmutableSortedDictionary<string,byte> UniqueDependencies => KeyedPropertyLists["strGrpUniqueDependencies"].ToImmutableSortedDictionary();
+        public List<string> UniqueDependencies => KeyedPropertyLists["strGrpUniqueDependencies"].ToImmutableSortedDictionary().Keys.ToList();
 
         /// <summary>
         /// List of detected output types
         /// </summary>
         [JsonProperty(PropertyName = "outputs")]
-        public ImmutableSortedDictionary<string,byte> Outputs => KeyedPropertyLists["strGrpOutputs"].ToImmutableSortedDictionary();
+        public List<string> Outputs => KeyedPropertyLists["strGrpOutputs"].ToImmutableSortedDictionary().Keys.ToList();
 
         /// <summary>
         /// List of detected target types
         /// </summary>
         [JsonProperty(PropertyName = "targets")]
-        public ImmutableSortedDictionary<string,byte> Targets => KeyedPropertyLists["strGrpTargets"].ToImmutableSortedDictionary();
+        public List<string> Targets => KeyedPropertyLists["strGrpTargets"].ToImmutableSortedDictionary().Keys.ToList();
 
         /// <summary>
         /// List of detected OS targets
         /// </summary>
         [JsonProperty(PropertyName = "OSTargets")]
-        public ImmutableSortedDictionary<string,byte> OSTargets => KeyedPropertyLists["strGrpOSTargets"].ToImmutableSortedDictionary();
+        public List<string> OSTargets => KeyedPropertyLists["strGrpOSTargets"].ToImmutableSortedDictionary().Keys.ToList();
 
         /// <summary>
         /// LIst of detected file types (extension based)
         /// </summary>
         [JsonProperty(PropertyName = "fileExtensions")]
-        public ImmutableSortedDictionary<string,byte> FileExtensions => KeyedPropertyLists["strGrpFileExtensions"].ToImmutableSortedDictionary();
+        public List<string> FileExtensions => KeyedPropertyLists["strGrpFileExtensions"].ToImmutableSortedDictionary().Keys.ToList();
 
         /// <summary>
         /// List of detected cloud host targets
         /// </summary>
         [JsonProperty(PropertyName = "cloudTargets")]
-        public ImmutableSortedDictionary<string,byte> CloudTargets => KeyedPropertyLists["strGrpCloudTargets"].ToImmutableSortedDictionary();
+        public List<string> CloudTargets => KeyedPropertyLists["strGrpCloudTargets"].ToImmutableSortedDictionary().Keys.ToList();
 
         /// <summary>
         /// List of detected cpu targets
         /// </summary>
         [JsonProperty(PropertyName = "CPUTargets")]
-        public ImmutableSortedDictionary<string,byte> CPUTargets => KeyedPropertyLists["strGrpCPUTargets"].ToImmutableSortedDictionary();
+        public List<string> CPUTargets => KeyedPropertyLists["strGrpCPUTargets"].ToImmutableSortedDictionary().Keys.ToList();
 
         //other data types
 
@@ -186,7 +186,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected programming languages used
         /// </summary>
         [JsonProperty(PropertyName = "languages")]
-        public ImmutableSortedDictionary<string, int> Languages => _languages.ToImmutableSortedDictionary();
+        public List<string> Languages => _languages.ToImmutableSortedDictionary().Keys.ToList();
 
         [JsonIgnore]
         public ConcurrentDictionary<string,MetricTagCounter> _tagCounters;

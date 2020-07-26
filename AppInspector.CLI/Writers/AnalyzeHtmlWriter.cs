@@ -184,7 +184,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     foreach (TagSearchPattern pattern in tagGroup.Patterns)
                     {
-                        pattern.Detected = _appMetaData.UniqueTags.Any(v => v.Key.Contains(pattern.SearchPattern));
+                        pattern.Detected = _appMetaData.UniqueTags.Any(v => v.Contains(pattern.SearchPattern));
                         //create dynamic "category" groups of tags with pattern relationship established from TagReportGroups.json
                         //that can be used to populate reports with various attributes for each tag detected
                         if (pattern.Detected)
@@ -422,12 +422,10 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <returns></returns>
         private List<TagInfo> GetTagInfoListByName()
         {
-            List<string> orderedTags = _appMetaData.UniqueTags.Keys.ToList<string>();
-            orderedTags.Sort();
             HashSet<string> dupCheck = new HashSet<string>();
             List<TagInfo> result = new List<TagInfo>();
 
-            foreach (string tag in orderedTags)
+            foreach (string tag in _appMetaData.UniqueTags)
             {
                 foreach (var match in _appMetaData.Matches)
                 {
@@ -465,9 +463,8 @@ namespace Microsoft.ApplicationInspector.CLI
             List<TagInfo> result = new List<TagInfo>();
             HashSet<string> dupCheck = new HashSet<string>();
             RulesEngine.Confidence[] confidences = { Confidence.High, Confidence.Medium, Confidence.Low };
-
-            
-            foreach (string tag in _appMetaData.UniqueTags.Keys)
+       
+            foreach (string tag in _appMetaData.UniqueTags)
             {
                 var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
                 foreach (Confidence test in confidences)
@@ -509,8 +506,7 @@ namespace Microsoft.ApplicationInspector.CLI
             HashSet<string> dupCheck = new HashSet<string>();
             RulesEngine.Severity[] severities = { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview };
 
-
-            foreach (string tag in _appMetaData.UniqueTags.Keys)
+            foreach (string tag in _appMetaData.UniqueTags)
             {
                 // TODO: How frequently are these generated? Cache?
                 var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);

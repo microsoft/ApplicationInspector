@@ -40,7 +40,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
             {
-                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags.Keys);
+                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags);
                 //keys.Sort();
                 TagsFile tags = new TagsFile();
                 tags.Tags = keys.ToArray();
