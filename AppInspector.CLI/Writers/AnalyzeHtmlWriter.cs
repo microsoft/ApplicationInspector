@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.CLI
@@ -51,8 +52,14 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private void WriteHtmlResult()
         {
+            string allCSS = MergeResourceFiles(Utils.GetPath(Utils.AppPath.basePath) + "html\\resources\\css");
+            string allJS = MergeResourceFiles(Utils.GetPath(Utils.AppPath.basePath) + "html\\resources\\js");
+
             //Prepare html template merge
-            var htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
+            string htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
+            htmlTemplateText = htmlTemplateText.Replace("<style></style>", "<style>" + allCSS + "</style>");
+            htmlTemplateText = htmlTemplateText.Replace("<script type=\"text/javascript\"></script>", "<script type=\"text/javascript\">" + allJS + "\nlet data = {{ json }};\n" + "</script>");
+
             Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(), "Microsoft.ApplicationInspector.CLI.html.partials");
             RegisterSafeType(typeof(MetaData));
 
@@ -62,7 +69,7 @@ namespace Microsoft.ApplicationInspector.CLI
             data["MetaData"] = _appMetaData;
 
             var hashData = new Hash();
-            hashData["json"] = Newtonsoft.Json.JsonConvert.SerializeObject(data);//json serialization required for [js] access to objects
+            hashData["json"] = JsonConvert.SerializeObject(data);//json serialization required for [js] access to objects
             hashData["application_version"] = Utils.GetVersionString();
 
             //add dynamic sets of groups of taginfo read from preferences for Profile page
@@ -75,14 +82,14 @@ namespace Microsoft.ApplicationInspector.CLI
                 hashData.Add(outerKey, KeyedSortedTagInfoLists[outerKey]);
             }
 
-            //add summary metadata lists TODO remove all these as we already passed metadata obj
+            //used by render
             hashData["cputargets"] = _appMetaData.CPUTargets;
             hashData["apptypes"] = _appMetaData.AppTypes;
             hashData["packagetypes"] = _appMetaData.PackageTypes;
             hashData["ostargets"] = _appMetaData.OSTargets;
             hashData["outputs"] = _appMetaData.Outputs;
             hashData["filetypes"] = _appMetaData.FileExtensions;
-            hashData["tagcounters"] = ConvertTagCounters(_appMetaData.TagCounters);
+            hashData["tagcounters"] = ConvertTagCounters(_appMetaData.TagCounters.Values);
 
             //final render and close
             var htmlResult = htmlTemplate.Render(hashData);
@@ -106,6 +113,39 @@ namespace Microsoft.ApplicationInspector.CLI
             jsonWriter.WriteResults(_analyzeResult, jsonOptions);
             WriteOnce.Verbosity = saveVerbosity;
         }
+
+
+
+        private string MergeResourceFiles(string inputPath)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            if (Directory.Exists(inputPath))
+            {
+                try
+                {
+                    IEnumerable<string> srcfileList = Directory.EnumerateFiles(inputPath, "*.*", SearchOption.AllDirectories);
+                    if (srcfileList.Count() == 0)
+                    {
+                        throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, inputPath));
+                    }
+                 
+                    foreach(string fileName in srcfileList)
+                    {
+                        stringBuilder.Append(File.ReadAllText(fileName));
+                    }
+                }
+                catch (Exception)
+                {
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, inputPath));
+                }
+            }
+
+            return stringBuilder.ToString();
+        }
+
+
+
 
         public override void FlushAndClose()
         {

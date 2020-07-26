@@ -5,6 +5,7 @@ using Microsoft.ApplicationInspector.Commands;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 
@@ -66,12 +67,12 @@ namespace Microsoft.ApplicationInspector.CLI
 
         #region helpers
 
-        private string StringList(ConcurrentDictionary<string, byte> data)
+        private string StringList(ImmutableSortedDictionary<string, byte> data)
         {
             return string.Join(' ', data.Keys);
         }
 
-        private string StringList(Dictionary<string, int> data)
+        private string StringList(ImmutableSortedDictionary<string, int> data)
         {
             StringBuilder build = new StringBuilder();
 
@@ -84,20 +85,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return build.ToString();
         }
 
-        private string StringList(ConcurrentDictionary<string, int> data)
-        {
-            StringBuilder build = new StringBuilder();
-
-            foreach (string s in data.Keys)
-            {
-                build.Append(s);
-                build.Append(" ");
-            }
-
-            return build.ToString();
-        }
-
-        private string StringList(SortedDictionary<string, string> data)
+        private string StringList(ImmutableSortedDictionary<string, string> data)
         {
             StringBuilder build = new StringBuilder();
 
@@ -158,16 +146,16 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(string.Format("Unique matches: {0}", metaData.UniqueMatchesCount));
 
             WriteOnce.General(MakeHeading("UniqueTags"));
-            List<string> orderedTags = metaData.UniqueTags.Keys.ToList<string>();
-            orderedTags.Sort();
+            //List<string> orderedTags = metaData.UniqueTags.Keys.ToList<string>();
+            //orderedTags.Sort();
 
-            foreach (string tag in orderedTags)
+            foreach (string tag in metaData.UniqueTags.Keys)
             {
                 WriteOnce.General(tag);
             }
 
             WriteOnce.General(MakeHeading("Select Counters"));
-            foreach (MetricTagCounter tagCounter in metaData.TagCounters)
+            foreach (MetricTagCounter tagCounter in metaData.TagCounters.Values)
             {
                 WriteOnce.General(string.Format("Tagname: {0}, Count: {1}", tagCounter.Tag, tagCounter.Count));
             }

@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 
 namespace Microsoft.ApplicationInspector.Commands
@@ -116,81 +118,84 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected package types 
         /// </summary>
         [JsonProperty(PropertyName = "packageTypes")]
-        public ConcurrentDictionary<string,byte> PackageTypes => KeyedPropertyLists["strGrpPackageTypes"];
+        public ImmutableSortedDictionary<string,byte> PackageTypes => KeyedPropertyLists["strGrpPackageTypes"].ToImmutableSortedDictionary();
 
         /// <summary>
         /// List of detected application types
         /// </summary>
         [JsonProperty(PropertyName = "appTypes")]
-        public ConcurrentDictionary<string,byte> AppTypes => KeyedPropertyLists["strGrpAppTypes"];
+        public ImmutableSortedDictionary<string,byte> AppTypes => KeyedPropertyLists["strGrpAppTypes"].ToImmutableSortedDictionary();
 
         [JsonIgnore]
-        public ConcurrentDictionary<string,byte> RulePaths { get => KeyedPropertyLists["strGrpRulePaths"]; set => KeyedPropertyLists["strGrpRulePaths"] = value; }
-
-        [JsonIgnore]
-        public ConcurrentDictionary<string,byte> FileNames => KeyedPropertyLists["strGrpFileNames"];
+        public ImmutableSortedDictionary<string,byte> FileNames => KeyedPropertyLists["strGrpFileNames"].ToImmutableSortedDictionary();
 
         /// <summary>
         /// List of detected unique tags 
         /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
-        public ConcurrentDictionary<string,byte> UniqueTags { get => KeyedPropertyLists["strGrpUniqueTags"]; set => KeyedPropertyLists["strGrpUniqueTags"] = value; }
+        public ImmutableSortedDictionary<string,byte> UniqueTags { get => KeyedPropertyLists["strGrpUniqueTags"].ToImmutableSortedDictionary(); }
 
         /// <summary>
         /// List of detected unique code dependency includes
         /// </summary>
         [JsonProperty(PropertyName = "uniqueDependencies")]
-        public ConcurrentDictionary<string,byte> UniqueDependencies => KeyedPropertyLists["strGrpUniqueDependencies"];
+        public ImmutableSortedDictionary<string,byte> UniqueDependencies => KeyedPropertyLists["strGrpUniqueDependencies"].ToImmutableSortedDictionary();
 
         /// <summary>
         /// List of detected output types
         /// </summary>
         [JsonProperty(PropertyName = "outputs")]
-        public ConcurrentDictionary<string,byte> Outputs => KeyedPropertyLists["strGrpOutputs"];
+        public ImmutableSortedDictionary<string,byte> Outputs => KeyedPropertyLists["strGrpOutputs"].ToImmutableSortedDictionary();
 
         /// <summary>
         /// List of detected target types
         /// </summary>
         [JsonProperty(PropertyName = "targets")]
-        public ConcurrentDictionary<string,byte> Targets => KeyedPropertyLists["strGrpTargets"];
-
-        /// <summary>
-        /// List of detected programming languages used
-        /// </summary>
-        [JsonProperty(PropertyName = "languages")]
-        public ConcurrentDictionary<string, int> Languages;
+        public ImmutableSortedDictionary<string,byte> Targets => KeyedPropertyLists["strGrpTargets"].ToImmutableSortedDictionary();
 
         /// <summary>
         /// List of detected OS targets
         /// </summary>
         [JsonProperty(PropertyName = "OSTargets")]
-        public ConcurrentDictionary<string,byte> OSTargets => KeyedPropertyLists["strGrpOSTargets"];
+        public ImmutableSortedDictionary<string,byte> OSTargets => KeyedPropertyLists["strGrpOSTargets"].ToImmutableSortedDictionary();
 
         /// <summary>
         /// LIst of detected file types (extension based)
         /// </summary>
         [JsonProperty(PropertyName = "fileExtensions")]
-        public ConcurrentDictionary<string,byte> FileExtensions => KeyedPropertyLists["strGrpFileExtensions"];
+        public ImmutableSortedDictionary<string,byte> FileExtensions => KeyedPropertyLists["strGrpFileExtensions"].ToImmutableSortedDictionary();
 
         /// <summary>
         /// List of detected cloud host targets
         /// </summary>
         [JsonProperty(PropertyName = "cloudTargets")]
-        public ConcurrentDictionary<string,byte> CloudTargets => KeyedPropertyLists["strGrpCloudTargets"];
+        public ImmutableSortedDictionary<string,byte> CloudTargets => KeyedPropertyLists["strGrpCloudTargets"].ToImmutableSortedDictionary();
 
         /// <summary>
         /// List of detected cpu targets
         /// </summary>
         [JsonProperty(PropertyName = "CPUTargets")]
-        public ConcurrentDictionary<string,byte> CPUTargets => KeyedPropertyLists["strGrpCPUTargets"];
+        public ImmutableSortedDictionary<string,byte> CPUTargets => KeyedPropertyLists["strGrpCPUTargets"].ToImmutableSortedDictionary();
 
         //other data types
+
+        [JsonIgnore]
+        public ConcurrentDictionary<string, int> _languages;
+
+        /// <summary>
+        /// List of detected programming languages used
+        /// </summary>
+        [JsonProperty(PropertyName = "languages")]
+        public ImmutableSortedDictionary<string, int> Languages => _languages.ToImmutableSortedDictionary();
+
+        [JsonIgnore]
+        public ConcurrentDictionary<string,MetricTagCounter> _tagCounters;
 
         /// <summary>
         /// List of detected tag counters i.e. metrics
         /// </summary>
         [JsonProperty(PropertyName = "tagCounters")]
-        public ConcurrentStack<MetricTagCounter> TagCounters { get; set; }
+        public ImmutableSortedDictionary<string, MetricTagCounter> TagCounters => _tagCounters.ToImmutableSortedDictionary();
 
         /// <summary>
         /// List of detailed MatchRecords from scan
@@ -224,8 +229,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 ["strGrpUniqueDependencies"] = new ConcurrentDictionary<string,byte>()
             };
 
-            Languages = new ConcurrentDictionary<string, int>();
-            TagCounters = new ConcurrentStack<MetricTagCounter>();
+            _languages = new ConcurrentDictionary<string, int>();
+            _tagCounters = new ConcurrentDictionary<string,MetricTagCounter>();
         }
 
         internal void IncrementFilesAnalyzed(int amount = 1)

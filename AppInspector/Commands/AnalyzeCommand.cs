@@ -385,7 +385,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (FileChecksPassed(filename, ref languageInfo))
             {
                 LastUpdated = File.GetLastWriteTime(filename);
-                _ = _metaDataHelper.Metadata.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_UNCOMPRESSED_FILETYPE),0);
+                _ = _metaDataHelper.Metadata.KeyedPropertyLists["strGrpPackageTypes"].TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_UNCOMPRESSED_FILETYPE),0);
 
                 string fileText = File.ReadAllText(filename);
                 ProcessInMemory(filename, fileText, languageInfo);
@@ -602,7 +602,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
 
                 string finalResult = rawResult.Replace(";", "");
-                _ = _metaDataHelper.Metadata.UniqueDependencies.TryAdd(finalResult,0);
+                _ = _metaDataHelper.Metadata.KeyedPropertyLists["strGrpUniqueDependencies"].TryAdd(finalResult,0);
 
                 return System.Net.WebUtility.HtmlEncode(finalResult);
             }
@@ -645,7 +645,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             LastUpdated = File.GetLastWriteTime(filePath);
-            _ = _metaDataHelper.Metadata.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILETYPE),0);
+            _ = _metaDataHelper.Metadata.KeyedPropertyLists["strGrpPackageTypes"].TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILETYPE),0);
 
             try
             {
@@ -715,7 +715,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
         {
-            _ = _metaDataHelper.Metadata.FileExtensions.TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(),0);
+            _ = _metaDataHelper.Metadata.KeyedPropertyLists["strGrpFileExtensions"].TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(),0);
 
             // 1. Skip files written in unknown language
             if (!Language.FromFileName(filePath, ref languageInfo))

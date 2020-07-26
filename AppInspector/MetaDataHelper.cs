@@ -2,7 +2,9 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -68,18 +70,18 @@ namespace Microsoft.ApplicationInspector.Commands
                         Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
                         break;
                     case "Metadata.Application.Target.Processor":
-                        _ = Metadata.CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        _ = Metadata.KeyedPropertyLists["strGrpCPUTargets"].TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     case "Metadata.Application.Output.Type":
-                        _ = Metadata.Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        _ = Metadata.KeyedPropertyLists["strGrpOutputs"].TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     case "Platform.OS":
-                        _ = Metadata.OSTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        _ = Metadata.KeyedPropertyLists["strGrpOSTargets"].TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     default:
                         if (tag.Contains("Metric."))
                         {
-                            Metadata.TagCounters.Push(new MetricTagCounter()
+                            _ = Metadata._tagCounters.TryAdd(tag, new MetricTagCounter()
                             {
                                 Tag = tag
                             });
@@ -95,15 +97,15 @@ namespace Microsoft.ApplicationInspector.Commands
             string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
             {
-                _ = Metadata.AppTypes.TryAdd(solutionType,0);
+                _ = Metadata.KeyedPropertyLists["strGrpAppTypes"].TryAdd(solutionType,0);
             }
 
             bool CounterOnlyTagSet = false;
-            var selected = Metadata.TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Tag)));
+            var selected = Metadata._tagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Key)));
             foreach (var select in selected)
             {
                 CounterOnlyTagSet = true;
-                select.IncrementCount();
+                select.Value.IncrementCount();
             }
 
             //omit adding if ther a counter metric tag
@@ -112,7 +114,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 //update list of unique tags as we go
                 foreach (string tag in matchRecord.Tags)
                 {
-                    _ = Metadata.UniqueTags.TryAdd(tag,0);
+                    _ = Metadata.KeyedPropertyLists["strGrpUniqueTags"].TryAdd(tag,0);
                 }
 
                 Metadata.Matches.Add(matchRecord);
@@ -129,7 +131,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="language"></param>
         public void AddLanguage(string language)
         {
-            Metadata.Languages.AddOrUpdate(language, 1, (language, count) => count + 1);
+            Metadata._languages.AddOrUpdate(language, 1, (language, count) => count + 1);
         }
 
         /// <summary>
