@@ -13,11 +13,22 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
     /// Provides utilty help specific to aggregating metadata from analyze cmd matches while isolating scanned data from that process
+    /// Hides complexity i.e. threaded scanning so that caller gets simple list<T> that is presorted and consistent each scan
     /// </summary>
     public class MetaDataHelper
     {
-        //inhouse common properties to capture
-        private readonly Dictionary<string, Regex> _propertyTagSearchPatterns;
+        public ConcurrentDictionary<string, byte> PackageTypes { get; set; }
+        public ConcurrentDictionary<string, byte> AppTypes { get; set; }
+        public ConcurrentDictionary<string, byte> FileNames { get; set; }
+        public ConcurrentDictionary<string, byte> UniqueTags { get; set; }
+        public ConcurrentDictionary<string, byte> UniqueDependencies { get; set; }
+        public ConcurrentDictionary<string, byte> Outputs { get; set; }
+        public ConcurrentDictionary<string, byte> Targets { get; set; }
+        public ConcurrentDictionary<string, byte> FileExtensions { get; set; }
+        public ConcurrentDictionary<string, byte> CPUTargets { get; set; }
+        public ConcurrentDictionary<string, byte> CloudTargets { get; set; }        
+        public ConcurrentDictionary<string, byte> OSTargets { get; set; }
+        ConcurrentDictionary<string,MetricTagCounter> TagCounters { get; set; }
 
         public MetaData Metadata { get; set; }
 
@@ -26,13 +37,19 @@ namespace Microsoft.ApplicationInspector.Commands
             sourcePath = Path.GetFullPath(sourcePath);//normalize for .\ and similar
             Metadata = new MetaData(GetDefaultProjectName(sourcePath), sourcePath);
 
-            _propertyTagSearchPatterns = new Dictionary<string, Regex>()
-            {
-                { "strGrpOSTargets", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) },
-                { "strGrpCloudTargets", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) },
-                { "strGrpOutputs", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) },
-                { "strGrpCPUTargets", new Regex(".OS.Targets", RegexOptions.Compiled | RegexOptions.IgnoreCase) }
-            };
+            PackageTypes = new ConcurrentDictionary<string, byte>();
+            AppTypes = new ConcurrentDictionary<string, byte>();
+            FileNames = new ConcurrentDictionary<string, byte>();
+            UniqueDependencies = new ConcurrentDictionary<string, byte>();
+            UniqueTags = new ConcurrentDictionary<string, byte>();
+            Outputs = new ConcurrentDictionary<string, byte>();
+            Targets = new ConcurrentDictionary<string, byte>();
+            FileExtensions = new ConcurrentDictionary<string, byte>();
+            CPUTargets = new ConcurrentDictionary<string, byte>();
+            CloudTargets = new ConcurrentDictionary<string, byte>();
+            OSTargets = new ConcurrentDictionary<string, byte>();
+
+            TagCounters = new ConcurrentDictionary<string, MetricTagCounter>();
         }
 
         /// <summary>
@@ -42,16 +59,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="matchRecord"></param>
         public void AddMatchRecord(MatchRecord matchRecord)
         {
-            //aggregate lists of matches against standard set of properties to report on
-            foreach (string key in _propertyTagSearchPatterns.Keys)
-            {
-                if (matchRecord.Tags.Any(v => _propertyTagSearchPatterns[key].IsMatch(v)))
-                {
-                    _ = Metadata.KeyedPropertyLists[key].TryAdd(matchRecord.Sample,0);
-                }
-            }
-
-            //Update metric counters for default or user specified tags; don't add as match detail
+            //special handling for standard characteristics in report
             foreach (var tag in matchRecord.Tags)
             {
                 switch (tag)
@@ -70,21 +78,26 @@ namespace Microsoft.ApplicationInspector.Commands
                         Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
                         break;
                     case "Metadata.Application.Target.Processor":
-                        _ = Metadata.KeyedPropertyLists["strGrpCPUTargets"].TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        _ = CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     case "Metadata.Application.Output.Type":
-                        _ = Metadata.KeyedPropertyLists["strGrpOutputs"].TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
-                        break;
-                    case "Platform.OS":
-                        _ = Metadata.KeyedPropertyLists["strGrpOSTargets"].TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        _ = Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     default:
                         if (tag.Contains("Metric."))
                         {
-                            _ = Metadata._tagCounters.TryAdd(tag, new MetricTagCounter()
+                            _ = TagCounters.TryAdd(tag, new MetricTagCounter()
                             {
                                 Tag = tag
                             });
+                        }
+                        else if (tag.Contains(".Platform.OS"))
+                        {
+                            _ = OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length-1)+1),0);
+                        }
+                        else if (tag.Contains("CloudServices.Hosting"))
+                        {
+                            _ = CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length-1)+1), 0);
                         }
                         break;
                 }
@@ -97,11 +110,11 @@ namespace Microsoft.ApplicationInspector.Commands
             string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
             {
-                _ = Metadata.KeyedPropertyLists["strGrpAppTypes"].TryAdd(solutionType,0);
+                _ = AppTypes.TryAdd(solutionType,0);
             }
 
             bool CounterOnlyTagSet = false;
-            var selected = Metadata._tagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Key)));
+            var selected = TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag)));
             foreach (var select in selected)
             {
                 CounterOnlyTagSet = true;
@@ -114,7 +127,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 //update list of unique tags as we go
                 foreach (string tag in matchRecord.Tags)
                 {
-                    _ = Metadata.KeyedPropertyLists["strGrpUniqueTags"].TryAdd(tag,0);
+                    _ = UniqueTags.TryAdd(tag,0);
                 }
 
                 Metadata.Matches.Add(matchRecord);
@@ -125,14 +138,39 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
+
+        /// <summary>
+        /// Transfer concurrent data from scan to analyze result with sorted, simplier types for callers
+        /// </summary>
+        public void PrepareReport()
+        {
+            Metadata.CPUTargets = CPUTargets.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.AppTypes = AppTypes.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.OSTargets = OSTargets.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.UniqueDependencies = UniqueDependencies.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.UniqueTags = UniqueTags.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.CloudTargets = CloudTargets.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.PackageTypes = PackageTypes.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.FileExtensions = FileExtensions.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.Outputs = Outputs.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.Targets = Targets.ToImmutableSortedDictionary().Keys.ToList();
+
+            foreach (MetricTagCounter metricTagCounter in TagCounters.Values)
+            {
+                Metadata.TagCounters.Add(metricTagCounter);
+            }
+        }
+
         /// <summary>
         /// Defined here to isolate MetaData from data processing methods and keep as pure data
         /// </summary>
         /// <param name="language"></param>
         public void AddLanguage(string language)
         {
-            Metadata._languages.AddOrUpdate(language, 1, (language, count) => count + 1);
+            Metadata.Languages.AddOrUpdate(language, 1, (language, count) => count + 1);
         }
+
+        #region helpers
 
         /// <summary>
         /// Initial best guess to deduce project name; if scanned metadata from project solution value is replaced later
@@ -285,4 +323,6 @@ namespace Microsoft.ApplicationInspector.Commands
             return System.Net.WebUtility.HtmlEncode(result);
         }
     }
+
+    #endregion
 }

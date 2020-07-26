@@ -16,9 +16,6 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class MetaData
     {
-        [JsonIgnore]
-        public Dictionary<string, ConcurrentDictionary<string,byte>> KeyedPropertyLists { get; } //dynamic keyed list of properties with more than one value
-
         //simple properties
         /// <summary>
         /// Detected or derived project name
@@ -112,96 +109,87 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(PropertyName = "uniqueMatchesCount")]
         public int UniqueMatchesCount => UniqueTags.Count;  //for liquid use
 
-        //convenience getters for serialzation and easy reference of standard properties found in dynamic lists
-
         /// <summary>
         /// List of detected package types 
         /// </summary>
         [JsonProperty(PropertyName = "packageTypes")]
-        public List<string> PackageTypes => KeyedPropertyLists["strGrpPackageTypes"].ToImmutableSortedDictionary().Keys.ToList();
+        public List<string> PackageTypes { get; set; }
 
         /// <summary>
         /// List of detected application types
         /// </summary>
         [JsonProperty(PropertyName = "appTypes")]
-        public List<string> AppTypes => KeyedPropertyLists["strGrpAppTypes"].ToImmutableSortedDictionary().Keys.ToList();
+        public List<string> AppTypes { get; set; }
 
         [JsonIgnore]
-        public List<string> FileNames => KeyedPropertyLists["strGrpFileNames"].ToImmutableSortedDictionary().Keys.ToList();
+        public List<string> FileNames { get; set; }
 
         /// <summary>
         /// List of detected unique tags 
         /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
-        public List<string> UniqueTags { get => KeyedPropertyLists["strGrpUniqueTags"].ToImmutableSortedDictionary().Keys.ToList(); }
+        public List<string> UniqueTags { get; set; }
+
 
         /// <summary>
         /// List of detected unique code dependency includes
         /// </summary>
         [JsonProperty(PropertyName = "uniqueDependencies")]
-        public List<string> UniqueDependencies => KeyedPropertyLists["strGrpUniqueDependencies"].ToImmutableSortedDictionary().Keys.ToList();
+        public List<string> UniqueDependencies { get; set; }
 
         /// <summary>
         /// List of detected output types
         /// </summary>
         [JsonProperty(PropertyName = "outputs")]
-        public List<string> Outputs => KeyedPropertyLists["strGrpOutputs"].ToImmutableSortedDictionary().Keys.ToList();
+        public List<string> Outputs { get; set; }
 
         /// <summary>
         /// List of detected target types
         /// </summary>
         [JsonProperty(PropertyName = "targets")]
-        public List<string> Targets => KeyedPropertyLists["strGrpTargets"].ToImmutableSortedDictionary().Keys.ToList();
+        public List<string> Targets { get; set; }
 
         /// <summary>
         /// List of detected OS targets
         /// </summary>
         [JsonProperty(PropertyName = "OSTargets")]
-        public List<string> OSTargets => KeyedPropertyLists["strGrpOSTargets"].ToImmutableSortedDictionary().Keys.ToList();
+        public List<string> OSTargets { get; set; }
 
         /// <summary>
         /// LIst of detected file types (extension based)
         /// </summary>
         [JsonProperty(PropertyName = "fileExtensions")]
-        public List<string> FileExtensions => KeyedPropertyLists["strGrpFileExtensions"].ToImmutableSortedDictionary().Keys.ToList();
+        public List<string> FileExtensions { get; set; }
 
         /// <summary>
         /// List of detected cloud host targets
         /// </summary>
         [JsonProperty(PropertyName = "cloudTargets")]
-        public List<string> CloudTargets => KeyedPropertyLists["strGrpCloudTargets"].ToImmutableSortedDictionary().Keys.ToList();
+        public List<string> CloudTargets { get; set; }
 
         /// <summary>
         /// List of detected cpu targets
         /// </summary>
         [JsonProperty(PropertyName = "CPUTargets")]
-        public List<string> CPUTargets => KeyedPropertyLists["strGrpCPUTargets"].ToImmutableSortedDictionary().Keys.ToList();
-
-        //other data types
-
-        [JsonIgnore]
-        public ConcurrentDictionary<string, int> _languages;
+        public List<string> CPUTargets { get; set; }
 
         /// <summary>
-        /// List of detected programming languages used
+        /// List of detected programming languages used and count of files 
         /// </summary>
         [JsonProperty(PropertyName = "languages")]
-        public List<string> Languages => _languages.ToImmutableSortedDictionary().Keys.ToList();
-
-        [JsonIgnore]
-        public ConcurrentDictionary<string,MetricTagCounter> _tagCounters;
+        public ConcurrentDictionary<string,int> Languages { get; set; }
 
         /// <summary>
         /// List of detected tag counters i.e. metrics
         /// </summary>
         [JsonProperty(PropertyName = "tagCounters")]
-        public ImmutableSortedDictionary<string, MetricTagCounter> TagCounters => _tagCounters.ToImmutableSortedDictionary();
+        public List<MetricTagCounter> TagCounters { get; set; }
 
         /// <summary>
         /// List of detailed MatchRecords from scan
         /// </summary>
         [JsonProperty(PropertyName = "detailedMatchList")]
-        public List<MatchRecord> Matches { get; }//lighter formatted list structure more suited for json output to limit extraneous fieldo in Issues class
+        public List<MatchRecord> Matches { get; }
 
         public MetaData(string applicationName, string sourcePath)
         {
@@ -211,26 +199,18 @@ namespace Microsoft.ApplicationInspector.Commands
 
             //Initial value for ApplicationName may be replaced if rule pattern match found later
             Matches = new List<MatchRecord>();
-
-            //initialize standard set groups using dynamic lists variables that may have more than one value
-            KeyedPropertyLists = new Dictionary<string, ConcurrentDictionary<string,byte>>
-            {
-                ["strGrpPackageTypes"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpAppTypes"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpFileTypes"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpUniqueTags"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpOutputs"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpTargets"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpOSTargets"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpFileExtensions"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpFileNames"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpCPUTargets"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpCloudTargets"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpUniqueDependencies"] = new ConcurrentDictionary<string,byte>()
-            };
-
-            _languages = new ConcurrentDictionary<string, int>();
-            _tagCounters = new ConcurrentDictionary<string,MetricTagCounter>();
+            PackageTypes = new List<string>();
+            AppTypes = new List<string>();
+            FileNames = new List<string>();
+            UniqueDependencies = new List<string>();
+            UniqueTags = new List<string>();
+            Outputs = new List<string>();
+            Targets = new List<string>();
+            OSTargets = new List<string>();
+            FileExtensions = new List<string>();
+            CPUTargets = new List<string>();
+            TagCounters = new List<MetricTagCounter>();
+            Languages = new ConcurrentDictionary<string, int>();
         }
 
         internal void IncrementFilesAnalyzed(int amount = 1)

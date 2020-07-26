@@ -380,7 +380,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 {
                     string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
                     var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
-                    exitCodeSingleThread = result.Metadata.TotalMatchesCount == 11 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCodeSingleThread = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
@@ -404,7 +404,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 {
                     string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
                     var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
-                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 11 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
@@ -430,7 +430,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 {
                     string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
                     var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
-                    exitCode = result.Metadata.TotalMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.TotalMatchesCount == 7 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)

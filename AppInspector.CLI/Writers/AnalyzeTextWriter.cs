@@ -72,6 +72,11 @@ namespace Microsoft.ApplicationInspector.CLI
             return string.Join(' ', data);
         }
 
+        private string StringList(ImmutableSortedDictionary<string,int> data)
+        { 
+            return string.Join(' ', data.Keys);
+        }
+
         private string StringList(ImmutableSortedDictionary<string, string> data)
         {
             StringBuilder build = new StringBuilder();
@@ -113,7 +118,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(string.Format("Source path: {0}", metaData.SourcePath));
             WriteOnce.General(string.Format("Authors: {0}", metaData.Authors));
             WriteOnce.General(string.Format("Last Updated: {0}", metaData.LastUpdated));
-            WriteOnce.General(string.Format("Languages: {0}", StringList(metaData.Languages)));
+            WriteOnce.General(string.Format("Languages: {0}", StringList(metaData.Languages.ToImmutableSortedDictionary())));
             WriteOnce.General(string.Format(MakeHeading("Scan Settings")));
             WriteOnce.General(string.Format("Date scanned: {0}", metaData.DateScanned));
             WriteOnce.General(string.Format(MakeHeading("Source Info")));
@@ -142,7 +147,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             WriteOnce.General(MakeHeading("Select Counters"));
-            foreach (MetricTagCounter tagCounter in metaData.TagCounters.Values)
+            foreach (MetricTagCounter tagCounter in metaData.TagCounters)
             {
                 WriteOnce.General(string.Format("Tagname: {0}, Count: {1}", tagCounter.Tag, tagCounter.Count));
             }
