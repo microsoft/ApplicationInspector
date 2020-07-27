@@ -48,9 +48,7 @@
     "id": "AI009500",
     "description": "Cryptography: Key Derivation (PBKDF2)",
     "tags": [
-      "Cryptography.KeyDerivation.PBKDF2",
-      "Cryptography.HashAlgorithm.PBKDF2"
-    ],
+      "Cryptography.KeyDerivation.PBKDF2"    ],
     "severity": "moderate",
     "patterns": [
       {

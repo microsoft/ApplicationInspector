@@ -10,8 +10,7 @@
       {
         "pattern": "extern crate rocket;|use rocket",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -26,9 +25,7 @@
       {
         "pattern": "use actix_web",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
-      }
+        "scopes": [ "code" ]
     ]
   },
   {
@@ -42,8 +39,7 @@
       {
         "pattern": "use Nickel",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -58,8 +54,7 @@
       {
         "pattern": "use yew",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -74,8 +69,7 @@
       {
         "pattern": "use azul",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "scopes": [ "code" ]
       }
     ]
   }
