@@ -55,7 +55,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\.create_subkey\\(|\\.set_value\\(",
+        "pattern": "CreateSubKey|SetValue",
         "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high",
@@ -65,12 +65,11 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "HKEY_",
+          "pattern": "HKEY_|Registry",
           "type": "regex-word",
           "scopes": [
             "code"
           ],
-          "modifiers": [ "i" ],
           "_comment": ""
         },
         "search_in": "finding-region(-40,40)",

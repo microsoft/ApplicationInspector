@@ -8,7 +8,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "extern crate rocket;|use rocket",
+        "pattern": "extern crate rocket|use rocket",
         "type": "regex",
         "scopes": [ "code" ]
       }
