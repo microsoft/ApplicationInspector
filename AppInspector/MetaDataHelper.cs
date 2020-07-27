@@ -17,39 +17,27 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class MetaDataHelper
     {
-        public ConcurrentDictionary<string, byte> PackageTypes { get; set; }
-        public ConcurrentDictionary<string, byte> AppTypes { get; set; }
-        public ConcurrentDictionary<string, byte> FileNames { get; set; }
-        public ConcurrentDictionary<string, byte> UniqueTags { get; set; }
-        public ConcurrentDictionary<string, byte> UniqueDependencies { get; set; }
-        public ConcurrentDictionary<string, byte> Outputs { get; set; }
-        public ConcurrentDictionary<string, byte> Targets { get; set; }
-        public ConcurrentDictionary<string, byte> FileExtensions { get; set; }
-        public ConcurrentDictionary<string, byte> CPUTargets { get; set; }
-        public ConcurrentDictionary<string, byte> CloudTargets { get; set; }        
-        public ConcurrentDictionary<string, byte> OSTargets { get; set; }
-        ConcurrentDictionary<string,MetricTagCounter> TagCounters { get; set; }
+        //visible to callers i.e. AnalyzeCommand
+        internal ConcurrentDictionary<string, byte> PackageTypes { get; set; } = new ConcurrentDictionary<string, byte>();
+        internal ConcurrentDictionary<string, byte> FileExtensions { get; set; } = new ConcurrentDictionary<string, byte>();
+        internal ConcurrentDictionary<string, byte> UniqueDependencies { get; set; } = new ConcurrentDictionary<string, byte>();
 
-        public MetaData Metadata { get; set; }
+        private ConcurrentDictionary<string, byte> AppTypes { get; set; } = new ConcurrentDictionary<string, byte>();
+        private ConcurrentDictionary<string, byte> FileNames { get; set; } = new ConcurrentDictionary<string, byte>();
+        private ConcurrentDictionary<string, byte> UniqueTags { get; set; } = new ConcurrentDictionary<string, byte>();      
+        private ConcurrentDictionary<string, byte> Outputs { get; set; } = new ConcurrentDictionary<string, byte>();
+        private ConcurrentDictionary<string, byte> Targets { get; set; } = new ConcurrentDictionary<string, byte>();
+        private ConcurrentDictionary<string, byte> CPUTargets { get; set; } = new ConcurrentDictionary<string, byte>();
+        private ConcurrentDictionary<string, byte> CloudTargets { get; set; } = new ConcurrentDictionary<string, byte>();
+        private ConcurrentDictionary<string, byte> OSTargets { get; set; } = new ConcurrentDictionary<string, byte>();
+        private ConcurrentDictionary<string,MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
+
+        internal MetaData Metadata { get; set; }
 
         public MetaDataHelper(string sourcePath, bool uniqueMatchesOnly)
         {
             sourcePath = Path.GetFullPath(sourcePath);//normalize for .\ and similar
             Metadata = new MetaData(GetDefaultProjectName(sourcePath), sourcePath);
-
-            PackageTypes = new ConcurrentDictionary<string, byte>();
-            AppTypes = new ConcurrentDictionary<string, byte>();
-            FileNames = new ConcurrentDictionary<string, byte>();
-            UniqueDependencies = new ConcurrentDictionary<string, byte>();
-            UniqueTags = new ConcurrentDictionary<string, byte>();
-            Outputs = new ConcurrentDictionary<string, byte>();
-            Targets = new ConcurrentDictionary<string, byte>();
-            FileExtensions = new ConcurrentDictionary<string, byte>();
-            CPUTargets = new ConcurrentDictionary<string, byte>();
-            CloudTargets = new ConcurrentDictionary<string, byte>();
-            OSTargets = new ConcurrentDictionary<string, byte>();
-
-            TagCounters = new ConcurrentDictionary<string, MetricTagCounter>();
         }
 
         /// <summary>
@@ -59,6 +47,8 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="matchRecord"></param>
         public void AddMatchRecord(MatchRecord matchRecord)
         {
+            bool allowAdd = true;
+
             //special handling for standard characteristics in report
             foreach (var tag in matchRecord.Tags)
             {
@@ -82,6 +72,9 @@ namespace Microsoft.ApplicationInspector.Commands
                         break;
                     case "Metadata.Application.Output.Type":
                         _ = Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        break;
+                    case "Dependency.SourceInclude":
+                        allowAdd = false; //design to keep noise out of detailed match list
                         break;
                     default:
                         if (tag.Contains("Metric."))
@@ -130,7 +123,10 @@ namespace Microsoft.ApplicationInspector.Commands
                     _ = UniqueTags.TryAdd(tag,0);
                 }
 
-                Metadata.Matches.Add(matchRecord);
+                if (allowAdd)
+                {
+                    Metadata.Matches.Add(matchRecord);
+                }
             }
             else
             {

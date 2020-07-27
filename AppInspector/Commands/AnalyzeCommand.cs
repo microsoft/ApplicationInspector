@@ -50,11 +50,6 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         [JsonProperty(Order = 3, PropertyName = "metaData")]
         public MetaData Metadata { get; set; }
-
-        public AnalyzeResult()
-        {
-            Metadata = new MetaData("", "");//needed for serialization; replaced later
-        }
     }
 
     /// <summary>
@@ -73,9 +68,6 @@ namespace Microsoft.ApplicationInspector.Commands
         private DateTime DateScanned { get; set; }
 
         private DateTime _lastUpdated;
-
-        //save all unique dependencies even if Dependency tag pattern is not-unique
-        private Regex tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Updated dynamically to more recent file in source
@@ -438,7 +430,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     string textMatch = string.Empty;
 
-                    if (scanResult.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))
+                    if (scanResult.Rule.Tags.Contains("Dependency.SourceInclude"))
                     {
                         textMatch = ExtractDependency(fileText, scanResult.Boundary.Index, scanResult.PatternMatch, languageInfo.Name);
                     }

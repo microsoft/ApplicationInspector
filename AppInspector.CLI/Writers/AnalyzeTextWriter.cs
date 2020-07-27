@@ -138,9 +138,6 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(string.Format("Unique matches: {0}", metaData.UniqueMatchesCount));
 
             WriteOnce.General(MakeHeading("UniqueTags"));
-            //List<string> orderedTags = metaData.UniqueTags.Keys.ToList<string>();
-            //orderedTags.Sort();
-
             foreach (string tag in metaData.UniqueTags)
             {
                 WriteOnce.General(tag);
