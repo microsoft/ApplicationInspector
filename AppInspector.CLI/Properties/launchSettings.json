@@ -1,8 +1,7 @@
 {
   "profiles": {
     "AppInspector.CLI": {
-      "commandName": "Project",
-      "commandLineArgs": "analyze -s C:\\temp\\RustScan-master"
+      "commandName": "Project"
     }
   }
 }

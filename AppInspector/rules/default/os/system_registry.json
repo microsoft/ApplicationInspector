@@ -55,8 +55,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": ".create_subkey(|.set_value(",
-        "type": "regex",
+        "pattern": "\\.create_subkey\\(|\\.set_value\\(",
+        "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high",
         "_comment": ""
