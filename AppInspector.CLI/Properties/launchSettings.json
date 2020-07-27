@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "AppInspector.CLI": {
-      "commandName": "Project",
-      "commandLineArgs": "analyze -s c:\\temp\\main.cpp"
-    }
-  }
-}
