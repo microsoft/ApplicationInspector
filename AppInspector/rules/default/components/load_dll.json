@@ -12,7 +12,6 @@
       {
         "pattern": "DllImport|Assembly\\.LoadFile|Assembly\\.LoadFrom",
         "type": "regex",
-        "modifiers": [ "i" ],
         "scopes": [
           "code"
         ],
@@ -33,7 +32,6 @@
       {
         "pattern": "LoadLibrary",
         "type": "string",
-        "modifiers": [ "i" ],
         "scopes": [
           "code"
         ],
@@ -54,7 +52,6 @@
       {
         "pattern": "LoadLibrary|libloading|use std::unstable::dynamic_lib::DynamicLibrary",
         "type": "regex",
-        "modifiers": [ "i" ],
         "scopes": [
           "code"
         ],
@@ -75,7 +72,6 @@
       {
         "pattern": "System\\.Load|ctypes\\.WinDLL",
         "type": "regex",
-        "modifiers": [ "i" ],
         "scopes": [
           "code"
         ],

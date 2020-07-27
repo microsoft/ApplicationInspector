@@ -40,7 +40,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },
@@ -50,7 +49,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },
@@ -154,7 +152,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -244,7 +241,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
