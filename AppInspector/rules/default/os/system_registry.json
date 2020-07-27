@@ -133,7 +133,6 @@
           "scopes": [
             "code"
           ],
-          "modifiers": [ "i" ],
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
@@ -197,7 +196,6 @@
         "pattern": "Registry",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
@@ -215,7 +213,6 @@
           "scopes": [
             "code"
           ],
-          "modifiers": [ "i" ],
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
@@ -252,7 +249,6 @@
           "scopes": [
             "code"
           ],
-          "modifiers": [ "i" ],
           "_comment": ""
         },
         "search_in": "finding-region(-40,40)",
