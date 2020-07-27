@@ -18,7 +18,7 @@
         "_comment": ""
       },
       {
-        "pattern": "async",
+        "pattern": "async|await",
         "type": "regex-word",
         "scopes": [
           "code"
@@ -67,6 +67,37 @@
     "patterns": [
       {
         "pattern": "BackgroundWorker|Task\\.Run|Async|System.Threading",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "(new System\\.Diagnostics.Process\\(\\)| new Process\\(\\))",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI036910",
+    "description": "OS: Multiprocessing / Multithreading",
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.Process.Multiprocessing"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "thread::spawn",
         "type": "regex",
         "scopes": [
           "code"

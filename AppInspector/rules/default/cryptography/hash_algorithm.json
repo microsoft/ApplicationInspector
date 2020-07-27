@@ -70,7 +70,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RIPEMD|Blowfish|Twofish|Threefish|Serpent|HMAC|KeyedHashAlgorithm",
+        "pattern": "RIPEMD|Blowfish|Twofish|Threefish|Serpent|HMAC|KeyedHashAlgorithm|Blake2|Blake3",
         "type": "regex",
         "scopes": [
           "code",

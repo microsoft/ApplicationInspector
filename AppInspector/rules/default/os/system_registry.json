@@ -44,6 +44,43 @@
   },
   {
     "name": "OS Operation: Windows Registry (Write)",
+    "id": "AI038110",
+    "description": "OS Operation: Windows Registry (Write)",
+    "tags": [
+      "OS.SystemRegistry.Write"
+    ],
+    "applies_to": [
+      "csharp"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.create_subkey\\(|\\.set_value\\(",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "HKEY_",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-40,40)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Windows Registry (Write)",
     "id": "AI038200",
     "description": "OS Operation: Windows Registry (Write)",
     "tags": [
@@ -190,21 +227,37 @@
   },
   {
     "name": "OS Operation: Windows Registry (Read)",
-    "id": "AI038600",
+    "id": "AI038601",
     "description": "OS Operation: Windows Registry (Read)",
     "tags": [
       "OS.SystemRegistry.Read"
     ],
     "applies_to": [
-      "csharp"
+      "rust"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "Registry(Key)?(.*)?.GetValue",
-        "type": "regex",
+        "pattern": ".open_subkey(",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "HKEY_",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-40,40)",
+        "negate_finding": false,
         "_comment": ""
       }
     ]
