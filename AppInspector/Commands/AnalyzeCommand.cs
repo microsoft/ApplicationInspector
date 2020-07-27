@@ -75,7 +75,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private DateTime _lastUpdated;
 
         //save all unique dependencies even if Dependency tag pattern is not-unique
-        private Regex tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
+        private Regex tagDepPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Updated dynamically to more recent file in source
@@ -274,7 +274,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
             _rulesProcessor = new RuleProcessor(rulesSet, _confidence, !_options.AllowDupTags, _options.MatchDepth == "first", _options.Log);
-            _rulesProcessor.UniqueTagExceptions = "Metric.".Split(",");//fix to enable non-unique tags if metric counter related
+            _rulesProcessor.UniqueTagExceptions = "Metric.,Dependency.SourceInclude".Split(",");//fix to enable non-unique tags if metric counter related
 
             //create metadata helper to wrap and help populate metadata from scan
             _metaDataHelper = new MetaDataHelper(_options.SourcePath, !_options.AllowDupTags);
@@ -438,7 +438,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     string textMatch = string.Empty;
 
-                    if (scanResult.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))
+                    if (scanResult.Rule.Tags.Any(v => tagDepPatternRegex.IsMatch(v)))
                     {
                         textMatch = ExtractDependency(fileText, scanResult.Boundary.Index, scanResult.PatternMatch, languageInfo.Name);
                     }
@@ -604,8 +604,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
 
                 string finalResult = rawResult.Replace(";", "");
-                _ = _metaDataHelper.UniqueDependencies.TryAdd(finalResult,0);
-
+               
                 return System.Net.WebUtility.HtmlEncode(finalResult);
             }
 

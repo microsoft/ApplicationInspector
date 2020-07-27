@@ -59,6 +59,8 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="matchRecord"></param>
         public void AddMatchRecord(MatchRecord matchRecord)
         {
+            bool allowAdd = true;
+
             //special handling for standard characteristics in report
             foreach (var tag in matchRecord.Tags)
             {
@@ -82,6 +84,10 @@ namespace Microsoft.ApplicationInspector.Commands
                         break;
                     case "Metadata.Application.Output.Type":
                         _ = Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        break;
+                    case "Dependency.SourceInclude":
+                        _ = UniqueDependencies.TryAdd(matchRecord.Sample, 0);
+                        allowAdd = false;
                         break;
                     default:
                         if (tag.Contains("Metric."))
@@ -130,7 +136,10 @@ namespace Microsoft.ApplicationInspector.Commands
                     _ = UniqueTags.TryAdd(tag,0);
                 }
 
-                Metadata.Matches.Add(matchRecord);
+                if (allowAdd)
+                {
+                    Metadata.Matches.Add(matchRecord);
+                }
             }
             else
             {

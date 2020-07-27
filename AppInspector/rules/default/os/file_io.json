@@ -176,6 +176,38 @@
     ]
   },
   {
+    "name": "File Operation (Read)",
+    "id": "AI035911",
+    "description": "File Operation",
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.FileOperation.Read"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "BufRead|File::open|read_to_string|read_to_end|\\.read\\(&",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "FileReader|new Scanner\\(Files\\.readAllLines|Files\\.readAllBytes|FileInputStream",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
     "name": "File Operation (Delete)",
     "id": "AI036000",
     "description": "File Operation (Delete)",
@@ -217,6 +249,29 @@
         },
         "search_in": "finding-region(-200,1)",
         "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Delete)",
+    "id": "AI036010",
+    "description": "File Operation (Delete)",
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "remove_file",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
         "_comment": ""
       }
     ]
@@ -484,6 +539,77 @@
           "code"
         ],
         "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Write)",
+    "id": "AI036621",
+    "description": "File Operation (Write)",
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "File::create|use std::io::Write|BufWriter::new",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "File Operation (Write)",
+    "id": "AI036622",
+    "description": "File Operation (Write)",
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.write_all|\\.write_fmt",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": ".write",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "use std::io::Write|use std::io::File|use std:fs:File",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-240,240)",
+        "negate_finding": false,
         "_comment": ""
       }
     ]

@@ -43,6 +43,27 @@
   },
   {
     "name": "Component: Windows DLL",
+    "id": "AI005510",
+    "description": "Component: Windows DLL",
+    "applies_to": [ "rust" ],
+    "tags": [
+      "Component.Executable.Microsoft.DLL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "LoadLibrary|libloading|use std::unstable::dynamic_lib::DynamicLibrary",
+        "type": "regex",
+        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: Windows DLL",
     "id": "AI005600",
     "description": "Component: Windows DLL",
     "applies_to": [ "python", "java" ],

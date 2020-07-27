@@ -40,7 +40,8 @@
     "applies_to": [
       "javascript",
       "ruby",
-      "javascriptreact"
+      "javascriptreact",
+      "rust"
     ],
     "tags": [
       "OS.Process.DynamicExecution"
@@ -96,6 +97,29 @@
       {
         "pattern": "process.start",
         "type": "substring",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035010",
+    "description": "OS: Dynamic Execution",
+    "recommendation": "",
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.Process.DynamicExecution"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "use std::process::Command;|Command::new",
+        "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high",
@@ -161,7 +185,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "shellexecute|createprocess|execl|execlp|execlp|execv|execve|execvp|execvpe|execle|fork",
+        "pattern": "shellexecute|createprocess|execl|execlp|execlp|execv|execve|execvp|execvpe|execle|fork|QProcess",
         "type": "regex-word",
         "scopes": [
           "code"

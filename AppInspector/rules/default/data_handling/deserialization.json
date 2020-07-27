@@ -4,7 +4,8 @@
     "id": "AI012100",
     "description": "Data: Serialization",
     "applies_to": [
-      "python"
+      "python",
+      "rust"
     ],
     "tags": [
       "Data.Serialization"
@@ -12,11 +13,12 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "(de)?serialize",
+        "pattern": "Serialize",
         "type": "regex",
         "scopes": [
           "code"
         ],
+        "modifiers": [ "i" ],
         "confidence": "medium"
       }
     ]
@@ -256,6 +258,30 @@
           "code"
         ],
         "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Deserialization",
+    "id": "AI013010",
+    "description": "Data: Deserialization",
+    "applies_to": [
+      "python",
+      "rust"
+    ],
+    "tags": [
+      "Data.Deserialization"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "Deserialize",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "medium"
       }
     ]
   },

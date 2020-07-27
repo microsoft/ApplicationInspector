@@ -15,6 +15,7 @@
       "javascript",
       "java",
       "typescript",
+      "rust",
       "php"
     ],
     "inline": "//",
