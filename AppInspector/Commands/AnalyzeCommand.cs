@@ -50,6 +50,11 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         [JsonProperty(Order = 3, PropertyName = "metaData")]
         public MetaData Metadata { get; set; }
+
+        public AnalyzeResult()
+        {
+            Metadata = new MetaData("", "");//needed for serialization for other commands; replaced later
+        }
     }
 
     /// <summary>
@@ -266,7 +271,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
             _rulesProcessor = new RuleProcessor(rulesSet, _confidence, !_options.AllowDupTags, _options.MatchDepth == "first", _options.Log);
-            _rulesProcessor.UniqueTagExceptions = "Metric.".Split(",");//fix to enable non-unique tags if metric counter related
+            _rulesProcessor.UniqueTagExceptions = "Metric.,Dependency.Split".Split(",");//fix to enable non-unique tags if metric counter related
 
             //create metadata helper to wrap and help populate metadata from scan
             _metaDataHelper = new MetaDataHelper(_options.SourcePath, !_options.AllowDupTags);
