@@ -113,104 +113,85 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected package types 
         /// </summary>
         [JsonProperty(PropertyName = "packageTypes")]
-        public List<string> PackageTypes { get; set; }
+        public List<string> PackageTypes { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected application types
         /// </summary>
         [JsonProperty(PropertyName = "appTypes")]
-        public List<string> AppTypes { get; set; }
-
-        [JsonIgnore]
-        public List<string> FileNames { get; set; }
+        public List<string> AppTypes { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected unique tags 
         /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
-        public List<string> UniqueTags { get; set; }
+        public List<string> UniqueTags { get; set; } = new List<string>();
 
 
         /// <summary>
         /// List of detected unique code dependency includes
         /// </summary>
         [JsonProperty(PropertyName = "uniqueDependencies")]
-        public List<string> UniqueDependencies { get; set; }
+        public List<string> UniqueDependencies { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected output types
         /// </summary>
         [JsonProperty(PropertyName = "outputs")]
-        public List<string> Outputs { get; set; }
+        public List<string> Outputs { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected target types
         /// </summary>
         [JsonProperty(PropertyName = "targets")]
-        public List<string> Targets { get; set; }
+        public List<string> Targets { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected OS targets
         /// </summary>
         [JsonProperty(PropertyName = "OSTargets")]
-        public List<string> OSTargets { get; set; }
+        public List<string> OSTargets { get; set; } = new List<string>();
 
         /// <summary>
         /// LIst of detected file types (extension based)
         /// </summary>
         [JsonProperty(PropertyName = "fileExtensions")]
-        public List<string> FileExtensions { get; set; }
+        public List<string> FileExtensions { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected cloud host targets
         /// </summary>
         [JsonProperty(PropertyName = "cloudTargets")]
-        public List<string> CloudTargets { get; set; }
+        public List<string> CloudTargets { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected cpu targets
         /// </summary>
         [JsonProperty(PropertyName = "CPUTargets")]
-        public List<string> CPUTargets { get; set; }
+        public List<string> CPUTargets { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected programming languages used and count of files 
         /// </summary>
         [JsonProperty(PropertyName = "languages")]
-        public ConcurrentDictionary<string,int> Languages { get; set; }
+        public ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
 
         /// <summary>
         /// List of detected tag counters i.e. metrics
         /// </summary>
         [JsonProperty(PropertyName = "tagCounters")]
-        public List<MetricTagCounter> TagCounters { get; set; }
+        public List<MetricTagCounter> TagCounters { get; set; } = new List<MetricTagCounter>();
 
         /// <summary>
         /// List of detailed MatchRecords from scan
         /// </summary>
         [JsonProperty(PropertyName = "detailedMatchList")]
-        public List<MatchRecord> Matches { get; }
+        public List<MatchRecord> Matches { get; } = new List<MatchRecord>();
 
         public MetaData(string applicationName, string sourcePath)
         {
             ApplicationName = applicationName;
-
             SourcePath = sourcePath;
-
-            //Initial value for ApplicationName may be replaced if rule pattern match found later
-            Matches = new List<MatchRecord>();
-            PackageTypes = new List<string>();
-            AppTypes = new List<string>();
-            FileNames = new List<string>();
-            UniqueDependencies = new List<string>();
-            UniqueTags = new List<string>();
-            Outputs = new List<string>();
-            Targets = new List<string>();
-            OSTargets = new List<string>();
-            FileExtensions = new List<string>();
-            CPUTargets = new List<string>();
-            TagCounters = new List<MetricTagCounter>();
-            Languages = new ConcurrentDictionary<string, int>();
         }
 
         internal void IncrementFilesAnalyzed(int amount = 1)
