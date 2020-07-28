@@ -223,6 +223,42 @@
   },
   {
     "name": "OS Operation: Windows Registry (Read)",
+    "id": "AI038600",
+    "description": "OS Operation: Windows Registry (Read)",
+    "tags": [
+      "OS.SystemRegistry.Read"
+    ],
+    "applies_to": [
+      "csharp"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Registry(Key)?(.*)?.GetValue",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "HKEY_",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-40,40)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  }
+  {
+    "name": "OS Operation: Windows Registry (Read)",
     "id": "AI038601",
     "description": "OS Operation: Windows Registry (Read)",
     "tags": [
