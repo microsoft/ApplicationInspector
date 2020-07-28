@@ -44,6 +44,42 @@
   },
   {
     "name": "OS Operation: Windows Registry (Write)",
+    "id": "AI038110",
+    "description": "OS Operation: Windows Registry (Write)",
+    "tags": [
+      "OS.SystemRegistry.Write"
+    ],
+    "applies_to": [
+      "csharp"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "CreateSubKey|SetValue",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "HKEY_|Registry",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-40,40)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Windows Registry (Write)",
     "id": "AI038200",
     "description": "OS Operation: Windows Registry (Write)",
     "tags": [
@@ -97,7 +133,6 @@
           "scopes": [
             "code"
           ],
-          "modifiers": [ "i" ],
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
@@ -161,7 +196,6 @@
         "pattern": "Registry",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
@@ -179,7 +213,6 @@
           "scopes": [
             "code"
           ],
-          "modifiers": [ "i" ],
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
@@ -202,9 +235,60 @@
     "patterns": [
       {
         "pattern": "Registry(Key)?(.*)?.GetValue",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "HKEY_",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-40,40)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS Operation: Windows Registry (Read)",
+    "id": "AI038601",
+    "description": "OS Operation: Windows Registry (Read)",
+    "tags": [
+      "OS.SystemRegistry.Read"
+    ],
+    "applies_to": [
+      "rust"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".open_subkey(",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "HKEY_",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-40,40)",
+        "negate_finding": false,
         "_comment": ""
       }
     ]

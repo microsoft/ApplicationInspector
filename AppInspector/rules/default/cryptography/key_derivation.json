@@ -33,6 +33,13 @@
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
+      },
+      {
+        "pattern": "pbkdf",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -40,10 +47,7 @@
     "name": "Cryptography: Key Derivation (PBKDF2)",
     "id": "AI009500",
     "description": "Cryptography: Key Derivation (PBKDF2)",
-    "tags": [
-      "Cryptography.KeyDerivation.PBKDF2",
-      "Cryptography.HashAlgorithm.PBKDF1"
-    ],
+    "tags": [ "Cryptography.KeyDerivation.PBKDF2" ],
     "severity": "moderate",
     "patterns": [
       {

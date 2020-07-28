@@ -73,6 +73,44 @@
     ]
   },
   {
+    "name": "Cryptography: Encryption (Salsa20)",
+    "id": "AI007101",
+    "description": "Cryptography: Encryption (Salsa20)",
+    "tags": [
+      "Cryptography.Cipher.Salsa20"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Salsa20",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (ChaCha)",
+    "id": "AI007102",
+    "description": "Cryptography: Encryption (ChaCha)",
+    "tags": [
+      "Cryptography.Cipher.ChaCha"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ChaCha",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
     "name": "Encryption: Cipher Mode",
     "id": "AI007200",
     "description": "Encryption: Cipher Mode",

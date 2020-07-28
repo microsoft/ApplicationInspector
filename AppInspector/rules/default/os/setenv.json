@@ -17,14 +17,15 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high",
         "_comment": ""
       }
     ]
   },
   {
-    "name": "OS: Environment Variable",
+    "name": "OS: Environment Variable (Write)",
     "id": "AI037600",
-    "description": "OS: Environment Variable",
+    "description": "OS: Environment Variable (Write)",
     "applies_to": [
     ],
     "tags": [
@@ -39,6 +40,7 @@
         "scopes": [
           "code"
         ],
+        "confidence": "medium",
         "_comment": ""
       }
     ]
@@ -61,6 +63,30 @@
         "scopes": [
           "code"
         ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Write)",
+    "id": "AI037710",
+    "description": "OS: Environment Variable (Write)",
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.Environment.Write"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "env::set_var",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
         "_comment": ""
       }
     ]
@@ -84,6 +110,7 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high",
         "_comment": ""
       }
     ]
@@ -107,6 +134,7 @@
         "scopes": [
           "code"
         ],
+        "confidence": "high",
         "_comment": ""
       }
     ]

@@ -40,7 +40,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },
@@ -50,7 +49,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },
@@ -137,6 +135,29 @@
     ]
   },
   {
+    "name": "Network Connection: TCP",
+    "description": "Network Connection",
+    "id": "AI031910",
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.Network.Connection.Http"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "TcpStream::connect|HttpConnection",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+
+  {
     "name": "Network Connection: Socket",
     "description": "Network Connection Socket",
     "id": "AI032000",
@@ -182,6 +203,27 @@
     ]
   },
   {
+    "name": "Network Connection: Socket",
+    "description": "Network Socket",
+    "id": "AI032110",
+    "tags": [
+      "OS.Network.Connection.Socket"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "connect|port",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": "general"
+      }
+    ]
+  },
+  {
     "name": "Network Connection: HTTP",
     "description": "Network Connection",
     "id": "AI032200",
@@ -199,7 +241,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]

@@ -133,7 +133,7 @@
     "tags": [
       "Dependency.SourceInclude"
     ],
-    "applies_to": [ "perl" ],
+    "applies_to": [ "perl", "rust"],
     "severity": "moderate",
     "_comment": "",
     "patterns": [

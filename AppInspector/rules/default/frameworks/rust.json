@@ -1,0 +1,77 @@
+﻿[
+  {
+    "name": "Development Framework: Rocket",
+    "id": "AI025610",
+    "description": "Development Framework: Rocket",
+    "applies_to": [ "rust" ],
+    "tags": [ "Framework.Development.Rocket" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "extern crate rocket|use rocket",
+        "type": "regex",
+        "scopes": [ "code" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: ActixWeb",
+    "id": "AI025620",
+    "description": "Development Framework: ActixWeb",
+    "applies_to": [ "rust" ],
+    "tags": [ "Framework.Development.ActixWeb" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "use actix_web",
+        "type": "regex",
+        "scopes": [ "code" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Nickel",
+    "id": "AI025630",
+    "description": "Development Framework: Nickel",
+    "applies_to": [ "rust" ],
+    "tags": [ "Framework.Development.Nickel" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "use Nickel",
+        "type": "regex",
+        "scopes": [ "code" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Yew",
+    "id": "AI025640",
+    "description": "Development Framework: Yew",
+    "applies_to": [ "rust" ],
+    "tags": [ "Framework.Development.Yew" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "use yew",
+        "type": "regex",
+        "scopes": [ "code" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Azul",
+    "id": "AI025650",
+    "description": "Development Framework: Azul",
+    "applies_to": [ "rust" ],
+    "tags": [ "Framework.Development.Azul" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "use azul",
+        "type": "regex",
+        "scopes": [ "code" ]
+      }
+    ]
+  }
+]

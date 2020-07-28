@@ -7,14 +7,33 @@
       "Metric.Code.Class.Defined"
     ],
     "severity": "moderate",
-    "applies_to": [ "csharp", "cpp", "javascript", "python", "vb", "rust", "ruby", "groovy", "php" ],
+    "applies_to": [ "csharp", "cpp", "javascript", "python", "vb", "ruby", "groovy", "php" ],
     "patterns": [
       {
         "pattern": "class",
         "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high",
-        "_comment": "langs defined to exclude css class reference vs class data structure which provides complexity/size insight"
+        "_comment": "data structure which provides complexity/size insight"
+      }
+    ]
+  },
+  {
+    "name": "Metric: Struct Definition",
+    "id": "AI025710",
+    "description": "Metric: Struct Defined",
+    "tags": [
+      "Metric.Code.Class.Defined"
+    ],
+    "severity": "moderate",
+    "applies_to": [ "c", "cpp", "csharp", "objective-c", "rust" ],
+    "patterns": [
+      {
+        "pattern": "struct",
+        "type": "regex-word",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
       }
     ]
   },
