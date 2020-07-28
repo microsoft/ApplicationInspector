@@ -174,7 +174,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected programming languages used and count of files 
         /// </summary>
         [JsonProperty(PropertyName = "languages")]
-        public ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
+        public ImmutableSortedDictionary<string, int> Languages { get; set; } //unable to init here for constr arg
 
         /// <summary>
         /// List of detected tag counters i.e. metrics

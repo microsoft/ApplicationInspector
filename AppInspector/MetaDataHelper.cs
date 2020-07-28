@@ -31,6 +31,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private ConcurrentDictionary<string, byte> CloudTargets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> OSTargets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string,MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
+        private ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
 
         internal MetaData Metadata { get; set; }
 
@@ -150,6 +151,7 @@ namespace Microsoft.ApplicationInspector.Commands
             Metadata.FileExtensions = FileExtensions.ToImmutableSortedDictionary().Keys.ToList();
             Metadata.Outputs = Outputs.ToImmutableSortedDictionary().Keys.ToList();
             Metadata.Targets = Targets.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.Languages = Languages.ToImmutableSortedDictionary();
 
             foreach (MetricTagCounter metricTagCounter in TagCounters.Values)
             {
@@ -163,7 +165,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="language"></param>
         public void AddLanguage(string language)
         {
-            Metadata.Languages.AddOrUpdate(language, 1, (language, count) => count + 1);
+            Languages.AddOrUpdate(language, 1, (language, count) => count + 1);
         }
 
         #region helpers
