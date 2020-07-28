@@ -5,6 +5,7 @@ using Microsoft.ApplicationInspector.Commands;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 
@@ -26,7 +27,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
             {
-                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags.Keys);
+                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags);
                 keys.Sort();
 
                 foreach (string tag in keys)
@@ -66,38 +67,17 @@ namespace Microsoft.ApplicationInspector.CLI
 
         #region helpers
 
-        private string StringList(ConcurrentDictionary<string, byte> data)
+        private string StringList(List<string> data)
         {
+            return string.Join(' ', data);
+        }
+
+        private string StringList(ImmutableSortedDictionary<string,int> data)
+        { 
             return string.Join(' ', data.Keys);
         }
 
-        private string StringList(Dictionary<string, int> data)
-        {
-            StringBuilder build = new StringBuilder();
-
-            foreach (string s in data.Keys)
-            {
-                build.Append(s);
-                build.Append(" ");
-            }
-
-            return build.ToString();
-        }
-
-        private string StringList(ConcurrentDictionary<string, int> data)
-        {
-            StringBuilder build = new StringBuilder();
-
-            foreach (string s in data.Keys)
-            {
-                build.Append(s);
-                build.Append(" ");
-            }
-
-            return build.ToString();
-        }
-
-        private string StringList(SortedDictionary<string, string> data)
+        private string StringList(ImmutableSortedDictionary<string, string> data)
         {
             StringBuilder build = new StringBuilder();
 
@@ -138,7 +118,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(string.Format("Source path: {0}", metaData.SourcePath));
             WriteOnce.General(string.Format("Authors: {0}", metaData.Authors));
             WriteOnce.General(string.Format("Last Updated: {0}", metaData.LastUpdated));
-            WriteOnce.General(string.Format("Languages: {0}", StringList(metaData.Languages)));
+            WriteOnce.General(string.Format("Languages: {0}", StringList(metaData.Languages.ToImmutableSortedDictionary())));
             WriteOnce.General(string.Format(MakeHeading("Scan Settings")));
             WriteOnce.General(string.Format("Date scanned: {0}", metaData.DateScanned));
             WriteOnce.General(string.Format(MakeHeading("Source Info")));
@@ -158,10 +138,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(string.Format("Unique matches: {0}", metaData.UniqueMatchesCount));
 
             WriteOnce.General(MakeHeading("UniqueTags"));
-            List<string> orderedTags = metaData.UniqueTags.Keys.ToList<string>();
-            orderedTags.Sort();
-
-            foreach (string tag in orderedTags)
+            foreach (string tag in metaData.UniqueTags)
             {
                 WriteOnce.General(tag);
             }
@@ -197,7 +174,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             WriteOnce.General(MakeHeading("Dependencies"));
 
-            foreach (string s in metaData.UniqueDependencies.Keys)
+            foreach (string s in metaData.UniqueDependencies)
             {
                 WriteOnce.General(s);
             }

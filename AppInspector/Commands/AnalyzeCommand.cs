@@ -53,7 +53,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         public AnalyzeResult()
         {
-            Metadata = new MetaData("", "");//needed for serialization; replaced later
+            Metadata = new MetaData("", "");//needed for serialization for other commands; replaced later
         }
     }
 
@@ -73,9 +73,6 @@ namespace Microsoft.ApplicationInspector.Commands
         private DateTime DateScanned { get; set; }
 
         private DateTime _lastUpdated;
-
-        //save all unique dependencies even if Dependency tag pattern is not-unique
-        private Regex tagPatternRegex = new Regex("Dependency.SourceInclude", RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Updated dynamically to more recent file in source
@@ -274,6 +271,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
             _rulesProcessor = new RuleProcessor(rulesSet, _confidence, !_options.AllowDupTags, _options.MatchDepth == "first", _options.Log);
+            _rulesProcessor.UniqueTagExceptions = "Metric.,Dependency.Split".Split(",");//fix to enable non-unique tags if metric counter related
 
             //create metadata helper to wrap and help populate metadata from scan
             _metaDataHelper = new MetaDataHelper(_options.SourcePath, !_options.AllowDupTags);
@@ -359,6 +357,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     _metaDataHelper.Metadata.LastUpdated = LastUpdated.ToString();
                     _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
+                    _metaDataHelper.PrepareReport();
                     analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
                     analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
                 }
@@ -385,7 +384,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (FileChecksPassed(filename, ref languageInfo))
             {
                 LastUpdated = File.GetLastWriteTime(filename);
-                _ = _metaDataHelper.Metadata.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_UNCOMPRESSED_FILETYPE),0);
+                _ = _metaDataHelper.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_UNCOMPRESSED_FILETYPE),0);
 
                 string fileText = File.ReadAllText(filename);
                 ProcessInMemory(filename, fileText, languageInfo);
@@ -436,7 +435,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     string textMatch = string.Empty;
 
-                    if (scanResult.Rule.Tags.Any(v => tagPatternRegex.IsMatch(v)))
+                    if (scanResult.Rule.Tags.Contains("Dependency.SourceInclude"))
                     {
                         textMatch = ExtractDependency(fileText, scanResult.Boundary.Index, scanResult.PatternMatch, languageInfo.Name);
                     }
@@ -602,7 +601,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
 
                 string finalResult = rawResult.Replace(";", "");
-                _ = _metaDataHelper.Metadata.UniqueDependencies.TryAdd(finalResult,0);
+                _ = _metaDataHelper.UniqueDependencies.TryAdd(finalResult,0);
 
                 return System.Net.WebUtility.HtmlEncode(finalResult);
             }
@@ -645,7 +644,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             LastUpdated = File.GetLastWriteTime(filePath);
-            _ = _metaDataHelper.Metadata.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILETYPE),0);
+            _ = _metaDataHelper.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILETYPE),0);
 
             try
             {
@@ -715,7 +714,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
         {
-            _ = _metaDataHelper.Metadata.FileExtensions.TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(),0);
+            _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(),0);
 
             // 1. Skip files written in unknown language
             if (!Language.FromFileName(filePath, ref languageInfo))

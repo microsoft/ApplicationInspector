@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 
 namespace Microsoft.ApplicationInspector.Commands
@@ -14,9 +16,6 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class MetaData
     {
-        [JsonIgnore]
-        public Dictionary<string, ConcurrentDictionary<string,byte>> KeyedPropertyLists { get; } //dynamic keyed list of properties with more than one value
-
         //simple properties
         /// <summary>
         /// Detected or derived project name
@@ -110,122 +109,89 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(PropertyName = "uniqueMatchesCount")]
         public int UniqueMatchesCount => UniqueTags.Count;  //for liquid use
 
-        //convenience getters for serialzation and easy reference of standard properties found in dynamic lists
-
         /// <summary>
         /// List of detected package types 
         /// </summary>
         [JsonProperty(PropertyName = "packageTypes")]
-        public ConcurrentDictionary<string,byte> PackageTypes => KeyedPropertyLists["strGrpPackageTypes"];
+        public List<string> PackageTypes { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected application types
         /// </summary>
         [JsonProperty(PropertyName = "appTypes")]
-        public ConcurrentDictionary<string,byte> AppTypes => KeyedPropertyLists["strGrpAppTypes"];
-
-        [JsonIgnore]
-        public ConcurrentDictionary<string,byte> RulePaths { get => KeyedPropertyLists["strGrpRulePaths"]; set => KeyedPropertyLists["strGrpRulePaths"] = value; }
-
-        [JsonIgnore]
-        public ConcurrentDictionary<string,byte> FileNames => KeyedPropertyLists["strGrpFileNames"];
+        public List<string> AppTypes { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected unique tags 
         /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
-        public ConcurrentDictionary<string,byte> UniqueTags { get => KeyedPropertyLists["strGrpUniqueTags"]; set => KeyedPropertyLists["strGrpUniqueTags"] = value; }
+        public List<string> UniqueTags { get; set; } = new List<string>();
+
 
         /// <summary>
         /// List of detected unique code dependency includes
         /// </summary>
         [JsonProperty(PropertyName = "uniqueDependencies")]
-        public ConcurrentDictionary<string,byte> UniqueDependencies => KeyedPropertyLists["strGrpUniqueDependencies"];
+        public List<string> UniqueDependencies { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected output types
         /// </summary>
         [JsonProperty(PropertyName = "outputs")]
-        public ConcurrentDictionary<string,byte> Outputs => KeyedPropertyLists["strGrpOutputs"];
+        public List<string> Outputs { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected target types
         /// </summary>
         [JsonProperty(PropertyName = "targets")]
-        public ConcurrentDictionary<string,byte> Targets => KeyedPropertyLists["strGrpTargets"];
-
-        /// <summary>
-        /// List of detected programming languages used
-        /// </summary>
-        [JsonProperty(PropertyName = "languages")]
-        public ConcurrentDictionary<string, int> Languages;
+        public List<string> Targets { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected OS targets
         /// </summary>
         [JsonProperty(PropertyName = "OSTargets")]
-        public ConcurrentDictionary<string,byte> OSTargets => KeyedPropertyLists["strGrpOSTargets"];
+        public List<string> OSTargets { get; set; } = new List<string>();
 
         /// <summary>
         /// LIst of detected file types (extension based)
         /// </summary>
         [JsonProperty(PropertyName = "fileExtensions")]
-        public ConcurrentDictionary<string,byte> FileExtensions => KeyedPropertyLists["strGrpFileExtensions"];
+        public List<string> FileExtensions { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected cloud host targets
         /// </summary>
         [JsonProperty(PropertyName = "cloudTargets")]
-        public ConcurrentDictionary<string,byte> CloudTargets => KeyedPropertyLists["strGrpCloudTargets"];
+        public List<string> CloudTargets { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected cpu targets
         /// </summary>
         [JsonProperty(PropertyName = "CPUTargets")]
-        public ConcurrentDictionary<string,byte> CPUTargets => KeyedPropertyLists["strGrpCPUTargets"];
+        public List<string> CPUTargets { get; set; } = new List<string>();
 
-        //other data types
+        /// <summary>
+        /// List of detected programming languages used and count of files 
+        /// </summary>
+        [JsonProperty(PropertyName = "languages")]
+        public ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
 
         /// <summary>
         /// List of detected tag counters i.e. metrics
         /// </summary>
         [JsonProperty(PropertyName = "tagCounters")]
-        public ConcurrentStack<MetricTagCounter> TagCounters { get; set; }
+        public List<MetricTagCounter> TagCounters { get; set; } = new List<MetricTagCounter>();
 
         /// <summary>
         /// List of detailed MatchRecords from scan
         /// </summary>
         [JsonProperty(PropertyName = "detailedMatchList")]
-        public List<MatchRecord> Matches { get; }//lighter formatted list structure more suited for json output to limit extraneous fieldo in Issues class
+        public List<MatchRecord> Matches { get; } = new List<MatchRecord>();
 
         public MetaData(string applicationName, string sourcePath)
         {
             ApplicationName = applicationName;
-
             SourcePath = sourcePath;
-
-            //Initial value for ApplicationName may be replaced if rule pattern match found later
-            Matches = new List<MatchRecord>();
-
-            //initialize standard set groups using dynamic lists variables that may have more than one value
-            KeyedPropertyLists = new Dictionary<string, ConcurrentDictionary<string,byte>>
-            {
-                ["strGrpPackageTypes"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpAppTypes"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpFileTypes"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpUniqueTags"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpOutputs"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpTargets"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpOSTargets"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpFileExtensions"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpFileNames"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpCPUTargets"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpCloudTargets"] = new ConcurrentDictionary<string,byte>(),
-                ["strGrpUniqueDependencies"] = new ConcurrentDictionary<string,byte>()
-            };
-
-            Languages = new ConcurrentDictionary<string, int>();
-            TagCounters = new ConcurrentStack<MetricTagCounter>();
         }
 
         internal void IncrementFilesAnalyzed(int amount = 1)

@@ -40,10 +40,8 @@ namespace Microsoft.ApplicationInspector.CLI
 
             if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
             {
-                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags.Keys);
-                keys.Sort();
-                TagsFile tags = new TagsFile();
-                tags.Tags = keys.ToArray();
+                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags);
+                TagsFile tags = new TagsFile() { Tags = keys.ToArray() };
                 TextWriter.Write(JsonConvert.SerializeObject(tags, Formatting.Indented));
             }
             else

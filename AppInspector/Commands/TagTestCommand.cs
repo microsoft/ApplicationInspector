@@ -213,7 +213,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     int sizeTags = analyze1.Metadata.UniqueTags.Count;
                     string[] tagsFound = new string[sizeTags];
 
-                    foreach (string tag in analyze1.Metadata.UniqueTags.Keys.ToList<string>())
+                    foreach (string tag in analyze1.Metadata.UniqueTags)
                     {
                         tagsFound[count++] = tag;
                     }
