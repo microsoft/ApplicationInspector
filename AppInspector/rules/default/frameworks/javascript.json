@@ -42,10 +42,9 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "Ember",
+        "pattern": "ember",
         "type": "regex-word",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -61,8 +60,7 @@
       {
         "pattern": "backbone",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -95,7 +93,6 @@
         "pattern": "redux",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -112,7 +109,6 @@
         "pattern": "redux-saga",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -146,7 +142,6 @@
         "pattern": "riteway",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -163,7 +158,6 @@
         "pattern": "meteor",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -179,8 +173,7 @@
       {
         "pattern": "mithril",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -188,7 +181,7 @@
     "name": "Development Framework: Polymer",
     "id": "AI021000",
     "description": "Development Framework: Polymer",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "html" ],
     "tags": [ "Framework.Development.Polymer" ],
     "severity": "moderate",
     "patterns": [
@@ -196,7 +189,6 @@
         "pattern": "polymer",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -213,7 +205,6 @@
         "pattern": "aurelia",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -298,7 +289,6 @@
         "pattern": "apis\\.google\\.com/js/api\\.js",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -317,14 +307,12 @@
         "pattern": "app\\.listen|server\\.listen",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
         "pattern": "\\.listen\\(",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "medium"
       }
     ]

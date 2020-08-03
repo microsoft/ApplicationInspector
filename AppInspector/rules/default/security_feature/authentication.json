@@ -75,7 +75,6 @@
           "scopes": [
             "code"
           ],
-          "modifiers": [ "i" ],
           "_comment": "negate cases for certificate rule identifying client TLS auth"
         },
         "search_in": "finding-region(-10,10)",
@@ -201,7 +200,6 @@
         "pattern": "Microsoft\\.IdentityModel\\.ActiveDirectory",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },
@@ -209,7 +207,6 @@
         "pattern": "System\\.DirectoryServices|IDirectoryObject|IDirectorySearch",
         "type": "regex",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
         "confidence": "medium",
         "_comment": ""
       }
@@ -247,7 +244,6 @@
         "pattern": "WWW-Authenticate: NTLM|windowsAuthentication|CredentialCache\\.DefaultCredentials|HTTPNtlmAuthHandler",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },
@@ -255,7 +251,6 @@
         "pattern": "LogonUserA|LogonUserEx|LogonUserW",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },

@@ -3,6 +3,7 @@
     "name": "Cryptography: Key Derivation",
     "id": "AI009300",
     "description": "Cryptography: Key Derivation",
+    "applies_to": ["csharp"],
     "tags": [
       "Cryptography.KeyDerivation.General"
     ],
@@ -12,7 +13,6 @@
         "pattern": "KeyDerivationAlgorithmNames|SampleDeriveKeyMaterialPbkdf|RNGCryptoServiceProvider|Rfc2898DeriveBytes|KeyDerivation|DeriveKey|PasswordDeriveBytes",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -28,15 +28,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "pbkdf1",
+        "pattern": "pbkdf(1)?",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
-      },
-      {
-        "pattern": "pbkdf",
-        "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"

@@ -12,8 +12,7 @@
         "pattern": "5a827999",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "i" ]
+        "confidence": "high"
       }
     ]
   },
@@ -30,8 +29,7 @@
         "pattern": "242070db",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "i" ]
+        "confidence": "high"
       }
     ]
   },
@@ -48,8 +46,7 @@
         "pattern": "d807aa98",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "i" ]
+        "confidence": "high"
       }
     ]
   },
@@ -66,8 +63,7 @@
         "pattern": "800000000000808A",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "i" ]
+        "confidence": "high"
       }
     ]
   }

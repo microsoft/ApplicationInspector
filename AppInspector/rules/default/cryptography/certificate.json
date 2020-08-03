@@ -44,7 +44,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       }
@@ -87,7 +86,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       }
@@ -100,7 +98,6 @@
           "scopes": [
             "code"
           ],
-          "modifiers": [ "i" ],
           "_comment": ""
         },
         "search_in": "finding-region(-10,10)",
@@ -134,7 +131,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": ""
       },
@@ -144,7 +140,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high",
         "_comment": "allow for PKCS7, other"
       },
@@ -217,7 +212,7 @@
           "code"
         ],
         "modifiers": [ "i" ],
-        "confidence": "medium",
+        "confidence": "low",
         "_comment": ""
       }
     ]

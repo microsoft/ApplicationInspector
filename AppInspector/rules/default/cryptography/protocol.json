@@ -61,7 +61,6 @@
           "scopes": [
             "code"
           ],
-          "modifiers": [ "i" ],
           "_comment": ""
         },
         "search_in": "finding-region(-1,1)",
