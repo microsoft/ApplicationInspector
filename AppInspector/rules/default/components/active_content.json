@@ -64,11 +64,19 @@
           "code",
           "comment"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
-        "pattern": "active-?x|CreateObject",
+        "pattern": "CreateObject",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "confidence": "medium"
+      },
+      {
+        "pattern": "active-?x",
         "type": "regex",
         "scopes": [
           "code",
@@ -98,7 +106,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]

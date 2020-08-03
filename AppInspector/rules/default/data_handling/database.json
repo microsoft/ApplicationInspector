@@ -119,6 +119,31 @@
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
+      },
+      {
+        "pattern": "require(‘pg’);",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (PostgreSQL)",
+    "id": "AI011010",
+    "description": "Data: DBMS (PostgreSQL)",
+    "applies_to": [ "ruby" ],
+    "tags": [
+      "Data.DBMS.PostgreSQL"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "require 'pg'|(pgsql|PG)\\.connect|PG::Connection",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -192,7 +217,6 @@
         "pattern": "import java.sql",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -211,7 +235,6 @@
         "pattern": "using system.data.sqlclient",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -284,7 +307,6 @@
         "pattern": "oracle\\.jdbc|oracledriver|com.oracle",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       },
       {

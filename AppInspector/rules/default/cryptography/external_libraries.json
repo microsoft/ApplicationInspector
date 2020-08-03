@@ -143,8 +143,7 @@
         "scopes": [
           "code"
         ],
-        "modified": [ "i" ],
-        "_comment": ""
+        "_comment": "crypto class"
       },
       {
         "pattern": "DPAPI",

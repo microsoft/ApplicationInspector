@@ -86,7 +86,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "gwt",
+        "pattern": "google.gwt",
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [],
@@ -105,7 +105,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "jsf",
+        "pattern": "http://xmlns.jcp.org/jsf/html",
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [],
@@ -117,7 +117,6 @@
     "name": "Development Framework: JHipster",
     "id": "AI018800",
     "description": "Development Framework: JHipster",
-    "applies_to": [ "java" ],
     "tags": [
       "Framework.Development.JHipster"
     ],
@@ -127,7 +126,6 @@
         "pattern": "jhipster",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -143,10 +141,9 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "mybatis",
-        "type": "string",
+        "pattern": "mybatis|iobatis",
+        "type": "regex-word",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -184,7 +181,6 @@
         "pattern": "primefaces",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -266,9 +262,9 @@
     ]
   },
   {
-    "name": "Development Framework: Vert.x",
+    "name": "Development Framework: Vertx",
     "id": "AI019600",
-    "description": "Development Framework: Vert.x",
+    "description": "Development Framework: Vertx",
     "applies_to": [ "java" ],
     "tags": [
       "Framework.Development.Vertx"
@@ -276,7 +272,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "vert.x",
+        "pattern": "import io.vertx",
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
@@ -298,7 +294,6 @@
         "pattern": "wicket",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -315,7 +310,6 @@
         "pattern": "googleapis",
         "type": "sub-string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]

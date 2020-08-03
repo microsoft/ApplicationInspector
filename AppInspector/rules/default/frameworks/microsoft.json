@@ -16,18 +16,17 @@
     ]
   },
   {
-    "name": "Development Framework: .NET Standard",
+    "name": "Development Framework: .NET Core SDK",
     "id": "AI022400",
-    "description": "Development Framework: .NET Standard",
+    "description": "Development Framework: .NET Core SDK",
     "applies_to": [ "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.NETStandard" ],
+    "tags": [ "Framework.Development.Microsoft.NETCore.SDK" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Microsoft.NET.Sdk",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -42,8 +41,7 @@
       {
         "pattern": "using (gtk|Glade)",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -61,8 +59,7 @@
       {
         "pattern": "Microsoft.Azure.WebJobs.Host",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -193,7 +190,7 @@
       {
         "pattern": "Microsoft Exchange",
         "type": "string",
-        "scopes": [ "code", "comment" ],
+        "scopes": [ "comment" ],
         "modifiers": [ "i" ],
         "_comment": ""
       }
