@@ -349,5 +349,86 @@
         "confidence": "high"
       }
     ]
+  },
+  {
+    "name": "OS: Dynamic Execution through Android Intent",
+    "id": "AI035530",
+    "description": "OS: Indirect Dynamic Execution through Android Intent",
+    "tags": [
+      "OS.Process.DynamicExecution.Intent"
+    ],
+    "applies_to": [ "java" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "startActivity\\(\\)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "startActivityForResult\\(\\)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution through Android Intent",
+    "id": "AI035531",
+    "description": "OS: Indirect Dynamic Execution through Android Intent",
+    "tags": [
+      "OS.Process.DynamicExecution.Intent"
+    ],
+    "applies_to": [ "csharp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "new Intent\\(\\)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "import android",
+          "type": "string",
+          "scopes": [
+            "code"
+          ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-200,0)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution through Android Intent",
+    "id": "AI035532",
+    "description": "OS: Indirect Dynamic Execution through Android Intent",
+    "tags": [
+      "OS.Process.DynamicExecution.Intent"
+    ],
+    "applies_to": [ "cpp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "startActivity",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      },
+      {
+        "pattern": "android/content/Intent",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
   }
 ]
