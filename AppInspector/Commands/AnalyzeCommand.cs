@@ -232,11 +232,9 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("AnalyzeCommand::ConfigRules", LogLevel.Trace);
 
             RuleSet rulesSet = null;
-            List<string> rulePaths = new List<string>();
 
             if (!_options.IgnoreDefaultRules)
             {
-                rulePaths.Add(Utils.GetPath(Utils.AppPath.defaultRulesPackedFile));
                 rulesSet = Utils.GetDefaultRuleSet(_options.Log);
             }
 
@@ -246,8 +244,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     rulesSet = new RuleSet(_options.Log);
                 }
-
-                rulePaths.Add(_options.CustomRulesPath);
 
                 if (Directory.Exists(_options.CustomRulesPath))
                 {

@@ -16,7 +16,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public static void Write(Result result, CLICommandOptions options)
         {
             CommandResultsWriter writer = WriterFactory.GetWriter(options);
-            string commandCompletedMsg = "Unknown";
+            string commandCompletedMsg;
 
             //perform type checking and assign final msg string
             if (result is TagTestResult)

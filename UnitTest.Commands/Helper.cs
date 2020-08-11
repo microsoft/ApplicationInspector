@@ -103,7 +103,7 @@ namespace ApplicationInspector.Unitprocess.Misc
 
         public static int RunProcess(string appFilePath, string arguments, out string consoleContent)
         {
-            int result = 2;
+            int result;
             using (Process process = new Process())
             {
                 process.StartInfo.FileName = appFilePath;
@@ -114,10 +114,11 @@ namespace ApplicationInspector.Unitprocess.Misc
                 process.WaitForExit();
                 result = process.ExitCode;
 
-                //reset to normal
-                var standardOutput = new StreamWriter(Console.OpenStandardOutput());
-                standardOutput.AutoFlush = true;
-                Console.SetOut(standardOutput);
+                using (StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput()))
+                {
+                    standardOutput.AutoFlush = true;
+                    Console.SetOut(standardOutput);
+                }
             }
 
             return result;
