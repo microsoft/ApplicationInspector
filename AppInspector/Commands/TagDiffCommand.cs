@@ -200,8 +200,8 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 #endregion setup analyze calls
 
-                bool equalTagsCompare1 = true;
-                bool equalTagsCompare2 = true;
+                bool equalTagsCompare1;
+                bool equalTagsCompare2;
 
                 //process results for each analyze call before comparing results
                 if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)

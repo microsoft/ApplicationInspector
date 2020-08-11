@@ -116,7 +116,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="tag">Tag for the rules</param>
         public void AddString(string jsonstring, string sourcename, string tag = null)
         {
-            List<Rule> ruleList = new List<Rule>();
+            List<Rule> ruleList;
             JsonSerializerSettings settings = new JsonSerializerSettings()
             {
                 Error = HandleDeserializationError

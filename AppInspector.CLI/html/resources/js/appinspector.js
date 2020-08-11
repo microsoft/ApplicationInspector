@@ -240,7 +240,7 @@ class TemplateInsertion {
             $tbody.empty();
 
             // Now we iterate through all of the rules that relate to this icon
-            for (let [rule, confidence] of Object.entries(identifiedRules))
+            for (let [rule] of Object.entries(identifiedRules))
             {
                 let $tr = $('<tr>');
                 $tr.on('click', 'td', { 'obj': this }, this.show_file_listing);
