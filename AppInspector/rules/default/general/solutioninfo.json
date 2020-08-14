@@ -29,10 +29,67 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "<ProductName>.*<\/ProductName>",
+        "pattern": "<Product(Name)?>.*<\/Product(Name)?>|<PackageId>.*</PackageId>",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Author",
+    "id": "AI030210",
+    "description": "Metadata: Application Author",
+    "tags": [
+      "Metadata.Application.Author"
+    ],
+    "applies_to": [ "VSProject" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<Authors>.*<\/Authors>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Version",
+    "id": "AI030220",
+    "description": "Metadata: Application Version",
+    "tags": [
+      "Metadata.Application.Version"
+    ],
+    "applies_to": [ "VSProject" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<Version>.*<\/Version>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+    {
+    "name": "Metadata: Application Description",
+    "id": "AI030230",
+    "description": "Metadata: Application Description",
+    "tags": [
+      "Metadata.Application.Description"
+    ],
+    "applies_to": [ "VSProject" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<Description>.*<\/Description>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
       }
     ]
   },
@@ -267,7 +324,6 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
-        "modifiers": [ "i" ],
         "_comment": "use as additional author value"
       }
     ]
@@ -282,11 +338,10 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "<TargetFramework>.*<\/TargetFramework>",
+        "pattern": "<TargetFramework(s)?>.*<\/TargetFramework(s)?>",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
-        "modifiers": [ "i" ],
         "_comment": ""
       }
     ]
