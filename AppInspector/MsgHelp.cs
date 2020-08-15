@@ -29,6 +29,7 @@ namespace Microsoft.ApplicationInspector.Commands
             ANALYZE_REPORTSIZE_WARN,
             ANALYZE_NODUPLICATES_HTML_FORMAT,
             ANALYZE_SIMPLETAGS_HTML_FORMAT,
+            ANALYZE_HTML_EXTENSION,
             CMD_NO_OUTPUT,
             CMD_PREPARING_REPORT,
             CMD_COMPLETED,

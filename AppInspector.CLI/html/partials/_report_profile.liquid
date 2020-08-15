@@ -17,7 +17,7 @@
             {% for group in groups -%}
             <tr>
               <td style="width:160px;line-height:30px;vertical-align:top">
-                <img id="{{group.title}}-toggleBtn" src="html/resources/images/toggleBtn-none.png" height="20" width="20" onclick="toggleSelectFeatures('{{group.title}}');"/>&nbsp;{{group.title}}
+                <img id="{{group.title}}-toggleBtn" src="" class="toggle_image" value="{{group.title}}" height="20" width="20"/>&nbsp;{{group.title}}
               </td>
               <td style="line-height:30px;;vertical-align:top">
                 <div id="{{group.title}}-summary" style="display:block">
@@ -55,7 +55,7 @@
                       </td>
                       <td style="font-size:14px;text-align:left;line-height:30px;">{{pattern.display_name}}</td>
                       <td style="text-align:center;font-size:14px;line-height:30px;">
-                        <img src="html/resources/images/{{pattern.confidence}}-guage.png" height="23" width="43" title="{{pattern.confidence}}">
+                        <img src="" class="confidence_image" height="23" width="43" value="{{pattern.confidence}}" title="{{pattern.confidence}}">
                       </td>
                       <td style="text-align:center;font-size:14px;line-height:30px;">
                         <a href="#" class="feature_icon" title="{{pattern.display_name}}" data-target="{{pattern.search_pattern}}">{{pattern.details}}</a>
@@ -90,17 +90,3 @@
       </div>
     </div>
   </div>
-
-
-  <script type="text/javascript">
-    function toggleSelectFeatures(divname)
-    {
-        var toggleValue1 = document.getElementById(divname+'-summary').style.display;
-        var toggleValue2 = document.getElementById(divname+'-detailed').style.display;
-
-        document.getElementById(divname+'-summary').style.display = toggleValue2;
-        document.getElementById(divname+'-detailed').style.display = toggleValue1;
-        document.getElementById(divname+'-toggleBtn').src = "html/resources/images/toggleBtn-"+toggleValue1+".png";
-    }
-
-  </script>
