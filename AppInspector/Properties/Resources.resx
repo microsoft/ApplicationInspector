@@ -141,6 +141,9 @@
   <data name="ANALYZE_FILE_TYPE_OPEN" xml:space="preserve">
     <value>Unable to determine file type.  File open error for {0}</value>
   </data>
+  <data name="ANALYZE_HTML_EXTENSION" xml:space="preserve">
+    <value>The output file does not have an html or htm extension and may not open properly in your browser</value>
+  </data>
   <data name="ANALYZE_LANGUAGE_NOTFOUND" xml:space="preserve">
     <value>File skipped: Language not found for file {0}</value>
   </data>

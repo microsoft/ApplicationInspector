@@ -133,6 +133,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The output file does not have an html or htm extension and may not open properly in your browser.
+        /// </summary>
+        internal static string ANALYZE_HTML_EXTENSION {
+            get {
+                return ResourceManager.GetString("ANALYZE_HTML_EXTENSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File skipped: Language not found for file {0}.
         /// </summary>
         internal static string ANALYZE_LANGUAGE_NOTFOUND {

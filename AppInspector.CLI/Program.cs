@@ -159,12 +159,13 @@ namespace Microsoft.ApplicationInspector.CLI
             //analyze with html format limit checks
             if (options.OutputFileFormat == "html")
             {
-                if (!string.IsNullOrEmpty(options.OutputFilePath)) //dependent local files won't be there; TODO look into dir copy to target!
+                string extensionCheck = Path.GetExtension(options.OutputFilePath);
+                if (extensionCheck != "html" || extensionCheck != "htm")
                 {
-                    WriteOnce.Info("-o output file argument ignored for html format");
+                    WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_HTML_EXTENSION));
                 }
 
-                options.OutputFilePath = "output.html";
+                options.OutputFilePath = options.OutputFilePath ?? "output.html";
 
                 if (options.AllowDupTags) //fix #183; duplicates results for html format is not supported which causes filedialog issues
 

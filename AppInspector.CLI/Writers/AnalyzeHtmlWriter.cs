@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.CLI
@@ -51,9 +52,18 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private void WriteHtmlResult()
         {
+            //Grab any local css and js files that are needed i.e. don't have hosted URL's or are proprietary
+            string allCSS = "<style>\n" + MergeResourceFiles(Utils.GetPath(Utils.AppPath.basePath) + "html\\resources\\css");
+            string allJS = "<script type=\"text/javascript\">\n" + MergeResourceFiles(Utils.GetPath(Utils.AppPath.basePath) + "html\\resources\\js");
+
             //Prepare html template merge
-            var htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
+            string htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
             Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(), "Microsoft.ApplicationInspector.CLI.html.partials");
+
+            //Update template with local aggregated code for easy relocation of output file
+            htmlTemplateText = htmlTemplateText.Replace("<script type=\"text/javascript\">", allJS);
+            htmlTemplateText = htmlTemplateText.Replace("<link rel=\"stylesheet\" type=\"text/css\" href=\"html/resources/css/appinspector.css\" />", allCSS+"</style>");
+
             RegisterSafeType(typeof(MetaData));
 
             //Prepare data for use in appinspector.js and html partials resources
@@ -62,7 +72,7 @@ namespace Microsoft.ApplicationInspector.CLI
             data["MetaData"] = _appMetaData;
 
             var hashData = new Hash();
-            hashData["json"] = Newtonsoft.Json.JsonConvert.SerializeObject(data);//json serialization required for [js] access to objects
+            hashData["json"] = JsonConvert.SerializeObject(data);//json serialization required for [js] access to objects
             hashData["application_version"] = Utils.GetVersionString();
 
             //add dynamic sets of groups of taginfo read from preferences for Profile page
@@ -119,6 +129,37 @@ namespace Microsoft.ApplicationInspector.CLI
             Template.RegisterSafeType(type, (t) => t.ToString());
             Template.RegisterSafeType(type, type.GetMembers(BindingFlags.Instance).Select((e) => e.Name).ToArray());
         }
+
+
+        private string MergeResourceFiles(string inputPath)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            if (Directory.Exists(inputPath))
+            {
+                try
+                {
+                    IEnumerable<string> srcfileList = Directory.EnumerateFiles(inputPath, "*.*", SearchOption.AllDirectories);
+                    if (!srcfileList.Any())
+                    {
+                        throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, inputPath));
+                    }
+
+                    foreach (string fileName in srcfileList)
+                    {
+                        stringBuilder.Append(string.Format("\n\n/*FILE: {0}*/\n\n", fileName));
+                        stringBuilder.Append(File.ReadAllText(fileName));
+                    }
+                }
+                catch (Exception)
+                {
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, inputPath));
+                }
+            }
+
+            return stringBuilder.ToString();
+        }
+
 
         #region UIAndReportResultsHelp
 
