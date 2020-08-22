@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.ApplicationInspector.RulesEngine;
-using Microsoft.CST.OpenSource.RecursiveExtractor;
+using Microsoft.CST.RecursiveExtractor;
 using Newtonsoft.Json;
 using NLog;
 using System;
@@ -645,9 +645,13 @@ namespace Microsoft.ApplicationInspector.Commands
             try
             {
                 var extractor = new Extractor();
-                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath,!_options.SingleThread);
+                var extractorOptions = new ExtractorOptions()
+                {
+                    Parallel = !_options.SingleThread
+                };
+                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath, extractorOptions);
 
-                if (_options.SingleThread)
+                if (!extractorOptions.Parallel)
                 {
                     foreach (FileEntry file in files)
                     {
