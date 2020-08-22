@@ -21,7 +21,6 @@ jobs:
     continueOnError: true
     inputs:
       outputformat: 'text'
-    continueOnError: true
   - task: SdtReport@2
     inputs:
       GdnExportAllTools: true
