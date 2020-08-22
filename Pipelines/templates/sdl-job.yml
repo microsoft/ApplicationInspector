@@ -11,13 +11,14 @@ jobs:
     vmImage: 'windows-latest'
   steps:
   - task: CodeInspector@2
+    continueOnError: true
     inputs:
       ProductId: ${{ parameters.serviceTreeID }}
-    continueOnError: true
   - task: CredScan@3
     inputs:
       verboseOutput: true
   - task: notice@0
+    continueOnError: true
     inputs:
       outputformat: 'text'
   - task: SdtReport@2
