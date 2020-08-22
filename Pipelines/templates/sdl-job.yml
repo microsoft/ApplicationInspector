@@ -20,6 +20,7 @@ jobs:
   - task: notice@0
     inputs:
       outputformat: 'text'
+    continueOnError: true
   - task: SdtReport@2
     inputs:
       GdnExportAllTools: true
