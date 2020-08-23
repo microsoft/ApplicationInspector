@@ -18,6 +18,7 @@ jobs:
     inputs:
       verboseOutput: true
   - task: notice@0
+    enabled: false
     continueOnError: true
     inputs:
       outputformat: 'text'
