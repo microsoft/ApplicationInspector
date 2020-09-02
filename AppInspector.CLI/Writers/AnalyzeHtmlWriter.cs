@@ -54,7 +54,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             //Grab any local css and js files that are needed i.e. don't have hosted URL's or are proprietary
             string allCSS = "<style>\n" + MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/resources/css"));
-            string allJS = "<script type=\"text/javascript\">\n" + MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath),"html/resources/js"));
+            string allJS = "<script type=\"text/javascript\">\n" + MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath),"html","resources","js"));
 
             //Prepare html template merge
             string htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
