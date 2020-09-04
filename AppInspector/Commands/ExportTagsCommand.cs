@@ -68,10 +68,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 ConfigureConsoleOutput();
                 ConfigRules();
             }
-            catch (OpException e)
+            catch (Exception e)
             {
                 WriteOnce.Error(e.Message);
-                throw;
+                throw new OpException(e.Message);
             }
         }
 
