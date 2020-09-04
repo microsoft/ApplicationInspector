@@ -203,7 +203,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 try
                 {
                     _srcfileList = Directory.EnumerateFiles(_options.SourcePath, "*.*", SearchOption.AllDirectories);
-                    if (_srcfileList.Count() == 0)
+                    if (!_srcfileList.Any())
                     {
                         throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, _options.SourcePath));
                     }
@@ -418,7 +418,7 @@ namespace Microsoft.ApplicationInspector.Commands
             ScanResult[] scanResults = _rulesProcessor.Analyze(fileText, languageInfo);
 
             //if any matches found for this file...
-            if (scanResults.Count() > 0)
+            if (scanResults.Any())
             {
                 _metaDataHelper.Metadata.IncrementFilesAffected();
                 _metaDataHelper.Metadata.IncrementTotalMatchesCount(scanResults.Count());
@@ -428,7 +428,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", scanResult.Rule.Id, scanResult.Rule.Name, filePath), LogLevel.Trace);
 
-                    string textMatch = string.Empty;
+                    string textMatch;
 
                     if (scanResult.Rule.Tags.Contains("Dependency.SourceInclude"))
                     {
@@ -454,7 +454,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         PatternConfidence = scanResult.Confidence.ToString(),
                         PatternType = scanResult.PatternMatch.PatternType.ToString(),
                         MatchingPattern = scanResult.PatternMatch.Pattern,
-                        Sample = textMatch,
+                        Sample = textMatch ?? "",
                         Excerpt = ExtractExcerpt(fileText, scanResult.StartLocation.Line),
                         Tags = scanResult.Rule.Tags
                     };

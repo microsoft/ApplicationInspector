@@ -21,8 +21,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     public class RuleSet : IEnumerable<Rule>
     {
         private readonly Logger? _logger;
-        private List<ConvertedOatRule> _oatRules = new List<ConvertedOatRule>();
-        private List<Rule> _rules = new List<Rule>();
+        private List<ConvertedOatRule> _oatRules = new List<ConvertedOatRule>();//used for analyze cmd primarily
+        private List<Rule> _rules = new List<Rule>();//2nd list is convenient for non-analyze cmds to remain as-is to package original set
         private Regex searchInRegex = new Regex("\\((.*),(.*)\\)", RegexOptions.Compiled);
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="collection"> Collection of rules </param>
         public void AddRange(IEnumerable<Rule> collection)
         {
-            foreach (var rule in collection.Select(AppInspectorRuleToConvertedOatRule))
+            foreach (var rule in collection.Select(AppInspectorRuleToOatRule))
             {
                 if (rule != null)
                 {
@@ -115,7 +115,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="rule"> </param>
         public void AddRule(Rule rule)
         {
-            if (AppInspectorRuleToConvertedOatRule(rule) is ConvertedOatRule cor)
+            if (AppInspectorRuleToOatRule(rule) is ConvertedOatRule cor)
             {
                 if (_logger != null)
                 {
@@ -158,12 +158,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
    
-        public ConvertedOatRule? AppInspectorRuleToConvertedOatRule(Rule rule)
+        public ConvertedOatRule? AppInspectorRuleToOatRule(Rule rule)
         {
             if (rule == null)
                 return null;
 
-            _rules.Add(rule);
+            _rules.Add(rule); //add native Rule to avoid creating from enumerated _oatRules later
 
             var clauses = new List<Clause>();
             int clauseNumber = 0;
@@ -275,7 +275,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public IEnumerable<Rule> GetAppInspectorRules() => _rules;
 
         /// <summary>
-        ///     Returns an enumerator that iterates through the Ruleset
+        ///     Returns an enumerator that iterates through the Ruleset where the default is the AppInspector version
         /// </summary>
         /// <returns> Enumerator </returns>
         public IEnumerator GetEnumerator()
@@ -284,7 +284,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        ///     Returns an enumerator that iterates through the Ruleset
+        ///     Returns an enumerator that iterates through the Ruleset where the default is the AppInspector version
         /// </summary>
         /// <returns> Enumerator </returns>
         IEnumerator<Rule> IEnumerable<Rule>.GetEnumerator()

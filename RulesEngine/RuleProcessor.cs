@@ -43,7 +43,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Creates instance of RuleProcessor
         /// </summary>
-        public RuleProcessor(RuleSet rules, Confidence confidenceFilter, Logger? logger, bool uniqueMatches = false, bool stopAfterFirstMatch = false, bool overRidesAllowed=false)
+        public RuleProcessor(RuleSet rules, Confidence confidenceFilter, Logger? logger, bool uniqueMatches = false, bool stopAfterFirstMatch = false)
         {
             if (rules == null)
             {
@@ -56,7 +56,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             _rulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
             _stopAfterFirstMatch = stopAfterFirstMatch;
             _uniqueTagMatchesOnly = uniqueMatches;
-            _overRidesEnabled = overRidesAllowed;
             _logger = logger;
             ConfidenceLevelFilter = confidenceFilter;
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
@@ -64,7 +63,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             analyzer = new Analyzer();
             analyzer.SetOperation(new WithinOperation(analyzer));
             analyzer.SetOperation(new OATScopedRegexOperation(analyzer));
-            //analyzer.SetOperation(new RegexWithIndexOperation(analyzer)); //CHECK with OAT team as delegate doesn't appear to fire
+            //analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer)); //CHECK with OAT team as delegate doesn't appear to fire; ALT working fine in Analyze method anyway
         }
 
         /// <summary>
@@ -80,12 +79,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             List<ScanResult> resultsList = new List<ScanResult>();
             TextContainer textContainer = new TextContainer(text, languageInfo.Name);
 
-            IEnumerable<CST.OAT.Rule> ruleMatches = analyzer.Analyze(rules, textContainer);
-            //bool found = ruleMatches.Any(x => x.Name.Equals("AI040300"));//debug test for missing expected tags
+            //DEBUG test for missing expected tags
+            //IEnumerable<CST.OAT.Rule> ruleMatches = analyzer.Analyze(rules, textContainer);
+            //bool found = ruleMatches.Any(x => x.Name.Equals("AI040300"));
 
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
-                List<ScanResult> newMatches = new List<ScanResult>();
                 // If we have within captures it means we had conditions, and we only want the conditioned captures
                 var withinCaptures = ruleCapture.Captures.Where(x => x.Clause is WithinClause);
                 if (withinCaptures.Any())
@@ -94,8 +93,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         ProcessBoundary(cap);
                     }
+                    
                     /* CHECK with OAT tool team on whether blocked out next lines should also be added to ensure we get both sets not one or the other.
-                     * Note: "is not" not currently supported in 8.0 c# except in preview but can test of each excluding WithinClause
+                    Note: "is not" not currently supported in 8.0 c# except in preview but can test of each excluding WithinClause
                     var withOutCaptures = ruleCapture.Captures.Where(x => x.Clause is not WithinClause);
                     foreach (var cap in withOutCaptures)
                     {
@@ -113,6 +113,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                 void ProcessBoundary(ClauseCapture cap)
                 {
+                    List<ScanResult> newMatches = new List<ScanResult>();
+
                     if (cap is TypedClauseCapture<List<Boundary>> tcc)
                     {
                         if (ruleCapture.Rule is ConvertedOatRule orh)
@@ -142,32 +144,31 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                                 Rule = orh.AppInspectorRule
                                             };
 
-                                            bool addNew = false;
                                             if (_uniqueTagMatchesOnly)
                                             {
-                                                if (TagsAreUniqueOrAllowed(newMatch.Rule.Tags)) //tags not seen before or have exception like metrics
+                                                if (RuleTagsAreUniqueOrAllowed(newMatch.Rule.Tags))
                                                 {
-                                                    addNew = true;
-                                                }
-                                                else if (!_stopAfterFirstMatch && BestMatch(newMatches, newMatch) && BestMatch(resultsList, newMatch))//best match option replacement found
-                                                {
-                                                    addNew = true;
+                                                    if (!_stopAfterFirstMatch) //use first or best match options
+                                                    {
+                                                        if (BestMatch(newMatches, newMatch) && BestMatch(resultsList, newMatch))
+                                                        {
+                                                            newMatches.Add(newMatch); //replaces previous and now removed match
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        newMatches.Add(newMatch); //first unique match and we're done
+                                                    }
                                                 }
                                             }
                                             else
                                             {
-                                                addNew = true;
-                                            }
-
-                                            if (addNew)
-                                            {
-                                                newMatches.Add(newMatch);
+                                                newMatches.Add(newMatch); //adds all matches; uniqueness is not requested
                                             }
 
                                             AddRuleTagHashes(orh.AppInspectorRule.Tags ?? new string[] {""});
                                         }
-                                    }
-                                    
+                                    }                                  
                                 }
                             }
                         }
@@ -177,7 +178,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
             }
 
-            if (_overRidesEnabled)
+            if (resultsList.Any(x => x.Rule.Overrides!=null && x.Rule.Overrides.Length > 0 ))
             {
                 // Deal with overrides
                 List<ScanResult> removes = new List<ScanResult>();
@@ -218,10 +219,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private bool BestMatch(List<ScanResult> scanResults, ScanResult newScanResult, bool removeOld = true)
         {
             bool betterMatch = false;
-            bool noMatch = false;
+            bool noMatch = true;
 
             //if list is empty the new match is the best match
-            if (scanResults == null || scanResults.Count == 0)
+            if (scanResults == null || scanResults.Any())
             {
                 return true;
             }
@@ -298,7 +299,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="ruleTags"></param>
         /// <returns></returns>
-        private bool TagsAreUniqueOrAllowed(string[]? ruleTags)
+        private bool RuleTagsAreUniqueOrAllowed(string[]? ruleTags)
         {
             bool approved = false;
             if (ruleTags == null)

@@ -152,7 +152,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //error check based on ruleset not path enumeration
-            if (_rulesSet.Count() == 0)
+            if (!_rulesSet.Any())
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
