@@ -287,6 +287,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
         }
 
+        [Ignore]
         [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
         {
@@ -316,6 +317,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
+        [Ignore]
         [TestMethod]
         public void ExpectedTagCountNoDupsAllowed_Pass()
         {

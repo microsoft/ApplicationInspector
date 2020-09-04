@@ -1,79 +1,140 @@
-﻿// Copyright (C) Microsoft. All rights reserved.
-// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
-    /// Class to handle text as a searchable container
+    ///     Class to handle text as a searchable container
     /// </summary>
-    internal class TextContainer
+    public class TextContainer
     {
-        private static readonly int MAX_PATTERN_MATCHES = 10;
-        private Regex reg = new Regex(".*\\((.*),(.*)\\)", RegexOptions.Compiled);
+        public List<int> LineEnds;
 
         /// <summary>
-        /// Creates new instance
+        ///     Creates new instance
         /// </summary>
-        /// <param name="content">Text to work with</param>
-        public TextContainer(string content, string language, bool stopAfterFirstMatch = false)
+        /// <param name="content"> Text to work with </param>
+        /// <param name="language"> The language of the test </param>
+        /// <param name="lineNumber"> The line number to specify. Leave empty for full file as target. </param>
+        public TextContainer(string content, string language, int lineNumber = 0)
         {
-            _content = content;
-            _language = language;
-            _stopAfterFirstMatch = stopAfterFirstMatch;
-            _lineEnds = new List<int>() { 0 };
+            Language = language;
+            LineNumber = lineNumber;
+            FullContent = content;
+            Target = LineNumber == 0 ? FullContent : GetLineContent(lineNumber);
+            LineEnds = new List<int>() { 0 };
+            LineStarts = new List<int>() { 0, 0 };
 
             // Find line end in the text
             int pos = 0;
-            while (pos > -1 && pos < _content.Length)
+            while (pos > -1 && pos < FullContent.Length)
             {
-                if (++pos < _content.Length)
+                if (++pos < FullContent.Length)
                 {
-                    pos = _content.IndexOf('\n', pos);
-                    _lineEnds.Add(pos);
+                    pos = FullContent.IndexOf("\n", pos, StringComparison.InvariantCultureIgnoreCase);
+                    LineEnds.Add(pos);
+                    if (pos > 0 && pos + 1 < FullContent.Length)
+                    {
+                        LineStarts.Add(pos + 1);
+                    }
                 }
             }
 
             // Text can end with \n or not
-            if (_lineEnds[_lineEnds.Count - 1] == -1)
+            if (LineEnds[LineEnds.Count - 1] == -1)
+                LineEnds[LineEnds.Count - 1] = (FullContent.Length > 0) ? FullContent.Length - 1 : 0;
+
+            prefix = RulesEngine.Language.GetCommentPrefix(Language);
+            suffix = RulesEngine.Language.GetCommentSuffix(Language);
+            inline = RulesEngine.Language.GetCommentInline(Language);
+        }
+
+        public string FullContent { get; }
+        public string Language { get; }
+        public string Line { get; } = "";
+        public int LineNumber { get; }
+        public List<int> LineStarts { get; }
+        public string Target { get; }
+
+        /// <summary>
+        ///     Returns the Boundary of a specified line number
+        /// </summary>
+        /// <param name="lineNumber"> The line number to return the boundary for </param>
+        /// <returns> </returns>
+        public Boundary GetBoundaryFromLine(int lineNumber)
+        {
+            Boundary result = new Boundary();
+
+            if (lineNumber >= LineEnds.Count)
             {
-                _lineEnds[_lineEnds.Count - 1] = (_content.Length > 0) ? content.Length - 1 : 0;
+                return result;
             }
+
+            // Fine when the line number is 0
+            var start = 0;
+            if (lineNumber > 0)
+            {
+                start = LineEnds[lineNumber - 1] + 1;
+            }
+            result.Index = start;
+            result.Length = LineEnds[lineNumber] - result.Index + 1;
+
+            return result;
         }
 
-        /// <summary>
-        /// Returns all boundaries matching the pattern
-        /// </summary>
-        /// <param name="pattern">Search pattern</param>
-        /// <returns>List of boundaries</returns>
-        public IEnumerable<Boundary> EnumerateMatchingBoundaries(SearchPattern pattern)
+        public string GetBoundaryText(Boundary capture)
         {
-            return EnumerateMatchingBoundaries(pattern, _content);
+            if (capture is null)
+            {
+                return string.Empty;
+            }
+            return FullContent[(Math.Min(FullContent.Length, capture.Index))..(Math.Min(FullContent.Length, capture.Index + capture.Length))];
         }
 
         /// <summary>
-        /// Returns all boundaries matching the pattern
+        ///     Returns boundary for a given index in text
         /// </summary>
-        /// <param name="pattern">Search pattern</param>
-        /// <param name="boundary">Content boundary</param>
-        /// <param name="searchIn">Search in command</param>
-        /// <returns>true iff the pattern is found in the boundary</returns>
-        public bool IsPatternMatch(SearchPattern pattern, Boundary boundary, SearchCondition condition)
+        /// <param name="index"> Position in text </param>
+        /// <returns> Boundary </returns>
+        public Boundary GetLineBoundary(int index)
         {
-            Boundary scope = ParseSearchBoundary(boundary, condition.SearchIn);
-            string text = _content.Substring(scope.Index, scope.Length);
-            return EnumerateMatchingBoundaries(pattern, text).Any();
+            Boundary result = new Boundary();
+
+            for (int i = 0; i < LineEnds.Count; i++)
+            {
+                if (LineEnds[i] >= index)
+                {
+                    result.Index = (i > 0 && LineEnds[i - 1] > 0) ? LineEnds[i - 1] + 1 : 0;
+                    result.Length = LineEnds[i] - result.Index + 1;
+                    break;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
-        /// Returns location (Line, Column) for given index in text
+        ///     Return content of the line
         /// </summary>
-        /// <param name="index">Position in text</param>
-        /// <returns>Location</returns>
+        /// <param name="line"> Line number </param>
+        /// <returns> Text </returns>
+        public string GetLineContent(int line)
+        {
+            int index = LineEnds[line];
+            Boundary bound = GetLineBoundary(index);
+            return FullContent.Substring(bound.Index, bound.Length);
+        }
+
+        /// <summary>
+        ///     Returns location (Line, Column) for given index in text
+        /// </summary>
+        /// <param name="index"> Position in text </param>
+        /// <returns> Location </returns>
         public Location GetLocation(int index)
         {
             Location result = new Location();
@@ -85,225 +146,112 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             else
             {
-                for (int i = 0; i < _lineEnds.Count; i++)
+                for (int i = 0; i < LineEnds.Count; i++)
                 {
-                    if (_lineEnds[i] >= index)
+                    if (LineEnds[i] >= index)
                     {
                         result.Line = i;
-                        result.Column = index - _lineEnds[i - 1];
+                        result.Column = index - LineEnds[i - 1];
 
                         break;
                     }
                 }
             }
-
             return result;
         }
 
         /// <summary>
-        /// Returns boundary for a given index in text
+        ///     Check whether the boundary in a text matches the scope of a search pattern (code, comment etc.)
         /// </summary>
-        /// <param name="index">Position in text</param>
-        /// <returns>Boundary</returns>
-        public Boundary GetLineBoundary(int index)
+        /// <param name="pattern"> Pattern with scope </param>
+        /// <param name="boundary"> Boundary in a text </param>
+        /// <param name="text"> Text </param>
+        /// <returns> True if boundary is matching the pattern scope </returns>
+        public bool ScopeMatch(IEnumerable<PatternScope> patterns, Boundary boundary)
         {
-            Boundary result = new Boundary();
-
-            for (int i = 0; i < _lineEnds.Count; i++)
-            {
-                if (_lineEnds[i] >= index)
-                {
-                    result.Index = (i > 0 && _lineEnds[i - 1] > 0) ? _lineEnds[i - 1] + 1 : 0;
-                    result.Length = _lineEnds[i] - result.Index + 1;
-                    break;
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Return content of the line
-        /// </summary>
-        /// <param name="line">Line number</param>
-        /// <returns>Text</returns>
-        public string GetLineContent(int line)
-        {
-            int index = _lineEnds[line];
-            Boundary bound = GetLineBoundary(index);
-            return _content.Substring(bound.Index, bound.Length);
-        }
-
-        /// <summary>
-        /// Returns all boundaries matching the pattern in a text
-        /// </summary>
-        /// <param name="pattern">Search pattern</param>
-        /// <param name="text">Text</param>
-        /// <returns>List of boundaries</returns>
-        private IEnumerable<Boundary> EnumerateMatchingBoundaries(SearchPattern pattern, string text)
-        {
-            MatchCollection matches = pattern.Expression.Matches(text);
-            var matchCount = 0;
-            foreach (Match m in matches)
-            {
-                Boundary bound = new Boundary() { Index = m.Index, Length = m.Length };
-                if (ScopeMatch(pattern, bound, text))
-                {
-                    yield return bound;
-                    //firewall in case the pattern match count is exceedingly high
-                    if (_stopAfterFirstMatch || matchCount++ > MAX_PATTERN_MATCHES)
-                    {
-                        yield break;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Check whether the boundary in a text matches the scope of a search pattern (code, comment etc.)
-        /// </summary>
-        /// <param name="pattern">Pattern with scope</param>
-        /// <param name="boundary">Boundary in a text</param>
-        /// <param name="text">Text</param>
-        /// <returns>True if boundary is matching the pattern scope</returns>
-        private bool ScopeMatch(SearchPattern pattern, Boundary boundary, string text)
-        {
-            string prefix = Language.GetCommentPrefix(_language);
-            string suffix = Language.GetCommentSuffix(_language);
-            string inline = Language.GetCommentInline(_language);
-
-            if (pattern.Scopes.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
+            if (patterns is null)
             {
                 return true;
             }
+            if (patterns.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
+                return true;
+            bool isInComment = IsBetween(FullContent, boundary.Index, prefix, suffix, inline);
 
-            bool isInComment = (IsBetween(text, boundary.Index, prefix, suffix)
-                               || IsBetween(text, boundary.Index, inline, "\n"));
-
-            return !(isInComment && !pattern.Scopes.Contains(PatternScope.Comment));
+            return !(isInComment && !patterns.Contains(PatternScope.Comment));
         }
 
-        /// <summary>
-        /// Checks if the index in the string lies between preffix and suffix
-        /// </summary>
-        /// <param name="text">Text</param>
-        /// <param name="index">Index to check</param>
-        /// <param name="prefix">Prefix</param>
-        /// <param name="suffix">Suffix</param>
-        /// <returns>True if the index is between prefix and suffix</returns>
-        private bool IsBetween(string text, int index, string prefix, string suffix)
-        {
-            bool result = false;
-            string preText = string.Concat(text.Substring(0, index));
-            int lastPreffix = preText.LastIndexOf(prefix, StringComparison.Ordinal);
-            if (lastPreffix >= 0)
-            {
-                preText = preText.Substring(lastPreffix);
-                int lastSuffix = preText.IndexOf(suffix, StringComparison.Ordinal);
-                if (lastSuffix < 0)
-                {
-                    result = true;
-                }
-            }
-
-            return result;
-        }
+        private string inline;
+        private string prefix;
+        private string suffix;
 
         /// <summary>
-        /// Return boundary defined by line and its offset
+        ///     Return boundary defined by line and its offset
         /// </summary>
-        /// <param name="line">Line number</param>
-        /// <param name="offset">Offset from line number</param>
-        /// <returns>Boundary</returns>
+        /// <param name="line"> Line number </param>
+        /// <param name="offset"> Offset from line number </param>
+        /// <returns> Boundary </returns>
         private int BoundaryByLine(int line, int offset)
         {
             int index = line + offset;
 
             // We need the begining of the line when going up
             if (offset < 0)
-            {
                 index--;
-            }
 
             if (index < 0)
-            {
                 index = 0;
-            }
+            if (index >= LineEnds.Count)
+                index = LineEnds.Count - 1;
 
-            if (index >= _lineEnds.Count)
-            {
-                index = _lineEnds.Count - 1;
-            }
-
-            return _lineEnds[index];
+            return LineEnds[index];
         }
 
         /// <summary>
-        /// Return boundary based on searchIn command and given boundary
+        ///     Checks if the index in the string lies between preffix and suffix
         /// </summary>
-        /// <param name="boundary">Relative boundary</param>
-        /// <param name="searchIn">Search in command</param>
-        /// <returns>Boundary</returns>
-        private Boundary ParseSearchBoundary(Boundary boundary, string searchIn)
+        /// <param name="text"> Text </param>
+        /// <param name="index"> Index to check </param>
+        /// <param name="prefix"> Prefix </param>
+        /// <param name="suffix"> Suffix </param>
+        /// <returns> True if the index is between prefix and suffix </returns>
+        private static bool IsBetween(string text, int index, string prefix, string suffix, string inline = "")
         {
-            // Default baundary is the fidning line
-            Boundary result = GetLineBoundary(boundary.Index);
-            string srch = (string.IsNullOrEmpty(searchIn)) ? string.Empty : searchIn.ToLower();
-
-            if (srch.Equals("finding-only"))
+            string preText = string.Concat(text.Substring(0, index));
+            int lastPrefix = preText.LastIndexOf(prefix, StringComparison.InvariantCulture);
+            if (lastPrefix >= 0)
             {
-                result.Index = boundary.Index;
-                result.Length = boundary.Length;
-            }
-            else if (srch.StartsWith("finding-region"))
-            {
-                if (ParseSearchIn(srch, out int[] args))
+                int lastInline = preText.Substring(0, lastPrefix).LastIndexOf(inline, StringComparison.InvariantCulture);
+                // For example in C#, If this /* is actually commented out by a //
+                if (!(lastInline >= 0 && lastInline < lastPrefix && !preText.Substring(lastInline, lastPrefix - lastInline).Contains(Environment.NewLine)))
                 {
-                    Location loc = GetLocation(boundary.Index);
-                    result.Index = BoundaryByLine(loc.Line, args[0]);
-                    result.Length = BoundaryByLine(loc.Line, args[1]) - result.Index;
+                    var commentedText = text.Substring(lastPrefix);
+                    int nextSuffix = commentedText.IndexOf(suffix, StringComparison.Ordinal);
+
+                    // If the index is in between the last prefix before the index and the next suffix after
+                    // that prefix Then it is commented out
+                    if (lastPrefix + nextSuffix > index)
+                        return true;
                 }
             }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Parse search in command and return arguments
-        /// </summary>
-        /// <param name="searchIn">text to ba parsed</param>
-        /// <param name="args">arguments</param>
-        /// <returns>True if parsing was succsessful</returns>
-        private bool ParseSearchIn(string searchIn, out int[] args)
-        {
-            bool result = false;
-            List<int> arglist = new List<int>();
-
-            Match m = reg.Match(searchIn);
-            if (m.Success)
+            if (!string.IsNullOrEmpty(inline))
             {
-                result = true;
-                for (int i = 1; i < m.Groups.Count; i++)
+                int lastInline = preText.LastIndexOf(inline, StringComparison.InvariantCulture);
+                if (lastInline >= 0)
                 {
-                    if (int.TryParse(m.Groups[i].Value, out int value))
+                    var commentedText = text.Substring(lastInline);
+                    int endOfLine = commentedText.IndexOf(Environment.NewLine, StringComparison.Ordinal);
+                    if (endOfLine < 0)
                     {
-                        arglist.Add(value);
+                        endOfLine = commentedText.Length - 1;
                     }
-                    else
+                    if (index > lastInline && index < lastInline + endOfLine)
                     {
-                        result = false;
-                        break;
+                        return true;
                     }
                 }
             }
 
-            args = arglist.ToArray();
-            return result;
+            return false;
         }
-
-        private readonly string _content;
-        private readonly List<int> _lineEnds;
-        private readonly string _language;
-        private readonly bool _stopAfterFirstMatch;
     }
 }

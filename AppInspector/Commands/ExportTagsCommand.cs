@@ -7,6 +7,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -134,7 +135,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //error check based on ruleset not path enumeration
-            if (_rules == null || _rules.Count() == 0)
+            if (_rules == null || !_rules.Any())
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }

@@ -11,15 +11,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     internal class Comment
     {
         [JsonProperty(PropertyName = "language")]
-        public string[] Languages { get; set; }
+        public string[]? Languages { get; set; }
 
         [JsonProperty(PropertyName = "inline")]
-        public string Inline { get; set; }
+        public string? Inline { get; set; }
 
         [JsonProperty(PropertyName = "preffix")]
-        public string Preffix { get; set; }
+        public string? Prefix { get; set; }
 
         [JsonProperty(PropertyName = "suffix")]
-        public string Suffix { get; set; }
+        public string? Suffix { get; set; }
     }
 }

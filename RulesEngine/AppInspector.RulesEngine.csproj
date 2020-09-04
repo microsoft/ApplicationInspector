@@ -20,9 +20,11 @@
     <Product>Applicaction Inspector</Product>
     <FileVersion>0.0.0.0</FileVersion>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CST.OAT" Version="1.0.62" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NLog" Version="4.7.2" />
   </ItemGroup>

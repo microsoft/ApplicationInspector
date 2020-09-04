@@ -12,18 +12,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     internal class ConfidenceConverter : JsonConverter
     {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
-            Confidence svr = (Confidence)value;
-            string svrstr = svr.ToString().ToLower();
+            if (reader.Value is string enumString)
+            {
+                return Enum.Parse(typeof(Confidence), enumString, true);
+            }
 
-            writer.WriteValue(svrstr);
+            return null;
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
-            var enumString = (string)reader.Value;
-            return Enum.Parse(typeof(Confidence), enumString, true);
+            if (value is Confidence svr)
+            {
+                string svrstr = svr.ToString().ToLower();
+                writer.WriteValue(svrstr);
+            }
         }
 
         public override bool CanConvert(Type objectType)

@@ -8,61 +8,41 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class ScanResult
     {
-        private Confidence _confidence;
+        private Confidence _confidence =  RulesEngine.Confidence.Medium;
 
-        /// <summary>
-        /// Creates new instance of Issue
-        /// </summary>
-        public ScanResult()
-        {
-            Rule = null;
-            Boundary = new Boundary();
-            StartLocation = new Location();
-            IsSuppressionInfo = false;
-            Confidence = Confidence.Medium;
-        }
-
-        public Confidence Confidence
+          public Confidence Confidence
         {
             get
             {
-#pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
-                if (_confidence == null)//possible from serialiation
-                {
-#pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
-                    _confidence = Confidence.Medium;
-                }
-
                 return _confidence;
             }
             set => _confidence = value;
         }
 
+        public string Excerpt { get; set; } = "";
+
+        public string Sample { get; set; } = "";
+
         /// <summary>
         /// Boundary of issue (index, length)
         /// </summary>
-        public Boundary Boundary { get; set; }
+        public Boundary Boundary { get; set; } = new Boundary();
 
         /// <summary>
         /// Location (line, column) where issue starts
         /// </summary>
-        public Location StartLocation { get; set; }
+        public Location StartLocation { get; set; } = new Location();
 
         /// <summary>
         /// Location (line, column) where issue ends
         /// </summary>
-        public Location EndLocation { get; set; }
+        public Location EndLocation { get; set; } = new Location();
 
         /// <summary>
         /// Matching rule
         /// </summary>
-        public Rule Rule { get; set; }
+        public Rule Rule { get; set; } = new Rule();
 
-        /// <summary>
-        /// True if Issue refers to suppression information
-        /// </summary>
-        public bool IsSuppressionInfo { get; set; }
-
-        public SearchPattern PatternMatch { get; set; }
+        public SearchPattern PatternMatch { get; set; } = new SearchPattern();
     }
 }
