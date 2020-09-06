@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using NLog;
 
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
@@ -24,7 +25,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private List<ConvertedOatRule> _oatRules = new List<ConvertedOatRule>();//used for analyze cmd primarily
         private List<Rule> _rules = new List<Rule>();//2nd list is convenient for non-analyze cmds to remain as-is to package original set
         private Regex searchInRegex = new Regex("\\((.*),(.*)\\)", RegexOptions.Compiled);
-
+        
         /// <summary>
         ///     Creates instance of Ruleset
         /// </summary>
@@ -174,7 +175,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     var scopes = pattern.Scopes ?? new PatternScope[] { PatternScope.All };
                     var modifiers = pattern.Modifiers ?? Array.Empty<string>();
-                    if (clauses.Where(x => x is OATScopedRegexClause src &&
+                    if (clauses.Where(x => x is OATRegexWithIndexClause src &&
                         src.Arguments.SequenceEqual(modifiers) && src.Scopes.SequenceEqual(scopes)) is IEnumerable<Clause> filteredClauses &&
                         filteredClauses.Any() && filteredClauses.First().Data is List<string> found)
                     {
@@ -182,12 +183,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else
                     {
-                        clauses.Add(new OATScopedRegexClause(scopes)
+                        
+                        clauses.Add(new OATRegexWithIndexClause(scopes)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             Data = new List<string>() { pattern.Pattern },
                             Capture = true,
-                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
+                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
+                            CustomOperation = "RegexWithIndex"
                         });
                         if (clauseNumber > 0)
                         {
@@ -221,6 +224,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Invert = condition.NegateFinding,
                             Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
                             FindingOnly = true,
+                            CustomOperation = "RegexWithIndex"
                         });
                         expression.Append(" AND ");
                         expression.Append(clauseNumber);
@@ -253,6 +257,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 Invert = condition.NegateFinding,
                                 Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
                                 FindingOnly = false,
+                                CustomOperation = "RegexWithIndex",
                                 Before = argList[0],
                                 After = argList[1]
                             });

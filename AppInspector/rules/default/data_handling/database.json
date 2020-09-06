@@ -297,7 +297,7 @@
     "name": "Data: DBMS (Oracle)",
     "id": "AI011700",
     "description": "Data: DBMS (Oracle)",
-    "applies_to": [ "java", "pom" ],
+    "applies_to": [ "java", "pom.xml" ],
     "tags": [
       "Data.DBMS.SQL.Oracle"
     ],
@@ -348,7 +348,7 @@
     "name": "Data: DBMS (General)",
     "id": "AI011900",
     "description": "Data: DBMS (General)",
-    "applies_to": [ "csharp", "c++", "java", "python", "objective-c", "go" ],
+    "applies_to": [ "csharp", "cpp", "java", "python", "objective-c", "go" ],
     "tags": [
       "Data.DBMS.General"
     ],
@@ -384,7 +384,7 @@
     "name": "Data: ODBC",
     "id": "AI012010",
     "description": "Data: ODBC",
-    "applies_to": [ "csharp", "c++", "java", "python", "objective-c", "go" ],
+    "applies_to": [ "csharp", "cpp", "java", "python", "objective-c", "go" ],
     "tags": [
       "Data.DBMS.Connection.ODBC"
     ],

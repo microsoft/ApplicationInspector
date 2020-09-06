@@ -4,8 +4,7 @@
     "id": "AI041800",
     "description": "Testing Framework: Ava",
     "applies_to": [
-      "package.json",
-      "yarn.lock"
+      "package.json"
     ],
     "tags": [
       "Framework.Testing.Ava"

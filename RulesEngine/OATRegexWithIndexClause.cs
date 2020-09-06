@@ -4,12 +4,12 @@ using Microsoft.CST.OAT;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    public class OATScopedRegexClause : Clause
+    public class OATRegexWithIndexClause : Clause
     {
-        public OATScopedRegexClause(PatternScope[] scopes, string? field = null) : base(Operation.Custom, field)
+        public OATRegexWithIndexClause(PatternScope[] scopes, string? field = null) : base(Operation.Custom, field)
         {
             Scopes = scopes;
-            CustomOperation = "ScopedRegex";
+            CustomOperation = "RegexWithIndex";
         }
 
         public PatternScope[] Scopes { get; }

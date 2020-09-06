@@ -4,8 +4,13 @@
 using Microsoft.ApplicationInspector.RulesEngine;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -14,21 +19,30 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     internal class RulesVerifier
     {
-        private bool fail_fast;
-        private readonly RuleSet _rules;
+        private RuleSet _rules;
         private readonly string _rulesPath;
         private readonly Logger _logger;
+        private readonly bool _failFast;
+        private bool _verified;
+        public bool IsVerified => _verified;
+        public RuleSet CompiledRuleset => _rules;
+        private List<RuleStatus> _ruleStatuses;
 
-        public RulesVerifier(string rulePath, Logger logger)
+        public RulesVerifier(string rulePath, Logger logger, bool failFast = true)
         {
             _logger = logger;
-            _rules = new RuleSet(logger);
             _rulesPath = rulePath;
+            _failFast = failFast;
         }
 
-        public void Verify(bool failFast = true)
+        /// <summary>
+        /// Return list of rule verification results
+        /// </summary>
+        /// <returns></returns>
+        public List<RuleStatus> Verify()
         {
-            fail_fast = failFast;
+            _rules = new RuleSet(_logger);
+            _ruleStatuses = new List<RuleStatus>();
 
             if (Directory.Exists(_rulesPath))
             {
@@ -42,8 +56,97 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, _rulesPath));
             }
+
+            CheckIntegrity();
+
+            return _ruleStatuses;
         }
 
+        public bool Verify(Rule rule)
+        {
+            return CheckIntegrity(rule);
+        }
+
+        private void CheckIntegrity()
+        {
+            _verified = true;
+
+            foreach (Rule rule in _rules.AsEnumerable())
+            {
+                bool ruleVerified = CheckIntegrity(rule);
+                _ruleStatuses.Add(new RuleStatus()
+                {
+                    RulesId = rule.Id,
+                    RulesName = rule.Name,
+                    Verified = ruleVerified
+                });
+
+                _verified = ruleVerified && _verified;
+
+                if (_failFast && !ruleVerified)
+                {
+                    return;
+                }
+            }
+        }
+        public bool CheckIntegrity(Rule rule)
+        {
+            bool isValid = true;
+
+            // Check for null Id
+            if (rule.Id == null)
+            {
+                _logger.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_NULLID_FAIL, rule.Name));
+                isValid = false;
+            }
+            else
+            {
+                // Check for same ID
+                Rule sameRule = _rules.FirstOrDefault(x => x.Id == rule.Id);
+                if (_rules.Count(x => x.Id == rule.Id) > 1)
+                {
+                    _logger.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Id));
+                    isValid = false;
+                }
+            }
+
+            //applicability
+            if (rule.AppliesTo != null)
+            {
+                string[] languages = Language.GetNames();
+                // Check for unknown language
+                foreach (string lang in rule.AppliesTo)
+                {
+                    if (!string.IsNullOrEmpty(lang))
+                    {
+                        if (!languages.Any(x => x.Equals(lang, StringComparison.CurrentCultureIgnoreCase)))
+                        {
+                            _logger.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL, rule.Id));
+                            isValid = false;
+                        }
+                    }
+                }
+            }
+
+            //valid search pattern
+            foreach (SearchPattern pattern in rule.Patterns)
+            {
+                try
+                {
+                    Regex regex = new Regex(pattern.Pattern);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id, pattern.Pattern, e.Message));
+                    isValid = false;
+                    break;
+                }
+            }
+
+            return isValid;
+        }
+
+        #region basicFileIO
         private void LoadDirectory(string path)
         {
             foreach (string filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
@@ -62,15 +165,10 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 Debug.Write(e.Message);//Ensure console message indicates problem for Build process
                 WriteOnce.SafeLog(e.Message, NLog.LogLevel.Error);
-
-                //allow caller to specify whether to continue
-                if (fail_fast)
-                {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_FAILED, file));
-                }
+                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED, file));
             }
         }
 
-        public RuleSet CompiledRuleset => _rules;
+        #endregion
     }
 }

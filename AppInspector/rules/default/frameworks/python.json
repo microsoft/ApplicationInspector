@@ -210,8 +210,7 @@
     "id": "AI025000",
     "description": "Development Framework: TurboGears",
     "applies_to": [
-      "python",
-      "requirements.txt"
+      "python"
     ],
     "tags": [ "Framework.Development.TurboGears" ],
     "severity": "moderate",

@@ -12,12 +12,13 @@ using System.Text.RegularExpressions;
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
-    /// The default Regex operation
+    /// The Custom Operation to enable identification of pattern index in result used by Application Inspector to report why a given
+    /// result was matched and to retrieve other pattern level meta-data
     /// </summary>
     public class OATRegexWithIndexOperation : OatOperation
     {
         private readonly ConcurrentDictionary<(string, RegexOptions), Regex?> RegexCache = new ConcurrentDictionary<(string, RegexOptions), Regex?>();
-
+        
         /// <summary>
         /// Create an OatOperation given an analyzer
         /// </summary>
@@ -29,7 +30,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             ValidationDelegate = RegexWithIndexValidationDelegate;
         }
 
-        internal IEnumerable<Violation> RegexWithIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
+        public IEnumerable<Violation> RegexWithIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
         {
             if (clause.Data?.Count == null || clause.Data?.Count == 0)
             {
@@ -51,63 +52,70 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
-        internal OperationResult RegexWithIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
+        /// <summary>
+        /// Returns results with pattern index and Boundary as a tuple to enable retrieval of Rule pattern level meta-data like Confidence and report the 
+        /// pattern that was responsible for the match
+        /// </summary>
+        /// <param name="clause"></param>
+        /// <param name="state1"></param>
+        /// <param name="state2"></param>
+        /// <param name="captures"></param>
+        /// <returns></returns>
+        public OperationResult RegexWithIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
         {
-            (var stateOneList, _) = Analyzer?.ObjectToValues(state1) ?? (new List<string>(), new List<KeyValuePair<string, string>>());
-            (var stateTwoList, _) = Analyzer?.ObjectToValues(state2) ?? (new List<string>(), new List<KeyValuePair<string, string>>());
-            if (clause.Data is List<string> RegexList && RegexList.Any())
+            if (state1 is TextContainer tc && clause is OATRegexWithIndexClause src)
             {
-                var options = RegexOptions.Compiled;
-
-                if (clause.Arguments.Contains("i"))
+                if (clause.Data is List<string> RegexList && RegexList.Any())
                 {
-                    options |= RegexOptions.IgnoreCase;
-                }
-                if (clause.Arguments.Contains("m"))
-                {
-                    options |= RegexOptions.Multiline;
-                }
-                var outmatches = new List<(int, Match)>();
-
-                for (int i = 0; i < RegexList.Count; i++)
-                {
-                    var regex = StringToRegex(RegexList[i], options);
-
-                    if (regex != null)
+                    var regexOpts = RegexOptions.Compiled;
+                    if (src.Arguments.Contains("i"))
                     {
-                        foreach (var state in stateOneList)
-                        {
-                            var matches = regex.Matches(state);
+                        regexOpts |= RegexOptions.IgnoreCase;
+                    }
+                    if (src.Arguments.Contains("m"))
+                    {
+                        regexOpts |= RegexOptions.Multiline;
+                    }
+                    
+                    var outmatches = new List<(int, Boundary)>();//tuple results i.e. pattern index and where
 
-                            if (matches.Count > 0 || (matches.Count == 0 && clause.Invert))
+                    if (Analyzer != null)
+                    {
+                        for (int i = 0; i < RegexList.Count; i++)
+                        {
+                            var regex = StringToRegex(RegexList[i], regexOpts);
+
+                            if (regex != null)
                             {
-                                foreach (var match in matches)
+                                var matches = regex.Matches(tc.Target);
+                                if (matches.Count > 0 || (matches.Count == 0 && clause.Invert))
                                 {
-                                    if (match is Match m)
+                                    foreach (var match in matches)
                                     {
-                                        outmatches.Add((i, m));
+                                        if (match is Match m)
+                                        {
+                                            Boundary translatedBoundary = new Boundary()
+                                            {
+                                                Length = m.Length,
+                                                Index = m.Index + tc.GetLineBoundary(tc.LineNumber).Index
+                                            };
+
+                                            // Should return only scoped matches
+                                            if (tc.ScopeMatch(src.Scopes, translatedBoundary))
+                                            {
+                                                //boundaries.Add(translatedBoundary);
+                                                outmatches.Add((i, translatedBoundary));
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                        foreach (var state in stateTwoList)
-                        {
-                            var matches = regex.Matches(state);
 
-                            if (matches.Count > 0 || (matches.Count == 0 && clause.Invert))
-                            {
-                                foreach (var match in matches)
-                                {
-                                    if (match is Match m)
-                                    {
-                                        outmatches.Add((i, m));
-                                    }
-                                }
-                            }
-                        }
+                        var result = src.Invert ? outmatches.Count == 0 : outmatches.Count > 0;
+                        return new OperationResult(result, result && src.Capture ? new TypedClauseCapture<List<(int, Boundary)>>(clause, outmatches, state1) : null);
                     }
                 }
-                return new OperationResult(true, !clause.Capture ? null : new TypedClauseCapture<List<(int, Match)>>(clause, outmatches, state1));
             }
             return new OperationResult(false, null);
         }

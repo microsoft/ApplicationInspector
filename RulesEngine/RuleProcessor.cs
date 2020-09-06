@@ -18,7 +18,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private Confidence ConfidenceLevelFilter { get; set; }
         private readonly bool _stopAfterFirstMatch;
         private readonly bool _uniqueTagMatchesOnly;
-        private readonly bool _overRidesEnabled;
         private readonly Logger? _logger;
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
@@ -62,8 +61,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             analyzer = new Analyzer();
             analyzer.SetOperation(new WithinOperation(analyzer));
-            analyzer.SetOperation(new OATScopedRegexOperation(analyzer));
-            //analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer)); //CHECK with OAT team as delegate doesn't appear to fire; ALT working fine in Analyze method anyway
+            analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer)); //CHECK with OAT team as delegate doesn't appear to fire; ALT working fine in Analyze method anyway
         }
 
         /// <summary>
@@ -72,7 +70,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="text">Source code</param>
         /// <param name="languages">List of languages</param>
         /// <returns>Array of matches</returns>
-        public ScanResult[] Analyze(string text, LanguageInfo languageInfo, int lineNumber = 0)
+        public ScanResult[] Analyze(string text, LanguageInfo languageInfo)
         {
             // Get rules for the given content type
             IEnumerable<ConvertedOatRule> rules = GetRulesForSingleLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
@@ -80,7 +78,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             TextContainer textContainer = new TextContainer(text, languageInfo.Name);
 
             //DEBUG test for missing expected tags
-            //IEnumerable<CST.OAT.Rule> ruleMatches = analyzer.Analyze(rules, textContainer);
+            IEnumerable<CST.OAT.Rule> ruleMatches = analyzer.Analyze(rules, textContainer);
             //bool found = ruleMatches.Any(x => x.Name.Equals("AI040300"));
 
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
@@ -93,14 +91,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         ProcessBoundary(cap);
                     }
-                    
-                    /* CHECK with OAT tool team on whether blocked out next lines should also be added to ensure we get both sets not one or the other.
-                    Note: "is not" not currently supported in 8.0 c# except in preview but can test of each excluding WithinClause
-                    var withOutCaptures = ruleCapture.Captures.Where(x => x.Clause is not WithinClause);
-                    foreach (var cap in withOutCaptures)
-                    {
-                        ProcessBoundary(cap);
-                    }*/
                 }
                 // Otherwise we can use all the captures
                 else
@@ -115,60 +105,65 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     List<ScanResult> newMatches = new List<ScanResult>();
 
-                    if (cap is TypedClauseCapture<List<Boundary>> tcc)
+                    if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
-                        if (ruleCapture.Rule is ConvertedOatRule orh)
+                        if (ruleCapture.Rule is ConvertedOatRule oatRule)
                         {
-                            foreach (var boundary in tcc.Result)
+                            if (tcc?.Result is List<(int, Boundary)> captureResults)
                             {
-                                foreach (SearchPattern pattern in orh.AppInspectorRule.Patterns ?? new SearchPattern[] {}) 
+                                foreach (var match in captureResults)
                                 {
-                                    foreach (var clausePattern in tcc.Clause.Data)
-                                    if (pattern.Pattern == clausePattern) //match OAT capture clause to AppInspector rule pattern for custom properties like Confidence
-                                    { 
-                                        //restrict tags build files to tags with "metadata" to avoid false feature positives that are not part of executable code
-                                        if (languageInfo.Type == LanguageInfo.LangFileType.Build && orh.AppInspectorRule.Tags.Any(v => !v.Contains("Metadata")))
+                                    var patternIndex = match.Item1;
+                                    var boundary = match.Item2;
+
+                                    //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
+                                    if (languageInfo.Type == LanguageInfo.LangFileType.Build && oatRule.AppInspectorRule.Tags.Any(v => !v.Contains("Metadata")))
+                                    {
+                                        continue;
+                                    }
+
+                                    if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
+                                    {
+                                        _logger?.Error("Index out of range for patterns for rule: " + oatRule.AppInspectorRule.Name);
+                                        continue;
+                                    }
+
+                                    if (!ConfidenceLevelFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+                                    {
+                                        continue;
+                                    }
+
+                                    ScanResult newMatch = new ScanResult()
+                                    {
+                                        StartLocation = textContainer.GetLocation(boundary.Index),
+                                        EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length),
+                                        PatternMatch = oatRule.AppInspectorRule.Patterns[patternIndex],
+                                        Confidence = oatRule.AppInspectorRule.Patterns[patternIndex].Confidence,
+                                        Rule = oatRule.AppInspectorRule
+                                    };
+
+                                    bool addNewRecord = true;
+                                    if (_uniqueTagMatchesOnly)
+                                    {
+                                        if (!RuleTagsAreUniqueOrAllowed(newMatch.Rule.Tags))
                                         {
-                                            continue;
-                                        }
-
-                                        if (ConfidenceLevelFilter.HasFlag(pattern.Confidence))
-                                        {
-                                            ScanResult newMatch = new ScanResult()
+                                            if (_stopAfterFirstMatch) 
                                             {
-                                                Boundary = boundary,
-                                                StartLocation = textContainer.GetLocation(boundary.Index),
-                                                EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length),
-                                                PatternMatch = pattern,
-                                                Confidence = pattern.Confidence,
-                                                Rule = orh.AppInspectorRule
-                                            };
-
-                                            if (_uniqueTagMatchesOnly)
-                                            {
-                                                if (RuleTagsAreUniqueOrAllowed(newMatch.Rule.Tags))
-                                                {
-                                                    if (!_stopAfterFirstMatch) //use first or best match options
-                                                    {
-                                                        if (BestMatch(newMatches, newMatch) && BestMatch(resultsList, newMatch))
-                                                        {
-                                                            newMatches.Add(newMatch); //replaces previous and now removed match
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        newMatches.Add(newMatch); //first unique match and we're done
-                                                    }
-                                                }
+                                                addNewRecord = false; //we've seen already; don't improve the match
                                             }
-                                            else
+                                            else if (newMatch.Confidence > Confidence.Low) //user prefers highest confidence match over first match
                                             {
-                                                newMatches.Add(newMatch); //adds all matches; uniqueness is not requested
+                                                addNewRecord = BetterMatch(newMatches, newMatch) && BetterMatch(resultsList, newMatch);//check current rule matches and previous processed files
                                             }
-
-                                            AddRuleTagHashes(orh.AppInspectorRule.Tags ?? new string[] {""});
                                         }
-                                    }                                  
+                                    }
+
+                                    if (addNewRecord)
+                                    {
+                                        newMatches.Add(newMatch);
+                                    }
+
+                                    AddRuleTagHashes(oatRule.AppInspectorRule.Tags ?? new string[] { "" });
                                 }
                             }
                         }
@@ -216,13 +211,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="compareResult"></param>
         /// <param name="removeOld"></param>
         /// <returns></returns>
-        private bool BestMatch(List<ScanResult> scanResults, ScanResult newScanResult, bool removeOld = true)
+        private bool BetterMatch(List<ScanResult> scanResults, ScanResult newScanResult, bool removeOld = true)
         {
             bool betterMatch = false;
             bool noMatch = true;
 
             //if list is empty the new match is the best match
-            if (scanResults == null || scanResults.Any())
+            if (scanResults == null || !scanResults.Any())
             {
                 return true;
             }

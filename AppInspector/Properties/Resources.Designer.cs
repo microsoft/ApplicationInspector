@@ -551,9 +551,27 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Rule parsing failed for file {0}.
         /// </summary>
-        internal static string VERIFY_RULE_FAILED {
+        internal static string VERIFY_RULE_LOADFILE_FAILED {
             get {
-                return ResourceManager.GetString("VERIFY_RULE_FAILED", resourceCulture);
+                return ResourceManager.GetString("VERIFY_RULE_LOADFILE_FAILED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rule {0} failed from dupicate rule id specified.
+        /// </summary>
+        internal static string VERIFY_RULES_DUPLICATEID_FAIL {
+            get {
+                return ResourceManager.GetString("VERIFY_RULES_DUPLICATEID_FAIL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rule {0} failed from unrecognized language specified.
+        /// </summary>
+        internal static string VERIFY_RULES_LANGUAGE_FAIL {
+            get {
+                return ResourceManager.GetString("VERIFY_RULES_LANGUAGE_FAIL", resourceCulture);
             }
         }
         
@@ -563,6 +581,24 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         internal static string VERIFY_RULES_NO_CLI_DEFAULT {
             get {
                 return ResourceManager.GetString("VERIFY_RULES_NO_CLI_DEFAULT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rule {0} failed from missing rule id.
+        /// </summary>
+        internal static string VERIFY_RULES_NULLID_FAIL {
+            get {
+                return ResourceManager.GetString("VERIFY_RULES_NULLID_FAIL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rule {0} failed from invalid regex &apos;{1}&apos; with {2}.
+        /// </summary>
+        internal static string VERIFY_RULES_REGEX_FAIL {
+            get {
+                return ResourceManager.GetString("VERIFY_RULES_REGEX_FAIL", resourceCulture);
             }
         }
         
