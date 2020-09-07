@@ -164,8 +164,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (rule == null)
                 return null;
 
-            _rules.Add(rule); //add native Rule to avoid creating from enumerated _oatRules later
-
             var clauses = new List<Clause>();
             int clauseNumber = 0;
             var expression = new StringBuilder("(");
@@ -277,7 +275,18 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public IEnumerable<ConvertedOatRule> GetOatRules() => _oatRules;
 
-        public IEnumerable<Rule> GetAppInspectorRules() => _rules;
+        public IEnumerable<Rule> GetAppInspectorRules()
+        {
+            if (!_rules.Any())
+            {
+                foreach (ConvertedOatRule cor in _oatRules)
+                {
+                    _rules.Add(cor.AppInspectorRule);
+                }
+            }
+
+            return _rules;
+        }
 
         /// <summary>
         ///     Returns an enumerator that iterates through the Ruleset where the default is the AppInspector version
@@ -285,6 +294,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> Enumerator </returns>
         public IEnumerator GetEnumerator()
         {
+            GetAppInspectorRules();
             return this._rules.GetEnumerator();
         }
 
@@ -294,6 +304,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> Enumerator </returns>
         IEnumerator<Rule> IEnumerable<Rule>.GetEnumerator()
         {
+            GetAppInspectorRules();
             return this._rules.GetEnumerator();
         }
 
