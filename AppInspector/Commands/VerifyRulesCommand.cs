@@ -144,7 +144,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 WriteOnce.Error(e.Message);
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
-                throw; ;
+                throw;
             }
 
             return verifyRulesResult;
