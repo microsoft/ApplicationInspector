@@ -23,7 +23,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     {
         private readonly Logger? _logger;
         private List<ConvertedOatRule> _oatRules = new List<ConvertedOatRule>();//used for analyze cmd primarily
-        private List<Rule> _rules = new List<Rule>();//2nd list is convenient for non-analyze cmds to remain as-is to package original set
+        private IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
         private Regex searchInRegex = new Regex("\\((.*),(.*)\\)", RegexOptions.Compiled);
         
         /// <summary>
@@ -258,16 +258,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public IEnumerable<ConvertedOatRule> GetOatRules() => _oatRules;
 
+
+
         public IEnumerable<Rule> GetAppInspectorRules()
         {
-            if (!_rules.Any())
-            {
-                foreach (ConvertedOatRule cor in _oatRules)
-                {
-                    _rules.Add(cor.AppInspectorRule);
-                }
-            }
-
             return _rules;
         }
 
