@@ -44,11 +44,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         public RuleProcessor(RuleSet rules, Confidence confidenceFilter, Logger? logger, bool uniqueMatches = false, bool stopAfterFirstMatch = false)
         {
-            if (rules == null)
-            {
-                throw new Exception("Null object.  No rules specified");
-            }
-
             _ruleset = rules;
             EnableCache = true;
             _uniqueTagHashes = new ConcurrentDictionary<string,byte>();
@@ -214,7 +209,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             bool noMatch = true;
 
             //if list is empty the new match is the best match
-            if (scanResults == null || !scanResults.Any())
+            if (!scanResults.Any())
             {
                 return true;
             }
@@ -296,11 +291,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             bool approved = false;
             if (ruleTags == null)
             {
-                if (_logger != null)
-                {
-                    _logger.Debug("Rule with no tags in TagsAreUniqueOrAllowed method");
-                }
-                throw new Exception("Missing rule tags found during processing");
+                _logger?.Debug("Rule with no tags in RuleTagsAreUniqueOrAllowed method");
+                throw new Exception("Rule with no tags in RuleTagsAreUniqueOrAllowed method");
             }
 
             foreach (string tag in ruleTags)

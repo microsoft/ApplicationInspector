@@ -54,9 +54,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="tag"> Tag for the rules </param>
         public void AddDirectory(string path, string? tag = null)
         {
-            if (path == null)
-                throw new ArgumentNullException(nameof(path));
-
             if (!Directory.Exists(path))
                 throw new DirectoryNotFoundException();
 
@@ -76,10 +73,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (string.IsNullOrEmpty(filename))
                 throw new ArgumentException(nameof(filename));
 
-            if (_logger != null)
-            {
-                _logger.Debug("Attempting to read rule file: " + filename);
-            }
+            _logger?.Debug("Attempting to read rule file: " + filename);
 
             if (!File.Exists(filename))
                 throw new FileNotFoundException();
@@ -100,11 +94,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (rule != null)
                 {
-                    if (_logger != null)
-                    {
-                        _logger?.Debug("Attempting to add rule: " + rule.Name);
-                    }
-
+                    _logger?.Debug("Attempting to add rule: " + rule.Name);
                     _oatRules.Add(rule);
                 }
             }
@@ -118,11 +108,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             if (AppInspectorRuleToOatRule(rule) is ConvertedOatRule cor)
             {
-                if (_logger != null)
-                {
-                    _logger.Debug("Attempting to add rule: " + rule.Name);
-                }
-
+                _logger?.Debug("Attempting to add rule: " + rule.Name);
                 _oatRules.Add(cor);
             }
         }
@@ -161,9 +147,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
    
         public ConvertedOatRule? AppInspectorRuleToOatRule(Rule rule)
         {
-            if (rule == null)
-                return null;
-
             var clauses = new List<Clause>();
             int clauseNumber = 0;
             var expression = new StringBuilder("(");
@@ -321,8 +304,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 foreach (Rule r in ruleList)
                 {
                     r.Source = sourcename;
-                    r.RuntimeTag = tag?? "";
-
+                    r.RuntimeTag = tag ?? "";
                     if (r.Patterns == null)
                         r.Patterns = Array.Empty<SearchPattern>();
 
