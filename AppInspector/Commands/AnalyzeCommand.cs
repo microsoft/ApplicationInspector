@@ -203,7 +203,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 try
                 {
                     _srcfileList = Directory.EnumerateFiles(_options.SourcePath, "*.*", SearchOption.AllDirectories);
-                    if (_srcfileList.Count() == 0)
+                    if (!_srcfileList.Any())
                     {
                         throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, _options.SourcePath));
                     }
@@ -260,14 +260,14 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //error check based on ruleset not path enumeration
-            if (rulesSet == null || rulesSet.Count() == 0)
+            if (rulesSet == null || !rulesSet.Any())
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
-            _rulesProcessor = new RuleProcessor(rulesSet, _confidence, !_options.AllowDupTags, _options.MatchDepth == "first", _options.Log);
-            _rulesProcessor.UniqueTagExceptions = "Metric.,Dependency.Split".Split(",");//fix to enable non-unique tags if metric counter related
+            _rulesProcessor = new RuleProcessor(rulesSet, _confidence, _options.Log, !_options.AllowDupTags, _options.MatchDepth == "first");
+            _rulesProcessor.UniqueTagExceptions = "Metric.,Dependency.".Split(",");//fix to enable non-unique tags if metric counter related
 
             //create metadata helper to wrap and help populate metadata from scan
             _metaDataHelper = new MetaDataHelper(_options.SourcePath, !_options.AllowDupTags);
@@ -358,10 +358,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
                 }
             }
-            catch (OpException e)
+            catch (OpException e) //group error handling
             {
                 WriteOnce.Error(e.Message);
-                //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }
 
@@ -419,7 +418,7 @@ namespace Microsoft.ApplicationInspector.Commands
             ScanResult[] scanResults = _rulesProcessor.Analyze(fileText, languageInfo);
 
             //if any matches found for this file...
-            if (scanResults.Count() > 0)
+            if (scanResults.Any())
             {
                 _metaDataHelper.Metadata.IncrementFilesAffected();
                 _metaDataHelper.Metadata.IncrementTotalMatchesCount(scanResults.Count());
@@ -429,7 +428,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", scanResult.Rule.Id, scanResult.Rule.Name, filePath), LogLevel.Trace);
 
-                    string textMatch = string.Empty;
+                    string textMatch;
 
                     if (scanResult.Rule.Tags.Contains("Dependency.SourceInclude"))
                     {
@@ -455,7 +454,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         PatternConfidence = scanResult.Confidence.ToString(),
                         PatternType = scanResult.PatternMatch.PatternType.ToString(),
                         MatchingPattern = scanResult.PatternMatch.Pattern,
-                        Sample = textMatch,
+                        Sample = textMatch ?? "",
                         Excerpt = ExtractExcerpt(fileText, scanResult.StartLocation.Line),
                         Tags = scanResult.Rule.Tags
                     };
@@ -566,8 +565,8 @@ namespace Microsoft.ApplicationInspector.Commands
             if (-1 != startIndex && -1 != endIndex)
             {
                 rawResult = text.Substring(startIndex, endIndex - startIndex).Trim();
-
-                MatchCollection matches = pattern.Expression.Matches(rawResult);
+                Regex regex = new Regex(pattern.Pattern);
+                MatchCollection matches = regex.Matches(rawResult);
 
                 //remove surrounding import or trailing comments
                 if (matches.Count > 0)

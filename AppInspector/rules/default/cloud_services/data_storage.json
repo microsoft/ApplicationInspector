@@ -38,7 +38,7 @@
       "python",
       "java",
       "yaml",
-      "pom"
+      "pom.xml"
     ],
     "tags": [
       "CloudServices.DataStorage.Microsoft.Azure"
@@ -143,7 +143,7 @@
     "description": "CloudServices: DataStorage (Azure) Table,File,Blob",
     "applies_to": [
       "c",
-      "c++"
+      "cpp"
     ],
     "tags": [
       "CloudServices.DataStorage.Microsoft.Azure"
@@ -188,7 +188,7 @@
     "description": "CloudServices: DataStorage (Amazon S3)",
     "applies_to": [
       "c",
-      "c++"
+      "cpp"
     ],
     "tags": [
       "CloudServices.DataStorage.Amazon.S3"

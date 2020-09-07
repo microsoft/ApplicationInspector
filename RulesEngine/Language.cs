@@ -1,5 +1,4 @@
-﻿// Copyright(C) Microsoft.All rights reserved.
-// Licensed under the MIT License. See LICENSE.txt in the project root for license information.
+﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
 using Newtonsoft.Json;
 using System;
@@ -16,24 +15,27 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class Language
     {
+        private static Language? _instance;
+        private List<Comment> Comments;
+        private List<LanguageInfo> Languages;
+
         private Language()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             // Load comments
-            Stream resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.comments.json");
-            using (StreamReader file = new StreamReader(resource))
+            Stream? resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.comments.json");
+            using (StreamReader file = new StreamReader(resource ?? new MemoryStream()))
             {
                 Comments = JsonConvert.DeserializeObject<List<Comment>>(file.ReadToEnd());
             }
 
             // Load languages
             resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.languages.json");
-            using (StreamReader file = new StreamReader(resource))
+            using (StreamReader file = new StreamReader(resource ?? new MemoryStream()))
             {
                 Languages = JsonConvert.DeserializeObject<List<LanguageInfo>>(file.ReadToEnd());
             }
         }
-
         /// <summary>
         /// Returns language for given file name
         /// </summary>
@@ -45,8 +47,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 return false;
             }
-
-            bool result = false;
 
             string file = Path.GetFileName(fileName).ToLower(CultureInfo.CurrentCulture);
             string ext = Path.GetExtension(file);
@@ -66,7 +66,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 foreach (LanguageInfo item in Instance.Languages)
                 {
-                    if (Array.Exists(item.Extensions, x => x.EndsWith(ext)))
+                    if (Array.Exists(item.Extensions ?? Array.Empty<string>(), x => x.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         info = item;
                         return true;
@@ -74,7 +74,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
             }
 
-            return result;
+            return false;
         }
 
         /// <summary>
@@ -90,10 +90,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 foreach (Comment comment in Instance.Comments)
                 {
-                    if (comment.Languages.Contains(language))
-                    {
+                    if (Array.Exists(comment.Languages ?? new string[] { "" }, x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)) && comment.Inline is { })
                         return comment.Inline;
-                    }
                 }
             }
 
@@ -113,10 +111,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 foreach (Comment comment in Instance.Comments)
                 {
-                    if (comment.Languages.Contains(language))
-                    {
-                        return comment.Preffix;
-                    }
+                    if (comment.Languages.Contains(language.ToLower(CultureInfo.InvariantCulture)) && comment.Prefix is { })
+                        return comment.Prefix;
                 }
             }
 
@@ -136,10 +132,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 foreach (Comment comment in Instance.Comments)
                 {
-                    if (comment.Languages.Contains(language))
-                    {
+                    if (Array.Exists(comment.Languages ?? new string[] { "" }, x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)) && comment.Suffix is { })
                         return comment.Suffix;
-                    }
                 }
             }
 
@@ -147,7 +141,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        /// Get names of all known lannguages
+        /// Get names of all known languages
         /// </summary>
         /// <returns>Returns list of names</returns>
         public static string[] GetNames()
@@ -157,9 +151,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             return names.ToArray();
         }
-
-        private static Language _instance;
-
         private static Language Instance
         {
             get
@@ -172,8 +163,5 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 return _instance;
             }
         }
-
-        private readonly List<Comment> Comments;
-        private readonly List<LanguageInfo> Languages;
     }
 }

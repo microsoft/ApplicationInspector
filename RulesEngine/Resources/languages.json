@@ -70,6 +70,16 @@
     "type": "code"
   },
   {
+    "name": "kotlin",
+    "extensions": [ ".kts" ],
+    "type": "code"
+  },
+  {
+    "name": "scala",
+    "extensions": [ ".scala" ],
+    "type": "code"
+  },
+  {
     "name": "objective-c",
     "extensions": [ ".m", ".mm" ],
     "type": "code"

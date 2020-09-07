@@ -136,26 +136,15 @@ namespace Microsoft.ApplicationInspector.Commands
             try
             {
                 RulesVerifier verifier = new RulesVerifier(_rules_path, _options.Log);
-                verifier.Verify(_options.Failfast);
                 verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
-
-                RuleSet rules = verifier.CompiledRuleset;
-
-                foreach (Rule rule in rules)
-                {
-                    verifyRulesResult.RuleStatusList.Add(new RuleStatus()
-                    {
-                        RulesId = rule.Id,
-                        RulesName = rule.Name,
-                        Verified = true
-                    });
-                }
+                verifyRulesResult.RuleStatusList = verifier.Verify();
+                verifyRulesResult.ResultCode = verifier.IsVerified ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
             }
             catch (OpException e)
             {
                 WriteOnce.Error(e.Message);
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
-                throw; ;
+                throw;
             }
 
             return verifyRulesResult;

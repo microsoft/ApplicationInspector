@@ -138,21 +138,17 @@ namespace Microsoft.ApplicationInspector.Commands
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
 
-            try
+            RulesVerifier verifier = new RulesVerifier(_options.CustomRulesPath, _options.Log);
+            verifier.Verify();
+            if (!verifier.IsVerified)
             {
-                RulesVerifier verifier = new RulesVerifier(_options.CustomRulesPath, _options.Log);
-                verifier.Verify();
+                throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
+            }
 
-                _rulesSet = verifier.CompiledRuleset;
-            }
-            catch (Exception e)
-            {
-                WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, NLog.LogLevel.Error);
-                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_FAILED, _options.CustomRulesPath));
-            }
+            _rulesSet = verifier.CompiledRuleset;
 
             //error check based on ruleset not path enumeration
-            if (_rulesSet.Count() == 0)
+            if (!_rulesSet.Any())
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }

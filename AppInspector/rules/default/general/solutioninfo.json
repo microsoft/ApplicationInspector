@@ -250,28 +250,6 @@
     ]
   },
   {
-    "name": "Metadata: Application Version",
-    "id": "AI031100",
-    "description": "Metadata: Application Version",
-    "tags": [
-      "Metadata.Application.Version"
-    ],
-    "applies_to": [
-      "plaintext",
-      "markdown"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "version [^\\b]+",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
-      }
-    ]
-  },
-  {
     "name": "Metadata: Application Author",
     "id": "AI031200",
     "description": "Metadata: Application Author",

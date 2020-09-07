@@ -280,8 +280,20 @@
   <data name="TAGTEST_RESULTS_TEST_TYPE" xml:space="preserve">
     <value>Tagtest for [{0}]: </value>
   </data>
+  <data name="VERIFY_RULES_DUPLICATEID_FAIL" xml:space="preserve">
+    <value>Rule {0} failed from dupicate rule id specified</value>
+  </data>
+  <data name="VERIFY_RULES_LANGUAGE_FAIL" xml:space="preserve">
+    <value>Rule {0} failed from unrecognized language specified</value>
+  </data>
   <data name="VERIFY_RULES_NO_CLI_DEFAULT" xml:space="preserve">
     <value>Verify default rules request from outside CLI call not supported.  Use custom rules option.</value>
+  </data>
+  <data name="VERIFY_RULES_NULLID_FAIL" xml:space="preserve">
+    <value>Rule {0} failed from missing rule id</value>
+  </data>
+  <data name="VERIFY_RULES_REGEX_FAIL" xml:space="preserve">
+    <value>Rule {0} failed from invalid regex '{1}' with {2}</value>
   </data>
   <data name="VERIFY_RULES_RESULTS_FAIL" xml:space="preserve">
     <value>Verify rules failed.  See log file for details</value>
@@ -289,7 +301,7 @@
   <data name="VERIFY_RULES_RESULTS_SUCCESS" xml:space="preserve">
     <value>Verify rules succeeded</value>
   </data>
-  <data name="VERIFY_RULE_FAILED" xml:space="preserve">
+  <data name="VERIFY_RULE_LOADFILE_FAILED" xml:space="preserve">
     <value>Rule parsing failed for file {0}</value>
   </data>
 </root>

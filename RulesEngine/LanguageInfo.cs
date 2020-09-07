@@ -13,12 +13,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public enum LangFileType { Code, Build };
 
         [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         [JsonProperty(PropertyName = "extensions")]
-        public string[] Extensions { get; set; }
+        public string[]? Extensions { get; set; }
 
         [JsonProperty(PropertyName = "type")]
-        public LangFileType Type { get; set; }
+        public LangFileType Type { get; set; } = LangFileType.Code;
     }
+
+   
 }

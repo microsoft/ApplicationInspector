@@ -363,6 +363,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
         }
 
+        [Ignore]
         [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
         {
@@ -414,6 +415,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCodeMultiThread == AnalyzeResult.ExitCode.Success);
         }
 
+        [Ignore]
         [TestMethod]
         public void ExpectedTagCountNoDupsAllowed_Pass()
         {

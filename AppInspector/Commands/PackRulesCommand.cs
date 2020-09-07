@@ -136,8 +136,11 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 RulesVerifier verifier = new RulesVerifier(_rules_path, _options.Log);
                 verifier.Verify();
+                if (!verifier.IsVerified)
+                {
+                    throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
+                }
                 packRulesResult.Rules = new List<Rule>(verifier.CompiledRuleset.AsEnumerable());
-
                 packRulesResult.ResultCode = PackRulesResult.ExitCode.Success;
             }
             catch (OpException e)
