@@ -258,8 +258,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public IEnumerable<ConvertedOatRule> GetOatRules() => _oatRules;
 
-
-
         public IEnumerable<Rule> GetAppInspectorRules()
         {
             return _rules;
