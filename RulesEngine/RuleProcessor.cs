@@ -77,10 +77,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             List<ScanResult> resultsList = new List<ScanResult>();
             TextContainer textContainer = new TextContainer(text, languageInfo.Name);
 
-            //DEBUG test for missing expected tags
-            IEnumerable<CST.OAT.Rule> ruleMatches = analyzer.Analyze(rules, textContainer);
-            //bool found = ruleMatches.Any(x => x.Name.Equals("AI040300"));
-
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
                 // If we have within captures it means we had conditions, and we only want the conditioned captures
@@ -135,6 +131,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                     ScanResult newMatch = new ScanResult()
                                     {
+                                        Boundary = boundary,
                                         StartLocation = textContainer.GetLocation(boundary.Index),
                                         EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length),
                                         PatternMatch = oatRule.AppInspectorRule.Patterns[patternIndex],

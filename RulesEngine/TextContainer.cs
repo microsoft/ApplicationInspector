@@ -238,8 +238,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 int lastInline = preText.LastIndexOf(inline, StringComparison.InvariantCulture);
                 if (lastInline >= 0)
                 {
+                    //extra check to ensure inline is not part of a file path or url i.e. http://111.333.44.444
+                    if (lastInline > 1)
+                    {
+                        if (text[lastInline-1] != ' ') //indicates not an actual inline comment
+                        {
+                            return false;
+                        }
+                    }
+
                     var commentedText = text.Substring(lastInline);
-                    int endOfLine = commentedText.IndexOf(Environment.NewLine, StringComparison.Ordinal);
+                    int endOfLine = commentedText.IndexOf("\n");//Environment.Newline looks for /r/n which is not guaranteed
                     if (endOfLine < 0)
                     {
                         endOfLine = commentedText.Length - 1;

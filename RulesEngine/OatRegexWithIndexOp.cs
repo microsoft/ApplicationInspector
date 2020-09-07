@@ -67,7 +67,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (clause.Data is List<string> RegexList && RegexList.Any())
                 {
-                    var regexOpts = RegexOptions.Compiled;
+                    RegexOptions regexOpts = new RegexOptions();
                     if (src.Arguments.Contains("i"))
                     {
                         regexOpts |= RegexOptions.IgnoreCase;
@@ -84,7 +84,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         for (int i = 0; i < RegexList.Count; i++)
                         {
                             var regex = StringToRegex(RegexList[i], regexOpts);
-
                             if (regex != null)
                             {
                                 var matches = regex.Matches(tc.Target);
@@ -103,7 +102,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                             // Should return only scoped matches
                                             if (tc.ScopeMatch(src.Scopes, translatedBoundary))
                                             {
-                                                //boundaries.Add(translatedBoundary);
                                                 outmatches.Add((i, translatedBoundary));
                                             }
                                         }
