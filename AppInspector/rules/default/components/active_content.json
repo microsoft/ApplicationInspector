@@ -67,7 +67,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "CreateObject",
+        "pattern": "Type\\.GetTypeFromProgID",
         "type": "regex",
         "scopes": [
           "code",
@@ -84,6 +84,29 @@
         ],
         "modifiers": [ "i" ],
         "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Component: Active-X",
+    "id": "AI005001",
+    "description": "Component: Active-X",
+    "applies_to": [
+      "vb"
+    ],
+    "tags": [
+      "Component.Executable.Microsoft.ActiveX"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "= CreateObject\\(",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "confidence": "high"
       }
     ]
   },

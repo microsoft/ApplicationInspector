@@ -120,6 +120,22 @@
         "modifiers": [ "i" ],
         "confidence": "medium"
       }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "hashset",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(0,0)",
+        "negate_finding": false,
+        "_comment": ""
+      }
     ]
   }
 ]
