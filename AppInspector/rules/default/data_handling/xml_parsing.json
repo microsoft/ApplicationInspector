@@ -155,6 +155,22 @@
           "code"
         ]
       }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "exclude",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(0,0)",
+        "negate_finding": true,
+        "_comment": ""
+      }
     ]
   },
   {
@@ -174,6 +190,22 @@
         "scopes": [
           "code"
         ]
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "exclude",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(0,0)",
+        "negate_finding": true,
+        "_comment": ""
       }
     ]
   }

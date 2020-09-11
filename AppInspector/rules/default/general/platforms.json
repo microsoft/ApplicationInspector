@@ -65,11 +65,46 @@
         "_comment": ""
       },
       {
-        "pattern": "kitkat|jellybean|lollipop|marshmallow|nougat|oreo|pie",
+        "pattern": "kitkat|jellybean|lollipop|marshmallow|nougat|oreo",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Platform: Google Android",
+    "id": "AI028801",
+    "description": "Platform: Google Android",
+    "tags": [
+      "Metadata.Platform.OS.Google.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pie",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "chart",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-10,10)",
+        "negate_finding": true,
         "_comment": ""
       }
     ]
@@ -84,7 +119,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "UIKit|ios",
+        "pattern": "AppleWebKit|UIKit|ios",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
@@ -181,7 +216,7 @@
     "patterns": [
       {
         "pattern": "Windows universal platform|UWP",
-        "type": "regex",
+        "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "_comment": ""
@@ -222,6 +257,22 @@
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "areapath",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": true,
         "_comment": ""
       }
     ]
