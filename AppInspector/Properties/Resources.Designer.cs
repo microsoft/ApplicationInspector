@@ -405,6 +405,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to locate local default rules folder.  This command is intended to be run as part of the source code build operation only.  Use the custom rules option instead..
+        /// </summary>
+        internal static string PACK_RULES_NO_DEFAULT {
+            get {
+                return ResourceManager.GetString("PACK_RULES_NO_DEFAULT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Additional details may be found in log file at {0}.
         /// </summary>
         internal static string RUNTIME_ERROR_NAMED {
