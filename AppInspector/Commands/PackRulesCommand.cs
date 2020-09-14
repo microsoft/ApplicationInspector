@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
@@ -101,10 +102,13 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NO_CLI_DEFAULT));
             }
-
-            if (!_options.RepackDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath))
+            else if (!_options.RepackDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath))
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
+            }
+            else if(_options.RepackDefaultRules && !Directory.Exists(Utils.GetPath(Utils.AppPath.defaultRulesSrc)))
+            {
+                throw new OpException(MsgHelp.GetString(MsgHelp.ID.PACK_RULES_NO_DEFAULT));
             }
 
             _rules_path = _options.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;

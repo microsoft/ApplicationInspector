@@ -73,7 +73,8 @@ namespace Microsoft.ApplicationInspector.Commands
             BROWSER_START_FAIL,
             BROWSER_START_SUCCESS,
             PACK_MISSING_OUTPUT_ARG,
-            PACK_RULES_NO_CLI_DEFAULT
+            PACK_RULES_NO_CLI_DEFAULT,
+            PACK_RULES_NO_DEFAULT,
         };
 
         public static string GetString(MsgHelp.ID id)

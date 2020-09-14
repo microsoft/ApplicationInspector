@@ -232,6 +232,9 @@
   <data name="PACK_RULES_NO_CLI_DEFAULT" xml:space="preserve">
     <value>Pack default rules request from outside CLI call not supported.  Use custom rules option.</value>
   </data>
+  <data name="PACK_RULES_NO_DEFAULT" xml:space="preserve">
+    <value>Unable to locate local default rules folder.  This command is intended to be run as part of the source code build operation only.  Use the custom rules option instead.</value>
+  </data>
   <data name="RUNTIME_ERROR_NAMED" xml:space="preserve">
     <value>Additional details may be found in log file at {0}</value>
   </data>
