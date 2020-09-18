@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using DotLiquid.Tags;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Newtonsoft.Json;
@@ -297,6 +298,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 Action<string> ProcessFile = filename =>
                 {
                     if (new FileInfo(filename).Length == 0)
+                    {
+                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
+                        _metaDataHelper.Metadata.IncrementFilesSkipped();
+                        return;
+                    }
+
+                    if (ExcludeFileFromScan(filename)) //added check needed prevents unwanted file open attempt to determine type if excluded
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
                         _metaDataHelper.Metadata.IncrementFilesSkipped();
