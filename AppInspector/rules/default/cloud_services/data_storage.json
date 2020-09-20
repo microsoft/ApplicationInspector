@@ -102,12 +102,23 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "new ClientSecret|keyvault",
+        "pattern": "new ClientSecret|KeyVaultClient|Microsoft.Azure.KeyVault|Microsoft.Azure.Management.KeyVault",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "keyvault",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": ["i"],
+        "confidence": "medium",
         "_comment": ""
       }
     ]
@@ -134,6 +145,64 @@
         ],
         "confidence": "high",
         "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (HashiCorp Vault)",
+    "id": "AI002730",
+    "description": "CloudServices: DataStorage (HashiCorp Vault)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "CloudServices.DataStorage.HashiCorp.Vault",
+      "Data.Sensitive.Secret"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "VaultClientSettings|IVaultClient",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "hashicorp|VaultSharp",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (HashiCorp Vault)",
+    "id": "AI002740",
+    "description": "CloudServices: DataStorage (HashiCorp Vault)",
+    "tags": [
+      "CloudServices.DataStorage.HashiCorp.Vault",
+      "Data.Sensitive.Secret"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "vaultSharp|hashicorp|spring vault|import org.springframework.vault",
+        "type": "regex",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "includes vaultsharp here for possible use in PS"
       }
     ]
   },

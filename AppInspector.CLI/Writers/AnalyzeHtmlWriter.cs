@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -178,14 +179,27 @@ namespace Microsoft.ApplicationInspector.CLI
                 TagGroupPreferences = new List<TagCategory>();
             }
 
+            string[] unSupportedGroupsOrPatterns = new string[] { "metric", "dependency" };
+
             //for each preferred group of tag patterns determine if at least one instance was detected
             foreach (TagCategory tagCategory in TagGroupPreferences)
             {
                 foreach (TagGroup tagGroup in tagCategory.Groups)
                 {
+                    bool test = tagGroup.Title.ToLower().Contains(unSupportedGroupsOrPatterns[0]);
+                    if (unSupportedGroupsOrPatterns.Any(x => tagGroup.Title.ToLower().Contains(x)))
+                    {
+                        WriteOnce.Log.Warn($"Unsupported tag group or pattern detected '{tagGroup.Title}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags");
+                    }
+
                     foreach (TagSearchPattern pattern in tagGroup.Patterns)
                     {
                         pattern.Detected = _appMetaData.UniqueTags.Any(v => v.Contains(pattern.SearchPattern));
+                        if (unSupportedGroupsOrPatterns.Any(x => pattern.SearchPattern.ToLower().Contains(x)))
+                        {
+                            WriteOnce.Log.Warn($"Unsupported tag group or pattern detected '{pattern.SearchPattern}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags"); 
+                        }
+
                         //create dynamic "category" groups of tags with pattern relationship established from TagReportGroups.json
                         //that can be used to populate reports with various attributes for each tag detected
                         if (pattern.Detected)
