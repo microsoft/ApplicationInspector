@@ -338,7 +338,7 @@ stages:
     - task: GitHubRelease@1
       displayName: Release to GitHub
       inputs:
-        gitHubConnection: 'AppInspector'
+        gitHubConnection: 'github.com_guyacosta'
         repositoryName: 'microsoft/ApplicationInspector'
         action: 'create'
         target: '$(Build.SourceVersion)'
