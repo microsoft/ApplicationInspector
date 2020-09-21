@@ -13,7 +13,7 @@ namespace Microsoft.ApplicationInspector.CLI
     public class CLICommandOptions : CommandOptions
     {
         [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
-        public string OutputFilePath { get; set; }
+        public string? OutputFilePath { get; set; }
 
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [json|text]", Default = "text")]
         public string OutputFileFormat { get; set; } = "text";
@@ -26,10 +26,10 @@ namespace Microsoft.ApplicationInspector.CLI
     public class CLIAnalyzeCmdOptions : CLICommandOptions
     {
         [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect")]
-        public string SourcePath { get; set; }
+        public string? SourcePath { get; set; }
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string CustomRulesPath { get; set; }
+        public string? CustomRulesPath { get; set; }
 
         [Option('h', "match-depth", Required = false, HelpText = "First match or best match based on confidence level (first|best)", Default = "best")]
         public string MatchDepth { get; set; } = "best";
@@ -66,10 +66,10 @@ namespace Microsoft.ApplicationInspector.CLI
     public class CLITagDiffCmdOptions : CLICommandOptions
     {
         [Option("src1", Required = true, HelpText = "Source 1 to compare")]
-        public string SourcePath1 { get; set; }
+        public string? SourcePath1 { get; set; }
 
         [Option("src2", Required = true, HelpText = "Source 2 to compare")]
-        public string SourcePath2 { get; set; }
+        public string? SourcePath2 { get; set; }
 
         [Option('t', "test-type", Required = false, HelpText = "Type of test to run [equality|inequality]", Default = "equality")]
         public string TestType { get; set; } = "equality";
@@ -78,7 +78,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string CustomRulesPath { get; set; }
+        public string? CustomRulesPath { get; set; }
 
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
@@ -88,13 +88,13 @@ namespace Microsoft.ApplicationInspector.CLI
     public class CLITagTestCmdOptions : CLICommandOptions
     {
         [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect")]
-        public string SourcePath { get; set; }
+        public string? SourcePath { get; set; }
 
         [Option('t', "test-type", Required = false, HelpText = "Test to perform [rulespresent|rulesnotpresent] ", Default = "rulespresent")]
         public string TestType { get; set; } = "rulespresent";
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string CustomRulesPath { get; set; }
+        public string? CustomRulesPath { get; set; }
 
         [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files (none|default: sample,example,test,docs,.vs,.git)", Default = "sample,example,test,docs,.vs,.git")]
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
@@ -104,7 +104,7 @@ namespace Microsoft.ApplicationInspector.CLI
     public class CLIExportTagsCmdOptions : CLICommandOptions
     {
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string CustomRulesPath { get; set; }
+        public string? CustomRulesPath { get; set; }
 
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
@@ -117,7 +117,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public bool VerifyDefaultRules { get; set; }
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string CustomRulesPath { get; set; }
+        public string? CustomRulesPath { get; set; }
 
         [Option('a', "fail-fast", Required = false, HelpText = "Fail fast", Default = false)]
         public bool Failfast { get; set; }
@@ -130,7 +130,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public bool RepackDefaultRules { get; set; }
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string CustomRulesPath { get; set; }
+        public string? CustomRulesPath { get; set; }
 
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [json]", Default = "json")]
         public new string OutputFileFormat { get; set; } = "json";

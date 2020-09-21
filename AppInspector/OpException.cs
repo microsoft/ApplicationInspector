@@ -11,7 +11,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class OpException : Exception
     {
-        public OpException(string msg) : base(msg)
+        public OpException(string? msg) : base(msg)
         {
         }
     }

@@ -73,7 +73,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     var fileInfo = new FileInfo(Utils.LogFilePath);
                     if (fileInfo.Length > 0)
                     {
-                        WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                        WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath??Utils.GetPath(Utils.AppPath.defaultLog)), true, WriteOnce.ConsoleVerbosity.Low, false);
                     }
                 }
             }
@@ -269,8 +269,8 @@ namespace Microsoft.ApplicationInspector.CLI
 
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
-                SourcePath = cliOptions.SourcePath,
-                CustomRulesPath = cliOptions.CustomRulesPath,
+                SourcePath = cliOptions.SourcePath ?? "",
+                CustomRulesPath = cliOptions.CustomRulesPath ?? "",
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 AllowDupTags = cliOptions.AllowDupTags,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
@@ -294,8 +294,8 @@ namespace Microsoft.ApplicationInspector.CLI
 
             TagDiffCommand command = new TagDiffCommand(new TagDiffOptions()
             {
-                SourcePath1 = cliOptions.SourcePath1,
-                SourcePath2 = cliOptions.SourcePath2,
+                SourcePath1 = cliOptions.SourcePath1 ?? "",
+                SourcePath2 = cliOptions.SourcePath2 ?? "",
                 CustomRulesPath = cliOptions.CustomRulesPath,
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 FilePathExclusions = cliOptions.FilePathExclusions,

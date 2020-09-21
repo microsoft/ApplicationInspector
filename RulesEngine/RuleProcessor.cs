@@ -373,13 +373,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                 result = fileText.Substring(index, length).Trim();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //control the error description and continue; error in rules engine possible
-                //WriteOnce.SafeLog("Unexpected indexing issue in ExtractTextSample.  Process continued", LogLevel.Error);
+                _logger?.Error(e.Message + " in ExtractTextSample");
             }
 
-            return result;
+            return System.Net.WebUtility.HtmlEncode(result);
         }
 
         /// <summary>

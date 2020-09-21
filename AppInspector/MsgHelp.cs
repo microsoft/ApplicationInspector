@@ -79,10 +79,10 @@ namespace Microsoft.ApplicationInspector.Commands
 
         public static string GetString(MsgHelp.ID id)
         {
-            string result = "";
+            string result;
             try
             {
-                result = Resources.ResourceManager.GetString(id.ToString());
+                result = Resources.ResourceManager.GetString(id.ToString())??"";
             }
             catch (Exception e)
             {
@@ -91,12 +91,12 @@ namespace Microsoft.ApplicationInspector.Commands
                 throw new Exception(error);
             }
 
-            return result;
+            return result ?? "";
         }
 
-        public static string FormatString(MsgHelp.ID id, params object[] parameters)
+        public static string FormatString(MsgHelp.ID id, params object[]? parameters)
         {
-            return string.Format(GetString(id), parameters);
+            return string.Format(GetString(id), parameters ?? new object[] { });
         }
 
         public static string FormatString(MsgHelp.ID id, int value)

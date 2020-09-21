@@ -20,10 +20,10 @@ namespace Microsoft.ApplicationInspector.Commands
         public tagInfoType Type;
 
         [JsonProperty(PropertyName = "categoryName")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [JsonProperty(PropertyName = "groups")]
-        public List<TagGroup> Groups { get; set; }
+        public List<TagGroup>? Groups { get; set; }
 
         public TagCategory()
         {
@@ -37,16 +37,16 @@ namespace Microsoft.ApplicationInspector.Commands
     public class TagGroup : Drop
     {
         [JsonProperty(PropertyName = "title")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [JsonIgnore]
-        public string IconURL { get; set; }
+        public string? IconURL { get; set; }
 
         [JsonProperty(PropertyName = "dataRef")]
-        public string DataRef { get; set; }
+        public string? DataRef { get; set; }
 
         [JsonProperty(PropertyName = "patterns")]
-        public List<TagSearchPattern> Patterns { get; set; }
+        public List<TagSearchPattern>? Patterns { get; set; }
 
         public TagGroup()
         {
@@ -56,8 +56,8 @@ namespace Microsoft.ApplicationInspector.Commands
 
     public class TagSearchPattern : Drop
     {
-        private string _searchPattern;
-        private Regex _expression;
+        private string _searchPattern = "";
+        private Regex? _expression;
 
         [JsonProperty(PropertyName = "searchPattern")]
         public string SearchPattern
@@ -91,13 +91,13 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
         [JsonProperty(PropertyName = "displayName")]
-        public string DisplayName { get; set; }
+        public string? DisplayName { get; set; }
 
         [JsonProperty(PropertyName = "detectedIcon")]
-        public string DetectedIcon { get; set; }
+        public string? DetectedIcon { get; set; } = "fas fa-cat";//default
 
         [JsonProperty(PropertyName = "notDetectedIcon")]
-        public string NotDetectedIcon { get; set; }
+        public string? NotDetectedIcon { get; set; }
 
         [JsonProperty(PropertyName = "detected")]
         public bool Detected { get; set; }
@@ -107,18 +107,13 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             get
             {
-                string result = Detected == true ? "View" : "N/A";
+                string result = Detected ? "View" : "N/A";
                 return result;
             }
         }
 
         [JsonProperty(PropertyName = "confidence")]
-        public string Confidence { get; set; }
-
-        public TagSearchPattern()
-        {
-            DetectedIcon = "fas fa-cat";//default
-        }
+        public string Confidence { get; set; } = "Medium";
     }
 
     /// <summary>
@@ -127,15 +122,15 @@ namespace Microsoft.ApplicationInspector.Commands
     public class TagInfo : Drop
     {
         [JsonProperty(PropertyName = "tag")]
-        public string Tag { get; set; }
+        public string? Tag { get; set; }
 
         [JsonProperty(PropertyName = "displayName")]
-        public string ShortTag { get; set; }
+        public string? ShortTag { get; set; }
 
         [JsonIgnore]
-        public string StatusIcon { get; set; }
+        public string? StatusIcon { get; set; }
 
-        private string _confidence;
+        private string _confidence = "Medium";
 
         [JsonProperty(PropertyName = "confidence")]
         public string Confidence
@@ -159,7 +154,7 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
         [JsonProperty(PropertyName = "severity")]
-        public string Severity { get; set; }
+        public string Severity { get; set; } = "Moderate";
 
         [JsonProperty(PropertyName = "detected")]
         public bool Detected { get; set; }
@@ -168,6 +163,6 @@ namespace Microsoft.ApplicationInspector.Commands
     public class TagException
     {
         [JsonProperty(PropertyName = "tag")]
-        public string Tag { get; set; }
+        public string? Tag { get; set; }
     }
 }

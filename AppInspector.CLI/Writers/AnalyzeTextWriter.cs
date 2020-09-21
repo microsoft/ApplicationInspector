@@ -28,7 +28,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
             {
-                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags);
+                List<string> keys = analyzeResult.Metadata.UniqueTags ?? new List<string>();
                 keys.Sort();
 
                 foreach (string tag in keys)
@@ -42,7 +42,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteDependencies(analyzeResult.Metadata);
                 WriteOnce.General(MakeHeading("Match Details"));
 
-                foreach (MatchRecord match in analyzeResult.Metadata.Matches)
+                foreach (MatchRecord match in analyzeResult.Metadata.Matches ?? new List<MatchRecord>())
                 {
                     WriteMatch(match);
                 }
@@ -123,14 +123,14 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(string.Format(MakeHeading("Scan Settings")));
             WriteOnce.General(string.Format("Date scanned: {0}", metaData.DateScanned));
             WriteOnce.General(string.Format(MakeHeading("Source Info")));
-            WriteOnce.General(string.Format("Application type: {0}", StringList(metaData.AppTypes)));
-            WriteOnce.General(string.Format("Package types: {0}", StringList(metaData.PackageTypes)));
-            WriteOnce.General(string.Format("File extensions: {0}", StringList(metaData.FileExtensions)));
+            WriteOnce.General(string.Format("Application type: {0}", StringList(metaData.AppTypes??new List<string>())));
+            WriteOnce.General(string.Format("Package types: {0}", StringList(metaData.PackageTypes ?? new List<string>())));
+            WriteOnce.General(string.Format("File extensions: {0}", StringList(metaData.FileExtensions ?? new List<string>())));
             WriteOnce.General(string.Format(MakeHeading("Detetected Targets")));
-            WriteOnce.General(string.Format("Output types: {0}", StringList(metaData.Outputs)));
-            WriteOnce.General(string.Format("OS Targets: {0}", StringList(metaData.OSTargets)));
-            WriteOnce.General(string.Format("CPU Targets: {0}", StringList(metaData.CPUTargets)));
-            WriteOnce.General(string.Format("Cloud targets: {0}", StringList(metaData.CloudTargets)));
+            WriteOnce.General(string.Format("Output types: {0}", StringList(metaData.Outputs ?? new List<string>())));
+            WriteOnce.General(string.Format("OS Targets: {0}", StringList(metaData.OSTargets ?? new List<string>())));
+            WriteOnce.General(string.Format("CPU Targets: {0}", StringList(metaData.CPUTargets ?? new List<string>())));
+            WriteOnce.General(string.Format("Cloud targets: {0}", StringList(metaData.CloudTargets ?? new List<string>())));
             WriteOnce.General(string.Format(MakeHeading("Stats")));
             WriteOnce.General(string.Format("Files analyzed: {0}", metaData.FilesAnalyzed));
             WriteOnce.General(string.Format("Files skipped: {0}", metaData.FilesSkipped));
@@ -139,13 +139,13 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(string.Format("Unique matches: {0}", metaData.UniqueMatchesCount));
 
             WriteOnce.General(MakeHeading("UniqueTags"));
-            foreach (string tag in metaData.UniqueTags)
+            foreach (string tag in metaData.UniqueTags ?? new List<string>())
             {
                 WriteOnce.General(tag);
             }
 
             WriteOnce.General(MakeHeading("Select Counters"));
-            foreach (MetricTagCounter tagCounter in metaData.TagCounters)
+            foreach (MetricTagCounter tagCounter in metaData.TagCounters ?? new List<MetricTagCounter>())
             {
                 WriteOnce.General(string.Format("Tagname: {0}, Count: {1}", tagCounter.Tag, tagCounter.Count));
             }
@@ -166,7 +166,7 @@ namespace Microsoft.ApplicationInspector.CLI
             output = output.Replace("%X", match.Confidence.ToString());
             output = output.Replace("%D", match.RuleDescription);
             output = output.Replace("%m", match.Sample);
-            output = output.Replace("%T", string.Join(',', match.Tags));
+            output = output.Replace("%T", string.Join(',', match.Tags ?? new string[] { }));
 
             WriteOnce.General(output);
         }
@@ -175,17 +175,10 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             WriteOnce.General(MakeHeading("Dependencies"));
 
-            foreach (string s in metaData.UniqueDependencies)
+            foreach (string s in metaData.UniqueDependencies ?? new List<string>())
             {
                 WriteOnce.General(s);
             }
-        }
-
-        public override void FlushAndClose()
-        {
-            TextWriter.Flush();
-            TextWriter.Close();
-            WriteOnce.TextWriter = null;
         }
 
         private readonly string _formatString;

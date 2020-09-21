@@ -11,9 +11,14 @@ namespace Microsoft.ApplicationInspector.CLI
     /// </summary>
     public abstract class CommandResultsWriter
     {
-        public TextWriter TextWriter { get; set; }
-        public string OutputFileName { get; set; }
+        public TextWriter? TextWriter { get; set; }
+        public string? OutputFileName { get; set; }
         public abstract void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true);
-        public abstract void FlushAndClose();
+        public void FlushAndClose()
+        {
+            TextWriter?.Flush();
+            TextWriter?.Close();
+            WriteOnce.TextWriter = null;
+        }
     }
 }

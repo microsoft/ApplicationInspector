@@ -24,6 +24,7 @@
     <PackageIcon>icon-128.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

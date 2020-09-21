@@ -12,13 +12,10 @@ namespace Microsoft.ApplicationInspector.Commands
     public class MetricTagCounter
     {
         [JsonProperty(PropertyName = "tag")]
-        public string Tag { get; set; }
+        public string? Tag { get; set; }
 
         [JsonProperty(PropertyName = "count")]
         public int Count { get { return _count; } }
-
-        [JsonProperty(PropertyName = "includeAsMatch")]
-        public bool IncludeAsMatch => false;
 
         private int _count = 0;
 

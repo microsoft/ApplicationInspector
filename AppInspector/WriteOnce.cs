@@ -16,12 +16,12 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class WriteOnce
     {
-        public static TextWriter TextWriter { get; set; }
+        public static TextWriter? TextWriter { get; set; }
 
         public enum ConsoleVerbosity { High, Medium, Low, None }
 
         public static ConsoleVerbosity Verbosity { get; set; }
-        public static Logger Log { get; set; } //use SafeLog or check for null before use
+        public static Logger? Log { get; set; } //use SafeLog or check for null before use
 
         //default colors
         private static ConsoleColor _infoColor = ConsoleColor.Magenta;

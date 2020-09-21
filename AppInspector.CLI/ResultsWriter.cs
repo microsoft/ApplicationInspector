@@ -15,7 +15,7 @@ namespace Microsoft.ApplicationInspector.CLI
     {
         public static void Write(Result result, CLICommandOptions options)
         {
-            CommandResultsWriter writer = WriterFactory.GetWriter(options);
+            CommandResultsWriter? writer = WriterFactory.GetWriter(options);
             string commandCompletedMsg;
 
             //perform type checking and assign final msg string
@@ -55,7 +55,7 @@ namespace Microsoft.ApplicationInspector.CLI
                         return;
                     }
 
-                    writer.WriteResults(analyzeResult, cLIAnalyzeCmdOptions);
+                    writer?.WriteResults(analyzeResult, cLIAnalyzeCmdOptions);
 
                     //post checks
                     if (File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
@@ -78,7 +78,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             //general for all but analyze html format
-            writer.WriteResults(result, options);
+            writer?.WriteResults(result, options);
             Finalize(writer, commandCompletedMsg);
         }
 
@@ -88,7 +88,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         /// <param name="_outputWriter"></param>
         /// <param name="options"></param>
-        public static void Finalize(CommandResultsWriter outputWriter, string commandName)
+        public static void Finalize(CommandResultsWriter? outputWriter, string commandName)
         {
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_COMPLETED, commandName));
 
@@ -96,7 +96,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 if (outputWriter.TextWriter != Console.Out) //target writer was to a file so inform where to find results
                 {
-                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE, outputWriter.OutputFileName), true, WriteOnce.ConsoleVerbosity.Medium, false);
+                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE, outputWriter?.OutputFileName??""), true, WriteOnce.ConsoleVerbosity.Medium, false);
                 }
             }
         }

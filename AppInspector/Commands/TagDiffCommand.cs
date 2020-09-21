@@ -11,11 +11,11 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     public class TagDiffOptions : CommandOptions
     {
-        public string SourcePath1 { get; set; }
-        public string SourcePath2 { get; set; }
+        public string SourcePath1 { get; set; } = "";
+        public string SourcePath2 { get; set; } = "";
         public string TestType { get; set; } = "equality";
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
-        public string CustomRulesPath { get; set; }
+        public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
     }
 
@@ -34,7 +34,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Tag value from rule used in comparison
         /// </summary>
         [JsonProperty(PropertyName = "tag")]
-        public string Tag { get; set; }
+        public string? Tag { get; set; }
 
         /// <summary>
         /// Source file (src1/src2) from the command option arguments
@@ -77,7 +77,7 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         private enum TagTestType { Equality, Inequality }
 
-        private readonly TagDiffOptions _options;
+        private readonly TagDiffOptions? _options;
         private TagTestType _arg_tagTestType;
 
         public TagDiffCommand(TagDiffOptions opt)
@@ -120,7 +120,7 @@ namespace Microsoft.ApplicationInspector.Commands
             else
             {
                 WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out verbosity))
+                if (!Enum.TryParse(_options?.ConsoleVerbosityLevel, true, out verbosity))
                 {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
@@ -133,9 +133,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private void ConfigureCompareType()
         {
-            if (!Enum.TryParse(_options.TestType, true, out _arg_tagTestType))
+            if (!Enum.TryParse(_options?.TestType, true, out _arg_tagTestType))
             {
-                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, _options.TestType));
+                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, _options?.TestType ?? ""));
             }
         }
 
@@ -143,11 +143,11 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("TagDiff::ConfigRules", LogLevel.Trace);
 
-            if (_options.SourcePath1 == _options.SourcePath2)
+            if (_options?.SourcePath1 == _options?.SourcePath2)
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.TAGDIFF_SAME_FILE_ARG));
             }
-            else if (string.IsNullOrEmpty(_options.SourcePath1) || string.IsNullOrEmpty(_options.SourcePath2))
+            else if (string.IsNullOrEmpty(_options?.SourcePath1) || string.IsNullOrEmpty(_options?.SourcePath2))
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_INVALID_ARG_VALUE));
             }
@@ -175,21 +175,21 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeOptions
                 {
-                    SourcePath = _options.SourcePath1,
-                    CustomRulesPath = _options.CustomRulesPath,
-                    IgnoreDefaultRules = _options.IgnoreDefaultRules,
-                    FilePathExclusions = _options.FilePathExclusions,
+                    SourcePath = _options?.SourcePath1 ?? "",
+                    CustomRulesPath = _options?.CustomRulesPath,
+                    IgnoreDefaultRules = _options?.IgnoreDefaultRules ?? false,
+                    FilePathExclusions = _options?.FilePathExclusions ?? "",
                     ConsoleVerbosityLevel = "none",
-                    Log = _options.Log
+                    Log = _options?.Log
                 });
                 AnalyzeCommand cmd2 = new AnalyzeCommand(new AnalyzeOptions
                 {
-                    SourcePath = _options.SourcePath2,
-                    CustomRulesPath = _options.CustomRulesPath,
-                    IgnoreDefaultRules = _options.IgnoreDefaultRules,
-                    FilePathExclusions = _options.FilePathExclusions,
+                    SourcePath = _options?.SourcePath2 ?? "",
+                    CustomRulesPath = _options?.CustomRulesPath,
+                    IgnoreDefaultRules = _options != null ? _options.IgnoreDefaultRules : false,
+                    FilePathExclusions = _options?.FilePathExclusions ?? "",
                     ConsoleVerbosityLevel = "none",
-                    Log = _options.Log
+                    Log = _options?.Log
                 });
 
                 AnalyzeResult analyze1 = cmd1.GetResult();
@@ -206,11 +206,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 //process results for each analyze call before comparing results
                 if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options.SourcePath1));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options?.SourcePath1 ?? ""));
                 }
                 else if (analyze2.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options.SourcePath2));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options?.SourcePath2 ?? ""));
                 }
                 else if (analyze1.ResultCode == AnalyzeResult.ExitCode.NoMatches || analyze2.ResultCode == AnalyzeResult.ExitCode.NoMatches)
                 {
@@ -219,19 +219,19 @@ namespace Microsoft.ApplicationInspector.Commands
                 else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.Success)
                 {
                     int count1 = 0;
-                    int sizeTags1 = analyze1.Metadata.UniqueTags.Count;
+                    int sizeTags1 = analyze1.Metadata.UniqueTags != null ? analyze1.Metadata.UniqueTags.Count : 0;
                     string[] file1Tags = new string[sizeTags1];
 
-                    foreach (string tag in analyze1.Metadata.UniqueTags)
+                    foreach (string tag in analyze1.Metadata.UniqueTags ?? new List<string>())
                     {
                         file1Tags[count1++] = tag;
                     }
 
                     int count2 = 0;
-                    int sizeTags2 = analyze2.Metadata.UniqueTags.Count;
+                    int sizeTags2 = analyze2.Metadata.UniqueTags != null ? analyze2.Metadata.UniqueTags.Count : 0;
                     string[] file2Tags = new string[sizeTags2];
 
-                    foreach (string tag in analyze2.Metadata.UniqueTags)
+                    foreach (string tag in analyze2.Metadata.UniqueTags ?? new List<string>())
                     {
                         file2Tags[count2++] = tag;
                     }
