@@ -38,12 +38,15 @@
     $('#file_listing_modal').on('click', 'a.content-link', (e) => {
         const content = $(e.target).data('excerpt');
         const startLocationLine = $(e.target).data('startLocationLine');
+        const endLocationLine = $(e.target).data('endLocationLine');
         const editor = ace.edit("editor");
 
         editor.setOption('firstLineNumber', startLocationLine);
         editor.getSession().setValue(content);
         editor.resize();
         editor.scrollToLine(0);
+        editor.gotoLine(endLocationLine - startLocationLine + 1);
+
         $('editor-container').removeClass('d-none');
     });
 
@@ -127,7 +130,7 @@ class TemplateInsertion {
     combineConfidence(a, b) {
         if (a && !b) return a;
         if (b && !a) return b;
-        if (!a && !b) return 'Low';
+        if (!a && !b) return 'low';
 
         const _a = a.toLowerCase();
         const _b = b.toLowerCase();
@@ -156,12 +159,14 @@ class TemplateInsertion {
             if (match.ruleId === ruleId || match.ruleName === ruleId) {
                 let $li = $('<li>');
                 let $a = $('<a>');
-                let $l = match.startLocationLine-3;
-                if ($l < 0) $l = 1; //fix #183
+                let $l = match.startLocationLine - 3;
+                let $e = match.endLocationLine;
+                if ($l <= 0) $l = 1; //fix #183
                 $a.addClass('content-link')
                     .attr('href', '#')
                     .data('excerpt', excerpt)
                     .data('startLocationLine', $l)
+                    .data('endLocationLine', $e)
                     .text(removePrefix(match.fileName));
                 $li.append($a);
                 $('#file_listing_modal ul').append($li);

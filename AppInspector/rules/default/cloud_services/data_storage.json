@@ -102,7 +102,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "new ClientSecret|KeyVaultClient|Microsoft.Azure.KeyVault|Microsoft.Azure.Management.KeyVault",
+        "pattern": "new ClientSecret|KeyVaultClient|Microsoft\\.Azure\\.KeyVault|Microsoft\\.Azure\\.Management\\.KeyVault",
         "type": "regex",
         "scopes": [
           "code"
@@ -112,7 +112,7 @@
       },
       {
         "pattern": "keyvault",
-        "type": "regex",
+        "type": "regex-word",
         "scopes": [
           "code",
           "comment"

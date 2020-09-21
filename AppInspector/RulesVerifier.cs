@@ -143,6 +143,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
 
+            if (rule.Tags?.Length == 0)
+            {
+                isValid = false;
+            }
+
             return isValid;
         }
 

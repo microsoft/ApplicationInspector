@@ -363,7 +363,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
         }
 
-        [Ignore]
         [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
         {
@@ -381,7 +380,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 {
                     string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
                     var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
-                    exitCodeSingleThread = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCodeSingleThread = result.Metadata.TotalMatchesCount == 10 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
@@ -405,7 +404,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 {
                     string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
                     var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
-                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 10 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
@@ -415,7 +414,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCodeMultiThread == AnalyzeResult.ExitCode.Success);
         }
 
-        [Ignore]
         [TestMethod]
         public void ExpectedTagCountNoDupsAllowed_Pass()
         {
@@ -432,7 +430,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 {
                     string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
                     var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
-                    exitCode = result.Metadata.TotalMatchesCount == 7 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.TotalMatchesCount == 6 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
@@ -565,7 +563,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
 
-        // TODO: How to test test this one without doing a process call?
         [TestMethod]
         public void NoConsoleOutput_Pass()
         {

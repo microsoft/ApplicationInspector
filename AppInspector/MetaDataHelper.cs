@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.RulesEngine;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -256,7 +257,7 @@ namespace Microsoft.ApplicationInspector.Commands
                                 break;
 
                             default:
-                                switch (match.Language.Name)
+                                switch (match.Language)
                                 {
                                     case "ruby":
                                     case "perl":

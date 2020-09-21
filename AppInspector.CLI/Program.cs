@@ -131,7 +131,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.Log = logger;
             options.Log = logger;
 
-            if (options.RepackDefaultRules && !string.IsNullOrEmpty(options.OutputFilePath)) //dependent local files won't be there; TODO look into dir copy to target!
+            if (options.RepackDefaultRules && !string.IsNullOrEmpty(options.OutputFilePath)) 
             {
                 WriteOnce.Info("output file argument ignored for -d option");
             }

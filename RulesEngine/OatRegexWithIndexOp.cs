@@ -102,7 +102,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                             // Should return only scoped matches
                                             if (tc.ScopeMatch(src.Scopes, translatedBoundary))
                                             {
-                                                outmatches.Add((i, translatedBoundary));
+                                                outmatches.Add((Convert.ToInt32(clause.Label), translatedBoundary));
                                             }
                                         }
                                     }
