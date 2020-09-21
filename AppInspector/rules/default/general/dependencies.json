@@ -31,7 +31,7 @@
     "_comment": "",
     "patterns": [
       {
-        "pattern": "(include|require) .*",
+        "pattern": "(include|require) .*;",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
@@ -51,7 +51,7 @@
     "_comment": "",
     "patterns": [
       {
-        "pattern": "import .*",
+        "pattern": "#import .*",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
@@ -78,7 +78,7 @@
         "_comment": ""
       },
       {
-        "pattern": "loadScriptByName.*",
+        "pattern": "loadScriptByName",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
@@ -138,14 +138,14 @@
     "_comment": "",
     "patterns": [
       {
-        "pattern": "use .*",
+        "pattern": "use .*;",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
         "_comment": ""
       },
       {
-        "pattern": "package. *",
+        "pattern": "package .*;",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
@@ -192,7 +192,7 @@
     "_comment": "",
     "patterns": [
       {
-        "pattern": "using (.*);",
+        "pattern": "using .*;",
         "type": "regex",
         "scopes": [ "code" ],
         "_comment": ""
@@ -211,7 +211,7 @@
     "_comment": "",
     "patterns": [
       {
-        "pattern": "import .*",
+        "pattern": "import .*;",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
@@ -225,7 +225,7 @@
         "_comment": ""
       },
       {
-        "pattern": "require ?\\(['\\\"]([^'\\\"]+)",
+        "pattern": "require ?\\(['\\\"]([^'\\\"]+);",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
