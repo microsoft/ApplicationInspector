@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using DotLiquid.Tags;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Newtonsoft.Json;
@@ -64,7 +65,7 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         private readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files
         private readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
-        private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
+
 
         private IEnumerable<string> _srcfileList;
         private MetaDataHelper _metaDataHelper; //wrapper containing MetaData object to be assigned to result
@@ -294,9 +295,16 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 _metaDataHelper.Metadata.IncrementTotalFiles(_srcfileList.Count());//updated for zipped files later
 
-                Action<string> ProcessFile = filename =>
+                Action<string> AnalyzeFiles = filename =>
                 {
                     if (new FileInfo(filename).Length == 0)
+                    {
+                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
+                        _metaDataHelper.Metadata.IncrementFilesSkipped();
+                        return;
+                    }
+
+                    if (ExcludeFileFromScan(filename)) //added check needed prevents unwanted file open attempt to determine type if excluded
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
                         _metaDataHelper.Metadata.IncrementFilesSkipped();
@@ -323,17 +331,38 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                 };
 
+
+                Action<MatchRecord> ProcessResult = MatchRecord =>
+                {
+                    // Iterate through each match issue
+                        WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", MatchRecord.RuleId, MatchRecord.RuleName, MatchRecord.FileName), LogLevel.Trace);
+
+                        if (MatchRecord.Tags.Contains("Dependency.SourceInclude"))
+                        {
+                            MatchRecord.Sample = ExtractDependency(MatchRecord.FullText, MatchRecord.Boundary.Index, MatchRecord.Pattern, MatchRecord.LanguageInfo.Name);
+                        }
+
+                        //preserve issue level characteristics as rolled up meta data of interest
+                        _metaDataHelper.AddMatchRecord(MatchRecord);               
+                };
+
                 if (_options.SingleThread)
                 {
                     // Iterate through all files and process against rules
                     foreach (string filename in _srcfileList)
                     {
-                        ProcessFile(filename);
+                        AnalyzeFiles(filename);
+                    }
+
+                    foreach (MatchRecord MatchRecord in _rulesProcessor.AllResults)
+                    {
+                        ProcessResult(MatchRecord);
                     }
                 }
                 else
                 {
-                    Parallel.ForEach(_srcfileList, filename => ProcessFile(filename));
+                    Parallel.ForEach(_srcfileList, filePath => AnalyzeFiles(filePath));
+                    Parallel.ForEach(_rulesProcessor.AllResults, MatchRecord => ProcessResult(MatchRecord));
                 }
 
                 WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
@@ -415,53 +444,15 @@ namespace Microsoft.ApplicationInspector.Commands
             #endregion minorRollupTrackingAndProgress
 
             //process file against rules returning unique or duplicate matches as configured
-            ScanResult[] scanResults = _rulesProcessor.Analyze(fileText, languageInfo);
+            MatchRecord[] MatchRecords = _rulesProcessor.AnalyzeFile(filePath, fileText, languageInfo);
 
             //if any matches found for this file...
-            if (scanResults.Any())
+            if (MatchRecords.Any())
             {
                 _metaDataHelper.Metadata.IncrementFilesAffected();
-                _metaDataHelper.Metadata.IncrementTotalMatchesCount(scanResults.Count());
+                _metaDataHelper.Metadata.IncrementTotalMatchesCount(MatchRecords.Count());
 
-                // Iterate through each match issue
-                foreach (ScanResult scanResult in scanResults)
-                {
-                    WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", scanResult.Rule.Id, scanResult.Rule.Name, filePath), LogLevel.Trace);
-
-                    string textMatch;
-
-                    if (scanResult.Rule.Tags.Contains("Dependency.SourceInclude"))
-                    {
-                        textMatch = ExtractDependency(fileText, scanResult.Boundary.Index, scanResult.PatternMatch, languageInfo.Name);
-                    }
-                    else
-                    {
-                        textMatch = ExtractTextSample(fileText, scanResult.Boundary.Index, scanResult.Boundary.Length);
-                    }
-
-                    MatchRecord matchRecord = new MatchRecord()
-                    {
-                        FileName = filePath,
-                        Language = languageInfo,
-                        StartLocationLine = scanResult.StartLocation.Line,
-                        StartLocationColumn = scanResult.StartLocation.Column,
-                        EndLocationLine = scanResult.EndLocation.Line,
-                        EndLocationColumn = scanResult.EndLocation.Column,
-                        RuleId = scanResult.Rule.Id,
-                        Severity = scanResult.Rule.Severity.ToString(),
-                        RuleName = scanResult.Rule.Name,
-                        RuleDescription = scanResult.Rule.Description,
-                        PatternConfidence = scanResult.Confidence.ToString(),
-                        PatternType = scanResult.PatternMatch.PatternType.ToString(),
-                        MatchingPattern = scanResult.PatternMatch.Pattern,
-                        Sample = textMatch ?? "",
-                        Excerpt = ExtractExcerpt(fileText, scanResult.StartLocation.Line),
-                        Tags = scanResult.Rule.Tags
-                    };
-
-                    //preserve issue level characteristics as rolled up meta data of interest
-                    _metaDataHelper.AddMatchRecord(matchRecord);
-                }
+              
             }
             else
             {
@@ -471,93 +462,12 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #region ProcessingAssist
 
-        /// <summary>
-        /// Simple wrapper but keeps calling code consistent
-        /// Do not html code result which is accomplished later before out put to report
-        /// </summary>
-        private string ExtractTextSample(string fileText, int index, int length)
-        {
-            string result = "";
-            try
-            {
-                //some js file results may be too long for practical display
-                if (length > MAX_TEXT_SAMPLE_LENGTH)
-                {
-                    length = MAX_TEXT_SAMPLE_LENGTH;
-                }
-
-                result = fileText.Substring(index, length).Trim();
-            }
-            catch (Exception)
-            {
-                //control the error description and continue; error in rules engine possible
-                WriteOnce.SafeLog("Unexpected indexing issue in ExtractTextSample.  Process continued", LogLevel.Error);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Located here to include during Match creation to avoid a call later or putting in constructor
-        /// Needed in match ensuring value exists at time of report writing rather than expecting a callback
-        /// from the template
-        /// </summary>
-        /// <returns></returns>
-        private string ExtractExcerpt(string text, int startLineNumber, int length = 10)
-        {
-            if (string.IsNullOrEmpty(text))
-            {
-                return "";
-            }
-
-            var lines = text.Split('\n');
-            var distance = (int)((length - 1.0) / 2.0);
-
-            // Sanity check
-            if (startLineNumber < 0)
-            {
-                startLineNumber = 0;
-            }
-
-            if (startLineNumber >= lines.Length)
-            {
-                startLineNumber = lines.Length - 1;
-            }
-
-            var excerptStartLine = Math.Max(0, startLineNumber - distance);
-            var excerptEndLine = Math.Min(lines.Length - 1, startLineNumber + distance);
-
-            /* If the code snippet we're viewing is already indented 16 characters minimum,
-             * we don't want to show all that extra white-space, so we'll find the smallest
-             * number of spaces at the beginning of each line and use that.
-             */
-
-            var minSpaces = -1;
-            for (var i = excerptStartLine; i <= excerptEndLine; i++)
-            {
-                var numPrefixSpaces = lines[i].TakeWhile(c => c == ' ').Count();
-                minSpaces = (minSpaces == -1 || numPrefixSpaces < minSpaces) ? numPrefixSpaces : minSpaces;
-            }
-
-            var sb = new StringBuilder();
-            // We want to go from (start - 5) to (start + 5) (off by one?)
-            // LINE=10, len=5, we want 8..12, so N-(L-1)/2 to N+(L-1)/2
-            // But cap those values at 0/end
-            for (var i = excerptStartLine; i <= excerptEndLine; i++)
-            {
-                string line = lines[i].Substring(minSpaces).TrimEnd();
-                sb.AppendLine(line);
-
-            }
-
-            return System.Net.WebUtility.HtmlEncode(sb.ToString());
-        }
-
+        
         /// <summary>
         /// Helper to special case additional processing to just get the values without the import keywords etc.
         /// and encode for html output
         /// </summary>
-        private string ExtractDependency(string text, int startIndex, SearchPattern pattern, string language)
+        private string ExtractDependency(string text, int startIndex, string pattern, string language)
         {
             // import value; load value; include value;
             string rawResult = "";
@@ -565,7 +475,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (-1 != startIndex && -1 != endIndex)
             {
                 rawResult = text.Substring(startIndex, endIndex - startIndex).Trim();
-                Regex regex = new Regex(pattern.Pattern);
+                Regex regex = new Regex(pattern);
                 MatchCollection matches = regex.Matches(rawResult);
 
                 //remove surrounding import or trailing comments

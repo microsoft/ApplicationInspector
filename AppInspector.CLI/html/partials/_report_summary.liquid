@@ -260,13 +260,11 @@
                 <tr>
                   <td class="font-weight-bold" style="font-size:16px;text-align:left;">Rule Tag</td>
                   <td class="font-weight-bold" style="font-size:16px;text-align:center;">Count</td>
-                  <td class="font-weight-bold" style="font-size:16px;text-align:center;">Include as Match</td>
                 </tr>
                 {% for counter in tagcounters -%}
                 <tr>
                   <td style="font-size:16px;text-align:left;">{{counter.tag}}</td>
                   <td style="font-size:16px;text-align:center;">{{counter.count}}</td>
-                  <td style="font-size:16px;text-align:center;">{{counter.include_as_match}}</td>
                 </tr>
                 {% endfor -%}
               </table>

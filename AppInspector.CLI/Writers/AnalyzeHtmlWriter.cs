@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -85,7 +86,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 hashData.Add(outerKey, KeyedSortedTagInfoLists[outerKey]);
             }
 
-            //add summary metadata lists TODO remove all these as we already passed metadata obj
             hashData["cputargets"] = _appMetaData.CPUTargets;
             hashData["apptypes"] = _appMetaData.AppTypes;
             hashData["packagetypes"] = _appMetaData.PackageTypes;
@@ -178,14 +178,27 @@ namespace Microsoft.ApplicationInspector.CLI
                 TagGroupPreferences = new List<TagCategory>();
             }
 
+            string[] unSupportedGroupsOrPatterns = new string[] { "metric", "dependency" };
+
             //for each preferred group of tag patterns determine if at least one instance was detected
             foreach (TagCategory tagCategory in TagGroupPreferences)
             {
                 foreach (TagGroup tagGroup in tagCategory.Groups)
                 {
+                    bool test = tagGroup.Title.ToLower().Contains(unSupportedGroupsOrPatterns[0]);
+                    if (unSupportedGroupsOrPatterns.Any(x => tagGroup.Title.ToLower().Contains(x)))
+                    {
+                        WriteOnce.Log.Warn($"Unsupported tag group or pattern detected '{tagGroup.Title}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags");
+                    }
+
                     foreach (TagSearchPattern pattern in tagGroup.Patterns)
                     {
                         pattern.Detected = _appMetaData.UniqueTags.Any(v => v.Contains(pattern.SearchPattern));
+                        if (unSupportedGroupsOrPatterns.Any(x => pattern.SearchPattern.ToLower().Contains(x)))
+                        {
+                            WriteOnce.Log.Warn($"Unsupported tag group or pattern detected '{pattern.SearchPattern}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags"); 
+                        }
+
                         //create dynamic "category" groups of tags with pattern relationship established from TagReportGroups.json
                         //that can be used to populate reports with various attributes for each tag detected
                         if (pattern.Detected)
@@ -278,8 +291,8 @@ namespace Microsoft.ApplicationInspector.CLI
                                     result.Add(new TagInfo
                                     {
                                         Tag = tagItem,
-                                        Confidence = match.PatternConfidence,
-                                        Severity = match.Severity,
+                                        Confidence = match.Confidence.ToString(),
+                                        Severity = match.Severity.ToString(),
                                         ShortTag = pattern.DisplayName,
                                         StatusIcon = pattern.DetectedIcon,
                                         Detected = true
@@ -287,7 +300,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
                                     hashSet.Add(pattern.SearchPattern);
 
-                                    pattern.Confidence = match.PatternConfidence;
+                                    pattern.Confidence = match.Confidence.ToString();
                                 }
                                 else
                                 {
@@ -296,20 +309,18 @@ namespace Microsoft.ApplicationInspector.CLI
                                     {
                                         if (updateItem.Tag == tagItem)
                                         {
-                                            Confidence oldConfidence, newConfidence;
+                                            Confidence oldConfidence;
                                             Enum.TryParse(updateItem.Confidence, out oldConfidence);
-                                            Enum.TryParse(match.PatternConfidence, out newConfidence);
 
-                                            if (newConfidence > oldConfidence)
+                                            if (match.Confidence > oldConfidence)
                                             {
-                                                updateItem.Confidence = match.PatternConfidence;
-                                                pattern.Confidence = match.PatternConfidence;
+                                                updateItem.Confidence = match.Confidence.ToString();
+                                                pattern.Confidence = match.Confidence.ToString();
                                             }
 
-                                            Severity oldSeverity, newtSeverity;
+                                            Severity oldSeverity;
                                             Enum.TryParse(updateItem.Severity, out oldSeverity);
-                                            Enum.TryParse(match.Severity, out newtSeverity);
-                                            if (newtSeverity > oldSeverity)
+                                            if (match.Severity > oldSeverity)
                                             {
                                                 updateItem.Severity = match.Severity.ToString();
                                             }
@@ -371,7 +382,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                     result.Add(new TagInfo
                                     {
                                         Tag = tagItem,
-                                        Confidence = match.PatternConfidence,
+                                        Confidence = match.Confidence.ToString(),
                                         Severity = match.Severity.ToString(),
                                         ShortTag = tagItem.Substring(tagItem.LastIndexOf('.') + 1),
                                         StatusIcon = pattern.DetectedIcon,
@@ -386,20 +397,18 @@ namespace Microsoft.ApplicationInspector.CLI
                                     {
                                         if (updateItem.Tag == tagItem)
                                         {
-                                            Confidence oldConfidence, newConfidence;
+                                            Confidence oldConfidence;
                                             Enum.TryParse(updateItem.Confidence, out oldConfidence);
-                                            Enum.TryParse(match.PatternConfidence, out newConfidence);
 
-                                            if (newConfidence > oldConfidence)
+                                            if (match.Confidence > oldConfidence)
                                             {
-                                                updateItem.Confidence = match.PatternConfidence;
-                                                pattern.Confidence = match.PatternConfidence;
+                                                updateItem.Confidence = match.Confidence.ToString();
+                                                pattern.Confidence = match.Confidence.ToString();
                                             }
 
-                                            Severity oldSeverity, newtSeverity;
+                                            Severity oldSeverity;
                                             Enum.TryParse(updateItem.Severity, out oldSeverity);
-                                            Enum.TryParse(match.Severity, out newtSeverity);
-                                            if (newtSeverity > oldSeverity)
+                                            if (match.Severity > oldSeverity)
                                             {
                                                 updateItem.Severity = match.Severity.ToString();
                                             }
@@ -439,7 +448,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                 result.Add(new TagInfo
                                 {
                                     Tag = testTag,
-                                    Confidence = match.PatternConfidence,
+                                    Confidence = match.Confidence.ToString(),
                                     Severity = match.Severity.ToString(),
                                     ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
                                 });
@@ -456,7 +465,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
         /// <summary>
         /// Tags sorted by confidence
-        /// Todo: address array of tags in rule
         /// </summary>
         /// <returns></returns>
         private List<TagInfo> GetTagInfoListByConfidence()
@@ -468,7 +476,7 @@ namespace Microsoft.ApplicationInspector.CLI
             foreach (string tag in _appMetaData.UniqueTags)
             {
                 var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
-                foreach (Confidence test in confidences)
+                foreach (Confidence confidence in confidences)
                 {
                     foreach (var match in _appMetaData.Matches)
                     {
@@ -476,15 +484,12 @@ namespace Microsoft.ApplicationInspector.CLI
                         {
                             if (searchPattern.IsMatch(testTag))
                             {
-                                Confidence matchConfidence;
-                                Enum.TryParse(match.PatternConfidence, out matchConfidence);
-
-                                if (matchConfidence == test && dupCheck.Add(tag))
+                                if (match.Confidence == confidence && dupCheck.Add(tag))
                                 {
                                     result.Add(new TagInfo
                                     {
                                         Tag = testTag,
-                                        Confidence = test.ToString(),
+                                        Confidence = confidence.ToString(),
                                         Severity = match.Severity.ToString(),
                                         ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
                                     });
@@ -509,9 +514,8 @@ namespace Microsoft.ApplicationInspector.CLI
 
             foreach (string tag in _appMetaData.UniqueTags)
             {
-                // TODO: How frequently are these generated? Cache?
                 var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
-                foreach (Severity test in severities)
+                foreach (Severity severity in severities)
                 {
                     foreach (var match in _appMetaData.Matches)
                     {
@@ -519,16 +523,13 @@ namespace Microsoft.ApplicationInspector.CLI
                         {
                             if (searchPattern.IsMatch(testTag))
                             {
-                                Severity matchSeverity;
-                                Enum.TryParse(match.Severity, out matchSeverity);
-
-                                if (matchSeverity == test && dupCheck.Add(tag))
+                                if (match.Severity == severity && dupCheck.Add(tag))
                                 {
                                     result.Add(new TagInfo
                                     {
                                         Tag = testTag,
-                                        Confidence = match.Severity,
-                                        Severity = test.ToString(),
+                                        Confidence = match.Confidence.ToString(),
+                                        Severity = severity.ToString(),
                                         ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
                                     });
                                 }

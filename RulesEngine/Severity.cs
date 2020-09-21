@@ -9,6 +9,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     ///     Issue severity
     /// </summary>
     [Flags]
+    [JsonConverter(typeof(SeverityConverter))]
     public enum Severity
     {
         /// <summary>

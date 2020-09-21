@@ -287,7 +287,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
         }
 
-        [Ignore]
         [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
         {
@@ -295,7 +294,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
-                AllowDupTags = true
+                AllowDupTags = true,
+                SingleThread = true
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -306,7 +306,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = result.ResultCode;
                 if (exitCode == AnalyzeResult.ExitCode.Success)
                 {
-                    exitCode = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.TotalMatchesCount == 10 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
@@ -315,9 +315,28 @@ namespace ApplicationInspector.Unitprocess.Commands
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+
+            AnalyzeResult.ExitCode exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
+            options.SingleThread = false;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                AnalyzeResult result = command.GetResult();
+                exitCodeMultiThread = result.ResultCode;
+                if (exitCodeMultiThread == AnalyzeResult.ExitCode.Success)
+                {
+                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 10 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                }
+            }
+            catch (Exception)
+            {
+                exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
+            }
+
+            Assert.IsTrue(exitCodeMultiThread == AnalyzeResult.ExitCode.Success);
+
         }
 
-        [Ignore]
         [TestMethod]
         public void ExpectedTagCountNoDupsAllowed_Pass()
         {
@@ -336,7 +355,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = result.ResultCode;
                 if (exitCode == AnalyzeResult.ExitCode.Success)
                 {
-                    exitCode = result.Metadata.TotalMatchesCount == 7 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.TotalMatchesCount == 6 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)

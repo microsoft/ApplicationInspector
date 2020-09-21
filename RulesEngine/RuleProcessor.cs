@@ -7,6 +7,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CST.OAT;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Text;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -15,6 +18,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class RuleProcessor
     {
+        private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
+
         private Confidence ConfidenceLevelFilter { get; set; }
         private readonly bool _stopAfterFirstMatch;
         private readonly bool _uniqueTagMatchesOnly;
@@ -23,7 +28,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly RuleSet _ruleset;
         private readonly ConcurrentDictionary<string, byte> _uniqueTagHashes;
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _rulesCache;
-
+        private readonly List<MatchRecord> _runningResultsList;//maintain across files for bestmatch compare
+        private readonly object _controllRunningListAdd;//safeguard shared list across threads
         /// <summary>
         /// Support to exlude list of tags from unique restrictions
         /// </summary>
@@ -48,6 +54,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             EnableCache = true;
             _uniqueTagHashes = new ConcurrentDictionary<string,byte>();
             _rulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
+            _runningResultsList = new List<MatchRecord>();
+            _controllRunningListAdd = new object();
             _stopAfterFirstMatch = stopAfterFirstMatch;
             _uniqueTagMatchesOnly = uniqueMatches;
             _logger = logger;
@@ -59,17 +67,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer)); //CHECK with OAT team as delegate doesn't appear to fire; ALT working fine in Analyze method anyway
         }
 
+        public List<MatchRecord> AllResults => _runningResultsList;
+
         /// <summary>
-        /// Analyzes given line of code returning matching scan results 
+        /// Analyzes given line of code returning matching scan results for the
+        /// file passed in only; Use AllResults to get results across the entire set
         /// </summary>
         /// <param name="text">Source code</param>
         /// <param name="languages">List of languages</param>
         /// <returns>Array of matches</returns>
-        public ScanResult[] Analyze(string text, LanguageInfo languageInfo)
+        public MatchRecord[] AnalyzeFile(string filePath, string text, LanguageInfo languageInfo)
         {
             // Get rules for the given content type
             IEnumerable<ConvertedOatRule> rules = GetRulesForSingleLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
-            List<ScanResult> resultsList = new List<ScanResult>();
+            List<MatchRecord> resultsList = new List<MatchRecord>();//matches for this file only
             TextContainer textContainer = new TextContainer(text, languageInfo.Name);
 
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
@@ -94,7 +105,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                 void ProcessBoundary(ClauseCapture cap)
                 {
-                    List<ScanResult> newMatches = new List<ScanResult>();
+                    List<MatchRecord> newMatches = new List<MatchRecord>();//matches for this rule clause only
 
                     if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
@@ -124,14 +135,18 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         continue;
                                     }
 
-                                    ScanResult newMatch = new ScanResult()
+                                    Location StartLocation = textContainer.GetLocation(boundary.Index);
+                                    MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
                                     {
+                                        FileName = filePath,
+                                        FullText = textContainer.FullContent,
+                                        LanguageInfo = languageInfo,
                                         Boundary = boundary,
-                                        StartLocation = textContainer.GetLocation(boundary.Index),
-                                        EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length),
-                                        PatternMatch = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Confidence = oatRule.AppInspectorRule.Patterns[patternIndex].Confidence,
-                                        Rule = oatRule.AppInspectorRule
+                                        StartLocationLine = StartLocation.Line,
+                                        EndLocationLine = textContainer.GetLocation(boundary.Index + boundary.Length).Line,
+                                        MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
+                                        Excerpt = ExtractExcerpt(textContainer.FullContent, StartLocation.Line), 
+                                        Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
                                     };
 
                                     bool addNewRecord = true;
@@ -145,7 +160,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                             }
                                             else if (newMatch.Confidence > Confidence.Low) //user prefers highest confidence match over first match
                                             {
-                                                addNewRecord = BetterMatch(newMatches, newMatch) && BetterMatch(resultsList, newMatch);//check current rule matches and previous processed files
+                                                addNewRecord = BetterMatch(newMatches, newMatch) && BetterMatch(resultsList, newMatch);
+                                                if (addNewRecord)
+                                                {
+                                                    lock (_controllRunningListAdd)
+                                                    {
+                                                        addNewRecord = BetterMatch(_runningResultsList, newMatch);//check current rule matches and previous processed files
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -153,6 +175,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     if (addNewRecord)
                                     {
                                         newMatches.Add(newMatch);
+                                        lock (_controllRunningListAdd)
+                                        {
+                                            _runningResultsList.Add(newMatch);
+                                        }
                                     }
 
                                     AddRuleTagHashes(oatRule.AppInspectorRule.Tags ?? new string[] { "" });
@@ -168,18 +194,18 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (resultsList.Any(x => x.Rule.Overrides!=null && x.Rule.Overrides.Length > 0 ))
             {
                 // Deal with overrides
-                List<ScanResult> removes = new List<ScanResult>();
-                foreach (ScanResult m in resultsList)
+                List<MatchRecord> removes = new List<MatchRecord>();
+                foreach (MatchRecord m in resultsList)
                 {
                     if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
                     {
                         foreach (string ovrd in m.Rule.Overrides)
                         {
                             // Find all overriden rules and mark them for removal from issues list
-                            foreach (ScanResult om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                            foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
                             {
-                                if (om.Boundary.Index >= m.Boundary.Index &&
-                                    om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
+                                if (om.Boundary?.Index >= m.Boundary?.Index &&
+                                    om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
                                     removes.Add(om);
                             }
                         }
@@ -197,37 +223,43 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         #region Private Support Methods
 
         /// <summary>
-        /// Identify if new scan result is a better match than previous i.e. has a higher confidence.  Assumes unique list of scanResults.
+        /// Identify if new scan result is a better match than previous i.e. has a higher confidence.  Assumes unique list of MatchRecords.
         /// </summary>
-        /// <param name="scanResults"></param>
+        /// <param name="MatchRecords"></param>
         /// <param name="compareResult"></param>
         /// <param name="removeOld"></param>
         /// <returns></returns>
-        private bool BetterMatch(List<ScanResult> scanResults, ScanResult newScanResult, bool removeOld = true)
+        private bool BetterMatch(List<MatchRecord> MatchRecords, MatchRecord newMatchRecord, bool removeOld = true)
         {
             bool betterMatch = false;
             bool noMatch = true;
 
             //if list is empty the new match is the best match
-            if (!scanResults.Any())
+            if (!MatchRecords.Any())
             {
                 return true;
             }
 
-            foreach (ScanResult scanResult in scanResults)
+            MatchRecord? matchRecordToRemove = null;
+            foreach (MatchRecord MatchRecord in MatchRecords)
             {
-                foreach (string scanResultTag in scanResult.Rule.Tags ?? new string[] {""})
+                foreach (string matchRecordTag in MatchRecord.Rule.Tags ?? new string[] {""})
                 {
-                    foreach (string newScanResultTag in newScanResult.Rule.Tags ?? new string[] {""})
+                    foreach (string newMatchRecordTag in newMatchRecord.Rule.Tags ?? new string[] {""})
                     {
-                        if (scanResultTag == newScanResultTag)
+                        if (matchRecordTag == newMatchRecordTag)
                         {
+                            if (newMatchRecord.Tags.Any(x => x.Contains("AzureKeyVault")))
+                            {
+
+                            }
+
                             noMatch = false;
-                            if (newScanResult.Confidence > scanResult.Confidence)
+                            if (newMatchRecord.Confidence > MatchRecord.Confidence)
                             {
                                 if (removeOld)
                                 {
-                                    scanResults.Remove(scanResult);
+                                    matchRecordToRemove = MatchRecord;
                                 }
 
                                 betterMatch = true;
@@ -242,10 +274,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                 }
 
-                if (betterMatch)
-                {
-                    break;
-                }
+            }
+
+            if (removeOld && matchRecordToRemove != null)
+            {
+                MatchRecords.Remove(matchRecordToRemove);//safer to remove outside for enumeration
             }
 
             return betterMatch || noMatch;
@@ -321,6 +354,88 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
 
             return approved;
+        }
+
+        /// <summary>
+        /// Simple wrapper but keeps calling code consistent
+        /// Do not html code result which is accomplished later before out put to report
+        /// </summary>
+        private string ExtractTextSample(string fileText, int index, int length)
+        {
+            string result = "";
+            try
+            {
+                //some js file results may be too long for practical display
+                if (length > MAX_TEXT_SAMPLE_LENGTH)
+                {
+                    length = MAX_TEXT_SAMPLE_LENGTH;
+                }
+
+                result = fileText.Substring(index, length).Trim();
+            }
+            catch (Exception)
+            {
+                //control the error description and continue; error in rules engine possible
+                //WriteOnce.SafeLog("Unexpected indexing issue in ExtractTextSample.  Process continued", LogLevel.Error);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Located here to include during Match creation to avoid a call later or putting in constructor
+        /// Needed in match ensuring value exists at time of report writing rather than expecting a callback
+        /// from the template
+        /// </summary>
+        /// <returns></returns>
+        private string ExtractExcerpt(string text, int startLineNumber, int length = 10)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return "";
+            }
+
+            var lines = text.Split('\n');
+            var distance = (int)((length - 1.0) / 2.0);
+
+            // Sanity check
+            if (startLineNumber < 0)
+            {
+                startLineNumber = 0;
+            }
+
+            if (startLineNumber >= lines.Length)
+            {
+                startLineNumber = lines.Length - 1;
+            }
+
+            var excerptStartLine = Math.Max(0, startLineNumber - distance);
+            var excerptEndLine = Math.Min(lines.Length - 1, startLineNumber + distance);
+
+            /* If the code snippet we're viewing is already indented 16 characters minimum,
+             * we don't want to show all that extra white-space, so we'll find the smallest
+             * number of spaces at the beginning of each line and use that.
+             */
+
+            var minSpaces = -1;
+            for (var i = excerptStartLine; i <= excerptEndLine; i++)
+            {
+                var numPrefixSpaces = lines[i].TakeWhile(c => c == ' ').Count();
+                minSpaces = (minSpaces == -1 || numPrefixSpaces < minSpaces) ? numPrefixSpaces : minSpaces;
+            }
+
+            var sb = new StringBuilder();
+            // We want to go from (start - 5) to (start + 5) (off by one?)
+            // LINE=10, len=5, we want 8..12, so N-(L-1)/2 to N+(L-1)/2
+            // But cap those values at 0/end
+            for (var i = excerptStartLine; i <= excerptEndLine; i++)
+            {
+                string line = lines[i].Substring(minSpaces).TrimEnd();
+                sb.AppendLine(line);
+
+            }
+
+            return System.Net.WebUtility.HtmlEncode(sb.ToString());
         }
 
         /// <summary>

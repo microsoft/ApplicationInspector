@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.RulesEngine;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -153,16 +154,16 @@ namespace Microsoft.ApplicationInspector.CLI
         public void WriteMatch(MatchRecord match)
         {
             string output = _formatString.Replace("%F", match.FileName);
-            output = output.Replace("%l", match.Language.Name);
-            output = output.Replace("%t", match.Language.Type.ToString());
+            output = output.Replace("%l", match.LanguageInfo.Name);
+            output = output.Replace("%t", match.LanguageInfo.Type.ToString());
             output = output.Replace("%L", match.StartLocationLine.ToString());
             output = output.Replace("%C", match.StartLocationColumn.ToString());
             output = output.Replace("%l", match.EndLocationLine.ToString());
             output = output.Replace("%c", match.EndLocationColumn.ToString());
             output = output.Replace("%R", match.RuleId);
             output = output.Replace("%N", match.RuleName);
-            output = output.Replace("%S", match.Severity);
-            output = output.Replace("%X", match.PatternConfidence);
+            output = output.Replace("%S", match.Severity.ToString());
+            output = output.Replace("%X", match.Confidence.ToString());
             output = output.Replace("%D", match.RuleDescription);
             output = output.Replace("%m", match.Sample);
             output = output.Replace("%T", string.Join(',', match.Tags));
