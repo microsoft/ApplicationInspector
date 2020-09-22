@@ -65,7 +65,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// Pattern confidence in matching rule pattern
         /// </summary>
         [JsonProperty(PropertyName = "confidence")]
-        public Confidence? Confidence { get { return MatchingPattern?.Confidence; } }
+        public Confidence Confidence { get { return MatchingPattern?.Confidence ?? Confidence.Medium; } }
 
         /// <summary>
         /// Pattern type of matching pattern
@@ -83,7 +83,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// Internal to namespace only 
         /// </summary>
         [JsonIgnore]
-        public LanguageInfo? LanguageInfo { get; set; }
+        public LanguageInfo LanguageInfo { get; set; } = new LanguageInfo();
 
         /// <summary>
         /// Friendly source type
@@ -110,7 +110,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public string Excerpt { get; set; } = "";
 
         [JsonIgnore]
-        public Boundary? Boundary { get; set; }
+        public Boundary Boundary { get; set; } = new Boundary();
 
         /// <summary>
         /// Starting line location of the matching text

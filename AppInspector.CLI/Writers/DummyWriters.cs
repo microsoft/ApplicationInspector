@@ -11,19 +11,10 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             throw new System.NotImplementedException();
         }
-
-        public override void FlushAndClose()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 
     public class ExportDummyWriter : CommandResultsWriter
     {
-        public override void FlushAndClose()
-        {
-            throw new System.NotImplementedException();
-        }
 
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
@@ -33,11 +24,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
     public class TagTestDummyWriter : CommandResultsWriter
     {
-        public override void FlushAndClose()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
             throw new System.NotImplementedException();
@@ -46,11 +32,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
     public class TagDiffDummyWriter : CommandResultsWriter
     {
-        public override void FlushAndClose()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
             throw new System.NotImplementedException();
@@ -59,11 +40,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
     public class VerifyRulesDummyWriter : CommandResultsWriter
     {
-        public override void FlushAndClose()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
             throw new System.NotImplementedException();
@@ -72,11 +48,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
     public class PackRulesDummyWriter : CommandResultsWriter
     {
-        public override void FlushAndClose()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
             throw new System.NotImplementedException();

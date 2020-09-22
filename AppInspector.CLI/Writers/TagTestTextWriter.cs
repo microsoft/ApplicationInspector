@@ -49,12 +49,5 @@ namespace Microsoft.ApplicationInspector.CLI
                 FlushAndClose();
             }
         }
-
-        public override void FlushAndClose()
-        {
-            TextWriter.Flush();
-            TextWriter.Close();
-            WriteOnce.TextWriter = null;
-        }
     }
 }

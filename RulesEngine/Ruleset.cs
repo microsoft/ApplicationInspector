@@ -68,7 +68,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="filename"> Filename with rules </param>
         /// <param name="tag"> Tag for the rules </param>
-        public void AddFile(string filename, string? tag = null)
+        public void AddFile(string? filename, string? tag = null)
         {
             if (string.IsNullOrEmpty(filename))
                 throw new ArgumentException(nameof(filename));

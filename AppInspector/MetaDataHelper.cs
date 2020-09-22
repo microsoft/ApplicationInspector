@@ -52,7 +52,7 @@ namespace Microsoft.ApplicationInspector.Commands
             bool allowAdd = true;
 
             //special handling for standard characteristics in report
-            foreach (var tag in matchRecord.Tags)
+            foreach (var tag in matchRecord.Tags ?? new string[] { })
             {
                 switch (tag)
                 {
@@ -109,7 +109,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             bool CounterOnlyTagSet = false;
-            var selected = TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag)));
+            var selected = TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag ?? "")));
             foreach (var select in selected)
             {
                 CounterOnlyTagSet = true;
@@ -120,14 +120,14 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!CounterOnlyTagSet)
             {
                 //update list of unique tags as we go
-                foreach (string tag in matchRecord.Tags)
+                foreach (string tag in matchRecord.Tags ?? new string[] { })
                 {
                     _ = UniqueTags.TryAdd(tag,0);
                 }
 
                 if (allowAdd)
                 {
-                    Metadata.Matches.Add(matchRecord);
+                    Metadata?.Matches?.Add(matchRecord);
                 }
             }
             else
@@ -156,7 +156,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             foreach (MetricTagCounter metricTagCounter in TagCounters.Values)
             {
-                Metadata.TagCounters.Add(metricTagCounter);
+                Metadata?.TagCounters?.Add(metricTagCounter);
             }
         }
 
@@ -214,7 +214,7 @@ namespace Microsoft.ApplicationInspector.Commands
             string result = "";
             if (match.Tags.Any(s => s.Contains("Application.Type")))
             {
-                foreach (string tag in match.Tags)
+                foreach (string tag in match.Tags ?? new string[] { })
                 {
                     int index = tag.IndexOf("Application.Type");
                     if (-1 != index)

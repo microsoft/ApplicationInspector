@@ -20,9 +20,9 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static CommandResultsWriter GetWriter(CLICommandOptions options)
+        public static CommandResultsWriter? GetWriter(CLICommandOptions options)
         {
-            CommandResultsWriter writer = null;
+            CommandResultsWriter? writer;
 
             //allocate the right writer by cmd (options) type
             if (options is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)
@@ -64,7 +64,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <returns></returns>
         private static CommandResultsWriter GetAnalyzeWriter(CLIAnalyzeCmdOptions options)
         {
-            CommandResultsWriter writer = null;
+            CommandResultsWriter? writer;
 
             switch (options.OutputFileFormat.ToLower())
             {
@@ -98,7 +98,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         public static CommandResultsWriter GetExportWriter(CLIExportTagsCmdOptions options)
         {
-            CommandResultsWriter writer = null;
+            CommandResultsWriter? writer;
 
             switch (options.OutputFileFormat.ToLower())
             {
@@ -128,7 +128,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static CommandResultsWriter GetTagTestWriter(CLITagTestCmdOptions options)
         {
-            CommandResultsWriter writer = null;
+            CommandResultsWriter? writer;
 
             switch (options.OutputFileFormat.ToLower())
             {
@@ -158,7 +158,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static CommandResultsWriter GetTagDiffWriter(CLITagDiffCmdOptions options)
         {
-            CommandResultsWriter writer = null;
+            CommandResultsWriter? writer;
 
             switch (options.OutputFileFormat.ToLower())
             {
@@ -188,7 +188,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static CommandResultsWriter GetVerifyRulesWriter(CLIVerifyRulesCmdOptions options)
         {
-            CommandResultsWriter writer = null;
+            CommandResultsWriter? writer;
 
             switch (options.OutputFileFormat.ToLower())
             {
@@ -218,7 +218,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static CommandResultsWriter GetPackRulesWriter(CLIPackRulesCmdOptions options)
         {
-            CommandResultsWriter writer = null;
+            CommandResultsWriter? writer;
 
             switch (options.OutputFileFormat.ToLower())
             {
@@ -241,7 +241,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return writer;
         }
 
-        private static TextWriter GetTextWriter(string outputFileName)
+        private static TextWriter GetTextWriter(string? outputFileName)
         {
             TextWriter textWriter;
             if (String.IsNullOrEmpty(outputFileName))

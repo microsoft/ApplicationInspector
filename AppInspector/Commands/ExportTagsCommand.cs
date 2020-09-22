@@ -16,7 +16,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class ExportTagsOptions : CommandOptions
     {
-        public string CustomRulesPath { get; set; }
+        public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
     }
 
@@ -110,10 +110,10 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!_options.IgnoreDefaultRules)
             {
-                _rules = Utils.GetDefaultRuleSet(_options.Log);
+                _rules = Utils.GetDefaultRuleSet(_options?.Log);
             }
 
-            if (!string.IsNullOrEmpty(_options.CustomRulesPath))
+            if (!string.IsNullOrEmpty(_options?.CustomRulesPath))
             {
                 if (_rules == null)
                 {
@@ -157,10 +157,10 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                foreach (Rule r in _rules)
+                foreach (Rule? r in _rules)
                 {
                     //builds a list of unique tags
-                    foreach (string t in r.Tags)
+                    foreach (string t in r?.Tags ?? new string[] { })
                     {
                         if (uniqueTags.ContainsKey(t))
                         {

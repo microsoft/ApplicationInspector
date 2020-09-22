@@ -22,31 +22,31 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Detected or derived project name
         /// </summary>
         [JsonProperty(PropertyName = "applicationName")]
-        public string ApplicationName { get; set; }
+        public string? ApplicationName { get; set; }
 
         /// <summary>
         /// Source path provided argument
         /// </summary>
         [JsonProperty(PropertyName = "sourcePath")]
-        public string SourcePath { get; set; }
+        public string? SourcePath { get; set; }
 
         /// <summary>
         /// Detected project source version
         /// </summary>
         [JsonProperty(PropertyName = "sourceVersion")]
-        public string SourceVersion { get; set; }
+        public string? SourceVersion { get; set; }
 
         /// <summary>
         /// Detected source authors
         /// </summary>
         [JsonProperty(PropertyName = "authors")]
-        public string Authors { get; set; }
+        public string? Authors { get; set; }
 
         /// <summary>
         /// Detected source description
         /// </summary>
         [JsonProperty(PropertyName = "description")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         private readonly DateTime _lastUpdated = DateTime.MinValue;
 
@@ -54,13 +54,13 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Last modified date for source code scanned
         /// </summary>
         [JsonProperty(PropertyName = "lastUpdated")]
-        public string LastUpdated { get; set; }
+        public string? LastUpdated { get; set; }
 
         /// <summary>
         /// Date of analyze scan
         /// </summary>
         [JsonProperty(PropertyName = "dateScanned")]
-        public string DateScanned { get; set; }
+        public string? DateScanned { get; set; }
 
         //stats
 
@@ -108,38 +108,46 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Total unique matches by tag
         /// </summary>
         [JsonProperty(PropertyName = "uniqueMatchesCount")]
-        public int UniqueMatchesCount => UniqueTags.Count;  //for liquid use
+        public int UniqueMatchesCount { 
+            get 
+            {
+                if (UniqueTags != null)
+                    return UniqueTags.Count;
+                else 
+                    return 0; 
+            } 
+        }
 
         /// <summary>
         /// List of detected package types 
         /// </summary>
         [JsonProperty(PropertyName = "packageTypes")]
-        public List<string> PackageTypes { get; set; } = new List<string>();
+        public List<string>? PackageTypes { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected application types
         /// </summary>
         [JsonProperty(PropertyName = "appTypes")]
-        public List<string> AppTypes { get; set; } = new List<string>();
+        public List<string>? AppTypes { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected unique tags 
         /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
-        public List<string> UniqueTags { get; set; } = new List<string>();
+        public List<string>? UniqueTags { get; set; } = new List<string>();
 
 
         /// <summary>
         /// List of detected unique code dependency includes
         /// </summary>
         [JsonProperty(PropertyName = "uniqueDependencies")]
-        public List<string> UniqueDependencies { get; set; } = new List<string>();
+        public List<string>? UniqueDependencies { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected output types
         /// </summary>
         [JsonProperty(PropertyName = "outputs")]
-        public List<string> Outputs { get; set; } = new List<string>();
+        public List<string>? Outputs { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected target types
@@ -151,43 +159,43 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected OS targets
         /// </summary>
         [JsonProperty(PropertyName = "OSTargets")]
-        public List<string> OSTargets { get; set; } = new List<string>();
+        public List<string>? OSTargets { get; set; } = new List<string>();
 
         /// <summary>
         /// LIst of detected file types (extension based)
         /// </summary>
         [JsonProperty(PropertyName = "fileExtensions")]
-        public List<string> FileExtensions { get; set; } = new List<string>();
+        public List<string>? FileExtensions { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected cloud host targets
         /// </summary>
         [JsonProperty(PropertyName = "cloudTargets")]
-        public List<string> CloudTargets { get; set; } = new List<string>();
+        public List<string>? CloudTargets { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected cpu targets
         /// </summary>
         [JsonProperty(PropertyName = "CPUTargets")]
-        public List<string> CPUTargets { get; set; } = new List<string>();
+        public List<string>? CPUTargets { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected programming languages used and count of files 
         /// </summary>
         [JsonProperty(PropertyName = "languages")]
-        public ImmutableSortedDictionary<string, int> Languages { get; set; } //unable to init here for constr arg
+        public ImmutableSortedDictionary<string, int>? Languages { get; set; } //unable to init here for constr arg
 
         /// <summary>
         /// List of detected tag counters i.e. metrics
         /// </summary>
         [JsonProperty(PropertyName = "tagCounters")]
-        public List<MetricTagCounter> TagCounters { get; set; } = new List<MetricTagCounter>();
+        public List<MetricTagCounter>? TagCounters { get; set; } = new List<MetricTagCounter>();
 
         /// <summary>
         /// List of detailed MatchRecords from scan
         /// </summary>
         [JsonProperty(PropertyName = "detailedMatchList")]
-        public List<MatchRecord> Matches { get; } = new List<MatchRecord>();
+        public List<MatchRecord>? Matches { get; } = new List<MatchRecord>();
 
         public MetaData(string applicationName, string sourcePath)
         {

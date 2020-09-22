@@ -11,6 +11,6 @@ namespace Microsoft.ApplicationInspector.Commands
     public class Result
     {
         [JsonProperty(Order = 1, PropertyName = "appVersion")]
-        public string AppVersion { get; set; }
+        public string? AppVersion { get; set; }
     }
 }

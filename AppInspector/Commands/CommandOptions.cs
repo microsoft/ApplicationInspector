@@ -14,10 +14,10 @@ namespace Microsoft.ApplicationInspector.Commands
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
         public string ConsoleVerbosityLevel { get; set; } = "medium";
 
-        public Logger Log { get; set; }
+        public Logger? Log { get; set; }
 
         [Option('l', "log-file-path", Required = false, HelpText = "Log file path")]
-        public string LogFilePath { get; set; }
+        public string? LogFilePath { get; set; }
 
         [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Debug|Info|Warn|Error|Trace|Fatal|Off]", Default = "Error")]
         public string LogFileLevel { get; set; } = "Error";

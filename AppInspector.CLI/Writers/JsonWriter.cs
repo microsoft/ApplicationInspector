@@ -18,29 +18,36 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
                 WriteOnce.Result("Results");
             }
 
-            if (result is TagTestResult)
+            if (TextWriter != null)
             {
-                jsonSerializer.Serialize(TextWriter, (TagTestResult)result);
-            }
-            else if (result is TagDiffResult)
-            {
-                jsonSerializer.Serialize(TextWriter, (TagDiffResult)result);
-            }
-            else if (result is VerifyRulesResult)
-            {
-                jsonSerializer.Serialize(TextWriter, (VerifyRulesResult)result);
-            }
-            else if (result is ExportTagsResult)
-            {
-                jsonSerializer.Serialize(TextWriter, (ExportTagsResult)result);
-            }
-            else if (result is PackRulesResult)
-            {
-                jsonSerializer.Serialize(TextWriter, (PackRulesResult)result);
+                if (result is TagTestResult)
+                {
+                    jsonSerializer.Serialize(TextWriter, (TagTestResult)result);
+                }
+                else if (result is TagDiffResult)
+                {
+                    jsonSerializer.Serialize(TextWriter, (TagDiffResult)result);
+                }
+                else if (result is VerifyRulesResult)
+                {
+                    jsonSerializer.Serialize(TextWriter, (VerifyRulesResult)result);
+                }
+                else if (result is ExportTagsResult)
+                {
+                    jsonSerializer.Serialize(TextWriter, (ExportTagsResult)result);
+                }
+                else if (result is PackRulesResult)
+                {
+                    jsonSerializer.Serialize(TextWriter, (PackRulesResult)result);
+                }
+                else
+                {
+                    throw new System.Exception("Unexpected object type for json writer");
+                }
             }
             else
             {
-                throw new System.Exception("Unexpected object type for json writer");
+                WriteOnce.Log?.Error("Unexpected null TextWriter");
             }
 
             WriteOnce.NewLine();
@@ -49,13 +56,6 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
             {
                 FlushAndClose();
             }
-        }
-
-        public override void FlushAndClose()
-        {
-            TextWriter.Flush();
-            TextWriter.Close();
-            WriteOnce.TextWriter = null;
         }
     }
 }

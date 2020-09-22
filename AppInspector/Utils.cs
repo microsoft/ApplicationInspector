@@ -23,9 +23,9 @@ namespace Microsoft.ApplicationInspector.Commands
             CriticalError = 2
         }
 
-        private static string _basePath;
-        public static string LogFilePath { get; set; } //used to capture and report log path for console messages
-        public static Logger Logger { get; set; }
+        private static string? _basePath;
+        public static string? LogFilePath { get; set; } //used to capture and report log path for console messages
+        public static Logger? Logger { get; set; }
 
         public enum AppPath { basePath, defaultRulesSrc, defaultRulesPackedFile, defaultLog, tagGroupPref, tagCounterPref };
 
@@ -93,13 +93,13 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="logger"></param>
         /// <returns></returns>
-        public static RuleSet GetDefaultRuleSet(Logger logger = null)
+        public static RuleSet GetDefaultRuleSet(Logger? logger = null)
         {
             RuleSet ruleSet = new RuleSet(logger);
             Assembly assembly = Assembly.GetExecutingAssembly();
             string filePath = "Microsoft.ApplicationInspector.Commands.defaultRulesPkd.json";
-            Stream resource = assembly.GetManifestResourceStream(filePath);
-            using (StreamReader file = new StreamReader(resource))
+            Stream? resource = assembly.GetManifestResourceStream(filePath);
+            using (StreamReader file = new StreamReader(resource ?? new MemoryStream()))
             {
                 ruleSet.AddString(file.ReadToEnd(), filePath, null);
             }
@@ -107,8 +107,14 @@ namespace Microsoft.ApplicationInspector.Commands
             return ruleSet;
         }
 
-        public static void OpenBrowser(string url)
+        public static void OpenBrowser(string? url)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                WriteOnce.Log?.Error("Bad url for OpenBrowser method");
+                return;
+            }
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 try
@@ -193,9 +199,9 @@ namespace Microsoft.ApplicationInspector.Commands
             if (File.Exists(opts.LogFilePath))
             {
                 // Read the file and display it line by line.
-                System.IO.StreamReader file = new System.IO.StreamReader(opts.LogFilePath);
-                string line = file.ReadLine();
-                file.Close();
+                StreamReader file = new StreamReader(opts.LogFilePath);
+                string line = file?.ReadLine() ?? "";
+                file?.Close();
                 if (!string.IsNullOrEmpty(line))
                 {
                     if (line.Contains("AppInsLog"))//prevent file other than our logs from deletion

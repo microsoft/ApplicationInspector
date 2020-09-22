@@ -12,9 +12,9 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     public class TagTestOptions : CommandOptions
     {
-        public string SourcePath { get; set; }
+        public string? SourcePath { get; set; }
         public string TestType { get; set; } = "rulespresent";
-        public string CustomRulesPath { get; set; }
+        public string? CustomRulesPath { get; set; }
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
     }
 
@@ -23,7 +23,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <summary>
         /// Tag name from the applicable rule
         /// </summary>
-        public string Tag { get; set; }
+        public string? Tag { get; set; }
 
         /// <summary>
         /// True/false indicator of test status for given tag
@@ -145,7 +145,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
             }
 
-            _rulesSet = verifier.CompiledRuleset;
+            _rulesSet = verifier.CompiledRuleset ?? new RuleSet(null);
 
             //error check based on ruleset not path enumeration
             if (!_rulesSet.Any())
@@ -178,12 +178,12 @@ namespace Microsoft.ApplicationInspector.Commands
                 //setup analyze call with silent option
                 AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeOptions
                 {
-                    SourcePath = _options.SourcePath,
+                    SourcePath = _options?.SourcePath ?? "",
                     IgnoreDefaultRules = true,
-                    CustomRulesPath = _options.CustomRulesPath,
-                    FilePathExclusions = _options.FilePathExclusions,
+                    CustomRulesPath = _options?.CustomRulesPath ?? "",
+                    FilePathExclusions = _options?.FilePathExclusions ?? "",
                     ConsoleVerbosityLevel = "none",
-                    Log = _options.Log
+                    Log = _options?.Log
                 });
 
                 //get and perform initial analyze on results
@@ -206,24 +206,24 @@ namespace Microsoft.ApplicationInspector.Commands
                     tagTestResult.ResultCode = TagTestResult.ExitCode.TestPassed;
 
                     int count = 0;
-                    int sizeTags = analyze1.Metadata.UniqueTags.Count;
+                    int sizeTags = analyze1.Metadata.UniqueTags != null ? analyze1.Metadata.UniqueTags.Count : 0;
                     string[] tagsFound = new string[sizeTags];
 
-                    foreach (string tag in analyze1.Metadata.UniqueTags)
+                    foreach (string tag in analyze1.Metadata.UniqueTags ?? new List<string>())
                     {
                         tagsFound[count++] = tag;
                     }
 
-                    foreach (Rule rule in _rulesSet)
+                    foreach (Rule? rule in _rulesSet)
                     {
                         //supports both directions by generalizing
-                        string[] testList1 = _arg_tagTestType == TagTestType.RulesNotPresent ?
-                            rule.Tags : tagsFound;
+                        string[]? testList1 = _arg_tagTestType == TagTestType.RulesNotPresent ?
+                            rule?.Tags : tagsFound;
 
-                        string[] testList2 = _arg_tagTestType == TagTestType.RulesNotPresent ?
-                            tagsFound : rule.Tags;
+                        string[]? testList2 = _arg_tagTestType == TagTestType.RulesNotPresent ?
+                            tagsFound : rule?.Tags;
 
-                        foreach (string t in testList2)
+                        foreach (string t in testList2 ?? new string[] { })
                         {
                             if (TagTest(testList1, t))
                             {
@@ -249,7 +249,7 @@ namespace Microsoft.ApplicationInspector.Commands
             return tagTestResult;
         }
 
-        private bool TagTest(string[] list, string test)
+        private bool TagTest(string[]? list, string? test)
         {
             if (_arg_tagTestType == TagTestType.RulesNotPresent)
             {

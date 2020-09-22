@@ -22,7 +22,7 @@ namespace Microsoft.ApplicationInspector.CLI
         private class TagsFile
         {
             [JsonProperty(PropertyName = "tags")]
-            public string[] Tags { get; set; }
+            public string[]? Tags { get; set; }
         }
 
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
@@ -40,15 +40,18 @@ namespace Microsoft.ApplicationInspector.CLI
 
             if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
             {
-                List<string> keys = new List<string>(analyzeResult.Metadata.UniqueTags);
+                List<string> keys = analyzeResult.Metadata.UniqueTags ?? new List<string>();
                 TagsFile tags = new TagsFile() { Tags = keys.ToArray() };
-                TextWriter.Write(JsonConvert.SerializeObject(tags, Formatting.Indented));
+                TextWriter?.Write(JsonConvert.SerializeObject(tags, Formatting.Indented));
             }
             else
             {
                 JsonSerializer jsonSerializer = new JsonSerializer();
                 jsonSerializer.Formatting = Formatting.Indented;
-                jsonSerializer.Serialize(TextWriter, analyzeResult);
+                if (TextWriter != null)
+                {
+                    jsonSerializer.Serialize(TextWriter, analyzeResult);
+                }
             }
 
             WriteOnce.NewLine();
@@ -57,13 +60,6 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 FlushAndClose();
             }
-        }
-
-        public override void FlushAndClose()
-        {
-            TextWriter.Flush();
-            TextWriter.Close();
-            WriteOnce.TextWriter = null;
         }
     }
 }

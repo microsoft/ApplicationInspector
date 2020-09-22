@@ -14,7 +14,7 @@ namespace Microsoft.ApplicationInspector.Commands
     public class PackRulesOptions : CommandOptions
     {
         public bool RepackDefaultRules { get; set; }
-        public string CustomRulesPath { get; set; }
+        public string? CustomRulesPath { get; set; }
         public bool NotIndented { get; set; }
     }
 
@@ -34,7 +34,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of Rules to pack as specified in pack command
         /// </summary>
         [JsonProperty(Order = 3)]
-        public List<Rule> Rules { get; set; }
+        public List<Rule>? Rules { get; set; }
     }
 
     /// <summary>
@@ -44,7 +44,7 @@ namespace Microsoft.ApplicationInspector.Commands
     public class PackRulesCommand
     {
         private readonly PackRulesOptions _options;
-        private string _rules_path;
+        private string? _rules_path;
 
         public PackRulesCommand(PackRulesOptions opt)
         {
@@ -138,7 +138,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                RulesVerifier verifier = new RulesVerifier(_rules_path, _options.Log);
+                RulesVerifier verifier = new RulesVerifier(_rules_path, _options?.Log);
                 verifier.Verify();
                 if (!verifier.IsVerified)
                 {
