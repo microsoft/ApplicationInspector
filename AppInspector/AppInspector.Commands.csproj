@@ -56,11 +56,11 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
-    <PackageReference Include="DotLiquid" Version="2.0.351" />
-    <PackageReference Include="Microsoft.CST.OAT" Version="1.0.70" />
+    <PackageReference Include="DotLiquid" Version="2.0.361" />
+    <PackageReference Include="Microsoft.CST.OAT" Version="1.0.74" />
     <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.0.36" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NLog" Version="4.7.2" />
+    <PackageReference Include="NLog" Version="4.7.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -93,7 +93,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.1.91" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.2.31" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="BeforeCompile">

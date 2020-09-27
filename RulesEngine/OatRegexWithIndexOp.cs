@@ -99,10 +99,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                                 Index = m.Index + tc.GetLineBoundary(tc.LineNumber).Index
                                             };
 
+                                            //regex patterns will be indexed off data while string patterns result in N clauses
+                                            int patternIndex = clause.Label == "0" ? i : Convert.ToInt32(clause.Label);
+
                                             // Should return only scoped matches
                                             if (tc.ScopeMatch(src.Scopes, translatedBoundary))
                                             {
-                                                outmatches.Add((Convert.ToInt32(clause.Label), translatedBoundary));
+                                                outmatches.Add((patternIndex, translatedBoundary));
                                             }
                                         }
                                     }

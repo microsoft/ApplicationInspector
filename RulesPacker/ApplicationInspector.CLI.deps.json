@@ -96,7 +96,6 @@
           "CommandLineParser": "2.7.82",
           "DotLiquid": "2.0.325",
           "Microsoft.ApplicationInspector.RulesEngine": "0.0.0-placeholder",
-          "Microsoft.MultiExtractor": "1.0.0",
           "NLog": "4.7.0",
           "Newtonsoft.Json": "12.0.3",
           "SharpZipLib": "1.2.0",
@@ -104,14 +103,6 @@
         },
         "runtime": {
           "ApplicationInspector.Commands.dll": {}
-        }
-      },
-      "MultiExtractor/1.1.0.0": {
-        "runtime": {
-          "MultiExtractor.dll": {
-            "assemblyVersion": "1.1.0.0",
-            "fileVersion": "1.1.30.50338"
-          }
         }
       }
     }
@@ -199,11 +190,6 @@
     },
     "Microsoft.CST.ApplicationInspector.Commands/0.0.0-placeholder": {
       "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "MultiExtractor/1.1.0.0": {
-      "type": "reference",
       "serviceable": false,
       "sha512": ""
     }

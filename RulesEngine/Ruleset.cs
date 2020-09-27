@@ -164,7 +164,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else
                     {
-                        
                         clauses.Add(new OATRegexWithIndexClause(scopes)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
