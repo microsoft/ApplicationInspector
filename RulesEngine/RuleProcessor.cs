@@ -378,7 +378,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 _logger?.Error(e.Message + " in ExtractTextSample");
             }
 
-            return System.Net.WebUtility.HtmlEncode(result);
+            return result;
         }
 
         /// <summary>
@@ -434,7 +434,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             }
 
-            return System.Net.WebUtility.HtmlEncode(sb.ToString());
+            return sb.ToString();
         }
 
         /// <summary>

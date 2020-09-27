@@ -53,6 +53,8 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private void WriteHtmlResult()
         {
+            RenderResultsSafeforHTML();
+
             //Grab any local css and js files that are needed i.e. don't have hosted URL's or are proprietary
             string allCSS = "<style>\n" + MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html","resources","css"));
             string allJS = "<script type=\"text/javascript\">\n" + MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath),"html","resources","js"));
@@ -156,8 +158,64 @@ namespace Microsoft.ApplicationInspector.CLI
             return stringBuilder.ToString();
         }
 
-
         #region UIAndReportResultsHelp
+
+        /// <summary>
+        /// Renders code i.e. user input safe for html display for default report
+        /// Delayed html encoding allows original values to be rendered for the output form i.e.
+        /// json, text formats, even nuget objects retain the originals for readability and 
+        /// for managing output transformations as desired
+        /// </summary>
+        private void RenderResultsSafeforHTML()
+        {
+            //safeguard simple string meta-data
+            if (_appMetaData?.ApplicationName != null)
+                _appMetaData.ApplicationName = SafeString(_appMetaData?.ApplicationName);
+
+            if (_appMetaData?.Description != null)
+                _appMetaData.Description = SafeString(_appMetaData?.Description);
+
+            if (_appMetaData?.Authors != null)
+                _appMetaData.Authors = SafeString(_appMetaData?.Authors);
+
+            if (_appMetaData?.SourceVersion != null)
+                _appMetaData.SourceVersion = SafeString(_appMetaData?.SourceVersion);
+
+            //safeguard lists data
+            SafeList(_appMetaData?.AppTypes);
+            SafeList(_appMetaData?.CloudTargets);
+            SafeList(_appMetaData?.OSTargets);
+            SafeList(_appMetaData?.Outputs);
+            SafeList(_appMetaData?.PackageTypes);
+            SafeList(_appMetaData?.Targets);
+            SafeList(_appMetaData?.CPUTargets);
+
+            //safeguard displayable fields in match records
+            foreach (MatchRecord matchRecord in _appMetaData?.Matches ?? new List<MatchRecord>())
+            {
+                //safeguard sample output now that we've matched properties for blocking browser xss
+                matchRecord.Sample = System.Net.WebUtility.HtmlEncode(matchRecord.Sample);
+                matchRecord.Excerpt = System.Net.WebUtility.HtmlEncode(matchRecord.Excerpt);
+            }
+        }
+
+        private void SafeList(List<string>? valuesList)
+        {
+            for (int i = 0; i < valuesList?.Count; i++)
+            {
+                valuesList[i] = SafeString(valuesList[i]);
+            }
+        }
+
+        private string SafeString(string? value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                return System.Net.WebUtility.HtmlEncode(value);
+            }
+
+            return "";
+        }
 
         /// <summary>
         /// Processing for organizing results into easy to use TagGroups for customizable display organization in HTML UI

@@ -98,9 +98,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
 
-            //safeguard sample output now that we've matched properties for blocking browser xss
-            matchRecord.Sample = System.Net.WebUtility.HtmlEncode(matchRecord.Sample);
-
             //Special handling; attempt to detect app types...review for multiple pattern rule limitation
             string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
@@ -280,10 +277,16 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 return ExtractXMLValue(s);
             }
-            else
+            else if (s.ToLower().Contains("<"))
+            {
+                return ExtractXMLValueMultiLine(s);
+            }
+            else if (s.ToLower().Contains(":"))
             {
                 return ExtractJSONValue(s);
             }
+
+            return s;
         }
 
         private static string ExtractJSONValue(string s)
@@ -301,7 +304,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 result = s;
             }
 
-            return System.Net.WebUtility.HtmlEncode(result);
+            return result;
         }
 
         private string ExtractXMLValue(string s)
@@ -319,7 +322,24 @@ namespace Microsoft.ApplicationInspector.Commands
                 result = s;
             }
 
-            return System.Net.WebUtility.HtmlEncode(result);
+            return result;
+        }
+
+        private string ExtractXMLValueMultiLine(string s)
+        {
+            string result = "";
+            try
+            {
+                int firstTag = s.IndexOf(">");
+                var value = s.Substring(firstTag + 1);
+                result = value;
+            }
+            catch (Exception)
+            {
+                result = s;
+            }
+
+            return result;
         }
     }
 
