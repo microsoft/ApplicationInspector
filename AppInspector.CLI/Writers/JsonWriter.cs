@@ -36,9 +36,9 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
                 {
                     jsonSerializer.Serialize(TextWriter, (ExportTagsResult)result);
                 }
-                else if (result is PackRulesResult)
+                else if (result is PackRulesResult packRulesResult)
                 {
-                    jsonSerializer.Serialize(TextWriter, (PackRulesResult)result);
+                    jsonSerializer.Serialize(TextWriter, packRulesResult.Rules);//write rules array only to disk
                 }
                 else
                 {
