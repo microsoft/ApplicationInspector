@@ -72,7 +72,7 @@ stages:
   dependsOn:
   - SDL
   - Build
-  condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI'))
+  condition: and(succeeded())
   jobs:
   - job: sign_hash_release
     displayName: Code Sign, Generate Hashes, Publish Public Releases
