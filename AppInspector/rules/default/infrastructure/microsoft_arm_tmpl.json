@@ -1,0 +1,175 @@
+[
+  {
+    "name": "Infrastructure As Code: Microsoft Azure ARM",
+    "id": "AI053600",
+    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Metadata.Infrastructure.ARM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "DeploymentOperationsExtensions|DeploymentScriptsClient|IDeploymentOperations|IDeploymentScriptsClient",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: Microsoft Azure ARM",
+    "id": "AI053700",
+    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "applies_to": [
+    ],
+    "tags": [
+      "Metadata.Infrastructure.ARM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "https://schema\\.management\\.azure\\.com/schemas/.*deploymentTemplate\\.json",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: Microsoft Azure ARM",
+    "id": "AI053800",
+    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "Metadata.Infrastructure.ARM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(New|Update|Remove)-(AzTag|AzResourceGroupDeployment|AzSubscriptionDeployment)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "az group create|az deployment create|az ts create",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: Microsoft Azure ARM",
+    "id": "AI053900",
+    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "applies_to": [
+    ],
+    "tags": [
+      "Metadata.Infrastructure.ARM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "https:\/\/management\\.azure\\.com\/subscriptions\/.*\/resourcegroups\/.*\/providers\/Microsoft\\.Resources\/deployments",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "https:\/\/management\\.azure\\.com\/subscriptions/.*\/providers\/Microsoft\\.Resources\/deployments",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "https:\/\/management\\.azure\\.com\/providers\/Microsoft\\.Management\/managementGroups\/providers\/Microsoft\\.Resources\/deployments",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "https:\/\/management\\.azure\\.com\/providers\/Microsoft\\.Resources\/deployments",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: Microsoft Azure ARM",
+    "id": "AI054000",
+    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "Metadata.Infrastructure.ARM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Deployment\\.Execution",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": "add conditions to raise confidence level"
+      },
+      {
+        "pattern": "com\\.microsoft\\.azure\\.management\\.resources",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": "add conditions to raise confidence level"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: Microsoft Azure ARM",
+    "id": "AI054100",
+    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "Metadata.Infrastructure.ARM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "from azure.mgmt.resource import ResourceManagementClient",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": "add conditions to raise confidence level"
+      }
+    ]
+  }
+]

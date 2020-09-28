@@ -249,9 +249,16 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     rulesSet.AddDirectory(_options.CustomRulesPath);
                 }
-                else if (File.Exists(_options.CustomRulesPath))
+                else if (File.Exists(_options.CustomRulesPath)) //verify custom rules before use
                 {
-                    rulesSet.AddFile(_options.CustomRulesPath);
+                    RulesVerifier verifier = new RulesVerifier(_options.CustomRulesPath, _options.Log);
+                    verifier.Verify();
+                    if (!verifier.IsVerified)
+                    {
+                        throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED, _options.CustomRulesPath));
+                    }
+
+                    rulesSet.AddRange(verifier.CompiledRuleset);
                 }
                 else
                 {

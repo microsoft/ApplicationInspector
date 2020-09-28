@@ -125,6 +125,11 @@
             "searchPattern": "Framework.CMS",
             "displayName": "Content management system",
             "detectedIcon": "fab fa-wordpress"
+          },
+          {
+            "searchPattern": "Metadata.Infrastructure",
+            "displayName": "Infrastructure as Code",
+            "detectedIcon": "fas fa-dolly"
           }
         ]
       },

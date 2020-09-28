@@ -88,7 +88,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         ///     Adds the elements of the collection to the Ruleset
         /// </summary>
         /// <param name="collection"> Collection of rules </param>
-        public void AddRange(IEnumerable<Rule> collection)
+        public void AddRange(IEnumerable<Rule>? collection)
         {
             foreach (var rule in collection.Select(AppInspectorRuleToOatRule))
             {
