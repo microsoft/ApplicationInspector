@@ -102,7 +102,7 @@ stages:
     - task: ExtractFiles@1
       displayName: Extract Artifacts for Signing
       inputs:
-        archiveFilePatterns: '$(Build.BinariesDirectory)\*.zip'
+        archiveFilePatterns: '$(Build.BinariesDirectory)\Unsigned_Binaries\*.zip'
         destinationFolder: '$(Build.BinariesDirectory)'
         cleanDestinationFolder: false
     - task: AntiMalware@3
