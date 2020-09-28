@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Infrastructure As Code: Hashicorp Packers",
+    "id": "AI053400",
+    "description": "Infrastructure As Code: Packers",
+    "applies_to": [
+      "json"
+    ],
+    "tags": [
+      "Metadata.Infrastructure.Packers"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "builders\": \\[",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

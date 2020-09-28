@@ -230,8 +230,18 @@
     "type": "build"
   },
   {
-    "name": "typescript",
+    "name": "typescript-config",
     "extensions": [ "tsconfig.json", "typings.json" ],
+    "type": "build"
+  },
+  {
+    "name": "json",
+    "extensions": [ ".json" ],
+    "type": "build"
+  },
+  {
+    "name": "terraform",
+    "extensions": [ ".tf" ],
     "type": "build"
   },
   {

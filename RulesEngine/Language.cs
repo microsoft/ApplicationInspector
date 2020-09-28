@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -66,7 +67,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 foreach (LanguageInfo item in Instance.Languages)
                 {
-                    if (Array.Exists(item.Extensions ?? Array.Empty<string>(), x => x.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase)))
+                    if (item.Name == "typescript-config")//special case where extension used for exact match to a single type
+                    {
+                        if (item.Extensions.Any(x => x.ToLower().Equals(file)))
+                        {
+                            info = item;
+                            return true;
+                        }
+                    }
+                    else if (Array.Exists(item.Extensions ?? Array.Empty<string>(), x => x.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase)))
                     {
                         info = item;
                         return true;
