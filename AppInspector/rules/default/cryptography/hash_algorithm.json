@@ -124,17 +124,17 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "hashset",
+          "pattern": "(NS)*Hashset|Hashtable|Hashmap",
           "type": "regex-word",
           "scopes": [
             "code"
           ],
           "modifiers": [ "i" ],
-          "_comment": ""
+          "_comment": "varies by language e.g. HashTable"
         },
-        "search_in": "finding-region(0,0)",
-        "negate_finding": false,
-        "_comment": ""
+        "search_in": "finding-only",
+        "negate_finding": true,
+        "_comment": "means not directly related to crypto"
       }
     ]
   }

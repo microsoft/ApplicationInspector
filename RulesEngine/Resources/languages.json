@@ -248,5 +248,10 @@
     "name": ".config",
     "extensions": [ ".config" ],
     "type": "build"
+  },
+  {
+    "name": "Package.appxmanifest",
+    "extensions": [ ".appxmanifest" ],
+    "type": "build"
   }
 ]

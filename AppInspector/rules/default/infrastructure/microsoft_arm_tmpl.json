@@ -1,7 +1,7 @@
 [
   {
     "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI053600",
+    "id": "AI031563",
     "description": "Infrastructure As Code: Microsoft Azure ARM",
     "applies_to": [
       "csharp"
@@ -23,7 +23,7 @@
   },
   {
     "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI053700",
+    "id": "AI031564",
     "description": "Infrastructure As Code: Microsoft Azure ARM",
     "applies_to": [
     ],
@@ -44,7 +44,7 @@
   },
   {
     "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI053800",
+    "id": "AI031565",
     "description": "Infrastructure As Code: Microsoft Azure ARM",
     "applies_to": [
       "powershell"
@@ -74,7 +74,7 @@
   },
   {
     "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI053900",
+    "id": "AI031566",
     "description": "Infrastructure As Code: Microsoft Azure ARM",
     "applies_to": [
     ],
@@ -119,7 +119,7 @@
   },
   {
     "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI054000",
+    "id": "AI031567",
     "description": "Infrastructure As Code: Microsoft Azure ARM",
     "applies_to": [
       "java"
@@ -151,7 +151,7 @@
   },
   {
     "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI054100",
+    "id": "AI031568",
     "description": "Infrastructure As Code: Microsoft Azure ARM",
     "applies_to": [
       "python"
