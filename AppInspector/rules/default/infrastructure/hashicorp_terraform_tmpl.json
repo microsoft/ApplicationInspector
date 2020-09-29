@@ -1,13 +1,13 @@
 [
   {
-    "name": "Infrastructure As Code: Hashicorp Terraform",
+    "name": "Infrastructure As Code: Terraform (Hashicorp)",
     "id": "AI031566",
-    "description": "Infrastructure As Code: Terraform",
+    "description": "Infrastructure As Code: Terraform (Hashicorp)",
     "applies_to": [
       "terraform"
     ],
     "tags": [
-      "Metadata.Infrastructure.Terraform"
+      "Metadata.Infrastructure.Terraform.Hashicorp"
     ],
     "severity": "moderate",
     "patterns": [

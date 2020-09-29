@@ -1,8 +1,8 @@
 [
   {
-    "name": "Infrastructure As Code: Deployment General (Microsoft ARM)",
+    "name": "Infrastructure As Code: Deployment (Microsoft ARM)",
     "id": "AI031567",
-    "description": "Infrastructure As Code: Deployment General (Microsoft ARM)",
+    "description": "Infrastructure As Code: Deployment (Microsoft ARM)",
     "applies_to": [
       "csharp"
     ],
@@ -164,7 +164,7 @@
     "applies_to": [
     ],
     "tags": [
-      "Metadata.Infrastructure.ARM"
+      "Metadata.Infrastructure.ARM.API.General"
     ],
     "severity": "moderate",
     "patterns": [
@@ -195,14 +195,14 @@
     ]
   },
   {
-    "name": "Infrastructure As Code: Deployment General (Microsoft ARM)",
+    "name": "Infrastructure As Code: Deployment (Microsoft ARM)",
     "id": "AI031573",
-    "description": "Infrastructure As Code: Deployment General (Microsoft ARM)",
+    "description": "Infrastructure As Code: Deployment (Microsoft ARM)",
     "applies_to": [
       "java"
     ],
     "tags": [
-      "Metadata.Infrastructure.ARM"
+      "Metadata.Infrastructure.ARM.Deployment"
     ],
     "severity": "moderate",
     "patterns": [
@@ -214,7 +214,21 @@
         ],
         "confidence": "medium",
         "_comment": "add conditions to raise confidence level"
-      },
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: General (Microsoft ARM)",
+    "id": "AI031574",
+    "description": "Infrastructure As Code: General (Microsoft ARM)",
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "Metadata.Infrastructure.ARM.General"
+    ],
+    "severity": "moderate",
+    "patterns": [
       {
         "pattern": "com\\.microsoft\\.azure\\.management\\.resources",
         "type": "regex",
@@ -228,13 +242,13 @@
   },
   {
     "name": "Infrastructure As Code: Deployment General (Microsoft ARM)",
-    "id": "AI031574",
+    "id": "AI031575",
     "description": "Infrastructure As Code: (Microsoft ARM)",
     "applies_to": [
       "python"
     ],
     "tags": [
-      "Metadata.Infrastructure.ARM"
+      "Metadata.Infrastructure.ARM.General"
     ],
     "severity": "moderate",
     "patterns": [
