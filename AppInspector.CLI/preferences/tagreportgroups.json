@@ -6,7 +6,7 @@
     "type": "uniqueTags",
     "groups": [
       {
-        "title": "Select Features",
+        "title": "<i>Select Features</i> ",
         "dataRef": "SelectFeatures",
         "patterns": [
           {
@@ -26,7 +26,7 @@
           },
           {
             "searchPattern": "Deserialization",
-            "displayName": "Data deserialization",
+            "displayName": "Object deserialization",
             "detectedIcon": "far fa-object-ungroup"
           },
           {
@@ -42,48 +42,120 @@
         ]
       },
       {
-        "title": "General Features",
-        "dataRef": "GeneralFeatures",
+        "title": "Active Content",
+        "dataRef": "ActiveContent",
         "patterns": [
           {
-            "searchPattern": "Network.Connection",
-            "displayName": "Network communications",
-            "detectedIcon": "fas fa-network-wired"
+            "searchPattern": ".Flash",
+            "displayName": "Adobe Flash",
+            "detectedIcon": "fas fa-bolt"
           },
           {
-            "searchPattern": "FileOperation.Read",
-            "displayName": "File read",
-            "detectedIcon": "fas fa-file"
+            "searchPattern": ".ActiveX",
+            "displayName": "Microsoft ActiveX",
+            "detectedIcon": "fas fa-file-invoice"
           },
           {
-            "searchPattern": "FileOperation.Write",
-            "displayName": "File write",
-            "detectedIcon": "far fa-edit"
+            "searchPattern": ".Microsoft.COM",
+            "displayName": "Microsoft COM",
+            "detectedIcon": "fab fa-hubspot"
           },
           {
-            "searchPattern": "FileOperation.Delete",
-            "displayName": "File delete",
-            "detectedIcon": "fas fa-trash"
+            "searchPattern": ".Silverlight",
+            "displayName": "Microsoft Silverlight",
+            "detectedIcon": "fas fa-cloud-moon"
           },
           {
-            "searchPattern": "Multiprocessing",
-            "displayName": "Multi-threaded processing",
-            "detectedIcon": "fas fa-code-branch"
+            "searchPattern": ".PDF",
+            "displayName": "Adobe PDF",
+            "detectedIcon": "far fa-file-pdf"
           },
           {
-            "searchPattern": "Logging",
-            "displayName": "Logging",
-            "detectedIcon": "far fa-clock"
+            "searchPattern": ".Ajax",
+            "displayName": "Javascript ajax",
+            "detectedIcon": "fas fa-exchange-alt"
+          }
+        ]
+      },
+      {
+        "title": "Cloud Services",
+        "dataRef": "CloudServices",
+        "patterns": [
+          {
+            "searchPattern": "CloudServices.Hosting",
+            "displayName": "Hosting",
+            "detectedIcon": "fab fa-microsoft"
           },
           {
-            "searchPattern": "Data.Parsing.XML",
-            "displayName": "Processes XML",
-            "detectedIcon": "far fa-file-code"
+            "searchPattern": "CloudServices.Application",
+            "displayName": "Cloud application",
+            "detectedIcon": "fas fa-globe"
           },
           {
-            "searchPattern": "Data.Parsing.JSON",
-            "displayName": "Processes JSON",
-            "detectedIcon": "far fa-file-alt"
+            "searchPattern": "CloudServices.DataStorage",
+            "displayName": "Cloud data storage",
+            "detectedIcon": "fas fa-cloud-upload-alt"
+          },
+          {
+            "searchPattern": "CloudServices.BigData",
+            "displayName": "Big data",
+            "detectedIcon": "fas fa-warehouse"
+          },
+          {
+            "searchPattern": "CloudServices.SocialMedia",
+            "displayName": "Social media",
+            "detectedIcon": "fab fa-facebook-square"
+          },
+          {
+            "searchPattern": "CloudServices.Finance.eCommerce",
+            "displayName": "eCommerce",
+            "detectedIcon": "fas fa-shopping-cart"
+          },
+          {
+            "searchPattern": "Web.Analytics",
+            "displayName": "Web Analytics",
+            "detectedIcon": "fas fa-flag-checkered"
+          },
+          {
+            "searchPattern": ".AdvertisingNetwork",
+            "displayName": "Advertising network",
+            "detectedIcon": "fas fa-ad"
+          }
+        ]
+      },
+      {
+        "title": "Data Storage",
+        "dataRef": "DataStorage",
+        "patterns": [
+          {
+            "searchPattern": "DBMS.SQLite",
+            "displayName": "SQLite database",
+            "detectedIcon": "fas fa-table"
+          },
+          {
+            "searchPattern": "DBMS.SQL",
+            "displayName": "SQL database",
+            "detectedIcon": "fas fa-database"
+          },
+          {
+            "searchPattern": "DBMS.NOSQL",
+            "displayName": "NOSQL database",
+            "detectedIcon": "fab fa-mdb"
+          },
+          {
+            "searchPattern": "DBMS.PostgreSQL",
+            "displayName": "PostgreSQL Database",
+            "detectedIcon": "fas fa-archive"
+          },
+          {
+            "searchPattern": "DBMS.Oracle",
+            "displayName": "Database ORM",
+            "detectedIcon": "fas fa-map"
+          },
+          {
+            "searchPattern": "DBMS.General",
+            "displayName": "General database",
+            "detectedIcon": "fas fa-save"
           }
         ]
       },
@@ -134,166 +206,135 @@
         ]
       },
       {
-        "title": "Active Content",
-        "dataRef": "ActiveContent",
+        "title": "Device Permissions",
+        "dataRef": "DevicePermissions",
         "patterns": [
           {
-            "searchPattern": ".Flash",
-            "displayName": "Adobe Flash",
-            "detectedIcon": "fab fa-adobe"
+            "searchPattern": "Permissions.PhoneCalls",
+            "displayName": "Phone calls",
+            "detectedIcon": "fa fa-phone"
           },
           {
-            "searchPattern": ".ActiveX",
-            "displayName": "Microsoft ActiveX",
-            "detectedIcon": "fas fa-file-invoice"
+            "searchPattern": "Permissions.SMS",
+            "displayName": "SMS",
+            "detectedIcon": "far fa-comment"
           },
           {
-            "searchPattern": ".Microsoft.COM",
-            "displayName": "Microsoft COM",
-            "detectedIcon": "fab fa-hubspot"
+            "searchPattern": "Permissions.Email",
+            "displayName": "Email",
+            "detectedIcon": "fa fa-envelope"
           },
           {
-            "searchPattern": ".Silverlight",
-            "displayName": "Microsoft Silverlight",
-            "detectedIcon": "fas fa-bolt"
+            "searchPattern": "Permissions.CalendarEvents",
+            "displayName": "Calendar events",
+            "detectedIcon": "far fa-calendar-alt"
           },
           {
-            "searchPattern": ".PDF",
-            "displayName": "Adobe PDF",
-            "detectedIcon": "far fa-file-pdf"
+            "searchPattern": "Permissions.Camera",
+            "displayName": "Camera",
+            "detectedIcon": "fa fa-camera"
           },
           {
-            "searchPattern": ".Ajax",
-            "displayName": "Javascript ajax",
-            "detectedIcon": "fas fa-exchange-alt"
+            "searchPattern": "Permissions.MediaLibrary",
+            "displayName": "Media library",
+            "detectedIcon": "far fa-file-audio"
+          },
+          {
+            "searchPattern": "Permissions.VoiceCommand",
+            "displayName": "Voice command",
+            "detectedIcon": "fa fa-bullhorn"
+          },
+          {
+            "searchPattern": "Permissions.Microphone",
+            "displayName": "Microphone",
+            "detectedIcon": "fa fa-microphone"
           }
         ]
       },
       {
-        "title": "Data Storage",
-        "dataRef": "DataStorage",
+        "title": "General Features",
+        "dataRef": "GeneralFeatures",
         "patterns": [
           {
-            "searchPattern": "DBMS.SQLite",
-            "displayName": "SQLite database",
-            "detectedIcon": "fas fa-table"
+            "searchPattern": "Network.Connection",
+            "displayName": "Network communications",
+            "detectedIcon": "fas fa-network-wired"
           },
           {
-            "searchPattern": "DBMS.SQL",
-            "displayName": "SQL database",
-            "detectedIcon": "fas fa-database"
+            "searchPattern": "FileOperation.Read",
+            "displayName": "File read",
+            "detectedIcon": "fas fa-file"
           },
           {
-            "searchPattern": "DBMS.NOSQL",
-            "displayName": "NOSQL database",
-            "detectedIcon": "fab fa-mdb"
+            "searchPattern": "FileOperation.Write",
+            "displayName": "File write",
+            "detectedIcon": "far fa-edit"
           },
           {
-            "searchPattern": "DBMS.PostgreSQL",
-            "displayName": "PostgreSQL Database",
-            "detectedIcon": "fas fa-archive"
+            "searchPattern": "FileOperation.Delete",
+            "displayName": "File delete",
+            "detectedIcon": "fas fa-trash"
           },
           {
-            "searchPattern": "DBMS.Oracle",
-            "displayName": "Database ORM",
-            "detectedIcon": "fas fa-map"
+            "searchPattern": "Multiprocessing",
+            "displayName": "Multi-threaded processing",
+            "detectedIcon": "fas fa-code-branch"
           },
           {
-            "searchPattern": "DBMS.General",
-            "displayName": "General database",
-            "detectedIcon": "fas fa-save"
+            "searchPattern": "Logging",
+            "displayName": "Logging",
+            "detectedIcon": "far fa-clock"
+          },
+          {
+            "searchPattern": "Data.Parsing.XML",
+            "displayName": "Processes XML",
+            "detectedIcon": "far fa-file-code"
+          },
+          {
+            "searchPattern": "Data.Parsing.JSON",
+            "displayName": "Processes JSON",
+            "detectedIcon": "far fa-file-alt"
           }
         ]
       },
       {
-        "title": "Sensitive Data",
-        "dataRef": "SensitiveData",
+        "title": "Miscellenous",
+        "dataRef": "Miscellenous",
         "patterns": [
           {
-            "searchPattern": "Sensitive.Identification",
-            "displayName": "Personally identifiable data",
-            "detectedIcon": "far fa-address-card"
+            "searchPattern": "Data.Media",
+            "displayName": "AV media",
+            "detectedIcon": "fas fa-play-circle"
           },
           {
-            "searchPattern": "Sensitive.Medical",
-            "displayName": "Medical data",
-            "detectedIcon": "fas fa-stethoscope"
+            "searchPattern": "Data.Zipfile",
+            "displayName": "Zip file processing",
+            "detectedIcon": "far fa-file-archive"
           },
           {
-            "searchPattern": "Sensitive.Credentials",
-            "displayName": "Credentials",
-            "detectedIcon": "fas fa-user-secret"
+            "searchPattern": "HTMLForm.Defined",
+            "displayName": "HTML form",
+            "detectedIcon": "far fa-window-maximize"
           },
           {
-            "searchPattern": "Sensitive.UserAccount",
-            "displayName": "Account or membership",
-            "detectedIcon": "fas fa-user-circle"
+            "searchPattern": "Exception.Caught",
+            "displayName": "Exception caught",
+            "detectedIcon": "fas fa-meteor"
           },
           {
-            "searchPattern": "Sensitive.ProductKey",
-            "displayName": "Product key",
-            "detectedIcon": "fas fa-compact-disc"
+            "searchPattern": "Hardware",
+            "displayName": "Specialized hardware",
+            "detectedIcon": "far fa-keyboard"
           },
           {
-            "searchPattern": "CryptoCurrency",
-            "displayName": "Crypto currency",
-            "detectedIcon": "fab fa-bitcoin"
+            "searchPattern": "Comment.Fix",
+            "displayName": "Fix comments",
+            "detectedIcon": "fas fa-toolbox"
           },
           {
-            "searchPattern": "Sensitive.Secret",
-            "displayName": "Senstive secret",
-            "detectedIcon": "fab fa-keycdn"
-          },
-          {
-            "searchPattern": "Sensitive.Financial",
-            "displayName": "Financial data",
-            "detectedIcon": "fas fa-money-bill"
-          }
-        ]
-      },
-      {
-        "title": "Cloud Services",
-        "dataRef": "CloudServices",
-        "patterns": [
-          {
-            "searchPattern": "CloudServices.Hosting",
-            "displayName": "Hosting",
-            "detectedIcon": "fab fa-microsoft"
-          },
-          {
-            "searchPattern": "CloudServices.Application",
-            "displayName": "Cloud application",
-            "detectedIcon": "fas fa-globe"
-          },
-          {
-            "searchPattern": "CloudServices.DataStorage",
-            "displayName": "Cloud data storage",
-            "detectedIcon": "fas fa-cloud-upload-alt"
-          },
-          {
-            "searchPattern": "CloudServices.BigData",
-            "displayName": "Big data",
-            "detectedIcon": "fas fa-warehouse"
-          },
-          {
-            "searchPattern": "CloudServices.SocialMedia",
-            "displayName": "Social media",
-            "detectedIcon": "fab fa-facebook-square"
-          },
-          {
-            "searchPattern": "CloudServices.Finance.eCommerce",
-            "displayName": "eCommerce",
-            "detectedIcon": "fas fa-shopping-cart"
-          },
-          {
-            "searchPattern": "Web.Analytics",
-            "displayName": "Web Analytics",
-            "detectedIcon": "fas fa-flag-checkered"
-          },
-          {
-            "searchPattern": ".AdvertisingNetwork",
-            "displayName": "Advertising network",
-            "detectedIcon": "fas fa-ad"
+            "searchPattern": "Comment.Suspicious",
+            "displayName": "Suspicious comments",
+            "detectedIcon": "fas fa-burn"
           }
         ]
       },
@@ -367,93 +408,51 @@
             "displayName": "Windows registry ACL",
             "detectedIcon": "fas fa-unlock"
           }
-
         ]
       },
       {
-        "title": "Device Permissions",
-        "dataRef": "DevicePermissions",
+        "title": "Sensitive Data",
+        "dataRef": "SensitiveData",
         "patterns": [
           {
-            "searchPattern": "Permissions.PhoneCalls",
-            "displayName": "Phone calls",
-            "detectedIcon": "fa fa-phone"
+            "searchPattern": "Sensitive.Identification",
+            "displayName": "Personally identifiable data",
+            "detectedIcon": "far fa-address-card"
           },
           {
-            "searchPattern": "Permissions.SMS",
-            "displayName": "SMS",
-            "detectedIcon": "far fa-comment"
+            "searchPattern": "Sensitive.Medical",
+            "displayName": "Medical data",
+            "detectedIcon": "fas fa-stethoscope"
           },
           {
-            "searchPattern": "Permissions.Email",
-            "displayName": "Email",
-            "detectedIcon": "fa fa-envelope"
+            "searchPattern": "Sensitive.Credentials",
+            "displayName": "Credentials",
+            "detectedIcon": "fas fa-user-secret"
           },
           {
-            "searchPattern": "Permissions.CalendarEvents",
-            "displayName": "Calendar events",
-            "detectedIcon": "far fa-calendar-alt"
+            "searchPattern": "Sensitive.UserAccount",
+            "displayName": "Account or membership",
+            "detectedIcon": "fas fa-user-circle"
           },
           {
-            "searchPattern": "Permissions.Camera",
-            "displayName": "Camera",
-            "detectedIcon": "fa fa-camera"
+            "searchPattern": "Sensitive.ProductKey",
+            "displayName": "Product key",
+            "detectedIcon": "fas fa-compact-disc"
           },
           {
-            "searchPattern": "Permissions.MediaLibrary",
-            "displayName": "Media library",
-            "detectedIcon": "far fa-file-audio"
+            "searchPattern": "CryptoCurrency",
+            "displayName": "Crypto currency",
+            "detectedIcon": "fab fa-bitcoin"
           },
           {
-            "searchPattern": "Permissions.VoiceCommand",
-            "displayName": "Voice command",
-            "detectedIcon": "fa fa-bullhorn"
+            "searchPattern": "Sensitive.Secret",
+            "displayName": "Senstive secret",
+            "detectedIcon": "fab fa-keycdn"
           },
           {
-            "searchPattern": "Permissions.Microphone",
-            "displayName": "Microphone",
-            "detectedIcon": "fa fa-microphone"
-          }
-        ]
-      },
-      {
-        "title": "Other",
-        "dataRef": "Other",
-        "patterns": [
-          {
-            "searchPattern": "Data.Media",
-            "displayName": "AV media",
-            "detectedIcon": "fas fa-play-circle"
-          },
-          {
-            "searchPattern": "Data.Zipfile",
-            "displayName": "Zip file processing",
-            "detectedIcon": "far fa-file-archive"
-          },
-          {
-            "searchPattern": "HTMLForm.Defined",
-            "displayName": "HTML form",
-            "detectedIcon": "far fa-window-maximize"
-          },
-          {
-            "searchPattern": "Exception.Caught",
-            "displayName": "Exception caught",
-            "detectedIcon": "fas fa-meteor"
-          },
-          {
-            "searchPattern": "Hardware",
-            "displayName": "Specialized hardware",
-            "detectedIcon": "far fa-keyboard"
-          },
-          {
-            "searchPattern": "Comment.Fix",
-            "displayName": "Fix comments",
-            "detectedIcon": "fas fa-toolbox"
-          },
-          {
-            "searchPattern": "Comment.Suspicious",
-            "displayName": "Suspicious comments",
-            "detectedIcon": "fas fa-burn"
+            "searchPattern": "Sensitive.Financial",
+            "displayName": "Financial data",
+            "detectedIcon": "fas fa-money-bill"
           }
         ]
       }
