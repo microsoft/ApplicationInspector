@@ -371,6 +371,52 @@
         ]
       },
       {
+        "title": "Device Permissions",
+        "dataRef": "DevicePermissions",
+        "patterns": [
+          {
+            "searchPattern": "Permissions.PhoneCalls",
+            "displayName": "Phone calls",
+            "detectedIcon": "fa fa-phone"
+          },
+          {
+            "searchPattern": "Permissions.SMS",
+            "displayName": "SMS",
+            "detectedIcon": "far fa-comment"
+          },
+          {
+            "searchPattern": "Permissions.Email",
+            "displayName": "Email",
+            "detectedIcon": "fa fa-envelope"
+          },
+          {
+            "searchPattern": "Permissions.CalendarEvents",
+            "displayName": "Calendar events",
+            "detectedIcon": "far fa-calendar-alt"
+          },
+          {
+            "searchPattern": "Permissions.Camera",
+            "displayName": "Camera",
+            "detectedIcon": "fa fa-camera"
+          },
+          {
+            "searchPattern": "Permissions.MediaLibrary",
+            "displayName": "Media library",
+            "detectedIcon": "far fa-file-audio"
+          },
+          {
+            "searchPattern": "Permissions.VoiceCommand",
+            "displayName": "Voice command",
+            "detectedIcon": "fa fa-bullhorn"
+          },
+          {
+            "searchPattern": "Permissions.Microphone",
+            "displayName": "Microphone",
+            "detectedIcon": "fa fa-microphone"
+          }
+        ]
+      },
+      {
         "title": "Other",
         "dataRef": "Other",
         "patterns": [

@@ -1,13 +1,13 @@
 [
   {
-    "name": "Infrastructure As Code: Hashicorp Packers",
-    "id": "AI053400",
-    "description": "Infrastructure As Code: Packers",
+    "name": "Infrastructure As Code: Packers (Hashicorp)",
+    "id": "AI031565",
+    "description": "Infrastructure As Code: Packers (Hashicorp)",
     "applies_to": [
       "json"
     ],
     "tags": [
-      "Metadata.Infrastructure.Packers"
+      "Metadata.Infrastructure.Packers.Hashicorp"
     ],
     "severity": "moderate",
     "patterns": [
@@ -17,7 +17,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high"
+        "confidence": "medium"
       }
     ]
   }

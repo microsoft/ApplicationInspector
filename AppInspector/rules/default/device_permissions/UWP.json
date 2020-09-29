@@ -1,0 +1,297 @@
+[
+  {
+    "name": "Declared Capabilities: InternetClient (Microsoft UWP)",
+    "id": "AI016745",
+    "description": "Declared Capabilities: InternetClient (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.InternetClient.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"internetClient\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: Media Library (Microsoft UWP)",
+    "id": "AI016746",
+    "description": "Declared Capabilities: Media Library (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.MediaLibrary.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"musicLibrary\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "Name=\"videosLibrary\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "Name=\"picturesLibrary\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: RemoveableStorage (Microsoft UWP)",
+    "id": "AI016747",
+    "description": "Declared Capabilities: RemoveableStorage (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.RemoveableStorage.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"removableStorage\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: Appointments (Microsoft UWP)",
+    "id": "AI016748",
+    "description": "Declared Capabilities: Appointments (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.CalendarEvents.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"appointments\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: PhoneCall (Microsoft UWP)",
+    "id": "AI016749",
+    "description": "Declared Capabilities: PhoneCall (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.PhoneCall.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"phoneCall\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: RecordedCalls (Microsoft UWP)",
+    "id": "AI016750",
+    "description": "Declared Capabilities: RecordedCalls (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.RecordedCalls.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"recordedCallsFolder\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: UserAcctRead (Microsoft UWP)",
+    "id": "AI016751",
+    "description": "Declared Capabilities: UserAcctRead (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.UserAcctRead.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"userAccountInformation\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: VoipCall (Microsoft UWP)",
+    "id": "AI016752",
+    "VoipCall": null,
+    "description": "Declared Capabilities:  VoipCall (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.VoipCall.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"voipCall\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: System Management (Microsoft UWP)",
+    "id": "AI016753",
+    "description": "Declared Capabilities: System Management (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.SystemSettings.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"systemManagement\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: Microphone (Microsoft UWP)",
+    "id": "AI016754",
+    "description": "Declared Capabilities: Microphone (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.Microphone.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"microphone\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: WebCam (Microsoft UWP)",
+    "id": "AI016755",
+    "description": "Declared Capabilities: WebCam (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.Camera.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"webcam\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Declared Capabilities: Bluetooth (Microsoft UWP)",
+    "id": "AI016756",
+    "description": "Declared Capabilities: Bluetooth (Microsoft UWP)",
+    "applies_to": [
+      "Package.appxmanifest"
+    ],
+    "tags": [
+      "Device.Permissions.Bluetooth.Microsoft.UWP"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Name=\"bluetooth\",",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

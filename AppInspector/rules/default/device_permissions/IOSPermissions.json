@@ -1,0 +1,324 @@
+[
+  {
+    "name": "Permissions Request: Contacts (iOS)",
+    "id": "AI016731",
+    "description": "Permissions Request: Contacts (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.Contacts.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.contacts",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: LocationAlways (iOS)",
+    "id": "AI016732",
+    "description": "Permissions Request: LocationAlways (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.LocationAlways.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.locationAlways",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: LocationWhenInUse (iOS)",
+    "id": "AI016733",
+    "description": "Permissions Request: LocationWhenInUse (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.LocationWhenInUse.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.locationWhenInUse",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: Notifications (iOS)",
+    "id": "AI016734",
+    "description": "Permissions Request: Notifications (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.Notifications.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.notifications",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: Microphone (iOS)",
+    "id": "AI016735",
+    "description": "Permissions Request: Microphone (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.Microphone.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.microphone",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: Camera (iOS)",
+    "id": "AI016736",
+    "description": "Permissions Request: Camera (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.Camera.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.camera",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: Media Library (iOS)",
+    "id": "AI016737",
+    "description": "Permissions Request: Media Library (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.MediaLibrary.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.photos|permission\\.mediaLibrary",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: Reminders (iOS)",
+    "id": "AI016738",
+    "description": "Permissions Request: Reminders (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.Reminders.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.reminders",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: Events (iOS)",
+    "id": "AI016739",
+    "description": "Permissions Request: Events (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.CalendarEvents.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.events",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: Bluetooth (iOS)",
+    "id": "AI016740",
+    "description": "Permissions Request: Bluetooth (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.Bluetooth.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.bluetooth",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: Motion (iOS)",
+    "id": "AI016741",
+    "description": "Permissions Request: Motion (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.Motion.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.motion",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: SpeechRecognizer (iOS)",
+    "id": "AI016742",
+    "description": "Permissions Request: SpeechRecognizer (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.SpeechRecognizer.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.speechRecognizer",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: Siri (iOS)",
+    "id": "AI016743",
+    "description": "Permissions Request: Siri (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.VoiceCommand.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.siri",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Permissions Request: Never (iOS)",
+    "id": "AI016744",
+    "description": "Permissions Request: Never (iOS)",
+    "applies_to": [
+      "swift"
+    ],
+    "tags": [
+      "Device.Permissions.Never.iOS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "permission\\.never",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

@@ -136,6 +136,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     }
 
                                     Location StartLocation = textContainer.GetLocation(boundary.Index);
+                                    Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
                                     MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
                                     {
                                         FileName = filePath,
@@ -143,7 +144,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         LanguageInfo = languageInfo,
                                         Boundary = boundary,
                                         StartLocationLine = StartLocation.Line,
-                                        EndLocationLine = textContainer.GetLocation(boundary.Index + boundary.Length).Line,
+                                        EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line+1, //match is on last line
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
                                         Excerpt = ExtractExcerpt(textContainer.FullContent, StartLocation.Line), 
                                         Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)

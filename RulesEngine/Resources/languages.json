@@ -242,11 +242,16 @@
   {
     "name": "terraform",
     "extensions": [ ".tf" ],
-    "type": "build"
+    "type": "code"
   },
   {
     "name": ".config",
     "extensions": [ ".config" ],
     "type": "build"
+  },
+  {
+    "name": "Package.appxmanifest",
+    "extensions": [ ".appxmanifest" ],
+    "type": "code"
   }
 ]

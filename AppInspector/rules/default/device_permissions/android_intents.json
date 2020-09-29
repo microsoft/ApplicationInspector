@@ -1,0 +1,740 @@
+[
+  {
+    "name": "Android Intents : View URL",
+    "id": "AI016705",
+    "description": "Android Intents : View URL",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.InternetClient.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_VIEW",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "Uri\\.parse\\(\"https?:\/\/www\\.);",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : View Map",
+    "id": "AI016706",
+    "description": "Android Intents : View Map",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.ViewMap.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_VIEW",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "Uri\\.parse\\(\"geo:",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
+      },
+      {
+        "pattern": {
+          "pattern": "Uri\\.parse(\"http:\/\/maps\\.google\\.com\/maps\");",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : Dial",
+    "id": "AI016707",
+    "description": "Android Intents : Dial",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.PhoneCalls.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_DIAL|Intent\\.ACTION_CALL",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : SMS",
+    "id": "AI016708",
+    "description": "Android Intents : SMS",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.SMS.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_(VIEW|SEND)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "sms|mms|smsto",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : Email",
+    "id": "AI016709",
+    "description": "Android Intents : Email",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.Email.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_SENDTO|Intent\\.ACTION_SEND",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "Intent\\.EXTRA_EMAIL|Intent\\.EXTRA_SUBJECT",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
+      },
+      {
+        "pattern": {
+          "pattern": "mailto:",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : PlayMedia",
+    "id": "AI016710",
+    "description": "Android Intents : PlayMedia",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.PlayMedia.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_VIEW",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "Media\\.INTERNAL_CONTENT_URI|mp3|mp4",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : WebSearch",
+    "id": "AI016711",
+    "description": "Android Intents : type",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.WebSearch.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_WEB_SEARCH",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : SetAlarm",
+    "id": "AI016712",
+    "description": "Android Intents : SetAlarm",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.SetAlarm.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ACTION_SET_ALARM",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : SetTimer",
+    "id": "AI016713",
+    "description": "Android Intents : SetTimer",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.SetTimer.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ACTION_SET_TIMER",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : AddEvent",
+    "id": "AI016714",
+    "description": "Android Intents : AddEvent",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.CalendarEvents.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_INSERT",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "Events\\.TITLE",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : CaptureImage",
+    "id": "AI016715",
+    "description": "Android Intents : CaptureImage",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.Camera.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ACTION_IMAGE_CAPTURE|ACTION_VIDEO_CAPTURE",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : SelectContact",
+    "id": "AI016716",
+    "description": "Android Intents : SelectContact",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.SelectContact.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_PICK",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "Contacts\\.CONTENT_TYPE|ContactsContract\\.CommonDataKinds",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : ReadContacts",
+    "id": "AI016717",
+    "description": "Android Intents : ReadContacts",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.Contacts.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.READ_CONTACTS",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : GetContent",
+    "id": "AI016718",
+    "description": "Android Intents : GetContent",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.GetContent.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_GET_CONTENT",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : OpenDocument",
+    "id": "AI016719",
+    "description": "Android Intents : OpenDocument",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.OpenDocument.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_OPEN_DOCUMENT",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : CreateDocument",
+    "id": "AI016720",
+    "description": "Android Intents : CreateDocument",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.CreateDocument.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_CREATE_DOCUMENT",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : OpenSettings",
+    "id": "AI016721",
+    "description": "Android Intents : OpenSettings",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.SystemSettings.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_*_SETTINGS",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : AddorEditContent",
+    "id": "AI016722",
+    "description": "Android Intents : AddorEditContent",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.AddorEditContent.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_EDIT|Intent\\.ACTION_INSERT_OR_EDIT",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : InstallPackage",
+    "id": "AI016723",
+    "description": "Android Intents : InstallPackage",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.InstallPackage.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_INSTALL_PACKAGE|Intent\\.ACTION_PACKAGE_ADDED",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : ProfileRemoved",
+    "id": "AI016724",
+    "description": "Android Intents : ProfileRemoved",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.ProfileRemoved.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_MANAGED_PROFILE_REMOVED|Intent\\.ACTION_UID_REMOVED",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : ProfileUnlocked",
+    "id": "AI016725",
+    "description": "Android Intents : ProfileUnlocked",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.ProfileUnlocked.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_MANAGED_PROFILE_UNLOCKED",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : PackageChanged",
+    "id": "AI016726",
+    "description": "Android Intents : PackageChanged",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.PackageChanged.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_MY_PACKAGE_REPLACED|Intent\\.ACTION_PACKAGE_CHANGED",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : Shutdown",
+    "id": "AI016727",
+    "description": "Android Intents : Shutdown",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.Shutdown.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_REBOOT|Intent\\.ACTION_SHUTDOWN",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : Search",
+    "id": "AI016728",
+    "description": "Android Intents : Search",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.Search.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_SEARCH",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : VoiceCommand",
+    "id": "AI016729",
+    "description": "Android Intents : VoiceCommand",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.VoiceCommand.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.ACTION_VOICE_COMMAND",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Android Intents : AllowUnsafeURI",
+    "id": "AI016730",
+    "description": "Android Intents : AllowUnsafeURI",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "Device.Permissions.AllowUnsafeUri\\.Android"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Intent\\.URI_ALLOW_UNSAFE",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  }
+]
