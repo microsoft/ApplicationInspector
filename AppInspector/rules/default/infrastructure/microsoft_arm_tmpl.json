@@ -1,13 +1,13 @@
 [
   {
-    "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI031563",
-    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "name": "Infrastructure As Code: Deployment General (Microsoft ARM)",
+    "id": "AI031567",
+    "description": "Infrastructure As Code: Deployment General (Microsoft ARM)",
     "applies_to": [
       "csharp"
     ],
     "tags": [
-      "Metadata.Infrastructure.ARM"
+      "Metadata.Infrastructure.ARM.Deployment"
     ],
     "severity": "moderate",
     "patterns": [
@@ -18,20 +18,7 @@
           "code"
         ],
         "confidence": "high"
-      }
-    ]
-  },
-  {
-    "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI031564",
-    "description": "Infrastructure As Code: Microsoft Azure ARM",
-    "applies_to": [
-    ],
-    "tags": [
-      "Metadata.Infrastructure.ARM"
-    ],
-    "severity": "moderate",
-    "patterns": [
+      },
       {
         "pattern": "https://schema\\.management\\.azure\\.com/schemas/.*deploymentTemplate\\.json",
         "type": "regex",
@@ -39,23 +26,31 @@
           "code"
         ],
         "confidence": "high"
+      },
+      {
+        "pattern": "az deployment create",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
       }
     ]
   },
   {
-    "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI031565",
-    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "name": "Infrastructure As Code: Tag AddUpdate (Microsoft ARM)",
+    "id": "AI031568",
+    "description": "Infrastructure As Code: Tag AddUpdate (Microsoft ARM)",
     "applies_to": [
       "powershell"
     ],
     "tags": [
-      "Metadata.Infrastructure.ARM"
+      "Metadata.Infrastructure.ARM.TagAddUpdate"
     ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "(New|Update|Remove)-(AzTag|AzResourceGroupDeployment|AzSubscriptionDeployment)",
+        "pattern": "(New|Update|Remove)-AzTag",
         "type": "regex",
         "scopes": [
           "code"
@@ -63,7 +58,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "az group create|az deployment create|az ts create",
+        "pattern": "az tag create",
         "type": "regex",
         "scopes": [
           "code"
@@ -73,9 +68,99 @@
     ]
   },
   {
-    "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI031566",
-    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "name": "Infrastructure As Code: ResourceGroupAddUpdate (Microsoft ARM)",
+    "id": "AI031569",
+    "description": "Infrastructure As Code: ResourceGroupAddUpdate (Microsoft ARM)",
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "Metadata.Infrastructure.ARM.ResourceGroupAddUpdate"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(New|Update|Remove)-AzResourceGroupDeployment",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "az group create",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: SubscriptionAddUpdate (Microsoft ARM)",
+    "id": "AI031570",
+    "description": "Infrastructure As Code: SubscriptionAddUpdate (Microsoft ARM)",
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "Metadata.Infrastructure.ARM.SubscriptionAddUpdate"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(New|Update|Remove)-AzSubscriptionDeployment",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "az subscription create",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: TemplateSpecUpdate (Microsoft ARM)",
+    "id": "AI031571",
+    "description": "Infrastructure As Code: TemplateSpecUpdate (Microsoft ARM)",
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "Metadata.Infrastructure.ARM.TemplateSpecAddUpdate"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(New|Update|Remove)-AzTemplateSpec",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "az ts create",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: API Based (Microsoft ARM)",
+    "id": "AI031572",
+    "description": "Infrastructure As Code: API Based (Microsoft ARM)",
     "applies_to": [
     ],
     "tags": [
@@ -85,7 +170,7 @@
     "patterns": [
       {
         "pattern": "https:\/\/management\\.azure\\.com\/subscriptions\/.*\/resourcegroups\/.*\/providers\/Microsoft\\.Resources\/deployments",
-        "type": "regex-word",
+        "type": "regex",
         "scopes": [
           "code"
         ],
@@ -93,7 +178,7 @@
       },
       {
         "pattern": "https:\/\/management\\.azure\\.com\/subscriptions/.*\/providers\/Microsoft\\.Resources\/deployments",
-        "type": "regex-word",
+        "type": "regex",
         "scopes": [
           "code"
         ],
@@ -101,15 +186,7 @@
       },
       {
         "pattern": "https:\/\/management\\.azure\\.com\/providers\/Microsoft\\.Management\/managementGroups\/providers\/Microsoft\\.Resources\/deployments",
-        "type": "regex-word",
-        "scopes": [
-          "code"
-        ],
-        "confidence": "high"
-      },
-      {
-        "pattern": "https:\/\/management\\.azure\\.com\/providers\/Microsoft\\.Resources\/deployments",
-        "type": "regex-word",
+        "type": "regex",
         "scopes": [
           "code"
         ],
@@ -118,9 +195,9 @@
     ]
   },
   {
-    "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI031567",
-    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "name": "Infrastructure As Code: Deployment General (Microsoft ARM)",
+    "id": "AI031573",
+    "description": "Infrastructure As Code: Deployment General (Microsoft ARM)",
     "applies_to": [
       "java"
     ],
@@ -131,7 +208,7 @@
     "patterns": [
       {
         "pattern": "Deployment\\.Execution",
-        "type": "regex-word",
+        "type": "regex",
         "scopes": [
           "code"
         ],
@@ -140,7 +217,7 @@
       },
       {
         "pattern": "com\\.microsoft\\.azure\\.management\\.resources",
-        "type": "regex-word",
+        "type": "regex",
         "scopes": [
           "code"
         ],
@@ -150,9 +227,9 @@
     ]
   },
   {
-    "name": "Infrastructure As Code: Microsoft Azure ARM",
-    "id": "AI031568",
-    "description": "Infrastructure As Code: Microsoft Azure ARM",
+    "name": "Infrastructure As Code: Deployment General (Microsoft ARM)",
+    "id": "AI031574",
+    "description": "Infrastructure As Code: (Microsoft ARM)",
     "applies_to": [
       "python"
     ],
@@ -162,8 +239,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "from azure.mgmt.resource import ResourceManagementClient",
-        "type": "regex-word",
+        "pattern": "from azure\\.mgmt\\.resource import ResourceManagementClient",
+        "type": "regex",
         "scopes": [
           "code"
         ],

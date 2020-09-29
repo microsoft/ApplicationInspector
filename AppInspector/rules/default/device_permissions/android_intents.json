@@ -24,7 +24,7 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "Uri.parse\\(\"https?:\/\/www\\.);",
+          "pattern": "Uri\\.parse\\(\"https?:\/\/www\\.);",
           "type": "regex",
           "scopes": [
             "code"
@@ -63,7 +63,7 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "Uri.parse\\(\"geo:",
+          "pattern": "Uri\\.parse\\(\"geo:",
           "type": "regex",
           "scopes": [
             "code"
@@ -77,7 +77,7 @@
       },
       {
         "pattern": {
-          "pattern": "Uri.parse(\"http:\/\/maps\\.google\\.com\/maps\");",
+          "pattern": "Uri\\.parse(\"http:\/\/maps\\.google\\.com\/maps\");",
           "type": "regex",
           "scopes": [
             "code"
@@ -723,7 +723,7 @@
       "kotlin"
     ],
     "tags": [
-      "Device.Permissions.AllowUnsafeURI.Android"
+      "Device.Permissions.AllowUnsafeUri\\.Android"
     ],
     "severity": "moderate",
     "patterns": [

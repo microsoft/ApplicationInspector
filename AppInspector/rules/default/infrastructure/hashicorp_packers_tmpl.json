@@ -1,7 +1,7 @@
 [
   {
     "name": "Infrastructure As Code: Hashicorp Packers",
-    "id": "AI031561",
+    "id": "AI031565",
     "description": "Infrastructure As Code: Packers",
     "applies_to": [
       "json"
@@ -17,7 +17,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high"
+        "confidence": "medium"
       }
     ]
   }

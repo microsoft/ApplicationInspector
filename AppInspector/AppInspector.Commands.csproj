@@ -98,6 +98,6 @@
 
   <Target Name="PreBuild" BeforeTargets="BeforeCompile">
     <MakeDir Directories="Resources" />
-    <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRulesPkd.json" />
+    <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRulesPkd.json -v debug" />
   </Target>
 </Project>

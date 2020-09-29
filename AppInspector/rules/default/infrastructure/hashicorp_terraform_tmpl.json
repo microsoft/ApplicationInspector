@@ -1,9 +1,10 @@
 [
   {
     "name": "Infrastructure As Code: Hashicorp Terraform",
-    "id": "AI031562",
+    "id": "AI031566",
     "description": "Infrastructure As Code: Terraform",
     "applies_to": [
+      "terraform"
     ],
     "tags": [
       "Metadata.Infrastructure.Terraform"
@@ -12,7 +13,7 @@
     "patterns": [
       {
         "pattern": "terraform",
-        "type": "regex-word",
+        "type": "regex",
         "scopes": [
           "code"
         ],
