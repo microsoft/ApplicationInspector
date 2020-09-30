@@ -53,15 +53,6 @@
    <None Update="html\resources\js\appinspector.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="html\resources\js\ext-beautify.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="html\resources\js\ext-modelist.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="html\resources\js\ext-settings_menu.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
       <None Update="preferences\tagreportgroups.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
