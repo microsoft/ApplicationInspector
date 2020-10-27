@@ -139,7 +139,7 @@
         "_comment": ""
       },
       {
-        "pattern": "app\\.set('environment'",
+        "pattern": "app\\.set\\('environment'",
         "type": "regex",
         "scopes": [
           "code"
@@ -272,7 +272,7 @@
     "_comment": "",
     "patterns": [
       {
-        "pattern": "GetEnvironmentVariable|\\$env:|Env:\\",
+        "pattern": "GetEnvironmentVariable|\\$env:|Env:\\\\",
         "type": "regex",
         "scopes": [
           "code"
@@ -305,7 +305,7 @@
         "_comment": ""
       },
       {
-        "pattern": "app\\.get('environment'",
+        "pattern": "app\\.get\\('environment'",
         "type": "regex",
         "scopes": [
           "code"
