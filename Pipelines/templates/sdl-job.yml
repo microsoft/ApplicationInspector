@@ -31,3 +31,9 @@ jobs:
   - task: SdtReport@2
     inputs:
       GdnExportAllTools: true
+  - task: PublishSecurityAnalysisLogs@2
+    inputs:
+        ArtifactName: 'CodeAnalysisLogs'
+        ArtifactType: 'Container'
+        AllTools: true
+        ToolLogsNotFoundAction: 'Standard'
