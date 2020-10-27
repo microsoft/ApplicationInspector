@@ -23,7 +23,7 @@
         "confidence": "medium"
       },
       {
-        "pattern": "(bit|lite|name|peer|doge|grid|prim|vert|tit|pot)coin",
+        "pattern": "(bit|lite|name|peer|doge|grid|prim|vert|pot)coin",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
