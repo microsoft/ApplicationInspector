@@ -1,0 +1,342 @@
+[
+  {
+    "name": "Pipeline Tool (AntiMalware)",
+    "id": "AI053300",
+    "description": "Pipeline Tool (AntiMalware)",
+    "tags": [
+      "Metadata.Pipeline.Tools.AntiMalware"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "AntiMalware",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (Bandit)",
+    "id": "AI053400",
+    "description": "A tool designed to find common security issues in Python code",
+    "tags": [
+      "Metadata.Pipeline.Tools.Bandit"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Bandit@1",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (BinSkim)",
+    "id": "AI053500",
+    "description": "BinSkim is a Portable Executable (PE) light-weight scanner that validates compiler/linker settings and other security-relevant binary characteristics.",
+    "tags": [
+      "Metadata.Pipeline.Tools.BinSkim"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "BinSkim",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CodeQL)",
+    "id": "AI053600",
+    "description": "Each CodeQL query represents a piece of security knowledge � codified, readable, and executable � ready to be applied to any number of projects",
+    "tags": [
+      "Metadata.Pipeline.Tools.CodeQL"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "CodeQL|Semmle",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI053700",
+    "description": "Pipeline Tool (CredScan)",
+    "tags": [
+      "Metadata.Pipeline.Tools.CredScan"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "CredScan",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CodeSigning)",
+    "id": "AI053800",
+    "description": "Pipeline Tool (CodeSigning)",
+    "tags": [
+      "Metadata.Pipeline.Tools.CodeSigning"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "EsrpCodeSigning",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (ComponentGovernance)",
+    "id": "AI053900",
+    "description": "Pipeline Tool (ComponentGovernance)",
+    "tags": [
+      "Metadata.Pipeline.Tools.ComponentGovernance"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "ComponentGovernance",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (ESLint)",
+    "id": "AI054000",
+    "description": "ESLint is a static code analysis tool for identifying problematic patterns found in JavaScript code",
+    "tags": [
+      "Metadata.Pipeline.Tools.ESLint"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "ESLint@1",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (FxCop)",
+    "id": "AI054100",
+    "description": "FxCop is a free static code analysis tool from Microsoft that checks.NET managed code assemblies for conformance to Microsoft's.NET Framework Design Guidelines",
+    "tags": [
+      "Metadata.Pipeline.Tools.FxCop"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "FxCop@2",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (ModernCop)",
+    "id": "AI054200",
+    "description": "Pipeline Tool (ModernCop)",
+    "tags": [
+      "Metadata.Pipeline.Tools.ModernCop"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "ModernCop@2",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (NoticeGenerator)",
+    "id": "AI054300",
+    "description": "Pipeline Tool (NoticeGenerator)",
+    "tags": [
+      "Metadata.Pipeline.Tools.NoticeGenerator"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "notice@0",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (NuGetCommand)",
+    "id": "AI054400",
+    "description": "Pipeline Tool (NuGetCommand)",
+    "tags": [
+      "Metadata.Pipeline.Tools.NuGetCommand"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "NuGetCommand",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (PoliCheck)",
+    "id": "AI054500",
+    "description": "Pipeline Tool (PoliCheck)",
+    "tags": [
+      "Metadata.Pipeline.Tools.PoliCheck"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "PoliCheck@1",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (RoslynAnalyzers)",
+    "id": "AI054600",
+    "description": "Roslyn analyzers inspect your code for style, quality, maintainability, design and other issues.",
+    "tags": [
+      "Metadata.Pipeline.Tools.RoslynAnalyzers"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "RoslynAnalyzers@2",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (SpotBugs)",
+    "id": "AI054700",
+    "description": "SpotBugs is a program which uses static analysis to look for bugs in Java code",
+    "tags": [
+      "Metadata.Pipeline.Tools.SpotBugs"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "SpotBugs@1",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (TSLint)",
+    "id": "AI054800",
+    "description": "TSLint is an extensible static analysis tool that checks TypeScript code for readability, maintainability, and functionality errors",
+    "tags": [
+      "Metadata.Pipeline.Tools.TSLint"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "TSLint@1",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (VulnerabilityAssessment)",
+    "id": "AI054900",
+    "description": "Pipeline Tool (VulnerabilityAssessment)",
+    "tags": [
+      "Metadata.Pipeline.Tools.VulnerabilityAssessment"
+    ],
+    "applies_to": ["yaml"],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "VulnerabilityAssessment@0",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]
