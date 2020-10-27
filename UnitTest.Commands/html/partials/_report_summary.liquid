@@ -20,7 +20,7 @@
 					      <a class="nav-link" href="#scan_metadata" role="tab" data-toggle="tab">Metadata</a>
 				      </li>
               <li class="nav-item">
-                <a class="nav-link" href="#sorted_uniquetags" role="tab" data-toggle="tab">Tags List</a>
+                <a class="nav-link" href="#sorted_uniquetags" role="tab" data-toggle="tab">All Tags</a>
               </li>
                 <li class="nav-item">
                   <a class="nav-link" href="#select_tagcounters" role="tab" data-toggle="tab">Tag Counters</a>
@@ -86,36 +86,36 @@
                 </tr>
                 <tr>
                   <td style="width:300px;">Application Types</td>
-                  <td style="">{% for item in apptypes -%}{{item}} {% endfor -%}</td>
+                  <td style="">{% for item in apptypes -%}{{item}}, {% endfor -%}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">Package Types</td>
-                  <td style="">{% for item in packagetypes -%}{{item}} {% endfor -%}</td>
+                  <td style="">{% for item in packagetypes -%}{{item}}, {% endfor -%}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">Output Types</td>
-                  <td style="">{% for item in outputs -%}{{item}} {% endfor -%}</td>
+                  <td style="">{% for item in outputs -%}{{item}}, {% endfor -%}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">File Types</td>
-                  <td style="">{% for item in filetypes -%}<a href="https://fileinfo.com/extension/{{item}}" target="_blank" rel="noopener">{{item}}</a> {% endfor -%}</td>
+                  <td style="">{% for item in filetypes -%}<a href="https://fileinfo.com/extension/{{item}}" target="_blank" rel="noopener">{{item}},</a> {% endfor -%}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">OS Targets</td>
-                  <td style="">{% for item in ostargets -%}{{item}} {% endfor -%}</td>
+                  <td style="">{% for item in ostargets -%}{{item}}, {% endfor -%}</td>
                 </tr>
                 <tr>
                   <td cstyle="width:300px;">CPU Targets</td>
-                  <td style="">{% for item in cputargets -%}{{item}} {% endfor -%}</td>
+                  <td style="">{% for item in cputargets -%}{{item}}, {% endfor -%}</td>
                 </tr>
               </table>
             </div>
             <div role="tabpanel" class="tab-pane" id="sorted_uniquetags">
               <h4>Tags List View</h4>
               <div>
-                A complete and simple list view of the unique tags found and matching rule. Click a tag on the left then click
+                A list view of the unique tags found and matching rule. Select a tag on the left then select
                 the rule name link shown on the right to view the source code location of the match.  See the Features menu
-                for an alternative illustration of the major features detected.
+                for an alternative grouped illustration of the major features detected.
               </div>
               <br>
               <br>
@@ -227,17 +227,19 @@
                       </div>
                     </div>
                     <div class="col">
-                      <h4>Rule</h4>
+                      <h4>Associated Rules</h4>
                       <div id="features">
                         <table class="table table-sm table-hover">
                           <thead>
                             <tr>
-                              <th style="font-size:16px;line-height:34px;">Name</th>
+                              <th style="font-size:14px;line-height:39px;">
+                                Name<span style="font-size:11px;line-height:39px;">&nbsp;(click rule to view source excerpt)</span>
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td>Hint: Select tag on left</td>
+                            <tr style="font-size:14px;line-height:39px;">
+                              <td>Hint: Select feature on left</td>
                             </tr>
                           </tbody>
                         </table>
@@ -250,8 +252,7 @@
             <div role="tabpanel" class="tab-pane" id="select_tagcounters">
               <h4>Tag Counters</h4>
               <div>
-                Selected set of tags for counting the number of occurrences found in the scanned source code.  These may be excluded from
-                detailed matches identified in the general report yet still get "counted" as specified in preferences/tagcounters.json.
+                Tags found that are identified as Metric related matches and therefore counted but not included in detailed results.
               </div>
               <br>
               <br>
@@ -259,13 +260,11 @@
                 <tr>
                   <td class="font-weight-bold" style="font-size:16px;text-align:left;">Rule Tag</td>
                   <td class="font-weight-bold" style="font-size:16px;text-align:center;">Count</td>
-                  <td class="font-weight-bold" style="font-size:16px;text-align:center;">Include as Match</td>
                 </tr>
                 {% for counter in tagcounters -%}
                 <tr>
                   <td style="font-size:16px;text-align:left;">{{counter.tag}}</td>
                   <td style="font-size:16px;text-align:center;">{{counter.count}}</td>
-                  <td style="font-size:16px;text-align:center;">{{counter.include_as_match}}</td>
                 </tr>
                 {% endfor -%}
               </table>

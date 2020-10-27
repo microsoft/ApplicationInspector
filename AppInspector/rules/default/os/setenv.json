@@ -18,36 +18,13 @@
           "code"
         ],
         "confidence": "high",
-        "_comment": ""
+        "_comment": "linux cmd from lang x"
       }
     ]
   },
   {
     "name": "OS: Environment Variable (Write)",
     "id": "AI037600",
-    "description": "OS: Environment Variable (Write)",
-    "applies_to": [
-    ],
-    "tags": [
-      "OS.Environment.Windows.RegistryLocation"
-    ],
-    "severity": "moderate",
-    "_comment": "Windows Registry location for environment variables",
-    "patterns": [
-      {
-        "pattern": "System\\CurrentControlSet\\Control\\Session Manager\\Environment",
-        "type": "substring",
-        "scopes": [
-          "code"
-        ],
-        "confidence": "medium",
-        "_comment": ""
-      }
-    ]
-  },
-  {
-    "name": "OS: Environment Variable (Write)",
-    "id": "AI037700",
     "description": "OS: Environment Variable (Write)",
     "applies_to": [
       "python"
@@ -70,7 +47,7 @@
   },
   {
     "name": "OS: Environment Variable (Write)",
-    "id": "AI037710",
+    "id": "AI037700",
     "description": "OS: Environment Variable (Write)",
     "applies_to": [
       "rust"
@@ -129,13 +106,274 @@
     "_comment": "",
     "patterns": [
       {
-        "pattern": "\\$env:.+=",
+        "pattern": "SetEnvironmentVariable|\\$env:.+=",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "confidence": "high",
         "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Write)",
+    "id": "AI037910",
+    "description": "OS: Environment Variable (Write)",
+    "applies_to": [
+      "javascript"
+    ],
+    "tags": [
+      "OS.Environment.Write"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "process\\.env\\[\\\".*\\\"\\] *= *",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "app\\.set\\('environment'",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Write)",
+    "id": "AI037920",
+    "description": "OS: Environment Variable (Write)",
+    "applies_to": [
+    ],
+    "tags": [
+      "OS.Environment.Write"
+    ],
+    "severity": "moderate",
+    "_comment": "Windows Registry location for environment variables",
+    "patterns": [
+      {
+        "pattern": "System\\CurrentControlSet\\Control\\Session Manager\\Environment",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "SetValue",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-10,10)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Read)",
+    "id": "AI037930",
+    "description": "OS: Environment Variable (Read)",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "OS.Environment.Read"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "os\\.environ\\.items|os\\.environ\\[\\\".*\\\"\\]|os\\.environ\\.get",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Read)",
+    "id": "AI037940",
+    "description": "OS: Environment Variable (Read)",
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.Environment.Read"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "env::get_var",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Read)",
+    "id": "AI037950",
+    "description": "OS: Environment Variable (Read)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Environment.Read"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "GetEnvironmentVariable",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Read)",
+    "id": "AI037960",
+    "description": "OS: Environment Variable (Read)",
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "OS.Environment.Read"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "GetEnvironmentVariable|\\$env:|Env:\\\\",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Read)",
+    "id": "AI037970",
+    "description": "OS: Environment Variable (Read)",
+    "applies_to": [
+      "javascript"
+    ],
+    "tags": [
+      "OS.Environment.Read"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "= *process\\.env\\[\\\".*\\\"\\]",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      },
+      {
+        "pattern": "app\\.get\\('environment'",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Read)",
+    "id": "AI037980",
+    "description": "OS: Environment Variable (Read)",
+    "applies_to": [
+    ],
+    "tags": [
+      "OS.Environment.Read"
+    ],
+    "severity": "moderate",
+    "_comment": "Windows Registry location for environment variables",
+    "patterns": [
+      {
+        "pattern": "System\\CurrentControlSet\\Control\\Session Manager\\Environment",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "GetValue",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-10,10)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "OS: Environment Variable (Read)",
+    "id": "AI037990",
+    "description": "OS: Environment Variable (Read)",
+    "applies_to": [
+    ],
+    "tags": [
+      "OS.Environment.Read"
+    ],
+    "severity": "moderate",
+    "_comment": "",
+    "patterns": [
+      {
+        "pattern": "getenv",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "linux for lang x"
       }
     ]
   }

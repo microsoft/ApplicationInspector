@@ -353,7 +353,7 @@
             "detectedIcon": "fas fa-box"
           },
           {
-            "searchPattern": "OS.Environment",
+            "searchPattern": "OS.Environment.Read",
             "displayName": "Environment variable read",
             "detectedIcon": "fas fa-tree"
           },
@@ -394,7 +394,7 @@
             "detectedIcon": "fab fa-bandcamp"
           },
           {
-            "searchPattern": "Environment.Write",
+            "searchPattern": "OS.Environment.Write",
             "displayName": "Environment variable write",
             "detectedIcon": "fas fa-tree"
           },
