@@ -17,6 +17,12 @@ jobs:
   - task: CredScan@3
     inputs:
       verboseOutput: true
+  - task: PoliCheck@1
+    inputs:
+      inputType: 'Basic'
+      targetType: 'F'
+      targetArgument: '$(Build.SourcesDirectory)'
+      result: 'PoliCheck.xml'
   - task: notice@0
     enabled: false
     continueOnError: true
