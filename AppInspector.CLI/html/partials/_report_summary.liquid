@@ -86,27 +86,27 @@
                 </tr>
                 <tr>
                   <td style="width:300px;">Application Types</td>
-                  <td style="">{% for item in apptypes -%}{{item}}, {% endfor -%}</td>
+                  <td style="">{{ apptypes | join:", " }}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">Package Types</td>
-                  <td style="">{% for item in packagetypes -%}{{item}}, {% endfor -%}</td>
+                  <td style="">{{ packagetypes | join:", " }}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">Output Types</td>
-                  <td style="">{% for item in outputs -%}{{item}}, {% endfor -%}</td>
+                  <td style="">{{ outputs | join:", " }}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">File Types</td>
-                  <td style="">{% for item in filetypes -%}<a href="https://fileinfo.com/extension/{{item}}" target="_blank" rel="noopener">{{item}},</a> {% endfor -%}</td>
+                  <td style="">{% for item in filetypes -%}<a href="https://fileinfo.com/extension/{{item}}" target="_blank" rel="noopener">{{item}} </a> {% endfor -%}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">OS Targets</td>
-                  <td style="">{% for item in ostargets -%}{{item}}, {% endfor -%}</td>
+                  <td style="">{{ ostargets | join:", " }}</td>
                 </tr>
                 <tr>
                   <td cstyle="width:300px;">CPU Targets</td>
-                  <td style="">{% for item in cputargets -%}{{item}}, {% endfor -%}</td>
+                  <td style="">{{ cputargets | join:", " }}</td>
                 </tr>
               </table>
             </div>

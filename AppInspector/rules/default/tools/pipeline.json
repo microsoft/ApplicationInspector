@@ -1,0 +1,325 @@
+[
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "Pipeline Tool - CredScan",
+    "tags": [
+      "Metadata.Pipeline.Tools.CredScan"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "CredScan",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (PoliCheck)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.PoliCheck"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "PoliCheck@1",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (AntiMalware)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.AntiMalware"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "AntiMalware",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CodeSigning)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.CodeSigning"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "EsrpCodeSigning",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (RoslynAnalyzers)",
+    "id": "AI038900",
+    "description": "Roslyn",
+    "tags": [
+      "Metadata.Pipeline.Tools.RoslynAnalyzers"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "RoslynAnalyzers@2",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (TSLint)",
+    "id": "AI038900",
+    "description": "SpotBugs",
+    "tags": [
+      "Metadata.Pipeline.Tools.TSLint"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "TSLint@1",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "SpotBugs",
+    "tags": [
+      "Metadata.Pipeline.Tools.VulnerabilityAssessment"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "VulnerabilityAssessment@0",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "SpotBugs",
+    "tags": [
+      "Metadata.Pipeline.Tools.SpotBugs"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "SpotBugs@1",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.Bandit"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "Bandit@1",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.FxCop"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "FxCop@2",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.NoticeGenerator"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "notice@0",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.ModernCop"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "ModernCop@2",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.ESLint"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "ESLint@1",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.ComponentGovernance"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "ComponentGovernance",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.NuGetCommand"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "NuGetCommand",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.BinSkim"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "BinSkim",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CredScan)",
+    "id": "AI038900",
+    "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
+    "tags": [
+      "Metadata.Pipeline.Tools.CodeQL"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "CodeQL|Semmle",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]
