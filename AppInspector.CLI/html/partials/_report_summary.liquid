@@ -82,31 +82,31 @@
               <table class="table table-condensed" style="width:600px;">
                 <tr>
                   <td class="font-weight-bold" style="width:300px;">Characteristic</td>
-                  <td class="font-weight-bold" style="">Detected Value(s)</td>
+                  <td class="font-weight-bold">Detected Value(s)</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">Application Types</td>
-                  <td style="">{{ apptypes | join:", " }}</td>
+                  <td>{{ apptypes | join:", " }}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">Package Types</td>
-                  <td style="">{{ packagetypes | join:", " }}</td>
+                  <td>{{ packagetypes | join:", " }}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">Output Types</td>
-                  <td style="">{{ outputs | join:", " }}</td>
+                  <td>{{ outputs | join:", " }}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">File Types</td>
-                  <td style="">{% for item in filetypes -%}<a href="https://fileinfo.com/extension/{{item}}" target="_blank" rel="noopener">{{item}} </a> {% endfor -%}</td>
+                  <td>{% for item in filetypes -%}<a href="https://fileinfo.com/extension/{{item}}" target="_blank" rel="noopener">{{item}} </a> {% endfor -%}</td>
                 </tr>
                 <tr>
                   <td style="width:300px;">OS Targets</td>
-                  <td style="">{{ ostargets | join:", " }}</td>
+                  <td>{{ ostargets | join:", " }}</td>
                 </tr>
                 <tr>
                   <td cstyle="width:300px;">CPU Targets</td>
-                  <td style="">{{ cputargets | join:", " }}</td>
+                  <td>{{ cputargets | join:", " }}</td>
                 </tr>
               </table>
             </div>
