@@ -1,4 +1,4 @@
-name: "Code Scanning - Application Inspector"
+name: "CodeQL"
 
 on:
   push:
