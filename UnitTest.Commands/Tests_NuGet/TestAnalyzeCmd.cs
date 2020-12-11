@@ -306,7 +306,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = result.ResultCode;
                 if (exitCode == AnalyzeResult.ExitCode.Success)
                 {
-                    exitCode = result.Metadata.TotalMatchesCount == 10 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
@@ -325,7 +325,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCodeMultiThread = result.ResultCode;
                 if (exitCodeMultiThread == AnalyzeResult.ExitCode.Success)
                 {
-                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 10 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
@@ -355,7 +355,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = result.ResultCode;
                 if (exitCode == AnalyzeResult.ExitCode.Success)
                 {
-                    exitCode = result.Metadata.TotalMatchesCount == 6 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.TotalMatchesCount == 7 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
