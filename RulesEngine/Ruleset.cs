@@ -204,7 +204,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Invert = condition.NegateFinding,
                             Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
                             FindingOnly = true,
-                            CustomOperation = "RegexWithIndex"
+                            CustomOperation = "Within"
                         });
                         expression.Append(" AND ");
                         expression.Append(clauseNumber);
@@ -237,7 +237,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 Invert = condition.NegateFinding,
                                 Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
                                 FindingOnly = false,
-                                CustomOperation = "RegexWithIndex",
+                                CustomOperation = "Within",
                                 Before = argList[0],
                                 After = argList[1]
                             });

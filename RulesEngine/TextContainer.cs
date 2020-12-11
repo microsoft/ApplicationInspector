@@ -216,20 +216,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> True if the index is between prefix and suffix </returns>
         private static bool IsBetween(string text, int index, string prefix, string suffix, string inline = "")
         {
-            string preText = string.Concat(text.Substring(0, index));
+            int pinnedIndex = Math.Min(index, text.Length);
+            string preText = string.Concat(text.Substring(0, pinnedIndex));
             int lastPrefix = preText.LastIndexOf(prefix, StringComparison.InvariantCulture);
             if (lastPrefix >= 0)
             {
                 int lastInline = preText.Substring(0, lastPrefix).LastIndexOf(inline, StringComparison.InvariantCulture);
                 // For example in C#, If this /* is actually commented out by a //
-                if (!(lastInline >= 0 && lastInline < lastPrefix && !preText.Substring(lastInline, lastPrefix - lastInline).Contains(Environment.NewLine)))
+                if (!(lastInline >= 0 && lastInline < lastPrefix && !preText.Substring(lastInline, lastPrefix - lastInline).Contains('\n')))
                 {
                     var commentedText = text.Substring(lastPrefix);
-                    int nextSuffix = commentedText.IndexOf(suffix, StringComparison.Ordinal);
+                    int nextSuffix = commentedText.IndexOf(suffix, StringComparison.InvariantCulture);
 
                     // If the index is in between the last prefix before the index and the next suffix after
                     // that prefix Then it is commented out
-                    if (lastPrefix + nextSuffix > index)
+                    if (lastPrefix + nextSuffix > pinnedIndex)
                         return true;
                 }
             }

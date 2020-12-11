@@ -85,22 +85,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
-                // If we have within captures it means we had conditions, and we only want the conditioned captures
-                var withinCaptures = ruleCapture.Captures.Where(x => x.Clause is WithinClause);
-                if (withinCaptures.Any())
+
+                foreach (var cap in ruleCapture.Captures)
                 {
-                    foreach (var cap in withinCaptures)
-                    {
-                        ProcessBoundary(cap);
-                    }
-                }
-                // Otherwise we can use all the captures
-                else
-                {
-                    foreach (var cap in ruleCapture.Captures)
-                    {
-                        ProcessBoundary(cap);
-                    }
+                    ProcessBoundary(cap);
                 }
 
                 void ProcessBoundary(ClauseCapture cap)

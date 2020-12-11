@@ -35,9 +35,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 var passed = new List<Boundary>();
                 foreach (var captureHolder in captures ?? Array.Empty<ClauseCapture>())
                 {
-                    if (captureHolder is TypedClauseCapture<List<Boundary>> tcc)
+                    if (captureHolder is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
-                        foreach (var capture in tcc.Result)
+                        foreach (var capture in tcc.Result.Select(x => x.Item2))
                         {
                             if (wc.FindingOnly)
                             {
