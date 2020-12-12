@@ -1,0 +1,98 @@
+[
+  {
+    "name": "WebApp Storage Write (Local)",
+    "id": "AI056300",
+    "description": "WebApp Storage (Local)",
+    "tags": [
+      "WebApp.Storage.Local.Write"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "localstorage.setItem",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "WebApp Storage Write (Session)",
+    "id": "AI056400",
+    "description": "WebApp Storage (Session)",
+    "tags": [
+      "WebApp.Storage.Session.Write"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "sessionstorage.setItem",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "WebApp Storage Write (Local Cookie)",
+    "id": "AI056500",
+    "description": "WebApp Storage",
+    "tags": [
+      "WebApp.Storage.Cookie.Write"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "document.cookie =",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

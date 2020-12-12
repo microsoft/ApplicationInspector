@@ -1,0 +1,290 @@
+[
+  {
+    "name": "Session Cookie Attributes (HttpOnly)",
+    "id": "AI055700",
+    "description": "Session Cookie Attributes (HttpOnly)",
+    "tags": [
+      "WebApp.Session.Cookies.Attr.HttpOnly"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "httpOnly",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,1)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Session Cookie Attributes (Lifetime)",
+    "id": "AI055800",
+    "description": "Session Cookie Attributes (Lifetime)",
+    "tags": [
+      "WebApp.Session.Cookies.Attr.Lifetime"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "lifetime",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,0)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Session Cookie Attributes (Strict)",
+    "id": "AI055900",
+    "description": "Session Cookie Attributes (Strict)",
+    "tags": [
+      "WebApp.Session.Cookies.Attr.Strict"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "strict",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,0)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Session Cookie Attributes (SameSite)",
+    "id": "AI056000",
+    "description": "Session Cookie Attributes (SameSite)",
+    "tags": [
+      "WebApp.Session.Cookies.Attr.SameSite"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "samesite",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,0)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Session Cookie Attributes (Expires)",
+    "id": "AI056100",
+    "description": "Session Cookie Attributes (Expires)",
+    "tags": [
+      "WebApp.Session.Cookies.Attr.Expires"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "expires",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,0)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Session Cookie Attributes (Domain)",
+    "id": "AI056200",
+    "description": "Session Cookie Attributes (Domain)",
+    "tags": [
+      "WebApp.Session.Cookies.Attr.Domain"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "domain",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,0)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  }
+]
