@@ -4,7 +4,7 @@
     "id": "AI053300",
     "description": "General AntiMalware",
     "tags": [
-      "Metadata.Pipeline.Tools.AntiMalware"
+      "Metadata.Pipeline.StaticAnalysis.AntiMalware"
     ],
     "severity": "critical",
     "patterns": [
@@ -23,7 +23,7 @@
     "id": "AI053400",
     "description": "Finds vulnerabilities in Python code.",
     "tags": [
-      "Metadata.Pipeline.Tools.Bandit"
+      "Metadata.Pipeline.StaticAnalysis.Bandit"
     ],
     "severity": "critical",
     "patterns": [
@@ -42,7 +42,7 @@
     "id": "AI053500",
     "description": "Validates compiler and linker security settings.",
     "tags": [
-      "Metadata.Pipeline.Tools.BinSkim"
+      "Metadata.Pipeline.CompilerSettings.BinSkim"
     ],
     "severity": "critical",
     "patterns": [
@@ -61,7 +61,7 @@
     "id": "AI053600",
     "description": "General code signing.",
     "tags": [
-      "Metadata.Pipeline.Tools.CodeSigning"
+      "Metadata.Pipeline.Packaging.CodeSigning"
     ],
     "severity": "critical",
     "patterns": [
@@ -80,7 +80,7 @@
     "id": "AI053700",
     "description": "Identifies patterns in code.",
     "tags": [
-      "Metadata.Pipeline.Tools.CodeQL"
+      "Metadata.Pipeline.StaticAnalysis.CodeQL"
     ],
     "severity": "critical",
     "patterns": [
@@ -99,7 +99,7 @@
     "id": "AI053800",
     "description": "Identifies problematic coding patterns in JavaScript.",
     "tags": [
-      "Metadata.Pipeline.Tools.ESLint"
+      "Metadata.Pipeline.Linter.ESLint"
     ],
     "severity": "critical",
     "patterns": [
@@ -118,7 +118,7 @@
     "id": "AI053900",
     "description": "Analyzer that checks conformance to Microsoft .NET Design Guidelines.",
     "tags": [
-      "Metadata.Pipeline.Tools.FxCop"
+      "Metadata.Pipeline.StaticAnalysis.FxCop"
     ],
     "severity": "critical",
     "patterns": [
@@ -137,7 +137,7 @@
     "id": "AI054000",
     "description": "Analyzer that checks for security vulnerabilities in .NET code.",
     "tags": [
-      "Metadata.Pipeline.Tools.ModernCop"
+      "Metadata.Pipeline.StaticAnalysis.ModernCop"
     ],
     "severity": "critical",
     "patterns": [
@@ -156,7 +156,7 @@
     "id": "AI054100",
     "description": "Identifies package manager commands for NuGet.",
     "tags": [
-      "Metadata.Pipeline.Tools.NuGetCommand"
+      "Metadata.Pipeline.Packaging.NuGetCommand"
     ],
     "severity": "critical",
     "patterns": [
@@ -175,7 +175,7 @@
     "id": "AI054200",
     "description": "Identifies style, quality, design and other code characteristics.",
     "tags": [
-      "Metadata.Pipeline.Tools.RoslynAnalyzers"
+      "Metadata.Pipeline.StaticAnalysis.RoslynAnalyzers"
     ],
     "severity": "critical",
     "patterns": [
@@ -194,7 +194,7 @@
     "id": "AI054300",
     "description": "Vulnerability detection for Java code.",
     "tags": [
-      "Metadata.Pipeline.Tools.SpotBugs"
+      "Metadata.Pipeline.StaticAnalysis.SpotBugs"
     ],
     "severity": "critical",
     "patterns": [
@@ -213,7 +213,7 @@
     "id": "AI054400",
     "description": "Checks TypeScript for readability and functionality errors.",
     "tags": [
-      "Metadata.Pipeline.Tools.TSLint"
+      "Metadata.Pipeline.Linter.TSLint"
     ],
     "severity": "critical",
     "patterns": [

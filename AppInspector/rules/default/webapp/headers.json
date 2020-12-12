@@ -1,0 +1,211 @@
+[
+  {
+    "name": "Web App Headers HSTS",
+    "id": "AI054800",
+    "description": "Web App Headers Strict-Transport Security (HSTS)",
+    "tags": [
+      "WebApp.Headers.HSTS"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "Strict-Transport-Security",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Headers CSP",
+    "id": "AI054900",
+    "description": "Web App Headers Content Security Policy (CSP)",
+    "tags": [
+      "WebApp.Headers.CSP"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "Content-Security-Policy",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Headers X-Frame",
+    "id": "AI055000",
+    "description": "Web App Headers X-Frame",
+    "tags": [
+      "WebApp.Headers.X-Frame"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "X-Frame-Options",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Deprecated Web App Headers X-XSS",
+    "id": "AI055100",
+    "description": "Web App Headers Cross Site Scripting Protection (X-XSS)",
+    "tags": [
+      "WebApp.Headers.XSS"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "X-XSS-Protection",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Deprecated Web App Headers HPKP",
+    "id": "AI055200",
+    "description": "Web App Headers Publick Key Pin (HPKP)",
+    "tags": [
+      "WebApp.Headers.HPKP"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "Public-Key-Pins",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Headers Expect-CT",
+    "id": "AI055300",
+    "description": "Web App Headers Certificate Transparency Expect-CT",
+    "tags": [
+      "WebApp.Headers.Expect-CT"
+    ],
+    "severity": "important",
+    "patterns": [
+      {
+        "pattern": "Expect-CT",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Headers X-Content-Type-Options",
+    "id": "AI055400",
+    "description": "Web App Headers X-Content-Type-Options",
+    "tags": [
+      "WebApp.Headers.X-Content-Type-Options"
+    ],
+    "severity": "important",
+    "patterns": [
+      {
+        "pattern": "X-Content-Type-Options",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Headers Referrer-Policy",
+    "id": "AI055500",
+    "description": "Web App Headers Referrer-Policy",
+    "tags": [
+      "WebApp.Headers.Referrer-Policy"
+    ],
+    "severity": "important",
+    "patterns": [
+      {
+        "pattern": "Referrer-Policy",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Headers Cache-Control",
+    "id": "AI055600",
+    "description": "Web App Headers Cache-Control",
+    "tags": [
+      "WebApp.Headers.Cache-Control"
+    ],
+    "severity": "important",
+    "patterns": [
+      {
+        "pattern": "Cache-Control",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Headers Clear-Site-Data",
+    "id": "AI055700",
+    "description": "Web App Headers Clear-Site-Data",
+    "tags": [
+      "WebApp.Headers.Clear-Site-Data"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "Clear-Site-Data",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Headers Feature-Policy",
+    "id": "AI055800",
+    "description": "Web App Headers",
+    "tags": [
+      "WebApp.Headers.Feature-Policy"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "Feature-Policy",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

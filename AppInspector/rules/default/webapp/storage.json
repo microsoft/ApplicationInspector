@@ -1,0 +1,244 @@
+[
+  {
+    "name": "Web App Local Storage Write",
+    "id": "AI057000",
+    "description": "Web App Local Storage Write",
+    "tags": [
+      "WebApp.Storage.Local.Write"
+    ],
+    "applies_to": [
+      "javascript",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "localstorage.setItem",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Session Storage Write",
+    "id": "AI057100",
+    "description": "Web App Session Storage Write",
+    "tags": [
+      "WebApp.Storage.Session.Write"
+    ],
+    "applies_to": [
+      "javascript",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "sessionstorage.setItem",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Storage Cookie Write",
+    "id": "AI057200",
+    "description": "Web App Storage Cookie Write",
+    "tags": [
+      "WebApp.Storage.Cookie.Write"
+    ],
+    "applies_to": [
+      "javascript",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": ".cookie =",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Storage Indexed DB Use",
+    "id": "AI057300",
+    "description": "Web App Storage Indexed DB",
+    "tags": [
+      "WebApp.Storage.IndexedDB"
+    ],
+    "applies_to": [
+      "javascript",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "indexedDB|mozIndexedDB|webkitIndexedDB|msIndexedDB",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Storage FileReader",
+    "id": "AI057400",
+    "description": "Web App Storage FileReader",
+    "tags": [
+      "WebApp.Storage.FileReader"
+    ],
+    "applies_to": [
+      "javascript",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "new FileReader",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Storage ReadFileAsURL",
+    "id": "AI057500",
+    "description": "Web App Storage ReadFileAsURL",
+    "tags": [
+      "WebApp.Storage.ReadFileAsURL"
+    ],
+    "applies_to": [
+      "javascript",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "readAsDataURL",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "FileReader",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "_comment": ""
+        },
+        "search_in": "finding-region-5,5",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Storage FileUpload",
+    "id": "AI057600",
+    "description": "Web App Storage FileUpload",
+    "tags": [
+      "WebApp.Storage.FileUpload"
+    ],
+    "applies_to": [
+      "javascript",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "fetch",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "PUT",
+          "type": "string",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region-5,5",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  }
+]

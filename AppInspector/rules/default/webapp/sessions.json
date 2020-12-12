@@ -1,0 +1,283 @@
+[
+  {
+    "name": "Web App Cookie HttpOnly",
+    "id": "AI056100",
+    "description": "Web App Cookie Attributes HttpOnly",
+    "tags": [
+      "WebApp.Cookies.Attr.HttpOnly"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "httpOnly",
+        "type": "string",
+        "modifiers": [ "i" ],
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,1)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Cookie Secure",
+    "id": "AI056200",
+    "description": "Web App Cookie Attributes Secure",
+    "tags": [
+      "WebApp.Cookies.Attr.Secure"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "secure",
+        "type": "string",
+        "modifiers": [ "i" ],
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,1)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Cookie Attributes Lifetime",
+    "id": "AI056300",
+    "description": "Web App Cookie Attributes Lifetime",
+    "tags": [
+      "WebApp.Cookies.Attr.Lifetime"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "lifetime",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,1)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Cookie Attributes Strict",
+    "id": "AI056400",
+    "description": "Web App Cookie Attributes Strict",
+    "tags": [
+      "WebApp.Cookies.Attr.Strict"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "strict",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,1)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Cookie Attributes SameSite",
+    "id": "AI056500",
+    "description": "Web App Cookie Attributes SameSite",
+    "tags": [
+      "WebApp.Cookies.Attr.SameSite"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "samesite",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,1)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Cookie Attributes Expires",
+    "id": "AI056600",
+    "description": "Web App Cookie Attributes Expires",
+    "tags": [
+      "WebApp.Cookies.Attr.Expires"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "expires",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,1)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Cookie Attributes Domain",
+    "id": "AI056700",
+    "description": "Web App Cookie Attributes Domain",
+    "tags": [
+      "WebApp.Cookies.Attr.Domain"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "domain",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "cookie",
+          "type": "regex-word",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": ""
+        },
+        "search_in": "finding-region(-1,1)",
+        "negate_finding": false,
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Session History Update",
+    "id": "AI056800",
+    "description": "Web App Session History Update",
+    "tags": [
+      "WebApp.History.Update"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "history\\.(pushState|replaceState)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Session Worker",
+    "id": "AI056900",
+    "description": "Web App Session Worker Used",
+    "tags": [
+      "WebApp.Worker"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "new Worker",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]
