@@ -63,7 +63,7 @@
           "modifiers": [ "i" ],
           "_comment": ""
         },
-        "search_in": "finding-region-1,1",
+        "search_in": "finding-region(-1,1)",
         "negate_finding": false,
         "_comment": ""
       }
@@ -203,7 +203,7 @@
           "modifiers": [ "i" ],
           "_comment": ""
         },
-        "search_in": "finding-region-1,1",
+        "search_in": "finding-region(-1,1)",
         "negate_finding": false,
         "_comment": ""
       }
