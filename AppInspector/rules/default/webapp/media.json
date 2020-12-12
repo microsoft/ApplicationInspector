@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Web App Media Audio",
+    "id": "AI055900",
+    "description": "Web App Media Audio",
+    "tags": [
+      "WebApp.Media.Audio"
+    ],
+    "applies_to": [
+      "javascript",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "new AudioContext",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Media GetUserMedia",
+    "id": "AI056000",
+    "description": "Web App Media GetUserMedia",
+    "tags": [
+      "WebApp.Media.GetUserMedia"
+    ],
+    "applies_to": [
+      "javascript",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "getUserMedia|webkitGetUserMedia|mozGetUserMedia|msGetUserMedia",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

@@ -1,23 +1,10 @@
 [
   {
-    "name": "WebApp Headers (HSTS)",
-    "id": "AI054500",
-    "description": "WebApp Headers (HSTS)",
+    "name": "Web App Headers HSTS",
+    "id": "AI054800",
+    "description": "Web App Headers Strict-Transport Security (HSTS)",
     "tags": [
       "WebApp.Headers.HSTS"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "critical",
     "patterns": [
@@ -32,24 +19,11 @@
     ]
   },
   {
-    "name": "WebApp Headers (CSP)",
-    "id": "AI054600",
-    "description": "WebApp Headers (CSP)",
+    "name": "Web App Headers CSP",
+    "id": "AI054900",
+    "description": "Web App Headers Content Security Policy (CSP)",
     "tags": [
       "WebApp.Headers.CSP"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "critical",
     "patterns": [
@@ -64,24 +38,11 @@
     ]
   },
   {
-    "name": "WebApp Headers (X-Frame)",
-    "id": "AI054700",
-    "description": "WebApp Headers (X-Frame)",
+    "name": "Web App Headers X-Frame",
+    "id": "AI055000",
+    "description": "Web App Headers X-Frame",
     "tags": [
       "WebApp.Headers.X-Frame"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "critical",
     "patterns": [
@@ -96,24 +57,11 @@
     ]
   },
   {
-    "name": "Deprecated WebApp Headers (X-XSS)",
-    "id": "AI054800",
-    "description": "WebApp Headers (X-XSS)",
+    "name": "Deprecated Web App Headers X-XSS",
+    "id": "AI055100",
+    "description": "Web App Headers Cross Site Scripting Protection (X-XSS)",
     "tags": [
       "WebApp.Headers.XSS"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "critical",
     "patterns": [
@@ -128,24 +76,11 @@
     ]
   },
   {
-    "name": "Deprecated WebApp Headers (HPKP)",
-    "id": "AI054900",
-    "description": "WebApp Headers (HPKP)",
+    "name": "Deprecated Web App Headers HPKP",
+    "id": "AI055200",
+    "description": "Web App Headers Publick Key Pin (HPKP)",
     "tags": [
       "WebApp.Headers.HPKP"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "critical",
     "patterns": [
@@ -160,24 +95,11 @@
     ]
   },
   {
-    "name": "WebApp Headers (Expect-CT)",
-    "id": "AI055000",
-    "description": "WebApp Headers (Expect-CT)",
+    "name": "Web App Headers Expect-CT",
+    "id": "AI055300",
+    "description": "Web App Headers Certificate Transparency Expect-CT",
     "tags": [
       "WebApp.Headers.Expect-CT"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "important",
     "patterns": [
@@ -192,24 +114,11 @@
     ]
   },
   {
-    "name": "WebApp Headers (X-Content-Type-Options)",
-    "id": "AI055100",
-    "description": "WebApp Headers (X-Content-Type-Options)",
+    "name": "Web App Headers X-Content-Type-Options",
+    "id": "AI055400",
+    "description": "Web App Headers X-Content-Type-Options",
     "tags": [
       "WebApp.Headers.X-Content-Type-Options"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "important",
     "patterns": [
@@ -224,24 +133,11 @@
     ]
   },
   {
-    "name": "WebApp Headers (Referrer-Policy)",
-    "id": "AI055200",
-    "description": "WebApp Headers (Referrer-Policy)",
+    "name": "Web App Headers Referrer-Policy",
+    "id": "AI055500",
+    "description": "Web App Headers Referrer-Policy",
     "tags": [
       "WebApp.Headers.Referrer-Policy"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "important",
     "patterns": [
@@ -256,24 +152,11 @@
     ]
   },
   {
-    "name": "WebApp Headers (Cache-Control)",
-    "id": "AI055300",
-    "description": "WebApp Headers (Cache-Control)",
+    "name": "Web App Headers Cache-Control",
+    "id": "AI055600",
+    "description": "Web App Headers Cache-Control",
     "tags": [
       "WebApp.Headers.Cache-Control"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "important",
     "patterns": [
@@ -288,24 +171,11 @@
     ]
   },
   {
-    "name": "WebApp Headers (Clear-Site-Data)",
-    "id": "AI055400",
-    "description": "WebApp Headers (Clear-Site-Data)",
+    "name": "Web App Headers Clear-Site-Data",
+    "id": "AI055700",
+    "description": "Web App Headers Clear-Site-Data",
     "tags": [
       "WebApp.Headers.Clear-Site-Data"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "critical",
     "patterns": [
@@ -320,24 +190,11 @@
     ]
   },
   {
-    "name": "WebApp Headers (Feature-Policy)",
-    "id": "AI055500",
-    "description": "WebApp Headers",
+    "name": "Web App Headers Feature-Policy",
+    "id": "AI055800",
+    "description": "Web App Headers",
     "tags": [
       "WebApp.Headers.Feature-Policy"
-    ],
-    "applies_to": [
-      "javascript",
-      "csharp",
-      "python",
-      "vb",
-      "html",
-      "javascriptreact",
-      "typescript",
-      "coffeescript",
-      "java",
-      "perl",
-      "ruby"
     ],
     "severity": "critical",
     "patterns": [

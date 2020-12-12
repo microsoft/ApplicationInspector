@@ -1,0 +1,97 @@
+[
+  {
+    "name": "Web App Communications Post Message",
+    "id": "AI054500",
+    "description": "Web App Communications Post Message",
+    "tags": [
+      "WebApp.Communications.PostMessage"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "window\\.parent\\.postMessage|contentWindow\\.postMessage",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Communications Sockets",
+    "id": "AI054600",
+    "description": "Web App Communications Sockets",
+    "tags": [
+      "WebApp.Communications.Sockets"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "WebSocket",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  },
+  {
+    "name": "Web App Communications Server Events",
+    "id": "AI054700",
+    "description": "Web App Communications Server Events",
+    "tags": [
+      "WebApp.Communications.ServerEvent"
+    ],
+    "applies_to": [
+      "javascript",
+      "csharp",
+      "python",
+      "vb",
+      "html",
+      "javascriptreact",
+      "typescript",
+      "coffeescript",
+      "java",
+      "perl",
+      "ruby"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "EventSource",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": ""
+      }
+    ]
+  }
+]

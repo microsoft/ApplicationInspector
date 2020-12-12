@@ -42,42 +42,6 @@
         ]
       },
       {
-        "title": "Active Content",
-        "dataRef": "ActiveContent",
-        "patterns": [
-          {
-            "searchPattern": ".Flash",
-            "displayName": "Adobe Flash",
-            "detectedIcon": "fas fa-bolt"
-          },
-          {
-            "searchPattern": ".ActiveX",
-            "displayName": "Microsoft ActiveX",
-            "detectedIcon": "fas fa-file-invoice"
-          },
-          {
-            "searchPattern": ".Microsoft.COM",
-            "displayName": "Microsoft COM",
-            "detectedIcon": "fab fa-hubspot"
-          },
-          {
-            "searchPattern": ".Silverlight",
-            "displayName": "Microsoft Silverlight",
-            "detectedIcon": "fas fa-cloud-moon"
-          },
-          {
-            "searchPattern": ".PDF",
-            "displayName": "Adobe PDF",
-            "detectedIcon": "far fa-file-pdf"
-          },
-          {
-            "searchPattern": ".Ajax",
-            "displayName": "Javascript ajax",
-            "detectedIcon": "fas fa-exchange-alt"
-          }
-        ]
-      },
-      {
         "title": "Cloud Services",
         "dataRef": "CloudServices",
         "patterns": [
@@ -124,8 +88,49 @@
         ]
       },
       {
-        "title": "Data Storage",
-        "dataRef": "DataStorage",
+        "title": "Cookie Attributes",
+        "dataRef": "SessionCookies",
+        "patterns": [
+          {
+            "searchPattern": "Cookies.Attr.HttpOnly",
+            "displayName": "HttpOnly attribute",
+            "detectedIcon": "fab fa-js"
+          },
+          {
+            "searchPattern": "Cookies.Attr.Secure",
+            "displayName": "Secure attribute",
+            "detectedIcon": "fas fa-shield-alt"
+          },
+          {
+            "searchPattern": "Cookies.Attr.Lifetime",
+            "displayName": "Lifetime attribute",
+            "detectedIcon": "fas fa-heartbeat"
+          },
+          {
+            "searchPattern": "Cookies.Attr.Strict",
+            "displayName": "Strict attribute",
+            "detectedIcon": "fas fa-gavel"
+          },
+          {
+            "searchPattern": "Cookies.Attr.SameSite",
+            "displayName": "SameSite attribute",
+            "detectedIcon": "far fa-object-group"
+          },
+          {
+            "searchPattern": "Cookies.Attr.Expires",
+            "displayName": "Expires attribute",
+            "detectedIcon": "far fa-calendar-times"
+          },
+          {
+            "searchPattern": "Cookies.Attr.Domain",
+            "displayName": "Domain attribute",
+            "detectedIcon": "fas fa-hotel"
+          }
+        ]
+      },
+      {
+        "title": "Databases",
+        "dataRef": "Databases",
         "patterns": [
           {
             "searchPattern": "DBMS.SQLite",
@@ -170,7 +175,7 @@
           },
           {
             "searchPattern": "Code.Repo",
-            "displayName": "Sourcecode Repository",
+            "displayName": "Source Code Repository",
             "detectedIcon": "fas fa-archive"
           },
           {
@@ -411,6 +416,83 @@
         ]
       },
       {
+        "title": "Pipeline Tools",
+        "dataRef": "PipelineTools",
+        "patterns": [
+          {
+            "searchPattern": ".CompilerSettings",
+            "displayName": "Compiler Settings",
+            "detectedIcon": "fas fa-list-ul"
+          },
+          {
+            "searchPattern": "Packaging.CodeSigning",
+            "displayName": "Code Signing",
+            "detectedIcon": "fas fa-signature"
+          },
+          {
+            "searchPattern": ".Linter",
+            "displayName": "Linters",
+            "detectedIcon": "fas fa-spell-check"
+          },
+          {
+            "searchPattern": ".StaticAnalysis",
+            "displayName": "Static Analyzers",
+            "detectedIcon": "fas fa-microscope "
+          },
+          {
+            "searchPattern": "Pipeline.Packaging",
+            "displayName": "Packaging",
+            "detectedIcon": "fas fa-truck-loading"
+          }
+        ]
+      },
+      {
+        "title": "Session Headers",
+        "dataRef": "SessionHeaders",
+        "patterns": [
+          {
+            "searchPattern": "Headers.HSTS",
+            "displayName": "Strict Transport Security (HSTS)",
+            "detectedIcon": "far fa-hand-paper"
+          },
+          {
+            "searchPattern": "Headers.CSP",
+            "displayName": "Content Security Policy (CSP)",
+            "detectedIcon": "fas fa-dungeon"
+          },
+          {
+            "searchPattern": "Headers.X-Frame",
+            "displayName": "X-Frame-Options",
+            "detectedIcon": "fas fa-crop"
+          },
+          {
+            "searchPattern": "Headers.XSS",
+            "displayName": "Cross Site Scripting (X-XSS)",
+            "detectedIcon": "fas fa-times"
+          },
+          {
+            "searchPattern": "Headers.HPKP",
+            "displayName": "Public Key Pins (HPKP) Deprecated",
+            "detectedIcon": "fas fa-thumbtack"
+          },
+          {
+            "searchPattern": "Headers.Expect-CT",
+            "displayName": "Certificate Transparency (Expect-CT)",
+            "detectedIcon": "fas fa-certificate"
+          },
+          {
+            "searchPattern": "Headers.X-Content-Type",
+            "displayName": "X-Content-Type Options",
+            "detectedIcon": "fas fa-border-style"
+          },
+          {
+            "searchPattern": "Headers.Clear-Site-Data",
+            "displayName": "Clear Site Data",
+            "detectedIcon": "fas fa-fire-alt"
+          }
+        ]
+      },
+      {
         "title": "Sensitive Data",
         "dataRef": "SensitiveData",
         "patterns": [
@@ -453,6 +535,52 @@
             "searchPattern": "Sensitive.Financial",
             "displayName": "Financial data",
             "detectedIcon": "fas fa-money-bill"
+          }
+        ]
+      },
+      {
+        "title": "Web App Features",
+        "dataRef": "WebAppFeatures",
+        "patterns": [
+          {
+            "searchPattern": "WebApp.Media.Audio",
+            "displayName": "HTML5 Audio",
+            "detectedIcon": "fas fa-volume-up"
+          },
+          {
+            "searchPattern": "WebApp.Media.GetUserMedia",
+            "displayName": "HTML5 GetUserMedia",
+            "detectedIcon": "fas fa-play-circle"
+          },
+          {
+            "searchPattern": "IndexedDB",
+            "displayName": "HTML5 IndexedDB",
+            "detectedIcon": "fas fa-arrow-alt-circle-down"
+          },
+          {
+            "searchPattern": "WebApp.Communications.PostMessage",
+            "displayName": "HTML5 PostMessage",
+            "detectedIcon": "fas fa-share-square"
+          },
+          {
+            "searchPattern": "WebApp.Communications.ServerEvent",
+            "displayName": "HTML5 Server Sent Event",
+            "detectedIcon": "fas fa-satellite-dish"
+          },
+          {
+            "searchPattern": "WebApp.Storage.FileReader",
+            "displayName": "HTML5 File Reader",
+            "detectedIcon": "fas fa-book-open"
+          },
+          {
+            "searchPattern": "WebApp.Worker",
+            "displayName": "HTML5 Worker",
+            "detectedIcon": "fas fa-people-carry"
+          },
+          {
+            "searchPattern": "WebApp.Storage.FileUpload",
+            "displayName": "HTML5 File Upload",
+            "detectedIcon": "fas fa-file-upload"
           }
         ]
       }
