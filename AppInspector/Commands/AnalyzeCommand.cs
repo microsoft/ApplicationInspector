@@ -642,11 +642,13 @@ namespace Microsoft.ApplicationInspector.Commands
             else
             {
                 _metaDataHelper?.AddLanguage("Unknown");
+                languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(filePath) }, Name = "Unknown" };
             }
 
             // 1. Check for exclusions
             if (ExcludeFileFromScan(filePath))
             {
+                _metaDataHelper?.Metadata.IncrementFilesSkipped();
                 return false;
             }
 
