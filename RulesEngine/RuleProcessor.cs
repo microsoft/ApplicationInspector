@@ -262,7 +262,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         break;
                     }
                 }
-
             }
 
             if (removeOld && matchRecordToRemove != null)
