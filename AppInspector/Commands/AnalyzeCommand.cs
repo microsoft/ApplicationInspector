@@ -635,23 +635,22 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(),0);
 
-            // 1. Skip files written in unknown language
-            if (!Language.FromFileName(filePath, ref languageInfo))
+            if (Language.FromFileName(filePath, ref languageInfo))
             {
-                WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_LANGUAGE_NOTFOUND, filePath), LogLevel.Warn);
-                _metaDataHelper?.Metadata.IncrementFilesSkipped();
-                return false;
+                _metaDataHelper?.AddLanguage(languageInfo.Name);
+            }
+            else
+            {
+                _metaDataHelper?.AddLanguage("Unknown");
             }
 
-            _metaDataHelper?.AddLanguage(languageInfo.Name);
-
-            // 2. Check for exclusions
+            // 1. Check for exclusions
             if (ExcludeFileFromScan(filePath))
             {
                 return false;
             }
 
-            // 3. Skip if exceeds file size limits
+            // 2. Skip if exceeds file size limits
             try
             {
                 fileLength = fileLength <= 0 ? new FileInfo(filePath).Length : fileLength;
