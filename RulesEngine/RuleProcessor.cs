@@ -24,6 +24,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly bool _stopAfterFirstMatch;
         private readonly bool _uniqueTagMatchesOnly;
         private readonly Logger? _logger;
+        private readonly bool _treatEverythingAsCode;
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
         private readonly ConcurrentDictionary<string, byte> _uniqueTagHashes;
@@ -48,7 +49,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Creates instance of RuleProcessor
         /// </summary>
-        public RuleProcessor(RuleSet rules, Confidence confidenceFilter, Logger? logger, bool uniqueMatches = false, bool stopAfterFirstMatch = false)
+        public RuleProcessor(RuleSet rules, Confidence confidenceFilter, Logger? logger, bool uniqueMatches = false, bool stopAfterFirstMatch = false, bool treatEverythingAsCode = false)
         {
             _ruleset = rules;
             EnableCache = true;
@@ -59,6 +60,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             _stopAfterFirstMatch = stopAfterFirstMatch;
             _uniqueTagMatchesOnly = uniqueMatches;
             _logger = logger;
+            _treatEverythingAsCode = treatEverythingAsCode;
             ConfidenceLevelFilter = confidenceFilter;
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
 
@@ -107,7 +109,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     var boundary = match.Item2;
 
                                     //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                                    if (languageInfo.Type == LanguageInfo.LangFileType.Build && oatRule.AppInspectorRule.Tags.Any(v => !v.Contains("Metadata")))
+                                    if (!_treatEverythingAsCode && languageInfo.Type == LanguageInfo.LangFileType.Build && oatRule.AppInspectorRule.Tags.Any(v => !v.Contains("Metadata")))
                                     {
                                         continue;
                                     }

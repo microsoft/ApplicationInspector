@@ -29,6 +29,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string ConfidenceFilters { get; set; } = "high,medium";
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
         public bool SingleThread { get; set; } = false;
+        public bool TreatEverythingAsCode { get; set; } = false;
     }
 
     /// <summary>
@@ -273,7 +274,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
-            _rulesProcessor = new RuleProcessor(rulesSet, _confidence, _options.Log, !_options.AllowDupTags, _options.MatchDepth == "first");
+            _rulesProcessor = new RuleProcessor(rulesSet, _confidence, _options.Log, !_options.AllowDupTags, _options.MatchDepth == "first", treatEverythingAsCode: _options.TreatEverythingAsCode);
             _rulesProcessor.UniqueTagExceptions = "Metric.,Dependency.".Split(",");//fix to enable non-unique tags if metric counter related
 
             //create metadata helper to wrap and help populate metadata from scan
