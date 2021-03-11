@@ -29,6 +29,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string ConfidenceFilters { get; set; } = "high,medium";
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
         public bool SingleThread { get; set; } = false;
+        public bool TreatEverythingAsCode { get; set; } = false;
     }
 
     /// <summary>
@@ -273,7 +274,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
-            _rulesProcessor = new RuleProcessor(rulesSet, _confidence, _options.Log, !_options.AllowDupTags, _options.MatchDepth == "first");
+            _rulesProcessor = new RuleProcessor(rulesSet, _confidence, _options.Log, !_options.AllowDupTags, _options.MatchDepth == "first", treatEverythingAsCode: _options.TreatEverythingAsCode);
             _rulesProcessor.UniqueTagExceptions = "Metric.,Dependency.".Split(",");//fix to enable non-unique tags if metric counter related
 
             //create metadata helper to wrap and help populate metadata from scan
@@ -635,23 +636,24 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(),0);
 
-            // 1. Skip files written in unknown language
-            if (!Language.FromFileName(filePath, ref languageInfo))
+            if (Language.FromFileName(filePath, ref languageInfo))
             {
-                WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_LANGUAGE_NOTFOUND, filePath), LogLevel.Warn);
+                _metaDataHelper?.AddLanguage(languageInfo.Name);
+            }
+            else
+            {
+                _metaDataHelper?.AddLanguage("Unknown");
+                languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(filePath) }, Name = "Unknown" };
+            }
+
+            // 1. Check for exclusions
+            if (ExcludeFileFromScan(filePath))
+            {
                 _metaDataHelper?.Metadata.IncrementFilesSkipped();
                 return false;
             }
 
-            _metaDataHelper?.AddLanguage(languageInfo.Name);
-
-            // 2. Check for exclusions
-            if (ExcludeFileFromScan(filePath))
-            {
-                return false;
-            }
-
-            // 3. Skip if exceeds file size limits
+            // 2. Skip if exceeds file size limits
             try
             {
                 fileLength = fileLength <= 0 ? new FileInfo(filePath).Length : fileLength;
