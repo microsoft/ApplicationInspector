@@ -345,6 +345,7 @@ stages:
         tagSource: 'userSpecifiedTag'
         tag: 'v$(ReleaseVersion)'
         title: 'Release v$(ReleaseVersion)'
+        releaseNotesSource: 'inline'
         assets: |
           $(Build.StagingDirectory)/*.zip
           $(Build.StagingDirectory)/HASHES.txt
