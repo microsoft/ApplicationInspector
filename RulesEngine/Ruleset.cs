@@ -121,7 +121,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="tag"> Tag for the rules </param>
         public void AddString(string jsonstring, string sourcename, string? tag = null)
         {
-            AddRange(StringToRules(jsonstring, sourcename, tag));
+            AddRange(StringToRules(jsonstring ?? string.Empty, sourcename ?? string.Empty, tag));
         }
 
         /// <summary>
@@ -131,7 +131,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> Filtered rules </returns>
         public IEnumerable<ConvertedOatRule> ByLanguages(string[] languages)
         {
-            return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0 || (x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Any(y => languages.Contains(y))));
+            if (languages is { })
+            {
+                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0 || (x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Any(y => languages.Contains(y))));
+            }
+            return _oatRules;
         }
 
         /// <summary>
@@ -141,7 +145,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> Filtered rules </returns>
         public IEnumerable<ConvertedOatRule> ByLanguage(string language)
         {
-            return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0 || (x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Any(y => language.Contains(y))));
+            if (language is string)
+            {
+                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0 || (x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Any(y => language.Contains(y))));
+            }
+            return _oatRules;
         }
 
    
