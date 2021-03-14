@@ -565,13 +565,9 @@ namespace Microsoft.ApplicationInspector.Commands
             try
             {
                 var extractor = new Extractor();
-                var extractorOptions = new ExtractorOptions()
-                {
-                    Parallel = !_options.SingleThread
-                };
-                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath, extractorOptions);
+                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath);
 
-                if (!extractorOptions.Parallel)
+                if (_options.SingleThread)
                 {
                     foreach (FileEntry file in files)
                     {
