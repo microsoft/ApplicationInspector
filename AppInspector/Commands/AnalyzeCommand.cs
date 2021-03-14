@@ -102,7 +102,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!string.IsNullOrEmpty(opt.FilePathExclusions))
             {
-                _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").ToList<string>();
+                _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").ToList();
                 if (_fileExclusionList != null && (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None")))
                 {
                     _fileExclusionList.Clear();
