@@ -579,16 +579,16 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             //check uncompressed file passes standard checks
                             LanguageInfo languageInfo = new LanguageInfo();
-                            if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                            if (FileChecksPassed(file, ref languageInfo))
                             {
                                 var streamByteArray = new byte[file.Content.Length];
                                 file.Content.Read(streamByteArray);
                                 ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
                             }
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            WriteOnce.SafeLog($"Failed to Decompress file {file.FullPath}",LogLevel.Info);
+                            WriteOnce.SafeLog($"Failed to parse {file.FullPath}. {e.GetType()}:{e.Message}", LogLevel.Info);
                         }
                     }
                 }
@@ -600,16 +600,16 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             //check uncompressed file passes standard checks
                             LanguageInfo languageInfo = new LanguageInfo();
-                            if (FileChecksPassed(file.FullPath, ref languageInfo, file.Content.Length))
+                            if (FileChecksPassed(file, ref languageInfo))
                             {
                                 var streamByteArray = new byte[file.Content.Length];
                                 file.Content.Read(streamByteArray);
                                 ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
                             }
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            Console.WriteLine($"Failed to parse {file.FullPath}");
+                            WriteOnce.SafeLog($"Failed to parse {file.FullPath}. {e.GetType()}:{e.Message}",LogLevel.Info);
                         }
                     });
                 }
@@ -634,7 +634,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
         {
-            _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(),0);
+            _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(), 0);
 
             if (Language.FromFileName(filePath, ref languageInfo))
             {
@@ -653,6 +653,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 return false;
             }
 
+
             // 2. Skip if exceeds file size limits
             try
             {
@@ -664,7 +665,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     return false;
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, filePath));
                 throw;
@@ -673,6 +674,45 @@ namespace Microsoft.ApplicationInspector.Commands
             return true;
         }
 
+        /// <summary>
+        /// Common validation called by ProcessAsFile and UnzipAndProcess to ensure same order and checks made
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="languageInfo"></param>
+        /// <param name="fileLength">should be > zero if called from unzip method</param>
+        /// <returns></returns>
+        private bool FileChecksPassed(FileEntry fileEntry, ref LanguageInfo languageInfo, long fileLength = 0)
+        {
+            _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(fileEntry.FullPath).Replace('.', ' ').TrimStart(), 0);
+
+            if (Language.FromFileName(fileEntry.FullPath, ref languageInfo))
+            {
+                _metaDataHelper?.AddLanguage(languageInfo.Name);
+            }
+            else
+            {
+                _metaDataHelper?.AddLanguage("Unknown");
+                languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(fileEntry.FullPath) }, Name = "Unknown" };
+            }
+
+            // 1. Check for exclusions
+            if (ExcludeFileFromScan(fileEntry.FullPath))
+            {
+                _metaDataHelper?.Metadata.IncrementFilesSkipped();
+                return false;
+            }
+
+
+            // 2. Skip if exceeds file size limits
+            if (fileLength > MAX_FILESIZE)
+            {
+                WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILESIZE_SKIPPED, fileEntry.FullPath), LogLevel.Warn);
+                _metaDataHelper?.Metadata.IncrementFilesSkipped();
+                return false;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Allow callers to exclude files that are not core code files and may otherwise report false positives for matches
