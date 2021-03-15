@@ -723,7 +723,7 @@ namespace Microsoft.ApplicationInspector.Commands
             // 2. Skip excluded files i.e. sample, test or similar from sub-directories (not root #210) unless ignore filter requested
             if (!scanningRootFolder)
             {
-                if (_fileExclusionList != null && _fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
+                if (_fileExclusionList != null && _fileExclusionList.Any(v => Path.GetFileName(filePath).ToLower().Contains(v)))
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filePath??""), LogLevel.Warn);
                     _metaDataHelper?.Metadata.IncrementFilesSkipped();
