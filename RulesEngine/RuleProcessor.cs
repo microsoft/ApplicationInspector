@@ -155,17 +155,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 var replacementList = new List<MatchRecord>();
                 foreach (var entry in resultsList)
                 {
-                    if (!replacementList.Any(x => entry.Tags.All(y => x.Tags.Contains(y))))
+                    if (!RuleTagsAreUniqueOrAllowed(entry.Rule.Tags))
                     {
                         if (!_stopAfterFirstMatch)
                         {
-                            // This function is deceptive it actually removes the worse match if it finds one
-                            // TODO: Do this a better way/remove this functionality
-                            if (IfHasBetterMatchRemoveWorseMatch(replacementList, entry))
+                            var replaceable = replacementList.Where(x => x.Confidence < entry.Confidence && x.Tags.All(y => entry.Tags.Contains(y)));
+                            foreach(var replaced in replaceable)
                             {
-                                replacementList.Add(entry);
+                                replacementList.Remove(replaced);
                             }
+                            replacementList.Add(entry);
                         }
+                    }
+                    else
+                    {
+                        replacementList.Add(entry);
                     }
                 }
                 resultsList = replacementList;
@@ -206,46 +210,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
   
         #region Private Support Methods
-
-        /// <summary>
-        /// Identify if new scan result is a better match than previous i.e. has a higher confidence.  Assumes unique list of MatchRecords.
-        /// </summary>
-        /// <param name="MatchRecords"></param>
-        /// <param name="compareResult"></param>
-        /// <param name="removeOld"></param>
-        /// <returns></returns>
-        private bool IfHasBetterMatchRemoveWorseMatch(List<MatchRecord> MatchRecords, MatchRecord newMatchRecord)
-        {
-            bool betterMatch = false;
-            bool noMatch = true;
-
-            //if list is empty the new match is the best match
-            if (!MatchRecords.Any())
-            {
-                return true;
-            }
-
-            foreach (MatchRecord MatchRecord in MatchRecords)
-            {
-                foreach (string matchRecordTag in MatchRecord.Rule.Tags ?? new string[] {""})
-                {
-                    foreach (string newMatchRecordTag in newMatchRecord.Rule.Tags ?? new string[] {""})
-                    {
-                        if (matchRecordTag == newMatchRecordTag)
-                        {
-                            noMatch = false;
-                            if (newMatchRecord.Confidence > MatchRecord.Confidence)
-                            {
-                                MatchRecords.Remove(newMatchRecord);
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return betterMatch || noMatch;
-        }
 
         /// <summary>
         ///     Filters the rules for those matching the content type. Resolves all the overrides
