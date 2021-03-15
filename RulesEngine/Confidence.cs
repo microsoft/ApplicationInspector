@@ -5,7 +5,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 {
     [Flags]
     [JsonConverter(typeof(ConfidenceConverter))]
-    public enum Confidence { Low = 1, Medium = 2, High = 4 }
+    public enum Confidence { Unspecified = 0, Low = 1, Medium = 2, High = 4 }
 
     /// <summary>
     /// Json converter for Pattern Type
