@@ -80,7 +80,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public MatchRecord[] AnalyzeFile(string filePath, string text, LanguageInfo languageInfo)
         {
             // Get rules for the given content type
-            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)).ToList();
+            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(filePath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
             List<MatchRecord> resultsList = new List<MatchRecord>();//matches for this file only
             TextContainer textContainer = new TextContainer(text, languageInfo.Name);
