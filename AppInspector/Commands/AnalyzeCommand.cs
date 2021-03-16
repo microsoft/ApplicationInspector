@@ -699,7 +699,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 return false;
             }
 
-
             // 2. Skip if exceeds file size limits
             if (fileLength > MAX_FILESIZE)
             {

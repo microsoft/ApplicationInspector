@@ -38,10 +38,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         [JsonProperty(PropertyName = "description")]
         public string? Description { get; set; } = "";
 
+        /// <summary>
+        /// Language names or regexes to test against file names
+        /// </summary>
         [JsonProperty(PropertyName = "applies_to")]
         public string[]? AppliesTo { get; set; }
 
-            [JsonProperty(PropertyName = "tags")]
+        [JsonProperty(PropertyName = "tags")]
         public string[]? Tags { get; set; }
 
         [JsonProperty(PropertyName = "severity")]
