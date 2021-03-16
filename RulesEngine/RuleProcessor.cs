@@ -159,12 +159,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         if (!_stopAfterFirstMatch)
                         {
-                            var replaceable = replacementList.Where(x => x.Confidence < entry.Confidence && x.Tags.All(y => entry.Tags.Contains(y)));
-                            foreach(var replaced in replaceable)
+                            var replaceable = replacementList.Where(x => x.Tags.All(y => entry.Tags.Contains(y)));
+                            if (replaceable.Any())
                             {
-                                replacementList.Remove(replaced);
+                                replaceable = replaceable.Where(x => x.Confidence < entry.Confidence).ToList();
+                                if (replaceable.Any())
+                                {
+                                    replacementList.RemoveAll(x => replaceable.Contains(x));
+                                    replacementList.Add(entry);
+                                }
                             }
-                            replacementList.Add(entry);
+                            else
+                            {
+                                replacementList.Add(entry);
+                            }
                         }
                     }
                     else
