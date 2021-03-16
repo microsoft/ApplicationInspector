@@ -87,7 +87,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
-
                 foreach (var cap in ruleCapture.Captures)
                 {
                     ProcessBoundary(cap);
