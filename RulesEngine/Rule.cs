@@ -2,6 +2,9 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -38,11 +41,40 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         [JsonProperty(PropertyName = "description")]
         public string? Description { get; set; } = "";
 
-        /// <summary>
-        /// Language names or regexes to test against file names
-        /// </summary>
         [JsonProperty(PropertyName = "applies_to")]
-        public string[]? AppliesTo { get; set; }
+        public string[]? AppliesTo 
+        { 
+            get 
+            { 
+                return _appliesTo; 
+            } 
+            set 
+            { 
+                _updateCompiled = true; 
+                _appliesTo = value; 
+            } 
+        }
+
+        private string[]? _appliesTo;
+
+        [JsonProperty(PropertyName = "file_regexes")]
+        public string[]? FileRegexes { get; set; }
+
+        public IEnumerable<Regex> CompiledFileRegexes
+        {
+            get
+            {
+                if (_updateCompiled)
+                {
+                    _compiled = FileRegexes.Select(x => new Regex(x, RegexOptions.Compiled));
+                    _updateCompiled = false;
+                }
+                return _compiled;
+            }
+        }
+
+        private IEnumerable<Regex> _compiled = new List<Regex>();
+        private bool _updateCompiled = false;
 
         [JsonProperty(PropertyName = "tags")]
         public string[]? Tags { get; set; }

@@ -80,8 +80,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public MatchRecord[] AnalyzeFile(string filePath, string text, LanguageInfo languageInfo)
         {
             // Get rules for the given content type
-            var rules = GetRulesByRegex(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)).ToList();
-            rules.AddRange(GetRulesByRegex(filePath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
+            var rules = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)).ToList();
+            rules.AddRange(GetRulesByFileName(filePath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
             List<MatchRecord> resultsList = new List<MatchRecord>();//matches for this file only
             TextContainer textContainer = new TextContainer(text, languageInfo.Name);
 
@@ -215,7 +215,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList.ToArray();
         }
 
-  
+
         #region Private Support Methods
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="languages"> Languages to filter rules for </param>
         /// <returns> List of rules </returns>
-        private IEnumerable<ConvertedOatRule> GetRulesByRegex(string input)
+        private IEnumerable<ConvertedOatRule> GetRulesByLanguage(string input)
         {
             string langid = string.Empty;
 
@@ -236,7 +236,36 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     return _rulesCache[langid];
             }
 
-            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByRegex(input);
+            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(input);
+
+            // Add the list to the cache so we save time on the next call
+            if (EnableCache && filteredRules.Any())
+            {
+                _rulesCache.TryAdd(langid, filteredRules);
+            }
+
+            return filteredRules;
+        }
+
+        /// <summary>
+        ///     Filters the rules for those matching the content type. Resolves all the overrides
+        /// </summary>
+        /// <param name="languages"> Languages to filter rules for </param>
+        /// <returns> List of rules </returns>
+        private IEnumerable<ConvertedOatRule> GetRulesByFileName(string input)
+        {
+            string langid = string.Empty;
+
+            if (EnableCache)
+            {
+                // Make language id for cache purposes
+                langid = string.Join(":", input);
+                // Do we have the ruleset alrady in cache? If so return it
+                if (_rulesCache.ContainsKey(langid))
+                    return _rulesCache[langid];
+            }
+
+            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByFilename(input);
 
             // Add the list to the cache so we save time on the next call
             if (EnableCache && filteredRules.Any())
