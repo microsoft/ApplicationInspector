@@ -7,6 +7,7 @@ using Microsoft.CST.RecursiveExtractor;
 using Newtonsoft.Json;
 using NLog;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -362,7 +363,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         AnalyzeFiles(filename);
                     }
 
-                    foreach (MatchRecord MatchRecord in _rulesProcessor?.AllResults ?? new List<MatchRecord>())
+                    foreach (MatchRecord MatchRecord in _rulesProcessor?.AllResults ?? new ConcurrentQueue<MatchRecord>())
                     {
                         ProcessResult(MatchRecord);
                     }

@@ -27,7 +27,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly RuleSet _ruleset;
         private readonly ConcurrentDictionary<string, byte> _uniqueTagHashes;
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _rulesCache;
-        private readonly List<MatchRecord> _runningResultsList;//maintain across files for bestmatch compare
+        private readonly ConcurrentQueue<MatchRecord> _runningResultsList;//maintain across files for bestmatch compare
         private readonly object _controllRunningListAdd;//safeguard shared list across threads
         /// <summary>
         /// Support to exlude list of tags from unique restrictions
@@ -53,7 +53,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             EnableCache = true;
             _uniqueTagHashes = new ConcurrentDictionary<string,byte>();
             _rulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
-            _runningResultsList = new List<MatchRecord>();
+            _runningResultsList = new ConcurrentQueue<MatchRecord>();
             _controllRunningListAdd = new object();
             _stopAfterFirstMatch = stopAfterFirstMatch;
             _uniqueTagMatchesOnly = uniqueMatches;
@@ -67,7 +67,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer)); //CHECK with OAT team as delegate doesn't appear to fire; ALT working fine in Analyze method anyway
         }
 
-        public List<MatchRecord> AllResults => _runningResultsList;
+        public ConcurrentQueue<MatchRecord> AllResults => _runningResultsList;
 
         /// <summary>
         /// Analyzes given line of code returning matching scan results for the
@@ -138,37 +138,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
                                     };
 
-                                    bool addNewRecord = true;
-                                    if (_uniqueTagMatchesOnly)
-                                    {
-                                        if (!RuleTagsAreUniqueOrAllowed(newMatch.Rule.Tags))
-                                        {
-                                            if (_stopAfterFirstMatch) 
-                                            {
-                                                addNewRecord = false; //we've seen already; don't improve the match
-                                            }
-                                            else if (newMatch.Confidence > Confidence.Low) //user prefers highest confidence match over first match
-                                            {
-                                                addNewRecord = BetterMatch(newMatches, newMatch) && BetterMatch(resultsList, newMatch);
-                                                if (addNewRecord)
-                                                {
-                                                    lock (_controllRunningListAdd)
-                                                    {
-                                                        addNewRecord = BetterMatch(_runningResultsList, newMatch);//check current rule matches and previous processed files
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if (addNewRecord)
-                                    {
-                                        newMatches.Add(newMatch);
-                                        lock (_controllRunningListAdd)
-                                        {
-                                            _runningResultsList.Add(newMatch);
-                                        }
-                                    }
+                                    newMatches.Add(newMatch);
 
                                     AddRuleTagHashes(oatRule.AppInspectorRule.Tags ?? new string[] { "" });
                                 }
@@ -178,6 +148,39 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                     resultsList.AddRange(newMatches);
                 }
+            }
+
+            if (_uniqueTagMatchesOnly)
+            {
+                var replacementList = new List<MatchRecord>();
+                foreach (var entry in resultsList)
+                {
+                    if (!RuleTagsAreUniqueOrAllowed(entry.Rule.Tags))
+                    {
+                        if (!_stopAfterFirstMatch)
+                        {
+                            var replaceable = replacementList.Where(x => x.Tags.All(y => entry.Tags.Contains(y)));
+                            if (replaceable.Any())
+                            {
+                                replaceable = replaceable.Where(x => x.Confidence < entry.Confidence).ToList();
+                                if (replaceable.Any())
+                                {
+                                    replacementList.RemoveAll(x => replaceable.Contains(x));
+                                    replacementList.Add(entry);
+                                }
+                            }
+                            else
+                            {
+                                replacementList.Add(entry);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        replacementList.Add(entry);
+                    }
+                }
+                resultsList = replacementList;
             }
 
             if (resultsList.Any(x => x.Rule.Overrides!=null && x.Rule.Overrides.Length > 0 ))
@@ -205,72 +208,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 resultsList.RemoveAll(x => removes.Contains(x));
             }
 
+            foreach (var entry in resultsList)
+            {
+                _runningResultsList.Enqueue(entry);
+            }
+
             return resultsList.ToArray();
         }
 
   
         #region Private Support Methods
-
-        /// <summary>
-        /// Identify if new scan result is a better match than previous i.e. has a higher confidence.  Assumes unique list of MatchRecords.
-        /// </summary>
-        /// <param name="MatchRecords"></param>
-        /// <param name="compareResult"></param>
-        /// <param name="removeOld"></param>
-        /// <returns></returns>
-        private bool BetterMatch(List<MatchRecord> MatchRecords, MatchRecord newMatchRecord, bool removeOld = true)
-        {
-            bool betterMatch = false;
-            bool noMatch = true;
-
-            //if list is empty the new match is the best match
-            if (!MatchRecords.Any())
-            {
-                return true;
-            }
-
-            MatchRecord? matchRecordToRemove = null;
-            foreach (MatchRecord MatchRecord in MatchRecords)
-            {
-                foreach (string matchRecordTag in MatchRecord.Rule.Tags ?? new string[] {""})
-                {
-                    foreach (string newMatchRecordTag in newMatchRecord.Rule.Tags ?? new string[] {""})
-                    {
-                        if (matchRecordTag == newMatchRecordTag)
-                        {
-                            if (newMatchRecord.Tags.Any(x => x.Contains("AzureKeyVault")))
-                            {
-
-                            }
-
-                            noMatch = false;
-                            if (newMatchRecord.Confidence > MatchRecord.Confidence)
-                            {
-                                if (removeOld)
-                                {
-                                    matchRecordToRemove = MatchRecord;
-                                }
-
-                                betterMatch = true;
-                                break;//as this method is used with uniquematche=true only one to worry about
-                            }
-                        }
-                    }
-
-                    if (betterMatch)
-                    {
-                        break;
-                    }
-                }
-            }
-
-            if (removeOld && matchRecordToRemove != null)
-            {
-                MatchRecords.Remove(matchRecordToRemove);//safer to remove outside for enumeration
-            }
-
-            return betterMatch || noMatch;
-        }
 
         /// <summary>
         ///     Filters the rules for those matching the content type. Resolves all the overrides
