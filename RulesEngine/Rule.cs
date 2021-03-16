@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -66,14 +67,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (_updateCompiled)
                 {
-                    _compiled = FileRegexes.Select(x => new Regex(x, RegexOptions.Compiled));
+                    _compiled = FileRegexes?.Select(x => new Regex(x, RegexOptions.Compiled)) ?? Array.Empty<Regex>();
                     _updateCompiled = false;
                 }
                 return _compiled;
             }
         }
 
-        private IEnumerable<Regex> _compiled = new List<Regex>();
+        private IEnumerable<Regex> _compiled = Array.Empty<Regex>();
         private bool _updateCompiled = false;
 
         [JsonProperty(PropertyName = "tags")]

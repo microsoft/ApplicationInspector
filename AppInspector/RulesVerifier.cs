@@ -124,9 +124,23 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (!languages.Any(x => x.Equals(lang, StringComparison.CurrentCultureIgnoreCase)))
                         {
                             _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL, rule.Id ?? ""));
-                            isValid = false;
+                            return false;
                         }
                     }
+                }
+            }
+
+            foreach(var pattern in rule.FileRegexes ?? Array.Empty<string>())
+            {
+                try
+                {
+                    _ = new Regex(pattern, RegexOptions.Compiled);
+                }
+                catch (Exception e)
+                {
+                    _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", pattern ?? "", e.Message));
+
+                    return false;
                 }
             }
 
@@ -135,13 +149,12 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 try
                 {
-                    Regex regex = new Regex(searchPattern.Pattern);
+                    _ = new Regex(searchPattern.Pattern);
                 }
                 catch (Exception e)
                 {
                     _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id??"", searchPattern.Pattern??"", e.Message));
-                    isValid = false;
-                    break;
+                    return false;
                 }
             }
 
