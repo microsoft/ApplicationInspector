@@ -58,7 +58,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         private string[]? _appliesTo;
 
-        [JsonProperty(PropertyName = "file_regexes")]
+        [JsonProperty(PropertyName = "applies_to_file_regex")]
         public string[]? FileRegexes { get; set; }
 
         public IEnumerable<Regex> CompiledFileRegexes
