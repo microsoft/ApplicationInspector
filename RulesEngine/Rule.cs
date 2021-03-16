@@ -61,6 +61,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         [JsonProperty(PropertyName = "applies_to_file_regex")]
         public string[]? FileRegexes { get; set; }
 
+        [JsonIgnore]
         public IEnumerable<Regex> CompiledFileRegexes
         {
             get
