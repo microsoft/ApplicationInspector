@@ -147,12 +147,26 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             if (language is string)
             {
-                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0 || (x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Any(y => language.Contains(y))));
+                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0 || (x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Contains(language)));
             }
             return _oatRules;
         }
 
-   
+        /// <summary>
+        ///     Filters rules within Ruleset by applies to regexes
+        /// </summary>
+        /// <param name="languages"> Languages </param>
+        /// <returns> Filtered rules </returns>
+        public IEnumerable<ConvertedOatRule> ByFilename(string input)
+        {
+            if (input is string)
+            {
+                return _oatRules.Where(x => x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Length == 0 || x.AppInspectorRule.CompiledFileRegexes.Any(y => y.IsMatch(input)));
+            }
+            return _oatRules;
+        }
+
+
         public ConvertedOatRule? AppInspectorRuleToOatRule(Rule rule)
         {
             var clauses = new List<Clause>();

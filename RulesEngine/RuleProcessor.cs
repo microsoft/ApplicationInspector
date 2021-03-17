@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CST.OAT;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -79,13 +80,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public MatchRecord[] AnalyzeFile(string filePath, string text, LanguageInfo languageInfo)
         {
             // Get rules for the given content type
-            IEnumerable<ConvertedOatRule> rules = GetRulesForSingleLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
+            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
+            var rules = rulesByLanguage.Union(GetRulesByFileName(filePath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
             List<MatchRecord> resultsList = new List<MatchRecord>();//matches for this file only
             TextContainer textContainer = new TextContainer(text, languageInfo.Name);
 
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
-
                 foreach (var cap in ruleCapture.Captures)
                 {
                     ProcessBoundary(cap);
@@ -140,7 +141,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                     newMatches.Add(newMatch);
 
-                                    AddRuleTagHashes(oatRule.AppInspectorRule.Tags ?? new string[] { "" });
+                                    if (oatRule.AppInspectorRule.Tags != null && oatRule.AppInspectorRule.Tags.Any())
+                                    {
+                                        AddRuleTagHashes(oatRule.AppInspectorRule.Tags);
+                                    }
                                 }
                             }
                         }
@@ -182,31 +186,25 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
                 resultsList = replacementList;
             }
-
-            if (resultsList.Any(x => x.Rule.Overrides!=null && x.Rule.Overrides.Length > 0 ))
+            List<MatchRecord> removes = new List<MatchRecord>();
+            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
             {
-                // Deal with overrides
-                List<MatchRecord> removes = new List<MatchRecord>();
-                foreach (MatchRecord m in resultsList)
+                if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
                 {
-                    if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
+                    foreach (string ovrd in m.Rule.Overrides)
                     {
-                        foreach (string ovrd in m.Rule.Overrides)
+                        // Find all overriden rules and mark them for removal from issues list
+                        foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
                         {
-                            // Find all overriden rules and mark them for removal from issues list
-                            foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
-                            {
-                                if (om.Boundary?.Index >= m.Boundary?.Index &&
-                                    om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
-                                    removes.Add(om);
-                            }
+                            if (om.Boundary?.Index >= m.Boundary?.Index &&
+                                om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
+                                removes.Add(om);
                         }
                     }
-                }
-
+                }    
                 // Remove overriden rules
-                resultsList.RemoveAll(x => removes.Contains(x));
             }
+            resultsList.RemoveAll(x => removes.Contains(x));
 
             foreach (var entry in resultsList)
             {
@@ -216,7 +214,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList.ToArray();
         }
 
-  
+
         #region Private Support Methods
 
         /// <summary>
@@ -224,25 +222,42 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="languages"> Languages to filter rules for </param>
         /// <returns> List of rules </returns>
-        private IEnumerable<ConvertedOatRule> GetRulesForSingleLanguage(string language)
+        private IEnumerable<ConvertedOatRule> GetRulesByLanguage(string input)
         {
-            string langid = string.Empty;
-
             if (EnableCache)
             {
-                // Make language id for cache purposes
-                langid = string.Join(":", language);
-                // Do we have the ruleset alrady in cache? If so return it
-                if (_rulesCache.ContainsKey(langid))
-                    return _rulesCache[langid];
+                if (_rulesCache.ContainsKey(input))
+                    return _rulesCache[input];
             }
 
-            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(language);
+            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(input);
 
-            // Add the list to the cache so we save time on the next call
             if (EnableCache && filteredRules.Any())
             {
-                _rulesCache.TryAdd(langid, filteredRules);
+                _rulesCache.TryAdd(input, filteredRules);
+            }
+
+            return filteredRules;
+        }
+
+        /// <summary>
+        ///     Filters the rules for those matching the content type. Resolves all the overrides
+        /// </summary>
+        /// <param name="languages"> Languages to filter rules for </param>
+        /// <returns> List of rules </returns>
+        private IEnumerable<ConvertedOatRule> GetRulesByFileName(string input)
+        {
+            if (EnableCache)
+            {
+                if (_rulesCache.ContainsKey(input))
+                    return _rulesCache[input];
+            }
+
+            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByFilename(input);
+
+            if (EnableCache && filteredRules.Any())
+            {
+                _rulesCache.TryAdd(input, filteredRules);
             }
 
             return filteredRules;
