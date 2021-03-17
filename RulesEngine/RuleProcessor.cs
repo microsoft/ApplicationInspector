@@ -224,23 +224,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> List of rules </returns>
         private IEnumerable<ConvertedOatRule> GetRulesByLanguage(string input)
         {
-            string langid = string.Empty;
-
             if (EnableCache)
             {
-                // Make language id for cache purposes
-                langid = string.Join(":", input);
-                // Do we have the ruleset alrady in cache? If so return it
-                if (_rulesCache.ContainsKey(langid))
-                    return _rulesCache[langid];
+                if (_rulesCache.ContainsKey(input))
+                    return _rulesCache[input];
             }
 
             IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(input);
 
-            // Add the list to the cache so we save time on the next call
             if (EnableCache && filteredRules.Any())
             {
-                _rulesCache.TryAdd(langid, filteredRules);
+                _rulesCache.TryAdd(input, filteredRules);
             }
 
             return filteredRules;
@@ -253,23 +247,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> List of rules </returns>
         private IEnumerable<ConvertedOatRule> GetRulesByFileName(string input)
         {
-            string langid = string.Empty;
-
             if (EnableCache)
             {
-                // Make language id for cache purposes
-                langid = string.Join(":", input);
-                // Do we have the ruleset alrady in cache? If so return it
-                if (_rulesCache.ContainsKey(langid))
-                    return _rulesCache[langid];
+                if (_rulesCache.ContainsKey(input))
+                    return _rulesCache[input];
             }
 
             IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByFilename(input);
 
-            // Add the list to the cache so we save time on the next call
             if (EnableCache && filteredRules.Any())
             {
-                _rulesCache.TryAdd(langid, filteredRules);
+                _rulesCache.TryAdd(input, filteredRules);
             }
 
             return filteredRules;
