@@ -371,18 +371,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 minSpaces = (minSpaces == -1 || numPrefixSpaces < minSpaces) ? numPrefixSpaces : minSpaces;
             }
 
-            var sb = new StringBuilder();
             // We want to go from (start - 5) to (start + 5) (off by one?)
             // LINE=10, len=5, we want 8..12, so N-(L-1)/2 to N+(L-1)/2
             // But cap those values at 0/end
-            for (var i = excerptStartLine; i <= excerptEndLine; i++)
-            {
-                string line = lines[i].Substring(minSpaces).TrimEnd();
-                sb.AppendLine(line);
-
-            }
-
-            return sb.ToString();
+            
+            return string.Join(Environment.NewLine, lines[excerptStartLine..(excerptEndLine + 1)].Select(x => x[minSpaces..].TrimEnd()));
         }
 
         /// <summary>
