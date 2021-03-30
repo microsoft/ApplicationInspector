@@ -348,7 +348,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         if (MatchRecord.Tags.Contains("Dependency.SourceInclude"))
                         {
-                            MatchRecord.Sample = ExtractDependency(MatchRecord.FullText, MatchRecord.Boundary.Index, MatchRecord.Pattern, MatchRecord.LanguageInfo.Name);
+                            MatchRecord.Sample = ExtractDependency(MatchRecord.FullTextContainer, MatchRecord.Boundary.Index, MatchRecord.Pattern, MatchRecord.LanguageInfo.Name);
                         }
 
                         //preserve issue level characteristics as rolled up meta data of interest
@@ -474,19 +474,23 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Helper to special case additional processing to just get the values without the import keywords etc.
         /// and encode for html output
         /// </summary>
-        private string ExtractDependency(string? text, int startIndex, string? pattern, string? language)
+        private string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
         {
-            // import value; load value; include value;
-            string rawResult = "";
-            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(language))
+            if (text is null)
             {
-                return rawResult;
+                return string.Empty;
             }
 
-            int endIndex = text.IndexOf('\n', startIndex);
+            if (string.IsNullOrEmpty(text.FullContent) || string.IsNullOrEmpty(language))
+            {
+                return string.Empty;
+            }
+
+            string rawResult = string.Empty;
+            int endIndex = text.FullContent.IndexOf('\n', startIndex);
             if (-1 != startIndex && -1 != endIndex)
             {
-                rawResult = text.Substring(startIndex, endIndex - startIndex).Trim();
+                rawResult = text.FullContent.Substring(startIndex, endIndex - startIndex).Trim();
                 Regex regex = new Regex(pattern);
                 MatchCollection matches = regex.Matches(rawResult);
 
@@ -662,7 +666,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     return false;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, filePath));
                 throw;
