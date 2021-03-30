@@ -487,7 +487,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             string rawResult = string.Empty;
-            int endIndex = text.FullContent.IndexOf('\n', startIndex);
+            int endIndex = text.FullContent.IndexOfAny(new char[] { '\n', '\r' }, startIndex);
             if (-1 != startIndex && -1 != endIndex)
             {
                 rawResult = text.FullContent.Substring(startIndex, endIndex - startIndex).Trim();
