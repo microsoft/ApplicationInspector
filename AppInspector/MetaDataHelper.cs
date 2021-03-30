@@ -106,7 +106,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             bool CounterOnlyTagSet = false;
-            var selected = TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag ?? "")));
+            var selected = matchRecord.Tags is not null ? TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag ?? ""))) : new Dictionary<string, MetricTagCounter>();
             foreach (var select in selected)
             {
                 CounterOnlyTagSet = true;
@@ -139,16 +139,28 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         public void PrepareReport()
         {
-            Metadata.CPUTargets = CPUTargets.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.AppTypes = AppTypes.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.OSTargets = OSTargets.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.UniqueDependencies = UniqueDependencies.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.UniqueTags = UniqueTags.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.CloudTargets = CloudTargets.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.PackageTypes = PackageTypes.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.FileExtensions = FileExtensions.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.Outputs = Outputs.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.Targets = Targets.ToImmutableSortedDictionary().Keys.ToList();
+            Metadata.CPUTargets = CPUTargets.Keys.ToList();
+            Metadata.AppTypes = AppTypes.Keys.ToList();
+            Metadata.OSTargets = OSTargets.Keys.ToList();
+            Metadata.UniqueDependencies = UniqueDependencies.Keys.ToList();
+            Metadata.UniqueTags = UniqueTags.Keys.ToList();
+            Metadata.CloudTargets = CloudTargets.Keys.ToList();
+            Metadata.PackageTypes = PackageTypes.Keys.ToList();
+            Metadata.FileExtensions = FileExtensions.Keys.ToList();
+            Metadata.Outputs = Outputs.Keys.ToList();
+            Metadata.Targets = Targets.Keys.ToList();
+
+            Metadata.CPUTargets.Sort();
+            Metadata.AppTypes.Sort();
+            Metadata.OSTargets.Sort();
+            Metadata.UniqueDependencies.Sort();
+            Metadata.UniqueTags.Sort();
+            Metadata.CloudTargets.Sort();
+            Metadata.PackageTypes.Sort();
+            Metadata.FileExtensions.Sort();
+            Metadata.Outputs.Sort();
+            Metadata.Targets.Sort();
+
             Metadata.Languages = Languages.ToImmutableSortedDictionary();
 
             foreach (MetricTagCounter metricTagCounter in TagCounters.Values)
@@ -209,7 +221,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string DetectSolutionType(MatchRecord match)
         {
             string result = "";
-            if (match.Tags.Any(s => s.Contains("Application.Type")))
+            if (match.Tags is not null && match.Tags.Any(s => s.Contains("Application.Type")))
             {
                 foreach (string tag in match.Tags ?? new string[] { })
                 {

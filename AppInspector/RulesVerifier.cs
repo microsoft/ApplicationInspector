@@ -73,7 +73,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _verified = true;
 
-            foreach (Rule rule in _rules.AsEnumerable())
+            foreach (Rule rule in _rules?.AsEnumerable() ?? Array.Empty<Rule>())
             {
                 bool ruleVerified = CheckIntegrity(rule);
                 _ruleStatuses?.Add(new RuleStatus()
@@ -104,8 +104,7 @@ namespace Microsoft.ApplicationInspector.Commands
             else
             {
                 // Check for same ID
-                Rule sameRule = _rules.FirstOrDefault(x => x.Id == rule.Id);
-                if (_rules.Count(x => x.Id == rule.Id) > 1)
+                if (_rules?.Count(x => x.Id == rule.Id) > 1)
                 {
                     _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Id));
                     isValid = false;
@@ -149,6 +148,10 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 try
                 {
+                    if (string.IsNullOrEmpty(searchPattern.Pattern))
+                    {
+                        throw new ArgumentException();
+                    }
                     _ = new Regex(searchPattern.Pattern);
                 }
                 catch (Exception e)
@@ -169,6 +172,7 @@ namespace Microsoft.ApplicationInspector.Commands
         #region basicFileIO
         private void LoadDirectory(string? path)
         {
+            if (path is null) { return; }
             foreach (string filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
             {
                 LoadFile(filename);

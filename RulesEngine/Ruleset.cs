@@ -90,6 +90,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="collection"> Collection of rules </param>
         public void AddRange(IEnumerable<Rule>? collection)
         {
+            if (collection is null)
+            {
+                return;
+            }
             foreach (var rule in collection.Select(AppInspectorRuleToOatRule))
             {
                 if (rule != null)
@@ -366,12 +370,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             else if (pattern.PatternType == PatternType.String)
             {
                 pattern.PatternType = PatternType.Regex;
-                pattern.Pattern = string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(pattern.Pattern));
+                pattern.Pattern = string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(pattern.Pattern ?? string.Empty));
             }
             else if (pattern.PatternType == PatternType.Substring)
             {
                 pattern.PatternType = PatternType.Regex;
-                pattern.Pattern = string.Format(CultureInfo.InvariantCulture, @"{0}", Regex.Escape(pattern.Pattern));
+                pattern.Pattern = string.Format(CultureInfo.InvariantCulture, @"{0}", Regex.Escape(pattern.Pattern ?? string.Empty));
             }
         }
     }
