@@ -139,17 +139,29 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         public void PrepareReport()
         {
-            Metadata.CPUTargets = CPUTargets.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.AppTypes = AppTypes.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.OSTargets = OSTargets.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.UniqueDependencies = UniqueDependencies.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.UniqueTags = UniqueTags.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.CloudTargets = CloudTargets.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.PackageTypes = PackageTypes.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.FileExtensions = FileExtensions.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.Outputs = Outputs.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.Targets = Targets.ToImmutableSortedDictionary().Keys.ToList();
-            Metadata.Languages = Languages.ToImmutableSortedDictionary();
+            Metadata.CPUTargets = CPUTargets.Keys.ToList();
+            Metadata.AppTypes = AppTypes.Keys.ToList();
+            Metadata.OSTargets = OSTargets.Keys.ToList();
+            Metadata.UniqueDependencies = UniqueDependencies.Keys.ToList();
+            Metadata.UniqueTags = UniqueTags.Keys.ToList();
+            Metadata.CloudTargets = CloudTargets.Keys.ToList();
+            Metadata.PackageTypes = PackageTypes.Keys.ToList();
+            Metadata.FileExtensions = FileExtensions.Keys.ToList();
+            Metadata.Outputs = Outputs.Keys.ToList();
+            Metadata.Targets = Targets.Keys.ToList();
+
+            Metadata.CPUTargets.Sort();
+            Metadata.AppTypes.Sort();
+            Metadata.OSTargets.Sort();
+            Metadata.UniqueDependencies.Sort();
+            Metadata.UniqueTags.Sort();
+            Metadata.CloudTargets.Sort();
+            Metadata.PackageTypes.Sort();
+            Metadata.FileExtensions.Sort();
+            Metadata.Outputs.Sort();
+            Metadata.Targets.Sort();
+
+            Metadata.Languages = Languages;
 
             foreach (MetricTagCounter metricTagCounter in TagCounters.Values)
             {
