@@ -1,0 +1,68 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.css" />
+    <link rel="stylesheet" type="text/css" href="html/resources/css/appinspector.css" />
+
+    <title>{{ application_version }}</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-light navbar-lg">
+        <span class="navbar-brand">
+            <img src="" id="ms_logo" width="32" height="32" class="d-inline-block align-top" alt="">
+            Application Inspector
+        </span>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li><a class="nav-button" href="#" data-target="#page__report_overview">Overview</a></li>
+                <li><a class="nav-button" href="#" data-target="#page__report_summary">Summary</a></li>
+                <li><a class="nav-button" href="#" data-target="#page__report_profile">Key Features</a></li>
+                <li><a class="nav-button" href="https://github.com/Microsoft/ApplicationInspector/wiki" data-target="#page__report_profile" target="_blank" rel="noopener">About</a></li>
+            </ul>
+            <ul class="navbar-nav ml-auto" style="margin-right: 80px">
+                <li>
+                    <a class="nav-button" href="https://github.com/Microsoft/ApplicationInspector" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-github" style="font-size: 1.8em; color: #888"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container-fluid">
+        <div class="row">
+            <div class="col col-lg-1"></div>
+            <div class="col" id="page__report_overview">
+                {% include "report_overview" %}
+            </div>
+            <div class="col d-none" id="page__report_summary">
+                {% include "report_summary" %}
+            </div>
+            <div class="col d-none" id="page__report_profile">
+                {% include "report_profile" %}
+            </div>
+            <div class="col col-lg-2"></div>
+        </div>
+    </main>
+
+    {% include "file_listing" %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js" integrity="sha512-GZ1RIgZaSc8rnco/8CXfRdCpDxRCphenIiZ2ztLy3XQfCbQUSCuk8IudvNHxkRA3oUg6q0qejgN/qqyG1duv5Q==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha512-M5KW3ztuIICmVIhjSqXe01oV2bpe248gOxqmlcYrEzAvws7Pw3z6BK0iGbrwvdrUQUhi3eXgtxp5I8PDo9YfjQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js" integrity="sha512-+IpCthlNahOuERYUSnKFjzjdKXIbJ/7Dd6xvUp+7bEw0Jp2dg6tluyxLs+zq9BMzZgrLv8886T4cBSqnKiVgUw==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js" integrity="sha512-FHsFVKQ/T1KWJDGSbrUhTJyS1ph3eRrxI228ND0EGaEp6v4a/vGwPWd3Dtd/+9cI7ccofZvl/wulICEurHN1pg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.5.3/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ext-beautify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ext-modelist.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ext-settings_menu.js"></script>
+
+    <script type="text/javascript">
+        let data = {{ json }};
+    </script>
+</body>
+</html>

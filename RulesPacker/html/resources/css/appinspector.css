@@ -1,0 +1,111 @@
+﻿body {
+    background-color: #fcfefd !important;
+    font-family: 'Segoe UI',Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.navbar {
+    background-color: #F3F3F3 !important;
+}
+
+.navbar-brand:focus, .navbar-brand:hover {
+    text-decoration: none !important;
+    color: #000 !important;
+}
+
+.navbar-lg {
+    min-height: 80px;
+    border-radius: 0;
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 5px;
+}
+
+    .navbar-lg .navbar-brand {
+        margin-left: 80px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .navbar-lg .navbar-nav > li {
+        margin-left: 15px;
+        margin-right: 15px;
+        font-size: 0.90em;
+    }
+
+        .navbar-lg .navbar-nav > li > a {
+            color: #000;
+        }
+
+#file_listing_modal div.modal-dialog {
+    max-width: 70%;
+}
+
+/* Report Overview */
+div.section {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#page__report_overview table tr:first-child td {
+    border-top: 0;
+}
+
+#page__report_overview table td {
+    padding: 0.10rem 0.55rem 0.10rem 0.55rem;
+}
+
+    #page__report_overview table td:first-child {
+        text-align: center;
+        color: #888;
+    }
+
+    #page__report_overview table td:nth-child(2) {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    #page__report_overview table td:nth-child(3) {
+        color: #888;
+    }
+
+/* Report Summary */
+.c3-chart-arcs-title {
+    font-weight: bold;
+}
+
+/* Report Profile */
+#page__report_profile div.accordion {
+    padding-bottom: 6px;
+    border-bottom: 1px solid #0078d4;
+}
+
+#page__report_profile div.grid-1 {
+    width: 32px !important;
+    display: inline-block;
+    text-align: center;
+    margin-left: 6px;
+    margin-right: 6px;
+    color: #7FBA00;
+    font-size: 1.4rem;
+}
+
+#page__report_profile div.grid-2 {
+    font-size: 1.4rem;
+}
+
+#page__report_profile table td:nth-child(1) {
+    font-weight: normal;
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+#page__report_profile a.disabled {
+    color: #ccc;
+    cursor: default;
+}
