@@ -77,7 +77,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// Internal to namespace use only for capturing boundary excerpts and sample
         /// </summary>
         [JsonIgnore]
-        public string? FullText { get; set; }
+        public string? FullText { get { return FullTextContainer?.FullContent; } }
+
+        [JsonIgnore]
+        public TextContainer? FullTextContainer { get; set; }
 
         /// <summary>
         /// Internal to namespace only 

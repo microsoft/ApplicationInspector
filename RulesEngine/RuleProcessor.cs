@@ -29,7 +29,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly ConcurrentDictionary<string, byte> _uniqueTagHashes;
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _rulesCache;
         private readonly ConcurrentQueue<MatchRecord> _runningResultsList;//maintain across files for bestmatch compare
-        private readonly object _controllRunningListAdd;//safeguard shared list across threads
         /// <summary>
         /// Support to exlude list of tags from unique restrictions
         /// </summary>
@@ -55,7 +54,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             _uniqueTagHashes = new ConcurrentDictionary<string,byte>();
             _rulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
             _runningResultsList = new ConcurrentQueue<MatchRecord>();
-            _controllRunningListAdd = new object();
             _stopAfterFirstMatch = stopAfterFirstMatch;
             _uniqueTagMatchesOnly = uniqueMatches;
             _logger = logger;
@@ -129,7 +127,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
                                     {
                                         FileName = filePath,
-                                        FullText = textContainer.FullContent,
+                                        FullTextContainer = textContainer,
                                         LanguageInfo = languageInfo,
                                         Boundary = boundary,
                                         StartLocationLine = StartLocation.Line,
