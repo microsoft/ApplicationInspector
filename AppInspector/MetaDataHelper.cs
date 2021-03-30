@@ -106,7 +106,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             bool CounterOnlyTagSet = false;
-            var selected = TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag ?? "")));
+            var selected = matchRecord.Tags is not null ? TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag ?? ""))) : new Dictionary<string, MetricTagCounter>();
             foreach (var select in selected)
             {
                 CounterOnlyTagSet = true;
@@ -221,7 +221,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string DetectSolutionType(MatchRecord match)
         {
             string result = "";
-            if (match.Tags.Any(s => s.Contains("Application.Type")))
+            if (match.Tags is not null && match.Tags.Any(s => s.Contains("Application.Type")))
             {
                 foreach (string tag in match.Tags ?? new string[] { })
                 {

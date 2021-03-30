@@ -119,7 +119,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(string.Format("Source path: {0}", metaData.SourcePath));
             WriteOnce.General(string.Format("Authors: {0}", metaData.Authors));
             WriteOnce.General(string.Format("Last Updated: {0}", metaData.LastUpdated));
-            WriteOnce.General(string.Format("Languages: {0}", StringList(metaData.Languages.ToImmutableSortedDictionary())));
+            WriteOnce.General(string.Format("Languages: {0}", StringList(metaData.Languages?.ToImmutableSortedDictionary() ?? new Dictionary<string,int>().ToImmutableSortedDictionary())));
             WriteOnce.General(string.Format(MakeHeading("Scan Settings")));
             WriteOnce.General(string.Format("Date scanned: {0}", metaData.DateScanned));
             WriteOnce.General(string.Format(MakeHeading("Source Info")));

@@ -253,7 +253,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
                     foreach (TagSearchPattern pattern in tagGroup.Patterns ?? new List<TagSearchPattern>())
                     {
-                        pattern.Detected = _appMetaData != null && _appMetaData.UniqueTags.Any(v => v.Contains(pattern.SearchPattern));
+                        pattern.Detected = _appMetaData?.UniqueTags is not null && _appMetaData.UniqueTags.Any(v => v.Contains(pattern.SearchPattern));
                         if (unSupportedGroupsOrPatterns.Any(x => pattern.SearchPattern.ToLower().Contains(x)))
                         {
                             WriteOnce.Log?.Warn($"Unsupported tag group or pattern detected '{pattern.SearchPattern}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags"); 

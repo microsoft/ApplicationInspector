@@ -144,7 +144,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
                 }
-                packRulesResult.Rules = new List<Rule>(verifier.CompiledRuleset.AsEnumerable());
+                packRulesResult.Rules = new List<Rule>(verifier.CompiledRuleset?.AsEnumerable() ?? new RuleSet(null).AsEnumerable());
                 packRulesResult.ResultCode = PackRulesResult.ExitCode.Success;
             }
             catch (OpException e)

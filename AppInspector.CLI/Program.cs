@@ -68,7 +68,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
             else
             {
-                if (File.Exists(Utils.LogFilePath))
+                if (Utils.LogFilePath is not null && File.Exists(Utils.LogFilePath))
                 {
                     var fileInfo = new FileInfo(Utils.LogFilePath);
                     if (fileInfo.Length > 0)

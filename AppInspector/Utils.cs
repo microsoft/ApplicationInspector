@@ -38,7 +38,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fileVersionInfo.ProductVersion;
+            return fileVersionInfo.ProductVersion ?? string.Empty;
         }
 
         public static bool CLIExecutionContext { get; set; }
