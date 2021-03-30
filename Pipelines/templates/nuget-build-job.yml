@@ -6,7 +6,7 @@ parameters:
 # Version of Dotnet SDK to use
 - name: dotnetVersion
   type: string
-  default: '3.1.x'
+  default: '5.0.x'
 # Version of NuGet Tool to use
 - name: nugetVersion
   type: string
