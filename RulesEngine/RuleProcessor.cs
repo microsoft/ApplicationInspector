@@ -7,8 +7,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CST.OAT;
+using Microsoft.CST.RecursiveExtractor;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -28,7 +31,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly RuleSet _ruleset;
         private readonly ConcurrentDictionary<string, byte> _uniqueTagHashes;
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _rulesCache;
-        private readonly ConcurrentQueue<MatchRecord> _runningResultsList;//maintain across files for bestmatch compare
         /// <summary>
         /// Support to exlude list of tags from unique restrictions
         /// </summary>
@@ -53,7 +55,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             EnableCache = true;
             _uniqueTagHashes = new ConcurrentDictionary<string,byte>();
             _rulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
-            _runningResultsList = new ConcurrentQueue<MatchRecord>();
             _stopAfterFirstMatch = stopAfterFirstMatch;
             _uniqueTagMatchesOnly = uniqueMatches;
             _logger = logger;
@@ -66,7 +67,167 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer)); //CHECK with OAT team as delegate doesn't appear to fire; ALT working fine in Analyze method anyway
         }
 
-        public ConcurrentQueue<MatchRecord> AllResults => _runningResultsList;
+
+        private string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
+        {
+            if (text is null || string.IsNullOrEmpty(text.FullContent) || string.IsNullOrEmpty(language) || string.IsNullOrEmpty(pattern))
+            {
+                return string.Empty;
+            }
+
+            string rawResult = string.Empty;
+            int endIndex = text.FullContent.IndexOfAny(new char[] { '\n', '\r' }, startIndex);
+            if (-1 != startIndex && -1 != endIndex)
+            {
+                rawResult = text.FullContent.Substring(startIndex, endIndex - startIndex).Trim();
+                Regex regex = new Regex(pattern ?? string.Empty);
+                MatchCollection matches = regex.Matches(rawResult);
+
+                //remove surrounding import or trailing comments
+                if (matches != null && matches.Any())
+                {
+                    foreach (Match? match in matches)
+                    {
+                        if (match?.Groups.Count == 1)//handles cases like "using Newtonsoft.Json"
+                        {
+                            string[] parseValues = match.Groups[0].Value.Split(' ');
+                            if (parseValues.Length == 1)
+                            {
+                                rawResult = parseValues[0].Trim();
+                            }
+                            else if (parseValues.Length > 1)
+                            {
+                                rawResult = parseValues[1].Trim(); //should be value; time will tell if fullproof
+                            }
+                        }
+                        else if (match?.Groups.Count > 1)//handles cases like include <stdio.h>
+                        {
+                            rawResult = match.Groups[1].Value.Trim();
+                        }
+                        //else if > 2 too hard to match; do nothing
+
+                        break;//only designed to expect one match per line i.e. not include value include value
+                    }
+                }
+
+                string finalResult = rawResult.Replace(";", "");
+
+                return System.Net.WebUtility.HtmlEncode(finalResult);
+            }
+
+            return rawResult;
+        }
+
+        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo)
+        {
+            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
+            var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
+            List<MatchRecord> resultsList = new List<MatchRecord>();
+
+            using var sr = new StreamReader(fileEntry.Content);
+            
+            TextContainer textContainer = new TextContainer(await sr.ReadToEndAsync(), languageInfo.Name);
+
+            foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
+            {
+                foreach (var cap in ruleCapture.Captures)
+                {
+                    resultsList.AddRange(ProcessBoundary(cap));
+                }
+
+                List<MatchRecord> ProcessBoundary(ClauseCapture cap)
+                {
+                    List<MatchRecord> newMatches = new List<MatchRecord>();//matches for this rule clause only
+
+                    if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
+                    {
+                        if (ruleCapture.Rule is ConvertedOatRule oatRule)
+                        {
+                            if (tcc?.Result is List<(int, Boundary)> captureResults)
+                            {
+                                foreach (var match in captureResults)
+                                {
+                                    var patternIndex = match.Item1;
+                                    var boundary = match.Item2;
+
+                                    //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
+                                    if (!_treatEverythingAsCode && languageInfo.Type == LanguageInfo.LangFileType.Build && oatRule.AppInspectorRule.Tags.Any(v => !v.Contains("Metadata")))
+                                    {
+                                        continue;
+                                    }
+
+                                    if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
+                                    {
+                                        _logger?.Error("Index out of range for patterns for rule: " + oatRule.AppInspectorRule.Name);
+                                        continue;
+                                    }
+
+                                    if (!ConfidenceLevelFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+                                    {
+                                        continue;
+                                    }
+
+                                    Location StartLocation = textContainer.GetLocation(boundary.Index);
+                                    Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
+                                    MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
+                                    {
+                                        FileName = fileEntry.FullPath,
+                                        FullTextContainer = textContainer,
+                                        LanguageInfo = languageInfo,
+                                        Boundary = boundary,
+                                        StartLocationLine = StartLocation.Line,
+                                        EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
+                                        MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
+                                        Excerpt = ExtractExcerpt(textContainer.FullContent, StartLocation.Line),
+                                        Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
+                                    };
+
+
+                                    if (oatRule.AppInspectorRule.Tags != null && oatRule.AppInspectorRule.Tags.Any())
+                                    {
+                                        AddRuleTagHashes(oatRule.AppInspectorRule.Tags);
+                                    }
+
+                                    if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
+                                    {
+                                        newMatch.Sample = ExtractDependency(newMatch.FullTextContainer, newMatch.Boundary.Index, newMatch.Pattern, newMatch.LanguageInfo.Name);
+                                    }
+
+                                    newMatches.Add(newMatch);
+                                }
+                            }
+                        }
+                    }
+                    return newMatches;
+                }
+            }
+
+            List<MatchRecord> removes = new List<MatchRecord>();
+            
+            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
+            {
+                if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
+                {
+                    foreach (string ovrd in m.Rule.Overrides)
+                    {
+                        // Find all overriden rules and mark them for removal from issues list
+                        foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                        {
+                            if (om.Boundary?.Index >= m.Boundary?.Index &&
+                                om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
+                            {
+                                removes.Add(om);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Remove overriden rules
+            resultsList.RemoveAll(x => removes.Contains(x));
+
+            return resultsList;
+        }
 
         /// <summary>
         /// Analyzes given line of code returning matching scan results for the
@@ -152,38 +313,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
             }
 
-            if (_uniqueTagMatchesOnly)
-            {
-                var replacementList = new List<MatchRecord>();
-                foreach (var entry in resultsList)
-                {
-                    if (!RuleTagsAreUniqueOrAllowed(entry.Rule.Tags))
-                    {
-                        if (!_stopAfterFirstMatch)
-                        {
-                            var replaceable = replacementList.Where(x => x.Tags.All(y => entry.Tags.Contains(y)));
-                            if (replaceable.Any())
-                            {
-                                replaceable = replaceable.Where(x => x.Confidence < entry.Confidence).ToList();
-                                if (replaceable.Any())
-                                {
-                                    replacementList.RemoveAll(x => replaceable.Contains(x));
-                                    replacementList.Add(entry);
-                                }
-                            }
-                            else
-                            {
-                                replacementList.Add(entry);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        replacementList.Add(entry);
-                    }
-                }
-                resultsList = replacementList;
-            }
             List<MatchRecord> removes = new List<MatchRecord>();
             foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
             {
@@ -202,12 +331,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }    
                 // Remove overriden rules
             }
-            resultsList.RemoveAll(x => removes.Contains(x));
 
-            foreach (var entry in resultsList)
-            {
-                _runningResultsList.Enqueue(entry);
-            }
+            resultsList.RemoveAll(x => removes.Contains(x));
 
             return resultsList.ToArray();
         }

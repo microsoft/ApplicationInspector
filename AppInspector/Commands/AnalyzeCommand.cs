@@ -11,8 +11,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.ApplicationInspector.Commands
@@ -284,6 +286,43 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
+        public async IAsyncEnumerable<MatchRecord> EnumerateRecordsAsync([EnumeratorCancellation]CancellationToken cancellationToken)
+        {
+            if (_rulesProcessor is null)
+            {
+                yield break;
+            }
+
+            WriteOnce.SafeLog("AnalyzeCommand::EnumerateRecordsAsync", LogLevel.Trace);
+            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+            
+            Extractor extractor = new();
+
+            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+            {
+                await foreach(var file in extractor.ExtractAsync(srcFile))
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        yield break;
+                    }
+                    
+                    LanguageInfo languageInfo = new LanguageInfo();
+                    if (FileChecksPassed(file, ref languageInfo))
+                    {
+                        var streamByteArray = new byte[file.Content.Length];
+                        file.Content.Read(streamByteArray);
+                        ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
+                    }
+
+                    foreach (var matchRecord in await _rulesProcessor.AnalyzeFileAsync(file, languageInfo))
+                    {
+                        yield return matchRecord;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Main entry point to start analysis from CLI; handles setting up rules, directory enumeration
         /// file type detection and handoff
@@ -346,10 +385,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     // Iterate through each match issue
                         WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", MatchRecord.RuleId, MatchRecord.RuleName, MatchRecord.FileName), LogLevel.Trace);
 
-                        if (MatchRecord.Tags.Contains("Dependency.SourceInclude"))
-                        {
-                            MatchRecord.Sample = ExtractDependency(MatchRecord.FullTextContainer, MatchRecord.Boundary.Index, MatchRecord.Pattern, MatchRecord.LanguageInfo.Name);
-                        }
+
 
                         //preserve issue level characteristics as rolled up meta data of interest
                         _metaDataHelper?.AddMatchRecord(MatchRecord);               
@@ -474,61 +510,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Helper to special case additional processing to just get the values without the import keywords etc.
         /// and encode for html output
         /// </summary>
-        private string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
-        {
-            if (text is null)
-            {
-                return string.Empty;
-            }
-
-            if (string.IsNullOrEmpty(text.FullContent) || string.IsNullOrEmpty(language))
-            {
-                return string.Empty;
-            }
-
-            string rawResult = string.Empty;
-            int endIndex = text.FullContent.IndexOfAny(new char[] { '\n', '\r' }, startIndex);
-            if (-1 != startIndex && -1 != endIndex)
-            {
-                rawResult = text.FullContent.Substring(startIndex, endIndex - startIndex).Trim();
-                Regex regex = new Regex(pattern);
-                MatchCollection matches = regex.Matches(rawResult);
-
-                //remove surrounding import or trailing comments
-                if (matches != null && matches.Any())
-                {
-                    foreach (Match? match in matches)
-                    {
-                        if (match?.Groups.Count == 1)//handles cases like "using Newtonsoft.Json"
-                        {
-                            string[] parseValues = match.Groups[0].Value.Split(' ');
-                            if (parseValues.Length == 1)
-                            {
-                                rawResult = parseValues[0].Trim();
-                            }
-                            else if (parseValues.Length > 1)
-                            {
-                                rawResult = parseValues[1].Trim(); //should be value; time will tell if fullproof
-                            }
-                        }
-                        else if (match?.Groups.Count > 1)//handles cases like include <stdio.h>
-                        {
-                            rawResult = match.Groups[1].Value.Trim();
-                        }
-                        //else if > 2 too hard to match; do nothing
-
-                        break;//only designed to expect one match per line i.e. not include value include value
-                    }
-                }
-
-                string finalResult = rawResult.Replace(";", "");
-                _ = _metaDataHelper?.UniqueDependencies.TryAdd(finalResult,0);
-
-                return System.Net.WebUtility.HtmlEncode(finalResult);
-            }
-
-            return rawResult;
-        }
+        
 
         #endregion ProcessingAssist
 
