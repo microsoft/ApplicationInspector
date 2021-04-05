@@ -308,16 +308,13 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     
                     LanguageInfo languageInfo = new LanguageInfo();
+
                     if (FileChecksPassed(file, ref languageInfo))
                     {
-                        var streamByteArray = new byte[file.Content.Length];
-                        file.Content.Read(streamByteArray);
-                        ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
-                    }
-
-                    foreach (var matchRecord in await _rulesProcessor.AnalyzeFileAsync(file, languageInfo))
-                    {
-                        yield return matchRecord;
+                        foreach (var matchRecord in await _rulesProcessor.AnalyzeFileAsync(file, languageInfo))
+                        {
+                            yield return matchRecord;
+                        }
                     }
                 }
             }
