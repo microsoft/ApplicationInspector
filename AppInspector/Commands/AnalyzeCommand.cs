@@ -286,6 +286,66 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
+        public IEnumerable<MatchRecord> EnumerateRecordsParallel(CancellationToken cancellationToken)
+        {
+            if (_rulesProcessor is null)
+            {
+                yield break;
+            }
+
+            WriteOnce.SafeLog("AnalyzeCommand::EnumerateRecordsParallel", LogLevel.Trace);
+            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+
+            Extractor extractor = new();
+
+            ConcurrentQueue<MatchRecord> output = new();
+
+            var done = false;
+
+            _ = _ = Task.Factory.StartNew(() => 
+            {
+                Process();
+            }, cancellationToken);
+
+            while (!done)
+            {
+                while (output.TryDequeue(out MatchRecord? result))
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        done = true;
+                        yield break;
+                    }
+                    if (result is not null)
+                    {
+                        yield return result;
+                    }
+                }
+                Thread.Sleep(1);
+            }
+
+            void Process()
+            {
+                foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+                {
+                    Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
+                    {
+                        LanguageInfo languageInfo = new LanguageInfo();
+
+                        if (FileChecksPassed(file, ref languageInfo))
+                        {
+                            foreach (var matchRecord in _rulesProcessor.AnalyzeFile(file, languageInfo))
+                            {
+                                output.Enqueue(matchRecord);
+                            }
+                        }
+                    });
+                }
+
+                done = true;
+            }
+        }
+
         public async IAsyncEnumerable<MatchRecord> EnumerateRecordsAsync([EnumeratorCancellation]CancellationToken cancellationToken)
         {
             if (_rulesProcessor is null)

@@ -118,6 +118,118 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return rawResult;
         }
 
+        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo)
+        {
+            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
+            var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
+            List<MatchRecord> resultsList = new List<MatchRecord>();
+
+            using var sr = new StreamReader(fileEntry.Content);
+
+            TextContainer textContainer = new TextContainer(sr.ReadToEnd(), languageInfo.Name);
+
+            foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
+            {
+                foreach (var cap in ruleCapture.Captures)
+                {
+                    resultsList.AddRange(ProcessBoundary(cap));
+                }
+
+                List<MatchRecord> ProcessBoundary(ClauseCapture cap)
+                {
+                    List<MatchRecord> newMatches = new List<MatchRecord>();//matches for this rule clause only
+
+                    if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
+                    {
+                        if (ruleCapture.Rule is ConvertedOatRule oatRule)
+                        {
+                            if (tcc?.Result is List<(int, Boundary)> captureResults)
+                            {
+                                foreach (var match in captureResults)
+                                {
+                                    var patternIndex = match.Item1;
+                                    var boundary = match.Item2;
+
+                                    //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
+                                    if (!_treatEverythingAsCode && languageInfo.Type == LanguageInfo.LangFileType.Build && oatRule.AppInspectorRule.Tags.Any(v => !v.Contains("Metadata")))
+                                    {
+                                        continue;
+                                    }
+
+                                    if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
+                                    {
+                                        _logger?.Error("Index out of range for patterns for rule: " + oatRule.AppInspectorRule.Name);
+                                        continue;
+                                    }
+
+                                    if (!ConfidenceLevelFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+                                    {
+                                        continue;
+                                    }
+
+                                    Location StartLocation = textContainer.GetLocation(boundary.Index);
+                                    Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
+                                    MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
+                                    {
+                                        FileName = fileEntry.FullPath,
+                                        FullTextContainer = textContainer,
+                                        LanguageInfo = languageInfo,
+                                        Boundary = boundary,
+                                        StartLocationLine = StartLocation.Line,
+                                        EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
+                                        MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
+                                        Excerpt = ExtractExcerpt(textContainer.FullContent, StartLocation.Line),
+                                        Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
+                                    };
+
+
+                                    if (oatRule.AppInspectorRule.Tags != null && oatRule.AppInspectorRule.Tags.Any())
+                                    {
+                                        AddRuleTagHashes(oatRule.AppInspectorRule.Tags);
+                                    }
+
+                                    if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
+                                    {
+                                        newMatch.Sample = ExtractDependency(newMatch.FullTextContainer, newMatch.Boundary.Index, newMatch.Pattern, newMatch.LanguageInfo.Name);
+                                    }
+
+                                    newMatches.Add(newMatch);
+                                }
+                            }
+                        }
+                    }
+                    return newMatches;
+                }
+            }
+
+            List<MatchRecord> removes = new List<MatchRecord>();
+
+            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
+            {
+                if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
+                {
+                    foreach (string ovrd in m.Rule.Overrides)
+                    {
+                        // Find all overriden rules and mark them for removal from issues list
+                        foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                        {
+                            if (om.Boundary?.Index >= m.Boundary?.Index &&
+                                om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
+                            {
+                                removes.Add(om);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Remove overriden rules
+            resultsList.RemoveAll(x => removes.Contains(x));
+
+            return resultsList;
+        }
+
+
         public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo)
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
