@@ -60,6 +60,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
         public bool SingleThread { get; set; }
+
+        [Option("no-show-progress", Required = false, HelpText = "Disable progress information.")]
+        public bool NoShowProgressBar { get; set; }
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]

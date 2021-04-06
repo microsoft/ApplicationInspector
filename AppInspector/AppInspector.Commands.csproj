@@ -62,6 +62,7 @@
     <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.0.58" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="ShellProgressBar" Version="5.1.0" />
   </ItemGroup>
 
   <ItemGroup>

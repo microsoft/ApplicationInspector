@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ShellProgressBar;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -33,6 +34,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
         public bool SingleThread { get; set; } = false;
         public bool TreatEverythingAsCode { get; set; } = false;
+        public bool NoShowProgress { get; set; } = true;
     }
 
     /// <summary>
@@ -286,51 +288,91 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public IEnumerable<MatchRecord> EnumerateRecords(CancellationToken cancellationToken, bool singleThread = false)
+        public IEnumerable<MatchRecord> EnumerateRecords(CancellationToken cancellationToken, AnalyzeOptions opts)
         {
+            WriteOnce.SafeLog("AnalyzeCommand::EnumerateRecords", LogLevel.Trace);
+
             if (_rulesProcessor is null)
             {
                 yield break;
             }
 
-            WriteOnce.SafeLog("AnalyzeCommand::EnumerateRecords", LogLevel.Trace);
-
             Extractor extractor = new();
-
             ConcurrentQueue<MatchRecord> output = new();
-
             var done = false;
+            var numFindings = 0;
+            var numFiles = 0;
 
-            _ = _ = Task.Factory.StartNew(() => 
+            _ = _ = Task.Factory.StartNew(() =>
             {
                 Process();
             }, cancellationToken);
 
-            while (!done)
+            if (opts.NoShowProgress)
             {
-                while (output.TryDequeue(out MatchRecord? result))
+                while (!done)
                 {
-                    if (cancellationToken.IsCancellationRequested)
+                    while (output.TryDequeue(out MatchRecord? result))
                     {
-                        yield break;
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            yield break;
+                        }
+                        if (result is not null)
+                        {
+                            numFindings++;
+                            yield return result;
+                        }
                     }
-                    if (result is not null)
-                    {
-                        yield return result;
-                    }
+                    Thread.Sleep(1);
                 }
-                Thread.Sleep(1);
             }
+            else
+            {
+                var options = new ProgressBarOptions
+                {
+                    ForegroundColor = ConsoleColor.Yellow,
+                    ForegroundColorDone = ConsoleColor.DarkGreen,
+                    BackgroundColor = ConsoleColor.DarkGray,
+                    BackgroundCharacter = '\u2593'
+                };
+
+                using var pbar = new IndeterminateProgressBar("Indeterminate", options);
+                pbar.Message = $"Analyzing Records";
+
+                while (!done)
+                {
+                    while (output.TryDequeue(out MatchRecord? result))
+                    {
+                        pbar.Message = $"Enumerating and Analyzing Files. {numFindings} findings in {numFiles} files.";
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            yield break;
+                        }
+                        if (result is not null)
+                        {
+                            numFindings++;
+                            yield return result;
+                        }
+                    }
+                    Thread.Sleep(1);
+                }
+
+                pbar.Finished();
+            }
+            
 
             void Process()
             {
                 foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
                 {
-                    if (singleThread)
+                    if (opts.SingleThread)
                     {
                         foreach (var file in extractor.Extract(srcFile))
                         {
-                            EnqueueFileIfPasses(file);
+                            _metaDataHelper?.Metadata.IncrementTotalFiles();
+                            numFiles++;
+                            ProcessAndEnqueueIfPasses(file);
                         }
                     }
                     else
@@ -338,20 +380,30 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
                         {
-                            EnqueueFileIfPasses(file);
+                            _metaDataHelper?.Metadata.IncrementTotalFiles();
+                            Interlocked.Increment(ref numFiles);
+                            ProcessAndEnqueueIfPasses(file);
                         });
                     }
                 }
 
                 done = true;
 
-                void EnqueueFileIfPasses(FileEntry file)
+                void ProcessAndEnqueueIfPasses(FileEntry file)
                 {
                     LanguageInfo languageInfo = new LanguageInfo();
 
                     if (FileChecksPassed(file, ref languageInfo))
                     {
-                        foreach (var matchRecord in _rulesProcessor.AnalyzeFile(file, languageInfo))
+                        _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
+
+                        var results = _rulesProcessor.AnalyzeFile(file, languageInfo);
+
+                        if (results.Any())
+                        {
+                            _metaDataHelper?.Metadata.IncrementFilesAffected();
+                        }
+                        foreach (var matchRecord in results)
                         {
                             output.Enqueue(matchRecord);
                         }
@@ -384,15 +436,29 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         yield break;
                     }
-                    
+
+                    _metaDataHelper?.Metadata.IncrementTotalFiles();
+
                     LanguageInfo languageInfo = new LanguageInfo();
 
                     if (FileChecksPassed(file, ref languageInfo))
                     {
+                        _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
+
+                        var any = false;
                         foreach (var matchRecord in await _rulesProcessor.AnalyzeFileAsync(file, languageInfo))
                         {
+                            any = true;
                             yield return matchRecord;
                         }
+                        if (any)
+                        {
+                            _metaDataHelper?.Metadata.IncrementFilesAffected();
+                        }
+                    }
+                    else
+                    {
+                        _metaDataHelper?.Metadata.IncrementFilesSkipped();
                     }
                 }
             }
@@ -413,12 +479,12 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Utils.GetVersionString()
             };
 
-            foreach(var matchRecord in EnumerateRecords(new CancellationToken(), _options.SingleThread))
+            foreach(var matchRecord in EnumerateRecords(new CancellationToken(), _options))
             {
                 _metaDataHelper?.AddMatchRecord(matchRecord);
             }
 
-            WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
+            WriteOnce.General(Environment.NewLine + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
 
             //wrapup result status
             if (_metaDataHelper?.Metadata.TotalFiles == _metaDataHelper?.Metadata.FilesSkipped)
@@ -478,7 +544,6 @@ namespace Microsoft.ApplicationInspector.Commands
             // 1. Check for exclusions
             if (ExcludeFileFromScan(fileEntry.FullPath))
             {
-                _metaDataHelper?.Metadata.IncrementFilesSkipped();
                 return false;
             }
 
@@ -486,7 +551,6 @@ namespace Microsoft.ApplicationInspector.Commands
             if (fileLength > MAX_FILESIZE)
             {
                 WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILESIZE_SKIPPED, fileEntry.FullPath), LogLevel.Warn);
-                _metaDataHelper?.Metadata.IncrementFilesSkipped();
                 return false;
             }
 
@@ -509,7 +573,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (_fileExclusionList != null && _fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filePath??""), LogLevel.Warn);
-                    _metaDataHelper?.Metadata.IncrementFilesSkipped();
                     return true;
                 }
             }
