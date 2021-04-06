@@ -279,7 +279,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
                 Log = cliOptions.Log,
                 SingleThread = cliOptions.SingleThread
-            }); ;
+            });
 
             AnalyzeResult analyzeResult = command.GetResult();
             exitCode = analyzeResult.ResultCode;

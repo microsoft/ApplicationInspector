@@ -286,15 +286,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public IEnumerable<MatchRecord> EnumerateRecordsParallel(CancellationToken cancellationToken)
+        public IEnumerable<MatchRecord> EnumerateRecords(CancellationToken cancellationToken, bool parallel = true)
         {
             if (_rulesProcessor is null)
             {
                 yield break;
             }
 
-            WriteOnce.SafeLog("AnalyzeCommand::EnumerateRecordsParallel", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+            WriteOnce.SafeLog("AnalyzeCommand::EnumerateRecords", LogLevel.Trace);
 
             Extractor extractor = new();
 
@@ -313,7 +312,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        done = true;
                         yield break;
                     }
                     if (result is not null)
@@ -328,21 +326,40 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
                 {
-                    Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
+                    if (parallel)
                     {
-                        LanguageInfo languageInfo = new LanguageInfo();
-
-                        if (FileChecksPassed(file, ref languageInfo))
+                        Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
                         {
-                            foreach (var matchRecord in _rulesProcessor.AnalyzeFile(file, languageInfo))
-                            {
-                                output.Enqueue(matchRecord);
-                            }
+                            EnqueueFileIfPasses(file);
+                        });
+                    }
+                    else
+                    {
+                        foreach(var file in extractor.Extract(srcFile))
+                        {
+                            EnqueueFileIfPasses(file);
                         }
-                    });
+                    }
                 }
 
                 done = true;
+
+                void EnqueueFileIfPasses(FileEntry file)
+                {
+                    LanguageInfo languageInfo = new LanguageInfo();
+
+                    if (FileChecksPassed(file, ref languageInfo))
+                    {
+                        foreach (var matchRecord in _rulesProcessor.AnalyzeFile(file, languageInfo))
+                        {
+                            output.Enqueue(matchRecord);
+                        }
+                    }
+                    else
+                    {
+                        _metaDataHelper?.Metadata.IncrementFilesSkipped();
+                    }
+                }
             }
         }
 
@@ -395,104 +412,31 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Utils.GetVersionString()
             };
 
-            try
+            foreach(var matchRecord in EnumerateRecords(new CancellationToken(), !_options.SingleThread))
             {
-                _metaDataHelper?.Metadata.IncrementTotalFiles(_srcfileList.Count());//updated for zipped files later
-
-                //lamda1 for choosing single or multi-threaded processing just runs rules analysis on filename arg
-                Action<string> AnalyzeFiles = filename =>
-                {
-                    if (new FileInfo(filename).Length == 0)
-                    {
-                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
-                        _metaDataHelper?.Metadata.IncrementFilesSkipped();
-                        return;
-                    }
-
-                    if (ExcludeFileFromScan(filename)) //added check needed prevents unwanted file open attempt to determine type if excluded
-                    {
-                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filename), LogLevel.Warn);
-                        _metaDataHelper?.Metadata.IncrementFilesSkipped();
-                        return;
-                    }
-
-                    ArchiveFileType archiveFileType = ArchiveFileType.UNKNOWN;
-                    try //fix for #146
-                    {
-                        archiveFileType = MiniMagic.DetectFileType(filename);
-                    }
-                    catch (Exception e)
-                    {
-                        WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, LogLevel.Error);//log details
-                    }
-
-                    if (archiveFileType == ArchiveFileType.UNKNOWN)//not a known zipped file type
-                    {
-                        ProcessAsFile(filename);
-                    }
-                    else
-                    {
-                        UnZipAndProcess(filename, archiveFileType, _srcfileList.Count() == 1);
-                    }
-                };
-
-                //lamda 2 for single vs multi-threaded work to process results once all rules processing is completed -must be broken out for unique option
-                Action<MatchRecord> ProcessResult = MatchRecord =>
-                {
-                    // Iterate through each match issue
-                        WriteOnce.SafeLog(string.Format("Processing pattern matches for ruleId {0}, ruleName {1} file {2}", MatchRecord.RuleId, MatchRecord.RuleName, MatchRecord.FileName), LogLevel.Trace);
-
-
-
-                        //preserve issue level characteristics as rolled up meta data of interest
-                        _metaDataHelper?.AddMatchRecord(MatchRecord);               
-                };
-
-                if (_options.SingleThread)
-                {
-                    // Iterate through all files and process against rules
-                    foreach (string filename in _srcfileList ?? new string[] { })
-                    {
-                        AnalyzeFiles(filename);
-                    }
-
-                    foreach (MatchRecord MatchRecord in _rulesProcessor?.AllResults ?? new ConcurrentQueue<MatchRecord>())
-                    {
-                        ProcessResult(MatchRecord);
-                    }
-                }
-                else
-                {
-                    Parallel.ForEach(_srcfileList, filePath => AnalyzeFiles(filePath));
-                    Parallel.ForEach(_rulesProcessor?.AllResults, MatchRecord => ProcessResult(MatchRecord));
-                }
-
-                WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
-
-                //wrapup result status
-                if (_metaDataHelper?.Metadata.TotalFiles == _metaDataHelper?.Metadata.FilesSkipped)
-                {
-                    WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
-                    analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
-                }
-                else if (_metaDataHelper?.Metadata?.Matches?.Count == 0)
-                {
-                    WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
-                    analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
-                }
-                else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
-                {
-                    _metaDataHelper.Metadata.LastUpdated = LastUpdated.ToString();
-                    _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
-                    _metaDataHelper.PrepareReport();
-                    analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
-                    analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
-                }
+                _metaDataHelper?.AddMatchRecord(matchRecord);
             }
-            catch (OpException e) //group error handling
+
+            WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
+
+            //wrapup result status
+            if (_metaDataHelper?.Metadata.TotalFiles == _metaDataHelper?.Metadata.FilesSkipped)
             {
-                WriteOnce.Error(e.Message);
-                throw;
+                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+            }
+            else if (_metaDataHelper?.Metadata?.Matches?.Count == 0)
+            {
+                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+            }
+            else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
+            {
+                _metaDataHelper.Metadata.LastUpdated = LastUpdated.ToString();
+                _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
+                _metaDataHelper.PrepareReport();
+                analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
             }
 
             return analyzeResult;
