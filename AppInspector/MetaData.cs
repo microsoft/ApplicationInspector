@@ -100,9 +100,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Total matches with supplied argument settings
         /// </summary>
         [JsonProperty(PropertyName = "totalMatchesCount")]
-        public int TotalMatchesCount { get { return _TotalMatchesCount; } set { _TotalMatchesCount = value; } }
-
-        private int _TotalMatchesCount;
+        public int TotalMatchesCount { get { return Matches?.Count ?? 0; } }
 
         /// <summary>
         /// Total unique matches by tag
@@ -114,7 +112,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (UniqueTags != null)
                     return UniqueTags.Count;
                 else 
-                    return 0; 
+                    return 0;
             } 
         }
 
@@ -211,11 +209,6 @@ namespace Microsoft.ApplicationInspector.Commands
         internal void IncrementTotalFiles(int amount = 1)
         {
             Interlocked.Add(ref _TotalFiles, amount);
-        }
-
-        internal void IncrementTotalMatchesCount(int amount = 1)
-        {
-            Interlocked.Add(ref _TotalMatchesCount, amount);
         }
 
         internal void IncrementFilesAffected(int amount = 1)

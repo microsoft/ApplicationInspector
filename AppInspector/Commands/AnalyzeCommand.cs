@@ -286,7 +286,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public IEnumerable<MatchRecord> EnumerateRecords(CancellationToken cancellationToken, bool parallel = true)
+        public IEnumerable<MatchRecord> EnumerateRecords(CancellationToken cancellationToken, bool singleThread = false)
         {
             if (_rulesProcessor is null)
             {
@@ -326,19 +326,20 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
                 {
-                    if (parallel)
+                    if (singleThread)
                     {
+                        foreach (var file in extractor.Extract(srcFile))
+                        {
+                            EnqueueFileIfPasses(file);
+                        }
+                    }
+                    else
+                    {
+
                         Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
                         {
                             EnqueueFileIfPasses(file);
                         });
-                    }
-                    else
-                    {
-                        foreach(var file in extractor.Extract(srcFile))
-                        {
-                            EnqueueFileIfPasses(file);
-                        }
                     }
                 }
 
@@ -412,7 +413,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Utils.GetVersionString()
             };
 
-            foreach(var matchRecord in EnumerateRecords(new CancellationToken(), !_options.SingleThread))
+            foreach(var matchRecord in EnumerateRecords(new CancellationToken(), _options.SingleThread))
             {
                 _metaDataHelper?.AddMatchRecord(matchRecord);
             }
@@ -442,68 +443,6 @@ namespace Microsoft.ApplicationInspector.Commands
             return analyzeResult;
         }
 
-        /// <summary>
-        /// Wrapper for files that are on disk and ready to read vs unzipped files which are not to allow separation of core
-        /// scan evaluation for use by decompression methods as well
-        /// </summary>
-        /// <param name="filename"></param>
-        private void ProcessAsFile(string filename)
-        {
-            //check for supported language
-            LanguageInfo languageInfo = new LanguageInfo();
-            if (FileChecksPassed(filename, ref languageInfo))
-            {
-                LastUpdated = File.GetLastWriteTime(filename);
-                _ = _metaDataHelper?.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_UNCOMPRESSED_FILETYPE),0);
-
-                string fileText = File.ReadAllText(filename);
-                ProcessInMemory(filename, fileText, languageInfo);
-            }
-        }
-
-        /// <summary>
-        /// Main WORKHORSE for analyzing file; called from file based or decompression functions
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="fileText"></param>
-        private void ProcessInMemory(string filePath, string fileText, LanguageInfo languageInfo)
-        {
-            #region minorRollupTrackingAndProgress
-
-            WriteOnce.SafeLog("Preparing to process file: " + filePath, LogLevel.Trace);
-
-            _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
-
-            int totalFilesReviewed = _metaDataHelper != null ? _metaDataHelper.Metadata.FilesAnalyzed + _metaDataHelper.Metadata.FilesSkipped : 0;
-            int percentCompleted = (int)((float)totalFilesReviewed / (float)(_metaDataHelper?.Metadata?.TotalFiles ?? 0) * 100);
-            //earlier issue now resolved so app handles mixed zipped/zipped and unzipped/zipped directories but catch all for non-critical UI
-            if (percentCompleted > 100)
-            {
-                percentCompleted = 100;
-            }
-
-            if (percentCompleted < 100) //caller already reports @100% so avoid 2x for file output
-            {
-                WriteOnce.General("\r" + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, percentCompleted), false);
-            }
-
-            #endregion minorRollupTrackingAndProgress
-
-            //process file against rules returning unique or duplicate matches as configured
-            MatchRecord[] MatchRecords = _rulesProcessor?.AnalyzeFile(filePath, fileText, languageInfo) ?? new MatchRecord[] { };
-
-            //if any matches found for this file...
-            if (MatchRecords.Any())
-            {
-                _metaDataHelper?.Metadata?.IncrementFilesAffected();
-                _metaDataHelper?.Metadata?.IncrementTotalMatchesCount(MatchRecords.Count());
-            }
-            else
-            {
-                WriteOnce.SafeLog("No pattern matches detected for file: " + filePath, LogLevel.Trace);
-            }
-        }
-
         #region ProcessingAssist
 
         
@@ -514,149 +453,6 @@ namespace Microsoft.ApplicationInspector.Commands
         
 
         #endregion ProcessingAssist
-
-        private void UnZipAndProcess(string filePath, ArchiveFileType archiveFileType, bool topLevel = true)
-        {
-            // zip itself may be in excluded list i.e. sample, test or similar unless ignore filter requested
-            if (ExcludeFileFromScan(filePath))
-            {
-                return;
-            }
-
-            //zip itself may be too huge for timely processing
-            if (new FileInfo(filePath).Length > WARN_ZIP_FILE_SIZE)
-            {
-                if (topLevel)
-                {
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILESIZE_WARN));
-                }
-                else
-                {
-                    WriteOnce.SafeLog("Decompressing large file " + filePath, LogLevel.Warn);
-                }
-            }
-            else
-            {
-                if (topLevel)
-                {
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_PROCESSING));
-                }
-                else
-                {
-                    WriteOnce.SafeLog("Decompressing file " + filePath, LogLevel.Warn);
-                }
-            }
-
-            LastUpdated = File.GetLastWriteTime(filePath);
-            _ = _metaDataHelper?.PackageTypes.TryAdd(MsgHelp.GetString(MsgHelp.ID.ANALYZE_COMPRESSED_FILETYPE),0);
-
-            try
-            {
-                var extractor = new Extractor();
-                IEnumerable<FileEntry> files = extractor.ExtractFile(filePath);
-
-                if (_options.SingleThread)
-                {
-                    foreach (FileEntry file in files)
-                    {
-                        try
-                        {
-                            //check uncompressed file passes standard checks
-                            LanguageInfo languageInfo = new LanguageInfo();
-                            if (FileChecksPassed(file, ref languageInfo))
-                            {
-                                var streamByteArray = new byte[file.Content.Length];
-                                file.Content.Read(streamByteArray);
-                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            WriteOnce.SafeLog($"Failed to parse {file.FullPath}. {e.GetType()}:{e.Message}", LogLevel.Info);
-                        }
-                    }
-                }
-                else
-                {
-                    Parallel.ForEach(files, file =>
-                    {
-                        try
-                        {
-                            //check uncompressed file passes standard checks
-                            LanguageInfo languageInfo = new LanguageInfo();
-                            if (FileChecksPassed(file, ref languageInfo))
-                            {
-                                var streamByteArray = new byte[file.Content.Length];
-                                file.Content.Read(streamByteArray);
-                                ProcessInMemory(file.FullPath, Encoding.UTF8.GetString(streamByteArray), languageInfo);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            WriteOnce.SafeLog($"Failed to parse {file.FullPath}. {e.GetType()}:{e.Message}",LogLevel.Info);
-                        }
-                    });
-                }
-
-                // Do this at the end so we don't force the IEnumerable to populate before we walk it
-                _metaDataHelper?.Metadata.IncrementTotalFiles(files.Count());//additive in case additional child zip files processed
-            }
-            catch (Exception)
-            {
-                string errmsg = MsgHelp.FormatString(MsgHelp.ID.ANALYZE_COMPRESSED_ERROR, filePath);
-                WriteOnce.Error(errmsg);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Common validation called by ProcessAsFile and UnzipAndProcess to ensure same order and checks made
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="languageInfo"></param>
-        /// <param name="fileLength">should be > zero if called from unzip method</param>
-        /// <returns></returns>
-        private bool FileChecksPassed(string filePath, ref LanguageInfo languageInfo, long fileLength = 0)
-        {
-            _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(filePath).Replace('.', ' ').TrimStart(), 0);
-
-            if (Language.FromFileName(filePath, ref languageInfo))
-            {
-                _metaDataHelper?.AddLanguage(languageInfo.Name);
-            }
-            else
-            {
-                _metaDataHelper?.AddLanguage("Unknown");
-                languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(filePath) }, Name = "Unknown" };
-            }
-
-            // 1. Check for exclusions
-            if (ExcludeFileFromScan(filePath))
-            {
-                _metaDataHelper?.Metadata.IncrementFilesSkipped();
-                return false;
-            }
-
-
-            // 2. Skip if exceeds file size limits
-            try
-            {
-                fileLength = fileLength <= 0 ? new FileInfo(filePath).Length : fileLength;
-                if (fileLength > MAX_FILESIZE)
-                {
-                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILESIZE_SKIPPED, filePath), LogLevel.Warn);
-                    _metaDataHelper?.Metadata.IncrementFilesSkipped();
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, filePath));
-                throw;
-            }
-
-            return true;
-        }
 
         /// <summary>
         /// Common validation called by ProcessAsFile and UnzipAndProcess to ensure same order and checks made

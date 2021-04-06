@@ -76,8 +76,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         _ = Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     case "Dependency.SourceInclude":
-                        allowAdd = false; //design to keep noise out of detailed match list
-                        break;
+                        return; //design to keep noise out of detailed match list
                     default:
                         if (tag.Contains("Metric."))
                         {
@@ -102,7 +101,7 @@ namespace Microsoft.ApplicationInspector.Commands
             string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
             {
-                _ = AppTypes.TryAdd(solutionType,0);
+                _ = AppTypes.TryAdd(solutionType, 0);
             }
 
             bool CounterOnlyTagSet = false;
@@ -121,15 +120,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     _ = UniqueTags.TryAdd(tag,0);
                 }
-
-                if (allowAdd)
-                {
-                    Metadata?.Matches?.Add(matchRecord);
-                }
-            }
-            else
-            {
-                Metadata.IncrementTotalMatchesCount(-1);//reduce e.g. tag counters not included as detailed match
+                
+                Metadata?.Matches?.Add(matchRecord);
             }
         }
 
