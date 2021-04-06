@@ -80,6 +80,8 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private DateTime _lastUpdated;
 
+        public MetaData MetaData { get { return _metaDataHelper.Metadata; } }
+
         /// <summary>
         /// Updated dynamically to more recent file in source
         /// </summary>
@@ -300,8 +302,6 @@ namespace Microsoft.ApplicationInspector.Commands
             Extractor extractor = new();
             ConcurrentQueue<MatchRecord> output = new();
             var done = false;
-            var numFindings = 0;
-            var numFiles = 0;
 
             _ = _ = Task.Factory.StartNew(() =>
             {
@@ -320,7 +320,6 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         if (result is not null)
                         {
-                            numFindings++;
                             yield return result;
                         }
                     }
@@ -344,14 +343,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     while (output.TryDequeue(out MatchRecord? result))
                     {
-                        pbar.Message = $"Enumerating and Analyzing Files. {numFindings} findings in {numFiles} files.";
+                        pbar.Message = $"Enumerating and Analyzing Files. {_metaDataHelper?.Metadata.TotalMatchesCount} findings in {_metaDataHelper?.Metadata.FilesAnalyzed} files.";
                         if (cancellationToken.IsCancellationRequested)
                         {
                             yield break;
                         }
                         if (result is not null)
                         {
-                            numFindings++;
                             yield return result;
                         }
                     }
@@ -360,7 +358,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 pbar.Finished();
             }
-            
 
             void Process()
             {
@@ -371,7 +368,6 @@ namespace Microsoft.ApplicationInspector.Commands
                         foreach (var file in extractor.Extract(srcFile))
                         {
                             _metaDataHelper?.Metadata.IncrementTotalFiles();
-                            numFiles++;
                             ProcessAndEnqueueIfPasses(file);
                         }
                     }
@@ -381,7 +377,6 @@ namespace Microsoft.ApplicationInspector.Commands
                         Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
                         {
                             _metaDataHelper?.Metadata.IncrementTotalFiles();
-                            Interlocked.Increment(ref numFiles);
                             ProcessAndEnqueueIfPasses(file);
                         });
                     }
@@ -484,8 +479,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 _metaDataHelper?.AddMatchRecord(matchRecord);
             }
 
-            WriteOnce.General(Environment.NewLine + MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILES_PROCESSED_PCNT, 100));
-
             //wrapup result status
             if (_metaDataHelper?.Metadata.TotalFiles == _metaDataHelper?.Metadata.FilesSkipped)
             {
@@ -508,17 +501,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return analyzeResult;
         }
-
-        #region ProcessingAssist
-
-        
-        /// <summary>
-        /// Helper to special case additional processing to just get the values without the import keywords etc.
-        /// and encode for html output
-        /// </summary>
-        
-
-        #endregion ProcessingAssist
 
         /// <summary>
         /// Common validation called by ProcessAsFile and UnzipAndProcess to ensure same order and checks made
