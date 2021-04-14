@@ -306,14 +306,11 @@ namespace Microsoft.ApplicationInspector.Commands
             foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
             {
                 if (cancellationToken.IsCancellationRequested) { break; }
-                if (opts.SingleThread)
+                else if (opts.SingleThread)
                 {
                     foreach (var file in extractor.Extract(srcFile))
                     {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            return;
-                        }
+                        if (cancellationToken.IsCancellationRequested) { break; }
                         ProcessAndAddToMetadata(file);
                     }
                 }
@@ -326,8 +323,12 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
 
+            Console.WriteLine("Yo");
+
             void ProcessAndAddToMetadata(FileEntry file)
             {
+                _metaDataHelper?.Metadata.IncrementTotalFiles();
+
                 LanguageInfo languageInfo = new LanguageInfo();
 
                 if (FileChecksPassed(file, ref languageInfo))
