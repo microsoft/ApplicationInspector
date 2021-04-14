@@ -323,8 +323,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
 
-            Console.WriteLine("Yo");
-
             void ProcessAndAddToMetadata(FileEntry file)
             {
                 _metaDataHelper?.Metadata.IncrementTotalFiles();

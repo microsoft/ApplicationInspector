@@ -349,10 +349,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"analyze -s {0} -r {1} -f json -o {2}",
+                string args = string.Format(@"analyze -s {0} -r {1} -f json -o {2} -k {3}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
+                    ".cpp");
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
