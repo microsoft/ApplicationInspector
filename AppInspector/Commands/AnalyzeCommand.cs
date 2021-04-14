@@ -290,174 +290,69 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public IEnumerable<MatchRecord> EnumerateRecords(CancellationToken cancellationToken, AnalyzeOptions opts)
+        public void PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts)
         {
             WriteOnce.SafeLog("AnalyzeCommand::EnumerateRecords", LogLevel.Trace);
 
+            var analyzeResult = new AnalyzeResult();
             if (_rulesProcessor is null)
             {
-                yield break;
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.CriticalError;
+                return;
             }
 
-            Extractor extractor = new();
-            ConcurrentQueue<MatchRecord> output = new();
-            var done = false;
-
-            _ = _ = Task.Factory.StartNew(() =>
-            {
-                Process();
-            }, cancellationToken);
-
-            if (opts.NoShowProgress)
-            {
-                while (!done)
-                {
-                    while (output.TryDequeue(out MatchRecord? result))
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            yield break;
-                        }
-                        if (result is not null)
-                        {
-                            yield return result;
-                        }
-                    }
-                    Thread.Sleep(1);
-                }
-            }
-            else
-            {
-                var options = new ProgressBarOptions
-                {
-                    ForegroundColor = ConsoleColor.Yellow,
-                    ForegroundColorDone = ConsoleColor.DarkGreen,
-                    BackgroundColor = ConsoleColor.DarkGray,
-                    BackgroundCharacter = '\u2593'
-                };
-
-                using var pbar = new IndeterminateProgressBar("Indeterminate", options);
-                pbar.Message = $"Analyzing Records";
-
-                while (!done)
-                {
-                    while (output.TryDequeue(out MatchRecord? result))
-                    {
-                        pbar.Message = $"Enumerating and Analyzing Files. {_metaDataHelper?.Metadata.TotalMatchesCount} findings in {_metaDataHelper?.Metadata.FilesAnalyzed} files.";
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            yield break;
-                        }
-                        if (result is not null)
-                        {
-                            yield return result;
-                        }
-                    }
-                    Thread.Sleep(1);
-                }
-
-                pbar.Finished();
-            }
-
-            void Process()
-            {
-                foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
-                {
-                    if (opts.SingleThread)
-                    {
-                        foreach (var file in extractor.Extract(srcFile))
-                        {
-                            _metaDataHelper?.Metadata.IncrementTotalFiles();
-                            ProcessAndEnqueueIfPasses(file);
-                        }
-                    }
-                    else
-                    {
-
-                        Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
-                        {
-                            _metaDataHelper?.Metadata.IncrementTotalFiles();
-                            ProcessAndEnqueueIfPasses(file);
-                        });
-                    }
-                }
-
-                done = true;
-
-                void ProcessAndEnqueueIfPasses(FileEntry file)
-                {
-                    LanguageInfo languageInfo = new LanguageInfo();
-
-                    if (FileChecksPassed(file, ref languageInfo))
-                    {
-                        _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
-
-                        var results = _rulesProcessor.AnalyzeFile(file, languageInfo);
-
-                        if (results.Any())
-                        {
-                            _metaDataHelper?.Metadata.IncrementFilesAffected();
-                        }
-                        foreach (var matchRecord in results)
-                        {
-                            output.Enqueue(matchRecord);
-                        }
-                    }
-                    else
-                    {
-                        _metaDataHelper?.Metadata.IncrementFilesSkipped();
-                    }
-                }
-            }
-        }
-
-        public async IAsyncEnumerable<MatchRecord> EnumerateRecordsAsync([EnumeratorCancellation]CancellationToken cancellationToken)
-        {
-            if (_rulesProcessor is null)
-            {
-                yield break;
-            }
-
-            WriteOnce.SafeLog("AnalyzeCommand::EnumerateRecordsAsync", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
-            
             Extractor extractor = new();
 
             foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
             {
-                await foreach(var file in extractor.ExtractAsync(srcFile))
+                if (cancellationToken.IsCancellationRequested) { break; }
+                if (opts.SingleThread)
                 {
-                    if (cancellationToken.IsCancellationRequested)
+                    foreach (var file in extractor.Extract(srcFile))
                     {
-                        yield break;
-                    }
-
-                    _metaDataHelper?.Metadata.IncrementTotalFiles();
-
-                    LanguageInfo languageInfo = new LanguageInfo();
-
-                    if (FileChecksPassed(file, ref languageInfo))
-                    {
-                        _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
-
-                        var any = false;
-                        foreach (var matchRecord in await _rulesProcessor.AnalyzeFileAsync(file, languageInfo))
+                        if (cancellationToken.IsCancellationRequested)
                         {
-                            any = true;
-                            yield return matchRecord;
+                            return;
                         }
-                        if (any)
-                        {
-                            _metaDataHelper?.Metadata.IncrementFilesAffected();
-                        }
+                        ProcessAndAddToMetadata(file);
                     }
-                    else
+                }
+                else
+                {
+                    Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
                     {
-                        _metaDataHelper?.Metadata.IncrementFilesSkipped();
+                        ProcessAndAddToMetadata(file);
+                    });
+                }
+            }
+
+            void ProcessAndAddToMetadata(FileEntry file)
+            {
+                LanguageInfo languageInfo = new LanguageInfo();
+
+                if (FileChecksPassed(file, ref languageInfo))
+                {
+                    _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
+
+                    var results = _rulesProcessor.AnalyzeFile(file, languageInfo, opts.AllowDupTags ? null : _metaDataHelper?.Metadata.UniqueTags);
+
+                    if (results.Any())
+                    {
+                        _metaDataHelper?.Metadata.IncrementFilesAffected();
                     }
+                    foreach (var matchRecord in results)
+                    {
+                        _metaDataHelper?.AddMatchRecord(matchRecord);
+                    }
+                }
+                else
+                {
+                    _metaDataHelper?.Metadata.IncrementFilesSkipped();
                 }
             }
         }
+
+    
 
         /// <summary>
         /// Main entry point to start analysis from CLI; handles setting up rules, directory enumeration
@@ -474,9 +369,38 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Utils.GetVersionString()
             };
 
-            foreach(var matchRecord in EnumerateRecords(new CancellationToken(), _options))
+
+
+            if (!_options.NoShowProgress)
             {
-                _metaDataHelper?.AddMatchRecord(matchRecord);
+                var done = false;
+                _ = Task.Factory.StartNew(() =>
+                {
+                    PopulateRecords(new CancellationToken(), _options);
+                    done = true;
+                });
+                var options = new ProgressBarOptions
+                {
+                    ForegroundColor = ConsoleColor.Yellow,
+                    ForegroundColorDone = ConsoleColor.DarkGreen,
+                    BackgroundColor = ConsoleColor.DarkGray,
+                    BackgroundCharacter = '\u2593'
+                };
+
+                using var pbar = new IndeterminateProgressBar("Indeterminate", options);
+                pbar.Message = $"Analyzing Records";
+
+                while (!done)
+                {
+                    pbar.Message = $"Enumerating and Analyzing Files. {_metaDataHelper?.Metadata.TotalMatchesCount} findings in {_metaDataHelper?.Metadata.FilesAnalyzed} files.";
+                    Thread.Sleep(10);
+                }
+
+                pbar.Finished();
+            }
+            else
+            {
+                PopulateRecords(new CancellationToken(), _options);
             }
 
             //wrapup result status

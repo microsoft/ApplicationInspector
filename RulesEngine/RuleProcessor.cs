@@ -118,10 +118,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return rawResult;
         }
 
-        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo)
+        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore)
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
+            if (tagsToIgnore is not null && tagsToIgnore.Any())
+            {
+                rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
+            }
             List<MatchRecord> resultsList = new List<MatchRecord>();
 
             using var sr = new StreamReader(fileEntry.Content);
