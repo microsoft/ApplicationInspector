@@ -58,7 +58,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     writer?.WriteResults(analyzeResult, cLIAnalyzeCmdOptions);
 
                     //post checks
-                    if (File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
+                    if (options.OutputFilePath is not null && File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
                     {
                         WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_REPORTSIZE_WARN));
                     }

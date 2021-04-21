@@ -64,7 +64,6 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class GetTagsCommand
     {
-        private readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files
         private readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
 
         private IEnumerable<string>? _srcfileList;

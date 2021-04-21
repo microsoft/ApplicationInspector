@@ -253,11 +253,11 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             if (_arg_tagTestType == TagTestType.RulesNotPresent)
             {
-                return (!list.Any(v => v.Equals(test)));
+                return (!list?.Any(v => v.Equals(test)) ?? false);
             }
             else
             {
-                return (list.Any(v => v.Equals(test)));
+                return (list?.Any(v => v.Equals(test)) ?? false);
             }
         }
     }

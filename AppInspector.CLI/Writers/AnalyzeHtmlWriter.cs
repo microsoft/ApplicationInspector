@@ -235,7 +235,7 @@ namespace Microsoft.ApplicationInspector.CLI
             string[] unSupportedGroupsOrPatterns = new string[] { "metric", "dependency" };
 
             //for each preferred group of tag patterns determine if at least one instance was detected
-            foreach (TagCategory tagCategory in TagGroupPreferences)
+            foreach (TagCategory tagCategory in TagGroupPreferences ?? new List<TagCategory>())
             {
                 foreach (TagGroup tagGroup in tagCategory.Groups ?? new List<TagGroup>())
                 {
