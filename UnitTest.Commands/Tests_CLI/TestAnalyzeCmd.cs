@@ -73,23 +73,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         }
 
         [TestMethod]
-        public void DupTagsHTMLOutput_Fail() //dupliacte tags not supported for html format
-        {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"analyze -b -s {0} -f html -k none -d", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
-                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
-        }
-
-        [TestMethod]
         public void UnknownFormat_Fail() //dupliacte tags not supported for html format
         {
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -371,7 +354,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string args = string.Format(@"analyze -s {0} -d -f json -o {1} -k none --single-threaded",
+                string args = string.Format(@"analyze -s {0} -f json -o {1} -k none --single-threaded",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -395,7 +378,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
 
-                string args = string.Format(@"analyze -s {0} -d -f json -o {1} -k none",
+                string args = string.Format(@"analyze -s {0} -f json -o {1} -k none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
