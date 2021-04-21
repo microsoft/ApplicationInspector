@@ -249,7 +249,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
 
                     var commentedText = text.Substring(lastInline);
-                    int endOfLine = commentedText.IndexOf("\n");//Environment.Newline looks for /r/n which is not guaranteed
+                    int endOfLine = commentedText.IndexOf('\n');//Environment.Newline looks for /r/n which is not guaranteed
                     if (endOfLine < 0)
                     {
                         endOfLine = commentedText.Length - 1;
