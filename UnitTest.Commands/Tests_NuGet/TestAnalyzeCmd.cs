@@ -295,8 +295,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
-                AllowDupTags = true,
-                SingleThread = true
+\                SingleThread = true
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -335,36 +334,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             }
 
             Assert.IsTrue(exitCodeMultiThread == AnalyzeResult.ExitCode.Success);
-
-        }
-
-        [TestMethod]
-        public void ExpectedTagCountNoDupsAllowed_Pass()
-        {
-            AnalyzeOptions options = new AnalyzeOptions()
-            {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
-                FilePathExclusions = "none", //allow source under unittest path
-                AllowDupTags = false
-            };
-
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
-                if (exitCode == AnalyzeResult.ExitCode.Success)
-                {
-                    exitCode = result.Metadata.UniqueTags.Count == 7 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
-                }
-            }
-            catch (Exception)
-            {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
         [TestMethod]

@@ -62,9 +62,6 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
 
-        [Option('h', "match-depth", Required = false, HelpText = "First match or best match based on confidence level (first|best)", Default = "best")]
-        public string MatchDepth { get; set; } = "best";
-
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
