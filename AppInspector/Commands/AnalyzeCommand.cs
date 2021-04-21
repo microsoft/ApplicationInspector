@@ -34,6 +34,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool SingleThread { get; set; } = false;
         public bool TreatEverythingAsCode { get; set; } = false;
         public bool NoShowProgress { get; set; } = true;
+        public int FileTimeOut { get; set; } = 0;
     }
 
     /// <summary>
@@ -351,7 +352,21 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
 
-                    var results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
+                    List<MatchRecord> results = new List<MatchRecord>();
+                    
+                    if (opts.FileTimeOut > 0)
+                    {
+                        var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, null),cancellationToken);
+                        if (!t.Wait(new TimeSpan(0, 0, opts.FileTimeOut)))
+                        {
+                            WriteOnce.Error($"{file.FullPath} analysis timed out.");
+                            _metaDataHelper?.Metadata.IncrementFilesSkipped();
+                        }
+                    }
+                    else
+                    {
+                        results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
+                    }
 
                     if (results.Any())
                     {
