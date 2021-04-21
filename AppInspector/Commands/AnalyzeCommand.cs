@@ -329,8 +329,20 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 LanguageInfo languageInfo = new LanguageInfo();
 
-                if (FileChecksPassed(file, ref languageInfo))
+                if (ChecksPassed(file, ref languageInfo))
                 {
+                    _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
+
+                    if (Language.FromFileName(file.FullPath, ref languageInfo))
+                    {
+                        _metaDataHelper?.AddLanguage(languageInfo.Name);
+                    }
+                    else
+                    {
+                        _metaDataHelper?.AddLanguage("Unknown");
+                        languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
+                    }
+
                     _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
 
                     var results = _rulesProcessor.AnalyzeFile(file, languageInfo, opts.AllowDupTags ? null : _metaDataHelper?.Metadata.UniqueTags);
@@ -432,20 +444,8 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="languageInfo"></param>
         /// <param name="fileLength">should be > zero if called from unzip method</param>
         /// <returns></returns>
-        private bool FileChecksPassed(FileEntry fileEntry, ref LanguageInfo languageInfo, long fileLength = 0)
+        private bool ChecksPassed(FileEntry fileEntry, ref LanguageInfo languageInfo, long fileLength = 0)
         {
-            _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(fileEntry.FullPath).Replace('.', ' ').TrimStart(), 0);
-
-            if (Language.FromFileName(fileEntry.FullPath, ref languageInfo))
-            {
-                _metaDataHelper?.AddLanguage(languageInfo.Name);
-            }
-            else
-            {
-                _metaDataHelper?.AddLanguage("Unknown");
-                languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(fileEntry.FullPath) }, Name = "Unknown" };
-            }
-
             // 1. Check for exclusions
             if (ExcludeFileFromScan(fileEntry.FullPath))
             {
