@@ -109,7 +109,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public int UniqueMatchesCount { 
             get 
             {
-                return Matches?.Select(x => x.Rule).Distinct().Count() ?? 0;
+                return Matches?.Select(x => x.RuleId).Distinct().Count() ?? 0;
             } 
         }
 
@@ -189,7 +189,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detailed MatchRecords from scan
         /// </summary>
         [JsonProperty(PropertyName = "detailedMatchList")]
-        public ConcurrentBag<MatchRecord>? Matches { get; } = new ConcurrentBag<MatchRecord>();
+        public ConcurrentBag<MatchRecord>? Matches { get; set; } = new ConcurrentBag<MatchRecord>();
 
         public MetaData(string applicationName, string sourcePath)
         {
