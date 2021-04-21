@@ -166,12 +166,6 @@ namespace Microsoft.ApplicationInspector.CLI
                     WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_HTML_EXTENSION));
                 }
 
-                if (options.AllowDupTags) //fix #183; duplicates results for html format is not supported which causes filedialog issues
-                {
-                    WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
-                    throw new OpException(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
-                }
-
                 if (options.SimpleTagsOnly) //won't work for html that expects full data for UI
                 {
                     WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_SIMPLETAGS_HTML_FORMAT));
@@ -263,6 +257,30 @@ namespace Microsoft.ApplicationInspector.CLI
 
         #region RunCmdsWriteResults
 
+        private static int RunGetTagsCommand(CLIGetTagsCommandOptions cliOptions)
+        {
+            GetTagsResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+
+            GetTagsCommand command = new GetTagsCommand(new GetTagsCommandOptions()
+            {
+                SourcePath = cliOptions.SourcePath ?? "",
+                CustomRulesPath = cliOptions.CustomRulesPath ?? "",
+                IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
+                ConfidenceFilters = cliOptions.ConfidenceFilters,
+                FilePathExclusions = cliOptions.FilePathExclusions,
+                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                Log = cliOptions.Log,
+                SingleThread = cliOptions.SingleThread,
+                NoShowProgress = cliOptions.NoShowProgressBar
+            });
+
+            GetTagsResult getTagsResult = command.GetResult();
+            exitCode = getTagsResult.ResultCode;
+            ResultsWriter.Write(getTagsResult, cliOptions);
+
+            return (int)exitCode;
+        }
+
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
         {
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -272,7 +290,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 SourcePath = cliOptions.SourcePath ?? "",
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
-                AllowDupTags = cliOptions.AllowDupTags,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
                 MatchDepth = cliOptions.MatchDepth,
                 FilePathExclusions = cliOptions.FilePathExclusions,

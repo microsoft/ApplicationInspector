@@ -47,10 +47,87 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Keeps helpers isolated from MetaData class which is used as a result object to keep pure
         /// </summary>
         /// <param name="matchRecord"></param>
+        public void AddTagsFromMatchRecord(MatchRecord matchRecord)
+        {
+            //special handling for standard characteristics in report
+            foreach (var tag in matchRecord.Tags ?? new string[] { })
+            {
+                switch (tag)
+                {
+                    case "Metadata.Application.Author":
+                    case "Metadata.Application.Publisher":
+                        Metadata.Authors = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Description":
+                        Metadata.Description = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Name":
+                        Metadata.ApplicationName = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Version":
+                        Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Target.Processor":
+                        _ = CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        break;
+                    case "Metadata.Application.Output.Type":
+                        _ = Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        break;
+                    case "Dependency.SourceInclude":
+                        return; //design to keep noise out of detailed match list
+                    default:
+                        if (tag.Contains("Metric."))
+                        {
+                            _ = TagCounters.TryAdd(tag, new MetricTagCounter()
+                            {
+                                Tag = tag
+                            });
+                        }
+                        else if (tag.Contains(".Platform.OS"))
+                        {
+                            _ = OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
+                        }
+                        else if (tag.Contains("CloudServices.Hosting"))
+                        {
+                            _ = CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
+                        }
+                        break;
+                }
+            }
+
+            //Special handling; attempt to detect app types...review for multiple pattern rule limitation
+            string solutionType = DetectSolutionType(matchRecord);
+            if (!string.IsNullOrEmpty(solutionType))
+            {
+                _ = AppTypes.TryAdd(solutionType, 0);
+            }
+
+            bool CounterOnlyTagSet = false;
+            var selected = matchRecord.Tags is not null ? TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag ?? ""))) : new Dictionary<string, MetricTagCounter>();
+            foreach (var select in selected)
+            {
+                CounterOnlyTagSet = true;
+                select.Value.IncrementCount();
+            }
+
+            //omit adding if ther a counter metric tag
+            if (!CounterOnlyTagSet)
+            {
+                //update list of unique tags as we go
+                foreach (string tag in matchRecord.Tags ?? new string[] { })
+                {
+                    _ = UniqueTags.TryAdd(tag, 0);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Assist in aggregating reporting properties of matches as they are added
+        /// Keeps helpers isolated from MetaData class which is used as a result object to keep pure
+        /// </summary>
+        /// <param name="matchRecord"></param>
         public void AddMatchRecord(MatchRecord matchRecord)
         {
-            bool allowAdd = true;
-
             //special handling for standard characteristics in report
             foreach (var tag in matchRecord.Tags ?? new string[] { })
             {

@@ -11,9 +11,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ShellProgressBar;
@@ -23,12 +20,11 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Options specific to analyze operation not to be confused with CLIAnalyzeCmdOptions which include CLI only args
     /// </summary>
-    public class AnalyzeOptions : CommandOptions
+    public class GetTagsCommandOptions : CommandOptions
     {
         public string SourcePath { get; set; } = "";
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
-        public string MatchDepth { get; set; } = "best";
         public string ConfidenceFilters { get; set; } = "high,medium";
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
         public bool SingleThread { get; set; } = false;
@@ -39,7 +35,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Result of Analyze command GetResult() operation
     /// </summary>
-    public class AnalyzeResult : Result
+    public class GetTagsResult : Result
     {
         public enum ExitCode
         {
@@ -57,7 +53,7 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(Order = 3, PropertyName = "metaData")]
         public MetaData Metadata { get; set; }
 
-        public AnalyzeResult()
+        public GetTagsResult()
         {
             Metadata = new MetaData("", "");//needed for serialization for other commands; replaced later
         }
@@ -66,7 +62,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Analyze operation for setup and processing of results from Rulesengine
     /// </summary>
-    public class AnalyzeCommand
+    public class GetTagsCommand
     {
         private readonly int WARN_ZIP_FILE_SIZE = 1024 * 1000 * 10;  // warning for large zip files
         private readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
@@ -101,7 +97,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private Confidence _confidence;
         private readonly AnalyzeOptions _options; //copy of incoming caller options
 
-        public AnalyzeCommand(AnalyzeOptions opt)
+        public GetTagsCommand(GetTagsCommandOptions opt)
         {
             _options = opt;
             _options.MatchDepth ??= "best";
@@ -283,7 +279,7 @@ namespace Microsoft.ApplicationInspector.Commands
             var rpo = new RuleProcessorOptions()
             {
                 logger = _options.Log,
-                uniqueMatches = false,
+                uniqueMatches = true,
                 treatEverythingAsCode = _options.TreatEverythingAsCode,
                 confidenceFilter = _confidence
             };
@@ -352,15 +348,11 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
 
-                    var results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
+                    var results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.Metadata.UniqueTags);
 
-                    if (results.Any())
-                    {
-                        _metaDataHelper?.Metadata.IncrementFilesAffected();
-                    }
                     foreach (var matchRecord in results)
                     {
-                        _metaDataHelper?.AddMatchRecord(matchRecord);
+                        _metaDataHelper?.AddTagsFromMatchRecord(matchRecord);
                     }
                 }
                 else
@@ -378,16 +370,14 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Pre: All Configure Methods have been called already and we are ready to SCAN
         /// </summary>
         /// <returns></returns>
-        public AnalyzeResult GetResult()
+        public GetTagsResult GetResult()
         {
-            WriteOnce.SafeLog("AnalyzeCommand::Run", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
-            AnalyzeResult analyzeResult = new AnalyzeResult()
+            WriteOnce.SafeLog("GetTagsCommand::Run", LogLevel.Trace);
+            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "GetTags"));
+            GetTagsResult analyzeResult = new AnalyzeResult()
             {
                 AppVersion = Utils.GetVersionString()
             };
-
-
 
             if (!_options.NoShowProgress)
             {
@@ -406,7 +396,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 };
 
                 using var pbar = new IndeterminateProgressBar("Indeterminate", options);
-                pbar.Message = $"Analyzing Records";
+                pbar.Message = $"Getting Tags";
 
                 while (!done)
                 {
@@ -425,12 +415,12 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_metaDataHelper?.Metadata.TotalFiles == _metaDataHelper?.Metadata.FilesSkipped)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                analyzeResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
             }
             else if (_metaDataHelper?.Metadata?.Matches?.Count == 0)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                analyzeResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
             }
             else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
             {
@@ -438,7 +428,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
                 _metaDataHelper.PrepareReport();
                 analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
+                analyzeResult.ResultCode = GetTagsResult.ExitCode.Success;
             }
 
             return analyzeResult;

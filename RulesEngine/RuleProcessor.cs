@@ -15,6 +15,19 @@ using System.Threading.Tasks;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    public class RuleProcessorOptions
+    {
+        public RuleProcessorOptions()
+        {
+
+        }
+
+        public Confidence confidenceFilter;
+        public Logger? logger;
+        public bool uniqueMatches = false;
+        public bool treatEverythingAsCode = false;
+    }
+
     /// <summary>
     /// Heart of RulesEngine. Parses code applies rules
     /// </summary>
@@ -49,17 +62,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Creates instance of RuleProcessor
         /// </summary>
-        public RuleProcessor(RuleSet rules, Confidence confidenceFilter, Logger? logger, bool uniqueMatches = false, bool stopAfterFirstMatch = false, bool treatEverythingAsCode = false)
+        public RuleProcessor(RuleSet rules, RuleProcessorOptions opts)
         {
             _ruleset = rules;
             EnableCache = true;
             _uniqueTagHashes = new ConcurrentDictionary<string,byte>();
             _rulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
-            _stopAfterFirstMatch = stopAfterFirstMatch;
-            _uniqueTagMatchesOnly = uniqueMatches;
-            _logger = logger;
-            _treatEverythingAsCode = treatEverythingAsCode;
-            ConfidenceLevelFilter = confidenceFilter;
+            _uniqueTagMatchesOnly = opts.uniqueMatches;
+            _logger = opts.logger;
+            _treatEverythingAsCode = opts.treatEverythingAsCode;
+            ConfidenceLevelFilter = opts.confidenceFilter;
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
 
             analyzer = new Analyzer();
