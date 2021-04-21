@@ -9,6 +9,8 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
         {
             JsonSerializer jsonSerializer = new JsonSerializer();
             jsonSerializer.Formatting = Formatting.Indented;
+            jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+            jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
 
             //For console output, update write once for same results to console or file
             WriteOnce.TextWriter = TextWriter;
