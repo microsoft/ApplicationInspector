@@ -356,7 +356,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = result.ResultCode;
                 if (exitCode == AnalyzeResult.ExitCode.Success)
                 {
-                    exitCode = result.Metadata.TotalMatchesCount == 7 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.UniqueTags.Count == 7 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
