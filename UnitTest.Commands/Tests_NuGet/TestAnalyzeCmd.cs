@@ -295,7 +295,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
-\                SingleThread = true
+                SingleThread = true
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;

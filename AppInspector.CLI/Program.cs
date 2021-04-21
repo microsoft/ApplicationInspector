@@ -259,7 +259,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunGetTagsCommand(CLIGetTagsCommandOptions cliOptions)
         {
-            GetTagsResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
 
             GetTagsCommand command = new GetTagsCommand(new GetTagsCommandOptions()
             {
@@ -291,7 +291,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
-                MatchDepth = cliOptions.MatchDepth,
                 FilePathExclusions = cliOptions.FilePathExclusions,
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
                 Log = cliOptions.Log,

@@ -25,7 +25,6 @@ namespace Benchmarks
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
                 SourcePath = path,
-                AllowDupTags = false,
                 SingleThread = true,
                 IgnoreDefaultRules = false
             });
@@ -39,7 +38,6 @@ namespace Benchmarks
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
                 SourcePath = path,
-                AllowDupTags = false,
                 SingleThread = false,
                 IgnoreDefaultRules = false
             });

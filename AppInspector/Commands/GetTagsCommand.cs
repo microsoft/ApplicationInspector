@@ -95,12 +95,11 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private readonly List<string>? _fileExclusionList;
         private Confidence _confidence;
-        private readonly AnalyzeOptions _options; //copy of incoming caller options
+        private readonly GetTagsCommandOptions _options; //copy of incoming caller options
 
         public GetTagsCommand(GetTagsCommandOptions opt)
         {
             _options = opt;
-            _options.MatchDepth ??= "best";
 
             if (!string.IsNullOrEmpty(opt.FilePathExclusions))
             {
@@ -293,14 +292,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public void PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts)
+        public void PopulateRecords(CancellationToken cancellationToken, GetTagsCommandOptions opts)
         {
-            WriteOnce.SafeLog("AnalyzeCommand::EnumerateRecords", LogLevel.Trace);
+            WriteOnce.SafeLog("GetTagsCommand::PopulateRecords", LogLevel.Trace);
 
-            var analyzeResult = new AnalyzeResult();
+            var gtr = new GetTagsResult();
             if (_rulesProcessor is null)
             {
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.CriticalError;
+                gtr.ResultCode = GetTagsResult.ExitCode.CriticalError;
                 return;
             }
 
@@ -374,7 +373,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("GetTagsCommand::Run", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "GetTags"));
-            GetTagsResult analyzeResult = new AnalyzeResult()
+            GetTagsResult analyzeResult = new GetTagsResult()
             {
                 AppVersion = Utils.GetVersionString()
             };
