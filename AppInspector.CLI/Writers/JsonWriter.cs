@@ -42,6 +42,10 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
                 {
                     jsonSerializer.Serialize(TextWriter, packRulesResult.Rules);//write rules array only to disk
                 }
+                else if (result is GetTagsResult getTagsResults)
+                {
+                    jsonSerializer.Serialize(TextWriter, getTagsResults);
+                }
                 else
                 {
                     throw new System.Exception("Unexpected object type for json writer");

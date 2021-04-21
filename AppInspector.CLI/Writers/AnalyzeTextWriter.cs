@@ -42,7 +42,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteDependencies(analyzeResult.Metadata);
                 WriteOnce.General(MakeHeading("Match Details"));
 
-                foreach (MatchRecord match in analyzeResult.Metadata.Matches ?? new List<MatchRecord>())
+                foreach (MatchRecord match in analyzeResult.Metadata.Matches ?? new ConcurrentBag<MatchRecord>())
                 {
                     WriteMatch(match);
                 }

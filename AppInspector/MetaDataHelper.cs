@@ -34,6 +34,8 @@ namespace Microsoft.ApplicationInspector.Commands
         private ConcurrentDictionary<string,MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
         private ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
 
+        public int UniqueTagsCount { get { return UniqueTags.Count; } }
+
         internal MetaData Metadata { get; set; }
 
         public MetaDataHelper(string sourcePath, bool uniqueMatchesOnly)

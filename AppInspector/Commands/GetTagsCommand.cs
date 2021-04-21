@@ -74,7 +74,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private DateTime _lastUpdated;
 
-        public MetaData MetaData { get { return _metaDataHelper.Metadata; } }
+        public MetaData? MetaData { get { return _metaDataHelper?.Metadata; } }
 
         /// <summary>
         /// Updated dynamically to more recent file in source
@@ -372,7 +372,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("GetTagsCommand::Run", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "GetTags"));
-            GetTagsResult analyzeResult = new GetTagsResult()
+            GetTagsResult getTagsResult = new GetTagsResult()
             {
                 AppVersion = Utils.GetVersionString()
             };
@@ -398,7 +398,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 while (!done)
                 {
-                    pbar.Message = $"Enumerating and Analyzing Files. {_metaDataHelper?.Metadata.TotalMatchesCount} findings in {_metaDataHelper?.Metadata.FilesAnalyzed} files.";
+                    pbar.Message = $"Enumerating and Analyzing Files. {_metaDataHelper?.UniqueTagsCount} tags in {_metaDataHelper?.Metadata.FilesAnalyzed} files.";
                     Thread.Sleep(10);
                 }
 
@@ -413,23 +413,23 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_metaDataHelper?.Metadata.TotalFiles == _metaDataHelper?.Metadata.FilesSkipped)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
-                analyzeResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
+                getTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
             }
-            else if (_metaDataHelper?.Metadata?.Matches?.Count == 0)
+            else if (_metaDataHelper?.UniqueTagsCount == 0)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
-                analyzeResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
+                getTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
             }
             else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
             {
                 _metaDataHelper.Metadata.LastUpdated = LastUpdated.ToString();
                 _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
                 _metaDataHelper.PrepareReport();
-                analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
-                analyzeResult.ResultCode = GetTagsResult.ExitCode.Success;
+                getTagsResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
+                getTagsResult.ResultCode = GetTagsResult.ExitCode.Success;
             }
 
-            return analyzeResult;
+            return getTagsResult;
         }
 
         /// <summary>

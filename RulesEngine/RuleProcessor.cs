@@ -395,7 +395,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     var boundary = match.Item2;
 
                                     //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                                    if (!_treatEverythingAsCode && languageInfo.Type == LanguageInfo.LangFileType.Build && oatRule.AppInspectorRule.Tags.Any(v => !v.Contains("Metadata")))
+                                    if (!_treatEverythingAsCode && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
                                     {
                                         continue;
                                     }

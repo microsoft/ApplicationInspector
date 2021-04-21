@@ -25,29 +25,33 @@ namespace Microsoft.ApplicationInspector.CLI
             CommandResultsWriter? writer;
 
             //allocate the right writer by cmd (options) type
-            if (options is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)
+            if (options is CLIAnalyzeCmdOptions cliAnalyzeCmdOptions)
             {
-                writer = GetAnalyzeWriter(cLIAnalyzeCmdOptions);
+                writer = GetAnalyzeWriter(cliAnalyzeCmdOptions);
             }
-            else if (options is CLITagTestCmdOptions cLITagTestCmdOptions)
+            else if (options is CLITagTestCmdOptions cliTagTestCmdOptions)
             {
-                writer = GetTagTestWriter(cLITagTestCmdOptions);
+                writer = GetTagTestWriter(cliTagTestCmdOptions);
             }
-            else if (options is CLITagDiffCmdOptions cLITagDiffCmdOptions)
+            else if (options is CLITagDiffCmdOptions cliTagDiffCmdOptions)
             {
-                writer = GetTagDiffWriter(cLITagDiffCmdOptions);
+                writer = GetTagDiffWriter(cliTagDiffCmdOptions);
             }
-            else if (options is CLIExportTagsCmdOptions cLIExportTagsCmdOptions)
+            else if (options is CLIExportTagsCmdOptions cliExportTagsCmdOptions)
             {
-                writer = GetExportWriter(cLIExportTagsCmdOptions);
+                writer = GetExportWriter(cliExportTagsCmdOptions);
             }
-            else if (options is CLIVerifyRulesCmdOptions cLIVerifyRulesCmdOptions)
+            else if (options is CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions)
             {
-                writer = GetVerifyRulesWriter(cLIVerifyRulesCmdOptions);
+                writer = GetVerifyRulesWriter(cliVerifyRulesCmdOptions);
             }
-            else if (options is CLIPackRulesCmdOptions cLIPackRulesCmdOptions)
+            else if (options is CLIPackRulesCmdOptions cliPackRulesCmdOptions)
             {
-                writer = GetPackRulesWriter(cLIPackRulesCmdOptions);
+                writer = GetPackRulesWriter(cliPackRulesCmdOptions);
+            }
+            else if (options is CLIGetTagsCommandOptions cliGetTagsCmdOptions)
+            {
+                writer = GetGetTagsWriter(cliGetTagsCmdOptions);
             }
             else
             {
@@ -56,6 +60,8 @@ namespace Microsoft.ApplicationInspector.CLI
 
             return writer;
         }
+
+
 
         /// <summary>
         /// Only AnalyzeResultsWriter supports an html option
@@ -112,6 +118,36 @@ namespace Microsoft.ApplicationInspector.CLI
 
                 case "text":
                     writer = new ExportTextWriter();
+                    break;
+
+                default:
+                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
+                    throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
+            }
+
+            //assign the stream as a file or console
+            writer.OutputFileName = options.OutputFilePath;
+            writer.TextWriter = GetTextWriter(writer.OutputFileName);
+
+            return writer;
+        }
+
+        private static CommandResultsWriter GetGetTagsWriter(CLIGetTagsCommandOptions options)
+        {
+            CommandResultsWriter? writer;
+
+            switch (options.OutputFileFormat.ToLower())
+            {
+                case "_dummy":
+                    writer = new TagTestDummyWriter();
+                    break;
+
+                case "json":
+                    writer = new JsonWriter();
+                    break;
+
+                case "text":
+                    writer = new GetTagsTextWriter();
                     break;
 
                 default:

@@ -30,7 +30,8 @@ namespace Microsoft.ApplicationInspector.CLI
                     CLITagTestCmdOptions,
                     CLIExportTagsCmdOptions,
                     CLIVerifyRulesCmdOptions,
-                    CLIPackRulesCmdOptions>(args)
+                    CLIPackRulesCmdOptions, 
+                    CLIGetTagsCommandOptions>(args)
                   .MapResult(
                     (CLIAnalyzeCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLITagDiffCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
@@ -38,7 +39,8 @@ namespace Microsoft.ApplicationInspector.CLI
                     (CLIExportTagsCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIVerifyRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIPackRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
-                    errs => 1
+                    (CLIGetTagsCommandOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
+                    errs => 2
                   );
 
                 finalResult = argsResult;
@@ -148,6 +150,16 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             return RunPackRulesCommand(options);
+        }
+
+        private static int VerifyOutputArgsRun(CLIGetTagsCommandOptions options)
+        {
+            Logger logger = Utils.SetupLogging(options, true);
+            WriteOnce.Log = logger;
+            options.Log = logger;
+
+            CommonOutputChecks((CLICommandOptions)options);
+            return RunGetTagsCommand(options);
         }
 
         private static int VerifyOutputArgsRun(CLIAnalyzeCmdOptions options)

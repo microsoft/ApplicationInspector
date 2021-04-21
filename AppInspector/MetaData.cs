@@ -109,10 +109,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public int UniqueMatchesCount { 
             get 
             {
-                if (UniqueTags != null)
-                    return UniqueTags.Count;
-                else 
-                    return 0;
+                return Matches?.Select(x => x.Rule).Distinct().Count() ?? 0;
             } 
         }
 
@@ -133,7 +130,6 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
         public List<string>? UniqueTags { get; set; } = new List<string>();
-
 
         /// <summary>
         /// List of detected unique code dependency includes
@@ -193,7 +189,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detailed MatchRecords from scan
         /// </summary>
         [JsonProperty(PropertyName = "detailedMatchList")]
-        public List<MatchRecord>? Matches { get; } = new List<MatchRecord>();
+        public ConcurrentBag<MatchRecord>? Matches { get; } = new ConcurrentBag<MatchRecord>();
 
         public MetaData(string applicationName, string sourcePath)
         {
