@@ -41,8 +41,11 @@ namespace Microsoft.ApplicationInspector.CLI
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
 
         [Option('e', "text-format", Required = false, HelpText = "Match text format specifiers", Default = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m")]
-        public string TextOutputFormat { get; set; } = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";
+        public string TextOutputFormat { get; set; } = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";\
 
+        [Option("file-timeout", Required = false, HelpText = "Maximum amount of time in seconds to allow for processing each file.", Default = 0)]
+        public int FileTimeOut { get; set; } = 0;
+        
         [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
         public bool SingleThread { get; set; }
 

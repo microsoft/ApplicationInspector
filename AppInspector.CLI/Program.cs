@@ -283,7 +283,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
                 Log = cliOptions.Log,
                 SingleThread = cliOptions.SingleThread,
-                NoShowProgress = cliOptions.NoShowProgressBar
+                NoShowProgress = cliOptions.NoShowProgressBar,
+                FileTimeOut = cliOptions.FileTimeOut
             });
 
             GetTagsResult getTagsResult = command.GetResult();

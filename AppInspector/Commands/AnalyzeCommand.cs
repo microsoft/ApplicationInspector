@@ -350,8 +350,6 @@ namespace Microsoft.ApplicationInspector.Commands
                         languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
                     }
 
-                    _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
-
                     List<MatchRecord> results = new List<MatchRecord>();
                     
                     if (opts.FileTimeOut > 0)
@@ -362,10 +360,15 @@ namespace Microsoft.ApplicationInspector.Commands
                             WriteOnce.Error($"{file.FullPath} analysis timed out.");
                             _metaDataHelper?.Metadata.IncrementFilesSkipped();
                         }
+                        else
+                        {
+                            _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
+                        }
                     }
                     else
                     {
                         results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
+                        _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
                     }
 
                     if (results.Any())
