@@ -292,7 +292,38 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public void PopulateRecords(CancellationToken cancellationToken, GetTagsCommandOptions opts)
+        public ConcurrentQueue<FileEntry> GetFileEntries(CancellationToken cancellationToken, GetTagsCommandOptions opts)
+        {
+            WriteOnce.SafeLog("GetTagsCommand::GetFileEntries", LogLevel.Trace);
+
+            Extractor extractor = new();
+
+            var output = new ConcurrentQueue<FileEntry>();
+
+            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+            {
+                if (cancellationToken.IsCancellationRequested) { break; }
+                else if (opts.SingleThread)
+                {
+                    foreach (var file in extractor.Extract(srcFile))
+                    {
+                        if (cancellationToken.IsCancellationRequested) { break; }
+                        output.Enqueue(file);
+                    }
+                }
+                else
+                {
+                    Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
+                    {
+                        output.Enqueue(file);
+                    });
+                }
+            }
+
+            return output;
+        }
+
+        public void PopulateRecords(CancellationToken cancellationToken, GetTagsCommandOptions opts, IEnumerable<FileEntry>? populatedEntries = null)
         {
             WriteOnce.SafeLog("GetTagsCommand::PopulateRecords", LogLevel.Trace);
 
@@ -303,27 +334,46 @@ namespace Microsoft.ApplicationInspector.Commands
                 return;
             }
 
-            Extractor extractor = new();
-
-            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+            if (populatedEntries is not null)
             {
-                if (cancellationToken.IsCancellationRequested) { break; }
-                else if (opts.SingleThread)
+                if (opts.SingleThread)
                 {
-                    foreach (var file in extractor.Extract(srcFile))
+                    foreach(var entry in populatedEntries)
                     {
                         if (cancellationToken.IsCancellationRequested) { break; }
-                        ProcessAndAddToMetadata(file);
+                        ProcessAndAddToMetadata(entry);
                     }
                 }
                 else
                 {
-                    Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
-                    {
-                        ProcessAndAddToMetadata(file);
-                    });
+                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken }, entry => ProcessAndAddToMetadata(entry));
                 }
             }
+            else
+            {
+                Extractor extractor = new();
+
+                foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+                {
+                    if (cancellationToken.IsCancellationRequested) { break; }
+                    else if (opts.SingleThread)
+                    {
+                        foreach (var file in extractor.Extract(srcFile))
+                        {
+                            if (cancellationToken.IsCancellationRequested) { break; }
+                            ProcessAndAddToMetadata(file);
+                        }
+                    }
+                    else
+                    {
+                        Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
+                        {
+                            ProcessAndAddToMetadata(file);
+                        });
+                    }
+                }
+            }
+            
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
@@ -398,11 +448,14 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!_options.NoShowProgress)
             {
                 var done = false;
+                ConcurrentQueue<FileEntry> fileQueue = new ();
+
                 _ = Task.Factory.StartNew(() =>
                 {
-                    PopulateRecords(new CancellationToken(), _options);
+                    fileQueue = GetFileEntries(new CancellationToken(), _options);
                     done = true;
                 });
+
                 var options = new ProgressBarOptions
                 {
                     ForegroundColor = ConsoleColor.Yellow,
@@ -412,15 +465,32 @@ namespace Microsoft.ApplicationInspector.Commands
                 };
 
                 using var pbar = new IndeterminateProgressBar("Indeterminate", options);
-                pbar.Message = $"Getting Tags";
+                pbar.Message = $"Enumerating Files.";
 
                 while (!done)
                 {
-                    pbar.Message = $"Enumerating and Analyzing Files. {_metaDataHelper?.UniqueTagsCount} tags in {_metaDataHelper?.Metadata.FilesAnalyzed} files.";
                     Thread.Sleep(10);
                 }
 
                 pbar.Finished();
+                
+                done = false;
+
+                float totFilesNum = fileQueue.Count;
+
+                using ProgressBar progressBar = new ProgressBar(10000, $"Analyzing {totFilesNum - _metaDataHelper?.Metadata.TotalFiles} files.");
+                IProgress<float> progress = progressBar.AsProgress<float>();
+                _ = Task.Factory.StartNew(() =>
+                {
+                    PopulateRecords(new CancellationToken(), _options, fileQueue);
+                    done = true;
+                });
+
+                while (!done)
+                {
+                    progressBar.Message = $"Analyzing {totFilesNum - _metaDataHelper?.Metadata.TotalFiles} files.";
+                    progress.Report(_metaDataHelper?.Metadata.TotalFiles/totFilesNum ?? 0);
+                }
             }
             else
             {
