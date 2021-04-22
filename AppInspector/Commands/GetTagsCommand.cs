@@ -383,8 +383,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 var sw = new Stopwatch();
                 sw.Start();
 
-                _metaDataHelper?.Metadata.IncrementTotalFiles();
-
                 LanguageInfo languageInfo = new LanguageInfo();
 
                 if (ChecksPassed(file, ref languageInfo))
@@ -410,31 +408,31 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (!t.Wait(new TimeSpan(0, 0, opts.FileTimeOut)))
                         {
                             WriteOnce.Error($"{file.FullPath} analysis timed out.");
-                            _metaDataHelper?.Metadata.IncrementFilesTimedOut();
                             record.Status = ScanState.TimedOut;
                             cts.Cancel();
                         }
                         else
                         {
-                            _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
                             record.Status = ScanState.Analyzed;
                         }
                     }
                     else
                     {
                         results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
-                        _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
                         record.Status = ScanState.Analyzed;
                     }
 
-                    foreach (var matchRecord in results)
+                    if (results.Any())
                     {
-                        _metaDataHelper?.AddTagsFromMatchRecord(matchRecord);
+                        record.Status = ScanState.Affected;
+                        foreach (var matchRecord in results)
+                        {
+                            _metaDataHelper?.AddTagsFromMatchRecord(matchRecord);
+                        }
                     }
                 }
                 else
                 {
-                    _metaDataHelper?.Metadata.IncrementFilesSkipped();
                     record.Status = ScanState.Skipped;
                 }
 

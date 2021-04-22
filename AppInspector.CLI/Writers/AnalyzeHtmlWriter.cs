@@ -192,7 +192,7 @@ namespace Microsoft.ApplicationInspector.CLI
             SafeList(_appMetaData?.CPUTargets);
 
             //safeguard displayable fields in match records
-            foreach (MatchRecord matchRecord in _appMetaData?.Matches ?? new ConcurrentBag<MatchRecord>())
+            foreach (MatchRecord matchRecord in _appMetaData?.Matches ?? new List<MatchRecord>())
             {
                 //safeguard sample output now that we've matched properties for blocking browser xss
                 matchRecord.Sample = System.Net.WebUtility.HtmlEncode(matchRecord.Sample);
@@ -312,7 +312,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             HashSet<string> results = new HashSet<string>();
 
-            foreach (MatchRecord match in _appMetaData?.Matches ?? new ConcurrentBag<MatchRecord>())
+            foreach (MatchRecord match in _appMetaData?.Matches ?? new List<MatchRecord>())
             {
                 foreach (string tag in match.Tags ?? new string[] { })
                 {
@@ -341,7 +341,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     var tagPatternRegex = pattern.Expression;
 
-                    foreach (var match in _appMetaData?.Matches ?? new ConcurrentBag<MatchRecord>())
+                    foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                     {
                         foreach (var tagItem in match.Tags ?? new string[] { })
                         {
@@ -432,7 +432,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     var tagPatternRegex = pattern.Expression;
 
-                    foreach (var match in _appMetaData?.Matches ?? new ConcurrentBag<MatchRecord>())
+                    foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                     {
                         foreach (var tagItem in match.Tags ?? new string[] { })
                         {
@@ -498,7 +498,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             foreach (string tag in _appMetaData?.UniqueTags ?? new List<string>())
             {
-                foreach (var match in _appMetaData?.Matches ?? new ConcurrentBag<MatchRecord>())
+                foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                 {
                     foreach (string testTag in match.Tags ?? new string[] { })
                     {
@@ -539,7 +539,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
                 foreach (Confidence confidence in confidences)
                 {
-                    foreach (var match in _appMetaData?.Matches ?? new ConcurrentBag<MatchRecord>())
+                    foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                     {
                         foreach (string testTag in match.Tags ?? new string[] { })
                         {
@@ -578,7 +578,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
                 foreach (Severity severity in severities)
                 {
-                    foreach (var match in _appMetaData?.Matches ?? new ConcurrentBag<MatchRecord>())
+                    foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                     {
                         foreach (string testTag in match.Tags ?? new string[] { })
                         {

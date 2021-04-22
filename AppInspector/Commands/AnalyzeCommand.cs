@@ -382,26 +382,23 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (!t.Wait(new TimeSpan(0, 0, opts.FileTimeOut)))
                         {
                             WriteOnce.Error($"{file.FullPath} analysis timed out.");
-                            _metaDataHelper?.Metadata.IncrementFilesTimedOut();
                             record.Status = ScanState.TimedOut;
                             cts.Cancel();
                         }
                         else
                         {
-                            _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
                             record.Status = ScanState.Analyzed;
                         }
                     }
                     else
                     {
                         results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
-                        _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
                         record.Status = ScanState.Analyzed;
                     }
 
                     if (results.Any())
                     {
-                        _metaDataHelper?.Metadata.IncrementFilesAffected();
+                        record.Status = ScanState.Affected;
                         record.NumFindings = results.Count;
                     }
                     foreach (var matchRecord in results)
@@ -525,12 +522,12 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //wrapup result status
-            if (_metaDataHelper?.Metadata.TotalFiles == _metaDataHelper?.Metadata.FilesSkipped)
+            if (_metaDataHelper?.TotalFiles == _metaDataHelper?.FilesSkipped)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
-            else if (_metaDataHelper?.Metadata?.Matches?.Count == 0)
+            else if (_metaDataHelper?.Matches.Count == 0)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;

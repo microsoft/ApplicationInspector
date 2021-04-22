@@ -65,44 +65,34 @@ namespace Microsoft.ApplicationInspector.Commands
         //stats
 
         /// <summary>
-        /// Total number of files Timed out 
-        /// </summary>
-        [JsonProperty(PropertyName = "filesTimedOut")]
-        public int FilesTimedOut { get { return _FilesTimedOut; } set { _FilesTimedOut = value; } }
-
-        private int _FilesTimedOut;
-
-        /// <summary>
-        /// Total number of files scanned successfully
-        /// </summary>
-        [JsonProperty(PropertyName = "filesAnalyzed")]
-        public int FilesAnalyzed { get { return _FilesAnalyzed; } set { _FilesAnalyzed = value; } }
-
-        private int _FilesAnalyzed;
-
-        /// <summary>
         /// Total number of files in source path
         /// </summary>
         [JsonProperty(PropertyName = "totalFiles")]
-        public int TotalFiles { get { return _TotalFiles; } set { _TotalFiles = value; } }
+        public int TotalFiles { get { return Files.Count; } }
 
-        private int _TotalFiles;
+        /// <summary>
+        /// Total number of files Timed out 
+        /// </summary>
+        [JsonProperty(PropertyName = "filesTimedOut")]
+        public int FilesTimedOut { get { return Files.Count(x => x.Status == ScanState.TimedOut); } }
+
+        /// <summary>
+        /// Total number of files scanned
+        /// </summary>
+        [JsonProperty(PropertyName = "filesAnalyzed")]
+        public int FilesAnalyzed { get { return Files.Count(x => x.Status == ScanState.Analyzed || x.Status == ScanState.Affected); } }
 
         /// <summary>
         /// Total number of skipped files based on supported formats
         /// </summary>
         [JsonProperty(PropertyName = "filesSkipped")]
-        public int FilesSkipped { get { return _FilesSkipped; } set { _FilesSkipped = value; } }
-
-        private int _FilesSkipped;
+        public int FilesSkipped { get { return Files.Count(x => x.Status == ScanState.Skipped); } }
 
         /// <summary>
         /// Total files with at least one result
         /// </summary>
         [JsonProperty(PropertyName = "filesAffected")]
-        public int FilesAffected { get { return _FilesAffected; } set { _FilesAffected = value; } }
-
-        private int _FilesAffected;
+        public int FilesAffected { get { return Files.Count(x => x.Status == ScanState.Affected); } }
 
         /// <summary>
         /// Total matches with supplied argument settings
@@ -111,7 +101,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public int TotalMatchesCount { get { return Matches?.Count ?? 0; } }
 
         /// <summary>
-        /// Total unique matches by tag
+        /// Total unique matches by Rule Id
         /// </summary>
         [JsonProperty(PropertyName = "uniqueMatchesCount")]
         public int UniqueMatchesCount { 
@@ -197,40 +187,15 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detailed MatchRecords from scan
         /// </summary>
         [JsonProperty(PropertyName = "detailedMatchList")]
-        public ConcurrentBag<MatchRecord>? Matches { get; set; } = new ConcurrentBag<MatchRecord>();
+        public List<MatchRecord> Matches { get; set; } = new List<MatchRecord>();
 
         [JsonProperty(PropertyName = "filesInformation")]
-        public ConcurrentBag<FileRecord> Files { get; set; } = new ConcurrentBag<FileRecord>();
+        public List<FileRecord> Files { get; set; } = new List<FileRecord>();
 
         public MetaData(string applicationName, string sourcePath)
         {
             ApplicationName = applicationName;
             SourcePath = sourcePath;
-        }
-
-        internal void IncrementFilesTimedOut(int amount = 1)
-        {
-            Interlocked.Add(ref _FilesTimedOut, amount);
-        }
-
-        internal void IncrementFilesAnalyzed(int amount = 1)
-        {
-            Interlocked.Add(ref _FilesAnalyzed, amount);
-        }
-
-        internal void IncrementTotalFiles(int amount = 1)
-        {
-            Interlocked.Add(ref _TotalFiles, amount);
-        }
-
-        internal void IncrementFilesAffected(int amount = 1)
-        {
-            Interlocked.Add(ref _FilesAffected, amount);
-        }
-
-        internal void IncrementFilesSkipped(int amount = 1)
-        {
-            Interlocked.Add(ref _FilesSkipped, amount);
         }
     }
 }

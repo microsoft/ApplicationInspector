@@ -19,6 +19,7 @@ namespace Microsoft.ApplicationInspector.Commands
         None,
         Skipped,
         TimedOut,
-        Analyzed
+        Analyzed,
+        Affected
     }
 }
