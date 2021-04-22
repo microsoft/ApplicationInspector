@@ -414,7 +414,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 record.ScanTime = sw.Elapsed;
 
-                _metaDataHelper?.Metadata.Files.Add(record);
+                _metaDataHelper?.Files.Add(record);
             }
         }
 
@@ -520,7 +520,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //wrapup result status
-            if (_metaDataHelper?.TotalFiles == _metaDataHelper?.FilesSkipped)
+            if (_metaDataHelper?.Files.All(x => x.Status == ScanState.Skipped) ?? false)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;

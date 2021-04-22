@@ -37,42 +37,7 @@ namespace Microsoft.ApplicationInspector.Commands
         internal ConcurrentBag<MatchRecord> Matches { get; set; } = new ConcurrentBag<MatchRecord>();
         internal ConcurrentBag<FileRecord> Files { get; set; } = new ConcurrentBag<FileRecord>();
 
-        /// <summary>
-        /// Total number of files Timed out 
-        /// </summary>
-        public int FilesTimedOut { get { return _FilesTimedOut; } set { _FilesTimedOut = value; } }
-
-        private int _FilesTimedOut;
-
-        /// <summary>
-        /// Total number of files scanned successfully
-        /// </summary>
-        public int FilesAnalyzed { get { return _FilesAnalyzed; } set { _FilesAnalyzed = value; } }
-
-        private int _FilesAnalyzed;
-
-        /// <summary>
-        /// Total number of files in source path
-        /// </summary>
-        public int TotalFiles { get { return _TotalFiles; } set { _TotalFiles = value; } }
-
-        private int _TotalFiles;
-
-        /// <summary>
-        /// Total number of skipped files based on supported formats
-        /// </summary>
-        public int FilesSkipped { get { return _FilesSkipped; } set { _FilesSkipped = value; } }
-
-        private int _FilesSkipped;
-
-        /// <summary>
-        /// Total files with at least one result
-        /// </summary>
-        public int FilesAffected { get { return _FilesAffected; } set { _FilesAffected = value; } }
-
-        private int _FilesAffected;
-
-        public int UniqueTagsCount { get { return UniqueTags.Count; } }
+        public int UniqueTagsCount { get { return UniqueTags.Keys.Count; } }
 
         internal MetaData Metadata { get; set; }
 
@@ -238,7 +203,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     _ = UniqueTags.TryAdd(tag,0);
                 }
                 
-                Metadata?.Matches?.Add(matchRecord);
+                Matches.Add(matchRecord);
             }
         }
 

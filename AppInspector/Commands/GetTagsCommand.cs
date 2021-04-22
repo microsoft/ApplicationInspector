@@ -514,7 +514,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //wrapup result status
-            if (_metaDataHelper?.Metadata.TotalFiles == _metaDataHelper?.Metadata.FilesSkipped)
+            if (_metaDataHelper?.Files.All(x => x.Status == ScanState.Skipped) ?? false)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 getTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
