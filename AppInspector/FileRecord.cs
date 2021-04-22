@@ -9,7 +9,16 @@ namespace Microsoft.ApplicationInspector.Commands
     public class FileRecord
     {
         public string FileName { get; set; } = string.Empty;
-        //public long Size { get; set; } = 0;
         public TimeSpan ScanTime { get; set; } = new TimeSpan();
+        public ScanState Status { get; set; } = ScanState.None;
+        public int NumFindings { get; set; } = 0;
+    }
+
+    public enum ScanState
+    {
+        None,
+        Skipped,
+        TimedOut,
+        Analyzed
     }
 }

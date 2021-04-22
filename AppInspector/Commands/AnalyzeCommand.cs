@@ -351,6 +351,8 @@ namespace Microsoft.ApplicationInspector.Commands
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
+                var record = new FileRecord() { FileName = file.FullPath };
+
                 var sw = new Stopwatch();
                 sw.Start();
                 _metaDataHelper?.Metadata.IncrementTotalFiles();
@@ -381,22 +383,26 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             WriteOnce.Error($"{file.FullPath} analysis timed out.");
                             _metaDataHelper?.Metadata.IncrementFilesTimedOut();
+                            record.Status = ScanState.TimedOut;
                             cts.Cancel();
                         }
                         else
                         {
                             _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
+                            record.Status = ScanState.Analyzed;
                         }
                     }
                     else
                     {
                         results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
                         _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
+                        record.Status = ScanState.Analyzed;
                     }
 
                     if (results.Any())
                     {
                         _metaDataHelper?.Metadata.IncrementFilesAffected();
+                        record.NumFindings = results.Count;
                     }
                     foreach (var matchRecord in results)
                     {
@@ -406,10 +412,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 else
                 {
                     _metaDataHelper?.Metadata.IncrementFilesSkipped();
+                    record.Status = ScanState.Skipped;
                 }
 
                 sw.Stop();
-                var record = new FileRecord() { FileName = file.FullPath, ScanTime = sw.Elapsed };
+
+                record.ScanTime = sw.Elapsed;
+
                 _metaDataHelper?.Metadata.Files.Add(record);
             }
         }
