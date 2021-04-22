@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ShellProgressBar;
+using System.Diagnostics;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -377,6 +378,11 @@ namespace Microsoft.ApplicationInspector.Commands
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
+                var record = new FileRecord() { FileName = file.FullPath };
+
+                var sw = new Stopwatch();
+                sw.Start();
+
                 _metaDataHelper?.Metadata.IncrementTotalFiles();
 
                 LanguageInfo languageInfo = new LanguageInfo();
@@ -399,21 +405,26 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     if (opts.FileTimeOut > 0)
                     {
-                        var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, null), cancellationToken);
+                        using var cts = new CancellationTokenSource();
+                        var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, null), cts.Token);
                         if (!t.Wait(new TimeSpan(0, 0, opts.FileTimeOut)))
                         {
                             WriteOnce.Error($"{file.FullPath} analysis timed out.");
-                            _metaDataHelper?.Metadata.IncrementFilesSkipped();
+                            _metaDataHelper?.Metadata.IncrementFilesTimedOut();
+                            record.Status = ScanState.TimedOut;
+                            cts.Cancel();
                         }
                         else
                         {
                             _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
+                            record.Status = ScanState.Analyzed;
                         }
                     }
                     else
                     {
                         results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
                         _metaDataHelper?.Metadata.IncrementFilesAnalyzed();
+                        record.Status = ScanState.Analyzed;
                     }
 
                     foreach (var matchRecord in results)
@@ -424,7 +435,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 else
                 {
                     _metaDataHelper?.Metadata.IncrementFilesSkipped();
+                    record.Status = ScanState.Skipped;
                 }
+
+                sw.Stop();
+
+                record.ScanTime = sw.Elapsed;
+
+                _metaDataHelper?.Metadata.Files.Add(record);
             }
         }
 
