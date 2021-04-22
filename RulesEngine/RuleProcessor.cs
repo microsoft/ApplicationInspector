@@ -130,7 +130,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return rawResult;
         }
 
-        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore)
+        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null)
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
@@ -364,105 +364,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="text">Source code</param>
         /// <param name="languages">List of languages</param>
         /// <returns>Array of matches</returns>
-        public MatchRecord[] AnalyzeFile(string filePath, string text, LanguageInfo languageInfo)
+        public List<MatchRecord> AnalyzeFile(string filePath, string text, LanguageInfo languageInfo)
         {
-            // Get rules for the given content type
-            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
-            var rules = rulesByLanguage.Union(GetRulesByFileName(filePath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
-            List<MatchRecord> resultsList = new List<MatchRecord>();//matches for this file only
-            TextContainer textContainer = new TextContainer(text, languageInfo.Name);
-
-            foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
-            {
-                foreach (var cap in ruleCapture.Captures)
-                {
-                    ProcessBoundary(cap);
-                }
-
-                void ProcessBoundary(ClauseCapture cap)
-                {
-                    List<MatchRecord> newMatches = new List<MatchRecord>();//matches for this rule clause only
-
-                    if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
-                    {
-                        if (ruleCapture.Rule is ConvertedOatRule oatRule)
-                        {
-                            if (tcc?.Result is List<(int, Boundary)> captureResults)
-                            {
-                                foreach (var match in captureResults)
-                                {
-                                    var patternIndex = match.Item1;
-                                    var boundary = match.Item2;
-
-                                    //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                                    if (!_treatEverythingAsCode && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
-                                    {
-                                        continue;
-                                    }
-
-                                    if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
-                                    {
-                                        _logger?.Error("Index out of range for patterns for rule: " + oatRule.AppInspectorRule.Name);
-                                        continue;
-                                    }
-
-                                    if (!ConfidenceLevelFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
-                                    {
-                                        continue;
-                                    }
-
-                                    Location StartLocation = textContainer.GetLocation(boundary.Index);
-                                    Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
-                                    MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
-                                    {
-                                        FileName = filePath,
-                                        FullTextContainer = textContainer,
-                                        LanguageInfo = languageInfo,
-                                        Boundary = boundary,
-                                        StartLocationLine = StartLocation.Line,
-                                        EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line+1, //match is on last line
-                                        MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = ExtractExcerpt(textContainer.FullContent, StartLocation.Line), 
-                                        Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
-                                    };
-
-                                    newMatches.Add(newMatch);
-
-                                    if (oatRule.AppInspectorRule.Tags != null && oatRule.AppInspectorRule.Tags.Any())
-                                    {
-                                        AddRuleTagHashes(oatRule.AppInspectorRule.Tags);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    resultsList.AddRange(newMatches);
-                }
-            }
-
-            List<MatchRecord> removes = new List<MatchRecord>();
-            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
-            {
-                if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
-                {
-                    foreach (string ovrd in m.Rule.Overrides)
-                    {
-                        // Find all overriden rules and mark them for removal from issues list
-                        foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
-                        {
-                            if (om.Boundary?.Index >= m.Boundary?.Index &&
-                                om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
-                                removes.Add(om);
-                        }
-                    }
-                }    
-                // Remove overriden rules
-            }
-
-            resultsList.RemoveAll(x => removes.Contains(x));
-
-            return resultsList.ToArray();
+            using var ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
+            var entry = new FileEntry(filePath, ms);
+            return AnalyzeFile(entry, languageInfo);
         }
 
 
