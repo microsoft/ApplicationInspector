@@ -65,6 +65,14 @@ namespace Microsoft.ApplicationInspector.Commands
         //stats
 
         /// <summary>
+        /// Total number of files Timed out 
+        /// </summary>
+        [JsonProperty(PropertyName = "filesTimedOut")]
+        public int FilesTimedOut { get { return _FilesTimedOut; } set { _FilesTimedOut = value; } }
+
+        private int _FilesTimedOut;
+
+        /// <summary>
         /// Total number of files scanned successfully
         /// </summary>
         [JsonProperty(PropertyName = "filesAnalyzed")]
@@ -191,10 +199,18 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(PropertyName = "detailedMatchList")]
         public ConcurrentBag<MatchRecord>? Matches { get; set; } = new ConcurrentBag<MatchRecord>();
 
+        [JsonProperty(PropertyName = "filesInformation")]
+        public ConcurrentBag<FileRecord> Files { get; set; } = new ConcurrentBag<FileRecord>();
+
         public MetaData(string applicationName, string sourcePath)
         {
             ApplicationName = applicationName;
             SourcePath = sourcePath;
+        }
+
+        internal void IncrementFilesTimedOut(int amount = 1)
+        {
+            Interlocked.Add(ref _FilesTimedOut, amount);
         }
 
         internal void IncrementFilesAnalyzed(int amount = 1)

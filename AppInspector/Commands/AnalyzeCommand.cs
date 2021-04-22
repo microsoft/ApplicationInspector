@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ShellProgressBar;
+using System.Diagnostics;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -350,6 +351,8 @@ namespace Microsoft.ApplicationInspector.Commands
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
+                var sw = new Stopwatch();
+                sw.Start();
                 _metaDataHelper?.Metadata.IncrementTotalFiles();
 
                 LanguageInfo languageInfo = new LanguageInfo();
@@ -372,11 +375,13 @@ namespace Microsoft.ApplicationInspector.Commands
                     
                     if (opts.FileTimeOut > 0)
                     {
-                        var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, null),cancellationToken);
+                        using var cts = new CancellationTokenSource();
+                        var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, null),cts.Token);
                         if (!t.Wait(new TimeSpan(0, 0, opts.FileTimeOut)))
                         {
                             WriteOnce.Error($"{file.FullPath} analysis timed out.");
-                            _metaDataHelper?.Metadata.IncrementFilesSkipped();
+                            _metaDataHelper?.Metadata.IncrementFilesTimedOut();
+                            cts.Cancel();
                         }
                         else
                         {
@@ -402,6 +407,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     _metaDataHelper?.Metadata.IncrementFilesSkipped();
                 }
+
+                sw.Stop();
+                var record = new FileRecord() { FileName = file.FullPath, ScanTime = sw.Elapsed };
+                _metaDataHelper?.Metadata.Files.Add(record);
             }
         }
 
