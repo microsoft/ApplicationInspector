@@ -36,7 +36,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
         private Confidence ConfidenceLevelFilter { get; set; }
-        private readonly bool _stopAfterFirstMatch;
         private readonly bool _uniqueTagMatchesOnly;
         private readonly Logger? _logger;
         private readonly bool _treatEverythingAsCode;

@@ -355,7 +355,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 var sw = new Stopwatch();
                 sw.Start();
-                _metaDataHelper?.Metadata.IncrementTotalFiles();
 
                 LanguageInfo languageInfo = new LanguageInfo();
 
@@ -408,7 +407,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    _metaDataHelper?.Metadata.IncrementFilesSkipped();
                     record.Status = ScanState.Skipped;
                 }
 
@@ -502,7 +500,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 float totFilesNum = fileQueue.Count;
 
-                using ProgressBar progressBar = new ProgressBar(10000, $"Analyzing {totFilesNum - _metaDataHelper?.Metadata.TotalFiles} files.");
+                using ProgressBar progressBar = new ProgressBar(10000, $"Analyzing {totFilesNum - _metaDataHelper?.Files.Count} files.");
                 IProgress<float> progress = progressBar.AsProgress<float>();
                 _ = Task.Factory.StartNew(() =>
                 {
@@ -512,8 +510,8 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 while (!done)
                 {
-                    progressBar.Message = $"Analyzing {totFilesNum - _metaDataHelper?.Metadata.TotalFiles} files.";
-                    progress.Report(_metaDataHelper?.Metadata.TotalFiles / totFilesNum ?? 0);
+                    progressBar.Message = $"Analyzing {totFilesNum - _metaDataHelper?.Files.Count} files.";
+                    progress.Report(_metaDataHelper?.Files.Count / totFilesNum ?? 0);
                 }
             }
             else

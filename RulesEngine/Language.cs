@@ -27,14 +27,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             Stream? resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.comments.json");
             using (StreamReader file = new StreamReader(resource ?? new MemoryStream()))
             {
-                Comments = JsonConvert.DeserializeObject<List<Comment>>(file.ReadToEnd());
+                Comments = JsonConvert.DeserializeObject<List<Comment>>(file.ReadToEnd()) ?? new List<Comment>(); ;
             }
 
             // Load languages
             resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.languages.json");
             using (StreamReader file = new StreamReader(resource ?? new MemoryStream()))
             {
-                Languages = JsonConvert.DeserializeObject<List<LanguageInfo>>(file.ReadToEnd());
+                Languages = JsonConvert.DeserializeObject<List<LanguageInfo>>(file.ReadToEnd()) ?? new List<LanguageInfo>();
             }
         }
         /// <summary>
@@ -69,7 +69,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     if (item.Name == "typescript-config")//special case where extension used for exact match to a single type
                     {
-                        if (item.Extensions.Any(x => x.ToLower().Equals(file)))
+                        if (item.Extensions?.Any(x => x.ToLower().Equals(file)) ?? false)
                         {
                             info = item;
                             return true;
@@ -120,7 +120,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 foreach (Comment comment in Instance.Comments)
                 {
-                    if (comment.Languages.Contains(language.ToLower(CultureInfo.InvariantCulture)) && comment.Prefix is { })
+                    if ((comment.Languages?.Contains(language.ToLower(CultureInfo.InvariantCulture)) ?? false) && comment.Prefix is { })
                         return comment.Prefix;
                 }
             }
