@@ -440,7 +440,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 record.ScanTime = sw.Elapsed;
 
-                _metaDataHelper?.Metadata.Files.Add(record);
+                _metaDataHelper?.Files.Add(record);
             }
         }
 
