@@ -486,8 +486,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     while (!done)
                     {
                         Thread.Sleep(10);
+                        pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     }
-
+                    pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     pbar.Finished();
                 }
 
@@ -512,9 +513,11 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     while (!done)
                     {
-                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0);
                         Thread.Sleep(10);
+                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0);
+                        progressBar.Message = $"Analyzing Files. {_metaDataHelper?.UniqueTagsCount} Tags Found.";
                     }
+                    progressBar.Message = $"Analyzing Files. {_metaDataHelper?.UniqueTagsCount} Tags Found.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
             }
