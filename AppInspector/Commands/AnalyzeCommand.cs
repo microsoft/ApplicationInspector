@@ -298,56 +298,35 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public void PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts, IEnumerable<FileEntry>? populatedEntries = null)
+        /// <summary>
+        /// Populate the MetaDataHelper with the data from the FileEntries.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <param name="opts"></param>
+        /// <param name="populatedEntries"></param>
+        public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts, IEnumerable<FileEntry> populatedEntries)
         {
-            WriteOnce.SafeLog("AnalyzeCommand::EnumerateRecords", LogLevel.Trace);
+            WriteOnce.SafeLog("AnalyzeCommand::PopulateRecords", LogLevel.Trace);
 
-            var analyzeResult = new AnalyzeResult();
-            if (_rulesProcessor is null)
+            if (_rulesProcessor is null || populatedEntries is null)
             {
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.CriticalError;
-                return;
+                return AnalyzeResult.ExitCode.CriticalError;
             }
 
-            if (populatedEntries is not null)
+            if (opts.SingleThread)
             {
-                if (opts.SingleThread)
+                foreach (var entry in populatedEntries)
                 {
-                    foreach (var entry in populatedEntries)
-                    {
-                        if (cancellationToken.IsCancellationRequested) { break; }
-                        ProcessAndAddToMetadata(entry);
-                    }
-                }
-                else
-                {
-                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken }, entry => ProcessAndAddToMetadata(entry));
+                    if (cancellationToken.IsCancellationRequested) { break; }
+                    ProcessAndAddToMetadata(entry);
                 }
             }
             else
             {
-                Extractor extractor = new();
-
-                foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
-                {
-                    if (cancellationToken.IsCancellationRequested) { break; }
-                    else if (opts.SingleThread)
-                    {
-                        foreach (var file in extractor.Extract(srcFile))
-                        {
-                            if (cancellationToken.IsCancellationRequested) { break; }
-                            ProcessAndAddToMetadata(file);
-                        }
-                    }
-                    else
-                    {
-                        Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
-                        {
-                            ProcessAndAddToMetadata(file);
-                        });
-                    }
-                }
+                Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken }, entry => ProcessAndAddToMetadata(entry));
             }
+
+            return AnalyzeResult.ExitCode.Success;
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
@@ -518,7 +497,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else
             {
-                PopulateRecords(new CancellationToken(), _options);
+                PopulateRecords(new CancellationToken(), _options, GetFileEntries(_options));
             }
 
             //wrapup result status

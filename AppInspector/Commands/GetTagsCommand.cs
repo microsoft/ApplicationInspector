@@ -293,7 +293,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public IEnumerable<FileEntry> GetFileEntries(CancellationToken cancellationToken, GetTagsCommandOptions opts)
+        public IEnumerable<FileEntry> GetFileEntries(GetTagsCommandOptions opts)
         {
             WriteOnce.SafeLog("GetTagsCommand::GetFileEntries", LogLevel.Trace);
 
@@ -301,66 +301,34 @@ namespace Microsoft.ApplicationInspector.Commands
 
             foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
             {
-                if (cancellationToken.IsCancellationRequested) { break; }
                 foreach (var file in extractor.Extract(srcFile))
                 {
-                    if (cancellationToken.IsCancellationRequested) { break; }
                     yield return file;
                 }
             }
         }
 
-        public void PopulateRecords(CancellationToken cancellationToken, GetTagsCommandOptions opts, IEnumerable<FileEntry>? populatedEntries = null)
+        public GetTagsResult.ExitCode PopulateRecords(CancellationToken cancellationToken, GetTagsCommandOptions opts, IEnumerable<FileEntry> populatedEntries)
         {
             WriteOnce.SafeLog("GetTagsCommand::PopulateRecords", LogLevel.Trace);
 
-            var gtr = new GetTagsResult();
-            if (_rulesProcessor is null)
+            if (_rulesProcessor is null || populatedEntries is null)
             {
-                gtr.ResultCode = GetTagsResult.ExitCode.CriticalError;
-                return;
+                return GetTagsResult.ExitCode.CriticalError;
             }
-
-            if (populatedEntries is not null)
+            if (opts.SingleThread)
             {
-                if (opts.SingleThread)
+                foreach(var entry in populatedEntries)
                 {
-                    foreach(var entry in populatedEntries)
-                    {
-                        if (cancellationToken.IsCancellationRequested) { break; }
-                        ProcessAndAddToMetadata(entry);
-                    }
-                }
-                else
-                {
-                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken }, entry => ProcessAndAddToMetadata(entry));
+                    if (cancellationToken.IsCancellationRequested) { break; }
+                    ProcessAndAddToMetadata(entry);
                 }
             }
             else
             {
-                Extractor extractor = new();
-
-                foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
-                {
-                    if (cancellationToken.IsCancellationRequested) { break; }
-                    else if (opts.SingleThread)
-                    {
-                        foreach (var file in extractor.Extract(srcFile))
-                        {
-                            if (cancellationToken.IsCancellationRequested) { break; }
-                            ProcessAndAddToMetadata(file);
-                        }
-                    }
-                    else
-                    {
-                        Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
-                        {
-                            ProcessAndAddToMetadata(file);
-                        });
-                    }
-                }
+                Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken }, entry => ProcessAndAddToMetadata(entry));
             }
-            
+            return GetTagsResult.ExitCode.Success;
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
@@ -454,7 +422,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 _ = Task.Factory.StartNew(() =>
                 {
-                    fileQueue.AddRange(GetFileEntries(new CancellationToken(), _options));
+                    fileQueue.AddRange(GetFileEntries(_options));
                     done = true;
                 });
 
@@ -515,7 +483,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else
             {
-                PopulateRecords(new CancellationToken(), _options);
+                PopulateRecords(new CancellationToken(), _options, GetFileEntries(_options));
             }
 
             //wrapup result status
