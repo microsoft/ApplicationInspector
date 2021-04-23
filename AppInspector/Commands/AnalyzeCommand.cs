@@ -418,35 +418,19 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        public ConcurrentQueue<FileEntry> GetFileEntries(CancellationToken cancellationToken, AnalyzeOptions opts)
+        public IEnumerable<FileEntry> GetFileEntries(AnalyzeOptions opts)
         {
-            WriteOnce.SafeLog("GetTagsCommand::GetFileEntries", LogLevel.Trace);
+            WriteOnce.SafeLog("AnalyzeCommand::GetFileEntries", LogLevel.Trace);
 
             Extractor extractor = new();
 
-            var output = new ConcurrentQueue<FileEntry>();
-
             foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
             {
-                if (cancellationToken.IsCancellationRequested) { break; }
-                else if (opts.SingleThread)
+                foreach (var file in extractor.Extract(srcFile))
                 {
-                    foreach (var file in extractor.Extract(srcFile))
-                    {
-                        if (cancellationToken.IsCancellationRequested) { break; }
-                        output.Enqueue(file);
-                    }
-                }
-                else
-                {
-                    Parallel.ForEach(extractor.Extract(srcFile), new ParallelOptions() { CancellationToken = cancellationToken }, file =>
-                    {
-                        output.Enqueue(file);
-                    });
-                }
+                    yield return file;
+                }   
             }
-
-            return output;
         }
 
 
@@ -465,16 +449,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Utils.GetVersionString()
             };
 
-
-
             if (!_options.NoShowProgress)
             {
                 var done = false;
-                ConcurrentQueue<FileEntry> fileQueue = new();
+                List<FileEntry> fileQueue = new();
 
                 _ = Task.Factory.StartNew(() =>
                 {
-                    fileQueue = GetFileEntries(new CancellationToken(), _options);
+                    fileQueue.AddRange(GetFileEntries(_options));
                     done = true;
                 });
 
@@ -492,6 +474,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     while (!done)
                     {
                         Thread.Sleep(10);
+                        pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     }
                     pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
 
