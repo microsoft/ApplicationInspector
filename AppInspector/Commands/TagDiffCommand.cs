@@ -173,7 +173,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 #region setup analyze calls
 
-                AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeOptions
+                GetTagsCommand cmd1 = new GetTagsCommand(new GetTagsCommandOptions
                 {
                     SourcePath = _options?.SourcePath1 ?? "",
                     CustomRulesPath = _options?.CustomRulesPath,
@@ -182,7 +182,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     ConsoleVerbosityLevel = "none",
                     Log = _options?.Log
                 });
-                AnalyzeCommand cmd2 = new AnalyzeCommand(new AnalyzeOptions
+                GetTagsCommand cmd2 = new GetTagsCommand(new GetTagsCommandOptions
                 {
                     SourcePath = _options?.SourcePath2 ?? "",
                     CustomRulesPath = _options?.CustomRulesPath,
@@ -192,8 +192,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     Log = _options?.Log
                 });
 
-                AnalyzeResult analyze1 = cmd1.GetResult();
-                AnalyzeResult analyze2 = cmd2.GetResult();
+                GetTagsResult analyze1 = cmd1.GetResult();
+                GetTagsResult analyze2 = cmd2.GetResult();
 
                 //restore
                 WriteOnce.Verbosity = saveVerbosity;
@@ -204,15 +204,15 @@ namespace Microsoft.ApplicationInspector.Commands
                 bool equalTagsCompare2;
 
                 //process results for each analyze call before comparing results
-                if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)
+                if (analyze1.ResultCode == GetTagsResult.ExitCode.CriticalError)
                 {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options?.SourcePath1 ?? ""));
                 }
-                else if (analyze2.ResultCode == AnalyzeResult.ExitCode.CriticalError)
+                else if (analyze2.ResultCode == GetTagsResult.ExitCode.CriticalError)
                 {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options?.SourcePath2 ?? ""));
                 }
-                else if (analyze1.ResultCode == AnalyzeResult.ExitCode.NoMatches || analyze2.ResultCode == AnalyzeResult.ExitCode.NoMatches)
+                else if (analyze1.ResultCode == GetTagsResult.ExitCode.NoMatches || analyze2.ResultCode == GetTagsResult.ExitCode.NoMatches)
                 {
                     throw new OpException(MsgHelp.GetString(MsgHelp.ID.TAGDIFF_NO_TAGS_FOUND));
                 }
