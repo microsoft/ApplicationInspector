@@ -422,7 +422,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 _ = Task.Factory.StartNew(() =>
                 {
-                    fileQueue.AddRange(GetFileEntries(_options));
+                    try
+                    {
+                        fileQueue.AddRange(GetFileEntries(_options));
+                    }
+                    catch (OverflowException e)
+                    {
+                        WriteOnce.Error($"Overflowed while extracting file entries. Check the input for quines or zip bombs. {e.Message}");
+                    }
                     done = true;
                 });
 
@@ -471,9 +478,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     while (!done)
                     {
                         Thread.Sleep(10);
-                        var current = (double)(_metaDataHelper?.Files.Count ?? 0);
+                        var current = _metaDataHelper?.Files.Count ?? 0;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
-                        var millisExpected = (int)(timePerRecord * (fileQueue.Count - (int)current));
+                        var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));
                         var timeExpected = new TimeSpan(0, 0, 0, 0, millisExpected);
                         progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Analyzing Files. {_metaDataHelper?.UniqueTagsCount} Tags Found.");
                     }
