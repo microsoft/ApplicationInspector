@@ -405,7 +405,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
             {
-                foreach (var file in extractor.Extract(srcFile))
+                foreach (var file in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
                 {
                     yield return file;
                 }   
