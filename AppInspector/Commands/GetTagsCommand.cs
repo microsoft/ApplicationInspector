@@ -477,35 +477,45 @@ namespace Microsoft.ApplicationInspector.Commands
                     ForegroundColor = ConsoleColor.Yellow,
                     ForegroundColorDone = ConsoleColor.DarkGreen,
                     BackgroundColor = ConsoleColor.DarkGray,
-                    BackgroundCharacter = '\u2593'
+                    BackgroundCharacter = '\u2593',
+                    DisableBottomPercentage = true
                 };
 
-                using var pbar = new IndeterminateProgressBar("Indeterminate", options);
-                pbar.Message = $"Enumerating Files.";
-
-                while (!done)
+                using (var pbar = new IndeterminateProgressBar("Enumerating Files.", options))
                 {
-                    Thread.Sleep(10);
+                    while (!done)
+                    {
+                        Thread.Sleep(10);
+                    }
+
+                    pbar.Finished();
                 }
 
-                pbar.Finished();
-                
                 done = false;
 
-                float totFilesNum = fileQueue.Count;
-
-                using ProgressBar progressBar = new ProgressBar(10000, $"Analyzing {totFilesNum - _metaDataHelper?.Files.Count} files.");
-                IProgress<float> progress = progressBar.AsProgress<float>();
-                _ = Task.Factory.StartNew(() =>
+                var options2 = new ProgressBarOptions
                 {
-                    PopulateRecords(new CancellationToken(), _options, fileQueue);
-                    done = true;
-                });
+                    ForegroundColor = ConsoleColor.Yellow,
+                    ForegroundColorDone = ConsoleColor.DarkGreen,
+                    BackgroundColor = ConsoleColor.DarkGray,
+                    BackgroundCharacter = '\u2593',
+                    DisableBottomPercentage = false
+                };
 
-                while (!done)
+                using (var progressBar = new ProgressBar(fileQueue.Count, $"Analyzing Files.", options2))
                 {
-                    progressBar.Message = $"Analyzing {totFilesNum - _metaDataHelper?.Files.Count} files.";
-                    progress.Report(_metaDataHelper?.Files.Count/totFilesNum ?? 0);
+                    _ = Task.Factory.StartNew(() =>
+                    {
+                        PopulateRecords(new CancellationToken(), _options, fileQueue);
+                        done = true;
+                    });
+
+                    while (!done)
+                    {
+                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0);
+                        Thread.Sleep(10);
+                    }
+                    progressBar.Tick(progressBar.MaxTicks);
                 }
             }
             else
