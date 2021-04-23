@@ -492,7 +492,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     while (!done)
                     {
                         Thread.Sleep(10);
-                        pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     }
                     pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
 
@@ -512,6 +511,8 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 using (var progressBar = new ProgressBar(fileQueue.Count, $"Analyzing Files.", options2))
                 {
+                    var sw = new Stopwatch();
+                    sw.Start();
                     _ = Task.Factory.StartNew(() =>
                     {
                         PopulateRecords(new CancellationToken(), _options, fileQueue);
@@ -521,9 +522,11 @@ namespace Microsoft.ApplicationInspector.Commands
                     while (!done)
                     {
                         Thread.Sleep(10);
-                        progressBar.Message = $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches.";
-                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0);
-
+                        var current = (double)(_metaDataHelper?.Files.Count ?? 0);
+                        var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
+                        var millisExpected = (int)(timePerRecord * (fileQueue.Count - (int)current));
+                        var timeExpected = new TimeSpan(0,0,0,0,millisExpected);
+                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches. ETA {timeExpected.ToString("hh\\:mm\\:ss")}.");
                     }
                     progressBar.Message = $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches.";
                     progressBar.Tick(progressBar.MaxTicks);

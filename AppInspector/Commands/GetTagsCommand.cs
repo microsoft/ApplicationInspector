@@ -486,7 +486,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     while (!done)
                     {
                         Thread.Sleep(10);
-                        pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     }
                     pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     pbar.Finished();
@@ -514,8 +513,11 @@ namespace Microsoft.ApplicationInspector.Commands
                     while (!done)
                     {
                         Thread.Sleep(10);
-                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0);
-                        progressBar.Message = $"Analyzing Files. {_metaDataHelper?.UniqueTagsCount} Tags Found.";
+                        var current = (double)(_metaDataHelper?.Files.Count ?? 0);
+                        var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
+                        var millisExpected = (int)(timePerRecord * (fileQueue.Count - (int)current));
+                        var timeExpected = new TimeSpan(0, 0, 0, 0, millisExpected);
+                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Analyzing Files. {_metaDataHelper?.UniqueTagsCount} Tags Found. ETA {timeExpected.ToString("hh\\:mm\\:ss")}.");
                     }
                     progressBar.Message = $"Analyzing Files. {_metaDataHelper?.UniqueTagsCount} Tags Found.";
                     progressBar.Tick(progressBar.MaxTicks);
