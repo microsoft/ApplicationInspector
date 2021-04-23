@@ -489,7 +489,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     ForegroundColorDone = ConsoleColor.DarkGreen,
                     BackgroundColor = ConsoleColor.DarkGray,
                     BackgroundCharacter = '\u2593',
-                    DisableBottomPercentage = false
+                    DisableBottomPercentage = false,
+                    ShowEstimatedDuration = true
                 };
 
                 using (var progressBar = new ProgressBar(fileQueue.Count, $"Analyzing Files.", options2))
@@ -509,7 +510,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - (int)current));
                         var timeExpected = new TimeSpan(0,0,0,0,millisExpected);
-                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches. ETA {timeExpected.ToString("hh\\:mm\\:ss")}.");
+                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches.");
                     }
                     progressBar.Message = $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches.";
                     progressBar.Tick(progressBar.MaxTicks);
