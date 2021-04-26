@@ -41,12 +41,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly bool _treatEverythingAsCode;
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
-        private readonly ConcurrentDictionary<string, byte> _uniqueTagHashes;
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _rulesCache;
-        /// <summary>
-        /// Support to exlude list of tags from unique restrictions
-        /// </summary>
-        public string[]? UniqueTagExceptions { get; set; }
 
         /// <summary>
         /// Sets severity levels for analysis
@@ -65,7 +60,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             _ruleset = rules;
             EnableCache = true;
-            _uniqueTagHashes = new ConcurrentDictionary<string,byte>();
             _rulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
             _uniqueTagMatchesOnly = opts.uniqueMatches;
             _logger = opts.logger;
@@ -197,12 +191,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
                                     };
 
-
-                                    if (oatRule.AppInspectorRule.Tags != null && oatRule.AppInspectorRule.Tags.Any())
-                                    {
-                                        AddRuleTagHashes(oatRule.AppInspectorRule.Tags);
-                                    }
-
                                     if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
                                     {
                                         newMatch.Sample = ExtractDependency(newMatch.FullTextContainer, newMatch.Boundary.Index, newMatch.Pattern, newMatch.LanguageInfo.Name);
@@ -309,12 +297,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
                                     };
 
-
-                                    if (oatRule.AppInspectorRule.Tags != null && oatRule.AppInspectorRule.Tags.Any())
-                                    {
-                                        AddRuleTagHashes(oatRule.AppInspectorRule.Tags);
-                                    }
-
                                     if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
                                     {
                                         newMatch.Sample = ExtractDependency(newMatch.FullTextContainer, newMatch.Boundary.Index, newMatch.Pattern, newMatch.LanguageInfo.Name);
@@ -420,49 +402,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        /// Check if rule has at least one unique tag not seen before or if exception exists
-        /// Assumes that _uniqueTagsOnly == true has been checked first for relevance
-        /// </summary>
-        /// <param name="ruleTags"></param>
-        /// <returns></returns>
-        private bool RuleTagsAreUniqueOrAllowed(string[]? ruleTags)
-        {
-            bool approved = false;
-            if (ruleTags == null)
-            {
-                _logger?.Debug("Rule with no tags in RuleTagsAreUniqueOrAllowed method");
-                throw new Exception("Rule with no tags in RuleTagsAreUniqueOrAllowed method");
-            }
-
-            foreach (string tag in ruleTags)
-            {
-                if (!_uniqueTagHashes.ContainsKey(tag))
-                {
-                    approved = true;
-                    break;
-                }
-                else if (UniqueTagExceptions != null)
-                {
-                    foreach (string tagException in UniqueTagExceptions)
-                    {
-                        if (tag.Contains(tagException))
-                        {
-                            approved = true;
-                            break;
-                        }
-                    }                   
-                }
-                
-                if (_logger != null && !approved)
-                {
-                    _logger.Debug(string.Format("Duplicate tag {0} not approved for match", tag));
-                }
-            }
-
-            return approved;
-        }
-
-        /// <summary>
         /// Simple wrapper but keeps calling code consistent
         /// Do not html code result which is accomplished later before out put to report
         /// </summary>
@@ -534,22 +473,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             // But cap those values at 0/end
             
             return string.Join(Environment.NewLine, lines[excerptStartLine..(excerptEndLine + 1)].Select(x => x[minSpaces..].TrimEnd()));
-        }
-
-        /// <summary>
-        /// Supports unique tags option to not process if seen before
-        /// No harm in being called again for same value; will not be added...
-        /// </summary>
-        /// <param name="ruleTags"></param>
-        private void AddRuleTagHashes(string[] ruleTags)
-        {
-            foreach (string tag in ruleTags)
-            {
-                if (_uniqueTagHashes.TryAdd(tag,0) && _logger != null)
-                {
-                    _logger.Debug(string.Format("Unique tag {0} added", tag));
-                }
-            }
         }
 
         #endregion Private Methods

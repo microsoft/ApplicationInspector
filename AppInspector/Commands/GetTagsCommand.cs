@@ -285,7 +285,6 @@ namespace Microsoft.ApplicationInspector.Commands
             };
 
             _rulesProcessor = new RuleProcessor(rulesSet, rpo);
-            _rulesProcessor.UniqueTagExceptions = "Metric.,Dependency.".Split(",");//fix to enable non-unique tags if metric counter related
 
             //create metadata helper to wrap and help populate metadata from scan
             _metaDataHelper = new MetaDataHelper(_options.SourcePath, false);
