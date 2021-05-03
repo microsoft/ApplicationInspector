@@ -73,10 +73,10 @@ namespace Microsoft.ApplicationInspector.Commands
                         Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
                         break;
                     case "Metadata.Application.Target.Processor":
-                        _ = CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     case "Metadata.Application.Output.Type":
-                        _ = Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     case "Dependency.SourceInclude":
                         return; //design to keep noise out of detailed match list
@@ -90,11 +90,11 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         else if (tag.Contains(".Platform.OS"))
                         {
-                            _ = OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
+                            OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
                         }
                         else if (tag.Contains("CloudServices.Hosting"))
                         {
-                            _ = CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
+                            CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
                         }
                         break;
                 }
@@ -104,7 +104,7 @@ namespace Microsoft.ApplicationInspector.Commands
             string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
             {
-                _ = AppTypes.TryAdd(solutionType, 0);
+               AppTypes.TryAdd(solutionType, 0);
             }
 
             bool CounterOnlyTagSet = false;
@@ -121,7 +121,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 //update list of unique tags as we go
                 foreach (string tag in matchRecord.Tags ?? new string[] { })
                 {
-                    _ = UniqueTags.TryAdd(tag, 0);
+                    UniqueTags.TryAdd(tag, 0);
                 }
             }
         }
@@ -152,28 +152,28 @@ namespace Microsoft.ApplicationInspector.Commands
                         Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
                         break;
                     case "Metadata.Application.Target.Processor":
-                        _ = CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     case "Metadata.Application.Output.Type":
-                        _ = Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     case "Dependency.SourceInclude":
                         return; //design to keep noise out of detailed match list
                     default:
                         if (tag.Contains("Metric."))
                         {
-                            _ = TagCounters.TryAdd(tag, new MetricTagCounter()
+                            TagCounters.TryAdd(tag, new MetricTagCounter()
                             {
                                 Tag = tag
                             });
                         }
                         else if (tag.Contains(".Platform.OS"))
                         {
-                            _ = OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length-1)+1),0);
+                            OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
                         }
                         else if (tag.Contains("CloudServices.Hosting"))
                         {
-                            _ = CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length-1)+1), 0);
+                            CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
                         }
                         break;
                 }
@@ -183,7 +183,7 @@ namespace Microsoft.ApplicationInspector.Commands
             string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
             {
-                _ = AppTypes.TryAdd(solutionType, 0);
+                AppTypes.TryAdd(solutionType, 0);
             }
 
             bool CounterOnlyTagSet = false;
@@ -200,7 +200,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 //update list of unique tags as we go
                 foreach (string tag in matchRecord.Tags ?? new string[] { })
                 {
-                    _ = UniqueTags.TryAdd(tag,0);
+                    UniqueTags.TryAdd(tag, 0);
                 }
                 
                 Matches.Add(matchRecord);

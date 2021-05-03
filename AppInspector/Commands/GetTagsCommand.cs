@@ -387,6 +387,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
+                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
                     fileRecord.Status = ScanState.Skipped;
                 }
 
