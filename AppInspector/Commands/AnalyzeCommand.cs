@@ -329,16 +329,16 @@ namespace Microsoft.ApplicationInspector.Commands
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
-                var record = new FileRecord() { FileName = file.FullPath };
+                var fileRecord = new FileRecord() { FileName = file.FullPath };
 
                 var sw = new Stopwatch();
                 sw.Start();
 
-                LanguageInfo languageInfo = new LanguageInfo();
-
-                if (ChecksPassed(file, ref languageInfo))
+                if (!_options.FilePathExclusions.Any(x => file.FullPath.ToLower().Contains(x)))
                 {
                     _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
+
+                    LanguageInfo languageInfo = new LanguageInfo();
 
                     if (Language.FromFileName(file.FullPath, ref languageInfo))
                     {
@@ -355,28 +355,28 @@ namespace Microsoft.ApplicationInspector.Commands
                     if (opts.FileTimeOut > 0)
                     {
                         using var cts = new CancellationTokenSource();
-                        var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, null),cts.Token);
+                        var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo),cts.Token);
                         if (!t.Wait(new TimeSpan(0, 0, opts.FileTimeOut)))
                         {
                             WriteOnce.Error($"{file.FullPath} analysis timed out.");
-                            record.Status = ScanState.TimedOut;
+                            fileRecord.Status = ScanState.TimedOut;
                             cts.Cancel();
                         }
                         else
                         {
-                            record.Status = ScanState.Analyzed;
+                            fileRecord.Status = ScanState.Analyzed;
                         }
                     }
                     else
                     {
-                        results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
-                        record.Status = ScanState.Analyzed;
+                        results = _rulesProcessor.AnalyzeFile(file, languageInfo);
+                        fileRecord.Status = ScanState.Analyzed;
                     }
 
                     if (results.Any())
                     {
-                        record.Status = ScanState.Affected;
-                        record.NumFindings = results.Count;
+                        fileRecord.Status = ScanState.Affected;
+                        fileRecord.NumFindings = results.Count;
                     }
                     foreach (var matchRecord in results)
                     {
@@ -385,14 +385,15 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    record.Status = ScanState.Skipped;
+                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
+                    fileRecord.Status = ScanState.Skipped;
                 }
 
                 sw.Stop();
 
-                record.ScanTime = sw.Elapsed;
+                fileRecord.ScanTime = sw.Elapsed;
 
-                _metaDataHelper?.Files.Add(record);
+                _metaDataHelper?.Files.Add(fileRecord);
             }
         }
 
@@ -527,54 +528,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             return analyzeResult;
-        }
-
-        /// <summary>
-        /// Common validation called by ProcessAsFile and UnzipAndProcess to ensure same order and checks made
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="languageInfo"></param>
-        /// <param name="fileLength">should be > zero if called from unzip method</param>
-        /// <returns></returns>
-        private bool ChecksPassed(FileEntry fileEntry, ref LanguageInfo languageInfo, long fileLength = 0)
-        {
-            // 1. Check for exclusions
-            if (ExcludeFileFromScan(fileEntry.FullPath))
-            {
-                return false;
-            }
-
-            // 2. Skip if exceeds file size limits
-            if (fileLength > MAX_FILESIZE)
-            {
-                WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_FILESIZE_SKIPPED, fileEntry.FullPath), LogLevel.Warn);
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Allow callers to exclude files that are not core code files and may otherwise report false positives for matches
-        /// Does not apply to root scan folder which may be named .\test etc. but to subdirectories only
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        private bool ExcludeFileFromScan(string filePath)
-        {
-            string? rootScanDirectory = Directory.Exists(_options.SourcePath) ? _options.SourcePath : Path.GetDirectoryName(_options.SourcePath);
-            bool scanningRootFolder = !string.IsNullOrEmpty(filePath) && Path.GetDirectoryName(filePath)?.ToLower() == rootScanDirectory?.ToLower();
-            // 2. Skip excluded files i.e. sample, test or similar from sub-directories (not root #210) unless ignore filter requested
-            if (!scanningRootFolder)
-            {
-                if (_fileExclusionList != null && _fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
-                {
-                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filePath??""), LogLevel.Warn);
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
 }
