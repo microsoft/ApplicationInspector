@@ -26,26 +26,13 @@ namespace Microsoft.ApplicationInspector.CLI
 
             WriteOnce.Result("Results");
 
-            if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
-            {
-                List<string> keys = analyzeResult.Metadata.UniqueTags ?? new List<string>();
-                keys.Sort();
+            WriteAppMeta(analyzeResult.Metadata);
+            WriteDependencies(analyzeResult.Metadata);
+            WriteOnce.General(MakeHeading("Match Details"));
 
-                foreach (string tag in keys)
-                {
-                    WriteOnce.General(tag);
-                }
-            }
-            else
+            foreach (MatchRecord match in analyzeResult.Metadata.Matches ?? new List<MatchRecord>())
             {
-                WriteAppMeta(analyzeResult.Metadata);
-                WriteDependencies(analyzeResult.Metadata);
-                WriteOnce.General(MakeHeading("Match Details"));
-
-                foreach (MatchRecord match in analyzeResult.Metadata.Matches ?? new List<MatchRecord>())
-                {
-                    WriteMatch(match);
-                }
+                WriteMatch(match);
             }
 
             if (autoClose)

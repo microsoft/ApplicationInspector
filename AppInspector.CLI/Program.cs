@@ -177,12 +177,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_HTML_EXTENSION));
                 }
-
-                if (options.SimpleTagsOnly) //won't work for html that expects full data for UI
-                {
-                    WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_SIMPLETAGS_HTML_FORMAT));
-                    throw new Exception(MsgHelp.GetString(MsgHelp.ID.ANALYZE_SIMPLETAGS_HTML_FORMAT));
-                }
             }
 
             CommonOutputChecks((CLICommandOptions)options);

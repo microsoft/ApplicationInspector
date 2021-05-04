@@ -38,20 +38,11 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteOnce.Result("Results");
             }
 
-            if (cLIAnalyzeCmdOptions.SimpleTagsOnly)
+            JsonSerializer jsonSerializer = new JsonSerializer();
+            jsonSerializer.Formatting = Formatting.Indented;
+            if (TextWriter != null)
             {
-                List<string> keys = analyzeResult.Metadata.UniqueTags ?? new List<string>();
-                TagsFile tags = new TagsFile() { Tags = keys.ToArray() };
-                TextWriter?.Write(JsonConvert.SerializeObject(tags, Formatting.Indented));
-            }
-            else
-            {
-                JsonSerializer jsonSerializer = new JsonSerializer();
-                jsonSerializer.Formatting = Formatting.Indented;
-                if (TextWriter != null)
-                {
-                    jsonSerializer.Serialize(TextWriter, analyzeResult);
-                }
+                jsonSerializer.Serialize(TextWriter, analyzeResult);
             }
 
             WriteOnce.NewLine();
