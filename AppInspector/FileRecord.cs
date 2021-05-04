@@ -8,6 +8,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public TimeSpan ScanTime { get; set; } = new TimeSpan();
         public ScanState Status { get; set; } = ScanState.None;
         public int NumFindings { get; set; } = 0;
+        public DateTime ModifyTime { get; set; } = DateTime.MinValue;
     }
 
     public enum ScanState

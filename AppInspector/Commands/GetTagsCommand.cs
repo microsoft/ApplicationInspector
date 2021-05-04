@@ -70,26 +70,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private DateTime DateScanned { get; set; }
 
-        private DateTime _lastUpdated;
-
-        public MetaData? MetaData { get { return _metaDataHelper?.Metadata; } }
-
-        /// <summary>
-        /// Updated dynamically to more recent file in source
-        /// </summary>
-        public DateTime LastUpdated
-        {
-            get => _lastUpdated;
-            set
-            {
-                //find last updated file in solution
-                if (_lastUpdated < value)
-                {
-                    _lastUpdated = value;
-                }
-            }
-        }
-
         private readonly List<string> _fileExclusionList = new List<string>();
         private Confidence _confidence;
         private readonly GetTagsCommandOptions _options; //copy of incoming caller options
@@ -331,7 +311,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
-                var fileRecord = new FileRecord() { FileName = file.FullPath };
+                var fileRecord = new FileRecord() { FileName = file.FullPath, ModifyTime = file.ModifyTime };
 
                 var sw = new Stopwatch();
                 sw.Start();

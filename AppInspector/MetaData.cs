@@ -52,7 +52,20 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Last modified date for source code scanned
         /// </summary>
         [JsonProperty(PropertyName = "lastUpdated")]
-        public string? LastUpdated { get; set; }
+        public string LastUpdated 
+        { 
+            get 
+            {
+                if (Files.Any())
+                {
+                    return Files.Select(x => x.ModifyTime).Max().ToString();
+                }
+                else
+                {
+                    return DateTime.MinValue.ToString();
+                }
+            } 
+        }
 
         /// <summary>
         /// Date of analyze scan
