@@ -22,33 +22,20 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
 
             if (TextWriter != null)
             {
-                if (result is TagTestResult)
+                switch (result) 
                 {
-                    jsonSerializer.Serialize(TextWriter, (TagTestResult)result);
-                }
-                else if (result is TagDiffResult)
-                {
-                    jsonSerializer.Serialize(TextWriter, (TagDiffResult)result);
-                }
-                else if (result is VerifyRulesResult)
-                {
-                    jsonSerializer.Serialize(TextWriter, (VerifyRulesResult)result);
-                }
-                else if (result is ExportTagsResult)
-                {
-                    jsonSerializer.Serialize(TextWriter, (ExportTagsResult)result);
-                }
-                else if (result is PackRulesResult packRulesResult)
-                {
-                    jsonSerializer.Serialize(TextWriter, packRulesResult.Rules);//write rules array only to disk
-                }
-                else if (result is GetTagsResult getTagsResults)
-                {
-                    jsonSerializer.Serialize(TextWriter, getTagsResults);
-                }
-                else
-                {
-                    throw new System.Exception("Unexpected object type for json writer");
+                    case TagTestResult:
+                    case TagDiffResult:
+                    case ExportTagsResult:
+                    case GetTagsResult:
+                    case VerifyRulesResult:
+                        jsonSerializer.Serialize(TextWriter, result);
+                        break;
+                    case PackRulesResult prr:
+                        jsonSerializer.Serialize(TextWriter, prr.Rules);
+                        break;
+                    default:
+                        throw new System.Exception("Unexpected object type for json writer");
                 }
             }
             else
