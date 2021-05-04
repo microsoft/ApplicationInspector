@@ -53,7 +53,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     break;
 
                 case AppPath.defaultLog:
-                    result = Path.Combine(GetBaseAppPath(), "appinspector.log.txt");
+                    result = "appinspector.log.txt";
                     break;
 
                 case AppPath.defaultRulesSrc://Packrules source use
