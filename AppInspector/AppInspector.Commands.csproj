@@ -59,10 +59,11 @@
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="DotLiquid" Version="2.1.436" />
     <PackageReference Include="Microsoft.CST.OAT" Version="1.0.83" />
-    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.0.58" />
+    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.0.60" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.9" />
     <PackageReference Include="ShellProgressBar" Version="5.1.0" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.194" />
   </ItemGroup>
 
   <ItemGroup>
@@ -92,10 +93,6 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\icon-128.png" Pack="true" PackagePath="" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.194" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="BeforeCompile">

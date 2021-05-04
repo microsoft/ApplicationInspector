@@ -26,7 +26,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CST.OAT" Version="1.0.83" />
-    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.0.58" />
+    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.0.60" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.194" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.9" />
   </ItemGroup>
@@ -41,8 +42,4 @@
     <EmbeddedResource Include="Resources\languages.json" />
   </ItemGroup>
   
-  <ItemGroup>
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.194" />
-  </ItemGroup>
-
 </Project>
