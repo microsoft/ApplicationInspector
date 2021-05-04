@@ -39,7 +39,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
             else if (options is CLIExportTagsCmdOptions cliExportTagsCmdOptions)
             {
-                writer = GetExportWriter(cliExportTagsCmdOptions);
+                writer = GetExportTagsWriter(cliExportTagsCmdOptions);
             }
             else if (options is CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions)
             {
@@ -102,7 +102,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return writer;
         }
 
-        public static CommandResultsWriter GetExportWriter(CLIExportTagsCmdOptions options)
+        public static CommandResultsWriter GetExportTagsWriter(CLIExportTagsCmdOptions options)
         {
             CommandResultsWriter? writer;
 
@@ -117,7 +117,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     break;
 
                 case "text":
-                    writer = new ExportTextWriter();
+                    writer = new ExportTagsTextWriter();
                     break;
 
                 default:
