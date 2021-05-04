@@ -383,7 +383,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             using var cts = new CancellationTokenSource();
                             var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo), cts.Token);
-                            if (!t.Wait(new TimeSpan(0, 0, opts.FileTimeOut)))
+                            if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                             {
                                 WriteOnce.Error($"{file.FullPath} analysis timed out.");
                                 fileRecord.Status = ScanState.TimedOut;

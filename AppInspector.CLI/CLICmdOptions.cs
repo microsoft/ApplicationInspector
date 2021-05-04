@@ -40,7 +40,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files (none|default: sample,example,test,docs,lib,.vs,.git)", Default = "sample,example,test,docs,lib,.vs,.git")]
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
 
-        [Option("file-timeout", Required = false, HelpText = "Maximum amount of time in seconds to allow for processing each file.", Default = 0)]
+        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 0)]
         public int FileTimeOut { get; set; } = 0;
         
         [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
@@ -80,7 +80,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('t', "tag-output-only", Required = false, HelpText = "Output only identified tags", Default = false)]
         public bool SimpleTagsOnly { get; set; }
 
-        [Option("file-timeout", Required = false, HelpText = "Maximum amount of time in seconds to allow for processing each file.", Default = 0)]
+        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 0)]
         public int FileTimeOut { get; set; } = 0;
 
         [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
