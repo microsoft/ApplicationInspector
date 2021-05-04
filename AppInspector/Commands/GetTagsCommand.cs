@@ -351,7 +351,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     List<char> bytes = new List<char>();
                     using var sr = new StreamReader(file.Content);
                     var ch = 0;
-                    while (ch != -1)
+                    var numChomped = 0;
+                    while (ch != -1 && numChomped++ < 1024)
                     {
                         ch = sr.Read();
                         bytes.Add((char)ch);
