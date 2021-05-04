@@ -3,6 +3,7 @@
 
 using NLog;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 
 namespace Microsoft.ApplicationInspector.Commands
@@ -22,7 +23,25 @@ namespace Microsoft.ApplicationInspector.Commands
 
         public static ConsoleVerbosity Verbosity { get; set; }
         public static Logger? Log { get; set; } //use SafeLog or check for null before use
-
+        public static bool PauseConsoleOutput
+        {
+            get => _pauseConsoleOutput;
+            set
+            {
+                _pauseConsoleOutput = value;
+                if (!_pauseConsoleOutput)
+                {
+                    while(pausedWrites.TryTake(out ConsoleWrite? result))
+                    {
+                        if (result is not null)
+                        {
+                            SafeConsoleWrite(result.Message, result.WriteLine, result.Foreground, result.Verbosity);
+                        }
+                    }
+                }
+            }
+        }
+        private static bool _pauseConsoleOutput = false;
         //default colors
         private static ConsoleColor _infoColor = ConsoleColor.Magenta;
 
@@ -118,6 +137,23 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
+        static ConcurrentBag<ConsoleWrite> pausedWrites = new ConcurrentBag<ConsoleWrite>();
+        
+        class ConsoleWrite
+        {
+            public string Message { get; }
+            public bool WriteLine { get; }
+            public ConsoleColor Foreground { get; }
+            public ConsoleVerbosity Verbosity { get; }
+            public ConsoleWrite(string message, bool writeLine, ConsoleColor foreground, ConsoleVerbosity verbosity)
+            {
+                Message = message;
+                WriteLine = writeLine;
+                Foreground = foreground;
+                Verbosity = verbosity;
+            }
+        }
+
         /// <summary>
         /// Console commands are only effected from CLI
         /// Filters verbosity based on settings and given call
@@ -132,22 +168,29 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 return;
             }
-
             if (verbosity >= Verbosity)
             {
-                ConsoleColor lastForecolor = Console.ForegroundColor;
-                Console.ForegroundColor = foreground;
-
-                if (writeLine)
+                if (PauseConsoleOutput)
                 {
-                    Console.WriteLine(msg);
+                    pausedWrites.Add(new ConsoleWrite(msg, writeLine, foreground, verbosity));
                 }
                 else
                 {
-                    Console.Write(msg);
-                }
+                    ConsoleColor lastForecolor = Console.ForegroundColor;
+                    Console.ForegroundColor = foreground;
 
-                Console.ForegroundColor = lastForecolor;
+                    if (writeLine)
+                    {
+                        Console.WriteLine(msg);
+                    }
+                    else
+                    {
+                        Console.Write(msg);
+                    }
+
+                    Console.ForegroundColor = lastForecolor;
+
+                }
             }
         }
 

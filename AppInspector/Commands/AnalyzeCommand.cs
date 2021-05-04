@@ -367,7 +367,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(fileContents, file, languageInfo), cts.Token);
                             if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                             {
-                                WriteOnce.Error($"{file.FullPath} analysis timed out.");
+                                WriteOnce.Error($"{file.FullPath} timed out.");
                                 fileRecord.Status = ScanState.TimedOut;
                                 cts.Cancel();
                             }
@@ -489,7 +489,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     DisableBottomPercentage = false,
                     ShowEstimatedDuration = true
                 };
-
+                WriteOnce.PauseConsoleOutput = true;
                 using (var progressBar = new ProgressBar(fileQueue.Count, $"Analyzing Files.", options2))
                 {
                     var sw = new Stopwatch();
@@ -509,9 +509,11 @@ namespace Microsoft.ApplicationInspector.Commands
                         var timeExpected = new TimeSpan(0, 0, 0, 0, millisExpected);
                         progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches.");
                     }
+
                     progressBar.Message = $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
+                WriteOnce.PauseConsoleOutput = false;
             }
             else
             {

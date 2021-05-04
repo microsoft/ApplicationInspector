@@ -381,7 +381,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(fileContents, file, languageInfo, null), cts.Token);
                             if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                             {
-                                WriteOnce.Error($"{file.FullPath} analysis timed out.");
+                                WriteOnce.Error($"{file.FullPath} timed out.");
                                 fileRecord.Status = ScanState.TimedOut;
                                 cts.Cancel();
                             }
@@ -458,6 +458,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     BackgroundCharacter = '\u2593',
                     DisableBottomPercentage = true
                 };
+                WriteOnce.PauseConsoleOutput = true;
 
                 using (var pbar = new IndeterminateProgressBar("Enumerating Files.", options))
                 {
@@ -504,6 +505,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     progressBar.Message = $"Analyzing Files. {_metaDataHelper?.UniqueTagsCount} Tags Found.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
+                WriteOnce.PauseConsoleOutput = false;
             }
             else
             {
