@@ -7,12 +7,10 @@ using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -57,8 +55,8 @@ namespace Microsoft.ApplicationInspector.CLI
             RenderResultsSafeforHTML();
 
             //Grab any local css and js files that are needed i.e. don't have hosted URL's or are proprietary
-            string allCSS = "<style>\n" + MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html","resources","css"));
-            string allJS = "<script type=\"text/javascript\">\n" + MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath),"html","resources","js"));
+            string allCSS = "<style>\n" + MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html", "resources", "css"));
+            string allJS = "<script type=\"text/javascript\">\n" + MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html", "resources", "js"));
 
             //Prepare html template merge
             string htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
@@ -66,14 +64,14 @@ namespace Microsoft.ApplicationInspector.CLI
 
             //Update template with local aggregated code for easy relocation of output file
             htmlTemplateText = htmlTemplateText.Replace("<script type=\"text/javascript\">", allJS);
-            htmlTemplateText = htmlTemplateText.Replace("<link rel=\"stylesheet\" type=\"text/css\" href=\"html/resources/css/appinspector.css\" />", allCSS+"</style>");
+            htmlTemplateText = htmlTemplateText.Replace("<link rel=\"stylesheet\" type=\"text/css\" href=\"html/resources/css/appinspector.css\" />", allCSS + "</style>");
 
             RegisterSafeType(typeof(MetaData));
 
             //Prepare data for use in appinspector.js and html partials resources
             var htmlTemplate = Template.Parse(htmlTemplateText);
             var data = new Dictionary<string, object>();
-            data["MetaData"] = _appMetaData ?? new MetaData("","");
+            data["MetaData"] = _appMetaData ?? new MetaData("", "");
 
             var hashData = new Hash();
             hashData["json"] = JsonConvert.SerializeObject(data);//json serialization required for [js] access to objects
@@ -257,7 +255,7 @@ namespace Microsoft.ApplicationInspector.CLI
                         pattern.Detected = _appMetaData?.UniqueTags is not null && _appMetaData.UniqueTags.Any(v => v.Contains(pattern.SearchPattern));
                         if (unSupportedGroupsOrPatterns.Any(x => pattern.SearchPattern.ToLower().Contains(x)))
                         {
-                            WriteOnce.Log?.Warn($"Unsupported tag group or pattern detected '{pattern.SearchPattern}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags"); 
+                            WriteOnce.Log?.Warn($"Unsupported tag group or pattern detected '{pattern.SearchPattern}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags");
                         }
 
                         //create dynamic "category" groups of tags with pattern relationship established from TagReportGroups.json
@@ -534,7 +532,7 @@ namespace Microsoft.ApplicationInspector.CLI
             HashSet<string> dupCheck = new HashSet<string>();
             RulesEngine.Confidence[] confidences = { Confidence.High, Confidence.Medium, Confidence.Low };
 
-            foreach (string tag in _appMetaData?.UniqueTags?? new List<string>())
+            foreach (string tag in _appMetaData?.UniqueTags ?? new List<string>())
             {
                 var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
                 foreach (Confidence confidence in confidences)

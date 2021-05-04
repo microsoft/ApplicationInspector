@@ -83,7 +83,7 @@ namespace Microsoft.ApplicationInspector.Commands
             string result;
             try
             {
-                result = Resources.ResourceManager.GetString(id.ToString())??"";
+                result = Resources.ResourceManager.GetString(id.ToString()) ?? "";
             }
             catch (Exception e)
             {

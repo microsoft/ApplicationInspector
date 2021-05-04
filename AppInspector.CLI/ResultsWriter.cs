@@ -95,7 +95,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 if (outputWriter.TextWriter != Console.Out) //target writer was to a file so inform where to find results
                 {
-                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE, outputWriter?.OutputFileName??""), true, WriteOnce.ConsoleVerbosity.Medium, false);
+                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE, outputWriter?.OutputFileName ?? ""), true, WriteOnce.ConsoleVerbosity.Medium, false);
                 }
             }
         }

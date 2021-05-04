@@ -1,11 +1,8 @@
-﻿using System;
+﻿using BenchmarkDotNet.Attributes;
+using Microsoft.ApplicationInspector.Commands;
+using System;
 using System.IO;
 using System.Reflection;
-using ApplicationInspector.Unitprocess.Misc;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Columns;
-using BenchmarkDotNet.Diagnostics.Windows.Configs;
-using Microsoft.ApplicationInspector.Commands;
 
 namespace Benchmarks
 {

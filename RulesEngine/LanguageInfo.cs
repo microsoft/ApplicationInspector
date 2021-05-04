@@ -22,5 +22,5 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public LangFileType Type { get; set; } = LangFileType.Code;
     }
 
-   
+
 }

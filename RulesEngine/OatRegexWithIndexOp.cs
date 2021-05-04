@@ -18,7 +18,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     public class OATRegexWithIndexOperation : OatOperation
     {
         private readonly ConcurrentDictionary<(string, RegexOptions), Regex?> RegexCache = new ConcurrentDictionary<(string, RegexOptions), Regex?>();
-        
+
         /// <summary>
         /// Create an OatOperation given an analyzer
         /// </summary>
@@ -76,7 +76,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         regexOpts |= RegexOptions.Multiline;
                     }
-                    
+
                     var outmatches = new List<(int, Boundary)>();//tuple results i.e. pattern index and where
 
                     if (Analyzer != null)

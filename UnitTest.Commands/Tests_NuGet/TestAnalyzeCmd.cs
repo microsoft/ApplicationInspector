@@ -309,7 +309,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                     exitCode = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 exitCode = AnalyzeResult.ExitCode.CriticalError;
             }

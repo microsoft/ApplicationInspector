@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.ApplicationInspector.Commands;
-using System;
 using System.Collections.Generic;
 
 namespace Microsoft.ApplicationInspector.CLI
@@ -22,7 +21,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteOnce.Result("Results");
             }
 
-            foreach(var tag in getTagsResult.Metadata.UniqueTags ?? new List<string>())
+            foreach (var tag in getTagsResult.Metadata.UniqueTags ?? new List<string>())
             {
                 WriteOnce.Result(tag);
             }

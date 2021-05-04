@@ -1,23 +1,18 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using DotLiquid.Tags;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Newtonsoft.Json;
 using NLog;
+using ShellProgressBar;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using ShellProgressBar;
-using System.Diagnostics;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -422,7 +417,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 foreach (var file in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
                 {
                     yield return file;
-                }   
+                }
             }
         }
 
@@ -453,7 +448,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         fileQueue.AddRange(GetFileEntries(_options));
                     }
-                    catch(OverflowException e)
+                    catch (OverflowException e)
                     {
                         WriteOnce.Error($"Overflowed while extracting file entries. Check the input for quines or zip bombs. {e.Message}");
                     }
@@ -509,7 +504,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         var current = _metaDataHelper?.Files.Count ?? 0;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));
-                        var timeExpected = new TimeSpan(0,0,0,0,millisExpected);
+                        var timeExpected = new TimeSpan(0, 0, 0, 0, millisExpected);
                         progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches.");
                     }
                     progressBar.Message = $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches.";

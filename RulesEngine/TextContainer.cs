@@ -3,8 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -242,7 +240,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     //extra check to ensure inline is not part of a file path or url i.e. http://111.333.44.444
                     if (lastInline > 1)
                     {
-                        if (text[lastInline-1] != ' ') //indicates not an actual inline comment
+                        if (text[lastInline - 1] != ' ') //indicates not an actual inline comment
                         {
                             return false;
                         }

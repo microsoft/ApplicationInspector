@@ -30,7 +30,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     CLITagTestCmdOptions,
                     CLIExportTagsCmdOptions,
                     CLIVerifyRulesCmdOptions,
-                    CLIPackRulesCmdOptions, 
+                    CLIPackRulesCmdOptions,
                     CLIGetTagsCommandOptions>(args)
                   .MapResult(
                     (CLIAnalyzeCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
@@ -75,7 +75,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     var fileInfo = new FileInfo(Utils.LogFilePath);
                     if (fileInfo.Length > 0)
                     {
-                        WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath??Utils.GetPath(Utils.AppPath.defaultLog)), true, WriteOnce.ConsoleVerbosity.Low, false);
+                        WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath ?? Utils.GetPath(Utils.AppPath.defaultLog)), true, WriteOnce.ConsoleVerbosity.Low, false);
                     }
                 }
             }
@@ -133,7 +133,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.Log = logger;
             options.Log = logger;
 
-            if (options.RepackDefaultRules && !string.IsNullOrEmpty(options.OutputFilePath)) 
+            if (options.RepackDefaultRules && !string.IsNullOrEmpty(options.OutputFilePath))
             {
                 WriteOnce.Info("output file argument ignored for -d option");
             }
@@ -158,7 +158,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.Log = logger;
             options.Log = logger;
 
-            CommonOutputChecks((CLICommandOptions)options);
+            CommonOutputChecks(options);
             return RunGetTagsCommand(options);
         }
 
@@ -179,7 +179,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 }
             }
 
-            CommonOutputChecks((CLICommandOptions)options);
+            CommonOutputChecks(options);
             return RunAnalyzeCommand(options);
         }
 

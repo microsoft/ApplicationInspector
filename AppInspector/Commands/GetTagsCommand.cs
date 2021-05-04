@@ -1,20 +1,18 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using DotLiquid.Tags;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Newtonsoft.Json;
 using NLog;
+using ShellProgressBar;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ShellProgressBar;
-using System.Diagnostics;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -319,7 +317,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             if (opts.SingleThread)
             {
-                foreach(var entry in populatedEntries)
+                foreach (var entry in populatedEntries)
                 {
                     if (cancellationToken.IsCancellationRequested) { break; }
                     ProcessAndAddToMetadata(entry);
@@ -413,7 +411,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-    
+
 
         /// <summary>
         /// Main entry point to start analysis from CLI; handles setting up rules, directory enumeration
@@ -433,7 +431,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!_options.NoShowProgress)
             {
                 var done = false;
-                List<FileEntry> fileQueue = new ();
+                List<FileEntry> fileQueue = new();
 
                 _ = Task.Factory.StartNew(() =>
                 {

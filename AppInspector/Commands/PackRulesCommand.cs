@@ -106,7 +106,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
-            else if(_options.RepackDefaultRules && !Directory.Exists(Utils.GetPath(Utils.AppPath.defaultRulesSrc)))
+            else if (_options.RepackDefaultRules && !Directory.Exists(Utils.GetPath(Utils.AppPath.defaultRulesSrc)))
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.PACK_RULES_NO_DEFAULT));
             }

@@ -42,7 +42,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 0)]
         public int FileTimeOut { get; set; } = 0;
-        
+
         [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
         public bool SingleThread { get; set; }
 

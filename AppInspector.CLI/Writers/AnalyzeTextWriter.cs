@@ -3,11 +3,8 @@
 
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.RulesEngine;
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Text;
 
 namespace Microsoft.ApplicationInspector.CLI
@@ -60,8 +57,8 @@ namespace Microsoft.ApplicationInspector.CLI
             return string.Join(' ', data);
         }
 
-        private string StringList(ImmutableSortedDictionary<string,int> data)
-        { 
+        private string StringList(ImmutableSortedDictionary<string, int> data)
+        {
             return string.Join(' ', data.Keys);
         }
 
@@ -106,11 +103,11 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.General(string.Format("Source path: {0}", metaData.SourcePath));
             WriteOnce.General(string.Format("Authors: {0}", metaData.Authors));
             WriteOnce.General(string.Format("Last Updated: {0}", metaData.LastUpdated));
-            WriteOnce.General(string.Format("Languages: {0}", StringList(metaData.Languages?.ToImmutableSortedDictionary() ?? new Dictionary<string,int>().ToImmutableSortedDictionary())));
+            WriteOnce.General(string.Format("Languages: {0}", StringList(metaData.Languages?.ToImmutableSortedDictionary() ?? new Dictionary<string, int>().ToImmutableSortedDictionary())));
             WriteOnce.General(string.Format(MakeHeading("Scan Settings")));
             WriteOnce.General(string.Format("Date scanned: {0}", metaData.DateScanned));
             WriteOnce.General(string.Format(MakeHeading("Source Info")));
-            WriteOnce.General(string.Format("Application type: {0}", StringList(metaData.AppTypes??new List<string>())));
+            WriteOnce.General(string.Format("Application type: {0}", StringList(metaData.AppTypes ?? new List<string>())));
             WriteOnce.General(string.Format("Package types: {0}", StringList(metaData.PackageTypes ?? new List<string>())));
             WriteOnce.General(string.Format("File extensions: {0}", StringList(metaData.FileExtensions ?? new List<string>())));
             WriteOnce.General(string.Format(MakeHeading("Detetected Targets")));

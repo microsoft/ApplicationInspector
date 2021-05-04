@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -25,13 +24,13 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private ConcurrentDictionary<string, byte> AppTypes { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> FileNames { get; set; } = new ConcurrentDictionary<string, byte>();
-        private ConcurrentDictionary<string, byte> UniqueTags { get; set; } = new ConcurrentDictionary<string, byte>();      
+        private ConcurrentDictionary<string, byte> UniqueTags { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> Outputs { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> Targets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> CPUTargets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> CloudTargets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> OSTargets { get; set; } = new ConcurrentDictionary<string, byte>();
-        private ConcurrentDictionary<string,MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
+        private ConcurrentDictionary<string, MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
         private ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
 
         internal ConcurrentBag<MatchRecord> Matches { get; set; } = new ConcurrentBag<MatchRecord>();
@@ -104,7 +103,7 @@ namespace Microsoft.ApplicationInspector.Commands
             string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
             {
-               AppTypes.TryAdd(solutionType, 0);
+                AppTypes.TryAdd(solutionType, 0);
             }
 
             bool CounterOnlyTagSet = false;
@@ -202,7 +201,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     UniqueTags.TryAdd(tag, 0);
                 }
-                
+
                 Matches.Add(matchRecord);
             }
         }

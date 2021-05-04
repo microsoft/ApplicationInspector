@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
@@ -101,7 +100,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         Index = targetBoundary.Index + m.Index
                                     };
                                     // Should return only scoped matches
-                                    if (tc.ScopeMatch(wc.Scopes ?? new PatternScope[] {}, translatedBoundary))
+                                    if (tc.ScopeMatch(wc.Scopes ?? new PatternScope[] { }, translatedBoundary))
                                     {
                                         boundaries.Add(translatedBoundary);
                                     }

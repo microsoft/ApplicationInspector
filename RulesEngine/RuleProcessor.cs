@@ -1,16 +1,16 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.CST.OAT;
+using Microsoft.CST.RecursiveExtractor;
 using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Microsoft.CST.OAT;
-using Microsoft.CST.RecursiveExtractor;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
@@ -243,7 +243,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             List<MatchRecord> resultsList = new List<MatchRecord>();
 
             using var sr = new StreamReader(fileEntry.Content);
-            
+
             TextContainer textContainer = new TextContainer(await sr.ReadToEndAsync(), languageInfo.Name);
 
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
@@ -315,7 +315,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
 
             List<MatchRecord> removes = new List<MatchRecord>();
-            
+
             foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
             {
                 if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
@@ -474,7 +474,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             // We want to go from (start - 5) to (start + 5) (off by one?)
             // LINE=10, len=5, we want 8..12, so N-(L-1)/2 to N+(L-1)/2
             // But cap those values at 0/end
-            
+
             return string.Join(Environment.NewLine, lines[excerptStartLine..(excerptEndLine + 1)].Select(x => x[minSpaces..].TrimEnd()));
         }
 

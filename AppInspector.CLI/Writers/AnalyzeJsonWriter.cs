@@ -3,8 +3,6 @@
 
 using Microsoft.ApplicationInspector.Commands;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Microsoft.ApplicationInspector.CLI
 {

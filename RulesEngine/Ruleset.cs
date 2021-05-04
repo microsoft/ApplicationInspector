@@ -2,6 +2,7 @@
 
 using Microsoft.CST.OAT;
 using Newtonsoft.Json;
+using NLog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using NLog;
 
 
 namespace Microsoft.ApplicationInspector.RulesEngine
@@ -25,12 +25,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private List<ConvertedOatRule> _oatRules = new List<ConvertedOatRule>();//used for analyze cmd primarily
         private IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
         private Regex searchInRegex = new Regex("\\((.*),(.*)\\)", RegexOptions.Compiled);
-        
+
         /// <summary>
         ///     Creates instance of Ruleset
         /// </summary>
         public RuleSet(Logger? log)
-        { 
+        {
             _logger = log;
         }
 
@@ -46,7 +46,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         public event DeserializationError? OnDeserializationError;
 
-  
+
         /// <summary>
         ///     Parse a directory with rule files and loads the rules
         /// </summary>
@@ -59,7 +59,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (string filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
             {
-                this.AddFile(filename, tag);
+                AddFile(filename, tag);
             }
         }
 
@@ -295,7 +295,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public IEnumerator GetEnumerator()
         {
             GetAppInspectorRules();
-            return this._rules.GetEnumerator();
+            return _rules.GetEnumerator();
         }
 
         /// <summary>
@@ -305,7 +305,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         IEnumerator<Rule> IEnumerable<Rule>.GetEnumerator()
         {
             GetAppInspectorRules();
-            return this._rules.GetEnumerator();
+            return _rules.GetEnumerator();
         }
 
         internal IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)

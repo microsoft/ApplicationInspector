@@ -4,11 +4,9 @@
 using Microsoft.ApplicationInspector.RulesEngine;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -104,11 +102,12 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Total unique matches by Rule Id
         /// </summary>
         [JsonProperty(PropertyName = "uniqueMatchesCount")]
-        public int UniqueMatchesCount { 
-            get 
+        public int UniqueMatchesCount
+        {
+            get
             {
                 return Matches?.Select(x => x.RuleId).Distinct().Count() ?? 0;
-            } 
+            }
         }
 
         /// <summary>
