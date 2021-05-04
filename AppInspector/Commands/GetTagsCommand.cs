@@ -271,7 +271,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public List<FileEntry> GetFileEntries(AnalyzeOptions opts)
+        public List<FileEntry> GetFileEntries(GetTagsCommandOptions opts)
         {
             WriteOnce.SafeLog("GetTagsCommand::GetFileEntries", LogLevel.Trace);
 
