@@ -123,7 +123,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return rawResult;
         }
 
-        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null)
+        public List<MatchRecord> AnalyzeFile(string contents, FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null)
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
@@ -133,9 +133,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             List<MatchRecord> resultsList = new List<MatchRecord>();
 
-            using var sr = new StreamReader(fileEntry.Content);
-
-            TextContainer textContainer = new TextContainer(sr.ReadToEnd(), languageInfo.Name);
+            TextContainer textContainer = new TextContainer(contents, languageInfo.Name);
 
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
@@ -232,6 +230,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList;
         }
 
+        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null)
+        {
+            using var sr = new StreamReader(fileEntry.Content);
+            return AnalyzeFile(sr.ReadToEnd(), fileEntry, languageInfo, tagsToIgnore);
+        }
 
         public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo)
         {

@@ -345,18 +345,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    List<char> bytes = new List<char>();
-                    using var sr = new StreamReader(file.Content);
-                    var ch = 0;
-                    var numChomped = 0;
-                    while (ch != -1 && numChomped++ < 1024)
-                    {
-                        ch = sr.Read();
-                        bytes.Add((char)ch);
-                    }
+                    using var sr = new StreamReader(file.Content,null,true,-1,true);
+                    var fileContents = sr.ReadToEnd();
+
+                    file.Content.Position = 0;
 
                     // More than 50% non printable characters, this is probably a binary file
-                    if (bytes.Count(c => !Char.IsControl(c) || Char.IsWhiteSpace(c)) > bytes.Count / 2)
+                    if (fileContents.Count(c => Char.IsControl(c) && !Char.IsWhiteSpace(c)) > fileContents.Length / 2)
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
                         fileRecord.Status = ScanState.Skipped;
@@ -382,7 +377,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (opts.FileTimeOut > 0)
                         {
                             using var cts = new CancellationTokenSource();
-                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo), cts.Token);
+                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(fileContents, file, languageInfo), cts.Token);
                             if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                             {
                                 WriteOnce.Error($"{file.FullPath} analysis timed out.");
@@ -396,7 +391,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         else
                         {
-                            results = _rulesProcessor.AnalyzeFile(file, languageInfo);
+                            results = _rulesProcessor.AnalyzeFile(fileContents, file, languageInfo);
                             fileRecord.Status = ScanState.Analyzed;
                         }
 
