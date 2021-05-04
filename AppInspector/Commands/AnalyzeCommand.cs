@@ -340,57 +340,74 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 if (_fileExclusionList.Any(x => file.FullPath.ToLower().Contains(x)))
                 {
-
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
                     fileRecord.Status = ScanState.Skipped;
                 }
                 else
                 {
-                    _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
-
-                    LanguageInfo languageInfo = new LanguageInfo();
-
-                    if (Language.FromFileName(file.FullPath, ref languageInfo))
+                    List<char> bytes = new List<char>();
+                    using var sr = new StreamReader(file.Content);
+                    var ch = 0;
+                    while (ch != -1)
                     {
-                        _metaDataHelper?.AddLanguage(languageInfo.Name);
+                        ch = sr.Read();
+                        bytes.Add((char)ch);
+                    }
+
+                    // More than 50% non printable characters, this is probably a binary file
+                    if (bytes.Count(c => !Char.IsControl(c) || Char.IsWhiteSpace(c)) > bytes.Count / 2)
+                    {
+                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
+                        fileRecord.Status = ScanState.Skipped;
                     }
                     else
                     {
-                        _metaDataHelper?.AddLanguage("Unknown");
-                        languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
-                    }
+                        _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
 
-                    List<MatchRecord> results = new List<MatchRecord>();
-                    
-                    if (opts.FileTimeOut > 0)
-                    {
-                        using var cts = new CancellationTokenSource();
-                        var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo),cts.Token);
-                        if (!t.Wait(new TimeSpan(0, 0, opts.FileTimeOut)))
+                        LanguageInfo languageInfo = new LanguageInfo();
+
+                        if (Language.FromFileName(file.FullPath, ref languageInfo))
                         {
-                            WriteOnce.Error($"{file.FullPath} analysis timed out.");
-                            fileRecord.Status = ScanState.TimedOut;
-                            cts.Cancel();
+                            _metaDataHelper?.AddLanguage(languageInfo.Name);
                         }
                         else
                         {
+                            _metaDataHelper?.AddLanguage("Unknown");
+                            languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
+                        }
+
+                        List<MatchRecord> results = new List<MatchRecord>();
+
+                        if (opts.FileTimeOut > 0)
+                        {
+                            using var cts = new CancellationTokenSource();
+                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo), cts.Token);
+                            if (!t.Wait(new TimeSpan(0, 0, opts.FileTimeOut)))
+                            {
+                                WriteOnce.Error($"{file.FullPath} analysis timed out.");
+                                fileRecord.Status = ScanState.TimedOut;
+                                cts.Cancel();
+                            }
+                            else
+                            {
+                                fileRecord.Status = ScanState.Analyzed;
+                            }
+                        }
+                        else
+                        {
+                            results = _rulesProcessor.AnalyzeFile(file, languageInfo);
                             fileRecord.Status = ScanState.Analyzed;
                         }
-                    }
-                    else
-                    {
-                        results = _rulesProcessor.AnalyzeFile(file, languageInfo);
-                        fileRecord.Status = ScanState.Analyzed;
-                    }
 
-                    if (results.Any())
-                    {
-                        fileRecord.Status = ScanState.Affected;
-                        fileRecord.NumFindings = results.Count;
-                    }
-                    foreach (var matchRecord in results)
-                    {
-                        _metaDataHelper?.AddMatchRecord(matchRecord);
+                        if (results.Any())
+                        {
+                            fileRecord.Status = ScanState.Affected;
+                            fileRecord.NumFindings = results.Count;
+                        }
+                        foreach (var matchRecord in results)
+                        {
+                            _metaDataHelper?.AddMatchRecord(matchRecord);
+                        }
                     }
                 }
 
