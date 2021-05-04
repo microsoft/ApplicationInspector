@@ -194,11 +194,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 select.Value.IncrementCount();
             }
 
-            //omit adding if ther a counter metric tag
+            //omit adding if it is a counter metric tag
             if (!CounterOnlyTagSet)
             {
                 //update list of unique tags as we go
-                foreach (string tag in matchRecord.Tags ?? new string[] { })
+                foreach (string tag in matchRecord.Tags ?? Array.Empty<string>())
                 {
                     UniqueTags.TryAdd(tag, 0);
                 }

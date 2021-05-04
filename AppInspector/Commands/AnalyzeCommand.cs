@@ -98,7 +98,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        private readonly List<string>? _fileExclusionList;
+        private readonly List<string> _fileExclusionList = new List<string>();
         private Confidence _confidence;
         private readonly AnalyzeOptions _options; //copy of incoming caller options
 
@@ -114,6 +114,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     _fileExclusionList.Clear();
                 }
+            }
+            else
+            {
+                _fileExclusionList = new List<string>();
             }
 
             LastUpdated = DateTime.MinValue;
@@ -334,7 +338,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 var sw = new Stopwatch();
                 sw.Start();
 
-                if (!_options.FilePathExclusions.Any(x => file.FullPath.ToLower().Contains(x)))
+                if (_fileExclusionList.Any(x => file.FullPath.ToLower().Contains(x)))
+                {
+
+                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
+                    fileRecord.Status = ScanState.Skipped;
+                }
+                else
                 {
                     _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
 
@@ -382,11 +392,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         _metaDataHelper?.AddMatchRecord(matchRecord);
                     }
-                }
-                else
-                {
-                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
-                    fileRecord.Status = ScanState.Skipped;
                 }
 
                 sw.Stop();
