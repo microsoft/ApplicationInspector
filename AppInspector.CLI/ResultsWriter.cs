@@ -63,11 +63,6 @@ namespace Microsoft.ApplicationInspector.CLI
                         WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_REPORTSIZE_WARN));
                     }
 
-                    if (!cLIAnalyzeCmdOptions.SuppressBrowserOpen)
-                    {
-                        Utils.OpenBrowser(cLIAnalyzeCmdOptions.OutputFilePath);
-                    }
-
                     Finalize(writer, "Analyze");
                     return;
                 }
