@@ -345,13 +345,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    using var sr = new StreamReader(file.Content,null,true,-1,true);
+                    using var sr = new StreamReader(file.Content);
                     var fileContents = sr.ReadToEnd();
 
-                    file.Content.Position = 0;
-
                     // More than 50% non printable characters, this is probably a binary file
-                    if (fileContents.Count(c => Char.IsControl(c) && !Char.IsWhiteSpace(c)) > fileContents.Length / 2)
+                    if (fileContents.Take(1024).Count(c => Char.IsControl(c) && !Char.IsWhiteSpace(c)) > fileContents.Length / 2)
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
                         fileRecord.Status = ScanState.Skipped;
