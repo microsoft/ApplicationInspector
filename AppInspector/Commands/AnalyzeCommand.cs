@@ -319,7 +319,26 @@ namespace Microsoft.ApplicationInspector.Commands
                     var fileContents = sr.ReadToEnd();
 
                     // Follows Perl's model, if there are NULs or too many non printable characters, this is probably a binary file
-                    if (fileContents.Any(c => c == '\0') || fileContents.Count(c => char.IsControl(c) && !char.IsWhiteSpace(c)) / (double)fileContents.Length > 0.3)
+                    var skip = false;
+                    var controlsEncountered = 0;
+                    var maxControlsEncountered = (int)(0.3 * fileContents.Length);
+                    for(int i = 0; i < fileContents.Length && !skip; i++)
+                    {
+                        if (fileContents[i] == '\0')
+                        {
+                            skip = true;
+                        }
+                        else if (char.IsControl(fileContents[i]) && !char.IsWhiteSpace(fileContents[i]))
+                        {
+                            if (++controlsEncountered > maxControlsEncountered)
+                            {
+                                skip = true;
+                            }
+                            
+                        }
+                    }
+
+                    if (skip)
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
                         fileRecord.Status = ScanState.Skipped;
@@ -383,19 +402,25 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        public IEnumerable<FileEntry> GetFileEntries(AnalyzeOptions opts)
+        public List<FileEntry> GetFileEntries(AnalyzeOptions opts)
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntries", LogLevel.Trace);
 
             Extractor extractor = new();
+            var fileEntries = new List<FileEntry>();
 
             foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
             {
-                foreach (var file in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
+                try
                 {
-                    yield return file;
+                    fileEntries.AddRange(extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }));
+                }
+                catch(OverflowException)
+                {
+                    WriteOnce.SafeLog($"Overflow encountered when extracting {srcFile}.", LogLevel.Warn);
                 }
             }
+            return fileEntries;
         }
 
 
