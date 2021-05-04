@@ -91,7 +91,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 _fileExclusionList = new List<string>();
             }
 
-            LastUpdated = DateTime.MinValue;
             DateScanned = DateTime.Now;
 
             try
@@ -499,7 +498,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
             {
-                _metaDataHelper.Metadata.LastUpdated = LastUpdated.ToString();
                 _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
                 _metaDataHelper.PrepareReport();
                 getTagsResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
