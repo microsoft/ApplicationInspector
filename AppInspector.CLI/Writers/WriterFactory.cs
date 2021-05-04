@@ -61,8 +61,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return writer;
         }
 
-
-
         /// <summary>
         /// Only AnalyzeResultsWriter supports an html option
         /// </summary>

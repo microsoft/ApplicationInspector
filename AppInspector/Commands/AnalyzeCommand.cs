@@ -24,7 +24,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public string SourcePath { get; set; } = "";
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
-        public string MatchDepth { get; set; } = "best";
         public string ConfidenceFilters { get; set; } = "high,medium";
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
         public bool SingleThread { get; set; } = false;
@@ -98,7 +97,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public AnalyzeCommand(AnalyzeOptions opt)
         {
             _options = opt;
-            _options.MatchDepth ??= "best";
 
             if (!string.IsNullOrEmpty(opt.FilePathExclusions))
             {
