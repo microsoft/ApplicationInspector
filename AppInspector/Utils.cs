@@ -107,59 +107,6 @@ namespace Microsoft.ApplicationInspector.Commands
             return ruleSet;
         }
 
-        public static void OpenBrowser(string? url)
-        {
-            if (string.IsNullOrEmpty(url))
-            {
-                WriteOnce.Log?.Error("Bad url for OpenBrowser method");
-                return;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                try
-                {
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_SUCCESS));
-                }
-                catch (Exception)
-                {
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_FAIL));//soft error
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BROWSER")))
-                {
-                    try
-                    {
-                        Process.Start("xdg-open", "\"" + url + "\"");
-                        WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_SUCCESS));
-                    }
-                    catch (Exception)
-                    {
-                        WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_FAIL));//soft error
-                    }
-                }
-                else
-                {
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_ENVIRONMENT_VAR));
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                try
-                {
-                    Process.Start("open", "\"" + url + "\"");
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_SUCCESS));
-                }
-                catch (Exception)
-                {
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_FAIL));//soft error
-                }
-            }
-        }
-
         /// <summary>
         /// For use when logging is needed and was not called via CLI
         /// </summary>
