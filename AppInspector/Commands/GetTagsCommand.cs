@@ -316,7 +316,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
-                var fileRecord = new FileRecord() { FileName = file.FullPath, ModifyTime = file.ModifyTime };
+                var fileRecord = new FileRecord() { FileName = file.FullPath, ModifyTime = file.ModifyTime, CreateTime = file.CreateTime, AccessTime = file.AccessTime };
 
                 var sw = new Stopwatch();
                 sw.Start();

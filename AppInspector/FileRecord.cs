@@ -9,6 +9,8 @@ namespace Microsoft.ApplicationInspector.Commands
         public ScanState Status { get; set; } = ScanState.None;
         public int NumFindings { get; set; } = 0;
         public DateTime ModifyTime { get; set; } = DateTime.MinValue;
+        public DateTime CreateTime { get; set; } = DateTime.MinValue;
+        public DateTime AccessTime { get; set; } = DateTime.MinValue;
     }
 
     public enum ScanState
