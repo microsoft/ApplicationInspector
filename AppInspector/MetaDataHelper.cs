@@ -223,6 +223,7 @@ namespace Microsoft.ApplicationInspector.Commands
             Metadata.FileExtensions = FileExtensions.Keys.ToList();
             Metadata.Outputs = Outputs.Keys.ToList();
             Metadata.Targets = Targets.Keys.ToList();
+
             Metadata.Files = Files.ToList();
             Metadata.Matches = Matches.ToList();
 
