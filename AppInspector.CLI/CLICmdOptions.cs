@@ -65,9 +65,6 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
-        [Option('b', "suppress-browser-open", Required = false, HelpText = "Suppress automatically opening HTML output using default browser", Default = false)]
-        public bool SuppressBrowserOpen { get; set; }
-
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; } = "high,medium";
 
