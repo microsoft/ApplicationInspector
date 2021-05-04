@@ -16,11 +16,6 @@ namespace Microsoft.ApplicationInspector.CLI
             //For console output, update write once for same results to console or file
             WriteOnce.TextWriter = TextWriter;
 
-            if (string.IsNullOrEmpty(commandOptions.OutputFilePath))
-            {
-                WriteOnce.Result("Results");
-            }
-
             foreach (var tag in getTagsResult.Metadata.UniqueTags ?? new List<string>())
             {
                 WriteOnce.Result(tag);
