@@ -70,8 +70,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class AnalyzeCommand
     {
-        private readonly int MAX_FILESIZE = 1024 * 1000 * 5;  // Skip source files larger than 5 MB and log
-
+        private int numBytesToCheckForBinary = 1024;
         private IEnumerable<string>? _srcfileList;
         private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
         private RuleProcessor? _rulesProcessor;
@@ -349,7 +348,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     var fileContents = sr.ReadToEnd();
 
                     // More than 50% non printable characters, this is probably a binary file
-                    if (fileContents.Take(1024).Count(c => Char.IsControl(c) && !Char.IsWhiteSpace(c)) > fileContents.Length / 2)
+                    if (fileContents.Take(numBytesToCheckForBinary).Count(c => Char.IsControl(c) && !Char.IsWhiteSpace(c)) > numBytesToCheckForBinary / 2)
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
                         fileRecord.Status = ScanState.Skipped;
