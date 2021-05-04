@@ -66,8 +66,6 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class GetTagsCommand
     {
-        private int numBytesToCheckForBinary = 1024;
-
         private IEnumerable<string>? _srcfileList;
         private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
         private RuleProcessor? _rulesProcessor;
@@ -351,8 +349,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     using var sr = new StreamReader(file.Content);
                     var fileContents = sr.ReadToEnd();
 
-                    // Too many non printable characters, this is probably a binary file
-                    if (fileContents.Take(numBytesToCheckForBinary).Count(c => Char.IsControl(c) && !Char.IsWhiteSpace(c)) > numBytesToCheckForBinary / 2)
+                    // Follows Perl's model, if there are NULs or too many non printable characters, this is probably a binary file
+                    if (fileContents.Any(c => c == '\0') || fileContents.Count(c => char.IsControl(c) && !char.IsWhiteSpace(c)) / (double)fileContents.Length > 0.3)
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
                         fileRecord.Status = ScanState.Skipped;
