@@ -325,30 +325,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    using var sr = new StreamReader(file.Content);
-                    var fileContents = sr.ReadToEnd();
-
-                    // Follows Perl's model, if there are NULs or too many non printable characters, this is probably a binary file
-                    var skip = false;
-                    var controlsEncountered = 0;
-                    var maxControlsEncountered = (int)(0.3 * fileContents.Length);
-                    for(int i = 0; i < fileContents.Length && !skip; i++)
-                    {
-                        if (fileContents[i] == '\0')
-                        {
-                            skip = true;
-                        }
-                        else if (char.IsControl(fileContents[i]) && !char.IsWhiteSpace(fileContents[i]))
-                        {
-                            if (++controlsEncountered > maxControlsEncountered)
-                            {
-                                skip = true;
-                            }
-                            
-                        }
-                    }
-
-                    if (skip)
+                    if (IsBinary(file.Content))
                     {
                         WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
                         fileRecord.Status = ScanState.Skipped;
@@ -374,7 +351,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (opts.FileTimeOut > 0)
                         {
                             using var cts = new CancellationTokenSource();
-                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(fileContents, file, languageInfo), cts.Token);
+                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo), cts.Token);
                             if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                             {
                                 WriteOnce.Error($"{file.FullPath} timed out.");
@@ -388,7 +365,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         else
                         {
-                            results = _rulesProcessor.AnalyzeFile(fileContents, file, languageInfo);
+                            results = _rulesProcessor.AnalyzeFile(file, languageInfo);
                             fileRecord.Status = ScanState.Analyzed;
                         }
 
@@ -433,6 +410,33 @@ namespace Microsoft.ApplicationInspector.Commands
             return fileEntries;
         }
 
+
+        // Follows Perl's model, if there are NULs or too many non printable characters, this is probably a binary file
+        private bool IsBinary(Stream fileContents)
+        {
+            var ch = (char)0;
+            var controlsEncountered = 0;
+            var maxControlsEncountered = (int)(0.3 * fileContents.Length);
+            while (ch != -1)
+            {
+                ch = (char)fileContents.ReadByte();
+                if (ch == '\0')
+                {
+                    fileContents.Position = 0;
+                    return true;
+                }
+                else if (char.IsControl(ch) && !char.IsWhiteSpace(ch))
+                {
+                    if (++controlsEncountered > maxControlsEncountered)
+                    {
+                        fileContents.Position = 0;
+                        return true;
+                    }
+                }
+            }
+            fileContents.Position = 0;
+            return false;
+        }
 
         /// <summary>
         /// Main entry point to start analysis from CLI; handles setting up rules, directory enumeration
