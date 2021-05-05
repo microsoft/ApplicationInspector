@@ -382,7 +382,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                     analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
                 }
-                else if (_metaDataHelper?.Metadata?.Matches?.Count == 0)
+                else if (_metaDataHelper?.Matches.Count == 0)
                 {
                     WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                     analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
