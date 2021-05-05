@@ -673,10 +673,8 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using var sr = new StreamReader(fs);
-            var fileContents = sr.ReadToEnd();
 
-            if (IsBinary(fileContents))
+            if (IsBinary(fs))
             {
                 return false;
             }
@@ -732,19 +730,20 @@ namespace Microsoft.ApplicationInspector.Commands
             return true;
         }
 
-        private bool IsBinary(string fileContents)
+        // Follows Perl's model, if there are NULs or too many non printable characters, this is probably a binary file
+        private bool IsBinary(Stream fileContents)
         {
-            // Follows Perl's model, if there are NULs or too many non printable characters, this is probably a binary file
-            var skip = false;
+            var ch = (char)0;
             var controlsEncountered = 0;
             var maxControlsEncountered = (int)(0.3 * fileContents.Length);
-            for (int i = 0; i < fileContents.Length && !skip; i++)
+            while (ch != -1)
             {
-                if (fileContents[i] == '\0')
+                ch = (char)fileContents.ReadByte();
+                if (ch == '\0')
                 {
                     return true;
                 }
-                else if (char.IsControl(fileContents[i]) && !char.IsWhiteSpace(fileContents[i]))
+                else if (char.IsControl(ch) && !char.IsWhiteSpace(ch))
                 {
                     if (++controlsEncountered > maxControlsEncountered)
                     {
