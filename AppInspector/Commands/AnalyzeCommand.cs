@@ -711,7 +711,39 @@ namespace Microsoft.ApplicationInspector.Commands
                 return false;
             }
 
+            using var sr = new StreamReader(fileEntry.Content, leaveOpen: true);
+            var fileContents = sr.ReadToEnd();
+            fileEntry.Content.Position = 0;
+
+            if (IsBinary(fileContents))
+            {
+                return false;
+            }
+
             return true;
+        }
+
+        private bool IsBinary(string fileContents)
+        {
+            // Follows Perl's model, if there are NULs or too many non printable characters, this is probably a binary file
+            var skip = false;
+            var controlsEncountered = 0;
+            var maxControlsEncountered = (int)(0.3 * fileContents.Length);
+            for (int i = 0; i < fileContents.Length && !skip; i++)
+            {
+                if (fileContents[i] == '\0')
+                {
+                    return true;
+                }
+                else if (char.IsControl(fileContents[i]) && !char.IsWhiteSpace(fileContents[i]))
+                {
+                    if (++controlsEncountered > maxControlsEncountered)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
