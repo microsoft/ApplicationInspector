@@ -41,7 +41,8 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             Success = 0,
             NoMatches = 1,
-            CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
+            CriticalError = Utils.ExitCode.CriticalError, //ensure common value for final exit log mention
+            Canceled = 3
         }
 
         [JsonProperty(Order = 2, PropertyName = "resultCode")]
@@ -290,13 +291,20 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 foreach (var entry in populatedEntries)
                 {
-                    if (cancellationToken.IsCancellationRequested) { break; }
+                    if (cancellationToken.IsCancellationRequested) { return AnalyzeResult.ExitCode.Canceled; }
                     ProcessAndAddToMetadata(entry);
                 }
             }
             else
             {
-                Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken }, entry => ProcessAndAddToMetadata(entry));
+                try
+                {
+                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken }, entry => ProcessAndAddToMetadata(entry));
+                }
+                catch (OperationCanceledException)
+                {
+                    return AnalyzeResult.ExitCode.Canceled;
+                }
             }
 
             return AnalyzeResult.ExitCode.Success;
