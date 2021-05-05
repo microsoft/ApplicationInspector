@@ -58,19 +58,18 @@ namespace Microsoft.ApplicationInspector.CLI
                     writer?.WriteResults(analyzeResult, cLIAnalyzeCmdOptions);
 
                     //post checks
-                    if (File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
+                    if (options.OutputFilePath is not null && File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
                     {
                         WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_REPORTSIZE_WARN));
-                    }
-
-                    if (!cLIAnalyzeCmdOptions.SuppressBrowserOpen)
-                    {
-                        Utils.OpenBrowser(cLIAnalyzeCmdOptions.OutputFilePath);
                     }
 
                     Finalize(writer, "Analyze");
                     return;
                 }
+            }
+            else if (result is GetTagsResult gtr && options is CLIGetTagsCommandOptions gtco)
+            {
+                commandCompletedMsg = "Get Tags";
             }
             else
             {
@@ -96,7 +95,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 if (outputWriter.TextWriter != Console.Out) //target writer was to a file so inform where to find results
                 {
-                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE, outputWriter?.OutputFileName??""), true, WriteOnce.ConsoleVerbosity.Medium, false);
+                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE, outputWriter?.OutputFileName ?? ""), true, WriteOnce.ConsoleVerbosity.Medium, false);
                 }
             }
         }

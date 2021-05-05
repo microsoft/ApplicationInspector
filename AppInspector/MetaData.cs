@@ -4,11 +4,9 @@
 using Microsoft.ApplicationInspector.RulesEngine;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -54,7 +52,20 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Last modified date for source code scanned
         /// </summary>
         [JsonProperty(PropertyName = "lastUpdated")]
-        public string? LastUpdated { get; set; }
+        public string LastUpdated 
+        { 
+            get 
+            {
+                if (Files.Any())
+                {
+                    return Files.Select(x => x.ModifyTime).Max().ToString();
+                }
+                else
+                {
+                    return DateTime.MinValue.ToString();
+                }
+            } 
+        }
 
         /// <summary>
         /// Date of analyze scan
@@ -65,57 +76,51 @@ namespace Microsoft.ApplicationInspector.Commands
         //stats
 
         /// <summary>
-        /// Total number of files scanned successfully
-        /// </summary>
-        [JsonProperty(PropertyName = "filesAnalyzed")]
-        public int FilesAnalyzed { get { return _FilesAnalyzed; } set { _FilesAnalyzed = value; } }
-
-        private int _FilesAnalyzed;
-
-        /// <summary>
         /// Total number of files in source path
         /// </summary>
         [JsonProperty(PropertyName = "totalFiles")]
-        public int TotalFiles { get { return _TotalFiles; } set { _TotalFiles = value; } }
+        public int TotalFiles { get { return Files.Count; } }
 
-        private int _TotalFiles;
+        /// <summary>
+        /// Total number of files Timed out 
+        /// </summary>
+        [JsonProperty(PropertyName = "filesTimedOut")]
+        public int FilesTimedOut { get { return Files.Count(x => x.Status == ScanState.TimedOut); } }
+
+        /// <summary>
+        /// Total number of files scanned
+        /// </summary>
+        [JsonProperty(PropertyName = "filesAnalyzed")]
+        public int FilesAnalyzed { get { return Files.Count(x => x.Status == ScanState.Analyzed || x.Status == ScanState.Affected); } }
 
         /// <summary>
         /// Total number of skipped files based on supported formats
         /// </summary>
         [JsonProperty(PropertyName = "filesSkipped")]
-        public int FilesSkipped { get { return _FilesSkipped; } set { _FilesSkipped = value; } }
-
-        private int _FilesSkipped;
+        public int FilesSkipped { get { return Files.Count(x => x.Status == ScanState.Skipped); } }
 
         /// <summary>
         /// Total files with at least one result
         /// </summary>
         [JsonProperty(PropertyName = "filesAffected")]
-        public int FilesAffected { get { return _FilesAffected; } set { _FilesAffected = value; } }
-
-        private int _FilesAffected;
+        public int FilesAffected { get { return Files.Count(x => x.Status == ScanState.Affected); } }
 
         /// <summary>
         /// Total matches with supplied argument settings
         /// </summary>
         [JsonProperty(PropertyName = "totalMatchesCount")]
-        public int TotalMatchesCount { get { return _TotalMatchesCount; } set { _TotalMatchesCount = value; } }
-
-        private int _TotalMatchesCount;
+        public int TotalMatchesCount { get { return Matches?.Count ?? 0; } }
 
         /// <summary>
-        /// Total unique matches by tag
+        /// Total unique matches by Rule Id
         /// </summary>
         [JsonProperty(PropertyName = "uniqueMatchesCount")]
-        public int UniqueMatchesCount { 
-            get 
+        public int UniqueMatchesCount
+        {
+            get
             {
-                if (UniqueTags != null)
-                    return UniqueTags.Count;
-                else 
-                    return 0; 
-            } 
+                return Matches?.Select(x => x.RuleId).Distinct().Count() ?? 0;
+            }
         }
 
         /// <summary>
@@ -135,7 +140,6 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
         public List<string>? UniqueTags { get; set; } = new List<string>();
-
 
         /// <summary>
         /// List of detected unique code dependency includes
@@ -195,37 +199,15 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detailed MatchRecords from scan
         /// </summary>
         [JsonProperty(PropertyName = "detailedMatchList")]
-        public List<MatchRecord>? Matches { get; } = new List<MatchRecord>();
+        public List<MatchRecord> Matches { get; set; } = new List<MatchRecord>();
+
+        [JsonProperty(PropertyName = "filesInformation")]
+        public List<FileRecord> Files { get; set; } = new List<FileRecord>();
 
         public MetaData(string applicationName, string sourcePath)
         {
             ApplicationName = applicationName;
             SourcePath = sourcePath;
-        }
-
-        internal void IncrementFilesAnalyzed(int amount = 1)
-        {
-            Interlocked.Add(ref _FilesAnalyzed, amount);
-        }
-
-        internal void IncrementTotalFiles(int amount = 1)
-        {
-            Interlocked.Add(ref _TotalFiles, amount);
-        }
-
-        internal void IncrementTotalMatchesCount(int amount = 1)
-        {
-            Interlocked.Add(ref _TotalMatchesCount, amount);
-        }
-
-        internal void IncrementFilesAffected(int amount = 1)
-        {
-            Interlocked.Add(ref _FilesAffected, amount);
-        }
-
-        internal void IncrementFilesSkipped(int amount = 1)
-        {
-            Interlocked.Add(ref _FilesSkipped, amount);
         }
     }
 }

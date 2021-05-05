@@ -229,7 +229,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 //check for specific error if desired
             }
 
-            Assert.IsTrue(exitCode == TagTestResult.ExitCode.TestFailed);
+            Assert.IsTrue(exitCode == TagTestResult.ExitCode.CriticalError);
         }
 
         [TestMethod]

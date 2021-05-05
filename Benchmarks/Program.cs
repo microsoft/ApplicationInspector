@@ -1,9 +1,5 @@
-﻿using System;
-using System.IO;
-using ApplicationInspector.Unitprocess.Misc;
-using BenchmarkDotNet.Configs;
+﻿using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Running;
-using Benchmarks;
 
 namespace ApplicationInspector.Benchmarks
 {

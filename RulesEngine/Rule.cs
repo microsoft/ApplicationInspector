@@ -43,17 +43,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public string? Description { get; set; } = "";
 
         [JsonProperty(PropertyName = "applies_to")]
-        public string[]? AppliesTo 
-        { 
-            get 
-            { 
-                return _appliesTo; 
-            } 
-            set 
-            { 
-                _updateCompiled = true; 
-                _appliesTo = value; 
-            } 
+        public string[]? AppliesTo
+        {
+            get
+            {
+                return _appliesTo;
+            }
+            set
+            {
+                _updateCompiled = true;
+                _appliesTo = value;
+            }
         }
 
         private string[]? _appliesTo;

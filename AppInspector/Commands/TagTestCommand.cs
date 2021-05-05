@@ -171,12 +171,12 @@ namespace Microsoft.ApplicationInspector.Commands
 
             //init based on true or false present argument value
             WriteOnce.ConsoleVerbosity saveVerbosity = WriteOnce.Verbosity;
-            AnalyzeResult.ExitCode analyzeCmdResult = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode analyzeCmdResult = GetTagsResult.ExitCode.CriticalError;
 
             try
             {
                 //setup analyze call with silent option
-                AnalyzeCommand cmd1 = new AnalyzeCommand(new AnalyzeOptions
+                GetTagsCommand cmd1 = new GetTagsCommand(new GetTagsCommandOptions
                 {
                     SourcePath = _options?.SourcePath ?? "",
                     IgnoreDefaultRules = true,
@@ -187,16 +187,16 @@ namespace Microsoft.ApplicationInspector.Commands
                 });
 
                 //get and perform initial analyze on results
-                AnalyzeResult analyze1 = cmd1.GetResult();
+                GetTagsResult analyze1 = cmd1.GetResult();
 
                 //restore
                 WriteOnce.Verbosity = saveVerbosity;
 
-                if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)
+                if (analyze1.ResultCode == GetTagsResult.ExitCode.CriticalError)
                 {
                     throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR));
                 }
-                else if (analyzeCmdResult == AnalyzeResult.ExitCode.NoMatches)
+                else if (analyzeCmdResult == GetTagsResult.ExitCode.NoMatches)
                 {
                     WriteOnce.General(MsgHelp.FormatString(MsgHelp.ID.TAGTEST_RESULTS_TEST_TYPE, _arg_tagTestType.ToString()), false, WriteOnce.ConsoleVerbosity.Low);
                     tagTestResult.ResultCode = _arg_tagTestType == TagTestType.RulesPresent ? TagTestResult.ExitCode.TestFailed : TagTestResult.ExitCode.TestPassed;
@@ -253,11 +253,11 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             if (_arg_tagTestType == TagTestType.RulesNotPresent)
             {
-                return (!list.Any(v => v.Equals(test)));
+                return (!list?.Any(v => v.Equals(test)) ?? false);
             }
             else
             {
-                return (list.Any(v => v.Equals(test)));
+                return (list?.Any(v => v.Equals(test)) ?? false);
             }
         }
     }

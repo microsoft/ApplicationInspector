@@ -19,7 +19,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Options specific to analyze operation not to be confused with CLIAnalyzeCmdOptions which include CLI only args
     /// </summary>
-    public class AnalyzeOptions : CommandOptions
+    public class GetTagsCommandOptions : CommandOptions
     {
         public string SourcePath { get; set; } = "";
         public string? CustomRulesPath { get; set; }
@@ -35,7 +35,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Result of Analyze command GetResult() operation
     /// </summary>
-    public class AnalyzeResult : Result
+    public class GetTagsResult : Result
     {
         public enum ExitCode
         {
@@ -54,7 +54,7 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(Order = 3, PropertyName = "metaData")]
         public MetaData Metadata { get; set; }
 
-        public AnalyzeResult()
+        public GetTagsResult()
         {
             Metadata = new MetaData("", "");//needed for serialization for other commands; replaced later
         }
@@ -63,7 +63,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Analyze operation for setup and processing of results from Rulesengine
     /// </summary>
-    public class AnalyzeCommand
+    public class GetTagsCommand
     {
         private IEnumerable<string>? _srcfileList;
         private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
@@ -73,9 +73,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private readonly List<string> _fileExclusionList = new List<string>();
         private Confidence _confidence;
-        private readonly AnalyzeOptions _options; //copy of incoming caller options
+        private readonly GetTagsCommandOptions _options; //copy of incoming caller options
 
-        public AnalyzeCommand(AnalyzeOptions opt)
+        public GetTagsCommand(GetTagsCommandOptions opt)
         {
             _options = opt;
 
@@ -259,7 +259,7 @@ namespace Microsoft.ApplicationInspector.Commands
             var rpo = new RuleProcessorOptions()
             {
                 logger = _options.Log,
-                uniqueMatches = false,
+                uniqueMatches = true,
                 treatEverythingAsCode = _options.TreatEverythingAsCode,
                 confidenceFilter = _confidence
             };
@@ -272,26 +272,43 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        /// <summary>
-        /// Populate the MetaDataHelper with the data from the FileEntries.
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <param name="opts"></param>
-        /// <param name="populatedEntries"></param>
-        public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts, IEnumerable<FileEntry> populatedEntries)
+        public List<FileEntry> GetFileEntries(GetTagsCommandOptions opts)
         {
-            WriteOnce.SafeLog("AnalyzeCommand::PopulateRecords", LogLevel.Trace);
+            WriteOnce.SafeLog("GetTagsCommand::GetFileEntries", LogLevel.Trace);
+
+            Extractor extractor = new();
+            var fileEntries = new List<FileEntry>();
+
+            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+            {
+                try
+                {
+                    fileEntries.AddRange(extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }));
+                }
+                catch (OverflowException)
+                {
+                    WriteOnce.SafeLog($"Overflow encountered when extracting {srcFile}.", LogLevel.Warn);
+                }
+            }
+            return fileEntries;
+        }
+
+        public GetTagsResult.ExitCode PopulateRecords(CancellationToken cancellationToken, GetTagsCommandOptions opts, IEnumerable<FileEntry> populatedEntries)
+        {
+            WriteOnce.SafeLog("GetTagsCommand::PopulateRecords", LogLevel.Trace);
 
             if (_rulesProcessor is null || populatedEntries is null)
             {
-                return AnalyzeResult.ExitCode.CriticalError;
+                return GetTagsResult.ExitCode.CriticalError;
             }
-
             if (opts.SingleThread)
             {
                 foreach (var entry in populatedEntries)
                 {
-                    if (cancellationToken.IsCancellationRequested) { return AnalyzeResult.ExitCode.Canceled; }
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return GetTagsResult.ExitCode.Canceled;
+                    }
                     ProcessAndAddToMetadata(entry);
                 }
             }
@@ -303,11 +320,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch (OperationCanceledException)
                 {
-                    return AnalyzeResult.ExitCode.Canceled;
+                    return GetTagsResult.ExitCode.Canceled;
                 }
             }
 
-            return AnalyzeResult.ExitCode.Success;
+            return GetTagsResult.ExitCode.Success;
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
@@ -316,7 +333,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 var sw = new Stopwatch();
                 sw.Start();
 
-                if (_fileExclusionList.Any(x => file.FullPath.ToLower().Contains(x)))
+
+                if (_fileExclusionList.Any(v => file.FullPath.ToLower().Contains(v)))
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
                     fileRecord.Status = ScanState.Skipped;
@@ -330,7 +348,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     var skip = false;
                     var controlsEncountered = 0;
                     var maxControlsEncountered = (int)(0.3 * fileContents.Length);
-                    for(int i = 0; i < fileContents.Length && !skip; i++)
+                    for (int i = 0; i < fileContents.Length && !skip; i++)
                     {
                         if (fileContents[i] == '\0')
                         {
@@ -342,7 +360,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             {
                                 skip = true;
                             }
-                            
+
                         }
                     }
 
@@ -372,7 +390,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (opts.FileTimeOut > 0)
                         {
                             using var cts = new CancellationTokenSource();
-                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(fileContents, file, languageInfo), cts.Token);
+                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(fileContents, file, languageInfo, null), cts.Token);
                             if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                             {
                                 WriteOnce.Error($"{file.FullPath} timed out.");
@@ -386,18 +404,17 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         else
                         {
-                            results = _rulesProcessor.AnalyzeFile(fileContents, file, languageInfo);
+                            results = _rulesProcessor.AnalyzeFile(fileContents, file, languageInfo, null);
                             fileRecord.Status = ScanState.Analyzed;
                         }
 
                         if (results.Any())
                         {
                             fileRecord.Status = ScanState.Affected;
-                            fileRecord.NumFindings = results.Count;
-                        }
-                        foreach (var matchRecord in results)
-                        {
-                            _metaDataHelper?.AddMatchRecord(matchRecord);
+                            foreach (var matchRecord in results)
+                            {
+                                _metaDataHelper?.AddTagsFromMatchRecord(matchRecord);
+                            }
                         }
                     }
                 }
@@ -410,26 +427,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        public List<FileEntry> GetFileEntries(AnalyzeOptions opts)
-        {
-            WriteOnce.SafeLog("AnalyzeCommand::GetFileEntries", LogLevel.Trace);
-
-            Extractor extractor = new();
-            var fileEntries = new List<FileEntry>();
-
-            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
-            {
-                try
-                {
-                    fileEntries.AddRange(extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }));
-                }
-                catch(OverflowException)
-                {
-                    WriteOnce.SafeLog($"Overflow encountered when extracting {srcFile}.", LogLevel.Warn);
-                }
-            }
-            return fileEntries;
-        }
 
 
         /// <summary>
@@ -438,11 +435,11 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Pre: All Configure Methods have been called already and we are ready to SCAN
         /// </summary>
         /// <returns></returns>
-        public AnalyzeResult GetResult()
+        public GetTagsResult GetResult()
         {
-            WriteOnce.SafeLog("AnalyzeCommand::Run", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
-            AnalyzeResult analyzeResult = new AnalyzeResult()
+            WriteOnce.SafeLog("GetTagsCommand::Run", LogLevel.Trace);
+            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "GetTags"));
+            GetTagsResult getTagsResult = new GetTagsResult()
             {
                 AppVersion = Utils.GetVersionString()
             };
@@ -473,6 +470,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     BackgroundCharacter = '\u2593',
                     DisableBottomPercentage = true
                 };
+                WriteOnce.PauseConsoleOutput = true;
 
                 using (var pbar = new IndeterminateProgressBar("Enumerating Files.", options))
                 {
@@ -482,7 +480,6 @@ namespace Microsoft.ApplicationInspector.Commands
                         pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     }
                     pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
-
                     pbar.Finished();
                 }
 
@@ -497,8 +494,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     DisableBottomPercentage = false,
                     ShowEstimatedDuration = true
                 };
-                WriteOnce.PauseConsoleOutput = true;
-                using (var progressBar = new ProgressBar(fileQueue.Count, $"Analyzing Files.", options2))
+
+                using (var progressBar = new ProgressBar(fileQueue.Count, $"Getting Tags..", options2))
                 {
                     var sw = new Stopwatch();
                     sw.Start();
@@ -515,10 +512,9 @@ namespace Microsoft.ApplicationInspector.Commands
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));
                         var timeExpected = new TimeSpan(0, 0, 0, 0, millisExpected);
-                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
+                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Getting Tags. {_metaDataHelper?.UniqueTagsCount} Tags Found. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
                     }
-
-                    progressBar.Message = $"{_metaDataHelper?.Matches.Count} Matches. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
+                    progressBar.Message = $"{_metaDataHelper?.UniqueTagsCount} Tags Found. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
                 WriteOnce.PauseConsoleOutput = false;
@@ -532,22 +528,22 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_metaDataHelper?.Files.All(x => x.Status == ScanState.Skipped) ?? false)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                getTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
             }
-            else if (_metaDataHelper?.Matches.Count == 0)
+            else if (_metaDataHelper?.UniqueTagsCount == 0)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                getTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
             }
             else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
             {
                 _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
                 _metaDataHelper.PrepareReport();
-                analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
+                getTagsResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
+                getTagsResult.ResultCode = GetTagsResult.ExitCode.Success;
             }
 
-            return analyzeResult;
+            return getTagsResult;
         }
     }
 }

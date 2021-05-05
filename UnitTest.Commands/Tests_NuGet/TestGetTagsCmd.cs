@@ -14,7 +14,7 @@ namespace ApplicationInspector.Unitprocess.Commands
     /// Note: in order to avoid log reuse, include the optional parameter CloseLogOnCommandExit = true
     /// </summary>
     [TestClass]
-    public class TestAnalyzeCmd
+    public class TestGetTagsCmd
     {
         [TestInitialize]
         public void InitOutput()
@@ -41,41 +41,41 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\log.txt")
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
             {
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
 
         [TestMethod]
         public void BasicAnalyze_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 FilePathExclusions = "none" //allow source under unittest path
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
@@ -83,23 +83,23 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]
         public void BasicZipRead_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\main.zip"),
                 FilePathExclusions = "none", //allow source under unittest path
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
@@ -107,23 +107,23 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]
         public void InvalidSourcePath_Fail()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"baddir\main.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
@@ -131,24 +131,24 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.CriticalError);
         }
 
         [TestMethod]
         public void InvalidRulesPath_Fail()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"notfound.json")
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
@@ -156,24 +156,24 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.CriticalError);
         }
 
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
                 IgnoreDefaultRules = true,
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
@@ -181,13 +181,13 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.CriticalError);
         }
 
         [TestMethod]
         public void NoDefaultCustomRules_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
@@ -195,89 +195,89 @@ namespace ApplicationInspector.Unitprocess.Commands
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                exitCode = GetTagsResult.ExitCode.CriticalError;
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]
         public void DefaultWithCustomRules_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                exitCode = GetTagsResult.ExitCode.CriticalError;
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]
         public void DefaultAndCustomRulesMatched_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json")
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 if (result.Metadata.UniqueTags.Any(v => v.Contains("Authentication.General")) &&
                     result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")))
                 {
-                    exitCode = AnalyzeResult.ExitCode.Success;
+                    exitCode = GetTagsResult.ExitCode.Success;
                 }
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                exitCode = GetTagsResult.ExitCode.CriticalError;
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]
         public void ExclusionFilter_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one"),
                 FilePathExclusions = "main.cpp"
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
@@ -285,85 +285,85 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.NoMatches);
         }
 
         [TestMethod]
-        public void ExpectedTagCountDupsAllowed_Pass()
+        public void ExpectedTagCount()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
                 SingleThread = true
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
-                if (exitCode == AnalyzeResult.ExitCode.Success)
+                if (exitCode == GetTagsResult.ExitCode.Success)
                 {
-                    exitCode = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.TotalMatchesCount == 0 && result.Metadata.UniqueMatchesCount == 0 && result.Metadata.UniqueTags.Count == 7 ? GetTagsResult.ExitCode.Success : GetTagsResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                exitCode = GetTagsResult.ExitCode.CriticalError;
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
 
-            AnalyzeResult.ExitCode exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCodeMultiThread = GetTagsResult.ExitCode.CriticalError;
             options.SingleThread = false;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCodeMultiThread = result.ResultCode;
-                if (exitCodeMultiThread == AnalyzeResult.ExitCode.Success)
+                if (exitCodeMultiThread == GetTagsResult.ExitCode.Success)
                 {
-                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 0 && result.Metadata.UniqueMatchesCount == 0 && result.Metadata.UniqueTags.Count == 7 ? GetTagsResult.ExitCode.Success : GetTagsResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
             {
-                exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
+                exitCodeMultiThread = GetTagsResult.ExitCode.CriticalError;
             }
 
-            Assert.IsTrue(exitCodeMultiThread == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCodeMultiThread == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]
         public void NoMatchesFound_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                exitCode = GetTagsResult.ExitCode.CriticalError;
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.NoMatches);
         }
 
         [TestMethod]
         public void LogTraceLevel_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
@@ -372,34 +372,34 @@ namespace ApplicationInspector.Unitprocess.Commands
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logtrace.txt"),
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
                 string testLogContent = File.ReadAllText(options.LogFilePath);
                 if (String.IsNullOrEmpty(testLogContent))
                 {
-                    exitCode = AnalyzeResult.ExitCode.CriticalError;
+                    exitCode = GetTagsResult.ExitCode.CriticalError;
                 }
                 else if (testLogContent.ToLower().Contains("trace"))
                 {
-                    exitCode = AnalyzeResult.ExitCode.Success;
+                    exitCode = GetTagsResult.ExitCode.Success;
                 }
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                exitCode = GetTagsResult.ExitCode.CriticalError;
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
@@ -408,31 +408,31 @@ namespace ApplicationInspector.Unitprocess.Commands
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logerror.txt"),
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
+                GetTagsCommand command = new GetTagsCommand(options);
             }
             catch (Exception)
             {
                 string testLogContent = File.ReadAllText(options.LogFilePath);
                 if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
                 {
-                    exitCode = AnalyzeResult.ExitCode.Success;
+                    exitCode = GetTagsResult.ExitCode.Success;
                 }
                 else
                 {
-                    exitCode = AnalyzeResult.ExitCode.CriticalError;
+                    exitCode = GetTagsResult.ExitCode.CriticalError;
                 }
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]
         public void LogDebugLevel_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
@@ -441,20 +441,20 @@ namespace ApplicationInspector.Unitprocess.Commands
                 CloseLogOnCommandExit = true
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
                 string testLogContent = File.ReadAllText(options.LogFilePath);
                 if (String.IsNullOrEmpty(testLogContent))
                 {
-                    exitCode = AnalyzeResult.ExitCode.CriticalError;
+                    exitCode = GetTagsResult.ExitCode.CriticalError;
                 }
                 else if (testLogContent.ToLower().Contains("debug"))
                 {
-                    exitCode = AnalyzeResult.ExitCode.Success;
+                    exitCode = GetTagsResult.ExitCode.Success;
                 }
             }
             catch (Exception)
@@ -462,24 +462,24 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
+                GetTagsCommand command = new GetTagsCommand(options);
+                GetTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
             catch (Exception)
@@ -487,20 +487,20 @@ namespace ApplicationInspector.Unitprocess.Commands
                 //check for specific error if desired
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.CriticalError);
         }
 
         [TestMethod]
         public void NoConsoleOutput_Pass()
         {
-            AnalyzeOptions options = new AnalyzeOptions()
+            GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                 FilePathExclusions = "none", //allow source under unittest path
                 ConsoleVerbosityLevel = "none"
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
                 // Attempt to open output file.
@@ -509,30 +509,30 @@ namespace ApplicationInspector.Unitprocess.Commands
                     // Redirect standard output from the console to the output file.
                     Console.SetOut(writer);
 
-                    AnalyzeCommand command = new AnalyzeCommand(options);
-                    AnalyzeResult result = command.GetResult();
+                    GetTagsCommand command = new GetTagsCommand(options);
+                    GetTagsResult result = command.GetResult();
                     exitCode = result.ResultCode;
                     try
                     {
                         string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
                         if (String.IsNullOrEmpty(testContent))
                         {
-                            exitCode = AnalyzeResult.ExitCode.Success;
+                            exitCode = GetTagsResult.ExitCode.Success;
                         }
                         else
                         {
-                            exitCode = AnalyzeResult.ExitCode.NoMatches;
+                            exitCode = GetTagsResult.ExitCode.NoMatches;
                         }
                     }
                     catch (Exception)
                     {
-                        exitCode = AnalyzeResult.ExitCode.Success;//no console output file found
+                        exitCode = GetTagsResult.ExitCode.Success;//no console output file found
                     }
                 }
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                exitCode = GetTagsResult.ExitCode.CriticalError;
             }
 
             //reset to normal
@@ -540,7 +540,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             standardOutput.AutoFlush = true;
             Console.SetOut(standardOutput);
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
         }
     }
 }

@@ -106,7 +106,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
-            else if(_options.RepackDefaultRules && !Directory.Exists(Utils.GetPath(Utils.AppPath.defaultRulesSrc)))
+            else if (_options.RepackDefaultRules && !Directory.Exists(Utils.GetPath(Utils.AppPath.defaultRulesSrc)))
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.PACK_RULES_NO_DEFAULT));
             }
@@ -144,7 +144,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
                 }
-                packRulesResult.Rules = new List<Rule>(verifier.CompiledRuleset?.AsEnumerable() ?? new RuleSet(null).AsEnumerable());
+                packRulesResult.Rules = verifier.CompiledRuleset?.GetAppInspectorRules().ToList() ?? new List<Rule>();
                 packRulesResult.ResultCode = PackRulesResult.ExitCode.Success;
             }
             catch (OpException e)

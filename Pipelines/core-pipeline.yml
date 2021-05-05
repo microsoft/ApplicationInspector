@@ -16,6 +16,7 @@ pr:
   branches:
     include:
     - main
+    - development
   paths:
     include:
     - Pipelines

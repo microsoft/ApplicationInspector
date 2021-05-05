@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -25,14 +24,19 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private ConcurrentDictionary<string, byte> AppTypes { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> FileNames { get; set; } = new ConcurrentDictionary<string, byte>();
-        private ConcurrentDictionary<string, byte> UniqueTags { get; set; } = new ConcurrentDictionary<string, byte>();      
+        private ConcurrentDictionary<string, byte> UniqueTags { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> Outputs { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> Targets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> CPUTargets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> CloudTargets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> OSTargets { get; set; } = new ConcurrentDictionary<string, byte>();
-        private ConcurrentDictionary<string,MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
+        private ConcurrentDictionary<string, MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
         private ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
+
+        internal ConcurrentBag<MatchRecord> Matches { get; set; } = new ConcurrentBag<MatchRecord>();
+        internal ConcurrentBag<FileRecord> Files { get; set; } = new ConcurrentBag<FileRecord>();
+
+        public int UniqueTagsCount { get { return UniqueTags.Keys.Count; } }
 
         internal MetaData Metadata { get; set; }
 
@@ -47,10 +51,8 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Keeps helpers isolated from MetaData class which is used as a result object to keep pure
         /// </summary>
         /// <param name="matchRecord"></param>
-        public void AddMatchRecord(MatchRecord matchRecord)
+        public void AddTagsFromMatchRecord(MatchRecord matchRecord)
         {
-            bool allowAdd = true;
-
             //special handling for standard characteristics in report
             foreach (var tag in matchRecord.Tags ?? new string[] { })
             {
@@ -70,14 +72,13 @@ namespace Microsoft.ApplicationInspector.Commands
                         Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
                         break;
                     case "Metadata.Application.Target.Processor":
-                        _ = CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     case "Metadata.Application.Output.Type":
-                        _ = Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
                         break;
                     case "Dependency.SourceInclude":
-                        allowAdd = false; //design to keep noise out of detailed match list
-                        break;
+                        return; //design to keep noise out of detailed match list
                     default:
                         if (tag.Contains("Metric."))
                         {
@@ -88,11 +89,11 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         else if (tag.Contains(".Platform.OS"))
                         {
-                            _ = OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length-1)+1),0);
+                            OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
                         }
                         else if (tag.Contains("CloudServices.Hosting"))
                         {
-                            _ = CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length-1)+1), 0);
+                            CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
                         }
                         break;
                 }
@@ -102,7 +103,7 @@ namespace Microsoft.ApplicationInspector.Commands
             string solutionType = DetectSolutionType(matchRecord);
             if (!string.IsNullOrEmpty(solutionType))
             {
-                _ = AppTypes.TryAdd(solutionType,0);
+                AppTypes.TryAdd(solutionType, 0);
             }
 
             bool CounterOnlyTagSet = false;
@@ -119,17 +120,89 @@ namespace Microsoft.ApplicationInspector.Commands
                 //update list of unique tags as we go
                 foreach (string tag in matchRecord.Tags ?? new string[] { })
                 {
-                    _ = UniqueTags.TryAdd(tag,0);
-                }
-
-                if (allowAdd)
-                {
-                    Metadata?.Matches?.Add(matchRecord);
+                    UniqueTags.TryAdd(tag, 0);
                 }
             }
-            else
+        }
+
+        /// <summary>
+        /// Assist in aggregating reporting properties of matches as they are added
+        /// Keeps helpers isolated from MetaData class which is used as a result object to keep pure
+        /// </summary>
+        /// <param name="matchRecord"></param>
+        public void AddMatchRecord(MatchRecord matchRecord)
+        {
+            //special handling for standard characteristics in report
+            foreach (var tag in matchRecord.Tags ?? new string[] { })
             {
-                Metadata.IncrementTotalMatchesCount(-1);//reduce e.g. tag counters not included as detailed match
+                switch (tag)
+                {
+                    case "Metadata.Application.Author":
+                    case "Metadata.Application.Publisher":
+                        Metadata.Authors = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Description":
+                        Metadata.Description = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Name":
+                        Metadata.ApplicationName = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Version":
+                        Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
+                        break;
+                    case "Metadata.Application.Target.Processor":
+                        CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        break;
+                    case "Metadata.Application.Output.Type":
+                        Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
+                        break;
+                    case "Dependency.SourceInclude":
+                        return; //design to keep noise out of detailed match list
+                    default:
+                        if (tag.Contains("Metric."))
+                        {
+                            TagCounters.TryAdd(tag, new MetricTagCounter()
+                            {
+                                Tag = tag
+                            });
+                        }
+                        else if (tag.Contains(".Platform.OS"))
+                        {
+                            OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
+                        }
+                        else if (tag.Contains("CloudServices.Hosting"))
+                        {
+                            CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
+                        }
+                        break;
+                }
+            }
+
+            //Special handling; attempt to detect app types...review for multiple pattern rule limitation
+            string solutionType = DetectSolutionType(matchRecord);
+            if (!string.IsNullOrEmpty(solutionType))
+            {
+                AppTypes.TryAdd(solutionType, 0);
+            }
+
+            bool CounterOnlyTagSet = false;
+            var selected = matchRecord.Tags is not null ? TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag ?? ""))) : new Dictionary<string, MetricTagCounter>();
+            foreach (var select in selected)
+            {
+                CounterOnlyTagSet = true;
+                select.Value.IncrementCount();
+            }
+
+            //omit adding if it is a counter metric tag
+            if (!CounterOnlyTagSet)
+            {
+                //update list of unique tags as we go
+                foreach (string tag in matchRecord.Tags ?? Array.Empty<string>())
+                {
+                    UniqueTags.TryAdd(tag, 0);
+                }
+
+                Matches.Add(matchRecord);
             }
         }
 
@@ -149,6 +222,9 @@ namespace Microsoft.ApplicationInspector.Commands
             Metadata.FileExtensions = FileExtensions.Keys.ToList();
             Metadata.Outputs = Outputs.Keys.ToList();
             Metadata.Targets = Targets.Keys.ToList();
+
+            Metadata.Files = Files.ToList();
+            Metadata.Matches = Matches.ToList();
 
             Metadata.CPUTargets.Sort();
             Metadata.AppTypes.Sort();
@@ -179,7 +255,6 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
         #region helpers
-
         /// <summary>
         /// Initial best guess to deduce project name; if scanned metadata from project solution value is replaced later
         /// </summary>

@@ -6,10 +6,8 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.Commands
@@ -129,7 +127,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
 
-            foreach(var pattern in rule.FileRegexes ?? Array.Empty<string>())
+            foreach (var pattern in rule.FileRegexes ?? Array.Empty<string>())
             {
                 try
                 {
@@ -156,7 +154,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch (Exception e)
                 {
-                    _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id??"", searchPattern.Pattern??"", e.Message));
+                    _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
                     return false;
                 }
             }

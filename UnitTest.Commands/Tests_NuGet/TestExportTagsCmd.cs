@@ -45,7 +45,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 ExportTagsCommand command = new ExportTagsCommand(options);
                 ExportTagsResult result = command.GetResult();
-                exitCode = (ExportTagsResult.ExitCode)result.ResultCode;
+                exitCode = result.ResultCode;
             }
             catch (Exception)
             {
@@ -68,7 +68,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 ExportTagsCommand command = new ExportTagsCommand(options);
                 ExportTagsResult result = command.GetResult();
-                exitCode = (ExportTagsResult.ExitCode)result.ResultCode;
+                exitCode = result.ResultCode;
             }
             catch (Exception)
             {
@@ -92,7 +92,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 ExportTagsCommand command = new ExportTagsCommand(options);
                 ExportTagsResult result = command.GetResult();
-                exitCode = (ExportTagsResult.ExitCode)result.ResultCode;
+                exitCode = result.ResultCode;
             }
             catch (Exception)
             {
@@ -115,7 +115,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 ExportTagsCommand command = new ExportTagsCommand(options);
                 ExportTagsResult result = command.GetResult();
-                exitCode = (ExportTagsResult.ExitCode)result.ResultCode;
+                exitCode = result.ResultCode;
             }
             catch (Exception)
             {
@@ -140,7 +140,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 ExportTagsCommand command = new ExportTagsCommand(options);
                 ExportTagsResult result = command.GetResult();
-                exitCode = (ExportTagsResult.ExitCode)result.ResultCode;
+                exitCode = result.ResultCode;
 
                 if (exitCode == ExportTagsResult.ExitCode.Success)
                 {
@@ -178,7 +178,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 ExportTagsCommand command = new ExportTagsCommand(options);
                 ExportTagsResult result = command.GetResult();
-                exitCode = (ExportTagsResult.ExitCode)result.ResultCode;
+                exitCode = result.ResultCode;
             }
             catch (Exception)
             {
@@ -211,7 +211,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 ExportTagsCommand command = new ExportTagsCommand(options);
                 ExportTagsResult result = command.GetResult();
-                exitCode = (ExportTagsResult.ExitCode)result.ResultCode;
+                exitCode = result.ResultCode;
 
                 string testLogContent = File.ReadAllText(options.LogFilePath);
                 if (String.IsNullOrEmpty(testLogContent))
@@ -245,7 +245,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 ExportTagsCommand command = new ExportTagsCommand(options);
                 ExportTagsResult result = command.GetResult();
-                exitCode = (ExportTagsResult.ExitCode)result.ResultCode;
+                exitCode = result.ResultCode;
             }
             catch (Exception)
             {
@@ -269,7 +269,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 ExportTagsCommand command = new ExportTagsCommand(options);
                 ExportTagsResult result = command.GetResult();
-                exitCode = (ExportTagsResult.ExitCode)result.ResultCode;
+                exitCode = result.ResultCode;
             }
             catch (Exception)
             {

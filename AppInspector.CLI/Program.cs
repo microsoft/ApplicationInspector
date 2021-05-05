@@ -30,7 +30,8 @@ namespace Microsoft.ApplicationInspector.CLI
                     CLITagTestCmdOptions,
                     CLIExportTagsCmdOptions,
                     CLIVerifyRulesCmdOptions,
-                    CLIPackRulesCmdOptions>(args)
+                    CLIPackRulesCmdOptions,
+                    CLIGetTagsCommandOptions>(args)
                   .MapResult(
                     (CLIAnalyzeCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLITagDiffCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
@@ -38,7 +39,8 @@ namespace Microsoft.ApplicationInspector.CLI
                     (CLIExportTagsCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIVerifyRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIPackRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
-                    errs => 1
+                    (CLIGetTagsCommandOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
+                    errs => 2
                   );
 
                 finalResult = argsResult;
@@ -73,7 +75,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     var fileInfo = new FileInfo(Utils.LogFilePath);
                     if (fileInfo.Length > 0)
                     {
-                        WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath??Utils.GetPath(Utils.AppPath.defaultLog)), true, WriteOnce.ConsoleVerbosity.Low, false);
+                        WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath ?? Utils.GetPath(Utils.AppPath.defaultLog)), true, WriteOnce.ConsoleVerbosity.Low, false);
                     }
                 }
             }
@@ -131,7 +133,7 @@ namespace Microsoft.ApplicationInspector.CLI
             WriteOnce.Log = logger;
             options.Log = logger;
 
-            if (options.RepackDefaultRules && !string.IsNullOrEmpty(options.OutputFilePath)) 
+            if (options.RepackDefaultRules && !string.IsNullOrEmpty(options.OutputFilePath))
             {
                 WriteOnce.Info("output file argument ignored for -d option");
             }
@@ -150,6 +152,16 @@ namespace Microsoft.ApplicationInspector.CLI
             return RunPackRulesCommand(options);
         }
 
+        private static int VerifyOutputArgsRun(CLIGetTagsCommandOptions options)
+        {
+            Logger logger = Utils.SetupLogging(options, true);
+            WriteOnce.Log = logger;
+            options.Log = logger;
+
+            CommonOutputChecks(options);
+            return RunGetTagsCommand(options);
+        }
+
         private static int VerifyOutputArgsRun(CLIAnalyzeCmdOptions options)
         {
             Logger logger = Utils.SetupLogging(options, true);
@@ -165,21 +177,9 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_HTML_EXTENSION));
                 }
-
-                if (options.AllowDupTags) //fix #183; duplicates results for html format is not supported which causes filedialog issues
-                {
-                    WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
-                    throw new OpException(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NODUPLICATES_HTML_FORMAT));
-                }
-
-                if (options.SimpleTagsOnly) //won't work for html that expects full data for UI
-                {
-                    WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_SIMPLETAGS_HTML_FORMAT));
-                    throw new Exception(MsgHelp.GetString(MsgHelp.ID.ANALYZE_SIMPLETAGS_HTML_FORMAT));
-                }
             }
 
-            CommonOutputChecks((CLICommandOptions)options);
+            CommonOutputChecks(options);
             return RunAnalyzeCommand(options);
         }
 
@@ -263,6 +263,31 @@ namespace Microsoft.ApplicationInspector.CLI
 
         #region RunCmdsWriteResults
 
+        private static int RunGetTagsCommand(CLIGetTagsCommandOptions cliOptions)
+        {
+            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
+
+            GetTagsCommand command = new GetTagsCommand(new GetTagsCommandOptions()
+            {
+                SourcePath = cliOptions.SourcePath ?? "",
+                CustomRulesPath = cliOptions.CustomRulesPath ?? "",
+                IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
+                ConfidenceFilters = cliOptions.ConfidenceFilters,
+                FilePathExclusions = cliOptions.FilePathExclusions,
+                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                Log = cliOptions.Log,
+                SingleThread = cliOptions.SingleThread,
+                NoShowProgress = cliOptions.NoShowProgressBar,
+                FileTimeOut = cliOptions.FileTimeOut
+            });
+
+            GetTagsResult getTagsResult = command.GetResult();
+            exitCode = getTagsResult.ResultCode;
+            ResultsWriter.Write(getTagsResult, cliOptions);
+
+            return (int)exitCode;
+        }
+
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
         {
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -272,14 +297,14 @@ namespace Microsoft.ApplicationInspector.CLI
                 SourcePath = cliOptions.SourcePath ?? "",
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
-                AllowDupTags = cliOptions.AllowDupTags,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
-                MatchDepth = cliOptions.MatchDepth,
                 FilePathExclusions = cliOptions.FilePathExclusions,
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
                 Log = cliOptions.Log,
-                SingleThread = cliOptions.SingleThread
-            }); ;
+                SingleThread = cliOptions.SingleThread,
+                NoShowProgress = cliOptions.NoShowProgressBar,
+                FileTimeOut = cliOptions.FileTimeOut
+            });
 
             AnalyzeResult analyzeResult = command.GetResult();
             exitCode = analyzeResult.ResultCode;

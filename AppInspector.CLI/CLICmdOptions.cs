@@ -22,6 +22,37 @@ namespace Microsoft.ApplicationInspector.CLI
     /// <summary>
     /// CLI command distinct arguments
     /// </summary>
+    [Verb("get-tags", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics for unique tags")]
+    public class CLIGetTagsCommandOptions : CLICommandOptions
+    {
+        [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect")]
+        public string? SourcePath { get; set; }
+
+        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
+        public string? CustomRulesPath { get; set; }
+
+        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
+        public bool IgnoreDefaultRules { get; set; }
+
+        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
+        public string ConfidenceFilters { get; set; } = "high,medium";
+
+        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files (none|default: sample,example,test,docs,lib,.vs,.git)", Default = "sample,example,test,docs,lib,.vs,.git")]
+        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
+
+        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 0)]
+        public int FileTimeOut { get; set; } = 0;
+
+        [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
+        public bool SingleThread { get; set; }
+
+        [Option("no-show-progress", Required = false, HelpText = "Disable progress information.")]
+        public bool NoShowProgressBar { get; set; }
+    }
+
+    /// <summary>
+    /// CLI command distinct arguments
+    /// </summary>
     [Verb("analyze", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics")]
     public class CLIAnalyzeCmdOptions : CLICommandOptions
     {
@@ -31,17 +62,8 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
 
-        [Option('h', "match-depth", Required = false, HelpText = "First match or best match based on confidence level (first|best)", Default = "best")]
-        public string MatchDepth { get; set; } = "best";
-
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
-
-        [Option('d', "allow-dup-tags", Required = false, HelpText = "Output contains unique and non-unique tag matches", Default = false)]
-        public bool AllowDupTags { get; set; }
-
-        [Option('b', "suppress-browser-open", Required = false, HelpText = "Suppress automatically opening HTML output using default browser", Default = false)]
-        public bool SuppressBrowserOpen { get; set; }
 
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; } = "high,medium";
@@ -55,11 +77,14 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('e', "text-format", Required = false, HelpText = "Match text format specifiers", Default = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m")]
         public string TextOutputFormat { get; set; } = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";
 
-        [Option('t', "tag-output-only", Required = false, HelpText = "Output only identified tags", Default = false)]
-        public bool SimpleTagsOnly { get; set; }
+        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 0)]
+        public int FileTimeOut { get; set; } = 0;
 
         [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
         public bool SingleThread { get; set; }
+
+        [Option("no-show-progress", Required = false, HelpText = "Disable progress information.")]
+        public bool NoShowProgressBar { get; set; }
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]

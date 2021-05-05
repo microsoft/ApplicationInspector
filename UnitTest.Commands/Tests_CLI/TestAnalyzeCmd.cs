@@ -45,7 +45,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"analyze -b -s {0} -f html -k none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
+                string args = string.Format(@"analyze -s {0} -f html -k none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
@@ -55,39 +55,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
-        [TestMethod]
-        public void SimpleTagsHTMLOutput_Fail() //simple tags not supported for html format
-        {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"analyze -b -s {0} -f html -k none -t", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
-                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
-        }
-
-        [TestMethod]
-        public void DupTagsHTMLOutput_Fail() //dupliacte tags not supported for html format
-        {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"analyze -b -s {0} -f html -k none -d", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
-                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
-        }
 
         [TestMethod]
         public void UnknownFormat_Fail() //dupliacte tags not supported for html format
@@ -112,89 +79,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"analyze -b -s {0} -f html -k none -l {1}",
+                string args = string.Format(@"analyze -s {0} -f html -k none -l {1}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\mainx.zip"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
-        }
-
-        [TestMethod]
-        public void SimpleTagsTextOutput_Pass()
-        {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"analyze -s {0} -f text -k none -o {1} -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-
-                if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")))
-                {
-                    File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                }
-
-                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                exitCode = testContent.Contains("Data.Sensitive") ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.CriticalError;
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
-        }
-
-        [TestMethod]
-        public void SimpleTagsJsonOutput_JSSrc_Pass()
-        {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"analyze -s {0} -f json -k none -o {1} -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\onetag.js"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-
-                if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")))
-                {
-                    File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                }
-
-                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                exitCode = testContent.Contains("Data.Parsing.JSON") ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.CriticalError;
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
-        }
-
-        [TestMethod]
-        public void SimpleTagsJsonOutput_CPPSrc_Pass()
-        {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"analyze -s {0} -f json -k none -o {1} -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-
-                if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")))
-                {
-                    File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                }
-
-                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                exitCode = testContent.Contains("Authentication.General") ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.CriticalError;
             }
             catch (Exception)
             {
@@ -349,10 +238,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"analyze -s {0} -r {1} -f json -o {2}",
+                string args = string.Format(@"analyze -s {0} -r {1} -f json -o {2} -k {3}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
+                    ".cpp");
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
@@ -370,7 +260,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string args = string.Format(@"analyze -s {0} -d -f json -o {1} -k none --single-threaded",
+                string args = string.Format(@"analyze -s {0} -f json -o {1} -k none --single-threaded",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -394,7 +284,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
 
-                string args = string.Format(@"analyze -s {0} -d -f json -o {1} -k none",
+                string args = string.Format(@"analyze -s {0} -f json -o {1} -k none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -412,32 +302,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             }
 
             Assert.IsTrue(exitCodeMultiThread == AnalyzeResult.ExitCode.Success);
-        }
-
-        [TestMethod]
-        public void ExpectedTagCountNoDupsAllowed_Pass()
-        {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"analyze -s {0} -f json -o {1} -k none",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-
-                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-
-                if (exitCode == AnalyzeResult.ExitCode.Success)
-                {
-                    string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                    var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
-                    exitCode = result.Metadata.TotalMatchesCount == 7 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
-                }
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
         [TestMethod]

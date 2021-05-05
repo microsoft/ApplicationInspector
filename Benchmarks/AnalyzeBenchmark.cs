@@ -1,11 +1,8 @@
-﻿using System;
+﻿using BenchmarkDotNet.Attributes;
+using Microsoft.ApplicationInspector.Commands;
+using System;
 using System.IO;
 using System.Reflection;
-using ApplicationInspector.Unitprocess.Misc;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Columns;
-using BenchmarkDotNet.Diagnostics.Windows.Configs;
-using Microsoft.ApplicationInspector.Commands;
 
 namespace Benchmarks
 {
@@ -25,7 +22,6 @@ namespace Benchmarks
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
                 SourcePath = path,
-                AllowDupTags = false,
                 SingleThread = true,
                 IgnoreDefaultRules = false
             });
@@ -39,7 +35,6 @@ namespace Benchmarks
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
                 SourcePath = path,
-                AllowDupTags = false,
                 SingleThread = false,
                 IgnoreDefaultRules = false
             });

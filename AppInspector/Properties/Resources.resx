@@ -132,6 +132,9 @@
   <data name="ANALYZE_EXCLUDED_TYPE_SKIPPED" xml:space="preserve">
     <value>File skipped: Name or path in exclude list. {0}</value>
   </data>
+  <data name="ANALYZE_EXCLUDED_BINARY" xml:space="preserve">
+    <value>File skipped: First 100 bytes appear to indicate this is a binary file. {0}</value>
+  </data>
   <data name="ANALYZE_FILESIZE_SKIPPED" xml:space="preserve">
     <value>File skipped: File size is too large.  {0}</value>
   </data>
