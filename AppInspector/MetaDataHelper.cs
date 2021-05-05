@@ -35,6 +35,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
 
         internal MetaData Metadata { get; set; }
+        public ConcurrentBag<MatchRecord> Matches { get; set; } = new ConcurrentBag<MatchRecord>();
 
         public MetaDataHelper(string sourcePath, bool uniqueMatchesOnly)
         {
@@ -124,7 +125,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 if (allowAdd)
                 {
-                    Metadata?.Matches?.Add(matchRecord);
+                    Matches?.Add(matchRecord);
                 }
             }
             else
@@ -160,6 +161,8 @@ namespace Microsoft.ApplicationInspector.Commands
             Metadata.FileExtensions.Sort();
             Metadata.Outputs.Sort();
             Metadata.Targets.Sort();
+
+            Metadata.Matches = Matches.ToList();
 
             Metadata.Languages = Languages.ToImmutableSortedDictionary();
 
