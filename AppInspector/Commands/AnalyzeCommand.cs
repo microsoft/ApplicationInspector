@@ -30,6 +30,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool TreatEverythingAsCode { get; set; } = false;
         public bool NoShowProgress { get; set; } = true;
         public int FileTimeOut { get; set; } = 0;
+        public int ProcessingTimeOut { get; set; } = 0;
     }
 
     /// <summary>
@@ -42,7 +43,8 @@ namespace Microsoft.ApplicationInspector.Commands
             Success = 0,
             NoMatches = 1,
             CriticalError = Utils.ExitCode.CriticalError, //ensure common value for final exit log mention
-            Canceled = 3
+            Canceled = 3,
+            TimedOut = 4
         }
 
         [JsonProperty(Order = 2, PropertyName = "resultCode")]
@@ -447,6 +449,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Utils.GetVersionString()
             };
 
+            var timedOut = false;
+
             if (!_options.NoShowProgress)
             {
                 var done = false;
@@ -504,7 +508,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     sw.Start();
                     _ = Task.Factory.StartNew(() =>
                     {
-                        PopulateRecords(new CancellationToken(), _options, fileQueue);
+                        DoProcessing(fileQueue);
                         done = true;
                     });
 
@@ -525,7 +529,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else
             {
-                PopulateRecords(new CancellationToken(), _options, GetFileEntries(_options));
+                DoProcessing(GetFileEntries(_options));
             }
 
             //wrapup result status
@@ -547,7 +551,39 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
             }
 
+            if (timedOut)
+            {
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.TimedOut;
+            }
+
             return analyzeResult;
+
+            void DoProcessing(IEnumerable<FileEntry> fileEntries)
+            {
+                if (_options.ProcessingTimeOut > 0)
+                {
+                    using var cts = new CancellationTokenSource();
+                    var t = Task.Run(() => PopulateRecords(cts.Token, _options, fileEntries), cts.Token);
+                    if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.ProcessingTimeOut)))
+                    {
+                        timedOut = true;
+                        WriteOnce.Error($"Processing timed out.");
+                        cts.Cancel();
+                        if (_metaDataHelper is not null)
+                        {
+                            // Populate skips for all the entries we didn't process
+                            foreach (var entry in fileEntries.Where(x => !_metaDataHelper.Files.Any(y => x.FullPath == y.FileName)))
+                            {
+                                _metaDataHelper.Files.Add(new FileRecord() { AccessTime = entry.AccessTime, CreateTime = entry.CreateTime, ModifyTime = entry.ModifyTime, FileName = entry.FullPath, Status = ScanState.TimeOutSkipped });
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    PopulateRecords(new CancellationToken(), _options, fileEntries);
+                }
+            }
         }
     }
 }
