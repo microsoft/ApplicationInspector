@@ -718,11 +718,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 return false;
             }
 
-            using var sr = new StreamReader(fileEntry.Content, leaveOpen: true);
-            var fileContents = sr.ReadToEnd();
-            fileEntry.Content.Position = 0;
-
-            if (IsBinary(fileContents))
+            if (IsBinary(fileEntry.Content))
             {
                 return false;
             }
