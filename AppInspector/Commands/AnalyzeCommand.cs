@@ -672,6 +672,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 throw;
             }
 
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            if (IsBinary(fs))
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -711,7 +718,44 @@ namespace Microsoft.ApplicationInspector.Commands
                 return false;
             }
 
+            if (IsBinary(fileEntry.Content))
+            {
+                return false;
+            }
+
             return true;
+        }
+
+        private bool IsBinary(Stream fileContents)
+        {
+            var numRead = 1;
+            var span = new Span<byte>(new byte[8192]);
+            var controlsEncountered = 0;
+            var maxControlsEncountered = (int)(0.3 * fileContents.Length);
+            while (numRead > 0)
+            {
+                numRead = fileContents.Read(span);
+                for (var i = 0; i < numRead; i++)
+                {
+                    var ch = (char)span[i];
+                    if (ch == '\0')
+                    {
+                        fileContents.Position = 0;
+                        return true;
+                    }
+                    else if (char.IsControl(ch) && !char.IsWhiteSpace(ch))
+                    {
+                        if (++controlsEncountered > maxControlsEncountered)
+                        {
+                            fileContents.Position = 0;
+                            return true;
+                        }
+                    }
+                }
+
+            }
+            fileContents.Position = 0;
+            return false;
         }
 
         /// <summary>
