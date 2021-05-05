@@ -672,6 +672,15 @@ namespace Microsoft.ApplicationInspector.Commands
                 throw;
             }
 
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using var sr = new StreamReader(fs);
+            var fileContents = sr.ReadToEnd();
+
+            if (IsBinary(fileContents))
+            {
+                return false;
+            }
+
             return true;
         }
 
