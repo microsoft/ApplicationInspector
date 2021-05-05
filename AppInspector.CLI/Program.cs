@@ -278,7 +278,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 Log = cliOptions.Log,
                 SingleThread = cliOptions.SingleThread,
                 NoShowProgress = cliOptions.NoShowProgressBar,
-                FileTimeOut = cliOptions.FileTimeOut
+                FileTimeOut = cliOptions.FileTimeOut,
+                ProcessingTimeOut = cliOptions.ProcessingTimeOut
             });
 
             GetTagsResult getTagsResult = command.GetResult();
@@ -290,8 +291,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
         {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
                 SourcePath = cliOptions.SourcePath ?? "",
@@ -303,20 +302,18 @@ namespace Microsoft.ApplicationInspector.CLI
                 Log = cliOptions.Log,
                 SingleThread = cliOptions.SingleThread,
                 NoShowProgress = cliOptions.NoShowProgressBar,
-                FileTimeOut = cliOptions.FileTimeOut
+                FileTimeOut = cliOptions.FileTimeOut,
+                ProcessingTimeOut = cliOptions.ProcessingTimeOut
             });
 
             AnalyzeResult analyzeResult = command.GetResult();
-            exitCode = analyzeResult.ResultCode;
             ResultsWriter.Write(analyzeResult, cliOptions);
 
-            return (int)exitCode;
+            return (int)analyzeResult.ResultCode;
         }
 
         private static int RunTagDiffCommand(CLITagDiffCmdOptions cliOptions)
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-
             TagDiffCommand command = new TagDiffCommand(new TagDiffOptions()
             {
                 SourcePath1 = cliOptions.SourcePath1 ?? "",
@@ -330,16 +327,13 @@ namespace Microsoft.ApplicationInspector.CLI
             });
 
             TagDiffResult tagDiffResult = command.GetResult();
-            exitCode = tagDiffResult.ResultCode;
             ResultsWriter.Write(tagDiffResult, cliOptions);
 
-            return (int)exitCode;
+            return (int)tagDiffResult.ResultCode;
         }
 
         private static int RunTagTestCommand(CLITagTestCmdOptions cliOptions)
         {
-            TagTestResult.ExitCode exitCode = TagTestResult.ExitCode.CriticalError;
-
             TagTestCommand command = new TagTestCommand(new TagTestOptions()
             {
                 SourcePath = cliOptions.SourcePath,
@@ -351,16 +345,13 @@ namespace Microsoft.ApplicationInspector.CLI
             });
 
             TagTestResult tagTestCommand = command.GetResult();
-            exitCode = tagTestCommand.ResultCode;
             ResultsWriter.Write(tagTestCommand, cliOptions);
 
-            return (int)exitCode;
+            return (int)tagTestCommand.ResultCode;
         }
 
         private static int RunExportTagsCommand(CLIExportTagsCmdOptions cliOptions)
         {
-            ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
-
             ExportTagsCommand command = new ExportTagsCommand(new ExportTagsOptions()
             {
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
@@ -370,16 +361,13 @@ namespace Microsoft.ApplicationInspector.CLI
             });
 
             ExportTagsResult exportTagsResult = command.GetResult();
-            exitCode = exportTagsResult.ResultCode;
             ResultsWriter.Write(exportTagsResult, cliOptions);
 
-            return (int)exitCode;
+            return (int)exportTagsResult.ResultCode;
         }
 
         private static int RunVerifyRulesCommand(CLIVerifyRulesCmdOptions cliOptions)
         {
-            VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
-
             VerifyRulesCommand command = new VerifyRulesCommand(new VerifyRulesOptions()
             {
                 VerifyDefaultRules = cliOptions.VerifyDefaultRules,
@@ -390,16 +378,13 @@ namespace Microsoft.ApplicationInspector.CLI
             });
 
             VerifyRulesResult exportTagsResult = command.GetResult();
-            exitCode = exportTagsResult.ResultCode;
             ResultsWriter.Write(exportTagsResult, cliOptions);
 
-            return (int)exitCode;
+            return (int)exportTagsResult.ResultCode;
         }
 
         private static int RunPackRulesCommand(CLIPackRulesCmdOptions cliOptions)
         {
-            PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
-
             PackRulesCommand command = new PackRulesCommand(new PackRulesOptions()
             {
                 RepackDefaultRules = cliOptions.RepackDefaultRules,
@@ -409,10 +394,9 @@ namespace Microsoft.ApplicationInspector.CLI
             });
 
             PackRulesResult exportTagsResult = command.GetResult();
-            exitCode = exportTagsResult.ResultCode;
             ResultsWriter.Write(exportTagsResult, cliOptions);
 
-            return (int)exitCode;
+            return (int)exportTagsResult.ResultCode;
         }
 
         #endregion RunCmdsWriteResults
