@@ -741,16 +741,19 @@ namespace Microsoft.ApplicationInspector.Commands
                 ch = (char)fileContents.ReadByte();
                 if (ch == '\0')
                 {
+                    fileContents.Position = 0;
                     return true;
                 }
                 else if (char.IsControl(ch) && !char.IsWhiteSpace(ch))
                 {
                     if (++controlsEncountered > maxControlsEncountered)
                     {
+                        fileContents.Position = 0;
                         return true;
                     }
                 }
             }
+            fileContents.Position = 0;
             return false;
         }
 
