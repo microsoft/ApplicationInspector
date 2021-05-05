@@ -195,7 +195,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detailed MatchRecords from scan
         /// </summary>
         [JsonProperty(PropertyName = "detailedMatchList")]
-        public List<MatchRecord>? Matches { get; } = new List<MatchRecord>();
+        public List<MatchRecord> Matches { get; set; } = new List<MatchRecord>();
 
         public MetaData(string applicationName, string sourcePath)
         {
