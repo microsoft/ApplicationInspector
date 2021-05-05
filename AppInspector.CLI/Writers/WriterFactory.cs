@@ -72,10 +72,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new AnalyzeDummyWriter();
-                    break;
-
                 case "json":
                     writer = new AnalyzeJsonWriter();
                     break;
@@ -106,10 +102,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new ExportDummyWriter();
-                    break;
-
                 case "json":
                     writer = new JsonWriter();
                     break;
@@ -136,10 +128,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new TagTestDummyWriter();
-                    break;
-
                 case "json":
                     writer = new JsonWriter();
                     break;
@@ -166,10 +154,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new TagTestDummyWriter();
-                    break;
-
                 case "json":
                     writer = new JsonWriter();
                     break;
@@ -196,10 +180,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new TagDiffDummyWriter();
-                    break;
-
                 case "json":
                     writer = new JsonWriter();
                     break;
@@ -226,10 +206,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new VerifyRulesDummyWriter();
-                    break;
-
                 case "json":
                     writer = new JsonWriter();
                     break;
@@ -256,10 +232,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new PackRulesDummyWriter();
-                    break;
-
                 case "json":
                     writer = new JsonWriter();
                     break;
