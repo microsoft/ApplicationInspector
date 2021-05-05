@@ -414,25 +414,31 @@ namespace Microsoft.ApplicationInspector.Commands
         // Follows Perl's model, if there are NULs or too many non printable characters, this is probably a binary file
         private bool IsBinary(Stream fileContents)
         {
-            var ch = (char)0;
+            var numRead = 1;
+            var span = new Span<byte>(new byte[8192]);
             var controlsEncountered = 0;
             var maxControlsEncountered = (int)(0.3 * fileContents.Length);
-            while (ch != -1)
+            while (numRead > 0)
             {
-                ch = (char)fileContents.ReadByte();
-                if (ch == '\0')
+                numRead = fileContents.Read(span);
+                for (var i = 0; i < numRead; i++)
                 {
-                    fileContents.Position = 0;
-                    return true;
-                }
-                else if (char.IsControl(ch) && !char.IsWhiteSpace(ch))
-                {
-                    if (++controlsEncountered > maxControlsEncountered)
+                    var ch = (char)span[i];
+                    if (ch == '\0')
                     {
                         fileContents.Position = 0;
                         return true;
                     }
+                    else if (char.IsControl(ch) && !char.IsWhiteSpace(ch))
+                    {
+                        if (++controlsEncountered > maxControlsEncountered)
+                        {
+                            fileContents.Position = 0;
+                            return true;
+                        }
+                    }
                 }
+
             }
             fileContents.Position = 0;
             return false;
