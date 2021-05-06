@@ -463,7 +463,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        public List<FileEntry> GetFileEntries()
+        public IEnumerable<FileEntry> GetFileEntries()
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntries", LogLevel.Trace);
 
