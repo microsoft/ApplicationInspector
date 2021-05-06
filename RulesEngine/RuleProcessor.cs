@@ -25,7 +25,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public Confidence confidenceFilter;
         public Logger? logger;
-        public bool uniqueMatches = false;
         public bool treatEverythingAsCode = false;
     }
 
@@ -37,7 +36,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
         private Confidence ConfidenceLevelFilter { get; set; }
-        private readonly bool _uniqueTagMatchesOnly;
         private readonly Logger? _logger;
         private readonly bool _treatEverythingAsCode;
         private readonly Analyzer analyzer;
@@ -237,10 +235,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return AnalyzeFile(sr.ReadToEnd(), fileEntry, languageInfo, tagsToIgnore);
         }
 
-        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken)
+        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null)
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
+            if (tagsToIgnore is not null && tagsToIgnore.Any())
+            {
+                rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
+            }
+
             List<MatchRecord> resultsList = new List<MatchRecord>();
 
             using var sr = new StreamReader(fileEntry.Content);

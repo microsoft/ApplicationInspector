@@ -369,7 +369,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (opts.FileTimeOut > 0)
                         {
                             using var cts = new CancellationTokenSource();
-                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, null), cts.Token);
+                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys), cts.Token);
                             if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                             {
                                 WriteOnce.Error($"{file.FullPath} timed out.");
@@ -383,7 +383,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         else
                         {
-                            results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
+                            results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys);
                             fileRecord.Status = ScanState.Analyzed;
                         }
 
@@ -503,13 +503,16 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
 
 
-                        var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken);
-                        fileRecord.Status = ScanState.Analyzed;
+                        var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, _metaDataHelper?.UniqueTags.Keys);
 
                         if (results.Any())
                         {
                             fileRecord.Status = ScanState.Affected;
                             fileRecord.NumFindings = results.Count;
+                        }
+                        else
+                        {
+                            fileRecord.Status = ScanState.Analyzed;
                         }
                         foreach (var matchRecord in results)
                         {
