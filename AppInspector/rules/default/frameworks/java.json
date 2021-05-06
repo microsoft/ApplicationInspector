@@ -308,7 +308,7 @@
     "patterns": [
       {
         "pattern": "googleapis",
-        "type": "sub-string",
+        "type": "substring",
         "scopes": [ "code" ],
         "confidence": "high"
       }
