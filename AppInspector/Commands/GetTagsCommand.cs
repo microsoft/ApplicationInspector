@@ -261,7 +261,6 @@ namespace Microsoft.ApplicationInspector.Commands
             var rpo = new RuleProcessorOptions()
             {
                 logger = _options.Log,
-                uniqueMatches = true,
                 treatEverythingAsCode = _options.TreatEverythingAsCode,
                 confidenceFilter = _confidence
             };
@@ -369,7 +368,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (opts.FileTimeOut > 0)
                         {
                             using var cts = new CancellationTokenSource();
-                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, null), cts.Token);
+                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys), cts.Token);
                             if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                             {
                                 WriteOnce.Error($"{file.FullPath} timed out.");
@@ -383,7 +382,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         else
                         {
-                            results = _rulesProcessor.AnalyzeFile(file, languageInfo, null);
+                            results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys);
                             fileRecord.Status = ScanState.Analyzed;
                         }
 
@@ -437,6 +436,136 @@ namespace Microsoft.ApplicationInspector.Commands
             return false;
         }
 
+        public async IAsyncEnumerable<FileEntry> GetFileEntriesAsync(GetTagsCommandOptions opts)
+        {
+            WriteOnce.SafeLog("AnalyzeCommand::GetFileEntriesAsync", LogLevel.Trace);
+
+            Extractor extractor = new();
+            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+            {
+                await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false }))
+                {
+                    yield return entry;
+                }
+            }
+        }
+
+        public async Task<GetTagsResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken, GetTagsCommandOptions opts)
+        {
+            WriteOnce.SafeLog("GetTagsCommand::PopulateRecordsAsync", LogLevel.Trace);
+
+            if (_rulesProcessor is null)
+            {
+                return GetTagsResult.ExitCode.CriticalError;
+            }
+            await foreach (var entry in GetFileEntriesAsync(opts))
+            {
+                if (cancellationToken.IsCancellationRequested) { return GetTagsResult.ExitCode.Canceled; }
+                await ProcessAndAddToMetadata(entry, cancellationToken);
+            }
+
+            return GetTagsResult.ExitCode.Success;
+
+            async Task ProcessAndAddToMetadata(FileEntry file, CancellationToken cancellationToken)
+            {
+                var fileRecord = new FileRecord() { FileName = file.FullPath, ModifyTime = file.ModifyTime, CreateTime = file.CreateTime, AccessTime = file.AccessTime };
+
+                var sw = new Stopwatch();
+                sw.Start();
+
+                if (_fileExclusionList.Any(x => file.FullPath.ToLower().Contains(x)))
+                {
+                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
+                    fileRecord.Status = ScanState.Skipped;
+                }
+                else
+                {
+                    if (IsBinary(file.Content))
+                    {
+                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
+                        fileRecord.Status = ScanState.Skipped;
+                    }
+                    else
+                    {
+                        _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
+
+                        LanguageInfo languageInfo = new LanguageInfo();
+
+                        if (Language.FromFileName(file.FullPath, ref languageInfo))
+                        {
+                            _metaDataHelper?.AddLanguage(languageInfo.Name);
+                        }
+                        else
+                        {
+                            _metaDataHelper?.AddLanguage("Unknown");
+                            languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
+                        }
+
+                        var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, _metaDataHelper?.UniqueTags.Keys);
+
+                        if (results.Any())
+                        {
+                            fileRecord.Status = ScanState.Affected;
+                            fileRecord.NumFindings = results.Count;
+                        }
+                        else
+                        {
+                            fileRecord.Status = ScanState.Analyzed;
+                        }
+                        foreach (var matchRecord in results)
+                        {
+                            _metaDataHelper?.AddTagsFromMatchRecord(matchRecord);
+                        }
+                    }
+                }
+
+                sw.Stop();
+
+                fileRecord.ScanTime = sw.Elapsed;
+
+                _metaDataHelper?.Files.Add(fileRecord);
+            }
+        }
+
+
+        public async Task<GetTagsResult> GetResultAsync(CancellationToken cancellationToken)
+        {
+            WriteOnce.SafeLog("AnalyzeCommand::GetResultAsync", LogLevel.Trace);
+            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+            GetTagsResult GetTagsResult = new GetTagsResult()
+            {
+                AppVersion = Utils.GetVersionString()
+            };
+
+            var exitCode = await PopulateRecordsAsync(cancellationToken, _options);
+
+            //wrapup result status
+            if (_metaDataHelper?.Files.All(x => x.Status == ScanState.Skipped) ?? false)
+            {
+                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
+                GetTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
+            }
+            else if (_metaDataHelper?.UniqueTagsCount == 0)
+            {
+                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
+                GetTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
+            }
+            else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
+            {
+                _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
+                _metaDataHelper.PrepareReport();
+                GetTagsResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
+                GetTagsResult.ResultCode = GetTagsResult.ExitCode.Success;
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                GetTagsResult.ResultCode = GetTagsResult.ExitCode.Canceled;
+            }
+
+            return GetTagsResult;
+        }
+
         /// <summary>
         /// Main entry point to start analysis from CLI; handles setting up rules, directory enumeration
         /// file type detection and handoff
@@ -445,7 +574,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         public GetTagsResult GetResult()
         {
-            WriteOnce.SafeLog("GetTagsCommand::Run", LogLevel.Trace);
+            WriteOnce.SafeLog("GetTagsCommand::GetResult", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "GetTags"));
             GetTagsResult getTagsResult = new GetTagsResult()
             {
