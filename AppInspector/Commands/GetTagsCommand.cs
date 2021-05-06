@@ -273,25 +273,19 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public List<FileEntry> GetFileEntries(GetTagsCommandOptions opts)
+        public IEnumerable<FileEntry> GetFileEntries()
         {
             WriteOnce.SafeLog("GetTagsCommand::GetFileEntries", LogLevel.Trace);
 
             Extractor extractor = new();
-            var fileEntries = new List<FileEntry>();
 
             foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
             {
-                try
+                foreach (var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
                 {
-                    fileEntries.AddRange(extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }));
-                }
-                catch (OverflowException)
-                {
-                    WriteOnce.SafeLog($"Overflow encountered when extracting {srcFile}.", LogLevel.Warn);
+                    yield return entry;
                 }
             }
-            return fileEntries;
         }
 
         public GetTagsResult.ExitCode PopulateRecords(CancellationToken cancellationToken, GetTagsCommandOptions opts, IEnumerable<FileEntry> populatedEntries)
@@ -592,7 +586,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     try
                     {
-                        fileQueue.AddRange(GetFileEntries(_options));
+                        foreach(var entry in GetFileEntries())
+                        {
+                            fileQueue.Add(entry);
+                        }
                     }
                     catch (OverflowException e)
                     {
@@ -660,7 +657,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else
             {
-                DoProcessing(GetFileEntries(_options));
+                DoProcessing(GetFileEntries());
             }
 
             //wrapup result status
