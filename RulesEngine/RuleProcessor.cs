@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
@@ -236,7 +237,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return AnalyzeFile(sr.ReadToEnd(), fileEntry, languageInfo, tagsToIgnore);
         }
 
-        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo)
+        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken)
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
@@ -248,6 +249,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return resultsList;
+                }
                 foreach (var cap in ruleCapture.Captures)
                 {
                     resultsList.AddRange(ProcessBoundary(cap));
@@ -318,6 +323,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return resultsList;
+                }
                 if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
                 {
                     foreach (string ovrd in m.Rule.Overrides)

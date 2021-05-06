@@ -437,6 +437,134 @@ namespace Microsoft.ApplicationInspector.Commands
             return false;
         }
 
+        public async IAsyncEnumerable<FileEntry> GetFileEntriesAsync(AnalyzeOptions opts)
+        {
+            WriteOnce.SafeLog("AnalyzeCommand::GetFileEntriesAsync", LogLevel.Trace);
+
+            Extractor extractor = new();
+            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+            {
+                await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false }))
+                {
+                    yield return entry;
+                }
+            }
+        }
+
+        public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken, AnalyzeOptions opts)
+        {
+            WriteOnce.SafeLog("AnalyzeCommand::PopulateRecordsAsync", LogLevel.Trace);
+
+            if (_rulesProcessor is null)
+            {
+                return AnalyzeResult.ExitCode.CriticalError;
+            }
+            await foreach (var entry in GetFileEntriesAsync(opts))
+            {
+                if (cancellationToken.IsCancellationRequested) { return AnalyzeResult.ExitCode.Canceled; }
+                await ProcessAndAddToMetadata(entry, cancellationToken);
+            }
+
+            return AnalyzeResult.ExitCode.Success;
+
+            async Task ProcessAndAddToMetadata(FileEntry file, CancellationToken cancellationToken)
+            {
+                var fileRecord = new FileRecord() { FileName = file.FullPath, ModifyTime = file.ModifyTime, CreateTime = file.CreateTime, AccessTime = file.AccessTime };
+
+                var sw = new Stopwatch();
+                sw.Start();
+
+                if (_fileExclusionList.Any(x => file.FullPath.ToLower().Contains(x)))
+                {
+                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
+                    fileRecord.Status = ScanState.Skipped;
+                }
+                else
+                {
+                    if (IsBinary(file.Content))
+                    {
+                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
+                        fileRecord.Status = ScanState.Skipped;
+                    }
+                    else
+                    {
+                        _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
+
+                        LanguageInfo languageInfo = new LanguageInfo();
+
+                        if (Language.FromFileName(file.FullPath, ref languageInfo))
+                        {
+                            _metaDataHelper?.AddLanguage(languageInfo.Name);
+                        }
+                        else
+                        {
+                            _metaDataHelper?.AddLanguage("Unknown");
+                            languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
+                        }
+
+
+                        var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken);
+                        fileRecord.Status = ScanState.Analyzed;
+
+                        if (results.Any())
+                        {
+                            fileRecord.Status = ScanState.Affected;
+                            fileRecord.NumFindings = results.Count;
+                        }
+                        foreach (var matchRecord in results)
+                        {
+                            _metaDataHelper?.AddMatchRecord(matchRecord);
+                        }
+                    }
+                }
+
+                sw.Stop();
+
+                fileRecord.ScanTime = sw.Elapsed;
+
+                _metaDataHelper?.Files.Add(fileRecord);
+            }
+        }
+
+
+        public async Task<AnalyzeResult> GetResultAsync(CancellationToken cancellationToken)
+        {
+            WriteOnce.SafeLog("AnalyzeCommand::GetResultAsync", LogLevel.Trace);
+            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+            AnalyzeResult analyzeResult = new AnalyzeResult()
+            {
+                AppVersion = Utils.GetVersionString()
+            };
+
+            var exitCode = await PopulateRecordsAsync(cancellationToken, _options);
+
+            //wrapup result status
+            if (_metaDataHelper?.Files.All(x => x.Status == ScanState.Skipped) ?? false)
+            {
+                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+            }
+            else if (_metaDataHelper?.Matches.Count == 0)
+            {
+                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+            }
+            else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
+            {
+                _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
+                _metaDataHelper.PrepareReport();
+                analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Canceled;
+            }
+
+            return analyzeResult;
+        }
+
         /// <summary>
         /// Main entry point to start analysis from CLI; handles setting up rules, directory enumeration
         /// file type detection and handoff
@@ -445,7 +573,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         public GetTagsResult GetResult()
         {
-            WriteOnce.SafeLog("GetTagsCommand::Run", LogLevel.Trace);
+            WriteOnce.SafeLog("GetTagsCommand::GetResult", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "GetTags"));
             GetTagsResult getTagsResult = new GetTagsResult()
             {
