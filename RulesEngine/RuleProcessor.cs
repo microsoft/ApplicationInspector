@@ -183,7 +183,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         StartLocationLine = StartLocation.Line,
                                         EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = ExtractExcerpt(textContainer.FullContent, StartLocation.Line),
+                                        Excerpt = ExtractExcerpt(textContainer, StartLocation.Line),
                                         Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
                                     };
 
@@ -303,7 +303,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         StartLocationLine = StartLocation.Line,
                                         EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = ExtractExcerpt(textContainer.FullContent, StartLocation.Line),
+                                        Excerpt = ExtractExcerpt(textContainer, StartLocation.Line),
                                         Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
                                     };
 
@@ -446,47 +446,22 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// from the template
         /// </summary>
         /// <returns></returns>
-        private string ExtractExcerpt(string text, int startLineNumber, int length = 10)
+        private string ExtractExcerpt(TextContainer text, int startLineNumber, int context = 3)
         {
-            if (string.IsNullOrEmpty(text))
-            {
-                return "";
-            }
-
-            var lines = text.Split('\n');
-            var distance = (int)((length - 1.0) / 2.0);
-
-            // Sanity check
             if (startLineNumber < 0)
             {
                 startLineNumber = 0;
             }
 
-            if (startLineNumber >= lines.Length)
+            if (startLineNumber >= text.LineEnds.Count)
             {
-                startLineNumber = lines.Length - 1;
+                startLineNumber = text.LineEnds.Count - 1;
             }
 
-            var excerptStartLine = Math.Max(0, startLineNumber - distance);
-            var excerptEndLine = Math.Min(lines.Length - 1, startLineNumber + distance);
+            var excerptStartLine = Math.Max(0, startLineNumber - context);
+            var excerptEndLine = Math.Min(text.LineEnds.Count - 1, startLineNumber + context);
 
-            /* If the code snippet we're viewing is already indented 16 characters minimum,
-             * we don't want to show all that extra white-space, so we'll find the smallest
-             * number of spaces at the beginning of each line and use that.
-             */
-
-            var minSpaces = -1;
-            for (var i = excerptStartLine; i <= excerptEndLine; i++)
-            {
-                var numPrefixSpaces = lines[i].TakeWhile(c => c == ' ').Count();
-                minSpaces = (minSpaces == -1 || numPrefixSpaces < minSpaces) ? numPrefixSpaces : minSpaces;
-            }
-
-            // We want to go from (start - 5) to (start + 5) (off by one?)
-            // LINE=10, len=5, we want 8..12, so N-(L-1)/2 to N+(L-1)/2
-            // But cap those values at 0/end
-
-            return string.Join(Environment.NewLine, lines[excerptStartLine..(excerptEndLine + 1)].Select(x => x[minSpaces..].TrimEnd()));
+            return text.FullContent[text.LineStarts[excerptStartLine]..(text.LineEnds[excerptEndLine]+1)];
         }
 
         #endregion Private Methods
