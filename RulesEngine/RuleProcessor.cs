@@ -60,7 +60,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             _ruleset = rules;
             EnableCache = true;
             _rulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
-            _uniqueTagMatchesOnly = opts.uniqueMatches;
             _logger = opts.logger;
             _treatEverythingAsCode = opts.treatEverythingAsCode;
             ConfidenceLevelFilter = opts.confidenceFilter;
