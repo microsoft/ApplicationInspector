@@ -261,7 +261,6 @@ namespace Microsoft.ApplicationInspector.Commands
             var rpo = new RuleProcessorOptions()
             {
                 logger = _options.Log,
-                uniqueMatches = false,
                 treatEverythingAsCode = _options.TreatEverythingAsCode,
                 confidenceFilter = _confidence
             };

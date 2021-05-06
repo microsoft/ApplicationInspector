@@ -261,7 +261,6 @@ namespace Microsoft.ApplicationInspector.Commands
             var rpo = new RuleProcessorOptions()
             {
                 logger = _options.Log,
-                uniqueMatches = true,
                 treatEverythingAsCode = _options.TreatEverythingAsCode,
                 confidenceFilter = _confidence
             };
@@ -437,7 +436,7 @@ namespace Microsoft.ApplicationInspector.Commands
             return false;
         }
 
-        public async IAsyncEnumerable<FileEntry> GetFileEntriesAsync(AnalyzeOptions opts)
+        public async IAsyncEnumerable<FileEntry> GetFileEntriesAsync(GetTagsCommandOptions opts)
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntriesAsync", LogLevel.Trace);
 
@@ -451,21 +450,21 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken, AnalyzeOptions opts)
+        public async Task<GetTagsResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken, GetTagsCommandOptions opts)
         {
-            WriteOnce.SafeLog("AnalyzeCommand::PopulateRecordsAsync", LogLevel.Trace);
+            WriteOnce.SafeLog("GetTagsCommand::PopulateRecordsAsync", LogLevel.Trace);
 
             if (_rulesProcessor is null)
             {
-                return AnalyzeResult.ExitCode.CriticalError;
+                return GetTagsResult.ExitCode.CriticalError;
             }
             await foreach (var entry in GetFileEntriesAsync(opts))
             {
-                if (cancellationToken.IsCancellationRequested) { return AnalyzeResult.ExitCode.Canceled; }
+                if (cancellationToken.IsCancellationRequested) { return GetTagsResult.ExitCode.Canceled; }
                 await ProcessAndAddToMetadata(entry, cancellationToken);
             }
 
-            return AnalyzeResult.ExitCode.Success;
+            return GetTagsResult.ExitCode.Success;
 
             async Task ProcessAndAddToMetadata(FileEntry file, CancellationToken cancellationToken)
             {
@@ -530,11 +529,11 @@ namespace Microsoft.ApplicationInspector.Commands
         }
 
 
-        public async Task<AnalyzeResult> GetResultAsync(CancellationToken cancellationToken)
+        public async Task<GetTagsResult> GetResultAsync(CancellationToken cancellationToken)
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetResultAsync", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
-            AnalyzeResult analyzeResult = new AnalyzeResult()
+            GetTagsResult GetTagsResult = new GetTagsResult()
             {
                 AppVersion = Utils.GetVersionString()
             };
@@ -545,27 +544,27 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_metaDataHelper?.Files.All(x => x.Status == ScanState.Skipped) ?? false)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                GetTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
             }
             else if (_metaDataHelper?.Matches.Count == 0)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                GetTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
             }
             else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
             {
                 _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
                 _metaDataHelper.PrepareReport();
-                analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
+                GetTagsResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
+                GetTagsResult.ResultCode = GetTagsResult.ExitCode.Success;
             }
 
             if (cancellationToken.IsCancellationRequested)
             {
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Canceled;
+                GetTagsResult.ResultCode = GetTagsResult.ExitCode.Canceled;
             }
 
-            return analyzeResult;
+            return GetTagsResult;
         }
 
         /// <summary>
