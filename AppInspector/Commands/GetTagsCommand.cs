@@ -501,7 +501,6 @@ namespace Microsoft.ApplicationInspector.Commands
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
                         }
 
-
                         var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, _metaDataHelper?.UniqueTags.Keys);
 
                         if (results.Any())
@@ -515,7 +514,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         foreach (var matchRecord in results)
                         {
-                            _metaDataHelper?.AddMatchRecord(matchRecord);
+                            _metaDataHelper?.AddTagsFromMatchRecord(matchRecord);
                         }
                     }
                 }
@@ -546,7 +545,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 GetTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;
             }
-            else if (_metaDataHelper?.Matches.Count == 0)
+            else if (_metaDataHelper?.UniqueTagsCount == 0)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 GetTagsResult.ResultCode = GetTagsResult.ExitCode.NoMatches;

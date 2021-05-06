@@ -4,6 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ApplicationInspector.Unitprocess.Commands
 {
@@ -286,6 +288,22 @@ namespace ApplicationInspector.Unitprocess.Commands
             }
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
+        }
+
+        [TestMethod]
+        public async Task ExpectedTagCountAsync_Pass()
+        {
+            AnalyzeOptions options = new AnalyzeOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
+                FilePathExclusions = "none", //allow source under unittest path
+                SingleThread = true
+            };
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
