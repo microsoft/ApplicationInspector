@@ -273,25 +273,19 @@ namespace Microsoft.ApplicationInspector.Commands
 
         #endregion configureMethods
 
-        public List<FileEntry> GetFileEntries(GetTagsCommandOptions opts)
+        public IEnumerable<FileEntry> GetFileEntries()
         {
             WriteOnce.SafeLog("GetTagsCommand::GetFileEntries", LogLevel.Trace);
 
             Extractor extractor = new();
-            var fileEntries = new List<FileEntry>();
 
             foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
             {
-                try
+                foreach (var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
                 {
-                    fileEntries.AddRange(extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }));
-                }
-                catch (OverflowException)
-                {
-                    WriteOnce.SafeLog($"Overflow encountered when extracting {srcFile}.", LogLevel.Warn);
+                    yield return entry;
                 }
             }
-            return fileEntries;
         }
 
         public GetTagsResult.ExitCode PopulateRecords(CancellationToken cancellationToken, GetTagsCommandOptions opts, IEnumerable<FileEntry> populatedEntries)
@@ -592,7 +586,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     try
                     {
-                        fileQueue.AddRange(GetFileEntries(_options));
+                        foreach(var entry in GetFileEntries())
+                        {
+                            fileQueue.Add(entry);
+                        }
                     }
                     catch (OverflowException e)
                     {
@@ -651,16 +648,16 @@ namespace Microsoft.ApplicationInspector.Commands
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));
                         var timeExpected = new TimeSpan(0, 0, 0, 0, millisExpected);
-                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Getting Tags. {_metaDataHelper?.UniqueTagsCount} Tags Found. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
+                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Getting Tags. {_metaDataHelper?.UniqueTagsCount} Tags Found. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected || x.Status == ScanState.Analyzed)} Analyzed.");
                     }
-                    progressBar.Message = $"{_metaDataHelper?.UniqueTagsCount} Tags Found. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
+                    progressBar.Message = $"{_metaDataHelper?.UniqueTagsCount} Tags Found. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected || x.Status == ScanState.Analyzed)} Analyzed.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
                 WriteOnce.PauseConsoleOutput = false;
             }
             else
             {
-                DoProcessing(GetFileEntries(_options));
+                DoProcessing(GetFileEntries());
             }
 
             //wrapup result status

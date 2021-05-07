@@ -463,25 +463,19 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        public List<FileEntry> GetFileEntries(AnalyzeOptions opts)
+        public IEnumerable<FileEntry> GetFileEntries()
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntries", LogLevel.Trace);
 
             Extractor extractor = new();
-            var fileEntries = new List<FileEntry>();
 
             foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
             {
-                try
+                foreach(var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
                 {
-                    fileEntries.AddRange(extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }));
-                }
-                catch(OverflowException)
-                {
-                    WriteOnce.SafeLog($"Overflow encountered when extracting {srcFile}.", LogLevel.Warn);
+                    yield return entry;
                 }
             }
-            return fileEntries;
         }
 
 
@@ -597,7 +591,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     try
                     {
-                        fileQueue.AddRange(GetFileEntries(_options));
+                        foreach(var entry in GetFileEntries())
+                        {
+                            fileQueue.Add(entry);
+                        }
                     }
                     catch (OverflowException e)
                     {
@@ -666,7 +663,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else
             {
-                DoProcessing(GetFileEntries(_options));
+                DoProcessing(GetFileEntries());
             }
 
             //wrapup result status
