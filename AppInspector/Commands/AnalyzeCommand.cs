@@ -32,6 +32,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public int FileTimeOut { get; set; } = 0;
         public int ProcessingTimeOut { get; set; } = 0;
         public int ContextLines { get; set; } = 3;
+        public bool ScanUnknownTypes { get; set; }
     }
 
     /// <summary>
@@ -344,39 +345,46 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             _metaDataHelper?.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
+                            if (!_options.ScanUnknownTypes)
+                            {
+                                fileRecord.Status = ScanState.Skipped;
+                            }
                         }
 
-                        List<MatchRecord> results = new List<MatchRecord>();
-
-                        if (opts.FileTimeOut > 0)
+                        if (fileRecord.Status != ScanState.Skipped)
                         {
-                            using var cts = new CancellationTokenSource();
-                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo), cts.Token);
-                            if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
+                            List<MatchRecord> results = new List<MatchRecord>();
+
+                            if (opts.FileTimeOut > 0)
                             {
-                                WriteOnce.Error($"{file.FullPath} timed out.");
-                                fileRecord.Status = ScanState.TimedOut;
-                                cts.Cancel();
+                                using var cts = new CancellationTokenSource();
+                                var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo), cts.Token);
+                                if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
+                                {
+                                    WriteOnce.Error($"{file.FullPath} timed out.");
+                                    fileRecord.Status = ScanState.TimedOut;
+                                    cts.Cancel();
+                                }
+                                else
+                                {
+                                    fileRecord.Status = ScanState.Analyzed;
+                                }
                             }
                             else
                             {
+                                results = _rulesProcessor.AnalyzeFile(file, languageInfo);
                                 fileRecord.Status = ScanState.Analyzed;
                             }
-                        }
-                        else
-                        {
-                            results = _rulesProcessor.AnalyzeFile(file, languageInfo);
-                            fileRecord.Status = ScanState.Analyzed;
-                        }
 
-                        if (results.Any())
-                        {
-                            fileRecord.Status = ScanState.Affected;
-                            fileRecord.NumFindings = results.Count;
-                        }
-                        foreach (var matchRecord in results)
-                        {
-                            _metaDataHelper?.AddMatchRecord(matchRecord);
+                            if (results.Any())
+                            {
+                                fileRecord.Status = ScanState.Affected;
+                                fileRecord.NumFindings = results.Count;
+                            }
+                            foreach (var matchRecord in results)
+                            {
+                                _metaDataHelper?.AddMatchRecord(matchRecord);
+                            }
                         }
                     }
                 }
@@ -438,20 +446,26 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             _metaDataHelper?.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
+                            if (opts.SkipUnknownFileTypes)
+                            {
+                                fileRecord.Status = ScanState.Skipped;
+                            }
                         }
 
-
-                        var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken);
-                        fileRecord.Status = ScanState.Analyzed;
-
-                        if (results.Any())
+                        if (fileRecord.Status != ScanState.Skipped)
                         {
-                            fileRecord.Status = ScanState.Affected;
-                            fileRecord.NumFindings = results.Count;
-                        }
-                        foreach (var matchRecord in results)
-                        {
-                            _metaDataHelper?.AddMatchRecord(matchRecord);
+                            var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken);
+                            fileRecord.Status = ScanState.Analyzed;
+
+                            if (results.Any())
+                            {
+                                fileRecord.Status = ScanState.Affected;
+                                fileRecord.NumFindings = results.Count;
+                            }
+                            foreach (var matchRecord in results)
+                            {
+                                _metaDataHelper?.AddMatchRecord(matchRecord);
+                            }
                         }
                     }
                 }

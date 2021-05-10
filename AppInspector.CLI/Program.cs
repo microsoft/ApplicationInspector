@@ -279,7 +279,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 SingleThread = cliOptions.SingleThread,
                 NoShowProgress = cliOptions.NoShowProgressBar,
                 FileTimeOut = cliOptions.FileTimeOut,
-                ProcessingTimeOut = cliOptions.ProcessingTimeOut
+                ProcessingTimeOut = cliOptions.ProcessingTimeOut,
+                ScanUnknownTypes = cliOptions.ScanUnknownTypes
             });
 
             GetTagsResult getTagsResult = command.GetResult();
@@ -304,7 +305,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 NoShowProgress = cliOptions.NoShowProgressBar,
                 FileTimeOut = cliOptions.FileTimeOut,
                 ProcessingTimeOut = cliOptions.ProcessingTimeOut,
-                ContextLines = cliOptions.ContextLines
+                ContextLines = cliOptions.ContextLines,
+                ScanUnknownTypes = cliOptions.ScanUnknownTypes
             });
 
             AnalyzeResult analyzeResult = command.GetResult();

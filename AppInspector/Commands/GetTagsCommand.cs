@@ -31,6 +31,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool NoShowProgress { get; set; } = true;
         public int FileTimeOut { get; set; } = 0;
         public int ProcessingTimeOut { get; set; }
+        public bool ScanUnknownTypes { get; set; };
     }
 
     /// <summary>
@@ -355,37 +356,44 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             _metaDataHelper?.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
+                            if (!_options.ScanUnknownTypes)
+                            {
+                                fileRecord.Status = ScanState.Skipped;
+                            }
                         }
 
-                        List<MatchRecord> results = new List<MatchRecord>();
-
-                        if (opts.FileTimeOut > 0)
+                        if (fileRecord.Status != ScanState.Skipped)
                         {
-                            using var cts = new CancellationTokenSource();
-                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys, -1), cts.Token);
-                            if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
+                            List<MatchRecord> results = new List<MatchRecord>();
+
+                            if (opts.FileTimeOut > 0)
                             {
-                                WriteOnce.Error($"{file.FullPath} timed out.");
-                                fileRecord.Status = ScanState.TimedOut;
-                                cts.Cancel();
+                                using var cts = new CancellationTokenSource();
+                                var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys, -1), cts.Token);
+                                if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
+                                {
+                                    WriteOnce.Error($"{file.FullPath} timed out.");
+                                    fileRecord.Status = ScanState.TimedOut;
+                                    cts.Cancel();
+                                }
+                                else
+                                {
+                                    fileRecord.Status = ScanState.Analyzed;
+                                }
                             }
                             else
                             {
+                                results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys, -1);
                                 fileRecord.Status = ScanState.Analyzed;
                             }
-                        }
-                        else
-                        {
-                            results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys, -1);
-                            fileRecord.Status = ScanState.Analyzed;
-                        }
 
-                        if (results.Any())
-                        {
-                            fileRecord.Status = ScanState.Affected;
-                            foreach (var matchRecord in results)
+                            if (results.Any())
                             {
-                                _metaDataHelper?.AddTagsFromMatchRecord(matchRecord);
+                                fileRecord.Status = ScanState.Affected;
+                                foreach (var matchRecord in results)
+                                {
+                                    _metaDataHelper?.AddTagsFromMatchRecord(matchRecord);
+                                }
                             }
                         }
                     }
