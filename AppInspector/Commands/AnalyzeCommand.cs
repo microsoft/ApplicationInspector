@@ -31,6 +31,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
         public bool SingleThread { get; set; } = false;
         public bool TreatEverythingAsCode { get; set; } = false;
+        public bool ScanUnknownTypes { get; set; }
     }
 
     /// <summary>
@@ -645,6 +646,11 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 _metaDataHelper?.AddLanguage("Unknown");
                 languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(filePath) }, Name = "Unknown" };
+                if (!_options.ScanUnknownTypes)
+                {
+                    _metaDataHelper?.Metadata.IncrementFilesSkipped();
+                    return false;
+                }
             }
 
             // 1. Check for exclusions
@@ -768,13 +774,13 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             string? rootScanDirectory = Directory.Exists(_options.SourcePath) ? _options.SourcePath : Path.GetDirectoryName(_options.SourcePath);
             bool scanningRootFolder = !string.IsNullOrEmpty(filePath) && Path.GetDirectoryName(filePath)?.ToLower() == rootScanDirectory?.ToLower();
+            
             // 2. Skip excluded files i.e. sample, test or similar from sub-directories (not root #210) unless ignore filter requested
             if (!scanningRootFolder)
             {
                 if (_fileExclusionList != null && _fileExclusionList.Any(v => filePath.ToLower().Contains(v)))
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, filePath??""), LogLevel.Warn);
-                    _metaDataHelper?.Metadata.IncrementFilesSkipped();
                     return true;
                 }
             }
