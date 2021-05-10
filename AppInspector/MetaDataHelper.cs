@@ -33,8 +33,8 @@ namespace Microsoft.ApplicationInspector.Commands
         private ConcurrentDictionary<string, MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
         private ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
 
-        internal ConcurrentBag<MatchRecord> Matches { get; set; } = new ConcurrentBag<MatchRecord>();
-        internal ConcurrentBag<FileRecord> Files { get; set; } = new ConcurrentBag<FileRecord>();
+        internal ConcurrentQueue<MatchRecord> Matches { get; set; } = new ConcurrentQueue<MatchRecord>();
+        internal ConcurrentQueue<FileRecord> Files { get; set; } = new ConcurrentQueue<FileRecord>();
 
         public int UniqueTagsCount { get { return UniqueTags.Keys.Count; } }
 
@@ -202,7 +202,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     UniqueTags.TryAdd(tag, 0);
                 }
 
-                Matches.Add(matchRecord);
+                Matches.Enqueue(matchRecord);
             }
         }
 
