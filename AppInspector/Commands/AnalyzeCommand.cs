@@ -446,7 +446,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             _metaDataHelper?.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
-                            if (opts.SkipUnknownFileTypes)
+                            if (!opts.ScanUnknownTypes)
                             {
                                 fileRecord.Status = ScanState.Skipped;
                             }

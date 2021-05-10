@@ -31,7 +31,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool NoShowProgress { get; set; } = true;
         public int FileTimeOut { get; set; } = 0;
         public int ProcessingTimeOut { get; set; }
-        public bool ScanUnknownTypes { get; set; };
+        public bool ScanUnknownTypes { get; set; }
     }
 
     /// <summary>
