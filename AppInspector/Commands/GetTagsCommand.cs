@@ -362,7 +362,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (opts.FileTimeOut > 0)
                         {
                             using var cts = new CancellationTokenSource();
-                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys), cts.Token);
+                            var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys, -1), cts.Token);
                             if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                             {
                                 WriteOnce.Error($"{file.FullPath} timed out.");
@@ -376,7 +376,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         else
                         {
-                            results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys);
+                            results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper?.UniqueTags.Keys, -1);
                             fileRecord.Status = ScanState.Analyzed;
                         }
 

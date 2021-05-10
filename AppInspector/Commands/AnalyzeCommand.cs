@@ -31,6 +31,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool NoShowProgress { get; set; } = true;
         public int FileTimeOut { get; set; } = 0;
         public int ProcessingTimeOut { get; set; } = 0;
+        public int ContextLines { get; set; } = 3;
     }
 
     /// <summary>

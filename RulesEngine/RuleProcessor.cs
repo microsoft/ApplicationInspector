@@ -121,7 +121,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return rawResult;
         }
 
-        public List<MatchRecord> AnalyzeFile(string contents, FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null)
+        public List<MatchRecord> AnalyzeFile(string contents, FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
@@ -183,8 +183,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         StartLocationLine = StartLocation.Line,
                                         EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = ExtractExcerpt(textContainer, StartLocation.Line),
-                                        Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
+                                        Excerpt = numLinesContext > -1 ? ExtractExcerpt(textContainer, StartLocation.Line, numLinesContext) : string.Empty,
+                                        Sample = numLinesContext > -1 ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length) : string.Empty
                                     };
 
                                     if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
@@ -228,10 +228,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList;
         }
 
-        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null)
+        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
             using var sr = new StreamReader(fileEntry.Content);
-            return AnalyzeFile(sr.ReadToEnd(), fileEntry, languageInfo, tagsToIgnore);
+            return AnalyzeFile(sr.ReadToEnd(), fileEntry, languageInfo, tagsToIgnore, numLinesContext);
         }
 
         public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null)
@@ -448,6 +448,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns></returns>
         private string ExtractExcerpt(TextContainer text, int startLineNumber, int context = 3)
         {
+            if (context == 0)
+            {
+                return string.Empty;
+            }
             if (startLineNumber < 0)
             {
                 startLineNumber = 0;

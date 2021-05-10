@@ -91,6 +91,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option("no-show-progress", Required = false, HelpText = "Disable progress information.")]
         public bool NoShowProgressBar { get; set; }
+
+        [Option("context-lines", Required = false, HelpText = "Number of lines of context on each side to include in excerpt. -1 to not extract samples or excerpts.")]
+        public int ContextLines { get; set; } = 3;
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]

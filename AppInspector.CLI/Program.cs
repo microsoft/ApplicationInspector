@@ -303,7 +303,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 SingleThread = cliOptions.SingleThread,
                 NoShowProgress = cliOptions.NoShowProgressBar,
                 FileTimeOut = cliOptions.FileTimeOut,
-                ProcessingTimeOut = cliOptions.ProcessingTimeOut
+                ProcessingTimeOut = cliOptions.ProcessingTimeOut,
+                ContextLines = cliOptions.ContextLines
             });
 
             AnalyzeResult analyzeResult = command.GetResult();
