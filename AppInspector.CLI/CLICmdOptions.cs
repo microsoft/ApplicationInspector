@@ -60,6 +60,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
         public bool SingleThread { get; set; }
+
+        [Option("scan-unknown-file-types", Required = false, HelpText = "Scan unknown file types.")]
+        public bool ScanUnknownTypes { get; set; }
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]
