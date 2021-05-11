@@ -307,6 +307,44 @@ namespace ApplicationInspector.Unitprocess.Commands
         }
 
         [TestMethod]
+        public async Task ScanUnknownFileTypesTest_Include()
+        {
+            AnalyzeOptions options = new AnalyzeOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unknowntest"),
+                FilePathExclusions = "none", //allow source under unittest path
+                ScanUnknownTypes = true
+            };
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(2, result.Metadata.TotalFiles);
+            Assert.AreEqual(1, result.Metadata.FilesSkipped);
+            Assert.AreEqual(1, result.Metadata.FilesAffected);
+            Assert.AreEqual(35, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(21, result.Metadata.UniqueMatchesCount);
+        }
+
+        [TestMethod]
+        public async Task ScanUnknownFileTypesTest_Exclude()
+        {
+            AnalyzeOptions options = new AnalyzeOptions()
+            {
+                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unknowntest"),
+                FilePathExclusions = "none", //allow source under unittest path
+                ScanUnknownTypes = false
+            };
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(2, result.Metadata.TotalFiles);
+            Assert.AreEqual(1, result.Metadata.FilesSkipped);
+            Assert.AreEqual(1, result.Metadata.FilesAffected);
+            Assert.AreEqual(41, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(25, result.Metadata.UniqueMatchesCount);
+        }
+
+        [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
         {
             AnalyzeOptions options = new AnalyzeOptions()

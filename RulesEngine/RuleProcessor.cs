@@ -40,7 +40,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly bool _treatEverythingAsCode;
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
-        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _rulesCache;
+        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
+        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _languageRulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
+        private IEnumerable<ConvertedOatRule>? _universalRulesCache = null;
 
         /// <summary>
         /// Sets severity levels for analysis
@@ -59,7 +61,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             _ruleset = rules;
             EnableCache = true;
-            _rulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
             _logger = opts.logger;
             _treatEverythingAsCode = opts.treatEverythingAsCode;
             ConfidenceLevelFilter = opts.confidenceFilter;
@@ -125,6 +126,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
+            rules = rules.Union(GetUniversalRules());
             if (tagsToIgnore is not null && tagsToIgnore.Any())
             {
                 rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
@@ -238,6 +240,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
+            rules = rules.Union(GetUniversalRules());
+
             if (tagsToIgnore is not null && tagsToIgnore.Any())
             {
                 rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
@@ -378,18 +382,40 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             if (EnableCache)
             {
-                if (_rulesCache.ContainsKey(input))
-                    return _rulesCache[input];
+                if (_languageRulesCache.ContainsKey(input))
+                    return _languageRulesCache[input];
             }
 
             IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(input);
 
             if (EnableCache && filteredRules.Any())
             {
-                _rulesCache.TryAdd(input, filteredRules);
+                _languageRulesCache.TryAdd(input, filteredRules);
             }
 
             return filteredRules;
+        }
+
+        /// <summary>
+        ///     Filters the rules for those matching the content type. Resolves all the overrides
+        /// </summary>
+        /// <param name="languages"> Languages to filter rules for </param>
+        /// <returns> List of rules </returns>
+        private IEnumerable<ConvertedOatRule> GetUniversalRules()
+        {
+            if (_universalRulesCache is null)
+            {
+                if (EnableCache)
+                {
+                    _universalRulesCache = _ruleset.GetUniversalRules();
+                }
+                else
+                {
+                    return _ruleset.GetUniversalRules();
+                }
+            }
+
+            return _universalRulesCache;
         }
 
         /// <summary>
@@ -401,15 +427,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             if (EnableCache)
             {
-                if (_rulesCache.ContainsKey(input))
-                    return _rulesCache[input];
+                if (_fileRulesCache.ContainsKey(input))
+                    return _fileRulesCache[input];
             }
 
             IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByFilename(input);
 
             if (EnableCache && filteredRules.Any())
             {
-                _rulesCache.TryAdd(input, filteredRules);
+                _fileRulesCache.TryAdd(input, filteredRules);
             }
 
             return filteredRules;
