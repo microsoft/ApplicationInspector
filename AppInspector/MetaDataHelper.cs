@@ -118,7 +118,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!CounterOnlyTagSet)
             {
                 //update list of unique tags as we go
-                foreach (string tag in matchRecord.Tags ?? new string[] { })
+                foreach (string tag in matchRecord.Tags ?? Array.Empty<string>())
                 {
                     UniqueTags.TryAdd(tag, 0);
                 }
@@ -133,7 +133,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public void AddMatchRecord(MatchRecord matchRecord)
         {
             //special handling for standard characteristics in report
-            foreach (var tag in matchRecord.Tags ?? new string[] { })
+            foreach (var tag in matchRecord.Tags ?? Array.Empty<string>())
             {
                 switch (tag)
                 {
@@ -371,55 +371,38 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private static string ExtractJSONValue(string s)
         {
-            string result = "";
-            try
+            var parts = s.Split(':');
+            if (parts.Length == 2)
             {
-                var parts = s.Split(':');
-                var value = parts[1];
-                value = value.Replace("\"", "");
-                result = value.Trim();
-            }
-            catch (Exception)
-            {
-                result = s;
+                return parts[1].Replace("\"", "").Trim();
             }
 
-            return result;
+            return s;
         }
 
         private string ExtractXMLValue(string s)
         {
-            string result = "";
-            try
+            int firstTag = s.IndexOf(">");
+            if (firstTag > -1)
             {
-                int firstTag = s.IndexOf(">");
                 int endTag = s.IndexOf("</", firstTag);
-                var value = s.Substring(firstTag + 1, endTag - firstTag - 1);
-                result = value;
-            }
-            catch (Exception)
-            {
-                result = s;
+                if (endTag > -1)
+                {
+                    return s.Substring(firstTag + 1, endTag - firstTag - 1);
+                }
             }
 
-            return result;
+            return s;
         }
 
         private string ExtractXMLValueMultiLine(string s)
         {
-            string result = "";
-            try
+            int firstTag = s.IndexOf(">");
+            if (firstTag > -1 && firstTag < s.Length - 1)
             {
-                int firstTag = s.IndexOf(">");
-                var value = s.Substring(firstTag + 1);
-                result = value;
+                return s[(firstTag + 1)..];
             }
-            catch (Exception)
-            {
-                result = s;
-            }
-
-            return result;
+            return s;
         }
     }
 
