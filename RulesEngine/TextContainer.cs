@@ -221,7 +221,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 int lastInline = FastGetLastIndex(preText[0..lastPrefix], inline);
                 // For example in C#, If this /* is actually commented out by a //
-                if (!(lastInline >= 0 && lastInline < lastPrefix && !preText[lastInline..(lastPrefix - lastInline)].Contains('\n')))
+                if (!(lastInline >= 0 && lastInline < lastPrefix && !preText[lastInline..lastPrefix].Contains('\n')))
                 {
                     var commentedText = text[lastPrefix..];
                     int nextSuffix = FastGetIndex(commentedText, suffix);
