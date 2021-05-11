@@ -165,6 +165,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             {
                                 Tag = tag
                             });
+                            TagCounters[tag].IncrementCount();
                         }
                         else if (tag.Contains(".Platform.OS"))
                         {
@@ -185,19 +186,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppTypes.TryAdd(solutionType, 0);
             }
 
-            bool CounterOnlyTagSet = false;
-            var selected = matchRecord.Tags is not null ? TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag ?? ""))) : new Dictionary<string, MetricTagCounter>();
-            foreach (var select in selected)
-            {
-                CounterOnlyTagSet = true;
-                select.Value.IncrementCount();
-            }
+            var nonCounters = matchRecord.Tags?.Where(x => TagCounters.Any(y => y.Key == x)) ?? Array.Empty<string>();
 
-            //omit adding if it is a counter metric tag
-            if (!CounterOnlyTagSet)
+            //omit adding if it if all the tags were counters
+            if (nonCounters.Any())
             {
                 //update list of unique tags as we go
-                foreach (string tag in matchRecord.Tags ?? Array.Empty<string>())
+                foreach (string tag in nonCounters)
                 {
                     UniqueTags.TryAdd(tag, 0);
                 }
