@@ -319,8 +319,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             Assert.AreEqual(2, result.Metadata.TotalFiles);
-            Assert.AreEqual(1, result.Metadata.FilesSkipped);
-            Assert.AreEqual(1, result.Metadata.FilesAffected);
+            Assert.AreEqual(0, result.Metadata.FilesSkipped);
+            Assert.AreEqual(2, result.Metadata.FilesAffected);
             Assert.AreEqual(35, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(21, result.Metadata.UniqueMatchesCount);
         }
