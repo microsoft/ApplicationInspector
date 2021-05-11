@@ -133,27 +133,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="languages"> Languages </param>
         /// <returns> Filtered rules </returns>
-        public IEnumerable<ConvertedOatRule> ByLanguages(string[] languages)
-        {
-            if (languages is { })
-            {
-                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0 || (x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Any(y => languages.Contains(y))));
-            }
-            return _oatRules;
-        }
-
-        /// <summary>
-        ///     Filters rules within Ruleset by languages
-        /// </summary>
-        /// <param name="languages"> Languages </param>
-        /// <returns> Filtered rules </returns>
         public IEnumerable<ConvertedOatRule> ByLanguage(string language)
         {
-            if (language is string)
+            if (!string.IsNullOrEmpty(language))
             {
-                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0 || (x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Contains(language)));
+                return _oatRules.Where(x =>  x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Contains(language));
             }
-            return _oatRules;
+            return Array.Empty<ConvertedOatRule>();
         }
 
         /// <summary>
@@ -163,11 +149,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> Filtered rules </returns>
         public IEnumerable<ConvertedOatRule> ByFilename(string input)
         {
-            if (input is string)
+            if (!string.IsNullOrEmpty(input))
             {
-                return _oatRules.Where(x => x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Length == 0 || x.AppInspectorRule.CompiledFileRegexes.Any(y => y.IsMatch(input)));
+                return _oatRules.Where(x => x.AppInspectorRule.CompiledFileRegexes.Any(y => y.IsMatch(input)));
             }
-            return _oatRules;
+            return Array.Empty<ConvertedOatRule>();
+        }
+
+        public IEnumerable<ConvertedOatRule> GetUniversalRules()
+        {
+            return _oatRules.Where(x => (x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Length == 0) && (x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0));
         }
 
 

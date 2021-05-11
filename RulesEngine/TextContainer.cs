@@ -215,16 +215,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private static bool IsBetween(string text, int index, string prefix, string suffix, string inline = "")
         {
             int pinnedIndex = Math.Min(index, text.Length);
-            string preText = string.Concat(text.Substring(0, pinnedIndex));
-            int lastPrefix = preText.LastIndexOf(prefix, StringComparison.InvariantCulture);
+            string preText = text[0..pinnedIndex];
+            int lastPrefix = FastGetLastIndex(preText, prefix);
             if (lastPrefix >= 0)
             {
-                int lastInline = preText.Substring(0, lastPrefix).LastIndexOf(inline, StringComparison.InvariantCulture);
+                int lastInline = FastGetLastIndex(preText[0..lastPrefix], inline);
                 // For example in C#, If this /* is actually commented out by a //
-                if (!(lastInline >= 0 && lastInline < lastPrefix && !preText.Substring(lastInline, lastPrefix - lastInline).Contains('\n')))
+                if (!(lastInline >= 0 && lastInline < lastPrefix && !preText[lastInline..lastPrefix].Contains('\n')))
                 {
-                    var commentedText = text.Substring(lastPrefix);
-                    int nextSuffix = commentedText.IndexOf(suffix, StringComparison.InvariantCulture);
+                    var commentedText = text[lastPrefix..];
+                    int nextSuffix = FastGetIndex(commentedText, suffix);
 
                     // If the index is in between the last prefix before the index and the next suffix after
                     // that prefix Then it is commented out
@@ -234,7 +234,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             if (!string.IsNullOrEmpty(inline))
             {
-                int lastInline = preText.LastIndexOf(inline, StringComparison.InvariantCulture);
+                int lastInline = FastGetLastIndex(preText, inline);
                 if (lastInline >= 0)
                 {
                     //extra check to ensure inline is not part of a file path or url i.e. http://111.333.44.444
@@ -246,8 +246,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
                     }
 
-                    var commentedText = text.Substring(lastInline);
-                    int endOfLine = commentedText.IndexOf('\n');//Environment.Newline looks for /r/n which is not guaranteed
+                    var commentedText = text[lastInline..];
+                    int endOfLine = FastGetIndex(commentedText,"\n");//Environment.Newline looks for /r/n which is not guaranteed
                     if (endOfLine < 0)
                     {
                         endOfLine = commentedText.Length - 1;
@@ -260,6 +260,56 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
 
             return false;
+        }
+
+        private static int FastGetIndex(string target, string query)
+        {
+            for (int i = 0; i < target.Length - query.Length; i++)
+            {
+                int offset = 0;
+                bool skip = false;
+                while (!skip && offset < query.Length)
+                {
+                    if (!target[i + offset].Equals(query[offset]))
+                    {
+                        skip = true;
+                    }
+                    else
+                    {
+                        offset++;
+                    }
+                }
+                if (!skip)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        private static int FastGetLastIndex(string target, string query)
+        {
+            for (int i = target.Length - query.Length; i > 0; i--)
+            {
+                int offset = 0;
+                bool skip = false;
+                while(!skip && offset < query.Length)
+                {
+                    if (!target[i + offset].Equals(query[offset]))
+                    {
+                        skip = true;
+                    }
+                    else
+                    {
+                        offset++;
+                    }
+                }
+                if (!skip)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 }
