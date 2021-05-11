@@ -216,10 +216,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             int pinnedIndex = Math.Min(index, text.Length);
             string preText = string.Concat(text.Substring(0, pinnedIndex));
-            int lastPrefix = preText.LastIndexOf(prefix, StringComparison.InvariantCulture);
+            int lastPrefix = GetLastIndexNoAlloc(preText, prefix, StringComparison.InvariantCulture);
             if (lastPrefix >= 0)
             {
-                int lastInline = preText.Substring(0, lastPrefix).LastIndexOf(inline, StringComparison.InvariantCulture);
+                int lastInline = GetLastIndexNoAlloc(preText[0..lastPrefix], inline, StringComparison.InvariantCulture);
                 // For example in C#, If this /* is actually commented out by a //
                 if (!(lastInline >= 0 && lastInline < lastPrefix && !preText.Substring(lastInline, lastPrefix - lastInline).Contains('\n')))
                 {
@@ -234,7 +234,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             if (!string.IsNullOrEmpty(inline))
             {
-                int lastInline = preText.LastIndexOf(inline, StringComparison.InvariantCulture);
+                int lastInline = GetLastIndexNoAlloc(preText, inline, StringComparison.InvariantCulture);
                 if (lastInline >= 0)
                 {
                     //extra check to ensure inline is not part of a file path or url i.e. http://111.333.44.444
@@ -260,6 +260,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
 
             return false;
+        }
+
+        private static int GetLastIndexNoAlloc(string target, string query, StringComparison stringComparison)
+        {
+            for (int i = target.Length - query.Length; i > 0; i--)
+            {
+                if (target[i].Equals(query[0]))
+                {
+                    if (target[i..(i + query.Length)].Equals(query, stringComparison))
+                    {
+                        return i;
+                    }
+                }
+            }
+            return -1;
         }
     }
 }
