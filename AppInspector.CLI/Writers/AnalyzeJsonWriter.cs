@@ -25,7 +25,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
-            CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions = (CLIAnalyzeCmdOptions)commandOptions;
             AnalyzeResult analyzeResult = (AnalyzeResult)result;
 
             //For console output, update write once for same results to console or file
