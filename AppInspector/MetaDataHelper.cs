@@ -33,8 +33,8 @@ namespace Microsoft.ApplicationInspector.Commands
         private ConcurrentDictionary<string, MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
         private ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
 
-        internal ConcurrentQueue<MatchRecord> Matches { get; set; } = new ConcurrentQueue<MatchRecord>();
-        internal ConcurrentQueue<FileRecord> Files { get; set; } = new ConcurrentQueue<FileRecord>();
+        internal ConcurrentBag<MatchRecord> Matches { get; set; } = new ConcurrentBag<MatchRecord>();
+        internal ConcurrentBag<FileRecord> Files { get; set; } = new ConcurrentBag<FileRecord>();
 
         public int UniqueTagsCount { get { return UniqueTags.Keys.Count; } }
 
@@ -197,7 +197,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     UniqueTags.TryAdd(tag, 0);
                 }
 
-                Matches.Enqueue(matchRecord);
+                Matches.Add(matchRecord);
             }
         }
 
@@ -257,22 +257,20 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private string GetDefaultProjectName(string sourcePath)
         {
-            string applicationName = "";
+            string applicationName = string.Empty;
 
             if (Directory.Exists(sourcePath))
             {
-                if (sourcePath[sourcePath.Length - 1] == Path.DirectorySeparatorChar) //in case path ends with dir separator; remove
+                if (sourcePath != string.Empty)
                 {
-                    applicationName = sourcePath.Substring(0, sourcePath.Length - 1);
-                }
-
-                try
-                {
-                    applicationName = applicationName.Substring(applicationName.LastIndexOf(Path.DirectorySeparatorChar)).Replace(Path.DirectorySeparatorChar, ' ').Trim();
-                }
-                catch (Exception)
-                {
-                    applicationName = Path.GetFileNameWithoutExtension(sourcePath);
+                    if (sourcePath[^1] == Path.DirectorySeparatorChar) //in case path ends with dir separator; remove
+                    {
+                        applicationName = sourcePath.Trim(Path.DirectorySeparatorChar);
+                    }
+                    if (applicationName.LastIndexOf(Path.DirectorySeparatorChar) is int idx && idx != -1)
+                    {
+                        applicationName = applicationName[idx..].Trim();
+                    }
                 }
             }
             else

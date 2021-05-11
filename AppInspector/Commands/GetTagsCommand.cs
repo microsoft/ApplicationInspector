@@ -403,7 +403,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 fileRecord.ScanTime = sw.Elapsed;
 
-                _metaDataHelper?.Files.Enqueue(fileRecord);
+                _metaDataHelper?.Files.Add(fileRecord);
             }
         }
 
@@ -525,7 +525,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 fileRecord.ScanTime = sw.Elapsed;
 
-                _metaDataHelper?.Files.Enqueue(fileRecord);
+                _metaDataHelper?.Files.Add(fileRecord);
             }
         }
 
@@ -710,7 +710,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             // Populate skips for all the entries we didn't process
                             foreach (var entry in fileEntries.Where(x => !_metaDataHelper.Files.Any(y => x.FullPath == y.FileName)))
                             {
-                                _metaDataHelper.Files.Enqueue(new FileRecord() { AccessTime = entry.AccessTime, CreateTime = entry.CreateTime, ModifyTime = entry.ModifyTime, FileName = entry.FullPath, Status = ScanState.TimeOutSkipped });
+                                _metaDataHelper.Files.Add(new FileRecord() { AccessTime = entry.AccessTime, CreateTime = entry.CreateTime, ModifyTime = entry.ModifyTime, FileName = entry.FullPath, Status = ScanState.TimeOutSkipped });
                             }
                         }
                     }
