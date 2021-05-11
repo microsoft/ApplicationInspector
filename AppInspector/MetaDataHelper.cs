@@ -186,7 +186,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppTypes.TryAdd(solutionType, 0);
             }
 
-            var nonCounters = matchRecord.Tags?.Where(x => TagCounters.Any(y => y.Key == x)) ?? Array.Empty<string>();
+            var nonCounters = matchRecord.Tags?.Where(x => !TagCounters.Any(y => y.Key == x)) ?? Array.Empty<string>();
 
             //omit adding if it if all the tags were counters
             if (nonCounters.Any())
@@ -383,12 +383,12 @@ namespace Microsoft.ApplicationInspector.Commands
         private string ExtractXMLValue(string s)
         {
             int firstTag = s.IndexOf(">");
-            if (firstTag > -1)
+            if (firstTag > -1 && firstTag < s.Length - 1)
             {
                 int endTag = s.IndexOf("</", firstTag);
                 if (endTag > -1)
                 {
-                    return s.Substring(firstTag + 1, endTag - firstTag - 1);
+                    return s[(firstTag + 1)..endTag];
                 }
             }
 
