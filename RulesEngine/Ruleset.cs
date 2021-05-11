@@ -153,7 +153,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0 || (x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Contains(language)));
             }
-            return _oatRules;
+            else
+            {
+                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0);
+            }
         }
 
         /// <summary>
