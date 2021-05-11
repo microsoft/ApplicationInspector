@@ -266,12 +266,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             for (int i = target.Length - query.Length; i > 0; i--)
             {
-                if (target[i].Equals(query[0]))
+
+                int offset = 0;
+                bool skip = false;
+                while(!skip && offset < query.Length)
                 {
-                    if (target[i..(i + query.Length)].Equals(query, stringComparison))
+                    if (!target[i + offset].Equals(query[offset]))
                     {
-                        return i;
+                        skip = true;
                     }
+                    else
+                    {
+                        offset++;
+                    }
+                }
+                if (!skip)
+                {
+                    return i;
                 }
             }
             return -1;
