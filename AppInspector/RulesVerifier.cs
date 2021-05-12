@@ -162,6 +162,27 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
 
+            foreach(var condition in rule.Conditions ?? Array.Empty<SearchCondition>())
+            {
+                if (condition.SearchIn is null)
+                {
+                    _logger?.Error("SearchIn is null in {0}",rule.Id);
+                    return false;
+                }
+                if (condition.SearchIn.StartsWith("finding-region("))
+                {
+                    var splits = condition.SearchIn.Split(')')[1].Split(',');
+                    if (int.TryParse(splits[1], out int int1) && int.TryParse(splits[1].Trim(')'), out int int2))
+                    {
+                        if (int1 <= 0 || int2 <= 0)
+                        {
+                            _logger?.Error("At least one finding region specifier must be greater than 0. {0}", rule.Id);
+                            return false;
+                        }
+                    }
+                }
+            }
+
             if (rule.Tags?.Length == 0)
             {
                 isValid = false;
