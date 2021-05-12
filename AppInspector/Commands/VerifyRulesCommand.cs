@@ -105,17 +105,12 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("VerifyRulesCommand::ConfigRules", LogLevel.Trace);
 
-            if (_options.VerifyDefaultRules && !Utils.CLIExecutionContext)
-            {
-                throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NO_CLI_DEFAULT));
-            }
-
             if (!_options.VerifyDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath))
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
 
-            _rules_path = _options.VerifyDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
+            _rules_path = _options.VerifyDefaultRules ? null : _options.CustomRulesPath;
         }
 
         #endregion configure
@@ -134,10 +129,20 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                RulesVerifier verifier = new RulesVerifier(_rules_path, _options.Log);
+                RulesVerifier verifier = new RulesVerifier(null, _options.Log);
                 verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
-                verifyRulesResult.RuleStatusList = verifier.Verify();
-                verifyRulesResult.ResultCode = verifier.IsVerified ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
+                var stati = new List<RuleStatus>();
+                foreach(var rule in Utils.GetDefaultRuleSet().GetAppInspectorRules())
+                {
+                    stati.Add(new RuleStatus()
+                    {
+                        RulesId = rule.Id,
+                        RulesName = rule.Name,
+                        Verified = verifier.Verify(rule)
+                    });
+                }
+                verifyRulesResult.RuleStatusList = stati;
+                verifyRulesResult.ResultCode = stati.TrueForAll(x => x.Verified) ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
             }
             catch (OpException e)
             {

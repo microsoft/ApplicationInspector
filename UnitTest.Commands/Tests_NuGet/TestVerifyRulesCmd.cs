@@ -46,8 +46,9 @@ namespace ApplicationInspector.Unitprocess.Commands
                 VerifyRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 //check for specific error if desired
             }
 
