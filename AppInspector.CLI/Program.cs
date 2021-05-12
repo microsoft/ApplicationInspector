@@ -268,8 +268,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunGetTagsCommand(CLIGetTagsCommandOptions cliOptions)
         {
-            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
-
             GetTagsCommand command = new GetTagsCommand(new GetTagsCommandOptions()
             {
                 SourcePath = cliOptions.SourcePath ?? "",
@@ -331,7 +329,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             WriteOnce.PauseConsoleOutput = false;
 
-            return (int)exitCode;
+            return (int)getTagsResult.ResultCode;
         }
 
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
