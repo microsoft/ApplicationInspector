@@ -32,7 +32,6 @@ namespace ApplicationInspector.Unitprocess.Commands
         }
 
         [TestMethod]
-        [Ignore] //default option won't find rules unless run from CLI; todo to look at addressed
         public void DefaultRules_Pass()
         {
             VerifyRulesOptions options = new VerifyRulesOptions()

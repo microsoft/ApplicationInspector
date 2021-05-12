@@ -144,18 +144,21 @@ namespace Microsoft.ApplicationInspector.Commands
             //valid search pattern
             foreach (SearchPattern searchPattern in rule.Patterns ?? new SearchPattern[] { })
             {
-                try
+                if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.RegexWord)
                 {
-                    if (string.IsNullOrEmpty(searchPattern.Pattern))
+                    try
                     {
-                        throw new ArgumentException();
+                        if (string.IsNullOrEmpty(searchPattern.Pattern))
+                        {
+                            throw new ArgumentException();
+                        }
+                        _ = new Regex(searchPattern.Pattern);
                     }
-                    _ = new Regex(searchPattern.Pattern);
-                }
-                catch (Exception e)
-                {
-                    _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
-                    return false;
+                    catch (Exception e)
+                    {
+                        _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
+                        return false;
+                    }
                 }
             }
 
