@@ -4,9 +4,12 @@
 using CommandLine;
 using Microsoft.ApplicationInspector.Commands;
 using NLog;
+using ShellProgressBar;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
@@ -283,9 +286,50 @@ namespace Microsoft.ApplicationInspector.CLI
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes
             });
 
+
+            if (!cliOptions.NoShowProgressBar)
+            {
+                WriteOnce.PauseConsoleOutput = true;
+            }
+
             GetTagsResult getTagsResult = command.GetResult();
-            exitCode = getTagsResult.ResultCode;
-            ResultsWriter.Write(getTagsResult, cliOptions);
+
+            if (cliOptions.NoShowProgressBar)
+            {
+                ResultsWriter.Write(getTagsResult, cliOptions);
+            }
+            else
+            {
+                var done = false;
+
+                _ = Task.Factory.StartNew(() =>
+                {
+                    ResultsWriter.Write(getTagsResult, cliOptions);
+                    done = true;
+                });
+
+                var options = new ProgressBarOptions
+                {
+                    ForegroundColor = ConsoleColor.Yellow,
+                    ForegroundColorDone = ConsoleColor.DarkGreen,
+                    BackgroundColor = ConsoleColor.DarkGray,
+                    BackgroundCharacter = '\u2593',
+                    DisableBottomPercentage = true
+                };
+
+                using (var pbar = new IndeterminateProgressBar("Writing Result Files.", options))
+                {
+                    while (!done)
+                    {
+                        Thread.Sleep(10);
+                    }
+                    pbar.Message = $"Results written.";
+
+                    pbar.Finished();
+                }
+            }
+
+            WriteOnce.PauseConsoleOutput = false;
 
             return (int)exitCode;
         }
@@ -309,8 +353,49 @@ namespace Microsoft.ApplicationInspector.CLI
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes
             });
 
+            if (!cliOptions.NoShowProgressBar)
+            {
+                WriteOnce.PauseConsoleOutput = true;
+            }
+
             AnalyzeResult analyzeResult = command.GetResult();
-            ResultsWriter.Write(analyzeResult, cliOptions);
+
+            if (cliOptions.NoShowProgressBar)
+            {
+                ResultsWriter.Write(analyzeResult, cliOptions);
+            }
+            else
+            {
+                var done = false;
+
+                _ = Task.Factory.StartNew(() =>
+                {
+                    ResultsWriter.Write(analyzeResult, cliOptions);
+                    done = true;
+                });
+
+                var options = new ProgressBarOptions
+                {
+                    ForegroundColor = ConsoleColor.Yellow,
+                    ForegroundColorDone = ConsoleColor.DarkGreen,
+                    BackgroundColor = ConsoleColor.DarkGray,
+                    BackgroundCharacter = '\u2593',
+                    DisableBottomPercentage = true
+                };
+
+                using (var pbar = new IndeterminateProgressBar("Writing Result Files.", options))
+                {
+                    while (!done)
+                    {
+                        Thread.Sleep(10);
+                    }
+                    pbar.Message = $"Results written.";
+
+                    pbar.Finished();
+                }
+            }
+
+            WriteOnce.PauseConsoleOutput = false;
 
             return (int)analyzeResult.ResultCode;
         }

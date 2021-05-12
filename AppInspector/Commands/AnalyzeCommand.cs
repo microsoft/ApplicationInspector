@@ -650,7 +650,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     DisableBottomPercentage = false,
                     ShowEstimatedDuration = true
                 };
-                WriteOnce.PauseConsoleOutput = true;
                 using (var progressBar = new ProgressBar(fileQueue.Count, $"Analyzing Files.", options2))
                 {
                     var sw = new Stopwatch();
@@ -674,7 +673,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     progressBar.Message = $"{_metaDataHelper?.Matches.Count} Matches. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
-                WriteOnce.PauseConsoleOutput = false;
             }
             else
             {

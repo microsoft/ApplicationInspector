@@ -614,7 +614,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     BackgroundCharacter = '\u2593',
                     DisableBottomPercentage = true
                 };
-                WriteOnce.PauseConsoleOutput = true;
 
                 using (var pbar = new IndeterminateProgressBar("Enumerating Files.", options))
                 {
@@ -661,7 +660,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     progressBar.Message = $"{_metaDataHelper?.UniqueTagsCount} Tags Found. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected || x.Status == ScanState.Analyzed)} Analyzed.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
-                WriteOnce.PauseConsoleOutput = false;
             }
             else
             {
