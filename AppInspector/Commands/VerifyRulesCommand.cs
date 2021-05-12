@@ -1,10 +1,13 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.CST.OAT;
 using Newtonsoft.Json;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -20,6 +23,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? RulesId { get; set; }
         public string? RulesName { get; set; }
         public bool Verified { get; set; }
+        public IEnumerable<Violation> OatIssues { get; set; } = Array.Empty<Violation>();
     }
 
     public class VerifyRulesResult : Result
@@ -132,17 +136,22 @@ namespace Microsoft.ApplicationInspector.Commands
                 RulesVerifier verifier = new RulesVerifier(null, _options.Log);
                 verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
                 var stati = new List<RuleStatus>();
-                foreach(var rule in Utils.GetDefaultRuleSet().GetAppInspectorRules())
+                var analyzer = new Analyzer();
+                analyzer.SetOperation(new WithinOperation(analyzer));
+                analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
+                analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
+                foreach (var rule in Utils.GetDefaultRuleSet().GetOatRules())
                 {
                     stati.Add(new RuleStatus()
                     {
-                        RulesId = rule.Id,
+                        RulesId = rule.AppInspectorRule.Id,
                         RulesName = rule.Name,
-                        Verified = verifier.Verify(rule)
+                        Verified = verifier.Verify(rule.AppInspectorRule),
+                        OatIssues = analyzer.EnumerateRuleIssues(rule)
                     });
                 }
                 verifyRulesResult.RuleStatusList = stati;
-                verifyRulesResult.ResultCode = stati.TrueForAll(x => x.Verified) ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
+                verifyRulesResult.ResultCode = stati.TrueForAll(x => x.Verified && !x.OatIssues.Any()) ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
             }
             catch (OpException e)
             {
