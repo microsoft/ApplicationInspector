@@ -44,14 +44,10 @@ If you use the .NET Core version, you will need to have .NET Core 3.1 or later i
 # Basic CLI Usage
 
 ```
-> dotnet ApplicationInspector.CLI.dll or on *Windows* simply ApplicationInspector.CLI.exe <command> <options>
+> appinspector <command> <options>
 
-Microsoft Application Inspector
-
-(c) Microsoft Corporation. All rights reserved
-
-ERROR(S):
-  No verb selected.
+ApplicationInspector.CLI 1.3.11-beta+110bd7cde1
+c Microsoft Corporation. All rights reserved.
 
   analyze        Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics
 
@@ -65,6 +61,9 @@ ERROR(S):
 
   packrules      Combine multiple rule files into one file for ease in distribution
 
+  get-tags       Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics for unique
+                 tags
+
   help           Display more information on a specific command.
 
   version        Display version information.
@@ -74,10 +73,10 @@ ERROR(S):
 
 ### Command Help
 ```
-  Usage: dotnet ApplicationInspector.CLI.dll [arguments] [options]
+  Usage: appinspector [arguments] [options]
 
-  dotnet ApplicationInspector.CLI.dll <no args> -description of available commands
-  dotnet ApplicationInspector.CLI.dll <command> <no args> -arg options description for a given command
+  appinspector <no args> -description of available commands
+  appinspector <command> <no args> -arg options description for a given command
 ```
 
 For additional help on use of the console interface see [CLI Usage](https://github.com/microsoft/ApplicationInspector/wiki/1.-CLI-Usage).  
