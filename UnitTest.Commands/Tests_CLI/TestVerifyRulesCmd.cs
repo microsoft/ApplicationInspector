@@ -258,7 +258,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 if (exitCode == VerifyRulesResult.ExitCode.Verified)
                 {
                     string testLogContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-                    if (String.IsNullOrEmpty(testLogContent))
+                    if (string.IsNullOrEmpty(testLogContent))
                     {
                         exitCode = VerifyRulesResult.ExitCode.CriticalError;
                     }
