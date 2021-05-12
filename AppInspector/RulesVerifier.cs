@@ -169,16 +169,33 @@ namespace Microsoft.ApplicationInspector.Commands
                     _logger?.Error("SearchIn is null in {0}",rule.Id);
                     return false;
                 }
-                if (condition.SearchIn.StartsWith("finding-region("))
+                if (condition.SearchIn.StartsWith("finding-region"))
                 {
-                    var splits = condition.SearchIn.Split(')')[1].Split(',');
-                    if (int.TryParse(splits[1], out int int1) && int.TryParse(splits[1].Trim(')'), out int int2))
+                    var parSplits = condition.SearchIn.Split(new char[] { ')', '(' });
+                    if (parSplits.Length == 3)
                     {
-                        if (int1 <= 0 || int2 <= 0)
+                        var splits = parSplits[1].Split(',');
+                        if (splits.Length == 2)
                         {
-                            _logger?.Error("At least one finding region specifier must be greater than 0. {0}", rule.Id);
+                            if (int.TryParse(splits[0], out int int1) && int.TryParse(splits[1], out int int2))
+                            {
+                                if (int1 == 0 && int2 == 0)
+                                {
+                                    _logger?.Error("At least one finding region specifier must be non 0. {0}", rule.Id);
+                                    return false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _logger?.Error("Improperly specified finding region. {0}", rule.Id);
                             return false;
                         }
+                    }
+                    else
+                    {
+                        _logger?.Error("Improperly specified finding region. {0}", rule.Id);
+                        return false;
                     }
                 }
             }
