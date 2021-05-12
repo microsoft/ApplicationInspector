@@ -173,28 +173,55 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     var scopes = pattern.Scopes ?? new PatternScope[] { PatternScope.All };
                     var modifiers = pattern.Modifiers ?? Array.Empty<string>();
-                    if (clauses.Where(x => x is OATRegexWithIndexClause src &&
-                        src.Arguments.SequenceEqual(modifiers) && src.Scopes.SequenceEqual(scopes)) is IEnumerable<Clause> filteredClauses &&
-                        filteredClauses.Any() && filteredClauses.First().Data is List<string> found)
+                    if (pattern.PatternType == PatternType.String || pattern.PatternType == PatternType.Substring)
                     {
-                        found.Add(pattern.Pattern);
+                        if (clauses.Where(x => x is OATSubstringIndexClause src &&
+                            src.Arguments.SequenceEqual(modifiers) && src.Scopes.SequenceEqual(scopes) && src.UseWordBoundaries) is IEnumerable<Clause> filteredClauses &&
+                            filteredClauses.Any() && filteredClauses.First().Data is List<string> found)
+                        {
+                            found.Add(pattern.Pattern);
+                        }
+                        else
+                        {
+                            clauses.Add(new OATSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String)
+                            {
+                                Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
+                                Data = new List<string>() { pattern.Pattern },
+                                Capture = true
+                            });
+                            if (clauseNumber > 0)
+                            {
+                                expression.Append(" OR ");
+                            }
+                            expression.Append(clauseNumber);
+                            clauseNumber++;
+                        }
                     }
                     else
                     {
-                        clauses.Add(new OATRegexWithIndexClause(scopes)
+                        if (clauses.Where(x => x is OATRegexWithIndexClause src &&
+                            src.Arguments.SequenceEqual(modifiers) && src.Scopes.SequenceEqual(scopes)) is IEnumerable<Clause> filteredClauses &&
+                            filteredClauses.Any() && filteredClauses.First().Data is List<string> found)
                         {
-                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
-                            Data = new List<string>() { pattern.Pattern },
-                            Capture = true,
-                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
-                            CustomOperation = "RegexWithIndex"
-                        });
-                        if (clauseNumber > 0)
-                        {
-                            expression.Append(" OR ");
+                            found.Add(pattern.Pattern);
                         }
-                        expression.Append(clauseNumber);
-                        clauseNumber++;
+                        else
+                        {
+                            clauses.Add(new OATRegexWithIndexClause(scopes)
+                            {
+                                Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
+                                Data = new List<string>() { pattern.Pattern },
+                                Capture = true,
+                                Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
+                                CustomOperation = "RegexWithIndex"
+                            });
+                            if (clauseNumber > 0)
+                            {
+                                expression.Append(" OR ");
+                            }
+                            expression.Append(clauseNumber);
+                            clauseNumber++;
+                        }
                     }
                 }
             }
@@ -262,6 +289,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             expression.Append(clauseNumber);
                             clauseNumber++;
                         }
+                    }
+                    else if (condition.SearchIn.Equals("same-line", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        clauses.Add(new WithinClause()
+                        {
+                            Data = new List<string>() { condition.Pattern.Pattern },
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                            Invert = condition.NegateFinding,
+                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                            SameLineOnly = true,
+                            CustomOperation = "Within"
+                        });
+                        expression.Append(" AND ");
+                        expression.Append(clauseNumber);
+                        clauseNumber++;
                     }
                 }
             }
@@ -357,16 +399,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 pattern.PatternType = PatternType.Regex;
                 pattern.Pattern = string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", pattern.Pattern);
-            }
-            else if (pattern.PatternType == PatternType.String)
-            {
-                pattern.PatternType = PatternType.Regex;
-                pattern.Pattern = string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", Regex.Escape(pattern.Pattern ?? string.Empty));
-            }
-            else if (pattern.PatternType == PatternType.Substring)
-            {
-                pattern.PatternType = PatternType.Regex;
-                pattern.Pattern = string.Format(CultureInfo.InvariantCulture, @"{0}", Regex.Escape(pattern.Pattern ?? string.Empty));
             }
         }
     }

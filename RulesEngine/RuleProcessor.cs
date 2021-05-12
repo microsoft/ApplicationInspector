@@ -68,7 +68,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             analyzer = new Analyzer();
             analyzer.SetOperation(new WithinOperation(analyzer));
-            analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer)); //CHECK with OAT team as delegate doesn't appear to fire; ALT working fine in Analyze method anyway
+            analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
+            analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
         }
 
 
@@ -183,9 +184,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         LanguageInfo = languageInfo,
                                         Boundary = boundary,
                                         StartLocationLine = StartLocation.Line,
+                                        StartLocationColumn = StartLocation.Column,
                                         EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
+                                        EndLocationColumn = EndLocation.Column,
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = numLinesContext > -1 ? ExtractExcerpt(textContainer, StartLocation.Line, numLinesContext) : string.Empty,
+                                        Excerpt = numLinesContext > 0 ? ExtractExcerpt(textContainer, StartLocation.Line, numLinesContext) : string.Empty,
                                         Sample = numLinesContext > -1 ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length) : string.Empty
                                     };
 
@@ -236,7 +239,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return AnalyzeFile(sr.ReadToEnd(), fileEntry, languageInfo, tagsToIgnore, numLinesContext);
         }
 
-        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null)
+        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
@@ -307,8 +310,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         StartLocationLine = StartLocation.Line,
                                         EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = ExtractExcerpt(textContainer, StartLocation.Line),
-                                        Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
+                                        Excerpt = numLinesContext > 0 ? ExtractExcerpt(textContainer, StartLocation.Line, numLinesContext) : string.Empty,
+                                        Sample = numLinesContext > -1 ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length) : string.Empty
                                     };
 
                                     if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
@@ -447,23 +450,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         private string ExtractTextSample(string fileText, int index, int length)
         {
-            string result = "";
-            try
-            {
-                //some js file results may be too long for practical display
-                if (length > MAX_TEXT_SAMPLE_LENGTH)
-                {
-                    length = MAX_TEXT_SAMPLE_LENGTH;
-                }
+            if (index < 0 || length < 0) { return fileText; }
 
-                result = fileText.Substring(index, length).Trim();
-            }
-            catch (Exception e)
-            {
-                _logger?.Error(e.Message + " in ExtractTextSample");
-            }
+            length = Math.Min(Math.Min(length, MAX_TEXT_SAMPLE_LENGTH), fileText.Length - index);
 
-            return result;
+            if (length == 0) { return string.Empty; }
+
+            return fileText[index..(index + length)].Trim();
         }
 
         /// <summary>

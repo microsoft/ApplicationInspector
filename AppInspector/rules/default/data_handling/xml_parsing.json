@@ -167,7 +167,7 @@
           "modifiers": [ "i" ],
           "_comment": ""
         },
-        "search_in": "finding-region(0,0)",
+        "search_in": "same-line",
         "negate_finding": true,
         "_comment": ""
       }
@@ -203,7 +203,7 @@
           "modifiers": [ "i" ],
           "_comment": ""
         },
-        "search_in": "finding-region(0,0)",
+        "search_in": "same-line",
         "negate_finding": true,
         "_comment": ""
       }

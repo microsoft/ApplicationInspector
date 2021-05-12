@@ -124,8 +124,8 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "unserialize(",
-        "type": "string",
+        "pattern": "unserialize\\(",
+        "type": "regex",
         "scopes": [
           "code"
         ],

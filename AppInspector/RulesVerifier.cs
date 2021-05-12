@@ -144,18 +144,59 @@ namespace Microsoft.ApplicationInspector.Commands
             //valid search pattern
             foreach (SearchPattern searchPattern in rule.Patterns ?? new SearchPattern[] { })
             {
-                try
+                if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.RegexWord)
                 {
-                    if (string.IsNullOrEmpty(searchPattern.Pattern))
+                    try
                     {
-                        throw new ArgumentException();
+                        if (string.IsNullOrEmpty(searchPattern.Pattern))
+                        {
+                            throw new ArgumentException();
+                        }
+                        _ = new Regex(searchPattern.Pattern);
                     }
-                    _ = new Regex(searchPattern.Pattern);
+                    catch (Exception e)
+                    {
+                        _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
+                        return false;
+                    }
                 }
-                catch (Exception e)
+            }
+
+            foreach(var condition in rule.Conditions ?? Array.Empty<SearchCondition>())
+            {
+                if (condition.SearchIn is null)
                 {
-                    _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
+                    _logger?.Error("SearchIn is null in {0}",rule.Id);
                     return false;
+                }
+                if (condition.SearchIn.StartsWith("finding-region"))
+                {
+                    var parSplits = condition.SearchIn.Split(new char[] { ')', '(' });
+                    if (parSplits.Length == 3)
+                    {
+                        var splits = parSplits[1].Split(',');
+                        if (splits.Length == 2)
+                        {
+                            if (int.TryParse(splits[0], out int int1) && int.TryParse(splits[1], out int int2))
+                            {
+                                if (int1 == 0 && int2 == 0)
+                                {
+                                    _logger?.Error("At least one finding region specifier must be non 0. {0}", rule.Id);
+                                    return false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _logger?.Error("Improperly specified finding region. {0}", rule.Id);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        _logger?.Error("Improperly specified finding region. {0}", rule.Id);
+                        return false;
+                    }
                 }
             }
 

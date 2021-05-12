@@ -234,18 +234,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             if (!string.IsNullOrEmpty(inline))
             {
-                int lastInline = FastGetLastIndex(preText, inline);
+                int lastInline = FastGetLastIndex(preText, inline, '\n'); // Check the same line for same-line comment marks, stopping if you find a newline
                 if (lastInline >= 0)
                 {
-                    //extra check to ensure inline is not part of a file path or url i.e. http://111.333.44.444
-                    if (lastInline > 1)
-                    {
-                        if (text[lastInline - 1] != ' ') //indicates not an actual inline comment
-                        {
-                            return false;
-                        }
-                    }
-
                     var commentedText = text[lastInline..];
                     int endOfLine = FastGetIndex(commentedText,"\n");//Environment.Newline looks for /r/n which is not guaranteed
                     if (endOfLine < 0)
@@ -262,7 +253,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return false;
         }
 
-        private static int FastGetIndex(string target, string query)
+        private static int FastGetIndex(string target, string query, char? cancelOn = null)
         {
             for (int i = 0; i < target.Length - query.Length; i++)
             {
@@ -270,7 +261,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 bool skip = false;
                 while (!skip && offset < query.Length)
                 {
-                    if (!target[i + offset].Equals(query[offset]))
+                    if (target[i + offset].Equals(cancelOn))
+                    {
+                        skip = true;
+                    }
+                    else if (!target[i + offset].Equals(query[offset]))
                     {
                         skip = true;
                     }
@@ -287,7 +282,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return -1;
         }
 
-        private static int FastGetLastIndex(string target, string query)
+        private static int FastGetLastIndex(string target, string query, char? cancelOn = null)
         {
             for (int i = target.Length - query.Length; i > 0; i--)
             {
@@ -295,7 +290,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 bool skip = false;
                 while(!skip && offset < query.Length)
                 {
-                    if (!target[i + offset].Equals(query[offset]))
+                    if (target[i + offset].Equals(cancelOn))
+                    {
+                        skip = true;
+                    }
+                    else if (!target[i + offset].Equals(query[offset]))
                     {
                         skip = true;
                     }
