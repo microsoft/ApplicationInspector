@@ -10,7 +10,7 @@ namespace Benchmarks
     public class AnalyzeBenchmark
     {
         // Manually put the file you want to benchmark. But don't put this in a path with "Test" in the name ;)
-        private const string path = "C:\\Users\\gstocco\\Downloads\\runtime-main\\runtime-main.zip\\runtime-main\\src\\coreclr\\binder";
+        private const string path = "C:\\Users\\gstocco\\Documents\\GitHub\\ApplicationInspector\\RulesEngine";
 
         public AnalyzeBenchmark()
         {
@@ -36,7 +36,8 @@ namespace Benchmarks
             {
                 SourcePath = path,
                 SingleThread = false,
-                IgnoreDefaultRules = false
+                IgnoreDefaultRules = false,
+                FilePathExclusions = "bin,obj"
             });
 
             AnalyzeResult analyzeResult = command.GetResult();
