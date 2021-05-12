@@ -68,7 +68,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             analyzer = new Analyzer();
             analyzer.SetOperation(new WithinOperation(analyzer));
-            analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer)); //CHECK with OAT team as delegate doesn't appear to fire; ALT working fine in Analyze method anyway
+            analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
+            analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
         }
 
 

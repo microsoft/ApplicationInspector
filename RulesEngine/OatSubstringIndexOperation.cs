@@ -59,23 +59,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                     for (int i = 0; i < stringList.Count; i++)
                     {
-                        var idx = 0;
+                        var idx = tc.FullContent.IndexOf(stringList[i]);
                         while (idx != -1)
                         {
-                            idx = tc.FullContent.IndexOf(stringList[i], idx);
-                            if (idx != -1)
+                            bool skip = false;
+                            if (src.UseWordBoundaries)
                             {
-                                if (src.UseWordBoundaries)
+                                if (idx > 0 && char.IsLetterOrDigit(tc.FullContent[idx - 1]))
                                 {
-                                    if (idx > 0 && !char.IsLetterOrDigit(tc.FullContent[idx - 1]))
-                                    {
-                                        continue;
-                                    }
-                                    if (idx + 1 < tc.FullContent.Length && !char.IsLetterOrDigit(tc.FullContent[idx + 1]))
-                                    {
-                                        continue;
-                                    }
+                                    skip = true;
                                 }
+                                if (idx + stringList[i].Length < tc.FullContent.Length && char.IsLetterOrDigit(tc.FullContent[idx + stringList[i].Length]))
+                                {
+                                    skip = true;
+                                }
+                            }
+                            if (!skip)
+                            {
                                 Boundary newBoundary = new Boundary()
                                 {
                                     Length = stringList[i].Length,
@@ -86,6 +86,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     outmatches.Add((i, newBoundary));
                                 }
                             }
+
+                            idx = tc.FullContent.IndexOf(stringList[i], idx + stringList[i].Length);
                         }
                     }
 

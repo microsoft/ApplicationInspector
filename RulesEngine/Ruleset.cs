@@ -187,8 +187,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             {
                                 Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                                 Data = new List<string>() { pattern.Pattern },
-                                Capture = true,
-                                CustomOperation = "SubstringIndex"
+                                Capture = true
                             });
                             if (clauseNumber > 0)
                             {
