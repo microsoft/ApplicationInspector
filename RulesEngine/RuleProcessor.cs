@@ -187,7 +187,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
                                         EndLocationColumn = EndLocation.Column,
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = numLinesContext > -1 ? ExtractExcerpt(textContainer, StartLocation.Line, numLinesContext) : string.Empty,
+                                        Excerpt = numLinesContext > 0 ? ExtractExcerpt(textContainer, StartLocation.Line, numLinesContext) : string.Empty,
                                         Sample = numLinesContext > -1 ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length) : string.Empty
                                     };
 
@@ -238,7 +238,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return AnalyzeFile(sr.ReadToEnd(), fileEntry, languageInfo, tagsToIgnore, numLinesContext);
         }
 
-        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null)
+        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
@@ -309,8 +309,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         StartLocationLine = StartLocation.Line,
                                         EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = ExtractExcerpt(textContainer, StartLocation.Line),
-                                        Sample = ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
+                                        Excerpt = numLinesContext > 0 ? ExtractExcerpt(textContainer, StartLocation.Line, numLinesContext) : string.Empty,
+                                        Sample = numLinesContext > -1 ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length) : string.Empty
                                     };
 
                                     if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
