@@ -51,6 +51,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns></returns>
         public OperationResult SubstringIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
         {
+            var comparisonType = clause.Arguments.Contains("i") ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture;
             if (state1 is TextContainer tc && clause is OATSubstringIndexClause src)
             {
                 if (clause.Data is List<string> stringList && stringList.Any())
@@ -59,7 +60,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                     for (int i = 0; i < stringList.Count; i++)
                     {
-                        var idx = tc.FullContent.IndexOf(stringList[i]);
+                        var idx = tc.FullContent.IndexOf(stringList[i], comparisonType);
                         while (idx != -1)
                         {
                             bool skip = false;
@@ -86,8 +87,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     outmatches.Add((i, newBoundary));
                                 }
                             }
-
-                            idx = tc.FullContent.IndexOf(stringList[i], idx + stringList[i].Length);
+                            idx = tc.FullContent.IndexOf(stringList[i], idx + stringList[i].Length, comparisonType);
                         }
                     }
 
