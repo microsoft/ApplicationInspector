@@ -449,23 +449,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         private string ExtractTextSample(string fileText, int index, int length)
         {
-            string result = "";
-            try
-            {
-                //some js file results may be too long for practical display
-                if (length > MAX_TEXT_SAMPLE_LENGTH)
-                {
-                    length = MAX_TEXT_SAMPLE_LENGTH;
-                }
+            if (index < 0 || length < 0) { return fileText; }
 
-                result = fileText.Substring(index, length).Trim();
-            }
-            catch (Exception e)
-            {
-                _logger?.Error(e.Message + " in ExtractTextSample");
-            }
+            length = Math.Min(Math.Min(length, MAX_TEXT_SAMPLE_LENGTH), fileText.Length - index);
 
-            return result;
+            if (length == 0) { return string.Empty; }
+
+            return fileText[index..(index + length)].Trim();
         }
 
         /// <summary>
