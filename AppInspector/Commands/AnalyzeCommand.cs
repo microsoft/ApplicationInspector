@@ -197,7 +197,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch (Exception)
                 {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, _options.SourcePath));
+                    throw;
                 }
             }
             else if (File.Exists(_options.SourcePath)) //not a directory but make one for single flow
