@@ -33,8 +33,8 @@ namespace Microsoft.ApplicationInspector.Commands
         private ConcurrentDictionary<string, MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
         private ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
 
-        internal ConcurrentQueue<MatchRecord> Matches { get; set; } = new ConcurrentQueue<MatchRecord>();
-        internal ConcurrentQueue<FileRecord> Files { get; set; } = new ConcurrentQueue<FileRecord>();
+        internal ConcurrentBag<MatchRecord> Matches { get; set; } = new ConcurrentBag<MatchRecord>();
+        internal ConcurrentBag<FileRecord> Files { get; set; } = new ConcurrentBag<FileRecord>();
 
         public int UniqueTagsCount { get { return UniqueTags.Keys.Count; } }
 
@@ -118,7 +118,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!CounterOnlyTagSet)
             {
                 //update list of unique tags as we go
-                foreach (string tag in matchRecord.Tags ?? new string[] { })
+                foreach (string tag in matchRecord.Tags ?? Array.Empty<string>())
                 {
                     UniqueTags.TryAdd(tag, 0);
                 }
@@ -133,7 +133,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public void AddMatchRecord(MatchRecord matchRecord)
         {
             //special handling for standard characteristics in report
-            foreach (var tag in matchRecord.Tags ?? new string[] { })
+            foreach (var tag in matchRecord.Tags ?? Array.Empty<string>())
             {
                 switch (tag)
                 {
@@ -165,6 +165,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             {
                                 Tag = tag
                             });
+                            TagCounters[tag].IncrementCount();
                         }
                         else if (tag.Contains(".Platform.OS"))
                         {
@@ -185,24 +186,18 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppTypes.TryAdd(solutionType, 0);
             }
 
-            bool CounterOnlyTagSet = false;
-            var selected = matchRecord.Tags is not null ? TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag ?? ""))) : new Dictionary<string, MetricTagCounter>();
-            foreach (var select in selected)
-            {
-                CounterOnlyTagSet = true;
-                select.Value.IncrementCount();
-            }
+            var nonCounters = matchRecord.Tags?.Where(x => !TagCounters.Any(y => y.Key == x)) ?? Array.Empty<string>();
 
-            //omit adding if it is a counter metric tag
-            if (!CounterOnlyTagSet)
+            //omit adding if it if all the tags were counters
+            if (nonCounters.Any())
             {
                 //update list of unique tags as we go
-                foreach (string tag in matchRecord.Tags ?? Array.Empty<string>())
+                foreach (string tag in nonCounters)
                 {
                     UniqueTags.TryAdd(tag, 0);
                 }
 
-                Matches.Enqueue(matchRecord);
+                Matches.Add(matchRecord);
             }
         }
 
@@ -262,22 +257,20 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         private string GetDefaultProjectName(string sourcePath)
         {
-            string applicationName = "";
+            string applicationName = string.Empty;
 
             if (Directory.Exists(sourcePath))
             {
-                if (sourcePath[sourcePath.Length - 1] == Path.DirectorySeparatorChar) //in case path ends with dir separator; remove
+                if (sourcePath != string.Empty)
                 {
-                    applicationName = sourcePath.Substring(0, sourcePath.Length - 1);
-                }
-
-                try
-                {
-                    applicationName = applicationName.Substring(applicationName.LastIndexOf(Path.DirectorySeparatorChar)).Replace(Path.DirectorySeparatorChar, ' ').Trim();
-                }
-                catch (Exception)
-                {
-                    applicationName = Path.GetFileNameWithoutExtension(sourcePath);
+                    if (sourcePath[^1] == Path.DirectorySeparatorChar) //in case path ends with dir separator; remove
+                    {
+                        applicationName = sourcePath.Trim(Path.DirectorySeparatorChar);
+                    }
+                    if (applicationName.LastIndexOf(Path.DirectorySeparatorChar) is int idx && idx != -1)
+                    {
+                        applicationName = applicationName[idx..].Trim();
+                    }
                 }
             }
             else
@@ -378,55 +371,38 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private static string ExtractJSONValue(string s)
         {
-            string result = "";
-            try
+            var parts = s.Split(':');
+            if (parts.Length == 2)
             {
-                var parts = s.Split(':');
-                var value = parts[1];
-                value = value.Replace("\"", "");
-                result = value.Trim();
-            }
-            catch (Exception)
-            {
-                result = s;
+                return parts[1].Replace("\"", "").Trim();
             }
 
-            return result;
+            return s;
         }
 
         private string ExtractXMLValue(string s)
         {
-            string result = "";
-            try
+            int firstTag = s.IndexOf(">");
+            if (firstTag > -1 && firstTag < s.Length - 1)
             {
-                int firstTag = s.IndexOf(">");
                 int endTag = s.IndexOf("</", firstTag);
-                var value = s.Substring(firstTag + 1, endTag - firstTag - 1);
-                result = value;
-            }
-            catch (Exception)
-            {
-                result = s;
+                if (endTag > -1)
+                {
+                    return s[(firstTag + 1)..endTag];
+                }
             }
 
-            return result;
+            return s;
         }
 
         private string ExtractXMLValueMultiLine(string s)
         {
-            string result = "";
-            try
+            int firstTag = s.IndexOf(">");
+            if (firstTag > -1 && firstTag < s.Length - 1)
             {
-                int firstTag = s.IndexOf(">");
-                var value = s.Substring(firstTag + 1);
-                result = value;
+                return s[(firstTag + 1)..];
             }
-            catch (Exception)
-            {
-                result = s;
-            }
-
-            return result;
+            return s;
         }
     }
 
