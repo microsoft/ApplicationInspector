@@ -183,7 +183,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         LanguageInfo = languageInfo,
                                         Boundary = boundary,
                                         StartLocationLine = StartLocation.Line,
+                                        StartLocationColumn = StartLocation.Column,
                                         EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
+                                        EndLocationColumn = EndLocation.Column,
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
                                         Excerpt = numLinesContext > -1 ? ExtractExcerpt(textContainer, StartLocation.Line, numLinesContext) : string.Empty,
                                         Sample = numLinesContext > -1 ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length) : string.Empty
