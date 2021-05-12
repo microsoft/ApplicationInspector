@@ -130,7 +130,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (!wc.FindingOnly && !wc.SameLineOnly && (wc.Before == 0 && wc.After == 0))
                 {
-                    yield return new Violation($"Either FindingOnly, SameLineOnly or some Combination of Before and After is required", rule, clause);
+                    yield return new Violation($"Either FindingOnly, SameLineOnly or some Combination of Before and After being set to non-zero values", rule, clause);
                 }
                 if (!wc.Data?.Any() ?? true)
                 {

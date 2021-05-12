@@ -24,7 +24,7 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "Uri\\.parse\\(\"https?:\/\/www\\.);",
+          "pattern": "Uri\\.parse\\(\"https?:\\/\\/www\\.\\);",
           "type": "regex",
           "scopes": [
             "code"

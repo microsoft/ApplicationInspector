@@ -290,6 +290,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             clauseNumber++;
                         }
                     }
+                    else if (condition.SearchIn.Equals("same-line", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        clauses.Add(new WithinClause()
+                        {
+                            Data = new List<string>() { condition.Pattern.Pattern },
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                            Invert = condition.NegateFinding,
+                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                            SameLineOnly = true,
+                            CustomOperation = "Within"
+                        });
+                        expression.Append(" AND ");
+                        expression.Append(clauseNumber);
+                        clauseNumber++;
+                    }
                 }
             }
             return new ConvertedOatRule(rule.Id, rule)

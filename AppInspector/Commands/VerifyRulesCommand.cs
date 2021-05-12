@@ -151,7 +151,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     });
                 }
                 verifyRulesResult.RuleStatusList = stati;
-                verifyRulesResult.ResultCode = stati.TrueForAll(x => x.Verified && !x.OatIssues.Any()) ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
+                verifyRulesResult.ResultCode = stati.All(x => x.Verified && !x.OatIssues.Any()) ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
             }
             catch (OpException e)
             {
@@ -159,7 +159,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }
-
             return verifyRulesResult;
         }
     }

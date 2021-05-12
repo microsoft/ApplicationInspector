@@ -34,7 +34,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteOnce.Result("Rule status");
                 foreach (RuleStatus ruleStatus in verifyRulesResult.RuleStatusList)
                 {
-                    WriteOnce.General(string.Format("Ruleid: {0}, Rulename: {1}, Status: {2}", ruleStatus.RulesId, ruleStatus.RulesName, ruleStatus.Verified));
+                    WriteOnce.Result(string.Format("Ruleid: {0}, Rulename: {1}, Status: {2}", ruleStatus.RulesId, ruleStatus.RulesName, ruleStatus.Verified));
                 }
             }
 
