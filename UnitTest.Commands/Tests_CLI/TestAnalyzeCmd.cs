@@ -435,7 +435,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
 
-                string args = string.Format(@"analyze -s {0} -x none -f text -k none -o {1}",
+                string args = string.Format(@"analyze -s {0} -x none -f text -k none -o {1} --no-show-progress",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -460,7 +460,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"analyze -s {0} -x none -f text -k none -l {1}",
+                string args = string.Format(@"analyze -s {0} -x none -f text -k none -l {1} --no-show-progress",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 

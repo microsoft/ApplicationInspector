@@ -399,23 +399,22 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
 
-                string args = string.Format(@"get-tags -s {0} -x none -f text -k none -o {1}",
+                string args = string.Format(@"get-tags -s {0} -x none -f text -k none -o {1} --no-show-progress",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-
 
                 exitCode = (GetTagsResult.ExitCode)Helper.RunProcess(appInspectorPath, args, out string testContent);
 
                 if (exitCode == GetTagsResult.ExitCode.Success)
                 {
-                    exitCode = String.IsNullOrEmpty(testContent) ? GetTagsResult.ExitCode.Success : GetTagsResult.ExitCode.CriticalError;
+                    exitCode = string.IsNullOrEmpty(testContent) ? GetTagsResult.ExitCode.Success : GetTagsResult.ExitCode.CriticalError;
                 }
             }
             catch (Exception)
             {
             }
 
-            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
+            Assert.AreEqual(GetTagsResult.ExitCode.Success, exitCode);
         }
 
         [TestMethod]
@@ -424,7 +423,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -x none -f text -k none -l {1}",
+                string args = string.Format(@"get-tags -s {0} -x none -f text -k none -l {1} --no-show-progress",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
