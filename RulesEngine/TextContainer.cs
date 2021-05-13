@@ -106,10 +106,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                 }
             }
-
-            if (!CommentedStates.ContainsKey(inIndex))
+            if (!CommentedStates.ContainsKey(index))
             {
-                CommentedStates[inIndex] = false;
+                CommentedStates[index] = false;
+            }
+            if (inIndex != index)
+            {
+                CommentedStates[inIndex] = CommentedStates[index];
             }
         }
 
