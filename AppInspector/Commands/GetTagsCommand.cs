@@ -260,7 +260,8 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 logger = _options.Log,
                 treatEverythingAsCode = _options.TreatEverythingAsCode,
-                confidenceFilter = _confidence
+                confidenceFilter = _confidence,
+                Parallel = !_options.SingleThread
             };
 
             _rulesProcessor = new RuleProcessor(rulesSet, rpo);
@@ -615,7 +616,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     while (!done)
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
                         pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     }
                     pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
@@ -646,7 +647,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     while (!done)
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
                         var current = _metaDataHelper?.Files.Count ?? 0;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));

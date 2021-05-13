@@ -36,7 +36,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     LineStarts.Add(pos + 1);
                 }
-                pos = FullContent.IndexOf('\n');
+                pos = FullContent.IndexOf('\n', pos + 1);
             }
 
             if (LineEnds.Count < LineStarts.Count)
@@ -186,10 +186,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (!CommentedStates.ContainsKey(index))
             {
                 PopulateCommentedState(index);
-            }
-            else
-            {
-                Console.WriteLine("Shortcut");
             }
             return CommentedStates[index];
         }

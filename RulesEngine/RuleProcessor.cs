@@ -23,7 +23,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
 
         }
-
+        public bool Parallel = true;
         public Confidence confidenceFilter;
         public Logger? logger;
         public bool treatEverythingAsCode = false;
@@ -67,7 +67,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             ConfidenceLevelFilter = opts.confidenceFilter;
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
 
-            analyzer = new Analyzer();
+            analyzer = new Analyzer(new AnalyzerOptions(false, opts.Parallel));
             analyzer.SetOperation(new WithinOperation(analyzer));
             analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
             analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));

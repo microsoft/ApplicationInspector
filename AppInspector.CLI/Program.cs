@@ -319,7 +319,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     while (!done)
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
                     }
                     pbar.Message = $"Results written.";
 
@@ -385,7 +385,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     while (!done)
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
                     }
                     pbar.Message = $"Results written.";
 
