@@ -270,6 +270,8 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 {
                     string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
                     var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
+                    var matches = result.Metadata.TotalMatchesCount;
+                    var uniqueMatches = result.Metadata.UniqueMatchesCount;
                     exitCodeSingleThread = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }

@@ -178,6 +178,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                     Location StartLocation = textContainer.GetLocation(boundary.Index);
                                     Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
+                                    var airule = oatRule.AppInspectorRule;
                                     MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
                                     {
                                         FileName = fileEntry.FullPath,
@@ -302,6 +303,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                     Location StartLocation = textContainer.GetLocation(boundary.Index);
                                     Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
+                                    var airule = oatRule.AppInspectorRule;
                                     MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
                                     {
                                         FileName = fileEntry.FullPath,
