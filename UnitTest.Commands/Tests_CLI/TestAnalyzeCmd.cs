@@ -242,7 +242,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
-                    ".cpp");
+                    "*.cpp");
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
