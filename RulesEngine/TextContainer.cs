@@ -161,7 +161,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 if (LineEnds[i] >= index)
                 {
                     result.Index = LineStarts[i];
-                    result.Length = LineEnds[i] - LineStarts[i];
+                    result.Length = LineEnds[i] - LineStarts[i] + 1;
                     break;
                 }
             }
