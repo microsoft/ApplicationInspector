@@ -74,7 +74,8 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; } = "high,medium";
 
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable., Default = "!*/bin,!*/obj!,!*/.vs,!*/.git")]
+        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable.", Default = "!*/bin,!*/obj!,!*/.vs,!*/.git")]
+
         public string FilePathExclusions { get; set; } = "";
 
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [html|json|text]", Default = "html")]
@@ -114,7 +115,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('t', "test-type", Required = false, HelpText = "Type of test to run [equality|inequality]", Default = "equality")]
         public string TestType { get; set; } = "equality";
 
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable., Default = "!*/bin,!*/obj!,!*/.vs,!*/.git")]
+        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable.", Default = "!*/bin,!*/obj!,!*/.vs,!*/.git")]
         public string FilePathExclusions { get; set; } = "";
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
@@ -136,7 +137,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
 
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable., Default = "!*/bin,!*/obj!,!*/.vs,!*/.git")]
+        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable.", Default = "!*/bin,!*/obj!,!*/.vs,!*/.git")]
         public string FilePathExclusions { get; set; } = "";
     }
 
