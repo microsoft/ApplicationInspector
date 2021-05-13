@@ -63,17 +63,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public ConcurrentDictionary<int,bool> CommentedStates { get; } = new();
 
-        public void PopulateCommentedState(int index)
+        private void PopulateCommentedStatesInternal(int index, string prefix, string suffix)
         {
-            var inIndex = index;
-            if (index >= FullContent.Length)
+            var prefixLoc = FullContent[..index].LastIndexOf(prefix, index);
+            if (prefixLoc != -1)
             {
-                index = FullContent.Length - 1;
-            }
-            if (!string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(suffix))
-            {
-                var prefixLoc = FullContent[..index].LastIndexOf(prefix, index);
-                if (prefixLoc != -1)
+                if (!CommentedStates.ContainsKey(prefixLoc))
                 {
                     var suffixLoc = FullContent.IndexOf(suffix, prefixLoc);
                     if (suffixLoc == -1)
@@ -86,25 +81,22 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                 }
             }
+        }
 
-            if (!string.IsNullOrEmpty(inline))
+        public void PopulateCommentedState(int index)
+        {
+            var inIndex = index;
+            if (index >= FullContent.Length)
             {
-                var inlineLoc = FullContent.LastIndexOf(inline, index);
-                if (inlineLoc != -1)
-                {
-                    if (!CommentedStates.ContainsKey(inlineLoc) || (CommentedStates.ContainsKey(inlineLoc) && !CommentedStates[inlineLoc]))
-                    {
-                        var newlineLoc = FullContent.IndexOf('\n', inlineLoc);
-                        if (newlineLoc == -1)
-                        {
-                            newlineLoc = FullContent.Length - 1;
-                        }
-                        for(int i = inlineLoc; i <= newlineLoc; i++)
-                        {
-                            CommentedStates[i] = true;
-                        }
-                    }
-                }
+                index = FullContent.Length - 1;
+            }
+            if (!string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(suffix))
+            {
+                PopulateCommentedStatesInternal(index, prefix, suffix);
+            }
+            if (!CommentedStates.ContainsKey(index) && !string.IsNullOrEmpty(inline))
+            {
+                PopulateCommentedStatesInternal(index, inline, "\n");
             }
             if (!CommentedStates.ContainsKey(index))
             {
