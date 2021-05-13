@@ -65,7 +65,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         private void PopulateCommentedStatesInternal(int index, string prefix, string suffix)
         {
-            var prefixLoc = FullContent[..index].LastIndexOf(prefix, index);
+            var prefixLoc = FullContent[..index].LastIndexOf(prefix);
             if (prefixLoc != -1)
             {
                 if (!CommentedStates.ContainsKey(prefixLoc))
