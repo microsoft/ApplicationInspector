@@ -26,7 +26,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
         public string ConfidenceFilters { get; set; } = "high,medium";
-        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
+        public string FilePathExclusions { get; set; } = "none";
         public bool SingleThread { get; set; } = false;
         public bool TreatEverythingAsCode { get; set; } = false;
         public bool NoShowProgress { get; set; } = true;
@@ -83,7 +83,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _options = opt;
 
-            if (!string.IsNullOrEmpty(opt.FilePathExclusions))
+            if (!string.IsNullOrEmpty(opt.FilePathExclusions) && opt.FilePathExclusions != "none")
             {
                 _fileExclusionList = opt.FilePathExclusions.Split(',').Select(x => new Glob(x)).ToList();
             }
