@@ -86,7 +86,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             var regex = StringToRegex(RegexList[i], regexOpts);
                             if (regex != null)
                             {
-                                var matches = regex.Matches(tc.Target);
+                                var matches = regex.Matches(tc.FullContent);
                                 if (matches.Count > 0 || (matches.Count == 0 && clause.Invert))
                                 {
                                     foreach (var match in matches)
@@ -96,7 +96,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                             Boundary translatedBoundary = new Boundary()
                                             {
                                                 Length = m.Length,
-                                                Index = m.Index + tc.GetLineBoundary(tc.LineNumber).Index
+                                                Index = m.Index
                                             };
 
                                             //regex patterns will be indexed off data while string patterns result in N clauses

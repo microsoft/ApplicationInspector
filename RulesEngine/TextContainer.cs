@@ -13,41 +13,36 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class TextContainer
     {
-        public List<int> LineEnds;
-
         /// <summary>
         ///     Creates new instance
         /// </summary>
         /// <param name="content"> Text to work with </param>
         /// <param name="language"> The language of the test </param>
         /// <param name="lineNumber"> The line number to specify. Leave empty for full file as target. </param>
-        public TextContainer(string content, string language, int lineNumber = 0)
+        public TextContainer(string content, string language)
         {
             Language = language;
-            LineNumber = lineNumber;
             FullContent = content;
-            Target = LineNumber == 0 ? FullContent : GetLineContent(lineNumber);
             LineEnds = new List<int>() { 0 };
             LineStarts = new List<int>() { 0, 0 };
 
             // Find line end in the text
-            int pos = 0;
-            while (pos > -1 && pos < FullContent.Length)
+            int pos = FullContent.IndexOf('\n');
+            while (pos > -1)
             {
-                if (++pos < FullContent.Length)
+                LineEnds.Add(pos);
+
+                if (pos > 0 && pos + 1 < FullContent.Length)
                 {
-                    pos = FullContent.IndexOf("\n", pos, StringComparison.InvariantCultureIgnoreCase);
-                    LineEnds.Add(pos);
-                    if (pos > 0 && pos + 1 < FullContent.Length)
-                    {
-                        LineStarts.Add(pos + 1);
-                    }
+                    LineStarts.Add(pos + 1);
                 }
+                pos = FullContent.IndexOf('\n');
             }
 
-            // Text can end with \n or not
-            if (LineEnds[LineEnds.Count - 1] == -1)
-                LineEnds[LineEnds.Count - 1] = (FullContent.Length > 0) ? FullContent.Length - 1 : 0;
+            if (LineEnds.Count < LineStarts.Count)
+            {
+                LineEnds.Add(FullContent.Length - 1);
+            }
 
             prefix = RulesEngine.Language.GetCommentPrefix(Language);
             suffix = RulesEngine.Language.GetCommentSuffix(Language);
@@ -56,10 +51,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public string FullContent { get; }
         public string Language { get; }
-        public string Line { get; } = "";
-        public int LineNumber { get; }
+        public List<int> LineEnds { get; }
         public List<int> LineStarts { get; }
-        public string Target { get; }
 
         public ConcurrentDictionary<int,bool> CommentedStates { get; } = new();
 
@@ -112,32 +105,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
-        /// <summary>
-        ///     Returns the Boundary of a specified line number
-        /// </summary>
-        /// <param name="lineNumber"> The line number to return the boundary for </param>
-        /// <returns> </returns>
-        public Boundary GetBoundaryFromLine(int lineNumber)
-        {
-            Boundary result = new Boundary();
-
-            if (lineNumber >= LineEnds.Count)
-            {
-                return result;
-            }
-
-            // Fine when the line number is 0
-            var start = 0;
-            if (lineNumber > 0)
-            {
-                start = LineEnds[lineNumber - 1] + 1;
-            }
-            result.Index = start;
-            result.Length = LineEnds[lineNumber] - result.Index + 1;
-
-            return result;
-        }
-
         public string GetBoundaryText(Boundary capture)
         {
             if (capture is null)
@@ -176,6 +143,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> Text </returns>
         public string GetLineContent(int line)
         {
+            if (line >= LineEnds.Count)
+            {
+                line = LineEnds.Count - 1;
+            }
             int index = LineEnds[line];
             Boundary bound = GetLineBoundary(index);
             return FullContent.Substring(bound.Index, bound.Length);
@@ -202,8 +173,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     if (LineEnds[i] >= index)
                     {
                         result.Line = i;
-                        result.Column = index - LineEnds[i - 1];
-
+                        result.Column = index - LineStarts[i];
                         break;
                     }
                 }
@@ -243,27 +213,5 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private string inline;
         private string prefix;
         private string suffix;
-
-        /// <summary>
-        ///     Return boundary defined by line and its offset
-        /// </summary>
-        /// <param name="line"> Line number </param>
-        /// <param name="offset"> Offset from line number </param>
-        /// <returns> Boundary </returns>
-        private int BoundaryByLine(int line, int offset)
-        {
-            int index = line + offset;
-
-            // We need the begining of the line when going up
-            if (offset < 0)
-                index--;
-
-            if (index < 0)
-                index = 0;
-            if (index >= LineEnds.Count)
-                index = LineEnds.Count - 1;
-
-            return LineEnds[index];
-        }
     }
 }
