@@ -360,21 +360,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList;
         }
 
-        /// <summary>
-        /// Analyzes given line of code returning matching scan results for the
-        /// file passed in only; Use AllResults to get results across the entire set
-        /// </summary>
-        /// <param name="text">Source code</param>
-        /// <param name="languages">List of languages</param>
-        /// <returns>Array of matches</returns>
-        public List<MatchRecord> AnalyzeFile(string filePath, string text, LanguageInfo languageInfo)
-        {
-            using var ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
-            var entry = new FileEntry(filePath, ms);
-            return AnalyzeFile(entry, languageInfo);
-        }
-
-
         #region Private Support Methods
 
         /// <summary>
