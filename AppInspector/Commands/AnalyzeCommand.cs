@@ -88,7 +88,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!string.IsNullOrEmpty(opt.FilePathExclusions))
             {
-                _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").Select(x => new Glob(x)).ToList();
+                _fileExclusionList = opt.FilePathExclusions.Split(",").Select(x => new Glob(x)).ToList();
             }
             else
             {
