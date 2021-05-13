@@ -160,8 +160,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (LineEnds[i] >= index)
                 {
-                    result.Index = (i > 0 && LineEnds[i - 1] > 0) ? LineEnds[i - 1] + 1 : 0;
-                    result.Length = LineEnds[i] - result.Index + 1;
+                    result.Index = LineStarts[i];
+                    result.Length = LineEnds[i] - LineStarts[i];
                     break;
                 }
             }
