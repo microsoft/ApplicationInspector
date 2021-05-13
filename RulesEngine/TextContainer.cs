@@ -65,7 +65,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         private void PopulateCommentedStatesInternal(int index, string prefix, string suffix)
         {
-            var prefixLoc = FullContent[..index].LastIndexOf(prefix);
+            var prefixLoc = FullContent.LastIndexOf(prefix, index);
             if (prefixLoc != -1)
             {
                 if (!CommentedStates.ContainsKey(prefixLoc))
@@ -89,6 +89,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (index >= FullContent.Length)
             {
                 index = FullContent.Length - 1;
+            }
+            if (index < 0)
+            {
+                index = 0;
             }
             if (!string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(suffix))
             {
