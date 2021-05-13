@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using GlobExpressions;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Newtonsoft.Json;
@@ -74,7 +75,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private DateTime DateScanned { get; set; }
 
-        private readonly List<string> _fileExclusionList = new List<string>();
+        private readonly List<Glob> _fileExclusionList = new();
         private Confidence _confidence;
         private readonly GetTagsCommandOptions _options; //copy of incoming caller options
 
@@ -84,15 +85,11 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!string.IsNullOrEmpty(opt.FilePathExclusions))
             {
-                _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").ToList();
-                if (_fileExclusionList != null && (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None")))
-                {
-                    _fileExclusionList.Clear();
-                }
+                _fileExclusionList = opt.FilePathExclusions.Split(',').Select(x => new Glob(x)).ToList();
             }
             else
             {
-                _fileExclusionList = new List<string>();
+                _fileExclusionList = new List<Glob>();
             }
 
             DateScanned = DateTime.Now;
@@ -330,7 +327,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 sw.Start();
 
 
-                if (_fileExclusionList.Any(v => file.FullPath.ToLower().Contains(v)))
+                if (_fileExclusionList.Any(v => v.IsMatch(file.FullPath))
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
                     fileRecord.Status = ScanState.Skipped;
@@ -475,7 +472,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 var sw = new Stopwatch();
                 sw.Start();
 
-                if (_fileExclusionList.Any(x => file.FullPath.ToLower().Contains(x)))
+                if (_fileExclusionList.Any(x => x.IsMatch(file.FullPath)))
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
                     fileRecord.Status = ScanState.Skipped;

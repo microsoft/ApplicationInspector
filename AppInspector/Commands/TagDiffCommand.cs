@@ -14,7 +14,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string SourcePath1 { get; set; } = "";
         public string SourcePath2 { get; set; } = "";
         public string TestType { get; set; } = "equality";
-        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
+        public string FilePathExclusions { get; set; } = string.Empty;
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
     }

@@ -187,6 +187,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 PopulateCommentedState(index);
             }
+            else
+            {
+                Console.WriteLine("Shortcut");
+            }
             return CommentedStates[index];
         }
 
