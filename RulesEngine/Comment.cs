@@ -16,7 +16,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         [JsonProperty(PropertyName = "inline")]
         public string? Inline { get; set; }
 
-        [JsonProperty(PropertyName = "preffix")]
+        [JsonProperty(PropertyName = "prefix")]
         public string? Prefix { get; set; }
 
         [JsonProperty(PropertyName = "suffix")]

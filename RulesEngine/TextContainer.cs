@@ -1,6 +1,8 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -58,6 +60,58 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public int LineNumber { get; }
         public List<int> LineStarts { get; }
         public string Target { get; }
+
+        public ConcurrentDictionary<int,bool> CommentedStates { get; } = new();
+
+        public void PopulateCommentedState(int index)
+        {
+            var inIndex = index;
+            if (index >= FullContent.Length)
+            {
+                index = FullContent.Length - 1;
+            }
+            if (!string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(suffix))
+            {
+                var prefixLoc = FullContent[..index].LastIndexOf(prefix, index);
+                if (prefixLoc != -1)
+                {
+                    var suffixLoc = FullContent.IndexOf(suffix, prefixLoc);
+                    if (suffixLoc == -1)
+                    {
+                        suffixLoc = FullContent.Length - 1;
+                    }
+                    for (int i = prefixLoc; i <= suffixLoc; i++)
+                    {
+                        CommentedStates[i] = true;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(inline))
+            {
+                var inlineLoc = FullContent.LastIndexOf(inline, index);
+                if (inlineLoc != -1)
+                {
+                    if (!CommentedStates.ContainsKey(inlineLoc) || (CommentedStates.ContainsKey(inlineLoc) && !CommentedStates[inlineLoc]))
+                    {
+                        var newlineLoc = FullContent.IndexOf('\n', inlineLoc);
+                        if (newlineLoc == -1)
+                        {
+                            newlineLoc = FullContent.Length - 1;
+                        }
+                        for(int i = inlineLoc; i <= newlineLoc; i++)
+                        {
+                            CommentedStates[i] = true;
+                        }
+                    }
+                }
+            }
+
+            if (!CommentedStates.ContainsKey(inIndex))
+            {
+                CommentedStates[inIndex] = false;
+            }
+        }
 
         /// <summary>
         ///     Returns the Boundary of a specified line number
@@ -158,6 +212,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return result;
         }
 
+        public bool IsCommented(int index)
+        {
+            if (!CommentedStates.ContainsKey(index))
+            {
+                PopulateCommentedState(index);
+            }
+            return CommentedStates[index];
+        }
+
         /// <summary>
         ///     Check whether the boundary in a text matches the scope of a search pattern (code, comment etc.)
         /// </summary>
@@ -173,9 +236,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             if (patterns.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
                 return true;
-            bool isInComment = IsBetween(FullContent, boundary.Index, prefix, suffix, inline);
+            bool isInComment = IsCommented(boundary.Index);
 
-            return !(isInComment && !patterns.Contains(PatternScope.Comment));
+            return (!isInComment && patterns.Contains(PatternScope.Code)) || (isInComment && patterns.Contains(PatternScope.Comment));
         }
 
         private string inline;
@@ -202,113 +265,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 index = LineEnds.Count - 1;
 
             return LineEnds[index];
-        }
-
-        /// <summary>
-        ///     Checks if the index in the string lies between preffix and suffix
-        /// </summary>
-        /// <param name="text"> Text </param>
-        /// <param name="index"> Index to check </param>
-        /// <param name="prefix"> Prefix </param>
-        /// <param name="suffix"> Suffix </param>
-        /// <returns> True if the index is between prefix and suffix </returns>
-        private static bool IsBetween(string text, int index, string prefix, string suffix, string inline = "")
-        {
-            int pinnedIndex = Math.Min(index, text.Length);
-            string preText = text[0..pinnedIndex];
-            int lastPrefix = FastGetLastIndex(preText, prefix);
-            if (lastPrefix >= 0)
-            {
-                int lastInline = FastGetLastIndex(preText[0..lastPrefix], inline);
-                // For example in C#, If this /* is actually commented out by a //
-                if (!(lastInline >= 0 && lastInline < lastPrefix && !preText[lastInline..lastPrefix].Contains('\n')))
-                {
-                    var commentedText = text[lastPrefix..];
-                    int nextSuffix = FastGetIndex(commentedText, suffix);
-
-                    // If the index is in between the last prefix before the index and the next suffix after
-                    // that prefix Then it is commented out
-                    if (lastPrefix + nextSuffix > pinnedIndex)
-                        return true;
-                }
-            }
-            if (!string.IsNullOrEmpty(inline))
-            {
-                int lastInline = FastGetLastIndex(preText, inline, '\n'); // Check the same line for same-line comment marks, stopping if you find a newline
-                if (lastInline >= 0)
-                {
-                    var commentedText = text[lastInline..];
-                    int endOfLine = FastGetIndex(commentedText,"\n");//Environment.Newline looks for /r/n which is not guaranteed
-                    if (endOfLine < 0)
-                    {
-                        endOfLine = commentedText.Length - 1;
-                    }
-                    if (index > lastInline && index < lastInline + endOfLine)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private static int FastGetIndex(string target, string query, char? cancelOn = null)
-        {
-            for (int i = 0; i < target.Length - query.Length; i++)
-            {
-                int offset = 0;
-                bool skip = false;
-                while (!skip && offset < query.Length)
-                {
-                    if (target[i + offset].Equals(cancelOn))
-                    {
-                        skip = true;
-                    }
-                    else if (!target[i + offset].Equals(query[offset]))
-                    {
-                        skip = true;
-                    }
-                    else
-                    {
-                        offset++;
-                    }
-                }
-                if (!skip)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        private static int FastGetLastIndex(string target, string query, char? cancelOn = null)
-        {
-            for (int i = target.Length - query.Length; i > 0; i--)
-            {
-                int offset = 0;
-                bool skip = false;
-                while(!skip && offset < query.Length)
-                {
-                    if (target[i + offset].Equals(cancelOn))
-                    {
-                        skip = true;
-                    }
-                    else if (!target[i + offset].Equals(query[offset]))
-                    {
-                        skip = true;
-                    }
-                    else
-                    {
-                        offset++;
-                    }
-                }
-                if (!skip)
-                {
-                    return i;
-                }
-            }
-            return -1;
         }
     }
 }

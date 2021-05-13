@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using NLog;
 using ShellProgressBar;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -600,15 +601,22 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!_options.NoShowProgress)
             {
                 var done = false;
-                List<FileEntry> fileQueue = new();
+                ConcurrentBag<FileEntry> fileQueue = new();
 
                 _ = Task.Factory.StartNew(() =>
                 {
                     try
                     {
-                        foreach(var entry in GetFileEntries())
+                        if (_options.SingleThread)
                         {
-                            fileQueue.Add(entry);
+                            foreach (var entry in GetFileEntries())
+                            {
+                                fileQueue.Add(entry);
+                            }
+                        }
+                        else
+                        {
+                            Parallel.ForEach(GetFileEntries(), entry => fileQueue.Add(entry));
                         }
                     }
                     catch (OverflowException e)
@@ -662,7 +670,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     while (!done)
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(1000);
                         var current = _metaDataHelper?.Files.Count ?? 0;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));
