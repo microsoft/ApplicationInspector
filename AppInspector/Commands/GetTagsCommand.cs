@@ -326,8 +326,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 var sw = new Stopwatch();
                 sw.Start();
 
-
-                if (_fileExclusionList.Any(v => v.IsMatch(file.FullPath))
+                if (_fileExclusionList.Any(v => v.IsMatch(file.FullPath)))
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
                     fileRecord.Status = ScanState.Skipped;
