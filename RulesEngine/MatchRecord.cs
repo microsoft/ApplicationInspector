@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Newtonsoft.Json;
+using System;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -16,11 +17,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="rule"></param>
         public MatchRecord(Rule rule)
         {
+            if (rule is null)
+            {
+                throw new ArgumentNullException();
+            }
             Rule = rule;
         }
 
         [JsonIgnore]
-        public Rule Rule;
+        public Rule Rule { get; }
 
         /// <summary>
         /// Rule Id found in matching rule

@@ -30,7 +30,6 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 var argsResult = Parser.Default.ParseArguments<CLIAnalyzeCmdOptions,
                     CLITagDiffCmdOptions,
-                    CLITagTestCmdOptions,
                     CLIExportTagsCmdOptions,
                     CLIVerifyRulesCmdOptions,
                     CLIPackRulesCmdOptions,
@@ -38,7 +37,6 @@ namespace Microsoft.ApplicationInspector.CLI
                   .MapResult(
                     (CLIAnalyzeCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLITagDiffCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
-                    (CLITagTestCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIExportTagsCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIVerifyRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIPackRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
@@ -99,17 +97,6 @@ namespace Microsoft.ApplicationInspector.CLI
             CommonOutputChecks(options);
             return RunTagDiffCommand(options);
         }
-
-        private static int VerifyOutputArgsRun(CLITagTestCmdOptions options)
-        {
-            Logger logger = Utils.SetupLogging(options, true);
-            WriteOnce.Log = logger;
-            options.Log = logger;
-
-            CommonOutputChecks(options);
-            return RunTagTestCommand(options);
-        }
-
         private static int VerifyOutputArgsRun(CLIExportTagsCmdOptions options)
         {
             Logger logger = Utils.SetupLogging(options, true);
@@ -417,25 +404,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             return (int)tagDiffResult.ResultCode;
         }
-
-        private static int RunTagTestCommand(CLITagTestCmdOptions cliOptions)
-        {
-            TagTestCommand command = new TagTestCommand(new TagTestOptions()
-            {
-                SourcePath = cliOptions.SourcePath,
-                CustomRulesPath = cliOptions.CustomRulesPath,
-                FilePathExclusions = cliOptions.FilePathExclusions,
-                TestType = cliOptions.TestType,
-                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
-                Log = cliOptions.Log
-            });
-
-            TagTestResult tagTestCommand = command.GetResult();
-            ResultsWriter.Write(tagTestCommand, cliOptions);
-
-            return (int)tagTestCommand.ResultCode;
-        }
-
+        
         private static int RunExportTagsCommand(CLIExportTagsCmdOptions cliOptions)
         {
             ExportTagsCommand command = new ExportTagsCommand(new ExportTagsOptions()

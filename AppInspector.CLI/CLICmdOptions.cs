@@ -40,8 +40,8 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable.", Default = "*/bin,*/obj,*/.vs,*/.git")]
         public string FilePathExclusions { get; set; } = "";
 
-        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 0)]
-        public int FileTimeOut { get; set; } = 0;
+        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 60000)]
+        public int FileTimeOut { get; set; } = 60000;
 
         [Option("processing-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing overall.", Default = 0)]
         public int ProcessingTimeOut { get; set; } = 0;
@@ -84,8 +84,8 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('e', "text-format", Required = false, HelpText = "Match text format specifiers", Default = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m")]
         public string TextOutputFormat { get; set; } = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";
 
-        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 0)]
-        public int FileTimeOut { get; set; } = 0;
+        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 60000)]
+        public int FileTimeOut { get; set; } = 60000;
 
         [Option("processing-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing overall.", Default = 0)]
         public int ProcessingTimeOut { get; set; } = 0;
@@ -123,22 +123,12 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
-    }
 
-    [Verb("tagtest", HelpText = "Test (T/F) for presence of custom rule set in source")]
-    public class CLITagTestCmdOptions : CLICommandOptions
-    {
-        [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect")]
-        public string? SourcePath { get; set; }
+        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 60000)]
+        public int FileTimeOut { get; set; } = 60000;
 
-        [Option('t', "test-type", Required = false, HelpText = "Test to perform [rulespresent|rulesnotpresent] ", Default = "rulespresent")]
-        public string TestType { get; set; } = "rulespresent";
-
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string? CustomRulesPath { get; set; }
-
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable.", Default = "*/bin,*/obj,*/.vs,*/.git")]
-        public string FilePathExclusions { get; set; } = "";
+        [Option("processing-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing overall.", Default = 0)]
+        public int ProcessingTimeOut { get; set; } = 0;
     }
 
     [Verb("exporttags", HelpText = "Export unique rule tags to view what code features may be detected")]

@@ -17,6 +17,8 @@ namespace Microsoft.ApplicationInspector.Commands
         public string FilePathExclusions { get; set; } = string.Empty;
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
+        public int FileTimeOut { get; set; }
+        public int ProcessingTimeOut { get; set; }
     }
 
     /// <summary>
