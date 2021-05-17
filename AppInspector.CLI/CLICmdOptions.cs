@@ -22,7 +22,7 @@ namespace Microsoft.ApplicationInspector.CLI
     /// <summary>
     /// CLI command distinct arguments
     /// </summary>
-    [Verb("get-tags", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics for unique tags")]
+    [Verb("gettags", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics for unique tags")]
     public class CLIGetTagsCommandOptions : CLICommandOptions
     {
         [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect")]

@@ -29,10 +29,6 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 writer = GetAnalyzeWriter(cliAnalyzeCmdOptions);
             }
-            else if (options is CLITagTestCmdOptions cliTagTestCmdOptions)
-            {
-                writer = GetTagTestWriter(cliTagTestCmdOptions);
-            }
             else if (options is CLITagDiffCmdOptions cliTagDiffCmdOptions)
             {
                 writer = GetTagDiffWriter(cliTagDiffCmdOptions);
@@ -134,32 +130,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
                 case "text":
                     writer = new GetTagsTextWriter();
-                    break;
-
-                default:
-                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
-                    throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
-            }
-
-            //assign the stream as a file or console
-            writer.OutputFileName = options.OutputFilePath;
-            writer.TextWriter = GetTextWriter(writer.OutputFileName);
-
-            return writer;
-        }
-
-        private static CommandResultsWriter GetTagTestWriter(CLITagTestCmdOptions options)
-        {
-            CommandResultsWriter? writer;
-
-            switch (options.OutputFileFormat.ToLower())
-            {
-                case "json":
-                    writer = new JsonWriter();
-                    break;
-
-                case "text":
-                    writer = new TagTestTextWriter();
                     break;
 
                 default:

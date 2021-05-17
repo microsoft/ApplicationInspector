@@ -45,7 +45,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -b -s {0} -f unknown -k none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
+                string args = string.Format(@"gettags -b -s {0} -f unknown -k none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
                 exitCode = (GetTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
             catch (Exception)
@@ -62,7 +62,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -f json -k none -o {1}",
+                string args = string.Format(@"gettags -s {0} -f json -k none -o {1}",
                      Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                      Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"badir\output.txt"));
 
@@ -81,7 +81,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -f json -k none -o {1}",
+                string args = string.Format(@"gettags -s {0} -f json -k none -o {1}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -100,7 +100,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -r badrulespath -f json -k none -o {1}",
+                string args = string.Format(@"gettags -s {0} -r badrulespath -f json -k none -o {1}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -119,7 +119,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -i -f json -k none -o {1}",
+                string args = string.Format(@"gettags -s {0} -i -f json -k none -o {1}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -138,7 +138,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -i -r {1} -f json -k none -o {2}",
+                string args = string.Format(@"gettags -s {0} -i -r {1} -f json -k none -o {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
@@ -158,7 +158,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -r {1} -f json -k none -o {2}",
+                string args = string.Format(@"gettags -s {0} -r {1} -f json -k none -o {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
@@ -178,7 +178,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -r {1} -f json -k none -o {2}",
+                string args = string.Format(@"gettags -s {0} -r {1} -f json -k none -o {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
@@ -202,7 +202,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -r {1} -f json -o {2} -k {3}",
+                string args = string.Format(@"gettags -s {0} -r {1} -f json -o {2} -k {3}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
@@ -224,7 +224,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string args = string.Format(@"get-tags -s {0} -f json -o {1} -k none --single-threaded",
+                string args = string.Format(@"gettags -s {0} -f json -o {1} -k none --single-threaded",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -248,7 +248,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             try
             {
 
-                string args = string.Format(@"get-tags -s {0} -f json -o {1} -k none",
+                string args = string.Format(@"gettags -s {0} -f json -o {1} -k none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -274,7 +274,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -f json -o {1} -k none",
+                string args = string.Format(@"gettags -s {0} -f json -o {1} -k none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -293,7 +293,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -f json -l {1} -v trace -k none",
+                string args = string.Format(@"gettags -s {0} -f json -l {1} -v trace -k none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log1.txt"));
 
@@ -315,7 +315,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -f json -l {1} -v error -k none",
+                string args = string.Format(@"gettags -s {0} -f json -l {1} -v error -k none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\nofile.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log2.txt"));
 
@@ -337,7 +337,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -f json -l {1} -v debug -k none",
+                string args = string.Format(@"gettags -s {0} -f json -l {1} -v debug -k none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log3.txt"));
 
@@ -359,7 +359,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -f json -l {1} -k none",
+                string args = string.Format(@"gettags -s {0} -f json -l {1} -k none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"badir\log.txt"));
 
@@ -378,7 +378,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -f json -l {1} -k none",
+                string args = string.Format(@"gettags -s {0} -f json -l {1} -k none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
 
@@ -399,7 +399,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
 
-                string args = string.Format(@"get-tags -s {0} -x none -f text -k none -o {1} --no-show-progress",
+                string args = string.Format(@"gettags -s {0} -x none -f text -k none -o {1} --no-show-progress",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -423,7 +423,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"get-tags -s {0} -x none -f text -k none -l {1} --no-show-progress",
+                string args = string.Format(@"gettags -s {0} -x none -f text -k none -l {1} --no-show-progress",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 

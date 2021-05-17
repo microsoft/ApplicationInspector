@@ -19,11 +19,7 @@ namespace Microsoft.ApplicationInspector.CLI
             string commandCompletedMsg;
 
             //perform type checking and assign final msg string
-            if (result is TagTestResult)
-            {
-                commandCompletedMsg = "Tag Test";
-            }
-            else if (result is TagDiffResult)
+            if (result is TagDiffResult)
             {
                 commandCompletedMsg = "Tag Diff";
             }

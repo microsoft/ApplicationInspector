@@ -57,7 +57,7 @@ ERROR(S):
 
   tagdiff        Compares unique tag values between two source paths
 
-  tagtest        Test (T/F) for presence of custom rule set in source
+  gettags       Checks the provided source for matching tags without additional analysis context
 
   exporttags     Export unique rule tags to view what code features may be detected
 
