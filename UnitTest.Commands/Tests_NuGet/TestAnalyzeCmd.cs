@@ -272,7 +272,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one"),
-                FilePathExclusions = "*/main.cpp"
+                FilePathExclusions = "**/main.cpp"
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
