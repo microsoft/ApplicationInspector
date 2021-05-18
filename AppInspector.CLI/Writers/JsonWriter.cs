@@ -31,7 +31,7 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
                         jsonSerializer.Serialize(TextWriter, result);
                         break;
                     case PackRulesResult prr:
-                        jsonSerializer.Serialize(TextWriter, prr.Rules);
+                        jsonSerializer.Serialize(TextWriter, result);
                         break;
                     default:
                         throw new System.Exception("Unexpected object type for json writer");

@@ -14,7 +14,7 @@
     "patterns": [
       {
         "pattern": "RegSetValueEx|RegOpenKeyEx|RegCreateKeyEx",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -54,7 +54,7 @@
     "patterns": [
       {
         "pattern": "CreateSubKey|SetValue",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -63,7 +63,7 @@
       {
         "pattern": {
           "pattern": "HKEY_|Registry",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -88,7 +88,7 @@
     "patterns": [
       {
         "pattern": "_?winreg\\.(Set|Delete|Create)(Key|Value)(Ex)?",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high",
         "_comment": "_winreg and winreg built-in modules"
@@ -148,7 +148,7 @@
     "patterns": [
       {
         "pattern": "RegistryAccessRule|RegistrySecurity",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -169,7 +169,7 @@
     "patterns": [
       {
         "pattern": "RegGetValue|RegGetDWord|RegGetString|CRegKey|RegOpenKey|RegQueryKeyEx",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -238,7 +238,7 @@
       {
         "pattern": {
           "pattern": "HKEY_",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -272,7 +272,7 @@
       {
         "pattern": {
           "pattern": "HKEY_",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],

@@ -18,7 +18,7 @@
       },
       {
         "pattern": "AES-?(128|192|256)|Rijndael",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -37,7 +37,7 @@
     "patterns": [
       {
         "pattern": "3DES|TripleDES",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -56,7 +56,7 @@
     "patterns": [
       {
         "pattern": "RC([2456])",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -121,7 +121,7 @@
     "patterns": [
       {
         "pattern": "CBC|CTR|ECB|OFB|CFB|CTS|PCBC|GMAC|XCBC|IACBC|IAPM|EAX|OCB|CWC|AEAD|LRW|XEX|XTS|CMC|EME|CBCMAC|OMAC|PMAC",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -143,19 +143,19 @@
     "patterns": [
       {
         "pattern": "RSACng|RSACryptoServiceProvider|RSAEncryptionPadding|RSAOAEPKeyExchangeDeformatter|X509AsymmetricSecurityKey",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "RSAOAEPKeyExchangeFormatter|RSAPKCS1KeyExchangeDeformatter|RSAPKCS1",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "RSASignaturePadding|RsaProtectedConfigurationProvider|RSACertificateExtensions",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -180,7 +180,7 @@
       },
       {
         "pattern": "rsa",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

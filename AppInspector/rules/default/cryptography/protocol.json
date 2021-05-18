@@ -81,7 +81,7 @@
     "patterns": [
       {
         "pattern": "(kCF|NS)StreamSocketSecurityLevel(None|SSLv2|SSLv3|TLSv1|NegotiatedSSL)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },
@@ -99,7 +99,7 @@
       },
       {
         "pattern": "ssl",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high",
         "_comment": "e.g. ssl_crl, ssl_ecdh_curve, others"
@@ -147,7 +147,7 @@
     "patterns": [
       {
         "pattern": "ssh",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }

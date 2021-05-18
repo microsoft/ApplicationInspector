@@ -142,7 +142,7 @@
     "patterns": [
       {
         "pattern": "mybatis|iobatis",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }

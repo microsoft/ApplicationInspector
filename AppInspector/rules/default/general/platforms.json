@@ -65,7 +65,7 @@
       },
       {
         "pattern": "kitkat|jellybean|lollipop|marshmallow|nougat|oreo",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -93,7 +93,7 @@
       {
         "pattern": {
           "pattern": "chart",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -116,7 +116,7 @@
     "patterns": [
       {
         "pattern": "AppleWebKit|UIKit|ios",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -134,7 +134,7 @@
     "patterns": [
       {
         "pattern": "(os x)|osx|macos|macosx",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -207,7 +207,7 @@
     "patterns": [
       {
         "pattern": "Windows universal platform|UWP",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ]
       }
@@ -224,7 +224,7 @@
     "patterns": [
       {
         "pattern": "linux|xubuntu|ubuntu|coreos|manjaro|archlinux|debian|mint|gentoo|opensuse|redhat|mandrake|mandriva|slackware",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -242,7 +242,7 @@
     "patterns": [
       {
         "pattern": "xbox",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -308,7 +308,7 @@
     "patterns": [
       {
         "pattern": "IOT",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high",
@@ -327,7 +327,7 @@
     "patterns": [
       {
         "pattern": "kinex",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"

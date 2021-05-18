@@ -54,7 +54,7 @@
       },
       {
         "pattern": "apsw",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "medium"
       }
@@ -195,7 +195,7 @@
     "patterns": [
       {
         "pattern": "mongodb|mongoose|mongoclient|pymongo|redis|hbase|neo4j|cassandra|couchbase|memcached|couchdb|litedb|LiteDatabase|tinydb",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -260,7 +260,7 @@
       {
         "pattern": {
           "pattern": "from|where",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -284,7 +284,7 @@
     "patterns": [
       {
         "pattern": "mysql",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -354,7 +354,7 @@
     "patterns": [
       {
         "pattern": "database",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "confidence": "high"
       }
@@ -372,7 +372,7 @@
     "patterns": [
       {
         "pattern": "OdbcConnection|OdbcCommand|OdbcDataReader",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -390,7 +390,7 @@
     "patterns": [
       {
         "pattern": "Odbc",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }

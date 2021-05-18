@@ -26,7 +26,7 @@
     "patterns": [
       {
         "pattern": "Vue",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -43,7 +43,7 @@
     "patterns": [
       {
         "pattern": "ember",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }

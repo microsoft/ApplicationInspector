@@ -31,7 +31,7 @@
       },
       {
         "pattern": "mobile_*(phone|number)|cell_*(phone|number)|telephone",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -49,14 +49,14 @@
     "patterns": [
       {
         "pattern": "mobile|cell|phone|ipaddress|ipaddr|geolocation|geotracking|identification|ssnumber|ssn|children|kids*",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "medium"
       },
       {
         "pattern": "age",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "medium"
@@ -66,7 +66,7 @@
       {
         "pattern": {
           "pattern": "address|(first|last|sur)name|gender|contact|email|user|mother|father",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -156,7 +156,7 @@
     "patterns": [
       {
         "pattern": "medical|insurance|doctor|patient|physician|medicare|medicaid|physician|blood_*type",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "low"
@@ -174,7 +174,7 @@
     "patterns": [
       {
         "pattern": "registration|membership|acctnum|accountnum|accountnumber",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"

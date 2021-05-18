@@ -32,7 +32,7 @@
       },
       {
         "pattern": "flash",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code",
           "comment"
@@ -59,7 +59,7 @@
     "patterns": [
       {
         "pattern": "CoInitialize|CoCreateInstance|comClassInterface|CLSCTX_INPROC_SERVER|ProgId|COleControlModule|ComDefaultInterface|IOleInPlaceObject|IOleControl|IOleObjective",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -144,7 +144,7 @@
     "patterns": [
       {
         "pattern": "CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER|CoCreateInstance",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

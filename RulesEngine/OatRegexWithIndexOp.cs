@@ -81,32 +81,30 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                     if (Analyzer != null)
                     {
-                        for (int i = 0; i < RegexList.Count; i++)
+                        var regex = StringToRegex(string.Join('|', RegexList), regexOpts);
+
+                        if (regex != null)
                         {
-                            var regex = StringToRegex(RegexList[i], regexOpts);
-                            if (regex != null)
+                            var matches = regex.Matches(tc.FullContent);
+                            if (matches.Count > 0 || (matches.Count == 0 && clause.Invert))
                             {
-                                var matches = regex.Matches(tc.FullContent);
-                                if (matches.Count > 0 || (matches.Count == 0 && clause.Invert))
+                                foreach (var match in matches)
                                 {
-                                    foreach (var match in matches)
+                                    if (match is Match m)
                                     {
-                                        if (match is Match m)
+                                        Boundary translatedBoundary = new Boundary()
                                         {
-                                            Boundary translatedBoundary = new Boundary()
-                                            {
-                                                Length = m.Length,
-                                                Index = m.Index
-                                            };
+                                            Length = m.Length,
+                                            Index = m.Index
+                                        };
 
-                                            //regex patterns will be indexed off data while string patterns result in N clauses
-                                            int patternIndex = clause.Label == "0" ? i : Convert.ToInt32(clause.Label);
+                                        //regex patterns will be indexed off data while string patterns result in N clauses
+                                        int patternIndex = Convert.ToInt32(clause.Label);
 
-                                            // Should return only scoped matches
-                                            if (tc.ScopeMatch(src.Scopes, translatedBoundary))
-                                            {
-                                                outmatches.Add((patternIndex, translatedBoundary));
-                                            }
+                                        // Should return only scoped matches
+                                        if (tc.ScopeMatch(src.Scopes, translatedBoundary))
+                                        {
+                                            outmatches.Add((patternIndex, translatedBoundary));
                                         }
                                     }
                                 }

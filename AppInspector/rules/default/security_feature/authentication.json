@@ -24,14 +24,14 @@
       },
       {
         "pattern": "microsoft\\.aad|microsoft\\.adal|microsoft\\.msal|AADClient|Microsoft\\.IdentityModel|passport\\.net|ServicePrincipalCredentials",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
         "pattern": "AuthenticationResult|MsalServiceException",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -49,7 +49,7 @@
     "patterns": [
       {
         "pattern": "AcquireTokenForClient|ConfidentialClientApplicationBuilder",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "confidence": "high"
       }
@@ -112,7 +112,7 @@
       },
       {
         "pattern": "auth.?token|access.?token|client.?credentials|client.?id|client.?secret|api.?key",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "low"
@@ -162,14 +162,14 @@
     "patterns": [
       {
         "pattern": "active.?directory|ADFS",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
         "pattern": "ADsOpenObject|ADObject|ADComputer|ADGroup|ADUser|ADContainer|ADDomain",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "confidence": "high"
       },
@@ -198,7 +198,7 @@
     "patterns": [
       {
         "pattern": "LDAP|ldaps",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -272,7 +272,7 @@
     "patterns": [
       {
         "pattern": "jwt|RFC 7519|System\\.IdentityModel\\.Tokens\\.Jwt|JwtSecurityToken|JsonWebToken",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code",
           "comment"
@@ -316,7 +316,7 @@
     "patterns": [
       {
         "pattern": "AuthenticationHeaderValue\\(\"SAML\"",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -334,14 +334,14 @@
     "patterns": [
       {
         "pattern": "SAML|saml2",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
         "pattern": "federation|sso",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "medium"
@@ -359,7 +359,7 @@
     "patterns": [
       {
         "pattern": "\"Authorization: Basic|WWW-Authenticate|AuthenticationHeaderValue\\(\"Basic\"",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -377,7 +377,7 @@
     "patterns": [
       {
         "pattern": "principal|identity|auth|authenticated|authentication|signin|sign-?in|signout|sign-?out|networkcredential",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -397,7 +397,7 @@
     "patterns": [
       {
         "pattern": "log(in|on)|log(off|out)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -417,7 +417,7 @@
     "patterns": [
       {
         "pattern": "(username|userid|password|passphrase|multi-factor|credential|acct)s?",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"

@@ -12,7 +12,7 @@
     "patterns": [
       {
         "pattern": "sharedAccessPolicy|storageAccessKey|sharedAccessAccountPolicy|storageAccountOrConnectionString",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -42,7 +42,7 @@
     "patterns": [
       {
         "pattern": "rbac|userrole*s|roles*",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -64,7 +64,7 @@
     "patterns": [
       {
         "pattern": "permissions*",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -101,7 +101,7 @@
     "patterns": [
       {
         "pattern": "claims*",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

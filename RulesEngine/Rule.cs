@@ -82,7 +82,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public string[]? Tags { get; set; }
 
         [JsonProperty(PropertyName = "severity")]
-        [JsonConverter(typeof(SeverityConverter))]
         public Severity Severity { get; set; } = Severity.Moderate;
 
         [JsonProperty(PropertyName = "overrides")]

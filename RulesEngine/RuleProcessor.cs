@@ -165,12 +165,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         continue;
                                     }
 
-                                    if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
-                                    {
-                                        _logger?.Error("Index out of range for patterns for rule: " + oatRule.AppInspectorRule.Name);
-                                        continue;
-                                    }
-
                                     if (!ConfidenceLevelFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
                                     {
                                         continue;

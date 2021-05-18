@@ -30,7 +30,7 @@
       },
       {
         "pattern": "rand|srand",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

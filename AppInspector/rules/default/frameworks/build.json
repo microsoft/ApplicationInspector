@@ -153,7 +153,7 @@
     "patterns": [
       {
         "pattern": "plug-ins|repositories|build|java",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ]
       }

@@ -76,7 +76,7 @@
     "patterns": [
       {
         "pattern": "ServiceContract|using System\\.ServiceModel|WSHttpBinding",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ]
       },
@@ -101,7 +101,7 @@
     "patterns": [
       {
         "pattern": "CFrameWnd|CMDIFrameWnd|CView|CWnd|stdafx\\.h|winafx\\.h|afx\\.h",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ]
       }
     ]
@@ -246,7 +246,7 @@
     "patterns": [
       {
         "pattern": "CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER|CoCreateInstance",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

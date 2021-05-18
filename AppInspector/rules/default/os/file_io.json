@@ -14,7 +14,7 @@
     "patterns": [
       {
         "pattern": "ifstream|fread|fgets|fgetc",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -567,7 +567,7 @@
       {
         "pattern": {
           "pattern": "use std::io::Write|use std::io::File|use std:fs:File",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],

@@ -10,7 +10,7 @@
     "patterns": [
       {
         "pattern": "ffmpeg|libraw|webp|mux|DivX|XviDH.263|H.264|HEVC|MPEG4|Theora|3GP|Windows Media|JPEG 2000",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code",
           "comment"
@@ -20,7 +20,7 @@
       },
       {
         "pattern": "Quicktime|MPEG-4|VP8|VP6|MPEG1|MPEG2|MPEG-TS|MPEG-4|DNXHD|XDCAM|DVCPRO|IMX|XDCAM",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code",
           "comment"

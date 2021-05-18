@@ -12,7 +12,7 @@
     "patterns": [
       {
         "pattern": "setenv|putenv",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -344,7 +344,7 @@
     "patterns": [
       {
         "pattern": "getenv",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

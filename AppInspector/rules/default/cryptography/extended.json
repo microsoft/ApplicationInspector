@@ -22,7 +22,7 @@
       },
       {
         "pattern": "Cng(Algorithm|Key|Property|Provider|UIPolicy)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },
@@ -65,19 +65,19 @@
       },
       {
         "pattern": "Oid",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "OidCollection",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "OidEnumerator",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },
@@ -154,7 +154,7 @@
       },
       {
         "pattern": "KeyAgreeRecipientInfo|KeyTransRecipientInfo",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },

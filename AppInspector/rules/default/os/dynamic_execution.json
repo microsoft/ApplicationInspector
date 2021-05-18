@@ -180,7 +180,7 @@
       },
       {
         "pattern": "shellexecute|createprocess|execl|execlp|execlp|execv|execve|execvp|execvpe|execle|fork|QProcess",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -250,7 +250,7 @@
     "patterns": [
       {
         "pattern": "xp_cmdshell|xp_regread|xp_instance_regread|xp_regwrite|sp_makewebtask|xp_sendmail|sp_configure|sp_executesql|dbcc writepage",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -268,21 +268,21 @@
     "patterns": [
       {
         "pattern": "powershell|cmd|rundll32|regedit|wscript|javaw|csc|regsvr32|certutil|bitsadmin|schtasks|wmic|eqnedt32|msiexec|cmstp|mshta|curl|installutil|regsvcs|regasm|msbuild|cscript|msxsl|runonce",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
         "pattern": "sc (config|query|start|stop)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
         "pattern": "reg (add|copy|delete|import|export|restore|save|unload|compare)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"

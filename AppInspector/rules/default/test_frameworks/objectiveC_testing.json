@@ -12,7 +12,7 @@
     "patterns": [
       {
         "pattern": "GHUnit",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

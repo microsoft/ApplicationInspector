@@ -137,7 +137,7 @@
       {
         "pattern": {
           "pattern": "sms|mms|smsto",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],

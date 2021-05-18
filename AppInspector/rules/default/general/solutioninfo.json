@@ -11,7 +11,7 @@
     "patterns": [
       {
         "pattern": "Win32|Any CPU|Win64|x64|x86|Arm|Arm64",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -145,7 +145,7 @@
     "patterns": [
       {
         "pattern": "ServiceStatus|ServiceController|InstallService",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -181,7 +181,7 @@
     "patterns": [
       {
         "pattern": "RegisterServiceCtrlHandler|serviceCtrlHandler|StartServiceCtrlDispatcher|SERVICE_STATUS|SERVICE_RUNNING|SERVICE_WIN32|SERVICE_CONTROL",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -324,7 +324,7 @@
     "patterns": [
       {
         "pattern": "Kubernetes",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -342,7 +342,7 @@
     "patterns": [
       {
         "pattern": "Docker|RancherOS",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -360,7 +360,7 @@
     "patterns": [
       {
         "pattern": "rktlet",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -378,7 +378,7 @@
     "patterns": [
       {
         "pattern": "CRI-O",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -396,7 +396,7 @@
     "patterns": [
       {
         "pattern": "hyper-v",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -414,7 +414,7 @@
     "patterns": [
       {
         "pattern": "Nano Server|Server Core",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"

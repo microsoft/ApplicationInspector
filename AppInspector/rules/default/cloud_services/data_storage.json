@@ -14,7 +14,7 @@
     "patterns": [
       {
         "pattern": "CloudStorageAccount|Microsoft\\.Azure\\.Storage|Microsoft\\.Azure\\.Cosmos\\.Table|Microsoft\\.Azure\\.Documents|Microsoft.WindowsAzure.Storage",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -46,7 +46,7 @@
     "patterns": [
       {
         "pattern": "(BlockBlobService|azure)\\.storage|cosmosdb\\.azure\\.com|BlobStorageAccount",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -107,7 +107,7 @@
       },
       {
         "pattern": "keyvault",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code",
           "comment"

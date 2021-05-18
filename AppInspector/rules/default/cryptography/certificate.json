@@ -10,7 +10,7 @@
     "patterns": [
       {
         "pattern": "x509|\\.(crt|cer|spc|p7b|p7s|p7r|ca-bundle)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -59,7 +59,7 @@
     "patterns": [
       {
         "pattern": "\\.(pem|pfx)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -80,7 +80,7 @@
     "patterns": [
       {
         "pattern": "\\.WithClientClaims\\(.*cert.*\\)|\\.WithCertificate\\(",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -113,7 +113,7 @@
     "patterns": [
       {
         "pattern": "genrsa|-keyout|-x509toreq|csr",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -123,7 +123,7 @@
       },
       {
         "pattern": "---BEGIN CERTIFICATE---",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -187,7 +187,7 @@
     "patterns": [
       {
         "pattern": "sign(ing)*.?key|signature.?key|valid.?signature|data.?sign|sign.?data",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code",
           "comment"
@@ -197,7 +197,7 @@
       },
       {
         "pattern": "DSA",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

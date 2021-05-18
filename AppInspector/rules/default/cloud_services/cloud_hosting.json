@@ -10,7 +10,7 @@
     "patterns": [
       {
         "pattern": "\\.amazonaws\\.com|aws\\.amazon\\.com",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -71,7 +71,7 @@
     "patterns": [
       {
         "pattern": "office365|office\\.com",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [],
         "confidence": "high"

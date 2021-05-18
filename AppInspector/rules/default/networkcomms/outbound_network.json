@@ -12,7 +12,7 @@
     "patterns": [
       {
         "pattern": "tftp|ntp\\.org|ntpupdate|imap|snmp|ftps|sftp|ftp|nntp|smtp|telnet|ssh|pop3|gopher",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -355,7 +355,7 @@
       },
       {
         "pattern": "curl|wpget",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

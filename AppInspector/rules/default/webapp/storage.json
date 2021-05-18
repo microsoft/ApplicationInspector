@@ -177,7 +177,7 @@
       {
         "pattern": {
           "pattern": "FileReader",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
