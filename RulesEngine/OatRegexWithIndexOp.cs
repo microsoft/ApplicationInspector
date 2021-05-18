@@ -67,7 +67,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (clause.Data is List<string> RegexList && RegexList.Any())
                 {
-                    RegexOptions regexOpts = new RegexOptions();
+                    RegexOptions regexOpts = new();
+
                     if (src.Arguments.Contains("i"))
                     {
                         regexOpts |= RegexOptions.IgnoreCase;
@@ -77,7 +78,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         regexOpts |= RegexOptions.Multiline;
                     }
 
-                    var outmatches = new List<(int, Boundary)>();//tuple results i.e. pattern index and where
+                    List<(int, Boundary)> outmatches = new();//tuple results i.e. pattern index and where
 
                     if (Analyzer != null)
                     {

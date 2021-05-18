@@ -133,11 +133,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
             }
-            List<MatchRecord> resultsList = new List<MatchRecord>();
+            List<MatchRecord> resultsList = new();
 
-            TextContainer textContainer = new TextContainer(contents, languageInfo.Name);
-
-            foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
+            TextContainer textContainer = new(contents, languageInfo.Name);
+            var caps = analyzer.GetCaptures(rules, textContainer).ToList();
+            foreach (var ruleCapture in caps)
             {
                 foreach (var cap in ruleCapture.Captures)
                 {

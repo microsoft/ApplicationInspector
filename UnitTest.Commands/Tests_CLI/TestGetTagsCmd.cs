@@ -220,30 +220,24 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
         {
-            GetTagsResult.ExitCode exitCodeSingleThread = GetTagsResult.ExitCode.CriticalError;
-
             try
             {
                 string args = string.Format(@"gettags -s {0} -f json -o {1} -k none --single-threaded",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
-                exitCodeSingleThread = (GetTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-
-                if (exitCodeSingleThread == GetTagsResult.ExitCode.Success)
-                {
-                    string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                    var result = JsonConvert.DeserializeObject<GetTagsResult>(content);
-                    exitCodeSingleThread = result.Metadata.TotalMatchesCount == 0 && result.Metadata.UniqueMatchesCount == 0 && result.Metadata.UniqueTags.Count == 7 ? GetTagsResult.ExitCode.Success : GetTagsResult.ExitCode.NoMatches;
-                }
+                var exitCode = (GetTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
+                Assert.AreEqual(GetTagsResult.ExitCode.Success, exitCode);
+                string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                var result = JsonConvert.DeserializeObject<GetTagsResult>(content);
+                Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+                Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
+                Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
             }
             catch (Exception)
             {
+                Assert.Fail();
             }
-
-            Assert.IsTrue(exitCodeSingleThread == GetTagsResult.ExitCode.Success);
-
-            GetTagsResult.ExitCode exitCodeMultiThread = GetTagsResult.ExitCode.CriticalError;
 
             try
             {
@@ -252,20 +246,19 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
-                exitCodeMultiThread = (GetTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
+                var exitCode = (GetTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
-                if (exitCodeMultiThread == GetTagsResult.ExitCode.Success)
-                {
-                    string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                    var result = JsonConvert.DeserializeObject<GetTagsResult>(content);
-                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 0 && result.Metadata.UniqueMatchesCount == 0 && result.Metadata.UniqueTags.Count == 7 ? GetTagsResult.ExitCode.Success : GetTagsResult.ExitCode.NoMatches;
-                }
+                Assert.AreEqual(GetTagsResult.ExitCode.Success, exitCode);
+                string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                var result = JsonConvert.DeserializeObject<GetTagsResult>(content);
+                Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+                Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
+                Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
             }
             catch (Exception)
             {
+                Assert.Fail();
             }
-
-            Assert.IsTrue(exitCodeMultiThread == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]

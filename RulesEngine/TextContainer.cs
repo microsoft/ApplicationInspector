@@ -76,6 +76,26 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
+        private void PopulateCommentedStatesInternal(int index, string prefix, char suffix)
+        {
+            var prefixLoc = FullContent.LastIndexOf(prefix, index);
+            if (prefixLoc != -1)
+            {
+                if (!CommentedStates.ContainsKey(prefixLoc))
+                {
+                    var suffixLoc = FullContent.IndexOf(suffix, prefixLoc);
+                    if (suffixLoc == -1)
+                    {
+                        suffixLoc = FullContent.Length - 1;
+                    }
+                    for (int i = prefixLoc; i <= suffixLoc; i++)
+                    {
+                        CommentedStates[i] = true;
+                    }
+                }
+            }
+        }
+
         public void PopulateCommentedState(int index)
         {
             var inIndex = index;
@@ -93,11 +113,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             if (!CommentedStates.ContainsKey(index) && !string.IsNullOrEmpty(inline))
             {
-                PopulateCommentedStatesInternal(index, inline, "\n");
+                PopulateCommentedStatesInternal(index, inline, '\n');
             }
-            if (!CommentedStates.ContainsKey(index))
+            var i = index;
+            // Everything preceding this, including this, which doesn't have a commented state is
+            // therefore not commented so we backfill
+            while (!CommentedStates.ContainsKey(i) && i >= 0)
             {
-                CommentedStates[index] = false;
+                CommentedStates[i--] = false;
             }
             if (inIndex != index)
             {

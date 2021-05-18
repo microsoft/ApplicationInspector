@@ -247,23 +247,18 @@ namespace ApplicationInspector.Unitprocess.Commands
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json")
             };
 
-            GetTagsResult.ExitCode exitCode = GetTagsResult.ExitCode.CriticalError;
             try
             {
                 GetTagsCommand command = new GetTagsCommand(options);
                 GetTagsResult result = command.GetResult();
-                if (result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.Implementation.MD5")) &&
-                    result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")))
-                {
-                    exitCode = GetTagsResult.ExitCode.Success;
-                }
+                Assert.AreEqual(GetTagsResult.ExitCode.Success, result.ResultCode);
+                Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.HashAlgorithm.Legacy")));
+                Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")));
             }
             catch (Exception)
             {
-                exitCode = GetTagsResult.ExitCode.CriticalError;
+                throw;
             }
-
-            Assert.IsTrue(exitCode == GetTagsResult.ExitCode.Success);
         }
 
         [TestMethod]

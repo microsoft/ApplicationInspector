@@ -1,6 +1,7 @@
 ﻿using ApplicationInspector.Unitprocess.Misc;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
@@ -257,9 +258,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             }
             catch (Exception)
             {
-                Assert.Fail();
+                throw;
             }
-
         }
 
         [TestMethod]
@@ -308,7 +308,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unknowntest"),
-                FilePathExclusions = "none", //allow source under unittest path
+                FilePathExclusions = "none",
                 ScanUnknownTypes = true
             };
             AnalyzeCommand command = new AnalyzeCommand(options);
@@ -317,8 +317,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(0, result.Metadata.FilesSkipped);
             Assert.AreEqual(2, result.Metadata.FilesAffected);
-            Assert.AreEqual(45, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(15, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(52, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(16, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -327,8 +327,9 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unknowntest"),
-                FilePathExclusions = "none", //allow source under unittest path
-                ScanUnknownTypes = false
+                FilePathExclusions = "none",
+                ScanUnknownTypes = false,
+                SingleThread = true
             };
             AnalyzeCommand command = new AnalyzeCommand(options);
             AnalyzeResult result = command.GetResult();
@@ -336,8 +337,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(1, result.Metadata.FilesSkipped);
             Assert.AreEqual(1, result.Metadata.FilesAffected);
-            Assert.AreEqual(22, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(13, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(28, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(15, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -346,7 +347,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
-                FilePathExclusions = "none", //allow source under unittest path
+                FilePathExclusions = "none",
                 SingleThread = true
             };
 
