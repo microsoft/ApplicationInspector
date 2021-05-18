@@ -252,7 +252,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
                 AnalyzeResult result = command.GetResult();
-                if (result.Metadata.UniqueTags.Any(v => v.Contains("Authentication.General")) &&
+                if (result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.Implementation.MD5")) &&
                     result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")))
                 {
                     exitCode = AnalyzeResult.ExitCode.Success;
@@ -321,8 +321,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(0, result.Metadata.FilesSkipped);
             Assert.AreEqual(2, result.Metadata.FilesAffected);
-            Assert.AreEqual(75, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(25, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(45, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(15, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -340,8 +340,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(1, result.Metadata.FilesSkipped);
             Assert.AreEqual(1, result.Metadata.FilesAffected);
-            Assert.AreEqual(40, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(24, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(21, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(12, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]

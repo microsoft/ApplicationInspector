@@ -252,7 +252,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 GetTagsCommand command = new GetTagsCommand(options);
                 GetTagsResult result = command.GetResult();
-                if (result.Metadata.UniqueTags.Any(v => v.Contains("Authentication.General")) &&
+                if (result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.Implementation.MD5")) &&
                     result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")))
                 {
                     exitCode = GetTagsResult.ExitCode.Success;
