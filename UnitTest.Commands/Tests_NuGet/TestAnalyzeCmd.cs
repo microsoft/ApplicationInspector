@@ -307,7 +307,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         }
 
         [TestMethod]
-        public async Task ScanUnknownFileTypesTest_Include()
+        public void ScanUnknownFileTypesTest_Include()
         {
             AnalyzeOptions options = new AnalyzeOptions()
             {
@@ -316,7 +316,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 ScanUnknownTypes = true
             };
             AnalyzeCommand command = new AnalyzeCommand(options);
-            AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
+            AnalyzeResult result = command.GetResult();
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(0, result.Metadata.FilesSkipped);
@@ -326,7 +326,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         }
 
         [TestMethod]
-        public async Task ScanUnknownFileTypesTest_Exclude()
+        public void ScanUnknownFileTypesTest_Exclude()
         {
             AnalyzeOptions options = new AnalyzeOptions()
             {
@@ -335,13 +335,13 @@ namespace ApplicationInspector.Unitprocess.Commands
                 ScanUnknownTypes = false
             };
             AnalyzeCommand command = new AnalyzeCommand(options);
-            AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
+            AnalyzeResult result = command.GetResult();
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(1, result.Metadata.FilesSkipped);
             Assert.AreEqual(1, result.Metadata.FilesAffected);
-            Assert.AreEqual(21, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(12, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(22, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(13, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
