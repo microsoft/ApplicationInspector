@@ -86,10 +86,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 {
                                     outmatches.Add((i, newBoundary));
                                 }
-                                else
-                                {
-                                    Console.WriteLine("Breakpoint");
-                                }
                             }
                             idx = tc.FullContent.IndexOf(stringList[i], idx + stringList[i].Length, comparisonType);
                         }
