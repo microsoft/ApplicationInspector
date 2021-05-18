@@ -202,9 +202,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 #endregion setup analyze calls
 
-                bool equalTagsCompare1;
-                bool equalTagsCompare2;
-
                 //process results for each analyze call before comparing results
                 if (analyze1.ResultCode == GetTagsResult.ExitCode.CriticalError)
                 {
@@ -220,44 +217,52 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.Success)
                 {
-                    int count1 = 0;
-                    int sizeTags1 = analyze1.Metadata.UniqueTags != null ? analyze1.Metadata.UniqueTags.Count : 0;
-                    string[] file1Tags = new string[sizeTags1];
-
-                    foreach (string tag in analyze1.Metadata.UniqueTags ?? new List<string>())
+                    var sorted1 = analyze1.Metadata.UniqueTags ?? new List<string>();
+                    var sorted2 = analyze2.Metadata.UniqueTags ?? new List<string>();
+                    if (sorted1.Count != sorted2.Count)
                     {
-                        file1Tags[count1++] = tag;
-                    }
-
-                    int count2 = 0;
-                    int sizeTags2 = analyze2.Metadata.UniqueTags != null ? analyze2.Metadata.UniqueTags.Count : 0;
-                    string[] file2Tags = new string[sizeTags2];
-
-                    foreach (string tag in analyze2.Metadata.UniqueTags ?? new List<string>())
-                    {
-                        file2Tags[count2++] = tag;
-                    }
-
-                    //can't simply compare counts as content may differ; must compare both in directions in two passes a->b; b->a
-                    equalTagsCompare1 = CompareTags(file1Tags, file2Tags, ref tagDiffResult, TagDiff.DiffSource.Source1);
-
-                    //reverse order for second pass
-                    equalTagsCompare2 = CompareTags(file2Tags, file1Tags, ref tagDiffResult, TagDiff.DiffSource.Source2);
-
-                    //final results
-                    bool resultsDiffer = !(equalTagsCompare1 && equalTagsCompare2);
-                    if (_arg_tagTestType == TagTestType.Inequality && !resultsDiffer)
-                    {
-                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
-                    }
-                    else if (_arg_tagTestType == TagTestType.Equality && resultsDiffer)
-                    {
-                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
+                        if (_arg_tagTestType == TagTestType.Inequality)
+                        {
+                            tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestPassed;
+                            return tagDiffResult;
+                        }
+                        else if (_arg_tagTestType == TagTestType.Equality)
+                        {
+                            tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
+                            return tagDiffResult;
+                        }
                     }
                     else
                     {
+                        sorted1.Sort();
+                        sorted2.Sort();
+
+                        for (int i = 0; i < sorted1.Count; i++)
+                        {
+                            if (sorted1[i] != sorted2[i])
+                            {
+                                if (_arg_tagTestType == TagTestType.Inequality)
+                                {
+                                    tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestPassed;
+                                    return tagDiffResult;
+                                }
+                                else if (_arg_tagTestType == TagTestType.Equality)
+                                {
+                                    tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
+                                    return tagDiffResult;
+                                }
+                            }
+                        }
+                    }
+                    if (_arg_tagTestType == TagTestType.Inequality)
+                    {
+                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
+                    }
+                    else if (_arg_tagTestType == TagTestType.Equality)
+                    {
                         tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestPassed;
                     }
+                    return tagDiffResult;
                 }
             }
             catch (OpException e)
@@ -267,8 +272,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }
-
-            return tagDiffResult;
         }
 
         private bool CompareTags(string[] fileTags1, string[] fileTags2, ref TagDiffResult tagDiffResult, TagDiff.DiffSource source)
