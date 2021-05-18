@@ -591,7 +591,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     try
                     {
-                        foreach(var entry in GetFileEntries())
+                        foreach (var entry in GetFileEntries())
                         {
                             fileQueue.Add(entry);
                         }

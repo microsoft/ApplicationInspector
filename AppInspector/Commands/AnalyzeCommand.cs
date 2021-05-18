@@ -606,17 +606,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     try
                     {
-                        //if (_options.SingleThread)
-                        //{
-                            foreach (var entry in GetFileEntries())
-                            {
-                                fileQueue.Add(entry);
-                            }
-                        //}
-                        //else
-                        //{
-                        //    Parallel.ForEach(GetFileEntries(), entry => fileQueue.Add(entry));
-                        //}
+                        foreach (var entry in GetFileEntries())
+                        {
+                            fileQueue.Add(entry);
+                        }
                     }
                     catch (OverflowException e)
                     {
