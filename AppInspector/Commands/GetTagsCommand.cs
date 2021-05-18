@@ -310,7 +310,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 try
                 {
-                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken }, entry => ProcessAndAddToMetadata(entry));
+                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken, MaxDegreeOfParallelism = Environment.ProcessorCount }, entry => ProcessAndAddToMetadata(entry));
                 }
                 catch (OperationCanceledException)
                 {
