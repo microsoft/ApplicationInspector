@@ -197,7 +197,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             clauseNumber++;
                         }
                     }
-                    else
+                    else if (pattern.PatternType == PatternType.Regex)
                     {
                         if (clauses.Where(x => x is OATRegexWithIndexClause src &&
                             src.Arguments.SequenceEqual(modifiers) && src.Scopes.SequenceEqual(scopes)) is IEnumerable<Clause> filteredClauses &&
@@ -221,6 +221,40 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             }
                             expression.Append(clauseNumber);
                             clauseNumber++;
+                        }
+                    }
+                    else if (pattern.PatternType == PatternType.RegexWord)
+                    {
+                        if (clauses.Where(x => x is OATRegexWithIndexClause src &&
+                            src.Arguments.SequenceEqual(modifiers) && src.Scopes.SequenceEqual(scopes)) is IEnumerable<Clause> filteredClauses &&
+                            filteredClauses.Any() && filteredClauses.First().Data is List<string> found)
+                        {
+                            foreach(var subPattern in pattern.Pattern.Split('|'))
+                            {
+                                found.Add($"[\\.\\b]{pattern.Pattern}[\\.\\b]");
+                            }
+                        }
+                        else
+                        {
+                            var newClause = new OATRegexWithIndexClause(scopes)
+                            {
+                                Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
+                                Data = new List<string>(),
+                                Capture = true,
+                                Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
+                                CustomOperation = "RegexWithIndex"
+                            };
+                            foreach (var subPattern in pattern.Pattern.Split('|'))
+                            {
+                                newClause.Data.Add($"[\\.\\b]{pattern.Pattern}[\\.\\b]");
+                            }
+                            if (clauseNumber > 0)
+                            {
+                                expression.Append(" OR ");
+                            }
+                            expression.Append(clauseNumber);
+                            clauseNumber++;
+                            clauses.Add(newClause);
                         }
                     }
                 }
