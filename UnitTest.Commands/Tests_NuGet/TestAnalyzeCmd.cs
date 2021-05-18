@@ -247,23 +247,19 @@ namespace ApplicationInspector.Unitprocess.Commands
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json")
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
                 AnalyzeResult result = command.GetResult();
-                if (result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.Encryption.General")) &&
-                    result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")))
-                {
-                    exitCode = AnalyzeResult.ExitCode.Success;
-                }
+                Assert.IsTrue(result.ResultCode == AnalyzeResult.ExitCode.Success);
+                Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.Encryption.General")));
+                Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")));
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                Assert.Fail();
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
         [TestMethod]
