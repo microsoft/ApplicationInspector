@@ -251,7 +251,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
                 AnalyzeResult result = command.GetResult();
-                Assert.IsTrue(result.ResultCode == AnalyzeResult.ExitCode.Success);
+                Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
                 Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.Encryption.General")));
                 Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")));
             }
