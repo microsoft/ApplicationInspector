@@ -206,18 +206,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
             {
-                if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
+                foreach (string ovrd in m.Rule.Overrides ?? Array.Empty<string>())
                 {
-                    foreach (string ovrd in m.Rule.Overrides)
+                    // Find all overriden rules and mark them for removal from issues list
+                    foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
                     {
-                        // Find all overriden rules and mark them for removal from issues list
-                        foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                        if (om.Boundary?.Index >= m.Boundary?.Index &&
+                            om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
                         {
-                            if (om.Boundary?.Index >= m.Boundary?.Index &&
-                                om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
-                            {
-                                removes.Add(om);
-                            }
+                            removes.Add(om);
                         }
                     }
                 }
@@ -251,8 +248,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             using var sr = new StreamReader(fileEntry.Content);
 
             TextContainer textContainer = new TextContainer(await sr.ReadToEndAsync(), languageInfo.Name);
-
-            foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
+            var captures = analyzer.GetCaptures(rules, textContainer);
+            foreach (var ruleCapture in captures)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -333,18 +330,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     return resultsList;
                 }
-                if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
+                foreach (string ovrd in m.Rule.Overrides ?? Array.Empty<string>())
                 {
-                    foreach (string ovrd in m.Rule.Overrides)
+                    // Find all overriden rules and mark them for removal from issues list
+                    foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
                     {
-                        // Find all overriden rules and mark them for removal from issues list
-                        foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                        if (om.Boundary?.Index >= m.Boundary?.Index &&
+                            om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
                         {
-                            if (om.Boundary?.Index >= m.Boundary?.Index &&
-                                om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
-                            {
-                                removes.Add(om);
-                            }
+                            removes.Add(om);
                         }
                     }
                 }

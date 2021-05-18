@@ -321,7 +321,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(0, result.Metadata.FilesSkipped);
             Assert.AreEqual(2, result.Metadata.FilesAffected);
-            Assert.AreEqual(46, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(45, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(15, result.Metadata.UniqueMatchesCount);
         }
 
