@@ -10,7 +10,7 @@
     "patterns": [
       {
         "pattern": "\\.(wma|wmv|asf|vp9|cr2|wav|mpeg|gsm|ogg|au|aiff|vox|aac|msv|dvf|flac|aifc|amz|atrac|m4a|m4p)",
-        "type": "regexword",
+        "type": "regex",
         "scopes": [
           "code",
           "comment"
@@ -20,33 +20,13 @@
       },
       {
         "pattern": "\\.(mp2|mp3|mp4|mpa|ra|rax|raw|smf|snd|sng|swa|hma|aac|ac3|eac3|Vorbis|pcm)",
-        "type": "regexword",
+        "type": "regex",
         "scopes": [
           "code",
           "comment"
         ],
         "modifiers": [ "i" ],
         "confidence": "high"
-      },
-      {
-        "pattern": "wma|wmv|asf|vp9|cr2|wav|mpeg|gsm|ogg|au|aiff|vox|aac|msv|dvf|flac|aifc|amz|atrac|m4a|m4p",
-        "type": "regexword",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [ "i" ],
-        "confidence": "medium"
-      },
-      {
-        "pattern": "mp2|mp3|mp4|mpa|ra|rax|snd|sng|swa|hma|aac|ac3|eac3|Vorbis|pcm",
-        "type": "regexword",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [ "i" ],
-        "confidence": "medium"
       }
     ]
   },
@@ -78,26 +58,6 @@
         ],
         "modifiers": [ "i" ],
         "confidence": "high"
-      },
-      {
-        "pattern": "avi|flv|mov|wmv|mp4|vob|hdv|ogg|oga|ogv|ogx",
-        "type": "regexword",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [ "i" ],
-        "confidence": "medium"
-      },
-      {
-        "pattern": "mp4|m4v|f4v|f4a|m4b|m4r|f4b|mxf|op1a|op-atom",
-        "type": "regexword",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [ "i" ],
-        "confidence": "medium"
       }
     ]
   }
