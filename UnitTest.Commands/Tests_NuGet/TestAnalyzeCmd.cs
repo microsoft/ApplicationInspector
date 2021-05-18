@@ -252,7 +252,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 AnalyzeCommand command = new AnalyzeCommand(options);
                 AnalyzeResult result = command.GetResult();
-                if (result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.Implementation.MD5")) &&
+                if (result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.Encryption.General")) &&
                     result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")))
                 {
                     exitCode = AnalyzeResult.ExitCode.Success;
@@ -321,7 +321,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(0, result.Metadata.FilesSkipped);
             Assert.AreEqual(2, result.Metadata.FilesAffected);
-            Assert.AreEqual(45, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(46, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(15, result.Metadata.UniqueMatchesCount);
         }
 
