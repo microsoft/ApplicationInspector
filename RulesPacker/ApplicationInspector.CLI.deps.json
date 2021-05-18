@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v5.0": {
-      "ApplicationInspector.CLI/1.3.38-beta-g59f439bd73": {
+      "ApplicationInspector.CLI/1.3.39-beta-g55b6eb5ec8": {
         "dependencies": {
           "DotLiquid": "2.1.436",
           "Microsoft.ApplicationInspector.RulesEngine": "0.0.0-placeholder",
@@ -1336,7 +1336,7 @@
     }
   },
   "libraries": {
-    "ApplicationInspector.CLI/1.3.38-beta-g59f439bd73": {
+    "ApplicationInspector.CLI/1.3.39-beta-g55b6eb5ec8": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
