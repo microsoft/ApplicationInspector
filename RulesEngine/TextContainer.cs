@@ -58,32 +58,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         private void PopulateCommentedStatesInternal(int index, string prefix, string suffix)
         {
-            var prefixLoc = FullContent.LastIndexOf(prefix, index);
+            var prefixLoc = FullContent.LastIndexOf(prefix, index, StringComparison.Ordinal);
             if (prefixLoc != -1)
             {
                 if (!CommentedStates.ContainsKey(prefixLoc))
                 {
-                    var suffixLoc = FullContent.IndexOf(suffix, prefixLoc);
-                    if (suffixLoc == -1)
-                    {
-                        suffixLoc = FullContent.Length - 1;
-                    }
-                    for (int i = prefixLoc; i <= suffixLoc; i++)
-                    {
-                        CommentedStates[i] = true;
-                    }
-                }
-            }
-        }
-
-        private void PopulateCommentedStatesInternal(int index, string prefix, char suffix)
-        {
-            var prefixLoc = FullContent.LastIndexOf(prefix, index);
-            if (prefixLoc != -1)
-            {
-                if (!CommentedStates.ContainsKey(prefixLoc))
-                {
-                    var suffixLoc = FullContent.IndexOf(suffix, prefixLoc);
+                    var suffixLoc = FullContent.IndexOf(suffix, prefixLoc, StringComparison.Ordinal);
                     if (suffixLoc == -1)
                     {
                         suffixLoc = FullContent.Length - 1;
@@ -113,7 +93,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             if (!CommentedStates.ContainsKey(index) && !string.IsNullOrEmpty(inline))
             {
-                PopulateCommentedStatesInternal(index, inline, '\n');
+                PopulateCommentedStatesInternal(index, inline, "\n");
             }
             var i = index;
             // Everything preceding this, including this, which doesn't have a commented state is
