@@ -61,16 +61,14 @@
         "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "kitkat|jellybean|lollipop|marshmallow|nougat|oreo",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -88,8 +86,7 @@
         "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -104,8 +101,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-10,10)",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   },
@@ -123,8 +119,7 @@
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -142,8 +137,7 @@
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -161,8 +155,7 @@
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -180,8 +173,7 @@
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -200,8 +192,7 @@
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -218,8 +209,7 @@
         "pattern": "Windows universal platform|UWP",
         "type": "regex-word",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -237,8 +227,7 @@
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -256,8 +245,7 @@
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -272,8 +260,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   },
@@ -291,8 +278,7 @@
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -307,8 +293,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-7,7)",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   },
@@ -345,8 +330,7 @@
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -364,8 +348,7 @@
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

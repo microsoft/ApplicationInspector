@@ -7,7 +7,6 @@
     "applies_to": [ "php" ],
     "tags": [ "Framework.Development.PHP" ],
     "severity": "moderate",
-    "_comment": "",
     "rule_info": "",
     "patterns": [
       {
@@ -15,80 +14,70 @@
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "Symfony",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "CodeIgniter",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "Zend",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "Fuelphp",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "Slim",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "Phalcon",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "Aura",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "Yii",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "Cakephp",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

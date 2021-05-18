@@ -53,31 +53,27 @@
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "exec(Sync)?\\(",
         "type": "substring",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "\\bspawn\\(",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "\\bsystem\\(",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -99,8 +95,7 @@
         "type": "substring",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -122,8 +117,7 @@
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -241,8 +235,7 @@
         "pattern": "\\bsystem\\(",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -402,8 +395,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-200,0)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },

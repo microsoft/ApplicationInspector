@@ -18,8 +18,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "cosmosdb",
@@ -51,8 +50,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "cosmosdb",
@@ -60,8 +58,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -83,8 +80,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -107,8 +103,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "keyvault",
@@ -118,8 +113,7 @@
           "comment"
         ],
         "modifiers": ["i"],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -143,8 +137,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -167,8 +160,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "hashicorp|VaultSharp",
@@ -178,8 +170,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -225,8 +216,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -246,8 +236,7 @@
           "code"
         ],
         "confidence": "high",
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -270,8 +259,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -293,8 +281,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -316,8 +303,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -336,8 +322,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -356,8 +341,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -376,8 +360,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

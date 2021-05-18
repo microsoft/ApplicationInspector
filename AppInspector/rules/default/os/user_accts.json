@@ -17,8 +17,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -40,8 +39,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

@@ -14,8 +14,7 @@
         "pattern": "ester",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   }

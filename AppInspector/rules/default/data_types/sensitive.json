@@ -74,8 +74,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-40,40)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -108,8 +107,7 @@
           "_comment": "special case for package.json for SF"
         },
         "search_in": "finding-region(-10,10)",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   },
@@ -143,8 +141,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-30,30)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -195,8 +192,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-40,40)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   }

@@ -7,7 +7,6 @@
       "Data.Parsing.Media"
     ],
     "severity": "critical",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "ffmpeg|libraw|webp|mux|DivX|XviDH.263|H.264|HEVC|MPEG4|Theora|3GP|Windows Media|JPEG 2000",
@@ -17,8 +16,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "Quicktime|MPEG-4|VP8|VP6|MPEG1|MPEG2|MPEG-TS|MPEG-4|DNXHD|XDCAM|DVCPRO|IMX|XDCAM",
@@ -28,8 +26,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

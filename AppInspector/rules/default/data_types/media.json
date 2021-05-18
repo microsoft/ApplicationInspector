@@ -16,8 +16,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "\\.(mp2|mp3|mp4|mpa|ra|rax|raw|smf|snd|sng|swa|hma|aac|ac3|eac3|Vorbis|pcm)",
@@ -27,8 +26,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "wma|wmv|asf|vp9|cr2|wav|mpeg|gsm|ogg|au|aiff|vox|aac|msv|dvf|flac|aifc|amz|atrac|m4a|m4p",
@@ -38,8 +36,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       },
       {
         "pattern": "mp2|mp3|mp4|mpa|ra|rax|snd|sng|swa|hma|aac|ac3|eac3|Vorbis|pcm",
@@ -49,8 +46,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -71,8 +67,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "\\.(mp4|m4v|f4v|f4a|m4b|m4r|f4b|mxf|op1a|op-atom)",
@@ -82,8 +77,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "avi|flv|mov|wmv|mp4|vob|hdv|ogg|oga|ogv|ogx",
@@ -93,8 +87,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       },
       {
         "pattern": "mp4|m4v|f4v|f4a|m4b|m4r|f4b|mxf|op1a|op-atom",
@@ -104,8 +97,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   }

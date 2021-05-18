@@ -84,8 +84,7 @@
           "_comment": "eliminate notices"
         },
         "search_in": "finding-region(-10,10)",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   },
@@ -122,8 +121,7 @@
           "_comment": "eliminate notices"
         },
         "search_in": "finding-region(-10,10)",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   },
@@ -160,8 +158,7 @@
           "_comment": "since already covered by another rule if SAS related"
         },
         "search_in": "finding-region(-10,10)",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   }

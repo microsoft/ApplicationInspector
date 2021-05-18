@@ -14,8 +14,7 @@
         "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -121,7 +120,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "require(‘pg’);",
+        "pattern": "require(ï¿½pgï¿½);",
         "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -269,8 +268,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },

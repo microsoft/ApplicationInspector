@@ -167,7 +167,6 @@
       "Metadata.CloudServices.Hosting.DigitalOcean"
     ],
     "severity": "moderate",
-    "_comment": "",
     "rule_info": "",
     "patterns": [
       {
@@ -175,8 +174,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -194,8 +192,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -455,8 +452,7 @@
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

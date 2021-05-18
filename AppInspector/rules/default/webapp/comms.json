@@ -26,8 +26,7 @@
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -58,8 +57,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -89,8 +87,7 @@
         "pattern": "EventSource",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

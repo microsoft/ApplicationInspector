@@ -13,40 +13,28 @@
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "System\\.IdentityModel|AzureADB2C|SingleAccountPublicClientApplication|MultipleAccountPublicClientApplication",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
-        "pattern": "microsoft\\.aad|adal|msal|AADClient|Microsoft\\.IdentityModel|passport\\.net|ServicePrincipalCredentials",
+        "pattern": "microsoft\\.aad|microsoft\\.adal|microsoft\\.msal|AADClient|Microsoft\\.IdentityModel|passport\\.net|ServicePrincipalCredentials",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "AuthenticationResult|MsalServiceException",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
-      },
-      {
-        "pattern": "aad",
-        "type": "regex-word",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -63,8 +51,7 @@
         "pattern": "AcquireTokenForClient|ConfidentialClientApplicationBuilder",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -78,8 +65,7 @@
           "_comment": "negate cases for certificate rule identifying client TLS auth"
         },
         "search_in": "finding-region(-10,10)",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   },
@@ -97,16 +83,14 @@
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "OIDAuthorizationRequest|accounts\\.google\\.com/o/oauth2|googleapis\\.com/oauth2|GTMAppAuth",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -121,35 +105,31 @@
     "patterns": [
       {
         "pattern": "oauth",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "auth.?token|access.?token|client.?credentials|client.?id|client.?secret|api.?key",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "low"
       },
       {
         "pattern": "Authorization: Bearer",
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "bearer",
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "low"
       }
     ]
   },
@@ -167,8 +147,7 @@
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -186,29 +165,25 @@
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "ADsOpenObject|ADObject|ADComputer|ADGroup|ADUser|ADContainer|ADDomain",
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "Microsoft\\.IdentityModel\\.ActiveDirectory",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "System\\.DirectoryServices|IDirectoryObject|IDirectorySearch",
         "type": "regex",
         "scopes": [ "code", "comment" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -226,8 +201,7 @@
         "type": "regex-word",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -244,23 +218,20 @@
         "pattern": "WWW-Authenticate: NTLM|windowsAuthentication|CredentialCache\\.DefaultCredentials|HTTPNtlmAuthHandler",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "LogonUserA|LogonUserEx|LogonUserW",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "NTLM",
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -307,8 +278,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -328,8 +298,7 @@
           "code"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -350,8 +319,7 @@
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -369,16 +337,14 @@
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "federation|sso",
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -396,8 +362,7 @@
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -411,14 +376,33 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "principal|identity|auth|authenticated|authentication|log(in|on)|log(off|out)|signin|sign-?in|signout|sign-?out|networkcredential",
+        "pattern": "principal|identity|auth|authenticated|authentication|signin|sign-?in|signout|sign-?out|networkcredential",
         "type": "regex-word",
         "scopes": [
           "code"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Authentication: General",
+    "id": "AI040001",
+    "description": "Authentication: General",
+    "tags": [
+      "Authentication.General"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "log(in|on)|log(off|out)",
+        "type": "regex-word",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [ "i" ],
+        "confidence": "low"
       }
     ]
   },
@@ -436,16 +420,14 @@
         "type": "regex-word",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "connection.?string|conn.?string|DefaultNetworkCredentials",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   }

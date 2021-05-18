@@ -32,8 +32,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -137,8 +136,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -313,8 +311,7 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   }

@@ -173,8 +173,7 @@
         "pattern": "Microsoft Dynamics|dynamics.com",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -191,8 +190,7 @@
         "pattern": "Microsoft Exchange",
         "type": "string",
         "scopes": [ "comment" ],
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -209,8 +207,7 @@
       {
         "pattern": "IIS",
         "type": "string",
-        "scopes": [ "code" ],
-        "_comment": ""
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -228,8 +225,7 @@
         "pattern": "ASP\\.NET|\\b\\.MVC\\b",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },

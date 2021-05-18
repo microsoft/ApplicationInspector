@@ -23,8 +23,7 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -44,8 +43,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -86,8 +84,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -101,8 +98,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-10,10)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -131,8 +127,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "---BEGIN PKCS",
@@ -171,17 +166,13 @@
         "pattern": "DSACng|SignData|CreateSignature|DSACryptoServiceProvider|DSASignatureDeformatter|DSASignatureFormatter|DSAKeyValue",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "DSAParameters",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -202,8 +193,7 @@
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "DSA",
@@ -212,8 +202,7 @@
           "code"
         ],
         "modifiers": [ "i" ],
-        "confidence": "low",
-        "_comment": ""
+        "confidence": "low"
       }
     ]
   },
@@ -233,8 +222,7 @@
           "code"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -249,8 +237,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-30,30)",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   }

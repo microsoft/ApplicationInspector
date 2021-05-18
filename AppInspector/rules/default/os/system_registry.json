@@ -16,8 +16,7 @@
         "pattern": "RegSetValueEx|RegOpenKeyEx|RegCreateKeyEx",
         "type": "regex-word",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -37,8 +36,7 @@
         "pattern": "Registry(Key)?(.*)?.(SetValue|CreateSubKey|Delete)",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -58,8 +56,7 @@
         "pattern": "CreateSubKey|SetValue",
         "type": "regex-word",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -73,8 +70,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-40,40)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -136,8 +132,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -216,8 +211,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -237,8 +231,7 @@
         "pattern": "Registry(Key)?(.*)?.GetValue",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -252,8 +245,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-40,40)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -273,8 +265,7 @@
         "pattern": ".open_subkey(",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -288,8 +279,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-40,40)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   }

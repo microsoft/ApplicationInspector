@@ -18,8 +18,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "pseudoRandomBytes",
@@ -27,8 +26,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "rand|srand",
@@ -36,8 +34,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "low",
-        "_comment": ""
+        "confidence": "low"
       }
     ]
   },

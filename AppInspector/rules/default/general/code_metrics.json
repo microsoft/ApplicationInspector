@@ -32,8 +32,7 @@
         "pattern": "struct",
         "type": "regex-word",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -63,14 +62,12 @@
       "Metric.Code.HTMLForm.Defined"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "<form",
         "type": "regex-word",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -88,8 +85,7 @@
         "pattern": "catch|except|exception",
         "type": "regex-word",
         "scopes": [ "code" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -101,15 +97,13 @@
       "Metric.Code.Logging.Call"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "log|logger",
         "type": "regex-word",
         "scopes": [ "code" ],
         "confidence": "high",
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -121,7 +115,6 @@
       "Metric.Code.SampleCode"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "(sample|example) code",
@@ -140,14 +133,12 @@
       "Metric.Code.URL"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "https*",
         "type": "regex-word",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

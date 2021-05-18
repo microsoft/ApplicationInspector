@@ -9,7 +9,6 @@
       "OS.Environment.Write"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "setenv|putenv",
@@ -40,8 +39,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -63,8 +61,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -79,7 +76,6 @@
       "OS.Environment.Write"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "SetEnvironmentVariable",
@@ -87,8 +83,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -103,7 +98,6 @@
       "OS.Environment.Write"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "SetEnvironmentVariable|\\$env:.+=",
@@ -111,8 +105,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -127,7 +120,6 @@
       "OS.Environment.Write"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "process\\.env\\[\\\".*\\\"\\] *= *",
@@ -135,8 +127,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "app\\.set\\('environment'",
@@ -144,8 +135,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -167,8 +157,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ],
     "conditions": [
@@ -183,8 +172,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-10,10)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -206,8 +194,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -229,8 +216,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -245,7 +231,6 @@
       "OS.Environment.Read"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "GetEnvironmentVariable",
@@ -253,8 +238,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -269,7 +253,6 @@
       "OS.Environment.Read"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "GetEnvironmentVariable|\\$env:|Env:\\\\",
@@ -277,8 +260,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -293,7 +275,6 @@
       "OS.Environment.Read"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "= *process\\.env\\[\\\".*\\\"\\]",
@@ -301,8 +282,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "app\\.get\\('environment'",
@@ -310,8 +290,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -333,8 +312,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ],
     "conditions": [
@@ -349,8 +327,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-10,10)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -364,7 +341,6 @@
       "OS.Environment.Read"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "getenv",

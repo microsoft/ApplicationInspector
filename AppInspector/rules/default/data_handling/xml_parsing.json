@@ -168,8 +168,7 @@
           "_comment": ""
         },
         "search_in": "same-line",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   },
@@ -204,8 +203,7 @@
           "_comment": ""
         },
         "search_in": "same-line",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   }

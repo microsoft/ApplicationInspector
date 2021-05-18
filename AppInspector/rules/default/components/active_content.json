@@ -61,8 +61,7 @@
         "pattern": "CoInitialize|CoCreateInstance|comClassInterface|CLSCTX_INPROC_SERVER|ProgId|COleControlModule|ComDefaultInterface|IOleInPlaceObject|IOleControl|IOleObjective",
         "type": "regex-word",
         "scopes": [
-          "code",
-          "comment"
+          "code"
         ],
         "confidence": "high"
       },
@@ -70,8 +69,7 @@
         "pattern": "Type\\.GetTypeFromProgID",
         "type": "regex",
         "scopes": [
-          "code",
-          "comment"
+          "code"
         ],
         "confidence": "medium"
       },
@@ -79,8 +77,7 @@
         "pattern": "active-?x",
         "type": "regex",
         "scopes": [
-          "code",
-          "comment"
+          "code"
         ],
         "modifiers": [ "i" ],
         "confidence": "medium"
@@ -103,8 +100,7 @@
         "pattern": "= CreateObject\\(",
         "type": "regex",
         "scopes": [
-          "code",
-          "comment"
+          "code"
         ],
         "confidence": "high"
       }
@@ -116,7 +112,6 @@
     "description": "Component: Active-X",
     "applies_to": [
       "javascript",
-      "typescript"
     ],
     "tags": [
       "Component.Executable.Microsoft.ActiveX"
