@@ -500,7 +500,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
                         }
 
-                        var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, _metaDataHelper?.UniqueTags.Keys);
+                        var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, _metaDataHelper?.UniqueTags.Keys, -1);
 
                         if (results.Any())
                         {

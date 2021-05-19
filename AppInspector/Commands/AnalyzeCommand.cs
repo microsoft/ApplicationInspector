@@ -358,7 +358,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             if (opts.FileTimeOut > 0)
                             {
                                 using var cts = new CancellationTokenSource();
-                                var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo), cts.Token);
+                                var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines), cts.Token);
                                 if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                                 {
                                     WriteOnce.Error($"{file.FullPath} timed out.");
@@ -372,7 +372,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                             else
                             {
-                                results = _rulesProcessor.AnalyzeFile(file, languageInfo);
+                                results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
                                 fileRecord.Status = ScanState.Analyzed;
                             }
 
@@ -454,7 +454,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         if (fileRecord.Status != ScanState.Skipped)
                         {
-                            var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken);
+                            var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, null, opts.ContextLines);
                             fileRecord.Status = ScanState.Analyzed;
 
                             if (results.Any())
