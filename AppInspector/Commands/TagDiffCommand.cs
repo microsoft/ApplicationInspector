@@ -178,23 +178,23 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     throw new ArgumentNullException("_options");
                 }
-                GetTagsCommand cmd1 = new GetTagsCommand(new GetTagsCommandOptions
+                GetTagsCommand cmd1 = new(new GetTagsCommandOptions
                 {
                     SourcePath = new string[1] { _options.SourcePath1 },
                     CustomRulesPath = _options.CustomRulesPath,
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
-                    Log = _options?.Log
+                    Log = _options.Log
                 });
-                GetTagsCommand cmd2 = new GetTagsCommand(new GetTagsCommandOptions
+                GetTagsCommand cmd2 = new(new GetTagsCommandOptions
                 {
                     SourcePath = new string[1] { _options.SourcePath2 },
                     CustomRulesPath = _options.CustomRulesPath,
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
-                    Log = _options?.Log
+                    Log = _options.Log
                 });
 
                 GetTagsResult analyze1 = cmd1.GetResult();
