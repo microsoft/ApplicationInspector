@@ -10,24 +10,26 @@ namespace Benchmarks
     public class AnalyzeBenchmark
     {
         // Manually put the file you want to benchmark. But don't put this in a path with "Test" in the name ;)
-        private const string path = "C:\\Users\\gstocco\\Documents\\GitHub\\ApplicationInspector\\RulesEngine";
+        private const string path = "C:\\Users\\gstocco\\Documents\\GitHub\\ApplicationInspector\\RulesEngine\\";
 
         public AnalyzeBenchmark()
         {
         }
 
-        //[Benchmark(Baseline = true)]
-        //public void AnalyzeSingleThreaded()
-        //{
-        //    AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
-        //    {
-        //        SourcePath = path,
-        //        SingleThread = true,
-        //        IgnoreDefaultRules = false
-        //    });
+        [Benchmark(Baseline = true)]
+        public void AnalyzeSingleThreaded()
+        {
+            AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
+            {
+                SourcePath = path,
+                SingleThread = true,
+                IgnoreDefaultRules = false,
+                FilePathExclusions = "**/bin/**,**/obj/**",
+                NoShowProgress = true
+            });
 
-        //    AnalyzeResult analyzeResult = command.GetResult();
-        //}
+            AnalyzeResult analyzeResult = command.GetResult();
+        }
 
         [Benchmark]
         public void AnalyzeMultiThread()
@@ -37,7 +39,8 @@ namespace Benchmarks
                 SourcePath = path,
                 SingleThread = false,
                 IgnoreDefaultRules = false,
-                FilePathExclusions = "bin,obj"
+                FilePathExclusions = "**/bin/**,**/obj/**",
+                NoShowProgress = true
             });
 
             AnalyzeResult analyzeResult = command.GetResult();
