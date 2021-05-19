@@ -254,6 +254,36 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         }
 
         [TestMethod]
+        public void MultiFiles()
+        {
+            var mainduptags = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp");
+            string args = string.Format(@"analyze -s {0} -f json -o {1} -k none",
+                $"{mainduptags}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+
+            var exitCodeSingleThread = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCodeSingleThread);
+                
+            string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
+            var matches = result.Metadata.TotalMatchesCount;
+            var uniqueMatches = result.Metadata.UniqueMatchesCount;
+            mainduptags = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp");
+            args = string.Format(@"analyze -s {0} -f json -o {1} -k none",
+                $"{mainduptags},{mainduptags}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+
+            exitCodeSingleThread = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCodeSingleThread);
+
+            content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            var result2 = JsonConvert.DeserializeObject<AnalyzeResult>(content);
+
+            Assert.AreEqual(matches * 2, result2.Metadata.TotalMatchesCount);
+            Assert.AreEqual(uniqueMatches, result2.Metadata.UniqueMatchesCount);
+        }
+
+        [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
         {
             AnalyzeResult.ExitCode exitCodeSingleThread = AnalyzeResult.ExitCode.CriticalError;

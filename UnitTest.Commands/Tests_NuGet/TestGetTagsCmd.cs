@@ -45,7 +45,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\log.txt")
             };
@@ -69,7 +69,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = "none" //allow source under unittest path
             };
 
@@ -93,7 +93,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\main.zip"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\main.zip") },
                 FilePathExclusions = "none", //allow source under unittest path
             };
 
@@ -117,7 +117,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"baddir\main.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"baddir\main.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
             };
 
@@ -141,7 +141,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"notfound.json")
             };
@@ -166,7 +166,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 IgnoreDefaultRules = true,
             };
@@ -191,7 +191,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 IgnoreDefaultRules = true,
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
@@ -217,7 +217,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
@@ -242,7 +242,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json")
             };
@@ -266,7 +266,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one") },
                 FilePathExclusions = "main.cpp"
             };
 
@@ -290,7 +290,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 SingleThread = true
             };
@@ -308,7 +308,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 SingleThread = true
             };
@@ -356,7 +356,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
             };
 
@@ -380,7 +380,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
 
                 LogFileLevel = "trace",
@@ -416,7 +416,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
 
                 LogFileLevel = "error",
@@ -449,7 +449,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 LogFileLevel = "debug",
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logdebug.txt"),
@@ -485,7 +485,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
             };
@@ -510,7 +510,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         {
             GetTagsCommandOptions options = new GetTagsCommandOptions()
             {
-                SourcePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
                 FilePathExclusions = "none", //allow source under unittest path
                 ConsoleVerbosityLevel = "none"
             };

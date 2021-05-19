@@ -3,6 +3,7 @@
 
 using CommandLine;
 using Microsoft.ApplicationInspector.Commands;
+using System.Collections.Generic;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
@@ -25,8 +26,8 @@ namespace Microsoft.ApplicationInspector.CLI
     [Verb("gettags", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics for unique tags")]
     public class CLIGetTagsCommandOptions : CLICommandOptions
     {
-        [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect")]
-        public string? SourcePath { get; set; }
+        [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect, comma separated", Separator = ',')]
+        public IEnumerable<string> SourcePath { get; set; } = new string[0];
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
@@ -62,8 +63,8 @@ namespace Microsoft.ApplicationInspector.CLI
     [Verb("analyze", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics")]
     public class CLIAnalyzeCmdOptions : CLICommandOptions
     {
-        [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect")]
-        public string? SourcePath { get; set; }
+        [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect, comma separated", Separator = ',')]
+        public IEnumerable<string> SourcePath { get; set; } = new string[0];
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }

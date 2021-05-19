@@ -40,10 +40,13 @@ namespace Microsoft.ApplicationInspector.Commands
 
         internal MetaData Metadata { get; set; }
 
-        public MetaDataHelper(string sourcePath, bool uniqueMatchesOnly)
+        public MetaDataHelper(string sourcePath)
         {
-            sourcePath = Path.GetFullPath(sourcePath);//normalize for .\ and similar
-            Metadata = new MetaData(GetDefaultProjectName(sourcePath), sourcePath);
+            if (!sourcePath.Contains(','))
+            {
+                sourcePath = Path.GetFullPath(sourcePath);//normalize for .\ and similar
+            }
+            Metadata = new MetaData(sourcePath, sourcePath);
         }
 
         /// <summary>

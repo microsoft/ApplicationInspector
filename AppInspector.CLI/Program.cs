@@ -6,6 +6,7 @@ using Microsoft.ApplicationInspector.Commands;
 using NLog;
 using ShellProgressBar;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -257,7 +258,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             GetTagsCommand command = new GetTagsCommand(new GetTagsCommandOptions()
             {
-                SourcePath = cliOptions.SourcePath ?? "",
+                SourcePath = cliOptions.SourcePath ?? new List<string>(),
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
@@ -312,6 +313,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
                     pbar.Finished();
                 }
+                Console.Write(Environment.NewLine);
             }
 
             WriteOnce.PauseConsoleOutput = false;
@@ -323,7 +325,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
-                SourcePath = cliOptions.SourcePath ?? "",
+                SourcePath = cliOptions.SourcePath ?? Array.Empty<string>(),
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
@@ -378,6 +380,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
                     pbar.Finished();
                 }
+                Console.Write(Environment.NewLine);
             }
 
             WriteOnce.PauseConsoleOutput = false;

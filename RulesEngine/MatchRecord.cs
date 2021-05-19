@@ -17,45 +17,53 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="rule"></param>
         public MatchRecord(Rule rule)
         {
-            if (rule is null)
-            {
-                throw new ArgumentNullException();
-            }
             Rule = rule;
+            RuleId = rule.Id;
+            RuleName = rule.Name;
+            RuleDescription = rule.Description;
+            Tags = rule.Tags;
+            Severity = rule.Severity;
+        }
+
+        [JsonConstructor]
+        public MatchRecord(string ruleId, string ruleName)
+        {
+            RuleId = ruleId;
+            RuleName = ruleName;
         }
 
         [JsonIgnore]
-        public Rule Rule { get; }
+        public Rule? Rule { get; set; }
 
         /// <summary>
         /// Rule Id found in matching rule
         /// </summary>
         [JsonProperty(PropertyName = "ruleId")]
-        public string RuleId => Rule.Id;
+        public string RuleId { get; set; }
 
         /// <summary>
         /// Rule name found in matching rule
         /// </summary>
         [JsonProperty(PropertyName = "ruleName")]
-        public string RuleName => Rule.Name;
+        public string RuleName { get; set;  }
 
         /// <summary>
         /// Rule description found in matching rule
         /// </summary>
         [JsonProperty(PropertyName = "ruleDescription")]
-        public string? RuleDescription => Rule.Description;
+        public string? RuleDescription { get; set; }
 
         /// <summary>
         /// Tags in matching rule
         /// </summary>
         [JsonProperty(PropertyName = "tags")]
-        public string[]? Tags => Rule.Tags;
+        public string[]? Tags { get; set;  }
 
         /// <summary>
         /// Rule severity
         /// </summary>_rule
         [JsonProperty(PropertyName = "severity")]
-        public Severity Severity => Rule.Severity;
+        public Severity Severity { get; set;  }
 
         [JsonIgnore]
         public SearchPattern? MatchingPattern { get; set; }

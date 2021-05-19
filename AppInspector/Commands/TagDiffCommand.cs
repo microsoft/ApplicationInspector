@@ -174,22 +174,25 @@ namespace Microsoft.ApplicationInspector.Commands
             try
             {
                 #region setup analyze calls
-
+                if (_options is null)
+                {
+                    throw new ArgumentNullException("_options");
+                }
                 GetTagsCommand cmd1 = new GetTagsCommand(new GetTagsCommandOptions
                 {
-                    SourcePath = _options?.SourcePath1 ?? "",
-                    CustomRulesPath = _options?.CustomRulesPath,
-                    IgnoreDefaultRules = _options?.IgnoreDefaultRules ?? false,
-                    FilePathExclusions = _options?.FilePathExclusions ?? "",
+                    SourcePath = new string[1] { _options.SourcePath1 },
+                    CustomRulesPath = _options.CustomRulesPath,
+                    IgnoreDefaultRules = _options.IgnoreDefaultRules,
+                    FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
                     Log = _options?.Log
                 });
                 GetTagsCommand cmd2 = new GetTagsCommand(new GetTagsCommandOptions
                 {
-                    SourcePath = _options?.SourcePath2 ?? "",
-                    CustomRulesPath = _options?.CustomRulesPath,
-                    IgnoreDefaultRules = _options != null ? _options.IgnoreDefaultRules : false,
-                    FilePathExclusions = _options?.FilePathExclusions ?? "",
+                    SourcePath = new string[1] { _options.SourcePath2 },
+                    CustomRulesPath = _options.CustomRulesPath,
+                    IgnoreDefaultRules = _options.IgnoreDefaultRules,
+                    FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
                     Log = _options?.Log
                 });

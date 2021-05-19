@@ -21,7 +21,7 @@ namespace Benchmarks
         {
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
-                SourcePath = path,
+                SourcePath = new string[1] { path },
                 SingleThread = true,
                 IgnoreDefaultRules = false,
                 FilePathExclusions = "**/bin/**,**/obj/**",
@@ -36,7 +36,7 @@ namespace Benchmarks
         {
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
-                SourcePath = path,
+                SourcePath = new string[1] { path },
                 SingleThread = false,
                 IgnoreDefaultRules = false,
                 FilePathExclusions = "**/bin/**,**/obj/**",

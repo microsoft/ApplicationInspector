@@ -24,7 +24,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class AnalyzeOptions : CommandOptions
     {
-        public string SourcePath { get; set; } = "";
+        public IEnumerable<string> SourcePath { get; set; } = new string[0];
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
         public string ConfidenceFilters { get; set; } = "high,medium";
@@ -72,7 +72,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class AnalyzeCommand
     {
-        private IEnumerable<string>? _srcfileList;
+        private List<string> _srcfileList = new List<string>();
         private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
         private RuleProcessor? _rulesProcessor;
 
@@ -179,33 +179,36 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
 
-            if (string.IsNullOrEmpty(_options.SourcePath))
+            if (!_options.SourcePath.Any())
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
             }
 
-            if (Directory.Exists(_options.SourcePath))
+            foreach(var entry in _options.SourcePath)
             {
-                try
+                if (Directory.Exists(entry))
                 {
-                    _srcfileList = Directory.EnumerateFiles(_options.SourcePath, "*.*", SearchOption.AllDirectories);
-                    if (!_srcfileList.Any())
+                    try
                     {
-                        throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, _options.SourcePath));
+                        _srcfileList.AddRange(Directory.EnumerateFiles(entry, "*.*", SearchOption.AllDirectories));
+                    }
+                    catch (Exception)
+                    {
+                        throw;
                     }
                 }
-                catch (Exception)
+                else if (File.Exists(entry))
                 {
-                    throw;
+                    _srcfileList.Add(entry);
+                }
+                else
+                {
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, string.Join(',', _options.SourcePath)));
                 }
             }
-            else if (File.Exists(_options.SourcePath)) //not a directory but make one for single flow
+            if (!_srcfileList.Any())
             {
-                _srcfileList = new List<string>() { _options.SourcePath };
-            }
-            else
-            {
-                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, _options.SourcePath));
+                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, string.Join(',', _options.SourcePath)));
             }
         }
 
@@ -270,7 +273,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _rulesProcessor = new RuleProcessor(rulesSet, rpo);
 
             //create metadata helper to wrap and help populate metadata from scan
-            _metaDataHelper = new MetaDataHelper(_options.SourcePath, false);
+            _metaDataHelper = new MetaDataHelper(string.Join(',',_options.SourcePath));
         }
 
         #endregion configureMethods
@@ -484,7 +487,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             Extractor extractor = new();
 
-            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+            foreach (var srcFile in _srcfileList ?? new List<string>())
             {
                 foreach(var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
                 {
@@ -499,7 +502,7 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntriesAsync", LogLevel.Trace);
 
             Extractor extractor = new();
-            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+            foreach (var srcFile in _srcfileList ?? new List<string>())
             {
                 await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false }))
                 {
@@ -638,7 +641,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     pbar.Finished();
                 }
-
+                Console.Write(Environment.NewLine);
                 done = false;
 
                 var options2 = new ProgressBarOptions
@@ -673,6 +676,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     progressBar.Message = $"{_metaDataHelper?.Matches.Count} Matches. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
+                Console.Write(Environment.NewLine);
             }
             else
             {
