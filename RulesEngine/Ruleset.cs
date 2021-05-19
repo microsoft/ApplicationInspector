@@ -202,10 +202,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
                             CustomOperation = "RegexWithIndex"
                         };
-                        foreach (var subPattern in pattern.Pattern.Split('|'))
-                        {
-                            newClause.Data.Add($"[\\.\\b]{pattern.Pattern}[\\.\\b]");
-                        }
+
+                        newClause.Data.Add($"[\\.\\b]({pattern.Pattern})[\\.\\b]");
+                        
                         if (clauseNumber > 0)
                         {
                             expression.Append(" OR ");
