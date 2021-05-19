@@ -144,7 +144,7 @@ namespace Microsoft.ApplicationInspector.Commands
             //valid search pattern
             foreach (SearchPattern searchPattern in rule.Patterns ?? new SearchPattern[] { })
             {
-                if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.RegexWord)
+                if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.Regex)
                 {
                     try
                     {
