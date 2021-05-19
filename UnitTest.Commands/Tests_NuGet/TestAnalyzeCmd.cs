@@ -298,8 +298,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeCommand command = new AnalyzeCommand(options);
             AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(8, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(6, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -317,7 +317,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(0, result.Metadata.FilesSkipped);
             Assert.AreEqual(2, result.Metadata.FilesAffected);
-            Assert.AreEqual(52, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(44, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(16, result.Metadata.UniqueMatchesCount);
         }
 
@@ -337,7 +337,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(1, result.Metadata.FilesSkipped);
             Assert.AreEqual(1, result.Metadata.FilesAffected);
-            Assert.AreEqual(28, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(24, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(15, result.Metadata.UniqueMatchesCount);
         }
 
@@ -393,7 +393,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCode = result.ResultCode;
                 if (exitCode == AnalyzeResult.ExitCode.Success)
                 {
-                    exitCode = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCode = result.Metadata.TotalMatchesCount == 8 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
@@ -412,7 +412,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 exitCodeMultiThread = result.ResultCode;
                 if (exitCodeMultiThread == AnalyzeResult.ExitCode.Success)
                 {
-                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 11 && result.Metadata.UniqueMatchesCount == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 8 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
                 }
             }
             catch (Exception)
