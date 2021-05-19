@@ -298,8 +298,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeCommand command = new AnalyzeCommand(options);
             AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(8, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(6, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -317,8 +317,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(0, result.Metadata.FilesSkipped);
             Assert.AreEqual(2, result.Metadata.FilesAffected);
-            Assert.AreEqual(44, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(16, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(65, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(22, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -337,8 +337,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(1, result.Metadata.FilesSkipped);
             Assert.AreEqual(1, result.Metadata.FilesAffected);
-            Assert.AreEqual(24, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(15, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(35, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(21, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -385,42 +385,19 @@ namespace ApplicationInspector.Unitprocess.Commands
                 SingleThread = true
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
-                if (exitCode == AnalyzeResult.ExitCode.Success)
-                {
-                    exitCode = result.Metadata.TotalMatchesCount == 8 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
-                }
-            }
-            catch (Exception)
-            {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
-            }
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
 
-            AnalyzeResult.ExitCode exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
             options.SingleThread = false;
-            try
-            {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
-                exitCodeMultiThread = result.ResultCode;
-                if (exitCodeMultiThread == AnalyzeResult.ExitCode.Success)
-                {
-                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 8 && result.Metadata.UniqueMatchesCount == 6 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
-                }
-            }
-            catch (Exception)
-            {
-                exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
-            }
-
-            Assert.IsTrue(exitCodeMultiThread == AnalyzeResult.ExitCode.Success);
+            command = new AnalyzeCommand(options);
+            result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]

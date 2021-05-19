@@ -260,7 +260,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             var result = JsonConvert.DeserializeObject<GetTagsResult>(content);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-            Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
             
             args = string.Format(@"gettags -s {0} -f json -o {1} -k none",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
@@ -273,7 +273,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             result = JsonConvert.DeserializeObject<GetTagsResult>(content);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-            Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
             
         }
 
