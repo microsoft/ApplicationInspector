@@ -365,7 +365,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (pattern.PatternType == PatternType.RegexWord)
             {
                 pattern.PatternType = PatternType.Regex;
-                pattern.Pattern = string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", pattern.Pattern);
+                pattern.Pattern = string.Format(CultureInfo.InvariantCulture, @"\b({0})\b", pattern.Pattern);
             }
             else if (pattern.PatternType == PatternType.String)
             {
