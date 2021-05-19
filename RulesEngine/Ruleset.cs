@@ -197,7 +197,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         clauses.Add(new OATRegexWithIndexClause(scopes)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
-                            Data = new List<string>() { $"[\\.\\b]({pattern.Pattern})[\\.\\b]" },
+                            Data = new List<string>() { $"\\b({pattern.Pattern})\\b" },
                             Capture = true,
                             Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
                             CustomOperation = "RegexWithIndex"
