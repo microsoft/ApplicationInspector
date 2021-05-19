@@ -250,45 +250,31 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
         {
-            try
-            {
-                string args = string.Format(@"gettags -s {0} -f json -o {1} -k none --single-threaded",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            string args = string.Format(@"gettags -s {0} -f json -o {1} -k none --single-threaded",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
-                var exitCode = (GetTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-                Assert.AreEqual(GetTagsResult.ExitCode.Success, exitCode);
-                string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                var result = JsonConvert.DeserializeObject<GetTagsResult>(content);
-                Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
-                Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-                Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+            var exitCode = (GetTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
+            Assert.AreEqual(GetTagsResult.ExitCode.Success, exitCode);
+            string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            var result = JsonConvert.DeserializeObject<GetTagsResult>(content);
+            Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
+            
+            args = string.Format(@"gettags -s {0} -f json -o {1} -k none",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
-            try
-            {
+            exitCode = (GetTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
-                string args = string.Format(@"gettags -s {0} -f json -o {1} -k none",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-
-                var exitCode = (GetTagsResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-
-                Assert.AreEqual(GetTagsResult.ExitCode.Success, exitCode);
-                string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                var result = JsonConvert.DeserializeObject<GetTagsResult>(content);
-                Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
-                Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-                Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+            Assert.AreEqual(GetTagsResult.ExitCode.Success, exitCode);
+            content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            result = JsonConvert.DeserializeObject<GetTagsResult>(content);
+            Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
+            
         }
 
         [TestMethod]
