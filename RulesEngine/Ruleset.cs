@@ -194,16 +194,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else if (pattern.PatternType == PatternType.RegexWord)
                     {
-                        var newClause = new OATRegexWithIndexClause(scopes)
+                        clauses.Add(new OATRegexWithIndexClause(scopes)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
-                            Data = new List<string>(),
+                            Data = new List<string>() { $"[\\.\\b]({pattern.Pattern})[\\.\\b]" },
                             Capture = true,
                             Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
                             CustomOperation = "RegexWithIndex"
-                        };
-
-                        newClause.Data.Add($"[\\.\\b]({pattern.Pattern})[\\.\\b]");
+                        });
                         
                         if (clauseNumber > 0)
                         {
@@ -211,7 +209,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
                         expression.Append(clauseNumber);
                         clauseNumber++;
-                        clauses.Add(newClause);
                     }
                 }
             }
