@@ -14,7 +14,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
     ///
     /// </summary>
     [TestClass]
-    public class CLITestGetTagsCommand
+    public class CLITestAnalyzeTagsOnlyCommand
     {
         [TestInitialize]
         public void InitOutput()

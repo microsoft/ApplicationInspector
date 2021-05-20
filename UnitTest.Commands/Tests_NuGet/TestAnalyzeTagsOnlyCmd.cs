@@ -16,7 +16,7 @@ namespace ApplicationInspector.Unitprocess.Commands
     /// Note: in order to avoid log reuse, include the optional parameter CloseLogOnCommandExit = true
     /// </summary>
     [TestClass]
-    public class TestAnalyzeGetTagsCmd
+    public class TestAnalyzeTagsOnlyCmd
     {
         [TestInitialize]
         public void InitOutput()
