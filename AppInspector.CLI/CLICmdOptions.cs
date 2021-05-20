@@ -23,43 +23,6 @@ namespace Microsoft.ApplicationInspector.CLI
     /// <summary>
     /// CLI command distinct arguments
     /// </summary>
-    [Verb("gettags", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics for unique tags")]
-    public class CLIGetTagsCommandOptions : CLICommandOptions
-    {
-        [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect, comma separated", Separator = ',')]
-        public IEnumerable<string> SourcePath { get; set; } = new string[0];
-
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string? CustomRulesPath { get; set; }
-
-        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
-        public bool IgnoreDefaultRules { get; set; }
-
-        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
-        public string ConfidenceFilters { get; set; } = "high,medium";
-
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable.", Default = "*/bin,*/obj,*/.vs,*/.git")]
-        public string FilePathExclusions { get; set; } = "";
-
-        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 60000)]
-        public int FileTimeOut { get; set; } = 60000;
-
-        [Option("processing-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing overall.", Default = 0)]
-        public int ProcessingTimeOut { get; set; } = 0;
-
-        [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
-        public bool SingleThread { get; set; }
-
-        [Option("no-show-progress", Required = false, HelpText = "Disable progress information.")]
-        public bool NoShowProgressBar { get; set; }
-
-        [Option("scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
-        public bool ScanUnknownTypes { get; set; }
-    }
-
-    /// <summary>
-    /// CLI command distinct arguments
-    /// </summary>
     [Verb("analyze", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics")]
     public class CLIAnalyzeCmdOptions : CLICommandOptions
     {
@@ -102,6 +65,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option("scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
         public bool ScanUnknownTypes { get; set; }
+
+        [Option('t',"tags-only", Required = false, HelpText = "Only get tags (no detailed match data).")]
+        public bool TagsOnly { get; set; }
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]

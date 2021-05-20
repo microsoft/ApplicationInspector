@@ -178,27 +178,29 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     throw new ArgumentNullException("_options");
                 }
-                GetTagsCommand cmd1 = new(new GetTagsCommandOptions
+                AnalyzeCommand cmd1 = new(new AnalyzeOptions()
                 {
                     SourcePath = new string[1] { _options.SourcePath1 },
                     CustomRulesPath = _options.CustomRulesPath,
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
-                    Log = _options.Log
+                    Log = _options.Log,
+                    TagsOnly = true,
                 });
-                GetTagsCommand cmd2 = new(new GetTagsCommandOptions
+                AnalyzeCommand cmd2 = new(new AnalyzeOptions()
                 {
                     SourcePath = new string[1] { _options.SourcePath2 },
                     CustomRulesPath = _options.CustomRulesPath,
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
-                    Log = _options.Log
+                    Log = _options.Log,
+                    TagsOnly = true
                 });
 
-                GetTagsResult analyze1 = cmd1.GetResult();
-                GetTagsResult analyze2 = cmd2.GetResult();
+                AnalyzeResult analyze1 = cmd1.GetResult();
+                AnalyzeResult analyze2 = cmd2.GetResult();
 
                 //restore
                 WriteOnce.Verbosity = saveVerbosity;
@@ -206,15 +208,15 @@ namespace Microsoft.ApplicationInspector.Commands
                 #endregion setup analyze calls
 
                 //process results for each analyze call before comparing results
-                if (analyze1.ResultCode == GetTagsResult.ExitCode.CriticalError)
+                if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options?.SourcePath1 ?? ""));
                 }
-                else if (analyze2.ResultCode == GetTagsResult.ExitCode.CriticalError)
+                else if (analyze2.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options?.SourcePath2 ?? ""));
                 }
-                else if (analyze1.ResultCode == GetTagsResult.ExitCode.NoMatches || analyze2.ResultCode == GetTagsResult.ExitCode.NoMatches)
+                else if (analyze1.ResultCode == AnalyzeResult.ExitCode.NoMatches || analyze2.ResultCode == AnalyzeResult.ExitCode.NoMatches)
                 {
                     throw new OpException(MsgHelp.GetString(MsgHelp.ID.TAGDIFF_NO_TAGS_FOUND));
                 }
@@ -275,22 +277,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }
-        }
-
-        private bool CompareTags(string[] fileTags1, string[] fileTags2, ref TagDiffResult tagDiffResult, TagDiff.DiffSource source)
-        {
-            bool found = true;
-            //are all tags in file1 found in file2
-            foreach (string s1 in fileTags1)
-            {
-                if (!fileTags2.Contains(s1))
-                {
-                    found = false;
-                    tagDiffResult.TagDiffList.Add(new TagDiff() { Tag = s1, Source = source });
-                }
-            }
-
-            return found;
         }
     }
 }

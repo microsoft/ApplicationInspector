@@ -45,10 +45,6 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 writer = GetPackRulesWriter(cliPackRulesCmdOptions);
             }
-            else if (options is CLIGetTagsCommandOptions cliGetTagsCmdOptions)
-            {
-                writer = GetGetTagsWriter(cliGetTagsCmdOptions);
-            }
             else
             {
                 throw new Exception("Unrecognized object type in writer request");
@@ -104,32 +100,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
                 case "text":
                     writer = new ExportTagsTextWriter();
-                    break;
-
-                default:
-                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
-                    throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
-            }
-
-            //assign the stream as a file or console
-            writer.OutputFileName = options.OutputFilePath;
-            writer.TextWriter = GetTextWriter(writer.OutputFileName);
-
-            return writer;
-        }
-
-        private static CommandResultsWriter GetGetTagsWriter(CLIGetTagsCommandOptions options)
-        {
-            CommandResultsWriter? writer;
-
-            switch (options.OutputFileFormat.ToLower())
-            {
-                case "json":
-                    writer = new JsonWriter();
-                    break;
-
-                case "text":
-                    writer = new GetTagsTextWriter();
                     break;
 
                 default:

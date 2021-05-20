@@ -26,7 +26,6 @@ namespace Microsoft.ApplicationInspector.CLI.Writers
                 {
                     case TagDiffResult:
                     case ExportTagsResult:
-                    case GetTagsResult:
                     case VerifyRulesResult:
                         jsonSerializer.Serialize(TextWriter, result);
                         break;

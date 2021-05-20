@@ -32,6 +32,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool SingleThread { get; set; } = false;
         public bool TreatEverythingAsCode { get; set; } = false;
         public bool NoShowProgress { get; set; } = true;
+        public bool TagsOnly { get; set; } = false;
         public int FileTimeOut { get; set; } = 0;
         public int ProcessingTimeOut { get; set; } = 0;
         public int ContextLines { get; set; } = 3;
@@ -287,7 +288,11 @@ namespace Microsoft.ApplicationInspector.Commands
         public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts, IEnumerable<FileEntry> populatedEntries)
         {
             WriteOnce.SafeLog("AnalyzeCommand::PopulateRecords", LogLevel.Trace);
-
+            if (_metaDataHelper is null)
+            {
+                WriteOnce.Error("MetadataHelper is null");
+                throw new ArgumentNullException("_metaDataHelper");
+            }
             if (_rulesProcessor is null || populatedEntries is null)
             {
                 return AnalyzeResult.ExitCode.CriticalError;
@@ -336,17 +341,17 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     else
                     {
-                        _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
+                        _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
 
                         LanguageInfo languageInfo = new LanguageInfo();
 
                         if (Language.FromFileName(file.FullPath, ref languageInfo))
                         {
-                            _metaDataHelper?.AddLanguage(languageInfo.Name);
+                            _metaDataHelper.AddLanguage(languageInfo.Name);
                         }
                         else
                         {
-                            _metaDataHelper?.AddLanguage("Unknown");
+                            _metaDataHelper.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
                             if (!_options.ScanUnknownTypes)
                             {
@@ -361,7 +366,17 @@ namespace Microsoft.ApplicationInspector.Commands
                             if (opts.FileTimeOut > 0)
                             {
                                 using var cts = new CancellationTokenSource();
-                                var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines), cts.Token);
+                                var t = Task.Run(() =>
+                                {
+                                    if (opts.TagsOnly)
+                                    {
+                                        results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Keys, -1);
+                                    }
+                                    else
+                                    {
+                                        results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
+                                    }
+                                }, cts.Token);
                                 if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                                 {
                                     WriteOnce.Error($"{file.FullPath} timed out.");
@@ -375,7 +390,14 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                             else
                             {
-                                results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
+                                if (opts.TagsOnly)
+                                {
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Keys, -1);
+                                }
+                                else
+                                {
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
+                                }
                                 fileRecord.Status = ScanState.Analyzed;
                             }
 
@@ -386,7 +408,14 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                             foreach (var matchRecord in results)
                             {
-                                _metaDataHelper?.AddMatchRecord(matchRecord);
+                                if (opts.TagsOnly)
+                                {
+                                    _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                                }
+                                else
+                                {
+                                    _metaDataHelper.AddMatchRecord(matchRecord);
+                                }
                             }
                         }
                     }
@@ -396,14 +425,18 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 fileRecord.ScanTime = sw.Elapsed;
 
-                _metaDataHelper?.Files.Add(fileRecord);
+                _metaDataHelper.Files.Add(fileRecord);
             }
         }
 
         public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken, AnalyzeOptions opts)
         {
             WriteOnce.SafeLog("AnalyzeCommand::PopulateRecordsAsync", LogLevel.Trace);
-
+            if (_metaDataHelper is null)
+            {
+                WriteOnce.Error("MetadataHelper is null");
+                throw new ArgumentNullException("_metaDataHelper");
+            }
             if (_rulesProcessor is null)
             {
                 return AnalyzeResult.ExitCode.CriticalError;
@@ -437,17 +470,17 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     else
                     {
-                        _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
+                        _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
 
                         LanguageInfo languageInfo = new LanguageInfo();
 
                         if (Language.FromFileName(file.FullPath, ref languageInfo))
                         {
-                            _metaDataHelper?.AddLanguage(languageInfo.Name);
+                            _metaDataHelper.AddLanguage(languageInfo.Name);
                         }
                         else
                         {
-                            _metaDataHelper?.AddLanguage("Unknown");
+                            _metaDataHelper.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
                             if (!opts.ScanUnknownTypes)
                             {
@@ -457,7 +490,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         if (fileRecord.Status != ScanState.Skipped)
                         {
-                            var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, null, opts.ContextLines);
+                            var results = opts.TagsOnly ?
+                                await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, _metaDataHelper.UniqueTags.Keys, -1) :
+                                await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, null, opts.ContextLines);
                             fileRecord.Status = ScanState.Analyzed;
 
                             if (results.Any())
@@ -467,7 +502,14 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                             foreach (var matchRecord in results)
                             {
-                                _metaDataHelper?.AddMatchRecord(matchRecord);
+                                if (opts.TagsOnly)
+                                {
+                                    _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                                }
+                                else
+                                {
+                                    _metaDataHelper.AddMatchRecord(matchRecord);
+                                }
                             }
                         }
                     }
@@ -477,7 +519,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 fileRecord.ScanTime = sw.Elapsed;
 
-                _metaDataHelper?.Files.Add(fileRecord);
+                _metaDataHelper.Files.Add(fileRecord);
             }
         }
 
@@ -549,6 +591,11 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetResultAsync", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+            if (_metaDataHelper is null)
+            {
+                WriteOnce.Error("MetadataHelper is null");
+                throw new ArgumentNullException("_metaDataHelper");
+            }
             AnalyzeResult analyzeResult = new AnalyzeResult()
             {
                 AppVersion = Utils.GetVersionString()
@@ -557,12 +604,12 @@ namespace Microsoft.ApplicationInspector.Commands
             var exitCode = await PopulateRecordsAsync(cancellationToken, _options);
 
             //wrapup result status
-            if (_metaDataHelper?.Files.All(x => x.Status == ScanState.Skipped) ?? false)
+            if (_metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
-            else if (_metaDataHelper?.Matches.Count == 0)
+            else if (_metaDataHelper.UniqueTagsCount == 0)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
@@ -593,6 +640,11 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetResult", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+            if (_metaDataHelper is null)
+            {
+                WriteOnce.Error("MetadataHelper is null");
+                throw new ArgumentNullException("_metaDataHelper");
+            }
             AnalyzeResult analyzeResult = new AnalyzeResult()
             {
                 AppVersion = Utils.GetVersionString()
@@ -666,14 +718,14 @@ namespace Microsoft.ApplicationInspector.Commands
                     while (!done)
                     {
                         Thread.Sleep(100);
-                        var current = _metaDataHelper?.Files.Count ?? 0;
+                        var current = _metaDataHelper.Files.Count;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));
                         var timeExpected = new TimeSpan(0, 0, 0, 0, millisExpected);
-                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
+                        progressBar.Tick(_metaDataHelper.Files.Count, timeExpected, $"Analyzing Files. {_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
                     }
 
-                    progressBar.Message = $"{_metaDataHelper?.Matches.Count} Matches. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
+                    progressBar.Message = $"{_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
                 Console.Write(Environment.NewLine);
@@ -684,12 +736,12 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //wrapup result status
-            if (_metaDataHelper?.Files.All(x => x.Status == ScanState.Skipped) ?? false)
+            if (_metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
-            else if (_metaDataHelper?.Matches.Count == 0)
+            else if (_metaDataHelper.UniqueTagsCount == 0)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;

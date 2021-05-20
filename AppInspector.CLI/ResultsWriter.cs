@@ -63,10 +63,6 @@ namespace Microsoft.ApplicationInspector.CLI
                     return;
                 }
             }
-            else if (result is GetTagsResult gtr && options is CLIGetTagsCommandOptions gtco)
-            {
-                commandCompletedMsg = "Get Tags";
-            }
             else
             {
                 throw new Exception("Unrecognized object types for write results");
