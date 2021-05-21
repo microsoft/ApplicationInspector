@@ -49,13 +49,34 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             inline = RulesEngine.Language.GetCommentInline(Language);
         }
 
+        /// <summary>
+        /// The full string of the TextContainer representes.
+        /// </summary>
         public string FullContent { get; }
+        /// <summary>
+        /// The code language of the file
+        /// </summary>
         public string Language { get; }
+        /// <summary>
+        /// One-indexed array of the character indexes of the ends of the lines in FullContent.
+        /// </summary>
         public List<int> LineEnds { get; }
+        /// <summary>
+        /// One-indexed array of the character indexes of the starts of the lines in FullContent.
+        /// </summary>
         public List<int> LineStarts { get; }
 
-        public ConcurrentDictionary<int,bool> CommentedStates { get; } = new();
+        /// <summary>
+        /// A dictionary mapping character index in FullContent to if a specific character is commented.  See IsCommented to use.
+        /// </summary>
+        private ConcurrentDictionary<int,bool> CommentedStates { get; } = new();
 
+        /// <summary>
+        /// Populates the CommentedStates Dictionary based on the index and the provided comment prefix and suffix
+        /// </summary>
+        /// <param name="index">The character index in FullContent</param>
+        /// <param name="prefix">The comment prefix</param>
+        /// <param name="suffix">The comment suffix</param>
         private void PopulateCommentedStatesInternal(int index, string prefix, string suffix)
         {
             var prefixLoc = FullContent.LastIndexOf(prefix, index, StringComparison.Ordinal);
@@ -76,6 +97,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
+        /// <summary>
+        /// Populate the CommentedStates Dictionary based on the provided index.
+        /// </summary>
+        /// <param name="index">The character index in FullContent to work based on.</param>
         public void PopulateCommentedState(int index)
         {
             var inIndex = index;
@@ -87,10 +112,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 index = 0;
             }
+            // Populate true for the indexes of the most immediately preceding instance of the multiline comment type if found
             if (!string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(suffix))
             {
                 PopulateCommentedStatesInternal(index, prefix, suffix);
             }
+            // Populate true for indexes of the most immediately preceding instance of the single-line comment type if found
             if (!CommentedStates.ContainsKey(index) && !string.IsNullOrEmpty(inline))
             {
                 PopulateCommentedStatesInternal(index, inline, "\n");
@@ -108,13 +135,22 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
-        public string GetBoundaryText(Boundary capture)
+        /// <summary>
+        /// Gets the text for a given boundary
+        /// </summary>
+        /// <param name="boundary">The boundary to get text for.</param>
+        /// <returns></returns>
+        public string GetBoundaryText(Boundary boundary)
         {
-            if (capture is null)
+            if (boundary is null)
             {
                 return string.Empty;
             }
-            return FullContent[(Math.Min(FullContent.Length, capture.Index))..(Math.Min(FullContent.Length, capture.Index + capture.Length))];
+            var start = Math.Max(boundary.Index, 0);
+            var end = start + boundary.Length;
+            start = Math.Min(FullContent.Length, start);
+            end = Math.Min(FullContent.Length, end);
+            return FullContent[start..end];
         }
 
         /// <summary>
