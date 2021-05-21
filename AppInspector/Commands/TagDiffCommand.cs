@@ -11,8 +11,8 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     public class TagDiffOptions : CommandOptions
     {
-        public string SourcePath1 { get; set; } = "";
-        public string SourcePath2 { get; set; } = "";
+        public IEnumerable<string> SourcePath1 { get; set; } = Array.Empty<string>();
+        public IEnumerable<string> SourcePath2 { get; set; } = Array.Empty<string>();
         public string TestType { get; set; } = "equality";
         public string FilePathExclusions { get; set; } = string.Empty;
         public string? CustomRulesPath { get; set; }
@@ -145,11 +145,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("TagDiff::ConfigRules", LogLevel.Trace);
 
-            if (_options?.SourcePath1 == _options?.SourcePath2)
-            {
-                throw new OpException(MsgHelp.GetString(MsgHelp.ID.TAGDIFF_SAME_FILE_ARG));
-            }
-            else if (string.IsNullOrEmpty(_options?.SourcePath1) || string.IsNullOrEmpty(_options?.SourcePath2))
+            if ((!_options?.SourcePath1.Any() ?? true) || (!_options?.SourcePath2.Any() ?? true))
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_INVALID_ARG_VALUE));
             }
@@ -180,7 +176,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 AnalyzeCommand cmd1 = new(new AnalyzeOptions()
                 {
-                    SourcePath = new string[1] { _options.SourcePath1 },
+                    SourcePath = _options.SourcePath1,
                     CustomRulesPath = _options.CustomRulesPath,
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
@@ -190,7 +186,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 });
                 AnalyzeCommand cmd2 = new(new AnalyzeOptions()
                 {
-                    SourcePath = new string[1] { _options.SourcePath2 },
+                    SourcePath = _options.SourcePath2,
                     CustomRulesPath = _options.CustomRulesPath,
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
@@ -210,11 +206,11 @@ namespace Microsoft.ApplicationInspector.Commands
                 //process results for each analyze call before comparing results
                 if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options?.SourcePath1 ?? ""));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, string.Join(',',_options.SourcePath1)));
                 }
                 else if (analyze2.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options?.SourcePath2 ?? ""));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, string.Join(',', _options.SourcePath2)));
                 }
                 else if (analyze1.ResultCode == AnalyzeResult.ExitCode.NoMatches || analyze2.ResultCode == AnalyzeResult.ExitCode.NoMatches)
                 {
@@ -259,6 +255,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                         }
                     }
+                    // If we got here there are the same number of tags and they all match
                     if (_arg_tagTestType == TagTestType.Inequality)
                     {
                         tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;

@@ -314,8 +314,8 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             TagDiffCommand command = new TagDiffCommand(new TagDiffOptions()
             {
-                SourcePath1 = cliOptions.SourcePath1 ?? "",
-                SourcePath2 = cliOptions.SourcePath2 ?? "",
+                SourcePath1 = cliOptions.SourcePath1,
+                SourcePath2 = cliOptions.SourcePath2,
                 CustomRulesPath = cliOptions.CustomRulesPath,
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 FilePathExclusions = cliOptions.FilePathExclusions,

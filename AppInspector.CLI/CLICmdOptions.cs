@@ -73,11 +73,11 @@ namespace Microsoft.ApplicationInspector.CLI
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]
     public class CLITagDiffCmdOptions : CLICommandOptions
     {
-        [Option("src1", Required = true, HelpText = "Source 1 to compare")]
-        public string? SourcePath1 { get; set; }
+        [Option("src1", Required = true, HelpText = "Source 1 to compare (commaa separated)")]
+        public IEnumerable<string> SourcePath1 { get; set; } = System.Array.Empty<string>();
 
-        [Option("src2", Required = true, HelpText = "Source 2 to compare")]
-        public string? SourcePath2 { get; set; }
+        [Option("src2", Required = true, HelpText = "Source 2 to compare (commaa separated)")]
+        public IEnumerable<string> SourcePath2 { get; set; } = System.Array.Empty<string>();
 
         [Option('t', "test-type", Required = false, HelpText = "Type of test to run [equality|inequality]", Default = "equality")]
         public string TestType { get; set; } = "equality";
