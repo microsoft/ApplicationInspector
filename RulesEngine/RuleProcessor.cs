@@ -205,7 +205,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
             {
-                foreach (string ovrd in m.Rule.Overrides ?? Array.Empty<string>())
+                foreach (string ovrd in m.Rule?.Overrides ?? Array.Empty<string>())
                 {
                     // Find all overriden rules and mark them for removal from issues list
                     foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
@@ -328,7 +328,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     return resultsList;
                 }
-                foreach (string ovrd in m.Rule.Overrides ?? Array.Empty<string>())
+                foreach (string ovrd in m.Rule?.Overrides ?? Array.Empty<string>())
                 {
                     // Find all overriden rules and mark them for removal from issues list
                     foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))

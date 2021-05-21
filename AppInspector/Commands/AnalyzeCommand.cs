@@ -83,6 +83,10 @@ namespace Microsoft.ApplicationInspector.Commands
         private Confidence _confidence;
         private readonly AnalyzeOptions _options; //copy of incoming caller options
 
+        /// <summary>
+        /// Constructor for AnalyzeCommand.
+        /// </summary>
+        /// <param name="opt"></param>
         public AnalyzeCommand(AnalyzeOptions opt)
         {
             _options = opt;
@@ -429,7 +433,12 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken, AnalyzeOptions opts)
+        /// <summary>
+        /// Populate the records in the metadata asynchronously.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Result code.</returns>
+        public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken)
         {
             WriteOnce.SafeLog("AnalyzeCommand::PopulateRecordsAsync", LogLevel.Trace);
             if (_metaDataHelper is null)
@@ -441,7 +450,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 return AnalyzeResult.ExitCode.CriticalError;
             }
-            await foreach (var entry in GetFileEntriesAsync(opts))
+            await foreach (var entry in GetFileEntriesAsync(_options))
             {
                 if (cancellationToken.IsCancellationRequested) { return AnalyzeResult.ExitCode.Canceled; }
                 await ProcessAndAddToMetadata(entry, cancellationToken);
@@ -482,7 +491,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             _metaDataHelper.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
-                            if (!opts.ScanUnknownTypes)
+                            if (!_options.ScanUnknownTypes)
                             {
                                 fileRecord.Status = ScanState.Skipped;
                             }
@@ -490,9 +499,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         if (fileRecord.Status != ScanState.Skipped)
                         {
-                            var results = opts.TagsOnly ?
+                            var results = _options.TagsOnly ?
                                 await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, _metaDataHelper.UniqueTags.Keys, -1) :
-                                await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, null, opts.ContextLines);
+                                await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, null, _options.ContextLines);
                             fileRecord.Status = ScanState.Analyzed;
 
                             if (results.Any())
@@ -502,7 +511,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                             foreach (var matchRecord in results)
                             {
-                                if (opts.TagsOnly)
+                                if (_options.TagsOnly)
                                 {
                                     _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
                                 }
@@ -523,6 +532,10 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
+        /// <summary>
+        /// Gets the FileEntries synchronously.
+        /// </summary>
+        /// <returns>An Enumerable of FileEntries.</returns>
         public IEnumerable<FileEntry> GetFileEntries()
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntries", LogLevel.Trace);
@@ -538,8 +551,11 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-
-        public async IAsyncEnumerable<FileEntry> GetFileEntriesAsync(AnalyzeOptions opts)
+        /// <summary>
+        /// Gets the FileEntries asynchronously.
+        /// </summary>
+        /// <returns>An enumeration of FileEntries</returns>
+        public async IAsyncEnumerable<FileEntry> GetFileEntriesAsync()
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntriesAsync", LogLevel.Trace);
 
@@ -587,6 +603,11 @@ namespace Microsoft.ApplicationInspector.Commands
             return false;
         }
 
+        /// <summary>
+        /// Perform Analysis and get the result Asynchronously
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token to stop analysis and return results found so far.</param>
+        /// <returns></returns>
         public async Task<AnalyzeResult> GetResultAsync(CancellationToken cancellationToken)
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetResultAsync", LogLevel.Trace);
@@ -601,7 +622,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Utils.GetVersionString()
             };
 
-            var exitCode = await PopulateRecordsAsync(cancellationToken, _options);
+            var exitCode = await PopulateRecordsAsync(cancellationToken);
 
             //wrapup result status
             if (_metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
