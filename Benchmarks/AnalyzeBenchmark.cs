@@ -24,7 +24,7 @@ namespace Benchmarks
                 SourcePath = new string[1] { path },
                 SingleThread = true,
                 IgnoreDefaultRules = false,
-                FilePathExclusions = "**/bin/**,**/obj/**",
+                FilePathExclusions = new string[] { "**/bin/**","**/obj/**" },
                 NoShowProgress = true
             });
 
@@ -39,7 +39,7 @@ namespace Benchmarks
                 SourcePath = new string[1] { path },
                 SingleThread = false,
                 IgnoreDefaultRules = false,
-                FilePathExclusions = "**/bin/**,**/obj/**",
+                FilePathExclusions = new string[] { "**/bin/**", "**/obj/**" },
                 NoShowProgress = true
             });
 

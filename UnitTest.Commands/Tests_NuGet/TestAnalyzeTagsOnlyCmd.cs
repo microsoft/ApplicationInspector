@@ -46,7 +46,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = "none", //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\log.txt"),
                 TagsOnly = true
             };
@@ -71,7 +71,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true
             };
 
@@ -86,7 +86,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\main.zip") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true
             };
 
@@ -111,7 +111,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"baddir\main.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true
             };
 
@@ -136,7 +136,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"notfound.json")
             };
@@ -162,7 +162,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 IgnoreDefaultRules = true,
             };
@@ -188,7 +188,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 IgnoreDefaultRules = true,
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
@@ -215,7 +215,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
@@ -241,7 +241,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json")
             };
@@ -266,7 +266,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one") },
-                FilePathExclusions = "main.cpp",
+                FilePathExclusions = new string[] { "main.cpp" },
                 TagsOnly = true
             };
 
@@ -291,7 +291,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
-                FilePathExclusions = "none", //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 SingleThread = true,
                 TagsOnly = true
             };
@@ -310,7 +310,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
-                FilePathExclusions = "none", //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 SingleThread = true,
                 TagsOnly = true
             };
@@ -359,7 +359,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true
             };
 
@@ -384,7 +384,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 LogFileLevel = "trace",
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logtrace.txt"),
@@ -420,7 +420,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 LogFileLevel = "error",
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logerror.txt"),
@@ -453,7 +453,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 LogFileLevel = "debug",
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logdebug.txt"),
@@ -490,7 +490,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
             };
@@ -516,7 +516,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                FilePathExclusions = "none",
+                FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 ConsoleVerbosityLevel = "none"
             };

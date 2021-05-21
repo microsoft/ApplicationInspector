@@ -28,7 +28,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
         public string ConfidenceFilters { get; set; } = "high,medium";
-        public string FilePathExclusions { get; set; } = "none";
+        public IEnumerable<string> FilePathExclusions { get; set; } = new string[] { };
         public bool SingleThread { get; set; } = false;
         public bool TreatEverythingAsCode { get; set; } = false;
         public bool NoShowProgress { get; set; } = true;
@@ -91,9 +91,8 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _options = opt;
 
-            if (!string.IsNullOrEmpty(opt.FilePathExclusions) && opt.FilePathExclusions != "none")
-            {
-                _fileExclusionList = opt.FilePathExclusions.Split(",").Select(x => new Glob(x)).ToList();
+            if (opt.FilePathExclusions.Any(x => !x.Equals("none"))){
+                _fileExclusionList = opt.FilePathExclusions.Select(x => new Glob(x)).ToList();
             }
             else
             {
@@ -450,7 +449,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 return AnalyzeResult.ExitCode.CriticalError;
             }
-            await foreach (var entry in GetFileEntriesAsync(_options))
+            await foreach (var entry in GetFileEntriesAsync())
             {
                 if (cancellationToken.IsCancellationRequested) { return AnalyzeResult.ExitCode.Canceled; }
                 await ProcessAndAddToMetadata(entry, cancellationToken);

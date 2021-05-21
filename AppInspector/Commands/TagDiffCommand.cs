@@ -14,7 +14,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public IEnumerable<string> SourcePath1 { get; set; } = Array.Empty<string>();
         public IEnumerable<string> SourcePath2 { get; set; } = Array.Empty<string>();
         public string TestType { get; set; } = "equality";
-        public string FilePathExclusions { get; set; } = string.Empty;
+        public IEnumerable<string> FilePathExclusions { get; set; } = new string[] { };
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
         public int FileTimeOut { get; set; }
