@@ -30,7 +30,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             ValidationDelegate = RegexWithIndexValidationDelegate;
         }
 
-        public IEnumerable<Violation> RegexWithIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
+        public static IEnumerable<Violation> RegexWithIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
         {
             if (clause.Data?.Count == null || clause.Data?.Count == 0)
             {
@@ -53,7 +53,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        /// Returns results with pattern index and Boundary as a tuple to enable retrieval of Rule pattern level meta-data like Confidence and report the 
+        /// Returns results with pattern index and Boundary as a tuple to enable retrieval of Rule pattern level meta-data like Confidence and report the
         /// pattern that was responsible for the match
         /// </summary>
         /// <param name="clause"></param>

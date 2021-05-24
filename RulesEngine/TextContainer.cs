@@ -176,7 +176,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        ///     Return content of the line 
+        ///     Return content of the line
         /// </summary>
         /// <param name="line"> Line number (one-indexed) </param>
         /// <returns> Text </returns>

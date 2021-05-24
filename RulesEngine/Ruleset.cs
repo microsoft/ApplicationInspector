@@ -197,7 +197,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
                             CustomOperation = "RegexWithIndex"
                         });
-                     
+                    
                         if (clauseNumber > 0)
                         {
                             expression.Append(" OR ");

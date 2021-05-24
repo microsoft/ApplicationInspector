@@ -24,11 +24,11 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class AnalyzeOptions : CommandOptions
     {
-        public IEnumerable<string> SourcePath { get; set; } = new string[0];
+        public IEnumerable<string> SourcePath { get; set; } = Array.Empty<string>();
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
         public string ConfidenceFilters { get; set; } = "high,medium";
-        public IEnumerable<string> FilePathExclusions { get; set; } = new string[] { };
+        public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
         public bool SingleThread { get; set; } = false;
         public bool TreatEverythingAsCode { get; set; } = false;
         public bool NoShowProgress { get; set; } = true;
@@ -73,11 +73,11 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class AnalyzeCommand
     {
-        private List<string> _srcfileList = new List<string>();
+        private readonly List<string> _srcfileList = new();
         private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
         private RuleProcessor? _rulesProcessor;
         private const int _sleepDelay = 100;
-        private DateTime DateScanned { get; set; }
+        private DateTime DateScanned { get; }
 
         private readonly List<Glob> _fileExclusionList = new();
         private Confidence _confidence;
@@ -135,8 +135,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else
             {
-                WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out verbosity))
+                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out WriteOnce.ConsoleVerbosity verbosity))
                 {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
@@ -244,7 +243,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else if (File.Exists(_options.CustomRulesPath)) //verify custom rules before use
                 {
-                    RulesVerifier verifier = new RulesVerifier(_options.CustomRulesPath, _options.Log);
+                    RulesVerifier verifier = new(_options.CustomRulesPath, _options.Log);
                     verifier.Verify();
                     if (!verifier.IsVerified)
                     {
