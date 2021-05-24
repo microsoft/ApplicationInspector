@@ -82,14 +82,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public string[]? Tags { get; set; }
 
         [JsonProperty(PropertyName = "severity")]
-        [JsonConverter(typeof(SeverityConverter))]
         public Severity Severity { get; set; } = Severity.Moderate;
 
         [JsonProperty(PropertyName = "overrides")]
         public string[]? Overrides { get; set; }
 
         [JsonProperty(PropertyName = "patterns")]
-        public SearchPattern[] Patterns { get; set; } = new SearchPattern[] { };
+        public SearchPattern[] Patterns { get; set; } = Array.Empty<SearchPattern>();
 
         [JsonProperty(PropertyName = "conditions")]
         public SearchCondition[]? Conditions { get; set; }

@@ -13,7 +13,7 @@
     "patterns": [
       {
         "pattern": "DeploymentOperationsExtensions|DeploymentScriptsClient|IDeploymentOperations|IDeploymentScriptsClient",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

@@ -11,12 +11,14 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     public class TagDiffOptions : CommandOptions
     {
-        public string SourcePath1 { get; set; } = "";
-        public string SourcePath2 { get; set; } = "";
+        public IEnumerable<string> SourcePath1 { get; set; } = Array.Empty<string>();
+        public IEnumerable<string> SourcePath2 { get; set; } = Array.Empty<string>();
         public string TestType { get; set; } = "equality";
-        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
+        public IEnumerable<string> FilePathExclusions { get; set; } = new string[] { };
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
+        public int FileTimeOut { get; set; }
+        public int ProcessingTimeOut { get; set; }
     }
 
     /// <summary>
@@ -143,11 +145,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("TagDiff::ConfigRules", LogLevel.Trace);
 
-            if (_options?.SourcePath1 == _options?.SourcePath2)
-            {
-                throw new OpException(MsgHelp.GetString(MsgHelp.ID.TAGDIFF_SAME_FILE_ARG));
-            }
-            else if (string.IsNullOrEmpty(_options?.SourcePath1) || string.IsNullOrEmpty(_options?.SourcePath2))
+            if ((!_options?.SourcePath1.Any() ?? true) || (!_options?.SourcePath2.Any() ?? true))
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_INVALID_ARG_VALUE));
             }
@@ -172,90 +170,89 @@ namespace Microsoft.ApplicationInspector.Commands
             try
             {
                 #region setup analyze calls
-
-                GetTagsCommand cmd1 = new GetTagsCommand(new GetTagsCommandOptions
+                if (_options is null)
                 {
-                    SourcePath = _options?.SourcePath1 ?? "",
-                    CustomRulesPath = _options?.CustomRulesPath,
-                    IgnoreDefaultRules = _options?.IgnoreDefaultRules ?? false,
-                    FilePathExclusions = _options?.FilePathExclusions ?? "",
-                    ConsoleVerbosityLevel = "none",
-                    Log = _options?.Log
-                });
-                GetTagsCommand cmd2 = new GetTagsCommand(new GetTagsCommandOptions
+                    throw new ArgumentNullException("_options");
+                }
+                AnalyzeCommand cmd1 = new(new AnalyzeOptions()
                 {
-                    SourcePath = _options?.SourcePath2 ?? "",
-                    CustomRulesPath = _options?.CustomRulesPath,
-                    IgnoreDefaultRules = _options != null ? _options.IgnoreDefaultRules : false,
-                    FilePathExclusions = _options?.FilePathExclusions ?? "",
+                    SourcePath = _options.SourcePath1,
+                    CustomRulesPath = _options.CustomRulesPath,
+                    IgnoreDefaultRules = _options.IgnoreDefaultRules,
+                    FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
-                    Log = _options?.Log
+                    Log = _options.Log,
+                    TagsOnly = true,
+                });
+                AnalyzeCommand cmd2 = new(new AnalyzeOptions()
+                {
+                    SourcePath = _options.SourcePath2,
+                    CustomRulesPath = _options.CustomRulesPath,
+                    IgnoreDefaultRules = _options.IgnoreDefaultRules,
+                    FilePathExclusions = _options.FilePathExclusions,
+                    ConsoleVerbosityLevel = "none",
+                    Log = _options.Log,
+                    TagsOnly = true
                 });
 
-                GetTagsResult analyze1 = cmd1.GetResult();
-                GetTagsResult analyze2 = cmd2.GetResult();
+                AnalyzeResult analyze1 = cmd1.GetResult();
+                AnalyzeResult analyze2 = cmd2.GetResult();
 
                 //restore
                 WriteOnce.Verbosity = saveVerbosity;
 
                 #endregion setup analyze calls
 
-                bool equalTagsCompare1;
-                bool equalTagsCompare2;
-
                 //process results for each analyze call before comparing results
-                if (analyze1.ResultCode == GetTagsResult.ExitCode.CriticalError)
+                if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options?.SourcePath1 ?? ""));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, string.Join(',',_options.SourcePath1)));
                 }
-                else if (analyze2.ResultCode == GetTagsResult.ExitCode.CriticalError)
+                else if (analyze2.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, _options?.SourcePath2 ?? ""));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, string.Join(',', _options.SourcePath2)));
                 }
-                else if (analyze1.ResultCode == GetTagsResult.ExitCode.NoMatches || analyze2.ResultCode == GetTagsResult.ExitCode.NoMatches)
+                else if (analyze1.ResultCode == AnalyzeResult.ExitCode.NoMatches || analyze2.ResultCode == AnalyzeResult.ExitCode.NoMatches)
                 {
                     throw new OpException(MsgHelp.GetString(MsgHelp.ID.TAGDIFF_NO_TAGS_FOUND));
                 }
                 else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.Success)
                 {
-                    int count1 = 0;
-                    int sizeTags1 = analyze1.Metadata.UniqueTags != null ? analyze1.Metadata.UniqueTags.Count : 0;
-                    string[] file1Tags = new string[sizeTags1];
+                    
+                    var list1 = analyze1.Metadata.UniqueTags ?? new List<string>();
+                    var list2 = analyze2.Metadata.UniqueTags ?? new List<string>();
 
-                    foreach (string tag in analyze1.Metadata.UniqueTags ?? new List<string>())
+                    var removed = list1.Except(list2);
+                    var added = list2.Except(list1);
+
+                    foreach(var add in added)
                     {
-                        file1Tags[count1++] = tag;
+                        tagDiffResult.TagDiffList.Add(new TagDiff()
+                        {
+                            Source = TagDiff.DiffSource.Source2,
+                            Tag = add
+                        });
+                    }
+                    foreach (var remove in removed)
+                    {
+                        tagDiffResult.TagDiffList.Add(new TagDiff()
+                        {
+                            Source = TagDiff.DiffSource.Source1,
+                            Tag = remove
+                        });
                     }
 
-                    int count2 = 0;
-                    int sizeTags2 = analyze2.Metadata.UniqueTags != null ? analyze2.Metadata.UniqueTags.Count : 0;
-                    string[] file2Tags = new string[sizeTags2];
 
-                    foreach (string tag in analyze2.Metadata.UniqueTags ?? new List<string>())
+                    if (tagDiffResult.TagDiffList.Count > 0)
                     {
-                        file2Tags[count2++] = tag;
-                    }
-
-                    //can't simply compare counts as content may differ; must compare both in directions in two passes a->b; b->a
-                    equalTagsCompare1 = CompareTags(file1Tags, file2Tags, ref tagDiffResult, TagDiff.DiffSource.Source1);
-
-                    //reverse order for second pass
-                    equalTagsCompare2 = CompareTags(file2Tags, file1Tags, ref tagDiffResult, TagDiff.DiffSource.Source2);
-
-                    //final results
-                    bool resultsDiffer = !(equalTagsCompare1 && equalTagsCompare2);
-                    if (_arg_tagTestType == TagTestType.Inequality && !resultsDiffer)
-                    {
-                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
-                    }
-                    else if (_arg_tagTestType == TagTestType.Equality && resultsDiffer)
-                    {
-                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
+                        tagDiffResult.ResultCode = _arg_tagTestType == TagTestType.Inequality ? TagDiffResult.ExitCode.TestPassed : TagDiffResult.ExitCode.TestFailed;
                     }
                     else
                     {
-                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestPassed;
+                        tagDiffResult.ResultCode = _arg_tagTestType == TagTestType.Inequality ? TagDiffResult.ExitCode.TestFailed : TagDiffResult.ExitCode.TestPassed;
                     }
+
+                    return tagDiffResult;
                 }
             }
             catch (OpException e)
@@ -265,24 +262,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }
-
-            return tagDiffResult;
-        }
-
-        private bool CompareTags(string[] fileTags1, string[] fileTags2, ref TagDiffResult tagDiffResult, TagDiff.DiffSource source)
-        {
-            bool found = true;
-            //are all tags in file1 found in file2
-            foreach (string s1 in fileTags1)
-            {
-                if (!fileTags2.Contains(s1))
-                {
-                    found = false;
-                    tagDiffResult.TagDiffList.Add(new TagDiff() { Tag = s1, Source = source });
-                }
-            }
-
-            return found;
         }
     }
 }

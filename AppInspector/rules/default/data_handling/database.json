@@ -14,8 +14,7 @@
         "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -55,7 +54,7 @@
       },
       {
         "pattern": "apsw",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "medium"
       }
@@ -121,7 +120,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "require(‘pg’);",
+        "pattern": "require(ï¿½pgï¿½);",
         "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -196,7 +195,7 @@
     "patterns": [
       {
         "pattern": "mongodb|mongoose|mongoclient|pymongo|redis|hbase|neo4j|cassandra|couchbase|memcached|couchdb|litedb|LiteDatabase|tinydb",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -261,7 +260,7 @@
       {
         "pattern": {
           "pattern": "from|where",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -269,8 +268,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -286,7 +284,7 @@
     "patterns": [
       {
         "pattern": "mysql",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -356,7 +354,7 @@
     "patterns": [
       {
         "pattern": "database",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "confidence": "high"
       }
@@ -374,7 +372,7 @@
     "patterns": [
       {
         "pattern": "OdbcConnection|OdbcCommand|OdbcDataReader",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -392,7 +390,7 @@
     "patterns": [
       {
         "pattern": "Odbc",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }

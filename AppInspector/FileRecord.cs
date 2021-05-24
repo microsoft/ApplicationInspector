@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -13,6 +15,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public DateTime AccessTime { get; set; } = DateTime.MinValue;
     }
 
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum ScanState
     {
         None,

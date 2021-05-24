@@ -35,7 +35,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         [JsonProperty(PropertyName = "type")]
-        [JsonConverter(typeof(PatternTypeConverter))]
         public PatternType? PatternType { get; set; }
 
         [JsonProperty(PropertyName = "scopes")]

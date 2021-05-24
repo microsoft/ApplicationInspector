@@ -23,7 +23,6 @@ namespace Microsoft.ApplicationInspector.Commands
         internal ConcurrentDictionary<string, byte> UniqueDependencies { get; set; } = new ConcurrentDictionary<string, byte>();
 
         private ConcurrentDictionary<string, byte> AppTypes { get; set; } = new ConcurrentDictionary<string, byte>();
-        private ConcurrentDictionary<string, byte> FileNames { get; set; } = new ConcurrentDictionary<string, byte>();
         internal ConcurrentDictionary<string, byte> UniqueTags { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> Outputs { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> Targets { get; set; } = new ConcurrentDictionary<string, byte>();
@@ -40,10 +39,13 @@ namespace Microsoft.ApplicationInspector.Commands
 
         internal MetaData Metadata { get; set; }
 
-        public MetaDataHelper(string sourcePath, bool uniqueMatchesOnly)
+        public MetaDataHelper(string sourcePath)
         {
-            sourcePath = Path.GetFullPath(sourcePath);//normalize for .\ and similar
-            Metadata = new MetaData(GetDefaultProjectName(sourcePath), sourcePath);
+            if (!sourcePath.Contains(','))
+            {
+                sourcePath = Path.GetFullPath(sourcePath);//normalize for .\ and similar
+            }
+            Metadata = new MetaData(sourcePath, sourcePath);
         }
 
         /// <summary>
@@ -353,15 +355,15 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private string ExtractValue(string s)
         {
-            if (s.ToLower().Contains("</"))
+            if (s.ToLower().Contains("</", StringComparison.Ordinal))
             {
                 return ExtractXMLValue(s);
             }
-            else if (s.ToLower().Contains("<"))
+            else if (s.ToLower().Contains('<'))
             {
                 return ExtractXMLValueMultiLine(s);
             }
-            else if (s.ToLower().Contains(":"))
+            else if (s.ToLower().Contains(':'))
             {
                 return ExtractJSONValue(s);
             }

@@ -66,7 +66,7 @@
   
   <ItemGroup>
     <PackageReference Include="DotLiquid" Version="2.1.436" />
-    <PackageReference Include="NLog" Version="4.7.9" />
+    <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="ShellProgressBar" Version="5.1.0" />
     <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.194" />
   </ItemGroup>  

@@ -11,7 +11,7 @@
     "patterns": [
       {
         "pattern": "class",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high",
         "_comment": "data structure which provides complexity/size insight"
@@ -30,10 +30,9 @@
     "patterns": [
       {
         "pattern": "struct",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -48,7 +47,7 @@
     "patterns": [
       {
         "pattern": "(def|function|fun) (.*)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "medium",
         "_comment": "doesn't detect a number of other potential patterns at present"
@@ -63,14 +62,12 @@
       "Metric.Code.HTMLForm.Defined"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "<form",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -86,10 +83,9 @@
     "patterns": [
       {
         "pattern": "catch|except|exception",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -101,15 +97,13 @@
       "Metric.Code.Logging.Call"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "log|logger",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high",
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -121,7 +115,6 @@
       "Metric.Code.SampleCode"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "(sample|example) code",
@@ -140,14 +133,12 @@
       "Metric.Code.URL"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "https*",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

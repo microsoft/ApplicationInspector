@@ -13,7 +13,7 @@
     "patterns": [
       {
         "pattern": "FileSecurity|DirectorySecurity",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -32,8 +32,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -51,7 +50,7 @@
     "patterns": [
       {
         "pattern": "acl.(remove|add)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -75,7 +74,7 @@
     "patterns": [
       {
         "pattern": "SetNamedSecurityInfo|SetEntriesInAcl|AddAccessAllowed|AceAddAccessAllowedObjectAce|AddAce|SetFileSecurity|DeleteAce",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -83,7 +82,7 @@
       },
       {
         "pattern": "AuthzModifyClaims|AuthzModifySids|BuildExplicitAccessWithName|SetUserObjectSecurity|DestroyPrivateObjectSecurity|SetKernelObjectSecurity|SetSecurityDescriptorSacl|SetSecurityDescriptorOwner|SetSecurityDescriptorGroup|SetPrivateObjectSecurity|SetNamedSecurityInfo|SetServiceObjectSecurity",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -106,7 +105,7 @@
     "patterns": [
       {
         "pattern": "AuditSetPerUserPolicy|AuditSetSecurity",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -114,7 +113,7 @@
       },
       {
         "pattern": "DestroyPrivateObjectSecurity|SetKernelObjectSecurity|SetSecurityDescriptorSacl|SetSecurityDescriptorOwner|SetSecurityDescriptorGroup|SetPrivateObjectSecurity|SetNamedSecurityInfo|SetServiceObjectSecurity",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -137,8 +136,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -157,7 +155,7 @@
     "patterns": [
       {
         "pattern": "ImpersonateAnonymousToken|ImpersonateLoggedOnUser",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -179,7 +177,7 @@
     "patterns": [
       {
         "pattern": "WindowsImpersonationContext|WindowsIdentity\\.Impersonate|WindowsIdentity\\.RunImpersonated|ImpersonateIdentity",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -201,7 +199,7 @@
     "patterns": [
       {
         "pattern": "WindowsImpersonationContext|WindowsIdentity\\.Impersonate|WindowsIdentity\\.RunImpersonated",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -224,7 +222,7 @@
     "patterns": [
       {
         "pattern": "AuthzSetAppContainerInformation",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -247,7 +245,7 @@
     "patterns": [
       {
         "pattern": "AdjustTokenPrivileges|SetTokenInformation",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -313,8 +311,7 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   }

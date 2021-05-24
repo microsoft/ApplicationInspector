@@ -14,8 +14,7 @@
         "pattern": "#include ?[\\\"<](.*)[\\\">]",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -28,14 +27,12 @@
     ],
     "applies_to": [ "php" ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "(include|require) .*;",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -48,14 +45,12 @@
     ],
     "applies_to": [ "objective-c" ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "#import .*",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -68,34 +63,29 @@
     ],
     "applies_to": [ "groovy" ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "import .*",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "loadScriptByName",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "evaluate ?\\(.*",
         "type": "regex",
-        "scopes": [ "code" ],
-        "_comment": ""
+        "scopes": [ "code" ]
       },
       {
         "pattern": "shell\\.parse ?\\(*",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -108,21 +98,18 @@
     ],
     "applies_to": [ "python", "java", "swift", "go" ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "import .*",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "package .*",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -135,21 +122,18 @@
     ],
     "applies_to": [ "perl", "rust"],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "use .*;",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "package .*;",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -162,21 +146,18 @@
     ],
     "applies_to": [ "ruby" ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "load .*",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "require .*",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -189,13 +170,11 @@
     ],
     "applies_to": [ "csharp" ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "using .*;",
         "type": "regex",
-        "scopes": [ "code" ],
-        "_comment": ""
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -208,35 +187,30 @@
     ],
     "applies_to": [ "javascript" ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "import .*;",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "fetchInject ?\\(.*",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "require ?\\(['\\\"]([^'\\\"]+);",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "\\$\\.getScript\\(.*",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

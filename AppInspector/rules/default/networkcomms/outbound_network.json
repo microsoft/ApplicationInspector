@@ -12,7 +12,7 @@
     "patterns": [
       {
         "pattern": "tftp|ntp\\.org|ntpupdate|imap|snmp|ftps|sftp|ftp|nntp|smtp|telnet|ssh|pop3|gopher",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -40,8 +40,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "TcpConnection",
@@ -49,8 +48,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "(Anonymous|Named)Pipe(Client|Server)Stream",
@@ -59,8 +57,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -358,13 +355,12 @@
       },
       {
         "pattern": "curl|wpget",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
         "modifiers": [],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -385,8 +381,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -407,8 +402,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -429,8 +423,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -451,8 +444,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -473,8 +465,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -495,8 +486,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -517,8 +507,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -539,8 +528,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -560,8 +548,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "send\\(",
@@ -570,8 +557,7 @@
           "code"
         ],
         "modifiers": [],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   }

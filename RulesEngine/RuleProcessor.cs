@@ -5,6 +5,7 @@ using Microsoft.CST.OAT;
 using Microsoft.CST.RecursiveExtractor;
 using NLog;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -20,9 +21,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     {
         public RuleProcessorOptions()
         {
-
         }
-
+        public bool Parallel = true;
         public Confidence confidenceFilter;
         public Logger? logger;
         public bool treatEverythingAsCode = false;
@@ -35,24 +35,24 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     {
         private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
-        private Confidence ConfidenceLevelFilter { get; set; }
+        private Confidence ConfidenceLevelFilter { get; }
         private readonly Logger? _logger;
         private readonly bool _treatEverythingAsCode;
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
-        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
-        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _languageRulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
-        private IEnumerable<ConvertedOatRule>? _universalRulesCache = null;
+        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new();
+        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _languageRulesCache = new();
+        private IEnumerable<ConvertedOatRule>? _universalRulesCache;
 
         /// <summary>
         /// Sets severity levels for analysis
         /// </summary>
-        private Severity SeverityLevel { get; set; }
+        private Severity SeverityLevel { get; }
 
         /// <summary>
         /// Enables caching of rules queries if multiple reuses per instance
         /// </summary>
-        private bool EnableCache { get; set; }
+        private bool EnableCache { get; }
 
         /// <summary>
         /// Creates instance of RuleProcessor
@@ -66,14 +66,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             ConfidenceLevelFilter = opts.confidenceFilter;
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
 
-            analyzer = new Analyzer();
+            analyzer = new Analyzer(new AnalyzerOptions(false, opts.Parallel));
             analyzer.SetOperation(new WithinOperation(analyzer));
             analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
             analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
         }
 
-
-        private string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
+        private static string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
         {
             if (text is null || string.IsNullOrEmpty(text.FullContent) || string.IsNullOrEmpty(language) || string.IsNullOrEmpty(pattern))
             {
@@ -84,12 +83,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             int endIndex = text.FullContent.IndexOfAny(new char[] { '\n', '\r' }, startIndex);
             if (-1 != startIndex && -1 != endIndex)
             {
-                rawResult = text.FullContent.Substring(startIndex, endIndex - startIndex).Trim();
-                Regex regex = new Regex(pattern ?? string.Empty);
+                rawResult = text.FullContent[startIndex..endIndex].Trim();
+                Regex regex = new(pattern ?? string.Empty);
                 MatchCollection matches = regex.Matches(rawResult);
 
                 //remove surrounding import or trailing comments
-                if (matches != null && matches.Any())
+                if (matches?.Any() == true)
                 {
                     foreach (Match? match in matches)
                     {
@@ -128,15 +127,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
             rules = rules.Union(GetUniversalRules());
-            if (tagsToIgnore is not null && tagsToIgnore.Any())
+            if (tagsToIgnore?.Any() == true)
             {
                 rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
             }
-            List<MatchRecord> resultsList = new List<MatchRecord>();
+            List<MatchRecord> resultsList = new();
 
-            TextContainer textContainer = new TextContainer(contents, languageInfo.Name);
-
-            foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
+            TextContainer textContainer = new(contents, languageInfo.Name);
+            var caps = analyzer.GetCaptures(rules, textContainer).ToList();
+            foreach (var ruleCapture in caps)
             {
                 foreach (var cap in ruleCapture.Captures)
                 {
@@ -145,7 +144,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                 List<MatchRecord> ProcessBoundary(ClauseCapture cap)
                 {
-                    List<MatchRecord> newMatches = new List<MatchRecord>();//matches for this rule clause only
+                    List<MatchRecord> newMatches = new();//matches for this rule clause only
 
                     if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
@@ -164,12 +163,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         continue;
                                     }
 
-                                    if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
-                                    {
-                                        _logger?.Error("Index out of range for patterns for rule: " + oatRule.AppInspectorRule.Name);
-                                        continue;
-                                    }
-
                                     if (!ConfidenceLevelFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
                                     {
                                         continue;
@@ -177,7 +170,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                     Location StartLocation = textContainer.GetLocation(boundary.Index);
                                     Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
-                                    MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
+                                    MatchRecord newMatch = new(oatRule.AppInspectorRule)
                                     {
                                         FileName = fileEntry.FullPath,
                                         FullTextContainer = textContainer,
@@ -206,22 +199,19 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
             }
 
-            List<MatchRecord> removes = new List<MatchRecord>();
+            List<MatchRecord> removes = new();
 
-            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
+            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides?.Length > 0))
             {
-                if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
+                foreach (string ovrd in m.Rule?.Overrides ?? Array.Empty<string>())
                 {
-                    foreach (string ovrd in m.Rule.Overrides)
+                    // Find all overriden rules and mark them for removal from issues list
+                    foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
                     {
-                        // Find all overriden rules and mark them for removal from issues list
-                        foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                        if (om.Boundary?.Index >= m.Boundary?.Index &&
+                            om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
                         {
-                            if (om.Boundary?.Index >= m.Boundary?.Index &&
-                                om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
-                            {
-                                removes.Add(om);
-                            }
+                            removes.Add(om);
                         }
                     }
                 }
@@ -245,17 +235,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
             rules = rules.Union(GetUniversalRules());
 
-            if (tagsToIgnore is not null && tagsToIgnore.Any())
+            if (tagsToIgnore?.Any() == true)
             {
                 rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
             }
 
-            List<MatchRecord> resultsList = new List<MatchRecord>();
+            List<MatchRecord> resultsList = new();
 
             using var sr = new StreamReader(fileEntry.Content);
 
-            TextContainer textContainer = new TextContainer(await sr.ReadToEndAsync(), languageInfo.Name);
-
+            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name);
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -269,7 +258,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                 List<MatchRecord> ProcessBoundary(ClauseCapture cap)
                 {
-                    List<MatchRecord> newMatches = new List<MatchRecord>();//matches for this rule clause only
+                    List<MatchRecord> newMatches = new();//matches for this rule clause only
 
                     if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
@@ -301,7 +290,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                     Location StartLocation = textContainer.GetLocation(boundary.Index);
                                     Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
-                                    MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
+                                    MatchRecord newMatch = new(oatRule.AppInspectorRule)
                                     {
                                         FileName = fileEntry.FullPath,
                                         FullTextContainer = textContainer,
@@ -328,26 +317,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
             }
 
-            List<MatchRecord> removes = new List<MatchRecord>();
+            List<MatchRecord> removes = new();
 
-            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
+            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides?.Length > 0))
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
                     return resultsList;
                 }
-                if (m.Rule.Overrides != null && m.Rule.Overrides.Length > 0)
+                foreach (string ovrd in m.Rule?.Overrides ?? Array.Empty<string>())
                 {
-                    foreach (string ovrd in m.Rule.Overrides)
+                    // Find all overriden rules and mark them for removal from issues list
+                    foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
                     {
-                        // Find all overriden rules and mark them for removal from issues list
-                        foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                        if (om.Boundary?.Index >= m.Boundary?.Index &&
+                            om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
                         {
-                            if (om.Boundary?.Index >= m.Boundary?.Index &&
-                                om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
-                            {
-                                removes.Add(om);
-                            }
+                            removes.Add(om);
                         }
                     }
                 }
@@ -358,21 +344,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             return resultsList;
         }
-
-        /// <summary>
-        /// Analyzes given line of code returning matching scan results for the
-        /// file passed in only; Use AllResults to get results across the entire set
-        /// </summary>
-        /// <param name="text">Source code</param>
-        /// <param name="languages">List of languages</param>
-        /// <returns>Array of matches</returns>
-        public List<MatchRecord> AnalyzeFile(string filePath, string text, LanguageInfo languageInfo)
-        {
-            using var ms = new MemoryStream(Encoding.UTF8.GetBytes(text));
-            var entry = new FileEntry(filePath, ms);
-            return AnalyzeFile(entry, languageInfo);
-        }
-
 
         #region Private Support Methods
 
@@ -465,7 +436,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// from the template
         /// </summary>
         /// <returns></returns>
-        private string ExtractExcerpt(TextContainer text, int startLineNumber, int context = 3)
+        private static string ExtractExcerpt(TextContainer text, int startLineNumber, int context = 3)
         {
             if (context == 0)
             {

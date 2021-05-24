@@ -10,11 +10,10 @@
     "patterns": [
       {
         "pattern": "\\.(zip|gz|gzip|gem|tar|tgz|tar\\.gz|xz|7z)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

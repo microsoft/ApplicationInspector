@@ -6,6 +6,7 @@ using Microsoft.ApplicationInspector.Commands;
 using NLog;
 using ShellProgressBar;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
-    public class Program
+    public static class Program
     {
         /// <summary>
         /// CLI program entry point which defines command verbs and options to running
@@ -30,19 +31,15 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 var argsResult = Parser.Default.ParseArguments<CLIAnalyzeCmdOptions,
                     CLITagDiffCmdOptions,
-                    CLITagTestCmdOptions,
                     CLIExportTagsCmdOptions,
                     CLIVerifyRulesCmdOptions,
-                    CLIPackRulesCmdOptions,
-                    CLIGetTagsCommandOptions>(args)
+                    CLIPackRulesCmdOptions>(args)
                   .MapResult(
                     (CLIAnalyzeCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLITagDiffCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
-                    (CLITagTestCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIExportTagsCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIVerifyRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIPackRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
-                    (CLIGetTagsCommandOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     errs => 2
                   );
 
@@ -99,17 +96,6 @@ namespace Microsoft.ApplicationInspector.CLI
             CommonOutputChecks(options);
             return RunTagDiffCommand(options);
         }
-
-        private static int VerifyOutputArgsRun(CLITagTestCmdOptions options)
-        {
-            Logger logger = Utils.SetupLogging(options, true);
-            WriteOnce.Log = logger;
-            options.Log = logger;
-
-            CommonOutputChecks(options);
-            return RunTagTestCommand(options);
-        }
-
         private static int VerifyOutputArgsRun(CLIExportTagsCmdOptions options)
         {
             Logger logger = Utils.SetupLogging(options, true);
@@ -153,16 +139,6 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             return RunPackRulesCommand(options);
-        }
-
-        private static int VerifyOutputArgsRun(CLIGetTagsCommandOptions options)
-        {
-            Logger logger = Utils.SetupLogging(options, true);
-            WriteOnce.Log = logger;
-            options.Log = logger;
-
-            CommonOutputChecks(options);
-            return RunGetTagsCommand(options);
         }
 
         private static int VerifyOutputArgsRun(CLIAnalyzeCmdOptions options)
@@ -229,12 +205,12 @@ namespace Microsoft.ApplicationInspector.CLI
             //validate output is not empty if no file output specified
             if (string.IsNullOrEmpty(options.OutputFilePath))
             {
-                if (options.ConsoleVerbosityLevel.ToLower() == "none")
+                if (string.Equals(options.ConsoleVerbosityLevel, "none", StringComparison.OrdinalIgnoreCase))
                 {
                     WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.CMD_NO_OUTPUT));
                     throw new Exception(MsgHelp.GetString(MsgHelp.ID.CMD_NO_OUTPUT));
                 }
-                else if (options.ConsoleVerbosityLevel.ToLower() == "low")
+                else if (string.Equals(options.ConsoleVerbosityLevel, "low", StringComparison.OrdinalIgnoreCase))
                 {
                     WriteOnce.SafeLog("Verbosity set low.  Detailed output limited.", NLog.LogLevel.Info);
                 }
@@ -266,77 +242,11 @@ namespace Microsoft.ApplicationInspector.CLI
 
         #region RunCmdsWriteResults
 
-        private static int RunGetTagsCommand(CLIGetTagsCommandOptions cliOptions)
-        {
-            GetTagsCommand command = new GetTagsCommand(new GetTagsCommandOptions()
-            {
-                SourcePath = cliOptions.SourcePath ?? "",
-                CustomRulesPath = cliOptions.CustomRulesPath ?? "",
-                IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
-                ConfidenceFilters = cliOptions.ConfidenceFilters,
-                FilePathExclusions = cliOptions.FilePathExclusions,
-                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
-                Log = cliOptions.Log,
-                SingleThread = cliOptions.SingleThread,
-                NoShowProgress = cliOptions.NoShowProgressBar,
-                FileTimeOut = cliOptions.FileTimeOut,
-                ProcessingTimeOut = cliOptions.ProcessingTimeOut,
-                ScanUnknownTypes = cliOptions.ScanUnknownTypes
-            });
-
-
-            if (!cliOptions.NoShowProgressBar)
-            {
-                WriteOnce.PauseConsoleOutput = true;
-            }
-
-            GetTagsResult getTagsResult = command.GetResult();
-
-            if (cliOptions.NoShowProgressBar)
-            {
-                ResultsWriter.Write(getTagsResult, cliOptions);
-            }
-            else
-            {
-                var done = false;
-
-                _ = Task.Factory.StartNew(() =>
-                {
-                    ResultsWriter.Write(getTagsResult, cliOptions);
-                    done = true;
-                });
-
-                var options = new ProgressBarOptions
-                {
-                    ForegroundColor = ConsoleColor.Yellow,
-                    ForegroundColorDone = ConsoleColor.DarkGreen,
-                    BackgroundColor = ConsoleColor.DarkGray,
-                    BackgroundCharacter = '\u2593',
-                    DisableBottomPercentage = true
-                };
-
-                using (var pbar = new IndeterminateProgressBar("Writing Result Files.", options))
-                {
-                    while (!done)
-                    {
-                        Thread.Sleep(10);
-                    }
-                    pbar.Message = $"Results written.";
-
-                    pbar.Finished();
-                }
-            }
-
-            WriteOnce.PauseConsoleOutput = false;
-
-            return (int)getTagsResult.ResultCode;
-        }
-
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
         {
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
-                SourcePath = cliOptions.SourcePath ?? "",
+                SourcePath = cliOptions.SourcePath ?? Array.Empty<string>(),
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
@@ -348,7 +258,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 FileTimeOut = cliOptions.FileTimeOut,
                 ProcessingTimeOut = cliOptions.ProcessingTimeOut,
                 ContextLines = cliOptions.ContextLines,
-                ScanUnknownTypes = cliOptions.ScanUnknownTypes
+                ScanUnknownTypes = cliOptions.ScanUnknownTypes,
+                TagsOnly = cliOptions.TagsOnly
             });
 
             if (!cliOptions.NoShowProgressBar)
@@ -385,12 +296,13 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     while (!done)
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
                     }
-                    pbar.Message = $"Results written.";
+                    pbar.Message = "Results written.";
 
                     pbar.Finished();
                 }
+                Console.Write(Environment.NewLine);
             }
 
             WriteOnce.PauseConsoleOutput = false;
@@ -402,8 +314,8 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             TagDiffCommand command = new TagDiffCommand(new TagDiffOptions()
             {
-                SourcePath1 = cliOptions.SourcePath1 ?? "",
-                SourcePath2 = cliOptions.SourcePath2 ?? "",
+                SourcePath1 = cliOptions.SourcePath1,
+                SourcePath2 = cliOptions.SourcePath2,
                 CustomRulesPath = cliOptions.CustomRulesPath,
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 FilePathExclusions = cliOptions.FilePathExclusions,
@@ -417,25 +329,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
             return (int)tagDiffResult.ResultCode;
         }
-
-        private static int RunTagTestCommand(CLITagTestCmdOptions cliOptions)
-        {
-            TagTestCommand command = new TagTestCommand(new TagTestOptions()
-            {
-                SourcePath = cliOptions.SourcePath,
-                CustomRulesPath = cliOptions.CustomRulesPath,
-                FilePathExclusions = cliOptions.FilePathExclusions,
-                TestType = cliOptions.TestType,
-                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
-                Log = cliOptions.Log
-            });
-
-            TagTestResult tagTestCommand = command.GetResult();
-            ResultsWriter.Write(tagTestCommand, cliOptions);
-
-            return (int)tagTestCommand.ResultCode;
-        }
-
+        
         private static int RunExportTagsCommand(CLIExportTagsCmdOptions cliOptions)
         {
             ExportTagsCommand command = new ExportTagsCommand(new ExportTagsOptions()

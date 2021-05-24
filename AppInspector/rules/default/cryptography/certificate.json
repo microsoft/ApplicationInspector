@@ -10,7 +10,7 @@
     "patterns": [
       {
         "pattern": "x509|\\.(crt|cer|spc|p7b|p7s|p7r|ca-bundle)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -23,8 +23,7 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -44,8 +43,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -61,7 +59,7 @@
     "patterns": [
       {
         "pattern": "\\.(pem|pfx)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -82,12 +80,11 @@
     "patterns": [
       {
         "pattern": "\\.WithClientClaims\\(.*cert.*\\)|\\.WithCertificate\\(",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -101,8 +98,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-10,10)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -117,7 +113,7 @@
     "patterns": [
       {
         "pattern": "genrsa|-keyout|-x509toreq|csr",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
@@ -127,12 +123,11 @@
       },
       {
         "pattern": "---BEGIN CERTIFICATE---",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "---BEGIN PKCS",
@@ -171,17 +166,13 @@
         "pattern": "DSACng|SignData|CreateSignature|DSACryptoServiceProvider|DSASignatureDeformatter|DSASignatureFormatter|DSAKeyValue",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "DSAParameters",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "modifiers": [ "" ],
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -196,24 +187,22 @@
     "patterns": [
       {
         "pattern": "sign(ing)*.?key|signature.?key|valid.?signature|data.?sign|sign.?data",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code",
           "comment"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "DSA",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
         "modifiers": [ "i" ],
-        "confidence": "low",
-        "_comment": ""
+        "confidence": "low"
       }
     ]
   },
@@ -233,8 +222,7 @@
           "code"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
@@ -249,8 +237,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-30,30)",
-        "negate_finding": true,
-        "_comment": ""
+        "negate_finding": true
       }
     ]
   }

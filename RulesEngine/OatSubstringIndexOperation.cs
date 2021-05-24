@@ -28,7 +28,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             ValidationDelegate = SubstringIndexValidationDelegate;
         }
 
-        public IEnumerable<Violation> SubstringIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
+        public static IEnumerable<Violation> SubstringIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
         {
             if (clause.Data?.Count == null || clause.Data?.Count == 0)
             {
@@ -41,7 +41,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        /// Returns results with pattern index and Boundary as a tuple to enable retrieval of Rule pattern level meta-data like Confidence and report the 
+        /// Returns results with pattern index and Boundary as a tuple to enable retrieval of Rule pattern level meta-data like Confidence and report the
         /// pattern that was responsible for the match
         /// </summary>
         /// <param name="clause"></param>
@@ -49,12 +49,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="state2"></param>
         /// <param name="captures"></param>
         /// <returns></returns>
-        public OperationResult SubstringIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
+        public static OperationResult SubstringIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
         {
             var comparisonType = clause.Arguments.Contains("i") ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture;
             if (state1 is TextContainer tc && clause is OATSubstringIndexClause src)
             {
-                if (clause.Data is List<string> stringList && stringList.Any())
+                if (clause.Data is List<string> stringList && stringList.Count > 0)
                 {
                     var outmatches = new List<(int, Boundary)>();//tuple results i.e. pattern index and where
 
@@ -77,7 +77,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             }
                             if (!skip)
                             {
-                                Boundary newBoundary = new Boundary()
+                                Boundary newBoundary = new()
                                 {
                                     Length = stringList[i].Length,
                                     Index = idx

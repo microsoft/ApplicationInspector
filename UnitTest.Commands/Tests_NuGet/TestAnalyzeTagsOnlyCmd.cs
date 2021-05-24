@@ -1,7 +1,6 @@
 ﻿using ApplicationInspector.Unitprocess.Misc;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
@@ -17,7 +16,7 @@ namespace ApplicationInspector.Unitprocess.Commands
     /// Note: in order to avoid log reuse, include the optional parameter CloseLogOnCommandExit = true
     /// </summary>
     [TestClass]
-    public class TestAnalyzeCmd
+    public class TestAnalyzeTagsOnlyCmd
     {
         [TestInitialize]
         public void InitOutput()
@@ -48,7 +47,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\log.txt")
+                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\log.txt"),
+                TagsOnly = true
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -71,22 +71,13 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>() //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
         }
 
         [TestMethod]
@@ -95,7 +86,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\main.zip") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -119,7 +111,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"baddir\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -143,7 +136,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true,
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"notfound.json")
             };
 
@@ -168,7 +162,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true,
                 IgnoreDefaultRules = true,
             };
 
@@ -193,7 +188,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true,
                 IgnoreDefaultRules = true,
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
@@ -219,7 +215,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true,
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
 
@@ -244,7 +241,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true,
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json")
             };
 
@@ -253,7 +251,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 AnalyzeCommand command = new AnalyzeCommand(options);
                 AnalyzeResult result = command.GetResult();
                 Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-                Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.Encryption.General")));
+                Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.HashAlgorithm.Legacy")));
                 Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")));
             }
             catch (Exception)
@@ -268,7 +266,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one") },
-                FilePathExclusions = new string[] { "**/main.cpp" }
+                FilePathExclusions = new string[] { "main.cpp" },
+                TagsOnly = true
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -287,117 +286,71 @@ namespace ApplicationInspector.Unitprocess.Commands
         }
 
         [TestMethod]
-        public async Task ExpectedTagCountAsync_Pass()
+        public async Task ExpectedTagCountAsync()
         {
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                SingleThread = true
-            };
-            AnalyzeCommand command = new AnalyzeCommand(options);
-            AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
-        }
-
-        [TestMethod]
-        public void ScanUnknownFileTypesTest_Include()
-        {
-            AnalyzeOptions options = new AnalyzeOptions()
-            {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unknowntest") },
-                FilePathExclusions = Array.Empty<string>(),
-                ScanUnknownTypes = true
-            };
-            AnalyzeCommand command = new AnalyzeCommand(options);
-            AnalyzeResult result = command.GetResult();
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(2, result.Metadata.TotalFiles);
-            Assert.AreEqual(0, result.Metadata.FilesSkipped);
-            Assert.AreEqual(2, result.Metadata.FilesAffected);
-            Assert.AreEqual(65, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(22, result.Metadata.UniqueMatchesCount);
-        }
-
-        [TestMethod]
-        public void ScanUnknownFileTypesTest_Exclude()
-        {
-            AnalyzeOptions options = new AnalyzeOptions()
-            {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unknowntest") },
-                FilePathExclusions = Array.Empty<string>(),
-                ScanUnknownTypes = false,
-                SingleThread = true
-            };
-            AnalyzeCommand command = new AnalyzeCommand(options);
-            AnalyzeResult result = command.GetResult();
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(2, result.Metadata.TotalFiles);
-            Assert.AreEqual(1, result.Metadata.FilesSkipped);
-            Assert.AreEqual(1, result.Metadata.FilesAffected);
-            Assert.AreEqual(35, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(21, result.Metadata.UniqueMatchesCount);
-        }
-
-        [TestMethod]
-        public void MultiPath_Pass()
-        {
-            AnalyzeOptions options = new AnalyzeOptions()
-            {
-                SourcePath = new string[] 
-                { 
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp")
-                },
-                FilePathExclusions = Array.Empty<string>(),
+                SingleThread = true,
+                TagsOnly = true
             };
 
             AnalyzeCommand command = new AnalyzeCommand(options);
-            AnalyzeResult result = command.GetResult();
+            var result = await command.GetResultAsync(new CancellationToken());
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-
-            AnalyzeOptions options2 = new AnalyzeOptions()
-            {
-                SourcePath = new string[2]
-                {
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp")
-                },
-                FilePathExclusions = Array.Empty<string>(),
-            };
-
-            AnalyzeCommand command2 = new AnalyzeCommand(options2);
-            AnalyzeResult result2 = command2.GetResult();
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result2.ResultCode);
-            Assert.AreEqual(result.Metadata.TotalMatchesCount * 2, result2.Metadata.TotalMatchesCount);
-            Assert.AreEqual(result.Metadata.UniqueMatchesCount, result2.Metadata.UniqueMatchesCount); 
+            Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
         }
 
-
         [TestMethod]
-        public void ExpectedTagCountDupsAllowed_Pass()
+        public void ExpectedTagCount()
         {
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
-                FilePathExclusions = Array.Empty<string>(),
-                SingleThread = true
+                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                SingleThread = true,
+                TagsOnly = true
             };
 
-            AnalyzeCommand command = new AnalyzeCommand(options);
-            AnalyzeResult result = command.GetResult();
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
+            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                AnalyzeResult result = command.GetResult();
+                exitCode = result.ResultCode;
+                if (exitCode == AnalyzeResult.ExitCode.Success)
+                {
+                    exitCode = result.Metadata.TotalMatchesCount == 0 && result.Metadata.UniqueMatchesCount == 0 && result.Metadata.UniqueTags.Count == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                }
+            }
+            catch (Exception)
+            {
+                exitCode = AnalyzeResult.ExitCode.CriticalError;
+            }
 
+            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
 
+            AnalyzeResult.ExitCode exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
             options.SingleThread = false;
-            command = new AnalyzeCommand(options);
-            result = command.GetResult();
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
+            try
+            {
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                AnalyzeResult result = command.GetResult();
+                exitCodeMultiThread = result.ResultCode;
+                if (exitCodeMultiThread == AnalyzeResult.ExitCode.Success)
+                {
+                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 0 && result.Metadata.UniqueMatchesCount == 0 && result.Metadata.UniqueTags.Count == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
+                }
+            }
+            catch (Exception)
+            {
+                exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
+            }
+
+            Assert.IsTrue(exitCodeMultiThread == AnalyzeResult.ExitCode.Success);
         }
 
         [TestMethod]
@@ -406,7 +359,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -430,8 +384,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true,
                 LogFileLevel = "trace",
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logtrace.txt"),
             };
@@ -466,8 +420,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true,
                 LogFileLevel = "error",
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logerror.txt"),
             };
@@ -499,7 +453,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true,
                 LogFileLevel = "debug",
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logdebug.txt"),
                 CloseLogOnCommandExit = true
@@ -535,7 +490,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true,
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
             };
 
@@ -560,7 +516,8 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeOptions options = new AnalyzeOptions()
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                FilePathExclusions = Array.Empty<string>(),
+                TagsOnly = true,
                 ConsoleVerbosityLevel = "none"
             };
 

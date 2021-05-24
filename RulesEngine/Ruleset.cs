@@ -12,17 +12,15 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
     ///     Storage for rules
     /// </summary>
-    /// 
     public class RuleSet : IEnumerable<Rule>
     {
         private readonly Logger? _logger;
-        private List<ConvertedOatRule> _oatRules = new List<ConvertedOatRule>();//used for analyze cmd primarily
+        private List<ConvertedOatRule> _oatRules = new();//used for analyze cmd primarily
         private IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
         private Regex searchInRegex = new Regex("\\((.*),(.*)\\)", RegexOptions.Compiled);
 
@@ -33,19 +31,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             _logger = log;
         }
-
-        /// <summary>
-        ///     Delegate for deserialization error handler
-        /// </summary>
-        /// <param name="sender"> Sender object </param>
-        /// <param name="e"> Error arguments </param>
-        public delegate void DeserializationError(object? sender, Newtonsoft.Json.Serialization.ErrorEventArgs e);
-
-        /// <summary>
-        ///     Event raised if deserialization error is encoutered while loading JSON rules
-        /// </summary>
-        public event DeserializationError? OnDeserializationError;
-
 
         /// <summary>
         ///     Parse a directory with rule files and loads the rules
@@ -71,17 +56,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public void AddFile(string? filename, string? tag = null)
         {
             if (string.IsNullOrEmpty(filename))
-                throw new ArgumentException(nameof(filename));
+                throw new ArgumentException(null, nameof(filename));
 
             _logger?.Debug("Attempting to read rule file: " + filename);
 
             if (!File.Exists(filename))
                 throw new FileNotFoundException();
 
-            using (StreamReader file = File.OpenText(filename))
-            {
-                AddString(file.ReadToEnd(), filename, tag);
-            }
+            using StreamReader file = File.OpenText(filename);
+            AddString(file.ReadToEnd(), filename, tag);
         }
 
         /// <summary>
@@ -161,7 +144,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return _oatRules.Where(x => (x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Length == 0) && (x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0));
         }
 
-
         public ConvertedOatRule? AppInspectorRuleToOatRule(Rule rule)
         {
             var clauses = new List<Clause>();
@@ -175,60 +157,60 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     var modifiers = pattern.Modifiers ?? Array.Empty<string>();
                     if (pattern.PatternType == PatternType.String || pattern.PatternType == PatternType.Substring)
                     {
-                        if (clauses.Where(x => x is OATSubstringIndexClause src &&
-                            src.Arguments.SequenceEqual(modifiers) && src.Scopes.SequenceEqual(scopes) && src.UseWordBoundaries) is IEnumerable<Clause> filteredClauses &&
-                            filteredClauses.Any() && filteredClauses.First().Data is List<string> found)
+                        clauses.Add(new OATSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String)
                         {
-                            found.Add(pattern.Pattern);
-                        }
-                        else
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
+                            Data = new List<string>() { pattern.Pattern },
+                            Capture = true
+                        });
+                        if (clauseNumber > 0)
                         {
-                            clauses.Add(new OATSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String)
-                            {
-                                Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
-                                Data = new List<string>() { pattern.Pattern },
-                                Capture = true
-                            });
-                            if (clauseNumber > 0)
-                            {
-                                expression.Append(" OR ");
-                            }
-                            expression.Append(clauseNumber);
-                            clauseNumber++;
+                            expression.Append(" OR ");
                         }
+                        expression.Append(clauseNumber);
+                        clauseNumber++;
                     }
-                    else
+                    else if (pattern.PatternType == PatternType.Regex)
                     {
-                        if (clauses.Where(x => x is OATRegexWithIndexClause src &&
-                            src.Arguments.SequenceEqual(modifiers) && src.Scopes.SequenceEqual(scopes)) is IEnumerable<Clause> filteredClauses &&
-                            filteredClauses.Any() && filteredClauses.First().Data is List<string> found)
+                        clauses.Add(new OATRegexWithIndexClause(scopes)
                         {
-                            found.Add(pattern.Pattern);
-                        }
-                        else
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
+                            Data = new List<string>() { pattern.Pattern },
+                            Capture = true,
+                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
+                            CustomOperation = "RegexWithIndex"
+                        });
+                        if (clauseNumber > 0)
                         {
-                            clauses.Add(new OATRegexWithIndexClause(scopes)
-                            {
-                                Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
-                                Data = new List<string>() { pattern.Pattern },
-                                Capture = true,
-                                Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
-                                CustomOperation = "RegexWithIndex"
-                            });
-                            if (clauseNumber > 0)
-                            {
-                                expression.Append(" OR ");
-                            }
-                            expression.Append(clauseNumber);
-                            clauseNumber++;
+                            expression.Append(" OR ");
                         }
+                        expression.Append(clauseNumber);
+                        clauseNumber++;
+                    }
+                    else if (pattern.PatternType == PatternType.RegexWord)
+                    {
+                        clauses.Add(new OATRegexWithIndexClause(scopes)
+                        {
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
+                            Data = new List<string>() { $"\\b({pattern.Pattern})\\b" },
+                            Capture = true,
+                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
+                            CustomOperation = "RegexWithIndex"
+                        });
+                    
+                        if (clauseNumber > 0)
+                        {
+                            expression.Append(" OR ");
+                        }
+                        expression.Append(clauseNumber);
+                        clauseNumber++;
                     }
                 }
             }
 
-            if (clauses.Any())
+            if (clauses.Count > 0)
             {
-                expression.Append(")");
+                expression.Append(')');
             }
             else
             {
@@ -239,7 +221,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (condition.Pattern?.Pattern != null)
                 {
-                    if (condition.SearchIn is null || condition.SearchIn.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase))
+                    if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
                     {
                         clauses.Add(new WithinClause()
                         {
@@ -343,12 +325,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         internal IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings()
-            {
-                Error = HandleDeserializationError
-            };
-
-            List<Rule>? ruleList = JsonConvert.DeserializeObject<List<Rule>>(jsonstring, settings);
+            List<Rule>? ruleList = JsonConvert.DeserializeObject<List<Rule>>(jsonstring);
             if (ruleList is List<Rule>)
             {
                 foreach (Rule r in ruleList)
@@ -357,48 +334,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     r.RuntimeTag = tag ?? "";
                     if (r.Patterns == null)
                         r.Patterns = Array.Empty<SearchPattern>();
-
-                    foreach (SearchPattern pattern in r.Patterns)
-                    {
-                        SanitizePatternRegex(pattern);
-                    }
-
-                    if (r.Conditions == null)
-                        r.Conditions = Array.Empty<SearchCondition>();
-
-                    foreach (SearchCondition condition in r.Conditions)
-                    {
-                        if (condition.Pattern is { })
-                        {
-                            SanitizePatternRegex(condition.Pattern);
-                        }
-                    }
-
                     yield return r;
                 }
-            }
-        }
-
-        /// <summary>
-        ///     Handler for deserialization error
-        /// </summary>
-        /// <param name="sender"> Sender object </param>
-        /// <param name="errorArgs"> Error arguments </param>
-        private void HandleDeserializationError(object? sender, Newtonsoft.Json.Serialization.ErrorEventArgs errorArgs)
-        {
-            OnDeserializationError?.Invoke(sender, errorArgs);
-        }
-
-        /// <summary>
-        ///     Method santizes pattern to be a valid regex
-        /// </summary>
-        /// <param name="pattern"> </param>
-        private static void SanitizePatternRegex(SearchPattern pattern)
-        {
-            if (pattern.PatternType == PatternType.RegexWord)
-            {
-                pattern.PatternType = PatternType.Regex;
-                pattern.Pattern = string.Format(CultureInfo.InvariantCulture, @"\b{0}\b", pattern.Pattern);
             }
         }
     }

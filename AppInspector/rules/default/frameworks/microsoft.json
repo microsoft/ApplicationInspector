@@ -76,7 +76,7 @@
     "patterns": [
       {
         "pattern": "ServiceContract|using System\\.ServiceModel|WSHttpBinding",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ]
       },
@@ -101,7 +101,7 @@
     "patterns": [
       {
         "pattern": "CFrameWnd|CMDIFrameWnd|CView|CWnd|stdafx\\.h|winafx\\.h|afx\\.h",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ]
       }
     ]
@@ -173,8 +173,7 @@
         "pattern": "Microsoft Dynamics|dynamics.com",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -191,8 +190,7 @@
         "pattern": "Microsoft Exchange",
         "type": "string",
         "scopes": [ "comment" ],
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -209,8 +207,7 @@
       {
         "pattern": "IIS",
         "type": "string",
-        "scopes": [ "code" ],
-        "_comment": ""
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -228,8 +225,7 @@
         "pattern": "ASP\\.NET|\\b\\.MVC\\b",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -250,7 +246,7 @@
     "patterns": [
       {
         "pattern": "CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER|CoCreateInstance",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],

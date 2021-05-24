@@ -10,19 +10,17 @@
     "patterns": [
       {
         "pattern": "bank\\s*(acct|account)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "(checking|savings|chk|401k|roth)\\s*(account|acct)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -40,8 +38,7 @@
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -55,7 +52,7 @@
     "patterns": [
       {
         "pattern": "currency|usd|money|dollar|coins|euro|peso|deutsche-mark|dinar|franc|krone|pound|rupee|shekel|yen",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "medium",
@@ -74,11 +71,10 @@
     "patterns": [
       {
         "pattern": "visa|americanexpress|amex|(master|discover|credit|debit)\\s*card",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -93,11 +89,10 @@
     "patterns": [
       {
         "pattern": "pay-*roll|salary|salaries|stock",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -112,7 +107,7 @@
     "patterns": [
       {
         "pattern": "sales",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high",

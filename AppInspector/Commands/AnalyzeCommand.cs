@@ -1,16 +1,19 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using GlobExpressions;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Newtonsoft.Json;
 using NLog;
 using ShellProgressBar;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,14 +24,15 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class AnalyzeOptions : CommandOptions
     {
-        public string SourcePath { get; set; } = "";
+        public IEnumerable<string> SourcePath { get; set; } = Array.Empty<string>();
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
         public string ConfidenceFilters { get; set; } = "high,medium";
-        public string FilePathExclusions { get; set; } = "sample,example,test,docs,.vs,.git";
+        public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
         public bool SingleThread { get; set; } = false;
         public bool TreatEverythingAsCode { get; set; } = false;
         public bool NoShowProgress { get; set; } = true;
+        public bool TagsOnly { get; set; } = false;
         public int FileTimeOut { get; set; } = 0;
         public int ProcessingTimeOut { get; set; } = 0;
         public int ContextLines { get; set; } = 3;
@@ -69,31 +73,30 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class AnalyzeCommand
     {
-        private IEnumerable<string>? _srcfileList;
+        private readonly List<string> _srcfileList = new();
         private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
         private RuleProcessor? _rulesProcessor;
+        private const int _sleepDelay = 100;
+        private DateTime DateScanned { get; }
 
-        private DateTime DateScanned { get; set; }
-
-        private readonly List<string> _fileExclusionList = new List<string>();
+        private readonly List<Glob> _fileExclusionList = new();
         private Confidence _confidence;
         private readonly AnalyzeOptions _options; //copy of incoming caller options
 
+        /// <summary>
+        /// Constructor for AnalyzeCommand.
+        /// </summary>
+        /// <param name="opt"></param>
         public AnalyzeCommand(AnalyzeOptions opt)
         {
             _options = opt;
 
-            if (!string.IsNullOrEmpty(opt.FilePathExclusions))
-            {
-                _fileExclusionList = opt.FilePathExclusions.ToLower().Split(",").ToList();
-                if (_fileExclusionList != null && (_fileExclusionList.Contains("none") || _fileExclusionList.Contains("None")))
-                {
-                    _fileExclusionList.Clear();
-                }
+            if (opt.FilePathExclusions.Any(x => !x.Equals("none"))){
+                _fileExclusionList = opt.FilePathExclusions.Select(x => new Glob(x)).ToList();
             }
             else
             {
-                _fileExclusionList = new List<string>();
+                _fileExclusionList = new List<Glob>();
             }
 
             DateScanned = DateTime.Now;
@@ -132,8 +135,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             else
             {
-                WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out verbosity))
+                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out WriteOnce.ConsoleVerbosity verbosity))
                 {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
                 }
@@ -180,33 +182,36 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
 
-            if (string.IsNullOrEmpty(_options.SourcePath))
+            if (!_options.SourcePath.Any())
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
             }
 
-            if (Directory.Exists(_options.SourcePath))
+            foreach(var entry in _options.SourcePath)
             {
-                try
+                if (Directory.Exists(entry))
                 {
-                    _srcfileList = Directory.EnumerateFiles(_options.SourcePath, "*.*", SearchOption.AllDirectories);
-                    if (!_srcfileList.Any())
+                    try
                     {
-                        throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, _options.SourcePath));
+                        _srcfileList.AddRange(Directory.EnumerateFiles(entry, "*.*", SearchOption.AllDirectories));
+                    }
+                    catch (Exception)
+                    {
+                        throw;
                     }
                 }
-                catch (Exception)
+                else if (File.Exists(entry))
                 {
-                    throw;
+                    _srcfileList.Add(entry);
+                }
+                else
+                {
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, string.Join(',', _options.SourcePath)));
                 }
             }
-            else if (File.Exists(_options.SourcePath)) //not a directory but make one for single flow
+            if (!_srcfileList.Any())
             {
-                _srcfileList = new List<string>() { _options.SourcePath };
-            }
-            else
-            {
-                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, _options.SourcePath));
+                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, string.Join(',', _options.SourcePath)));
             }
         }
 
@@ -238,7 +243,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else if (File.Exists(_options.CustomRulesPath)) //verify custom rules before use
                 {
-                    RulesVerifier verifier = new RulesVerifier(_options.CustomRulesPath, _options.Log);
+                    RulesVerifier verifier = new(_options.CustomRulesPath, _options.Log);
                     verifier.Verify();
                     if (!verifier.IsVerified)
                     {
@@ -264,13 +269,14 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 logger = _options.Log,
                 treatEverythingAsCode = _options.TreatEverythingAsCode,
-                confidenceFilter = _confidence
+                confidenceFilter = _confidence,
+                Parallel = !_options.SingleThread
             };
 
             _rulesProcessor = new RuleProcessor(rulesSet, rpo);
 
             //create metadata helper to wrap and help populate metadata from scan
-            _metaDataHelper = new MetaDataHelper(_options.SourcePath, false);
+            _metaDataHelper = new MetaDataHelper(string.Join(',',_options.SourcePath));
         }
 
         #endregion configureMethods
@@ -284,7 +290,11 @@ namespace Microsoft.ApplicationInspector.Commands
         public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts, IEnumerable<FileEntry> populatedEntries)
         {
             WriteOnce.SafeLog("AnalyzeCommand::PopulateRecords", LogLevel.Trace);
-
+            if (_metaDataHelper is null)
+            {
+                WriteOnce.Error("MetadataHelper is null");
+                throw new ArgumentNullException("_metaDataHelper");
+            }
             if (_rulesProcessor is null || populatedEntries is null)
             {
                 return AnalyzeResult.ExitCode.CriticalError;
@@ -302,7 +312,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 try
                 {
-                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken }, entry => ProcessAndAddToMetadata(entry));
+                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken, MaxDegreeOfParallelism = Environment.ProcessorCount * 3 / 2 }, entry => ProcessAndAddToMetadata(entry));
                 }
                 catch (OperationCanceledException)
                 {
@@ -319,7 +329,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 var sw = new Stopwatch();
                 sw.Start();
 
-                if (_fileExclusionList.Any(x => file.FullPath.ToLower().Contains(x)))
+                if (_fileExclusionList.Any(x => x.IsMatch(file.FullPath)))
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
                     fileRecord.Status = ScanState.Skipped;
@@ -333,17 +343,17 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     else
                     {
-                        _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
+                        _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
 
                         LanguageInfo languageInfo = new LanguageInfo();
 
                         if (Language.FromFileName(file.FullPath, ref languageInfo))
                         {
-                            _metaDataHelper?.AddLanguage(languageInfo.Name);
+                            _metaDataHelper.AddLanguage(languageInfo.Name);
                         }
                         else
                         {
-                            _metaDataHelper?.AddLanguage("Unknown");
+                            _metaDataHelper.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
                             if (!_options.ScanUnknownTypes)
                             {
@@ -358,7 +368,17 @@ namespace Microsoft.ApplicationInspector.Commands
                             if (opts.FileTimeOut > 0)
                             {
                                 using var cts = new CancellationTokenSource();
-                                var t = Task.Run(() => results = _rulesProcessor.AnalyzeFile(file, languageInfo), cts.Token);
+                                var t = Task.Run(() =>
+                                {
+                                    if (opts.TagsOnly)
+                                    {
+                                        results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Keys, -1);
+                                    }
+                                    else
+                                    {
+                                        results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
+                                    }
+                                }, cts.Token);
                                 if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                                 {
                                     WriteOnce.Error($"{file.FullPath} timed out.");
@@ -372,7 +392,14 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                             else
                             {
-                                results = _rulesProcessor.AnalyzeFile(file, languageInfo);
+                                if (opts.TagsOnly)
+                                {
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Keys, -1);
+                                }
+                                else
+                                {
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
+                                }
                                 fileRecord.Status = ScanState.Analyzed;
                             }
 
@@ -383,7 +410,14 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                             foreach (var matchRecord in results)
                             {
-                                _metaDataHelper?.AddMatchRecord(matchRecord);
+                                if (opts.TagsOnly)
+                                {
+                                    _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                                }
+                                else
+                                {
+                                    _metaDataHelper.AddMatchRecord(matchRecord);
+                                }
                             }
                         }
                     }
@@ -393,19 +427,28 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 fileRecord.ScanTime = sw.Elapsed;
 
-                _metaDataHelper?.Files.Add(fileRecord);
+                _metaDataHelper.Files.Add(fileRecord);
             }
         }
 
-        public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken, AnalyzeOptions opts)
+        /// <summary>
+        /// Populate the records in the metadata asynchronously.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Result code.</returns>
+        public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken)
         {
             WriteOnce.SafeLog("AnalyzeCommand::PopulateRecordsAsync", LogLevel.Trace);
-
+            if (_metaDataHelper is null)
+            {
+                WriteOnce.Error("MetadataHelper is null");
+                throw new ArgumentNullException("_metaDataHelper");
+            }
             if (_rulesProcessor is null)
             {
                 return AnalyzeResult.ExitCode.CriticalError;
             }
-            await foreach (var entry in GetFileEntriesAsync(opts))
+            await foreach (var entry in GetFileEntriesAsync())
             {
                 if (cancellationToken.IsCancellationRequested) { return AnalyzeResult.ExitCode.Canceled; }
                 await ProcessAndAddToMetadata(entry, cancellationToken);
@@ -420,7 +463,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 var sw = new Stopwatch();
                 sw.Start();
 
-                if (_fileExclusionList.Any(x => file.FullPath.ToLower().Contains(x)))
+                if (_fileExclusionList.Any(x => x.IsMatch(file.FullPath)))
                 {
                     WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
                     fileRecord.Status = ScanState.Skipped;
@@ -434,19 +477,19 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     else
                     {
-                        _ = _metaDataHelper?.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
+                        _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
 
                         LanguageInfo languageInfo = new LanguageInfo();
 
                         if (Language.FromFileName(file.FullPath, ref languageInfo))
                         {
-                            _metaDataHelper?.AddLanguage(languageInfo.Name);
+                            _metaDataHelper.AddLanguage(languageInfo.Name);
                         }
                         else
                         {
-                            _metaDataHelper?.AddLanguage("Unknown");
+                            _metaDataHelper.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
-                            if (!opts.ScanUnknownTypes)
+                            if (!_options.ScanUnknownTypes)
                             {
                                 fileRecord.Status = ScanState.Skipped;
                             }
@@ -454,7 +497,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         if (fileRecord.Status != ScanState.Skipped)
                         {
-                            var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken);
+                            var results = _options.TagsOnly ?
+                                await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, _metaDataHelper.UniqueTags.Keys, -1) :
+                                await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, null, _options.ContextLines);
                             fileRecord.Status = ScanState.Analyzed;
 
                             if (results.Any())
@@ -464,7 +509,14 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                             foreach (var matchRecord in results)
                             {
-                                _metaDataHelper?.AddMatchRecord(matchRecord);
+                                if (_options.TagsOnly)
+                                {
+                                    _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                                }
+                                else
+                                {
+                                    _metaDataHelper.AddMatchRecord(matchRecord);
+                                }
                             }
                         }
                     }
@@ -474,17 +526,21 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 fileRecord.ScanTime = sw.Elapsed;
 
-                _metaDataHelper?.Files.Add(fileRecord);
+                _metaDataHelper.Files.Add(fileRecord);
             }
         }
 
+        /// <summary>
+        /// Gets the FileEntries synchronously.
+        /// </summary>
+        /// <returns>An Enumerable of FileEntries.</returns>
         public IEnumerable<FileEntry> GetFileEntries()
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntries", LogLevel.Trace);
 
             Extractor extractor = new();
 
-            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+            foreach (var srcFile in _srcfileList ?? new List<string>())
             {
                 foreach(var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
                 {
@@ -493,13 +549,16 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-
-        public async IAsyncEnumerable<FileEntry> GetFileEntriesAsync(AnalyzeOptions opts)
+        /// <summary>
+        /// Gets the FileEntries asynchronously.
+        /// </summary>
+        /// <returns>An enumeration of FileEntries</returns>
+        public async IAsyncEnumerable<FileEntry> GetFileEntriesAsync()
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntriesAsync", LogLevel.Trace);
 
             Extractor extractor = new();
-            foreach (var srcFile in _srcfileList ?? Array.Empty<string>())
+            foreach (var srcFile in _srcfileList ?? new List<string>())
             {
                 await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false }))
                 {
@@ -542,24 +601,34 @@ namespace Microsoft.ApplicationInspector.Commands
             return false;
         }
 
+        /// <summary>
+        /// Perform Analysis and get the result Asynchronously
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation token to stop analysis and return results found so far.</param>
+        /// <returns></returns>
         public async Task<AnalyzeResult> GetResultAsync(CancellationToken cancellationToken)
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetResultAsync", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+            if (_metaDataHelper is null)
+            {
+                WriteOnce.Error("MetadataHelper is null");
+                throw new ArgumentNullException("_metaDataHelper");
+            }
             AnalyzeResult analyzeResult = new AnalyzeResult()
             {
                 AppVersion = Utils.GetVersionString()
             };
 
-            var exitCode = await PopulateRecordsAsync(cancellationToken, _options);
+            var exitCode = await PopulateRecordsAsync(cancellationToken);
 
             //wrapup result status
-            if (_metaDataHelper?.Files.All(x => x.Status == ScanState.Skipped) ?? false)
+            if (_metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
-            else if (_metaDataHelper?.Matches.Count == 0)
+            else if (_metaDataHelper.UniqueTagsCount == 0)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
@@ -590,6 +659,11 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetResult", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+            if (_metaDataHelper is null)
+            {
+                WriteOnce.Error("MetadataHelper is null");
+                throw new ArgumentNullException("_metaDataHelper");
+            }
             AnalyzeResult analyzeResult = new AnalyzeResult()
             {
                 AppVersion = Utils.GetVersionString()
@@ -600,13 +674,13 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!_options.NoShowProgress)
             {
                 var done = false;
-                List<FileEntry> fileQueue = new();
+                ConcurrentBag<FileEntry> fileQueue = new();
 
                 _ = Task.Factory.StartNew(() =>
                 {
                     try
                     {
-                        foreach(var entry in GetFileEntries())
+                        foreach (var entry in GetFileEntries())
                         {
                             fileQueue.Add(entry);
                         }
@@ -631,14 +705,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     while (!done)
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(_sleepDelay);
                         pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     }
                     pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
 
                     pbar.Finished();
                 }
-
+                Console.Write(Environment.NewLine);
                 done = false;
 
                 var options2 = new ProgressBarOptions
@@ -662,17 +736,18 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     while (!done)
                     {
-                        Thread.Sleep(10);
-                        var current = _metaDataHelper?.Files.Count ?? 0;
+                        Thread.Sleep(_sleepDelay);
+                        var current = _metaDataHelper.Files.Count;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));
                         var timeExpected = new TimeSpan(0, 0, 0, 0, millisExpected);
-                        progressBar.Tick(_metaDataHelper?.Files.Count ?? 0, timeExpected, $"Analyzing Files. {_metaDataHelper?.Matches.Count} Matches. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
+                        progressBar.Tick(_metaDataHelper.Files.Count, timeExpected, $"Analyzing Files. {_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
                     }
 
-                    progressBar.Message = $"{_metaDataHelper?.Matches.Count} Matches. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper?.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
+                    progressBar.Message = $"{_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
+                Console.Write(Environment.NewLine);
             }
             else
             {
@@ -680,12 +755,12 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //wrapup result status
-            if (_metaDataHelper?.Files.All(x => x.Status == ScanState.Skipped) ?? false)
+            if (_metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
-            else if (_metaDataHelper?.Matches.Count == 0)
+            else if (_metaDataHelper.UniqueTagsCount == 0)
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
