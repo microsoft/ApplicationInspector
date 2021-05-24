@@ -298,7 +298,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     {
                         Thread.Sleep(100);
                     }
-                    pbar.Message = $"Results written.";
+                    pbar.Message = "Results written.";
 
                     pbar.Finished();
                 }

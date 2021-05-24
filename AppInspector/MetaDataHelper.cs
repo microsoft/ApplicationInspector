@@ -23,7 +23,6 @@ namespace Microsoft.ApplicationInspector.Commands
         internal ConcurrentDictionary<string, byte> UniqueDependencies { get; set; } = new ConcurrentDictionary<string, byte>();
 
         private ConcurrentDictionary<string, byte> AppTypes { get; set; } = new ConcurrentDictionary<string, byte>();
-        private ConcurrentDictionary<string, byte> FileNames { get; set; } = new ConcurrentDictionary<string, byte>();
         internal ConcurrentDictionary<string, byte> UniqueTags { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> Outputs { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> Targets { get; set; } = new ConcurrentDictionary<string, byte>();

@@ -76,7 +76,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private List<string> _srcfileList = new List<string>();
         private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
         private RuleProcessor? _rulesProcessor;
-
+        private const int _sleepDelay = 100;
         private DateTime DateScanned { get; set; }
 
         private readonly List<Glob> _fileExclusionList = new();
@@ -706,7 +706,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     while (!done)
                     {
-                        Thread.Sleep(100);
+                        Thread.Sleep(_sleepDelay);
                         pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     }
                     pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
@@ -737,7 +737,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     while (!done)
                     {
-                        Thread.Sleep(100);
+                        Thread.Sleep(_sleepDelay);
                         var current = _metaDataHelper.Files.Count;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));

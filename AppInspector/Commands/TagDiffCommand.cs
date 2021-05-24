@@ -218,52 +218,40 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.Success)
                 {
-                    var sorted1 = analyze1.Metadata.UniqueTags ?? new List<string>();
-                    var sorted2 = analyze2.Metadata.UniqueTags ?? new List<string>();
-                    if (sorted1.Count != sorted2.Count)
+                    
+                    var list1 = analyze1.Metadata.UniqueTags ?? new List<string>();
+                    var list2 = analyze2.Metadata.UniqueTags ?? new List<string>();
+
+                    var removed = list1.Except(list2);
+                    var added = list2.Except(list1);
+
+                    foreach(var add in added)
                     {
-                        if (_arg_tagTestType == TagTestType.Inequality)
+                        tagDiffResult.TagDiffList.Add(new TagDiff()
                         {
-                            tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestPassed;
-                            return tagDiffResult;
-                        }
-                        else if (_arg_tagTestType == TagTestType.Equality)
+                            Source = TagDiff.DiffSource.Source2,
+                            Tag = add
+                        });
+                    }
+                    foreach (var remove in removed)
+                    {
+                        tagDiffResult.TagDiffList.Add(new TagDiff()
                         {
-                            tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
-                            return tagDiffResult;
-                        }
+                            Source = TagDiff.DiffSource.Source1,
+                            Tag = remove
+                        });
+                    }
+
+
+                    if (tagDiffResult.TagDiffList.Count > 0)
+                    {
+                        tagDiffResult.ResultCode = _arg_tagTestType == TagTestType.Inequality ? TagDiffResult.ExitCode.TestPassed : TagDiffResult.ExitCode.TestFailed;
                     }
                     else
                     {
-                        sorted1.Sort();
-                        sorted2.Sort();
+                        tagDiffResult.ResultCode = _arg_tagTestType == TagTestType.Inequality ? TagDiffResult.ExitCode.TestFailed : TagDiffResult.ExitCode.TestPassed;
+                    }
 
-                        for (int i = 0; i < sorted1.Count; i++)
-                        {
-                            if (sorted1[i] != sorted2[i])
-                            {
-                                if (_arg_tagTestType == TagTestType.Inequality)
-                                {
-                                    tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestPassed;
-                                    return tagDiffResult;
-                                }
-                                else if (_arg_tagTestType == TagTestType.Equality)
-                                {
-                                    tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
-                                    return tagDiffResult;
-                                }
-                            }
-                        }
-                    }
-                    // If we got here there are the same number of tags and they all match
-                    if (_arg_tagTestType == TagTestType.Inequality)
-                    {
-                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestFailed;
-                    }
-                    else if (_arg_tagTestType == TagTestType.Equality)
-                    {
-                        tagDiffResult.ResultCode = TagDiffResult.ExitCode.TestPassed;
-                    }
                     return tagDiffResult;
                 }
             }
