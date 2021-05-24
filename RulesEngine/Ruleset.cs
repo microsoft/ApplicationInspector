@@ -12,17 +12,15 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
     ///     Storage for rules
     /// </summary>
-    /// 
     public class RuleSet : IEnumerable<Rule>
     {
         private readonly Logger? _logger;
-        private List<ConvertedOatRule> _oatRules = new List<ConvertedOatRule>();//used for analyze cmd primarily
+        private List<ConvertedOatRule> _oatRules = new();//used for analyze cmd primarily
         private IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
         private Regex searchInRegex = new Regex("\\((.*),(.*)\\)", RegexOptions.Compiled);
 
@@ -58,17 +56,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public void AddFile(string? filename, string? tag = null)
         {
             if (string.IsNullOrEmpty(filename))
-                throw new ArgumentException(nameof(filename));
+                throw new ArgumentException(null, nameof(filename));
 
             _logger?.Debug("Attempting to read rule file: " + filename);
 
             if (!File.Exists(filename))
                 throw new FileNotFoundException();
 
-            using (StreamReader file = File.OpenText(filename))
-            {
-                AddString(file.ReadToEnd(), filename, tag);
-            }
+            using StreamReader file = File.OpenText(filename);
+            AddString(file.ReadToEnd(), filename, tag);
         }
 
         /// <summary>
@@ -148,7 +144,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return _oatRules.Where(x => (x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Length == 0) && (x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0));
         }
 
-
         public ConvertedOatRule? AppInspectorRuleToOatRule(Rule rule)
         {
             var clauses = new List<Clause>();
@@ -202,7 +197,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
                             CustomOperation = "RegexWithIndex"
                         });
-                        
+                     
                         if (clauseNumber > 0)
                         {
                             expression.Append(" OR ");
@@ -213,9 +208,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
             }
 
-            if (clauses.Any())
+            if (clauses.Count > 0)
             {
-                expression.Append(")");
+                expression.Append(')');
             }
             else
             {
@@ -226,7 +221,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (condition.Pattern?.Pattern != null)
                 {
-                    if (condition.SearchIn is null || condition.SearchIn.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase))
+                    if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
                     {
                         clauses.Add(new WithinClause()
                         {

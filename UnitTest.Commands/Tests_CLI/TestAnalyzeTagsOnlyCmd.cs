@@ -42,56 +42,31 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void UnknownFormat_Fail()
         {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"analyze -b -s {0} -f unknown -k none -t", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
-                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
+            string args = string.Format(@"analyze -b -s {0} -f unknown -k none -t", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
+            var exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
+            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
         }
 
         [TestMethod]
         public void InvalidOutputfilePath_Fail()
         {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"analyze -s {0} -f json -k none -o {1} -t",
+            string args = string.Format(@"analyze -s {0} -f json -k none -o {1} -t",
                      Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                      Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"badir\output.txt"));
 
-                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
+            var exitCode  = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
+            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
         }
 
         [TestMethod]
         public void InvalidSourcePath_Fail()
         {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"analyze -s {0} -f json -k none -o {1} -t",
+            string args = string.Format(@"analyze -s {0} -f json -k none -o {1} -t",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
-                exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
+            var exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
+            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
         }
 
         [TestMethod]

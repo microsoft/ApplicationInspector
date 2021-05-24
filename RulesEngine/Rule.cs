@@ -88,7 +88,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public string[]? Overrides { get; set; }
 
         [JsonProperty(PropertyName = "patterns")]
-        public SearchPattern[] Patterns { get; set; } = new SearchPattern[] { };
+        public SearchPattern[] Patterns { get; set; } = Array.Empty<SearchPattern>();
 
         [JsonProperty(PropertyName = "conditions")]
         public SearchCondition[]? Conditions { get; set; }

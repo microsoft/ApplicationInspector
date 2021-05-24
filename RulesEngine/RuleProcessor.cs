@@ -21,7 +21,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     {
         public RuleProcessorOptions()
         {
-
         }
         public bool Parallel = true;
         public Confidence confidenceFilter;
@@ -36,24 +35,24 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     {
         private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
-        private Confidence ConfidenceLevelFilter { get; set; }
+        private Confidence ConfidenceLevelFilter { get; }
         private readonly Logger? _logger;
         private readonly bool _treatEverythingAsCode;
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
-        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
-        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _languageRulesCache = new ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>>();
-        private IEnumerable<ConvertedOatRule>? _universalRulesCache = null;
+        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new();
+        private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _languageRulesCache = new();
+        private IEnumerable<ConvertedOatRule>? _universalRulesCache;
 
         /// <summary>
         /// Sets severity levels for analysis
         /// </summary>
-        private Severity SeverityLevel { get; set; }
+        private Severity SeverityLevel { get; }
 
         /// <summary>
         /// Enables caching of rules queries if multiple reuses per instance
         /// </summary>
-        private bool EnableCache { get; set; }
+        private bool EnableCache { get; }
 
         /// <summary>
         /// Creates instance of RuleProcessor
@@ -73,8 +72,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
         }
 
-
-        private string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
+        private static string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
         {
             if (text is null || string.IsNullOrEmpty(text.FullContent) || string.IsNullOrEmpty(language) || string.IsNullOrEmpty(pattern))
             {
@@ -85,12 +83,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             int endIndex = text.FullContent.IndexOfAny(new char[] { '\n', '\r' }, startIndex);
             if (-1 != startIndex && -1 != endIndex)
             {
-                rawResult = text.FullContent.Substring(startIndex, endIndex - startIndex).Trim();
-                Regex regex = new Regex(pattern ?? string.Empty);
+                rawResult = text.FullContent[startIndex..endIndex].Trim();
+                Regex regex = new(pattern ?? string.Empty);
                 MatchCollection matches = regex.Matches(rawResult);
 
                 //remove surrounding import or trailing comments
-                if (matches != null && matches.Any())
+                if (matches?.Any() == true)
                 {
                     foreach (Match? match in matches)
                     {
@@ -129,7 +127,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
             rules = rules.Union(GetUniversalRules());
-            if (tagsToIgnore is not null && tagsToIgnore.Any())
+            if (tagsToIgnore?.Any() == true)
             {
                 rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
             }
@@ -146,7 +144,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                 List<MatchRecord> ProcessBoundary(ClauseCapture cap)
                 {
-                    List<MatchRecord> newMatches = new List<MatchRecord>();//matches for this rule clause only
+                    List<MatchRecord> newMatches = new();//matches for this rule clause only
 
                     if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
@@ -172,7 +170,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                     Location StartLocation = textContainer.GetLocation(boundary.Index);
                                     Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
-                                    MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
+                                    MatchRecord newMatch = new(oatRule.AppInspectorRule)
                                     {
                                         FileName = fileEntry.FullPath,
                                         FullTextContainer = textContainer,
@@ -201,9 +199,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
             }
 
-            List<MatchRecord> removes = new List<MatchRecord>();
+            List<MatchRecord> removes = new();
 
-            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
+            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides?.Length > 0))
             {
                 foreach (string ovrd in m.Rule?.Overrides ?? Array.Empty<string>())
                 {
@@ -237,18 +235,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
             rules = rules.Union(GetUniversalRules());
 
-            if (tagsToIgnore is not null && tagsToIgnore.Any())
+            if (tagsToIgnore?.Any() == true)
             {
                 rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
             }
 
-            List<MatchRecord> resultsList = new List<MatchRecord>();
+            List<MatchRecord> resultsList = new();
 
             using var sr = new StreamReader(fileEntry.Content);
 
-            TextContainer textContainer = new TextContainer(await sr.ReadToEndAsync(), languageInfo.Name);
-            var captures = analyzer.GetCaptures(rules, textContainer);
-            foreach (var ruleCapture in captures)
+            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name);
+            foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -261,7 +258,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                 List<MatchRecord> ProcessBoundary(ClauseCapture cap)
                 {
-                    List<MatchRecord> newMatches = new List<MatchRecord>();//matches for this rule clause only
+                    List<MatchRecord> newMatches = new();//matches for this rule clause only
 
                     if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
@@ -293,7 +290,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                     Location StartLocation = textContainer.GetLocation(boundary.Index);
                                     Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
-                                    MatchRecord newMatch = new MatchRecord(oatRule.AppInspectorRule)
+                                    MatchRecord newMatch = new(oatRule.AppInspectorRule)
                                     {
                                         FileName = fileEntry.FullPath,
                                         FullTextContainer = textContainer,
@@ -320,9 +317,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
             }
 
-            List<MatchRecord> removes = new List<MatchRecord>();
+            List<MatchRecord> removes = new();
 
-            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides != null && x.Rule.Overrides.Length > 0))
+            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides?.Length > 0))
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -439,7 +436,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// from the template
         /// </summary>
         /// <returns></returns>
-        private string ExtractExcerpt(TextContainer text, int startLineNumber, int context = 3)
+        private static string ExtractExcerpt(TextContainer text, int startLineNumber, int context = 3)
         {
             if (context == 0)
             {

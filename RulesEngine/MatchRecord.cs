@@ -96,7 +96,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public TextContainer? FullTextContainer { get; set; }
 
         /// <summary>
-        /// Internal to namespace only 
+        /// Internal to namespace only
         /// </summary>
         [JsonIgnore]
         public LanguageInfo LanguageInfo { get; set; } = new LanguageInfo();

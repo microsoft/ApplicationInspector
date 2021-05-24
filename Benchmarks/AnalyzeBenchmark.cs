@@ -17,9 +17,9 @@ namespace Benchmarks
         }
 
         [Benchmark(Baseline = true)]
-        public void AnalyzeSingleThreaded()
+        public static void AnalyzeSingleThreaded()
         {
-            AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
+            AnalyzeCommand command = new(new AnalyzeOptions()
             {
                 SourcePath = new string[1] { path },
                 SingleThread = true,
@@ -28,13 +28,13 @@ namespace Benchmarks
                 NoShowProgress = true
             });
 
-            AnalyzeResult analyzeResult = command.GetResult();
+            _ = command.GetResult();
         }
 
         [Benchmark]
-        public void AnalyzeMultiThread()
+        public static void AnalyzeMultiThread()
         {
-            AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
+            AnalyzeCommand command = new(new AnalyzeOptions()
             {
                 SourcePath = new string[1] { path },
                 SingleThread = false,
@@ -43,7 +43,7 @@ namespace Benchmarks
                 NoShowProgress = true
             });
 
-            AnalyzeResult analyzeResult = command.GetResult();
+            _ = command.GetResult();
         }
 
         public static string GetExecutingDirectoryName()

@@ -160,7 +160,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> Boundary </returns>
         public Boundary GetLineBoundary(int index)
         {
-            Boundary result = new Boundary();
+            Boundary result = new();
 
             for (int i = 0; i < LineEnds.Count; i++)
             {
@@ -176,9 +176,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        ///     Return content of the line
+        ///     Return content of the line 
         /// </summary>
-        /// <param name="line"> Line number </param>
+        /// <param name="line"> Line number (one-indexed) </param>
         /// <returns> Text </returns>
         public string GetLineContent(int line)
         {
@@ -194,11 +194,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         ///     Returns location (Line, Column) for given index in text
         /// </summary>
-        /// <param name="index"> Position in text </param>
+        /// <param name="index"> Position in text (line is one-indexed)</param>
         /// <returns> Location </returns>
         public Location GetLocation(int index)
         {
-            Location result = new Location();
+            Location result = new();
 
             if (index == 0)
             {
@@ -232,25 +232,25 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         ///     Check whether the boundary in a text matches the scope of a search pattern (code, comment etc.)
         /// </summary>
-        /// <param name="pattern"> Pattern with scope </param>
-        /// <param name="boundary"> Boundary in a text </param>
+        /// <param name="pattern"> The scopes to check </param>
+        /// <param name="boundary"> Boundary in the text </param>
         /// <param name="text"> Text </param>
-        /// <returns> True if boundary is matching the pattern scope </returns>
-        public bool ScopeMatch(IEnumerable<PatternScope> patterns, Boundary boundary)
+        /// <returns> True if boundary is in a provided scope </returns>
+        public bool ScopeMatch(IEnumerable<PatternScope> scopes, Boundary boundary)
         {
-            if (patterns is null)
+            if (scopes is null)
             {
                 return true;
             }
-            if (patterns.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
+            if (scopes.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
                 return true;
             bool isInComment = IsCommented(boundary.Index);
 
-            return (!isInComment && patterns.Contains(PatternScope.Code)) || (isInComment && patterns.Contains(PatternScope.Comment));
+            return (!isInComment && scopes.Contains(PatternScope.Code)) || (isInComment && scopes.Contains(PatternScope.Comment));
         }
 
-        private string inline;
-        private string prefix;
-        private string suffix;
+        private readonly string inline;
+        private readonly string prefix;
+        private readonly string suffix;
     }
 }

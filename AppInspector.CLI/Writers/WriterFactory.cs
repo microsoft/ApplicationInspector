@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
-    public class WriterFactory
+    public static class WriterFactory
     {
         /// <summary>
         /// Responsible for returning the correct cmd and format writer for output of cmd results.  An an output

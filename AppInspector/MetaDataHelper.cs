@@ -356,15 +356,15 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private string ExtractValue(string s)
         {
-            if (s.ToLower().Contains("</"))
+            if (s.ToLower().Contains("</", StringComparison.Ordinal))
             {
                 return ExtractXMLValue(s);
             }
-            else if (s.ToLower().Contains("<"))
+            else if (s.ToLower().Contains('<'))
             {
                 return ExtractXMLValueMultiLine(s);
             }
-            else if (s.ToLower().Contains(":"))
+            else if (s.ToLower().Contains(':'))
             {
                 return ExtractJSONValue(s);
             }

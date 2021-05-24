@@ -12,7 +12,7 @@ using System.Linq;
 namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
-    ///
+    /// Options for the Export Tags command.
     /// </summary>
     public class ExportTagsOptions : CommandOptions
     {

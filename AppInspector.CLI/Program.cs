@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
-    public class Program
+    public static class Program
     {
         /// <summary>
         /// CLI program entry point which defines command verbs and options to running
@@ -205,12 +205,12 @@ namespace Microsoft.ApplicationInspector.CLI
             //validate output is not empty if no file output specified
             if (string.IsNullOrEmpty(options.OutputFilePath))
             {
-                if (options.ConsoleVerbosityLevel.ToLower() == "none")
+                if (string.Equals(options.ConsoleVerbosityLevel, "none", StringComparison.OrdinalIgnoreCase))
                 {
                     WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.CMD_NO_OUTPUT));
                     throw new Exception(MsgHelp.GetString(MsgHelp.ID.CMD_NO_OUTPUT));
                 }
-                else if (options.ConsoleVerbosityLevel.ToLower() == "low")
+                else if (string.Equals(options.ConsoleVerbosityLevel, "low", StringComparison.OrdinalIgnoreCase))
                 {
                     WriteOnce.SafeLog("Verbosity set low.  Detailed output limited.", NLog.LogLevel.Info);
                 }
