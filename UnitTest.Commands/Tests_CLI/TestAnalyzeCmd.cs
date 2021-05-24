@@ -55,7 +55,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             string args = string.Format(@"analyze -b -s {0} -f unknown -k none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
             var exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
+            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
         }
 
         [TestMethod]
@@ -156,7 +156,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             var exitCode  = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
             string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-            Assert.IsTrue(testContent.Contains("Data.Parsing.JSON"));
+            Assert.IsTrue(testContent.Contains("Cryptography.HashAlgorithm.Legacy"));
             Assert.IsTrue(testContent.Contains("Data.Custom1"));
         }
 
@@ -267,7 +267,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log2.txt"));
 
             var exitCode  = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
+            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
             string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log2.txt"));
             Assert.IsTrue(testContent.Contains("error", StringComparison.OrdinalIgnoreCase));
         }
@@ -280,7 +280,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log3.txt"));
 
             var exitCode  = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
+            Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, exitCode);
             string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log3.txt"));
             Assert.IsTrue(testContent.Contains("debug", StringComparison.OrdinalIgnoreCase));
         }
