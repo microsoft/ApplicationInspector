@@ -306,7 +306,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
 
             var exitCode  = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
+            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
         }
 
         [TestMethod]
@@ -332,7 +332,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
             var  exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
+            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
         }
     }
 }
