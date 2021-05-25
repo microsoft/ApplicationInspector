@@ -1,11 +1,8 @@
-﻿using System;
+﻿using BenchmarkDotNet.Attributes;
+using Microsoft.ApplicationInspector.Commands;
+using System;
 using System.IO;
 using System.Reflection;
-using ApplicationInspector.Unitprocess.Misc;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Columns;
-using BenchmarkDotNet.Diagnostics.Windows.Configs;
-using Microsoft.ApplicationInspector.Commands;
 
 namespace Benchmarks
 {
@@ -13,38 +10,40 @@ namespace Benchmarks
     public class AnalyzeBenchmark
     {
         // Manually put the file you want to benchmark. But don't put this in a path with "Test" in the name ;)
-        private const string path = "D:\\runtime-master.zip";
+        private const string path = "C:\\Users\\gstocco\\Documents\\GitHub\\ApplicationInspector\\RulesEngine\\";
 
         public AnalyzeBenchmark()
         {
         }
 
         [Benchmark(Baseline = true)]
-        public void AnalyzeSingleThreaded()
+        public static void AnalyzeSingleThreaded()
         {
-            AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
+            AnalyzeCommand command = new(new AnalyzeOptions()
             {
-                SourcePath = path,
-                AllowDupTags = false,
+                SourcePath = new string[1] { path },
                 SingleThread = true,
-                IgnoreDefaultRules = false
+                IgnoreDefaultRules = false,
+                FilePathExclusions = new string[] { "**/bin/**","**/obj/**" },
+                NoShowProgress = true
             });
 
-            AnalyzeResult analyzeResult = command.GetResult();
+            _ = command.GetResult();
         }
 
         [Benchmark]
-        public void AnalyzeMultiThread()
+        public static void AnalyzeMultiThread()
         {
-            AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
+            AnalyzeCommand command = new(new AnalyzeOptions()
             {
-                SourcePath = path,
-                AllowDupTags = false,
+                SourcePath = new string[1] { path },
                 SingleThread = false,
-                IgnoreDefaultRules = false
+                IgnoreDefaultRules = false,
+                FilePathExclusions = new string[] { "**/bin/**", "**/obj/**" },
+                NoShowProgress = true
             });
 
-            AnalyzeResult analyzeResult = command.GetResult();
+            _ = command.GetResult();
         }
 
         public static string GetExecutingDirectoryName()

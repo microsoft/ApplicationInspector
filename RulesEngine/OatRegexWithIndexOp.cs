@@ -17,8 +17,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class OATRegexWithIndexOperation : OatOperation
     {
-        private readonly ConcurrentDictionary<(string, RegexOptions), Regex?> RegexCache = new ConcurrentDictionary<(string, RegexOptions), Regex?>();
-        
+        private readonly ConcurrentDictionary<(string, RegexOptions), Regex?> RegexCache = new();
+
         /// <summary>
         /// Create an OatOperation given an analyzer
         /// </summary>
@@ -30,7 +30,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             ValidationDelegate = RegexWithIndexValidationDelegate;
         }
 
-        public IEnumerable<Violation> RegexWithIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
+        public static IEnumerable<Violation> RegexWithIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
         {
             if (clause.Data?.Count == null || clause.Data?.Count == 0)
             {
@@ -53,7 +53,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        /// Returns results with pattern index and Boundary as a tuple to enable retrieval of Rule pattern level meta-data like Confidence and report the 
+        /// Returns results with pattern index and Boundary as a tuple to enable retrieval of Rule pattern level meta-data like Confidence and report the
         /// pattern that was responsible for the match
         /// </summary>
         /// <param name="clause"></param>
@@ -63,59 +63,51 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns></returns>
         public OperationResult RegexWithIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
         {
-            if (state1 is TextContainer tc && clause is OATRegexWithIndexClause src)
+            if (state1 is TextContainer tc && clause is OATRegexWithIndexClause src && clause.Data is List<string> RegexList && RegexList.Count > 0)
             {
-                if (clause.Data is List<string> RegexList && RegexList.Any())
+                RegexOptions regexOpts = new();
+
+                if (src.Arguments.Contains("i"))
                 {
-                    RegexOptions regexOpts = new RegexOptions();
-                    if (src.Arguments.Contains("i"))
-                    {
-                        regexOpts |= RegexOptions.IgnoreCase;
-                    }
-                    if (src.Arguments.Contains("m"))
-                    {
-                        regexOpts |= RegexOptions.Multiline;
-                    }
-                    
-                    var outmatches = new List<(int, Boundary)>();//tuple results i.e. pattern index and where
+                    regexOpts |= RegexOptions.IgnoreCase;
+                }
+                if (src.Arguments.Contains("m"))
+                {
+                    regexOpts |= RegexOptions.Multiline;
+                }
 
-                    if (Analyzer != null)
+                List<(int, Boundary)> outmatches = new();//tuple results i.e. pattern index and where
+
+                if (Analyzer != null)
+                {
+                    var regex = StringToRegex(string.Join('|', RegexList), regexOpts);
+
+                    if (regex != null)
                     {
-                        for (int i = 0; i < RegexList.Count; i++)
+                        foreach (var match in regex.Matches(tc.FullContent))
                         {
-                            var regex = StringToRegex(RegexList[i], regexOpts);
-                            if (regex != null)
+                            if (match is Match m)
                             {
-                                var matches = regex.Matches(tc.Target);
-                                if (matches.Count > 0 || (matches.Count == 0 && clause.Invert))
+                                Boundary translatedBoundary = new()
                                 {
-                                    foreach (var match in matches)
-                                    {
-                                        if (match is Match m)
-                                        {
-                                            Boundary translatedBoundary = new Boundary()
-                                            {
-                                                Length = m.Length,
-                                                Index = m.Index + tc.GetLineBoundary(tc.LineNumber).Index
-                                            };
+                                    Length = m.Length,
+                                    Index = m.Index
+                                };
 
-                                            //regex patterns will be indexed off data while string patterns result in N clauses
-                                            int patternIndex = clause.Label == "0" ? i : Convert.ToInt32(clause.Label);
+                                //regex patterns will be indexed off data while string patterns result in N clauses
+                                int patternIndex = Convert.ToInt32(clause.Label);
 
-                                            // Should return only scoped matches
-                                            if (tc.ScopeMatch(src.Scopes, translatedBoundary))
-                                            {
-                                                outmatches.Add((patternIndex, translatedBoundary));
-                                            }
-                                        }
-                                    }
+                                // Should return only scoped matches
+                                if (tc.ScopeMatch(src.Scopes, translatedBoundary))
+                                {
+                                    outmatches.Add((patternIndex, translatedBoundary));
                                 }
                             }
                         }
-
-                        var result = src.Invert ? outmatches.Count == 0 : outmatches.Count > 0;
-                        return new OperationResult(result, result && src.Capture ? new TypedClauseCapture<List<(int, Boundary)>>(clause, outmatches, state1) : null);
                     }
+
+                    var result = src.Invert ? outmatches.Count == 0 : outmatches.Count > 0;
+                    return new OperationResult(result, result && src.Capture ? new TypedClauseCapture<List<(int, Boundary)>>(clause, outmatches, state1) : null);
                 }
             }
             return new OperationResult(false, null);

@@ -30,7 +30,7 @@
     "patterns": [
       {
         "pattern": "MD2|MD4|MD5|SHA-*(0|1)",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code",
           "comment"
@@ -112,7 +112,7 @@
     "patterns": [
       {
         "pattern": "hash",
-        "type": "regex",
+        "type": "string",
         "scopes": [
           "code",
           "comment"
@@ -125,14 +125,14 @@
       {
         "pattern": {
           "pattern": "(NS)*Hashset|Hashtable|Hashmap",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
           "modifiers": [ "i" ],
           "_comment": "varies by language e.g. HashTable"
         },
-        "search_in": "finding-only",
+        "search_in": "same-line",
         "negate_finding": true,
         "_comment": "means not directly related to crypto"
       }

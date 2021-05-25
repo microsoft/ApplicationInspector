@@ -2,10 +2,12 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.CST.OAT;
 using Newtonsoft.Json;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -21,6 +23,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? RulesId { get; set; }
         public string? RulesName { get; set; }
         public bool Verified { get; set; }
+        public IEnumerable<Violation> OatIssues { get; set; } = Array.Empty<Violation>();
     }
 
     public class VerifyRulesResult : Result
@@ -106,17 +109,12 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("VerifyRulesCommand::ConfigRules", LogLevel.Trace);
 
-            if (_options.VerifyDefaultRules && !Utils.CLIExecutionContext)
-            {
-                throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NO_CLI_DEFAULT));
-            }
-
             if (!_options.VerifyDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath))
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
 
-            _rules_path = _options.VerifyDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
+            _rules_path = _options.VerifyDefaultRules ? null : _options.CustomRulesPath;
         }
 
         #endregion configure
@@ -135,10 +133,25 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                RulesVerifier verifier = new RulesVerifier(_rules_path, _options.Log);
+                RulesVerifier verifier = new RulesVerifier(null, _options.Log);
                 verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
-                verifyRulesResult.RuleStatusList = verifier.Verify();
-                verifyRulesResult.ResultCode = verifier.IsVerified ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
+                var stati = new List<RuleStatus>();
+                var analyzer = new Analyzer();
+                analyzer.SetOperation(new WithinOperation(analyzer));
+                analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
+                analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
+                foreach (var rule in Utils.GetDefaultRuleSet().GetOatRules())
+                {
+                    stati.Add(new RuleStatus()
+                    {
+                        RulesId = rule.AppInspectorRule.Id,
+                        RulesName = rule.Name,
+                        Verified = verifier.Verify(rule.AppInspectorRule),
+                        OatIssues = analyzer.EnumerateRuleIssues(rule)
+                    });
+                }
+                verifyRulesResult.RuleStatusList = stati;
+                verifyRulesResult.ResultCode = stati.All(x => x.Verified && !x.OatIssues.Any()) ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
             }
             catch (OpException e)
             {
@@ -146,7 +159,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }
-
             return verifyRulesResult;
         }
     }

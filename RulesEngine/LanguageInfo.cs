@@ -21,6 +21,4 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         [JsonProperty(PropertyName = "type")]
         public LangFileType Type { get; set; } = LangFileType.Code;
     }
-
-   
 }

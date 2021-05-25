@@ -9,7 +9,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -36,9 +35,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         public static string GetVersion()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fileVersionInfo.ProductVersion ?? string.Empty;
+            return (Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false) as AssemblyInformationalVersionAttribute[])?[0].InformationalVersion ?? "Unknown";
         }
 
         public static bool CLIExecutionContext { get; set; }
@@ -53,7 +50,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     break;
 
                 case AppPath.defaultLog:
-                    result = Path.Combine(GetBaseAppPath(), "appinspector.log.txt");
+                    result = "appinspector.log.txt";
                     break;
 
                 case AppPath.defaultRulesSrc://Packrules source use
@@ -105,59 +102,6 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             return ruleSet;
-        }
-
-        public static void OpenBrowser(string? url)
-        {
-            if (string.IsNullOrEmpty(url))
-            {
-                WriteOnce.Log?.Error("Bad url for OpenBrowser method");
-                return;
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                try
-                {
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}"));
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_SUCCESS));
-                }
-                catch (Exception)
-                {
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_FAIL));//soft error
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BROWSER")))
-                {
-                    try
-                    {
-                        Process.Start("xdg-open", "\"" + url + "\"");
-                        WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_SUCCESS));
-                    }
-                    catch (Exception)
-                    {
-                        WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_FAIL));//soft error
-                    }
-                }
-                else
-                {
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_ENVIRONMENT_VAR));
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                try
-                {
-                    Process.Start("open", "\"" + url + "\"");
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_SUCCESS));
-                }
-                catch (Exception)
-                {
-                    WriteOnce.General(MsgHelp.GetString(MsgHelp.ID.BROWSER_START_FAIL));//soft error
-                }
-            }
         }
 
         /// <summary>

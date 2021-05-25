@@ -10,21 +10,19 @@
     "patterns": [
       {
         "pattern": "mutex|semaphore|thread|lock|fork",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "async|await",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ]
   },
@@ -40,16 +38,14 @@
       "OS.Process.Multiprocessing"
     ],
     "severity": "moderate",
-    "_comment": "",
     "patterns": [
       {
         "pattern": "WaitForSingleObject|WaitForMultipleObjects",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -71,8 +67,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "(new System\\.Diagnostics.Process\\(\\)| new Process\\(\\))",
@@ -102,8 +97,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "(new System\\.Diagnostics.Process\\(\\)| new Process\\(\\))",
@@ -183,7 +177,7 @@
       },
       {
         "pattern": "ReadProcessMemory|OpenProcess|VirtualQueryEx",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ]
@@ -214,8 +208,7 @@
         "type": "substring",
         "scopes": [
           "code"
-        ],
-        "_comment": ""
+        ]
       }
     ]
   },

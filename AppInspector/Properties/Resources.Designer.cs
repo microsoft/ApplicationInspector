@@ -97,6 +97,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File skipped: First 100 bytes appear to indicate this is a binary file. {0}.
+        /// </summary>
+        internal static string ANALYZE_EXCLUDED_BINARY {
+            get {
+                return ResourceManager.GetString("ANALYZE_EXCLUDED_BINARY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File skipped: Name or path in exclude list. {0}.
         /// </summary>
         internal static string ANALYZE_EXCLUDED_TYPE_SKIPPED {

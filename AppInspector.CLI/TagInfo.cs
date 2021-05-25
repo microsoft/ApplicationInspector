@@ -143,7 +143,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     if (Enum.TryParse(value, true, out test))
                     {
-                        this._confidence = value;
+                        _confidence = value;
                     }
                 }
                 catch (Exception)//control error description

@@ -10,7 +10,7 @@
     "patterns": [
       {
         "pattern": "analytics|tracker|tracking|tracking cookie|pixel url|tracking script",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "low"

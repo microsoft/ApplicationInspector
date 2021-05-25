@@ -43,7 +43,7 @@
     "patterns": [
       {
         "pattern": "google/apis",
-        "type": "sub-string",
+        "type": "substring",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"

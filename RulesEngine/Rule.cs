@@ -43,17 +43,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public string? Description { get; set; } = "";
 
         [JsonProperty(PropertyName = "applies_to")]
-        public string[]? AppliesTo 
-        { 
-            get 
-            { 
-                return _appliesTo; 
-            } 
-            set 
-            { 
-                _updateCompiled = true; 
-                _appliesTo = value; 
-            } 
+        public string[]? AppliesTo
+        {
+            get
+            {
+                return _appliesTo;
+            }
+            set
+            {
+                _updateCompiled = true;
+                _appliesTo = value;
+            }
         }
 
         private string[]? _appliesTo;
@@ -82,14 +82,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public string[]? Tags { get; set; }
 
         [JsonProperty(PropertyName = "severity")]
-        [JsonConverter(typeof(SeverityConverter))]
         public Severity Severity { get; set; } = Severity.Moderate;
 
         [JsonProperty(PropertyName = "overrides")]
         public string[]? Overrides { get; set; }
 
         [JsonProperty(PropertyName = "patterns")]
-        public SearchPattern[] Patterns { get; set; } = new SearchPattern[] { };
+        public SearchPattern[] Patterns { get; set; } = Array.Empty<SearchPattern>();
 
         [JsonProperty(PropertyName = "conditions")]
         public SearchCondition[]? Conditions { get; set; }

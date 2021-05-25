@@ -5,7 +5,7 @@ using Microsoft.ApplicationInspector.Commands;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
-    internal class ExportTextWriter : CommandResultsWriter
+    internal class ExportTagsTextWriter : CommandResultsWriter
     {
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {

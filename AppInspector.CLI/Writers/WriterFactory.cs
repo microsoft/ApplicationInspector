@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
-    public class WriterFactory
+    public static class WriterFactory
     {
         /// <summary>
         /// Responsible for returning the correct cmd and format writer for output of cmd results.  An an output
@@ -25,29 +25,25 @@ namespace Microsoft.ApplicationInspector.CLI
             CommandResultsWriter? writer;
 
             //allocate the right writer by cmd (options) type
-            if (options is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)
+            if (options is CLIAnalyzeCmdOptions cliAnalyzeCmdOptions)
             {
-                writer = GetAnalyzeWriter(cLIAnalyzeCmdOptions);
+                writer = GetAnalyzeWriter(cliAnalyzeCmdOptions);
             }
-            else if (options is CLITagTestCmdOptions cLITagTestCmdOptions)
+            else if (options is CLITagDiffCmdOptions cliTagDiffCmdOptions)
             {
-                writer = GetTagTestWriter(cLITagTestCmdOptions);
+                writer = GetTagDiffWriter(cliTagDiffCmdOptions);
             }
-            else if (options is CLITagDiffCmdOptions cLITagDiffCmdOptions)
+            else if (options is CLIExportTagsCmdOptions cliExportTagsCmdOptions)
             {
-                writer = GetTagDiffWriter(cLITagDiffCmdOptions);
+                writer = GetExportTagsWriter(cliExportTagsCmdOptions);
             }
-            else if (options is CLIExportTagsCmdOptions cLIExportTagsCmdOptions)
+            else if (options is CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions)
             {
-                writer = GetExportWriter(cLIExportTagsCmdOptions);
+                writer = GetVerifyRulesWriter(cliVerifyRulesCmdOptions);
             }
-            else if (options is CLIVerifyRulesCmdOptions cLIVerifyRulesCmdOptions)
+            else if (options is CLIPackRulesCmdOptions cliPackRulesCmdOptions)
             {
-                writer = GetVerifyRulesWriter(cLIVerifyRulesCmdOptions);
-            }
-            else if (options is CLIPackRulesCmdOptions cLIPackRulesCmdOptions)
-            {
-                writer = GetPackRulesWriter(cLIPackRulesCmdOptions);
+                writer = GetPackRulesWriter(cliPackRulesCmdOptions);
             }
             else
             {
@@ -68,10 +64,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new AnalyzeDummyWriter();
-                    break;
-
                 case "json":
                     writer = new AnalyzeJsonWriter();
                     break;
@@ -96,52 +88,18 @@ namespace Microsoft.ApplicationInspector.CLI
             return writer;
         }
 
-        public static CommandResultsWriter GetExportWriter(CLIExportTagsCmdOptions options)
+        public static CommandResultsWriter GetExportTagsWriter(CLIExportTagsCmdOptions options)
         {
             CommandResultsWriter? writer;
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new ExportDummyWriter();
-                    break;
-
                 case "json":
                     writer = new JsonWriter();
                     break;
 
                 case "text":
-                    writer = new ExportTextWriter();
-                    break;
-
-                default:
-                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
-                    throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
-            }
-
-            //assign the stream as a file or console
-            writer.OutputFileName = options.OutputFilePath;
-            writer.TextWriter = GetTextWriter(writer.OutputFileName);
-
-            return writer;
-        }
-
-        private static CommandResultsWriter GetTagTestWriter(CLITagTestCmdOptions options)
-        {
-            CommandResultsWriter? writer;
-
-            switch (options.OutputFileFormat.ToLower())
-            {
-                case "_dummy":
-                    writer = new TagTestDummyWriter();
-                    break;
-
-                case "json":
-                    writer = new JsonWriter();
-                    break;
-
-                case "text":
-                    writer = new TagTestTextWriter();
+                    writer = new ExportTagsTextWriter();
                     break;
 
                 default:
@@ -162,10 +120,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new TagDiffDummyWriter();
-                    break;
-
                 case "json":
                     writer = new JsonWriter();
                     break;
@@ -192,10 +146,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new VerifyRulesDummyWriter();
-                    break;
-
                 case "json":
                     writer = new JsonWriter();
                     break;
@@ -222,10 +172,6 @@ namespace Microsoft.ApplicationInspector.CLI
 
             switch (options.OutputFileFormat.ToLower())
             {
-                case "_dummy":
-                    writer = new PackRulesDummyWriter();
-                    break;
-
                 case "json":
                     writer = new JsonWriter();
                     break;

@@ -14,12 +14,11 @@
     "patterns": [
       {
         "pattern": "ifstream|fread|fgets|fgetc",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -41,8 +40,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "new StreamReader",
@@ -50,8 +48,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "File.OpenText",
@@ -59,8 +56,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -82,8 +78,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": ".readlines(",
@@ -91,16 +86,14 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": ".read(",
         "type": "string",
         "scopes": [
           "code"
-        ],
-        "_comment": ""
+        ]
       }
     ]
   },
@@ -121,8 +114,7 @@
         "type": "string",
         "scopes": [
           "code"
-        ],
-        "_comment": ""
+        ]
       },
       {
         "pattern": "fs.ReadStream",
@@ -130,16 +122,14 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "fs.open",
         "type": "string",
         "scopes": [
           "code"
-        ],
-        "_comment": ""
+        ]
       }
     ]
   },
@@ -161,8 +151,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "FileReader|new Scanner\\(Files\\.readAllLines|Files\\.readAllBytes|FileInputStream",
@@ -170,8 +159,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -193,8 +181,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "FileReader|new Scanner\\(Files\\.readAllLines|Files\\.readAllBytes|FileInputStream",
@@ -202,8 +189,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -226,16 +212,14 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "remove",
         "type": "regex",
         "scopes": [
           "code"
-        ],
-        "_comment": ""
+        ]
       }
     ],
     "conditions": [
@@ -248,8 +232,7 @@
           ]
         },
         "search_in": "finding-region(-200,1)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -271,8 +254,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -294,8 +276,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "os.ulink(",
@@ -303,8 +284,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -326,8 +306,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -349,8 +328,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -372,8 +350,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "fs.remove(",
@@ -381,8 +358,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -404,8 +380,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -428,8 +403,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "fopen\\(.*,.*w.*\\);",
@@ -456,8 +430,7 @@
           "code"
         ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -479,8 +452,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "open\\(.*,.*w.*\\);",
@@ -520,8 +492,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "WriteStream|appendFile|copyFile|createWriteStream|ftruncate",
@@ -529,8 +500,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": "FileWriter|BufferedWriter|FileUtils\\.copyFile|Files\\.copy",
@@ -538,8 +508,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -561,8 +530,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -584,8 +552,7 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       },
       {
         "pattern": ".write",
@@ -593,15 +560,14 @@
         "scopes": [
           "code"
         ],
-        "confidence": "medium",
-        "_comment": ""
+        "confidence": "medium"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "use std::io::Write|use std::io::File|use std:fs:File",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -609,8 +575,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-240,240)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   }

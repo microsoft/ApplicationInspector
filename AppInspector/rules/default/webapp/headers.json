@@ -13,8 +13,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -32,8 +31,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -51,8 +49,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -70,8 +67,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -89,8 +85,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -108,8 +103,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -127,8 +121,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -146,8 +139,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -165,8 +157,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -184,8 +175,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -203,8 +193,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

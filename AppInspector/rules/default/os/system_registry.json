@@ -14,10 +14,9 @@
     "patterns": [
       {
         "pattern": "RegSetValueEx|RegOpenKeyEx|RegCreateKeyEx",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -37,8 +36,7 @@
         "pattern": "Registry(Key)?(.*)?.(SetValue|CreateSubKey|Delete)",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -56,25 +54,23 @@
     "patterns": [
       {
         "pattern": "CreateSubKey|SetValue",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "HKEY_|Registry",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
           "_comment": ""
         },
         "search_in": "finding-region(-40,40)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -92,7 +88,7 @@
     "patterns": [
       {
         "pattern": "_?winreg\\.(Set|Delete|Create)(Key|Value)(Ex)?",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high",
         "_comment": "_winreg and winreg built-in modules"
@@ -136,8 +132,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -153,7 +148,7 @@
     "patterns": [
       {
         "pattern": "RegistryAccessRule|RegistrySecurity",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -174,7 +169,7 @@
     "patterns": [
       {
         "pattern": "RegGetValue|RegGetDWord|RegGetString|CRegKey|RegOpenKey|RegQueryKeyEx",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -216,8 +211,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-5,5)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -237,23 +231,21 @@
         "pattern": "Registry(Key)?(.*)?.GetValue",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "HKEY_",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
           "_comment": ""
         },
         "search_in": "finding-region(-40,40)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -273,23 +265,21 @@
         "pattern": ".open_subkey(",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "HKEY_",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
           "_comment": ""
         },
         "search_in": "finding-region(-40,40)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   }

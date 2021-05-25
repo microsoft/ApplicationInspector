@@ -24,8 +24,7 @@
         "pattern": "new AudioContext",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -54,8 +53,7 @@
         "pattern": "getUserMedia|webkitGetUserMedia|mozGetUserMedia|msGetUserMedia",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

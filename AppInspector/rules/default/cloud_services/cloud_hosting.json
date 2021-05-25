@@ -10,7 +10,7 @@
     "patterns": [
       {
         "pattern": "\\.amazonaws\\.com|aws\\.amazon\\.com",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -71,7 +71,7 @@
     "patterns": [
       {
         "pattern": "office365|office\\.com",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [],
         "confidence": "high"
@@ -167,7 +167,6 @@
       "Metadata.CloudServices.Hosting.DigitalOcean"
     ],
     "severity": "moderate",
-    "_comment": "",
     "rule_info": "",
     "patterns": [
       {
@@ -175,8 +174,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -194,8 +192,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -455,8 +452,7 @@
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

@@ -142,7 +142,7 @@
     "patterns": [
       {
         "pattern": "mybatis|iobatis",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -308,7 +308,7 @@
     "patterns": [
       {
         "pattern": "googleapis",
-        "type": "sub-string",
+        "type": "substring",
         "scopes": [ "code" ],
         "confidence": "high"
       }

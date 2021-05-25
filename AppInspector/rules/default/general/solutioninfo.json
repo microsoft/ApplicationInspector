@@ -11,7 +11,7 @@
     "patterns": [
       {
         "pattern": "Win32|Any CPU|Win64|x64|x86|Arm|Arm64",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -50,8 +50,7 @@
         "pattern": "<Authors>.*<\/Authors>",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -69,8 +68,7 @@
         "pattern": "<Version>.*<\/Version>",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -88,8 +86,7 @@
         "pattern": "<Description>.*<\/Description>",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -132,8 +129,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -149,7 +145,7 @@
     "patterns": [
       {
         "pattern": "ServiceStatus|ServiceController|InstallService",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -169,8 +165,7 @@
         "pattern": "(/etc/rc\\.d/service|/etc/systemd/system)",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -186,7 +181,7 @@
     "patterns": [
       {
         "pattern": "RegisterServiceCtrlHandler|serviceCtrlHandler|StartServiceCtrlDispatcher|SERVICE_STATUS|SERVICE_RUNNING|SERVICE_WIN32|SERVICE_CONTROL",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -206,8 +201,7 @@
         "pattern": "<artifactId>(.*)<\/artifactId>",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -225,8 +219,7 @@
         "pattern": "\\\"description\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -244,8 +237,7 @@
         "pattern": "\\\"version\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -263,8 +255,7 @@
         "pattern": "\\\"author\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -282,8 +273,7 @@
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high",
-        "modifiers": [ "i" ],
-        "_comment": ""
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -319,8 +309,7 @@
         "pattern": "<TargetFramework(s)?>.*<\/TargetFramework(s)?>",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -335,7 +324,7 @@
     "patterns": [
       {
         "pattern": "Kubernetes",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -353,7 +342,7 @@
     "patterns": [
       {
         "pattern": "Docker|RancherOS",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -371,7 +360,7 @@
     "patterns": [
       {
         "pattern": "rktlet",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -389,7 +378,7 @@
     "patterns": [
       {
         "pattern": "CRI-O",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -407,7 +396,7 @@
     "patterns": [
       {
         "pattern": "hyper-v",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -425,7 +414,7 @@
     "patterns": [
       {
         "pattern": "Nano Server|Server Core",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"

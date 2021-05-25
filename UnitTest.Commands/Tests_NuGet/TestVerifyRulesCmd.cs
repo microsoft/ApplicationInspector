@@ -32,7 +32,6 @@ namespace ApplicationInspector.Unitprocess.Commands
         }
 
         [TestMethod]
-        [Ignore] //default option won't find rules unless run from CLI; todo to look at addressed
         public void DefaultRules_Pass()
         {
             VerifyRulesOptions options = new VerifyRulesOptions()
@@ -47,8 +46,9 @@ namespace ApplicationInspector.Unitprocess.Commands
                 VerifyRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 //check for specific error if desired
             }
 
@@ -182,48 +182,6 @@ namespace ApplicationInspector.Unitprocess.Commands
                 {
                     exitCode = VerifyRulesResult.ExitCode.CriticalError;
                 }
-            }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
-            Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
-        }
-
-        [TestMethod]
-        public void LogDebugLevel_Pass()
-        {
-            VerifyRulesOptions options = new VerifyRulesOptions()
-            {
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                LogFileLevel = "debug",
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logdebug.txt"),
-            };
-
-            VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
-            try
-            {
-                VerifyRulesCommand command = new VerifyRulesCommand(options);
-                VerifyRulesResult result = command.GetResult();
-                exitCode = result.ResultCode;
-
-                if (exitCode == VerifyRulesResult.ExitCode.Verified)
-                {
-                    string testLogContent = File.ReadAllText(options.LogFilePath);
-                    if (String.IsNullOrEmpty(testLogContent))
-                    {
-                        exitCode = VerifyRulesResult.ExitCode.CriticalError;
-                    }
-                    else if (testLogContent.ToLower().Contains("debug"))
-                    {
-                        exitCode = VerifyRulesResult.ExitCode.Verified;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
             }
 
             //because these are static and each test is meant to be indpendent null assign the references to create the log

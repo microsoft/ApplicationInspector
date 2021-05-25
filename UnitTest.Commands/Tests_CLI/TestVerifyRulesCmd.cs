@@ -32,7 +32,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         }
 
         [TestMethod]
-        [Ignore] //default option won't find rules unless run from CLI; todo to look at addressed
         public void DefaultRules_Pass()
         {
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
@@ -233,39 +232,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                     else
                     {
                         exitCode = VerifyRulesResult.ExitCode.CriticalError;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                exitCode = VerifyRulesResult.ExitCode.CriticalError;
-            }
-
-            Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
-        }
-
-        [TestMethod]
-        public void LogDebugLevel_Pass()
-        {
-            VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"verifyrules -r {0} -f text -v debug -l {1}",
-                        Path.Combine(Helper.GetPath(Helper.AppPath.defaultRules)),
-                        Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-
-                exitCode = (VerifyRulesResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-
-                if (exitCode == VerifyRulesResult.ExitCode.Verified)
-                {
-                    string testLogContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-                    if (String.IsNullOrEmpty(testLogContent))
-                    {
-                        exitCode = VerifyRulesResult.ExitCode.CriticalError;
-                    }
-                    else if (testLogContent.ToLower().Contains("debug"))
-                    {
-                        exitCode = VerifyRulesResult.ExitCode.Verified;
                     }
                 }
             }

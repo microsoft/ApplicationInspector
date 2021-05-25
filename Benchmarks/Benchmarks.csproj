@@ -6,8 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.12.1" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.0" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.0" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.194" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
@@ -17,8 +18,5 @@
     <Compile Update="AnalyzeBenchmark.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.194" />
   </ItemGroup>
 </Project>

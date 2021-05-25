@@ -35,21 +35,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         [JsonProperty(PropertyName = "type")]
-        [JsonConverter(typeof(PatternTypeConverter))]
         public PatternType? PatternType { get; set; }
 
         [JsonProperty(PropertyName = "scopes")]
         public PatternScope[]? Scopes { get; set; }
-
-        public Regex GetRegex(RegexOptions opts)
-        {
-            if (!_compiled.ContainsKey(opts))
-            {
-                _compiled[opts] = new Regex(Pattern, opts | RegexOptions.Compiled);
-            }
-            return _compiled[opts];
-        }
-
-
     }
 }

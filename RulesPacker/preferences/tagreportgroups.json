@@ -528,7 +528,7 @@
           },
           {
             "searchPattern": "Sensitive.Secret",
-            "displayName": "Senstive secret",
+            "displayName": "Sensitive secret",
             "detectedIcon": "fab fa-keycdn"
           },
           {

@@ -7,34 +7,33 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
     /// Helper class for language based commenting
     /// </summary>
-    public class Language
+    public sealed class Language
     {
         private static Language? _instance;
-        private List<Comment> Comments;
-        private List<LanguageInfo> Languages;
+        private readonly List<Comment> Comments;
+        private readonly List<LanguageInfo> Languages;
 
         private Language()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             // Load comments
             Stream? resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.comments.json");
-            using (StreamReader file = new StreamReader(resource ?? new MemoryStream()))
+            using (StreamReader file = new(resource ?? new MemoryStream()))
             {
-                Comments = JsonConvert.DeserializeObject<List<Comment>>(file.ReadToEnd());
+                Comments = JsonConvert.DeserializeObject<List<Comment>>(file.ReadToEnd()) ?? new List<Comment>(); ;
             }
 
             // Load languages
             resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.languages.json");
-            using (StreamReader file = new StreamReader(resource ?? new MemoryStream()))
+            using (StreamReader file = new(resource ?? new MemoryStream()))
             {
-                Languages = JsonConvert.DeserializeObject<List<LanguageInfo>>(file.ReadToEnd());
+                Languages = JsonConvert.DeserializeObject<List<LanguageInfo>>(file.ReadToEnd()) ?? new List<LanguageInfo>();
             }
         }
         /// <summary>
@@ -69,7 +68,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     if (item.Name == "typescript-config")//special case where extension used for exact match to a single type
                     {
-                        if (item.Extensions.Any(x => x.ToLower().Equals(file)))
+                        if (item.Extensions?.Any(x => x.ToLower().Equals(file)) ?? false)
                         {
                             info = item;
                             return true;
@@ -120,7 +119,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 foreach (Comment comment in Instance.Comments)
                 {
-                    if (comment.Languages.Contains(language.ToLower(CultureInfo.InvariantCulture)) && comment.Prefix is { })
+                    if ((comment.Languages?.Contains(language.ToLower(CultureInfo.InvariantCulture)) ?? false) && comment.Prefix is { })
                         return comment.Prefix;
                 }
             }
@@ -164,12 +163,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             get
             {
-                if (_instance == null)
-                {
-                    _instance = new Language();
-                }
-
-                return _instance;
+                return _instance ??= new Language();
             }
         }
     }

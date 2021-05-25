@@ -13,12 +13,11 @@
     "patterns": [
       {
         "pattern": "NetUserAdd|NetGroupAddUser|NetLocalGroupAdd",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -36,12 +35,11 @@
     "patterns": [
       {
         "pattern": "NetGroupSetInfo|NetGroupSetUsers|NetLocalGroupDel|NetUserChangePassword",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

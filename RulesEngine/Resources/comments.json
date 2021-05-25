@@ -18,7 +18,7 @@
       "php"
     ],
     "inline": "//",
-    "preffix": "/*",
+    "prefix": "/*",
     "suffix": "*/"
   },
   {
@@ -32,33 +32,25 @@
       "powershell",
       "python"
     ],
-    "inline": "#",
-    "preffix": "#",
-    "suffix": "\n"
+    "inline": "#"
   },
   {
     "language": [
       "lua",
       "sql"
     ],
-    "inline": "--",
-    "preffix": "--",
-    "suffix": "\n"
+    "inline": "--"
   },
   {
     "language": [
       "clojure"
     ],
-    "inline": ";;",
-    "preffix": ";;",
-    "suffix": ""
+    "inline": ";;"
   },
   {
     "language": [
       "vb"
     ],
-    "inline": "'",
-    "preffix": "'",
-    "suffix": ""
+    "inline": "'"
   }
 ]

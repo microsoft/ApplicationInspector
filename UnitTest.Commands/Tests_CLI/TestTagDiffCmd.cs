@@ -140,27 +140,6 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         }
 
         [TestMethod]
-        public void SameSrcFile_Fail()
-        {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
-        }
-
-        [TestMethod]
         public void OneSrcResult_Fail()
         {
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;

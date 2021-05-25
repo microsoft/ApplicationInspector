@@ -13,15 +13,14 @@
         "type": "string",
         "modifiers": [ "i" ],
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -29,8 +28,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-1,1)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -48,15 +46,14 @@
         "type": "string",
         "modifiers": [ "i" ],
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -64,8 +61,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-1,1)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -83,15 +79,14 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -99,8 +94,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-1,1)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -118,15 +112,14 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -134,8 +127,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-1,1)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -153,15 +145,14 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -169,8 +160,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-1,1)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -188,15 +178,14 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -204,8 +193,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-1,1)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -223,15 +211,14 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regex-word",
+          "type": "regexword",
           "scopes": [
             "code"
           ],
@@ -239,8 +226,7 @@
           "_comment": ""
         },
         "search_in": "finding-region(-1,1)",
-        "negate_finding": false,
-        "_comment": ""
+        "negate_finding": false
       }
     ]
   },
@@ -257,8 +243,7 @@
         "pattern": "history\\.(pushState|replaceState)",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   },
@@ -275,8 +260,7 @@
         "pattern": "new Worker",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": ""
+        "confidence": "high"
       }
     ]
   }

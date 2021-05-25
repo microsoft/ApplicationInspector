@@ -21,6 +21,7 @@ namespace Microsoft.ApplicationInspector.Commands
             ANALYZE_UNSUPPORTED_COMPR_TYPE,
             ANALYZE_FILESIZE_SKIPPED,
             ANALYZE_EXCLUDED_TYPE_SKIPPED,
+            ANALYZE_EXCLUDED_BINARY,
             ANALYZE_LANGUAGE_NOTFOUND,
             ANALYZE_COMPRESSED_FILESIZE_WARN,
             ANALYZE_COMPRESSED_PROCESSING,
@@ -82,7 +83,7 @@ namespace Microsoft.ApplicationInspector.Commands
             string result;
             try
             {
-                result = Resources.ResourceManager.GetString(id.ToString())??"";
+                result = Resources.ResourceManager.GetString(id.ToString()) ?? "";
             }
             catch (Exception e)
             {

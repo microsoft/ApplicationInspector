@@ -7,6 +7,7 @@ trigger:
   branches:
     include:
     - main
+    - development
   paths:
     include:
     - AppInspector/*
@@ -16,6 +17,7 @@ pr:
   branches:
     include:
     - main
+    - development
   paths:
     include:
     - Pipelines

@@ -19,11 +19,7 @@ namespace Microsoft.ApplicationInspector.CLI
             string commandCompletedMsg;
 
             //perform type checking and assign final msg string
-            if (result is TagTestResult)
-            {
-                commandCompletedMsg = "Tag Test";
-            }
-            else if (result is TagDiffResult)
+            if (result is TagDiffResult)
             {
                 commandCompletedMsg = "Tag Diff";
             }
@@ -58,14 +54,9 @@ namespace Microsoft.ApplicationInspector.CLI
                     writer?.WriteResults(analyzeResult, cLIAnalyzeCmdOptions);
 
                     //post checks
-                    if (File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
+                    if (options.OutputFilePath is not null && File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
                     {
                         WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_REPORTSIZE_WARN));
-                    }
-
-                    if (!cLIAnalyzeCmdOptions.SuppressBrowserOpen)
-                    {
-                        Utils.OpenBrowser(cLIAnalyzeCmdOptions.OutputFilePath);
                     }
 
                     Finalize(writer, "Analyze");
@@ -96,7 +87,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 if (outputWriter.TextWriter != Console.Out) //target writer was to a file so inform where to find results
                 {
-                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE, outputWriter?.OutputFileName??""), true, WriteOnce.ConsoleVerbosity.Medium, false);
+                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE, outputWriter?.OutputFileName ?? ""), true, WriteOnce.ConsoleVerbosity.Medium, false);
                 }
             }
         }

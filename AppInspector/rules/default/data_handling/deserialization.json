@@ -124,8 +124,8 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "unserialize(",
-        "type": "string",
+        "pattern": "unserialize\\(",
+        "type": "regex",
         "scopes": [
           "code"
         ],
@@ -169,7 +169,7 @@
     "patterns": [
       {
         "pattern": "SerializeObject|JavaScriptSerializer|Newtonsoft|json\\.net|Utf8Json|MessagePack",
-        "type": "regex-word",
+        "type": "regexword",
         "scopes": [
           "code"
         ],
