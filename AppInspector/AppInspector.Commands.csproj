@@ -60,11 +60,11 @@
     <PackageReference Include="DotLiquid" Version="2.1.436" />
     <PackageReference Include="Glob" Version="1.1.8" />
     <PackageReference Include="Microsoft.CST.OAT" Version="1.0.85" />
-    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.0.63" />
+    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.0.64" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="ShellProgressBar" Version="5.1.0" />
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.194" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.203" />
   </ItemGroup>
 
   <ItemGroup>
