@@ -82,7 +82,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('t', "test-type", Required = false, HelpText = "Type of test to run [equality|inequality]", Default = "equality")]
         public string TestType { get; set; } = "equality";
 
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable.", Default = "*/bin,*/obj,*/.vs,*/.git", Separator = ',')]
+        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
         public IEnumerable<string> FilePathExclusions { get; set; } = new string[] { };
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
