@@ -36,6 +36,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public int FileTimeOut { get; set; } = 0;
         public int ProcessingTimeOut { get; set; } = 0;
         public int ContextLines { get; set; } = 3;
+
         public bool ScanUnknownTypes { get; set; }
     }
 
@@ -635,6 +636,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Utils.GetVersionString()
             };
 
+
             var exitCode = await PopulateRecordsAsync(cancellationToken);
 
             //wrapup result status
@@ -796,6 +798,7 @@ namespace Microsoft.ApplicationInspector.Commands
             return analyzeResult;
 
             void DoProcessing(IEnumerable<FileEntry> fileEntries)
+
             {
                 if (_options.ProcessingTimeOut > 0)
                 {
