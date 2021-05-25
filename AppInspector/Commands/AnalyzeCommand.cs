@@ -540,7 +540,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             Extractor extractor = new();
 
-            var keeps = new List<string>();
+            // For every file, if the file isn't excluded return it, and if it is track the exclusion in the metadata
             foreach (var srcFile in _srcfileList)
             {
                 if (!_fileExclusionList.Any(x => x.IsMatch(srcFile)))
@@ -555,31 +555,29 @@ namespace Microsoft.ApplicationInspector.Commands
                     _metaDataHelper?.Metadata.Files.Add(new FileRecord() { FileName = srcFile, Status = ScanState.Skipped });
                 }
             }
-            foreach (var entry in keeps)
-            {
-                _srcfileList.Remove(entry);
-            }
-
-            foreach (var srcFile in _srcfileList)
-            {
-
-            }
         }
 
         /// <summary>
         /// Gets the FileEntries asynchronously.
         /// </summary>
         /// <returns>An enumeration of FileEntries</returns>
-        public async IAsyncEnumerable<FileEntry> GetFileEntriesAsync()
+        private async IAsyncEnumerable<FileEntry> GetFileEntriesAsync()
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntriesAsync", LogLevel.Trace);
 
             Extractor extractor = new();
             foreach (var srcFile in _srcfileList ?? new List<string>())
             {
-                await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false }))
+                if (!_fileExclusionList.Any(x => x.IsMatch(srcFile)))
                 {
-                    yield return entry;
+                    await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false }))
+                    {
+                        yield return entry;
+                    }
+                }
+                else
+                {
+                    _metaDataHelper?.Metadata.Files.Add(new FileRecord() { FileName = srcFile, Status = ScanState.Skipped });
                 }
             }
         }
