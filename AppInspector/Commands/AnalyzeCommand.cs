@@ -539,13 +539,12 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntries", LogLevel.Trace);
 
             Extractor extractor = new();
-
             // For every file, if the file isn't excluded return it, and if it is track the exclusion in the metadata
             foreach (var srcFile in _srcfileList)
             {
                 if (!_fileExclusionList.Any(x => x.IsMatch(srcFile)))
                 {
-                    foreach (var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
+                    foreach (var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions }))
                     {
                         yield return entry;
                     }
@@ -570,7 +569,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 if (!_fileExclusionList.Any(x => x.IsMatch(srcFile)))
                 {
-                    await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false }))
+                    await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions }))
                     {
                         yield return entry;
                     }
