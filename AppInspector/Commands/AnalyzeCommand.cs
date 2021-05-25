@@ -727,7 +727,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     pbar.Finished();
                 }
-                Console.Write(Environment.NewLine);
+                Console.WriteLine();
                 done = false;
 
                 var options2 = new ProgressBarOptions
@@ -762,7 +762,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     progressBar.Message = $"{_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
-                Console.Write(Environment.NewLine);
+                Console.WriteLine();
             }
             else
             {
