@@ -209,7 +209,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, string.Join(',', _options.SourcePath)));
                 }
             }
-            if (!_srcfileList.Any())
+            if (_srcfileList.Count == 0)
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, string.Join(',', _options.SourcePath)));
             }
@@ -534,17 +534,25 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Gets the FileEntries synchronously.
         /// </summary>
         /// <returns>An Enumerable of FileEntries.</returns>
-        public IEnumerable<FileEntry> GetFileEntries()
+        private IEnumerable<FileEntry> GetFileEntries()
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntries", LogLevel.Trace);
 
             Extractor extractor = new();
 
-            foreach (var srcFile in _srcfileList ?? new List<string>())
+            // For every file, if the file isn't excluded return it, and if it is track the exclusion in the metadata
+            foreach (var srcFile in _srcfileList)
             {
-                foreach(var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
+                if (!_fileExclusionList.Any(x => x.IsMatch(srcFile)))
                 {
-                    yield return entry;
+                    foreach (var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false }))
+                    {
+                        yield return entry;
+                    }
+                }
+                else
+                {
+                    _metaDataHelper?.Metadata.Files.Add(new FileRecord() { FileName = srcFile, Status = ScanState.Skipped });
                 }
             }
         }
@@ -553,16 +561,23 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Gets the FileEntries asynchronously.
         /// </summary>
         /// <returns>An enumeration of FileEntries</returns>
-        public async IAsyncEnumerable<FileEntry> GetFileEntriesAsync()
+        private async IAsyncEnumerable<FileEntry> GetFileEntriesAsync()
         {
             WriteOnce.SafeLog("AnalyzeCommand::GetFileEntriesAsync", LogLevel.Trace);
 
             Extractor extractor = new();
             foreach (var srcFile in _srcfileList ?? new List<string>())
             {
-                await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false }))
+                if (!_fileExclusionList.Any(x => x.IsMatch(srcFile)))
                 {
-                    yield return entry;
+                    await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false }))
+                    {
+                        yield return entry;
+                    }
+                }
+                else
+                {
+                    _metaDataHelper?.Metadata.Files.Add(new FileRecord() { FileName = srcFile, Status = ScanState.Skipped });
                 }
             }
         }
