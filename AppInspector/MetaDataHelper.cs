@@ -38,7 +38,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public int UniqueTagsCount { get { return UniqueTags.Keys.Count; } }
 
         internal MetaData Metadata { get; set; }
-        public ConcurrentBag<MatchRecord> Matches { get; set; } = new ConcurrentBag<MatchRecord>();
 
         public MetaDataHelper(string sourcePath)
         {
@@ -234,8 +233,6 @@ namespace Microsoft.ApplicationInspector.Commands
             Metadata.FileExtensions.Sort();
             Metadata.Outputs.Sort();
             Metadata.Targets.Sort();
-
-            Metadata.Matches = Matches.ToList();
 
             Metadata.Languages = Languages.ToImmutableSortedDictionary();
 

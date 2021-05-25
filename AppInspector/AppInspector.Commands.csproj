@@ -65,7 +65,6 @@
     <PackageReference Include="NLog" Version="4.7.10" />
     <PackageReference Include="ShellProgressBar" Version="5.1.0" />
     <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.194" />
-
   </ItemGroup>
 
   <ItemGroup>
@@ -96,6 +95,7 @@
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\icon-128.png" Pack="true" PackagePath="" />
   </ItemGroup>
+
   <Target Name="PreBuild" BeforeTargets="BeforeCompile">
     <MakeDir Directories="Resources" />
     <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRulesPkd.json -v debug" />
