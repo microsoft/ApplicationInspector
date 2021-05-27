@@ -38,7 +38,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; } = "high,medium";
 
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
+        [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
 
         public IEnumerable<string> FilePathExclusions { get; set; } = new string[0];
 
