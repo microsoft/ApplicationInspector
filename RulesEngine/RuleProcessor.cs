@@ -375,7 +375,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(input);
 
-            if (EnableCache && filteredRules.Any())
+            if (EnableCache)
             {
                 _languageRulesCache.TryAdd(input, filteredRules);
             }
@@ -420,7 +420,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByFilename(input);
 
-            if (EnableCache && filteredRules.Any())
+            if (EnableCache)
             {
                 _fileRulesCache.TryAdd(input, filteredRules);
             }
