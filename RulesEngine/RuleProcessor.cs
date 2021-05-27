@@ -125,13 +125,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public List<MatchRecord> AnalyzeFile(string contents, FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
-            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
-            var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
-            rules = rules.Union(GetUniversalRules());
-            if (tagsToIgnore?.Any() == true)
-            {
-                rules = rules.Where(x => x.AppInspectorRule.Tags.Any(y => !tagsToIgnore.Contains(y)));
-            }
+            var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
             List<MatchRecord> resultsList = new();
 
             TextContainer textContainer = new(contents, languageInfo.Name);
@@ -224,6 +218,18 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList;
         }
 
+        private IEnumerable<ConvertedOatRule> GetRulesForFile(LanguageInfo languageInfo, FileEntry fileEntry, IEnumerable<string>? tagsToIgnore)
+        {
+            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
+            var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
+            rules = rules.Union(GetUniversalRules());
+            if (tagsToIgnore?.Any() == true)
+            {
+                rules = rules.Where(x => x.AppInspectorRule?.Tags?.Any(y => !tagsToIgnore.Contains(y)) ?? false);
+            }
+            return rules;
+        }
+
         public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
             using var sr = new StreamReader(fileEntry.Content);
@@ -245,14 +251,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
-            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
-            var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
-            rules = rules.Union(GetUniversalRules());
-
-            if (tagsToIgnore?.Any() == true)
-            {
-                rules = rules.Where(x => x.AppInspectorRule.Tags.Any(y => !tagsToIgnore.Contains(y)));
-            }
+            var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
 
             List<MatchRecord> resultsList = new();
 
