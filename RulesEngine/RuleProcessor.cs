@@ -468,8 +468,19 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             var excerptStartLine = Math.Max(0, startLineNumber - context);
             var excerptEndLine = Math.Min(text.LineEnds.Count - 1, startLineNumber + context);
-
-            return text.FullContent[text.LineStarts[excerptStartLine]..(text.LineEnds[excerptEndLine]+1)];
+            var startIndex = text.LineStarts[excerptStartLine];
+            var endIndex = text.LineEnds[excerptEndLine] + 1;
+            var maxCharacterContext = context * 100;
+            // Only gather 100*lines context characters to avoid gathering super long lines
+            if (text.LineStarts[startLineNumber] - startIndex > maxCharacterContext)
+            {
+                startIndex = Math.Max(0, startIndex - maxCharacterContext);
+            }
+            if (endIndex - text.LineEnds[startLineNumber] > maxCharacterContext)
+            {
+                endIndex = Math.Min(text.FullContent.Length - 1, endIndex + maxCharacterContext);
+            }
+            return text.FullContent[startIndex..endIndex];
         }
 
         #endregion Private Methods
