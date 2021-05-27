@@ -130,7 +130,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             rules = rules.Union(GetUniversalRules());
             if (tagsToIgnore?.Any() == true)
             {
-                rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
+                rules = rules.Where(x => x.AppInspectorRule.Tags.Any(y => !tagsToIgnore.Contains(y)));
             }
             List<MatchRecord> resultsList = new();
 
@@ -251,7 +251,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             if (tagsToIgnore?.Any() == true)
             {
-                rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
+                rules = rules.Where(x => x.AppInspectorRule.Tags.Any(y => !tagsToIgnore.Contains(y)));
             }
 
             List<MatchRecord> resultsList = new();
