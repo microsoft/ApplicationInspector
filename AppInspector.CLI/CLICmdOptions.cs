@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using CommandLine;
-using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.Common;
 using System.Collections.Generic;
 
 namespace Microsoft.ApplicationInspector.CLI
@@ -11,7 +11,7 @@ namespace Microsoft.ApplicationInspector.CLI
     /// CLI command option classes add output arguments to common properties for each command verb
     /// </summary>
     ///
-    public class CLICommandOptions : CommandOptions
+    public class CLICommandOptions : LogOptions
     {
         [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string? OutputFilePath { get; set; }

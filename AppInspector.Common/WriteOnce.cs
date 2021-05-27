@@ -2,11 +2,12 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using NLog;
+using NLog.Config;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
 
-namespace Microsoft.ApplicationInspector.Commands
+namespace Microsoft.ApplicationInspector.Common
 {
     /// <summary>
     /// Wraps Console, TextWriter and Log Writes for convenience to write "once" from calling
@@ -17,6 +18,10 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class WriteOnce
     {
+        /// <summary>
+        /// For use when logging is needed and was not called via CLI
+        /// </summary>
+        /// <returns></returns>
         public static TextWriter? TextWriter { get; set; }
 
         public enum ConsoleVerbosity { High, Medium, Low, None }

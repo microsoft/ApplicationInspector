@@ -84,6 +84,8 @@
 
   <ItemGroup>
 		
+    <ProjectReference Include="..\AppInspector.Common\AppInspector.Common.csproj" />
+		
     <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj">
         <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
         <IncludeAssets>ApplicationInspector.RulesEngine.dll</IncludeAssets>

@@ -42,4 +42,8 @@
     <EmbeddedResource Include="Resources\languages.json" />
   </ItemGroup>
   
+  <ItemGroup>
+    <ProjectReference Include="..\AppInspector.Common\AppInspector.Common.csproj" />
+  </ItemGroup>
+  
 </Project>

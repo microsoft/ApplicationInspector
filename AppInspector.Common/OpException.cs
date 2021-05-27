@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.ApplicationInspector.Commands
+namespace Microsoft.ApplicationInspector.Common
 {
     /// <summary>
     /// Used to distinguish exceptions which are expected to have been safely written to log and console for CLI use

@@ -1,5 +1,6 @@
 ﻿using ApplicationInspector.Unitprocess.Misc;
 using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System;

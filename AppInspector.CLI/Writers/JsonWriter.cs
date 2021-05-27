@@ -1,4 +1,5 @@
 ﻿using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.Common;
 using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.CLI.Writers

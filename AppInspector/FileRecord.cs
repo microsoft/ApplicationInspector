@@ -23,6 +23,7 @@ namespace Microsoft.ApplicationInspector.Commands
         TimedOut,
         Analyzed,
         Affected,
-        TimeOutSkipped
+        TimeOutSkipped,
+        Error
     }
 }

@@ -8,13 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.ApplicationInspector.Common;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
     /// Options for the Export Tags command.
     /// </summary>
-    public class ExportTagsOptions : CommandOptions
+    public class ExportTagsOptions : LogOptions
     {
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
@@ -29,7 +30,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             Success = 0,
             Error = 1,
-            CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
+            CriticalError = Common.Utils.ExitCode.CriticalError //ensure common value for final exit log mention
         }
 
         [JsonProperty(Order = 2, PropertyName = "resultCode")]
@@ -61,7 +62,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                _options.Log ??= Utils.SetupLogging(_options);
+                _options.Log ??= Common.Utils.SetupLogging(_options);
                 WriteOnce.Log ??= _options.Log;
                 _rules = new RuleSet(_options.Log);
 
@@ -86,7 +87,7 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("ExportTagsCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
-            if (!Utils.CLIExecutionContext)
+            if (!Common.Utils.CLIExecutionContext)
             {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
             }
@@ -110,7 +111,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!_options.IgnoreDefaultRules)
             {
-                _rules = Utils.GetDefaultRuleSet(_options?.Log);
+                _rules = RuleSetUtils.GetDefaultRuleSet(_options?.Log);
             }
 
             if (!string.IsNullOrEmpty(_options?.CustomRulesPath))
@@ -150,7 +151,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             ExportTagsResult exportTagsResult = new ExportTagsResult()
             {
-                AppVersion = Utils.GetVersionString()
+                AppVersion = Common.Utils.GetVersionString()
             };
 
             SortedDictionary<string, string> uniqueTags = new SortedDictionary<string, string>();

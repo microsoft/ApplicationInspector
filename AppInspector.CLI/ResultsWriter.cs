@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.Common;
 using System;
 using System.IO;
 

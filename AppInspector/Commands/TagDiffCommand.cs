@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.Common;
 using Newtonsoft.Json;
 using NLog;
 using System;
@@ -9,7 +10,7 @@ using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
-    public class TagDiffOptions : CommandOptions
+    public class TagDiffOptions : LogOptions
     {
         public IEnumerable<string> SourcePath1 { get; set; } = Array.Empty<string>();
         public IEnumerable<string> SourcePath2 { get; set; } = Array.Empty<string>();
@@ -89,7 +90,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                _options.Log ??= Utils.SetupLogging(_options);
+                _options.Log ??= Common.Utils.SetupLogging(_options);
                 WriteOnce.Log ??= _options.Log;
 
                 ConfigureConsoleOutput();
@@ -115,7 +116,7 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("TagDiffCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
-            if (!Utils.CLIExecutionContext)
+            if (!Common.Utils.CLIExecutionContext)
             {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
             }
@@ -162,7 +163,7 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("TagDiffCommand::Run", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Tag Diff"));
 
-            TagDiffResult tagDiffResult = new TagDiffResult() { AppVersion = Utils.GetVersionString() };
+            TagDiffResult tagDiffResult = new TagDiffResult() { AppVersion = Common.Utils.GetVersionString() };
 
             //save to quiet analyze cmd and restore
             WriteOnce.ConsoleVerbosity saveVerbosity = WriteOnce.Verbosity;

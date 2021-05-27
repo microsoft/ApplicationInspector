@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.Common;
 using Microsoft.CST.OAT;
 using Microsoft.CST.RecursiveExtractor;
 using NLog;
@@ -226,7 +227,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
             using var sr = new StreamReader(fileEntry.Content);
-            return AnalyzeFile(sr.ReadToEnd(), fileEntry, languageInfo, tagsToIgnore, numLinesContext);
+            var contents = string.Empty;
+            try
+            {
+                contents = sr.ReadToEnd();
+            }
+            catch(Exception e)
+            {
+                WriteOnce.SafeLog($"Failed to analyze file {fileEntry.FullPath}. {e.GetType()}:{e.Message}. ({e.StackTrace})", LogLevel.Debug);
+            }
+            if (!string.IsNullOrEmpty(contents))
+            {
+                return AnalyzeFile(contents, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
+            }
+            return new List<MatchRecord>();
         }
 
         public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)

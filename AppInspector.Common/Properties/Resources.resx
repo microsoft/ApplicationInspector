@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ANALYZE_COMPRESSED_ERROR" xml:space="preserve">
+    <value>Problem while decompressing {0}: Unzip and try running on uncompressed files</value>
+  </data>
+  <data name="ANALYZE_COMPRESSED_FILESIZE_WARN" xml:space="preserve">
+    <value>Decompressing may take longer for larger files</value>
+  </data>
+  <data name="ANALYZE_COMPRESSED_FILETYPE" xml:space="preserve">
+    <value>compressed</value>
+  </data>
+  <data name="ANALYZE_COMPRESSED_PROCESSING" xml:space="preserve">
+    <value>Decompressing files...</value>
+  </data>
+  <data name="ANALYZE_EXCLUDED_TYPE_SKIPPED" xml:space="preserve">
+    <value>File skipped: Name or path in exclude list. {0}</value>
+  </data>
+  <data name="ANALYZE_EXCLUDED_BINARY" xml:space="preserve">
+    <value>File skipped: First 100 bytes appear to indicate this is a binary file. {0}</value>
+  </data>
+  <data name="ANALYZE_FILESIZE_SKIPPED" xml:space="preserve">
+    <value>File skipped: File size is too large.  {0}</value>
+  </data>
+  <data name="ANALYZE_FILES_PROCESSED_PCNT" xml:space="preserve">
+    <value>{0}% source files processed</value>
+  </data>
+  <data name="ANALYZE_FILE_TYPE_OPEN" xml:space="preserve">
+    <value>Unable to determine file type.  File open error for {0}</value>
+  </data>
+  <data name="ANALYZE_HTML_EXTENSION" xml:space="preserve">
+    <value>The output file does not have an html or htm extension and may not open properly in your browser</value>
+  </data>
+  <data name="ANALYZE_LANGUAGE_NOTFOUND" xml:space="preserve">
+    <value>File skipped: Language not found for file {0}</value>
+  </data>
+  <data name="ANALYZE_NODUPLICATES_HTML_FORMAT" xml:space="preserve">
+    <value>Allow duplicate matches argument not supported for html output format.  Select a different output format (text/json) or remove the argument.</value>
+  </data>
+  <data name="ANALYZE_NOPATTERNS" xml:space="preserve">
+    <value>No pattern matches were detected for files in source path</value>
+  </data>
+  <data name="ANALYZE_NOSUPPORTED_FILETYPES" xml:space="preserve">
+    <value>No file types found in source path that are supported</value>
+  </data>
+  <data name="ANALYZE_REPORTSIZE_WARN" xml:space="preserve">
+    <value>The output.html file size is large and may render slowly.  Consider running using alternate output format options as needed.</value>
+  </data>
+  <data name="ANALYZE_SIMPLETAGS_HTML_FORMAT" xml:space="preserve">
+    <value>Simple tags only argument not supported for html output format.  Select a different output format or remove the argument</value>
+  </data>
+  <data name="ANALYZE_UNCOMPRESSED_FILETYPE" xml:space="preserve">
+    <value>uncompressed</value>
+  </data>
+  <data name="ANALYZE_UNSUPPORTED_COMPR_TYPE" xml:space="preserve">
+    <value>unsupported</value>
+  </data>
+  <data name="BROWSER_ENVIRONMENT_VAR" xml:space="preserve">
+    <value>Unable to launch output.html automatically.  Set the BROWSER environment variable to your desired browser and try again or launch your browser and navigate to the file to view the report file manually.</value>
+  </data>
+  <data name="BROWSER_START_FAIL" xml:space="preserve">
+    <value>Unable to launch output.html in default browser.  Launch your browser manually to view output.html report file</value>
+  </data>
+  <data name="BROWSER_START_SUCCESS" xml:space="preserve">
+    <value>Opening default browser to output.html report</value>
+  </data>
+  <data name="CMD_COMPLETED" xml:space="preserve">
+    <value>{0} command completed</value>
+  </data>
+  <data name="CMD_CRITICAL_FILE_ERR" xml:space="preserve">
+    <value>Critical error processing file {0}</value>
+  </data>
+  <data name="CMD_INVALID_ARG_VALUE" xml:space="preserve">
+    <value>Invalid {0} argument value</value>
+  </data>
+  <data name="CMD_INVALID_FILE_OR_DIR" xml:space="preserve">
+    <value>Invalid file or directory {0}</value>
+  </data>
+  <data name="CMD_INVALID_LOG_PATH" xml:space="preserve">
+    <value>The requested log file {0}) exist but is not recognized as an application log. Provide a different value or delete the file and try again.</value>
+  </data>
+  <data name="CMD_INVALID_RULE_PATH" xml:space="preserve">
+    <value>Invalid rule path {0}</value>
+  </data>
+  <data name="CMD_NORULES_SPECIFIED" xml:space="preserve">
+    <value>No rules specified.  At least one valid rules path required</value>
+  </data>
+  <data name="CMD_NO_OUTPUT" xml:space="preserve">
+    <value>No output specified.  Raise the console versosity or provide an output file argument.</value>
+  </data>
+  <data name="CMD_PREPARING_REPORT" xml:space="preserve">
+    <value>Preparing report</value>
+  </data>
+  <data name="CMD_REMINDER_CHECK_LOG" xml:space="preserve">
+    <value>Additional details may be found in log file at {0}</value>
+  </data>
+  <data name="CMD_REPORT_DONE" xml:space="preserve">
+    <value>{0} report completed</value>
+  </data>
+  <data name="CMD_REQUIRED_ARG_MISSING" xml:space="preserve">
+    <value>Required {0} argument missing</value>
+  </data>
+  <data name="CMD_RUNNING" xml:space="preserve">
+    <value>{0} command running</value>
+  </data>
+  <data name="CMD_VIEW_OUTPUT_FILE" xml:space="preserve">
+    <value>See output file at {0}</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="comments" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\RulesEngine\Resources\comments.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="languages" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\RulesEngine\Resources\languages.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="PACK_MISSING_OUTPUT_ARG" xml:space="preserve">
+    <value>Output file not specified for custom rules pack command</value>
+  </data>
+  <data name="PACK_RULES_NO_CLI_DEFAULT" xml:space="preserve">
+    <value>Pack default rules request from outside CLI call not supported.  Use custom rules option.</value>
+  </data>
+  <data name="PACK_RULES_NO_DEFAULT" xml:space="preserve">
+    <value>Unable to locate local default rules folder.  This command is intended to be run as part of the source code build operation only.  Use the custom rules option instead.</value>
+  </data>
+  <data name="RUNTIME_ERROR_NAMED" xml:space="preserve">
+    <value>Additional details may be found in log file at {0}</value>
+  </data>
+  <data name="RUNTIME_ERROR_PRELOG" xml:space="preserve">
+    <value>No additional information or log available</value>
+  </data>
+  <data name="RUNTIME_ERROR_UNNAMED" xml:space="preserve">
+    <value>Additional details may be found in log file at {0}</value>
+  </data>
+  <data name="TAGDIFF_NO_TAGS_FOUND" xml:space="preserve">
+    <value>No tags found in one or both source paths</value>
+  </data>
+  <data name="TAGDIFF_RESULTS_DIFFER" xml:space="preserve">
+    <value>Files contain tag differences: </value>
+  </data>
+  <data name="TAGDIFF_RESULTS_FAIL" xml:space="preserve">
+    <value>failed</value>
+  </data>
+  <data name="TAGDIFF_RESULTS_GAP" xml:space="preserve">
+    <value>Tags in {0} not detected in {1}:</value>
+  </data>
+  <data name="TAGDIFF_RESULTS_SUCCESS" xml:space="preserve">
+    <value>succeeded</value>
+  </data>
+  <data name="TAGDIFF_RESULTS_TEST_TYPE" xml:space="preserve">
+    <value>Test for all [{0}] in source</value>
+  </data>
+  <data name="TAGDIFF_SAME_FILE_ARG" xml:space="preserve">
+    <value>Same file passed in for both sources. Test terminated</value>
+  </data>
+  <data name="TAGTEST_RESULTS_FAIL" xml:space="preserve">
+    <value>failed</value>
+  </data>
+  <data name="TAGTEST_RESULTS_NONE" xml:space="preserve">
+    <value>none</value>
+  </data>
+  <data name="TAGTEST_RESULTS_SUCCESS" xml:space="preserve">
+    <value>succeeded</value>
+  </data>
+  <data name="TAGTEST_RESULTS_TAGS_FOUND" xml:space="preserve">
+    <value>Found {0} in source</value>
+  </data>
+  <data name="TAGTEST_RESULTS_TAGS_MISSING" xml:space="preserve">
+    <value>Missing {0} in source</value>
+  </data>
+  <data name="TAGTEST_RESULTS_TEST_TYPE" xml:space="preserve">
+    <value>Tagtest for [{0}]: </value>
+  </data>
+  <data name="VERIFY_RULES_DUPLICATEID_FAIL" xml:space="preserve">
+    <value>Rule {0} failed from dupicate rule id specified</value>
+  </data>
+  <data name="VERIFY_RULES_LANGUAGE_FAIL" xml:space="preserve">
+    <value>Rule {0} failed from unrecognized language specified</value>
+  </data>
+  <data name="VERIFY_RULES_NO_CLI_DEFAULT" xml:space="preserve">
+    <value>Verify default rules request from outside CLI call not supported.  Use custom rules option.</value>
+  </data>
+  <data name="VERIFY_RULES_NULLID_FAIL" xml:space="preserve">
+    <value>Rule {0} failed from missing rule id</value>
+  </data>
+  <data name="VERIFY_RULES_REGEX_FAIL" xml:space="preserve">
+    <value>Rule {0} failed from invalid regex '{1}' with {2}</value>
+  </data>
+  <data name="VERIFY_RULES_RESULTS_FAIL" xml:space="preserve">
+    <value>Verify rules failed.  See log file for details</value>
+  </data>
+  <data name="VERIFY_RULES_RESULTS_SUCCESS" xml:space="preserve">
+    <value>Verify rules succeeded</value>
+  </data>
+  <data name="VERIFY_RULE_LOADFILE_FAILED" xml:space="preserve">
+    <value>Rule parsing failed for file {0}</value>
+  </data>
+</root>

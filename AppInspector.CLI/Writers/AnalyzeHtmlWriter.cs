@@ -3,6 +3,7 @@
 
 using DotLiquid;
 using DotLiquid.FileSystems;
+using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Newtonsoft.Json;

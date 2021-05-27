@@ -1,278 +1,270 @@
-﻿<div class="section">
-    <h2>Report Summary</h2>
+﻿<div>
+  <div class="section">
+      <h2>Report Summary</h2>
+  </div>
 
-    <div class="small font-weight-bold">
-        View as
-        &nbsp; &nbsp;
-        <a class="btn-link disabled font-weight-bold" href="#">HTML</a>|
-        <a href="output.json">JSON</a>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row">
-        <div class="col-2">
-            <ul class="nav flex-column">
-				      <li class="nav-item">
-					      <a class="nav-link active" href="#project_info" role="tab" data-toggle="tab">Project Info</a>
-				      </li>
-				      <li class="nav-item">
-					      <a class="nav-link" href="#scan_metadata" role="tab" data-toggle="tab">Metadata</a>
-				      </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#sorted_uniquetags" role="tab" data-toggle="tab">All Tags</a>
-              </li>
+  <div class="container">
+      <div class="row">
+          <div class="col-2">
+              <ul class="nav flex-column">
+				        <li class="nav-item">
+					        <a class="nav-link active" href="#project_info" role="tab" data-toggle="tab">Project Info</a>
+				        </li>
+				        <li class="nav-item">
+					        <a class="nav-link" href="#scan_metadata" role="tab" data-toggle="tab">Metadata</a>
+				        </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#select_tagcounters" role="tab" data-toggle="tab">Tag Counters</a>
-             </li>
-			      </ul>
-        </div>
-        <div class="col">
-          <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active show" id="project_info">
-              <h4>Project Info</h4>
-              <div class="container">
-                <div class="row">
-                  <div class="col">
-                    <div id="s_pi_analysis_chart"></div>
-                  </div>
-                  <div class="col">
-                    <div id="s_pi_patterns_chart"></div>
-                  </div>
-                  <div class="col">
-                    <div id="s_pi_languages_chart"></div>
-                  </div>
-                </div>
-              </div>
-
-              <table class="table table-sm">
-                <tr>
-                  <td class="font-weight-bold">Name</td>
-                  <td id="s_pi_application_name"></td>
-                </tr>
-                <tr>
-                  <td class="font-weight-bold">Version</td>
-                  <td id="s_pi_version"></td>
-                </tr>
-                <tr>
-                  <td class="font-weight-bold">Description</td>
-                  <td id="s_pi_description"></td>
-                </tr>
-                <tr>
-                  <td class="font-weight-bold">Folder</td>
-                  <td id="s_pi_source_path"></td>
-                </tr>
-                <tr>
-                  <td class="font-weight-bold">Author(s)</td>
-                  <td id="s_pi_author"></td>
-                </tr>
-                <tr>
-                  <td class="font-weight-bold">Analyzed</td>
-                  <td id="s_pi_date_scanned"></td>
-                </tr>
-              </table>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="scan_metadata">
-              <h4>Metadata</h4>
-              <div>
-                Application targets or packaging detected.
-              </div>
-              <br>
-              <br>
-              <table class="table table-condensed" style="width:600px;">
-                <tr>
-                  <td class="font-weight-bold" style="width:300px;">Characteristic</td>
-                  <td class="font-weight-bold">Detected Value(s)</td>
-                </tr>
-                <tr>
-                  <td style="width:300px;">Application Types</td>
-                  <td>{{ apptypes | join:", " }}</td>
-                </tr>
-                <tr>
-                  <td style="width:300px;">Package Types</td>
-                  <td>{{ packagetypes | join:", " }}</td>
-                </tr>
-                <tr>
-                  <td style="width:300px;">Output Types</td>
-                  <td>{{ outputs | join:", " }}</td>
-                </tr>
-                <tr>
-                  <td style="width:300px;">File Types</td>
-                  <td>{% for item in filetypes -%}<a href="https://fileinfo.com/extension/{{item}}" target="_blank" rel="noopener">{{item}} </a> {% endfor -%}</td>
-                </tr>
-                <tr>
-                  <td style="width:300px;">OS Targets</td>
-                  <td>{{ ostargets | join:", " }}</td>
-                </tr>
-                <tr>
-                  <td cstyle="width:300px;">CPU Targets</td>
-                  <td>{{ cputargets | join:", " }}</td>
-                </tr>
-              </table>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="sorted_uniquetags">
-              <h4>Tags List View</h4>
-              <div>
-                A list view of the unique tags found and matching rule. Select a tag on the left then select
-                the rule name link shown on the right to view the source code location of the match.  See the Features menu
-                for an alternative grouped illustration of the major features detected.
-              </div>
-              <br>
-              <br>
-              <div class="section">
-                <div class="container-fluid">
+                  <a class="nav-link" href="#sorted_uniquetags" role="tab" data-toggle="tab">All Tags</a>
+                </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#select_tagcounters" role="tab" data-toggle="tab">Tag Counters</a>
+               </li>
+			        </ul>
+          </div>
+          <div class="col">
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active show" id="project_info">
+                <h4>Project Info</h4>
+                <div class="container">
                   <div class="row">
                     <div class="col">
-                      <h4>Unique Tags Detected ({{tagGrpAllTagsByName.size}})</h4>
-                      <div id="divtag" style="border:none;display:normal">                     
-                          <div>
-                            <table class="table table-condensed" style="border:none; width:400px;">
-                              <tr>
-                                <td>
-                                  <a href="#" onclick="SortbyTags();">
-                                    <strong>Rule Tag</strong>
-                                  </a>
-                                </td>
-                                <td>
-                                  <a href="#" onclick="SortbyConfidence();">
-                                    <strong>Confidence</strong>
-                                  </a>
-                                </td>
-                                <td>
-                                  <a href="#" onclick="SortbySeverity();">
-                                    <strong>Importance</strong>
-                                  </a>
-                                </td>
-                              </tr>
-                              <tr></tr>
-                              {% for tag in tagGrpAllTagsByName -%}
-                              <tr>
-                                <td style="width:300px;">
-                                  <a href="#" class="feature_icon" data-target="{{ tag.tag }}">{{ tag.tag }}</a>
-                                </td>
-                                <td style="width:100px;text-align:center">{{ tag.confidence }}</td>
-                                <td>{{ tag.severity }}</td>
-                              </tr>
-                              {% endfor -%}
-                            </table>
-                          </div>
-                      </div>
-                      <div id="divconf" style="border:none;display:none">
-                        <div>
-                          <div>
-                            <table class="table table-condensed" style="border:none; width:400px;">
-                              <tr>
-                                <td>
-                                  <a href="#" onclick="SortbyTags();">
-                                    <strong>Rule Tag</strong>
-                                  </a>
-                                </td>
-                                <td>
-                                  <a href="#" onclick="SortbyConfidence();">
-                                    <strong>Confidence</strong>
-                                  </a>
-                                </td>
-                                <td>
-                                  <a href="#" onclick="SortbySeverity();">
-                                    <strong>Importance</strong>
-                                  </a>
-                                </td>
-                              </tr>
-                              {% for tag in tagGrpAllTagsByConfidence -%}
-                              <tr>
-                                <td style="width:300px;">
-                                  <a href="#" class="feature_icon" data-target="{{ tag.tag }}">{{ tag.tag }}</a>
-                                </td>
-                                <td style="width:100px;text-align:center">{{ tag.confidence }}</td>
-                                <td>{{ tag.severity }}</td>
-                              </tr>
-                              {% endfor -%}
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                      <div id="divsev" style="border:none;display:none">
-                        <div>
-                          <div>
-                            <table class="table table-condensed" style="border:none; width:400px;">
-                              <tr>
-                                <td>
-                                  <a href="#" onclick="SortbyTags();">
-                                    <strong>Rule Tag</strong>
-                                  </a>
-                                </td>
-                                <td>
-                                  <a href="#" onclick="SortbyConfidence();">
-                                    <strong>Confidence</strong>
-                                  </a>
-                                </td>
-                                <td>
-                                  <a href="#" onclick="SortbySeverity();">
-                                    <strong>Importance</strong>
-                                  </a>
-                                </td>
-                              </tr>
-                              {% for tag in tagGrpAllTagsBySeverity -%}
-                              <tr>
-                                <td style="width:300px;">
-                                  <a href="#" class="feature_icon" data-target="{{ tag.tag }}">{{ tag.tag }}</a>
-                                </td>
-                                <td style="width:100px;text-align:center">{{ tag.confidence }}</td>
-                                <td>{{ tag.severity }}</td>
-                              </tr>
-                              {% endfor -%}
-                            </table>
-                          </div>
-                        </div>
-                      </div>
+                      <div id="s_pi_analysis_chart"></div>
                     </div>
                     <div class="col">
-                      <h4>Associated Rules</h4>
-                      <div id="features">
-                        <table class="table table-sm table-hover">
-                          <thead>
-                            <tr>
-                              <th style="font-size:14px;line-height:39px;">
-                                Name<span style="font-size:11px;line-height:39px;">&nbsp;(click rule to view source excerpt)</span>
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr style="font-size:14px;line-height:39px;">
-                              <td>Hint: Select feature on left</td>
-                            </tr>
-                          </tbody>
-                        </table>
+                      <div id="s_pi_patterns_chart"></div>
+                    </div>
+                    <div class="col">
+                      <div id="s_pi_languages_chart"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <table class="table table-sm">
+                  <tr>
+                    <td class="font-weight-bold">Name</td>
+                    <td id="s_pi_application_name"></td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-bold">Version</td>
+                    <td id="s_pi_version"></td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-bold">Description</td>
+                    <td id="s_pi_description"></td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-bold">Folder</td>
+                    <td id="s_pi_source_path"></td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-bold">Author(s)</td>
+                    <td id="s_pi_author"></td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-bold">Analyzed</td>
+                    <td id="s_pi_date_scanned"></td>
+                  </tr>
+                </table>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="scan_metadata">
+                <h4>Metadata</h4>
+                <div>
+                  Application targets or packaging detected.
+                </div>
+                <br/>
+                <br/>
+                <table class="table table-condensed" style="width:600px;">
+                  <tr>
+                    <td class="font-weight-bold" style="width:300px;">Characteristic</td>
+                    <td class="font-weight-bold">Detected Value(s)</td>
+                  </tr>
+                  <tr>
+                    <td style="width:300px;">Application Types</td>
+                    <td>{{ apptypes | join:", " }}</td>
+                  </tr>
+                  <tr>
+                    <td style="width:300px;">Package Types</td>
+                    <td>{{ packagetypes | join:", " }}</td>
+                  </tr>
+                  <tr>
+                    <td style="width:300px;">Output Types</td>
+                    <td>{{ outputs | join:", " }}</td>
+                  </tr>
+                  <tr>
+                    <td style="width:300px;">File Types</td>
+                    <td>{% for item in filetypes -%}<a href="https://fileinfo.com/extension/{{item}}" target="_blank" rel="noopener">{{item}} </a> {% endfor -%}</td>
+                  </tr>
+                  <tr>
+                    <td style="width:300px;">OS Targets</td>
+                    <td>{{ ostargets | join:", " }}</td>
+                  </tr>
+                  <tr>
+                    <td cstyle="width:300px;">CPU Targets</td>
+                    <td>{{ cputargets | join:", " }}</td>
+                  </tr>
+                </table>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="sorted_uniquetags">
+                <h4>Tags List View</h4>
+                <div>
+                  A list view of the unique tags found and matching rule. Select a tag on the left then select
+                  the rule name link shown on the right to view the source code location of the match.  See the Features menu
+                  for an alternative grouped illustration of the major features detected.
+                </div>
+                <br/>
+                <br/>
+                <div class="section">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col">
+                        <h4>Unique Tags Detected ({{tagGrpAllTagsByName.size}})</h4>
+                        <div id="divtag" style="border:none;display:normal">                     
+                            <div>
+                              <table class="table table-condensed" style="border:none; width:400px;">
+                                <tr>
+                                  <td>
+                                    <a href="#" onclick="SortbyTags();">
+                                      <strong>Rule Tag</strong>
+                                    </a>
+                                  </td>
+                                  <td>
+                                    <a href="#" onclick="SortbyConfidence();">
+                                      <strong>Confidence</strong>
+                                    </a>
+                                  </td>
+                                  <td>
+                                    <a href="#" onclick="SortbySeverity();">
+                                      <strong>Importance</strong>
+                                    </a>
+                                  </td>
+                                </tr>
+                                <tr></tr>
+                                {% for tag in tagGrpAllTagsByName -%}
+                                <tr>
+                                  <td style="width:300px;">
+                                    <a href="#" class="feature_icon" data-target="{{ tag.tag }}">{{ tag.tag }}</a>
+                                  </td>
+                                  <td style="width:100px;text-align:center">{{ tag.confidence }}</td>
+                                  <td>{{ tag.severity }}</td>
+                                </tr>
+                                {% endfor -%}
+                              </table>
+                            </div>
+                        </div>
+                        <div id="divconf" style="border:none;display:none">
+                          <div>
+                            <div>
+                              <table class="table table-condensed" style="border:none; width:400px;">
+                                <tr>
+                                  <td>
+                                    <a href="#" onclick="SortbyTags();">
+                                      <strong>Rule Tag</strong>
+                                    </a>
+                                  </td>
+                                  <td>
+                                    <a href="#" onclick="SortbyConfidence();">
+                                      <strong>Confidence</strong>
+                                    </a>
+                                  </td>
+                                  <td>
+                                    <a href="#" onclick="SortbySeverity();">
+                                      <strong>Importance</strong>
+                                    </a>
+                                  </td>
+                                </tr>
+                                {% for tag in tagGrpAllTagsByConfidence -%}
+                                <tr>
+                                  <td style="width:300px;">
+                                    <a href="#" class="feature_icon" data-target="{{ tag.tag }}">{{ tag.tag }}</a>
+                                  </td>
+                                  <td style="width:100px;text-align:center">{{ tag.confidence }}</td>
+                                  <td>{{ tag.severity }}</td>
+                                </tr>
+                                {% endfor -%}
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                        <div id="divsev" style="border:none;display:none">
+                          <div>
+                            <div>
+                              <table class="table table-condensed" style="border:none; width:400px;">
+                                <tr>
+                                  <td>
+                                    <a href="#" onclick="SortbyTags();">
+                                      <strong>Rule Tag</strong>
+                                    </a>
+                                  </td>
+                                  <td>
+                                    <a href="#" onclick="SortbyConfidence();">
+                                      <strong>Confidence</strong>
+                                    </a>
+                                  </td>
+                                  <td>
+                                    <a href="#" onclick="SortbySeverity();">
+                                      <strong>Importance</strong>
+                                    </a>
+                                  </td>
+                                </tr>
+                                {% for tag in tagGrpAllTagsBySeverity -%}
+                                <tr>
+                                  <td style="width:300px;">
+                                    <a href="#" class="feature_icon" data-target="{{ tag.tag }}">{{ tag.tag }}</a>
+                                  </td>
+                                  <td style="width:100px;text-align:center">{{ tag.confidence }}</td>
+                                  <td>{{ tag.severity }}</td>
+                                </tr>
+                                {% endfor -%}
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <h4>Associated Rules</h4>
+                        <div id="features">
+                          <table class="table table-sm table-hover">
+                            <thead>
+                              <tr>
+                                <th style="font-size:14px;line-height:39px;">
+                                  Name<span style="font-size:11px;line-height:39px;">&nbsp;(click rule to view source excerpt)</span>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr style="font-size:14px;line-height:39px;">
+                                <td>Hint: Select feature on left</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="select_tagcounters">
-              <h4>Tag Counters</h4>
-              <div>
-                Tags found that are identified as Metric related matches and therefore counted but not included in detailed results.
+              <div role="tabpanel" class="tab-pane" id="select_tagcounters">
+                <h4>Tag Counters</h4>
+                <div>
+                  Tags found that are identified as Metric related matches and therefore counted but not included in detailed results.
+                </div>
+                <br/>
+                <br/>
+                <table class="table table-condensed" style="width:600px;">
+                  <tr>
+                    <td class="font-weight-bold" style="font-size:16px;text-align:left;">Rule Tag</td>
+                    <td class="font-weight-bold" style="font-size:16px;text-align:center;">Count</td>
+                  </tr>
+                  {% for counter in tagcounters -%}
+                  <tr>
+                    <td style="font-size:16px;text-align:left;">{{counter.tag}}</td>
+                    <td style="font-size:16px;text-align:center;">{{counter.count}}</td>
+                  </tr>
+                  {% endfor -%}
+                </table>
               </div>
-              <br>
-              <br>
-              <table class="table table-condensed" style="width:600px;">
-                <tr>
-                  <td class="font-weight-bold" style="font-size:16px;text-align:left;">Rule Tag</td>
-                  <td class="font-weight-bold" style="font-size:16px;text-align:center;">Count</td>
-                </tr>
-                {% for counter in tagcounters -%}
-                <tr>
-                  <td style="font-size:16px;text-align:left;">{{counter.tag}}</td>
-                  <td style="font-size:16px;text-align:center;">{{counter.count}}</td>
-                </tr>
-                {% endfor -%}
-              </table>
-            </div>
-          </div> 
-        </div>
-    </div>
+            </div> 
+          </div>
+      </div>
+  </div>
 </div>
-
-
-

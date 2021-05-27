@@ -16,13 +16,14 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInspector.Common;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
     /// <summary>
     /// Options specific to analyze operation not to be confused with CLIAnalyzeCmdOptions which include CLI only args
     /// </summary>
-    public class AnalyzeOptions : CommandOptions
+    public class AnalyzeOptions : LogOptions
     {
         public IEnumerable<string> SourcePath { get; set; } = Array.Empty<string>();
         public string? CustomRulesPath { get; set; }
@@ -48,7 +49,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             Success = 0,
             NoMatches = 1,
-            CriticalError = Utils.ExitCode.CriticalError, //ensure common value for final exit log mention
+            CriticalError = Common.Utils.ExitCode.CriticalError, //ensure common value for final exit log mention
             Canceled = 3,
             TimedOut = 4
         }
@@ -103,7 +104,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                _options.Log ??= Utils.SetupLogging(_options);
+                _options.Log ??= Common.Utils.SetupLogging(_options);
                 WriteOnce.Log ??= _options.Log;
 
                 ConfigureConsoleOutput();
@@ -129,7 +130,7 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("AnalyzeCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
-            if (!Utils.CLIExecutionContext)
+            if (!Common.Utils.CLIExecutionContext)
             {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
             }
@@ -227,7 +228,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!_options.IgnoreDefaultRules)
             {
-                rulesSet = Utils.GetDefaultRuleSet(_options.Log);
+                rulesSet = RuleSetUtils.GetDefaultRuleSet(_options.Log);
             }
 
             if (!string.IsNullOrEmpty(_options.CustomRulesPath))
@@ -312,7 +313,17 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 try
                 {
-                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken, MaxDegreeOfParallelism = Environment.ProcessorCount * 3 / 2 }, entry => ProcessAndAddToMetadata(entry));
+                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken, MaxDegreeOfParallelism = Environment.ProcessorCount * 3 / 2 }, entry =>
+                    {
+                        try
+                        {
+                            ProcessAndAddToMetadata(entry);
+                        }
+                        catch(Exception e)
+                        {
+                            throw;
+                        }
+                    });
                 }
                 catch (OperationCanceledException)
                 {
@@ -379,15 +390,23 @@ namespace Microsoft.ApplicationInspector.Commands
                                         results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
                                     }
                                 }, cts.Token);
-                                if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
+                                try
                                 {
-                                    WriteOnce.Error($"{file.FullPath} timed out.");
-                                    fileRecord.Status = ScanState.TimedOut;
-                                    cts.Cancel();
+                                    if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
+                                    {
+                                        WriteOnce.Error($"{file.FullPath} timed out.");
+                                        fileRecord.Status = ScanState.TimedOut;
+                                        cts.Cancel();
+                                    }
+                                    else
+                                    {
+                                        fileRecord.Status = ScanState.Analyzed;
+                                    }
                                 }
-                                else
+                                catch(Exception e)
                                 {
-                                    fileRecord.Status = ScanState.Analyzed;
+                                    WriteOnce.SafeLog($"Failed to analyze file {file.FullPath}. {e.GetType()}:{e.Message}. ({e.StackTrace})", LogLevel.Debug);
+                                    fileRecord.Status = ScanState.Error;
                                 }
                             }
                             else
@@ -544,7 +563,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 if (!_fileExclusionList.Any(x => x.IsMatch(srcFile)))
                 {
-                    foreach (var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions }))
+                    foreach (var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1 }))
                     {
                         yield return entry;
                     }
@@ -569,7 +588,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 if (!_fileExclusionList.Any(x => x.IsMatch(srcFile)))
                 {
-                    await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions }))
+                    await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1 }))
                     {
                         yield return entry;
                     }
@@ -631,7 +650,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             AnalyzeResult analyzeResult = new AnalyzeResult()
             {
-                AppVersion = Utils.GetVersionString()
+                AppVersion = Common.Utils.GetVersionString()
             };
 
             var exitCode = await PopulateRecordsAsync(cancellationToken);
@@ -680,7 +699,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             AnalyzeResult analyzeResult = new AnalyzeResult()
             {
-                AppVersion = Utils.GetVersionString()
+                AppVersion = Common.Utils.GetVersionString()
             };
 
             var timedOut = false;

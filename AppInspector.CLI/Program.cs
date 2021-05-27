@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInspector.Common;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
@@ -22,9 +23,9 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <param name="args"></param>
         public static int Main(string[] args)
         {
-            int finalResult = (int)Utils.ExitCode.CriticalError;
+            int finalResult = (int)Common.Utils.ExitCode.CriticalError;
 
-            Utils.CLIExecutionContext = true;//set manually at start from CLI
+            Common.Utils.CLIExecutionContext = true;//set manually at start from CLI
 
             WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Medium;
             try
@@ -57,11 +58,11 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             //final exit msg to review log
-            if (finalResult == (int)Utils.ExitCode.CriticalError)
+            if (finalResult == (int)Common.Utils.ExitCode.CriticalError)
             {
-                if (!string.IsNullOrEmpty(Utils.LogFilePath))
+                if (!string.IsNullOrEmpty(Common.Utils.LogFilePath))
                 {
-                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.RUNTIME_ERROR_UNNAMED, Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
+                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.RUNTIME_ERROR_UNNAMED, Common.Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
                 }
                 else
                 {
@@ -70,12 +71,12 @@ namespace Microsoft.ApplicationInspector.CLI
             }
             else
             {
-                if (Utils.LogFilePath is not null && File.Exists(Utils.LogFilePath))
+                if (Common.Utils.LogFilePath is not null && File.Exists(Common.Utils.LogFilePath))
                 {
-                    var fileInfo = new FileInfo(Utils.LogFilePath);
+                    var fileInfo = new FileInfo(Common.Utils.LogFilePath);
                     if (fileInfo.Length > 0)
                     {
-                        WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Utils.LogFilePath ?? Utils.GetPath(Utils.AppPath.defaultLog)), true, WriteOnce.ConsoleVerbosity.Low, false);
+                        WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Common.Utils.LogFilePath ?? Common.Utils.GetPath(Common.Utils.AppPath.defaultLog)), true, WriteOnce.ConsoleVerbosity.Low, false);
                     }
                 }
             }
@@ -89,7 +90,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int VerifyOutputArgsRun(CLITagDiffCmdOptions options)
         {
-            Logger logger = Utils.SetupLogging(options, true);
+            Logger logger = Common.Utils.SetupLogging(options, true);
             WriteOnce.Log = logger;
             options.Log = logger;
 
@@ -98,7 +99,7 @@ namespace Microsoft.ApplicationInspector.CLI
         }
         private static int VerifyOutputArgsRun(CLIExportTagsCmdOptions options)
         {
-            Logger logger = Utils.SetupLogging(options, true);
+            Logger logger = Common.Utils.SetupLogging(options, true);
             WriteOnce.Log = logger;
             options.Log = logger;
 
@@ -108,7 +109,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int VerifyOutputArgsRun(CLIVerifyRulesCmdOptions options)
         {
-            Logger logger = Utils.SetupLogging(options, true);
+            Logger logger = Common.Utils.SetupLogging(options, true);
             WriteOnce.Log = logger;
             options.Log = logger;
 
@@ -118,7 +119,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int VerifyOutputArgsRun(CLIPackRulesCmdOptions options)
         {
-            Logger logger = Utils.SetupLogging(options, true);
+            Logger logger = Common.Utils.SetupLogging(options, true);
             WriteOnce.Log = logger;
             options.Log = logger;
 
@@ -127,7 +128,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteOnce.Info("output file argument ignored for -d option");
             }
 
-            options.OutputFilePath = options.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesPackedFile) : options.OutputFilePath;
+            options.OutputFilePath = options.RepackDefaultRules ? Common.Utils.GetPath(Common.Utils.AppPath.defaultRulesPackedFile) : options.OutputFilePath;
             if (string.IsNullOrEmpty(options.OutputFilePath))
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.PACK_MISSING_OUTPUT_ARG));
@@ -143,7 +144,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int VerifyOutputArgsRun(CLIAnalyzeCmdOptions options)
         {
-            Logger logger = Utils.SetupLogging(options, true);
+            Logger logger = Common.Utils.SetupLogging(options, true);
             WriteOnce.Log = logger;
             options.Log = logger;
 
