@@ -106,6 +106,12 @@ namespace Microsoft.ApplicationInspector.Commands
         public int FilesAffected { get { return Files.Count(x => x.Status == ScanState.Affected); } }
 
         /// <summary>
+        /// Total files with at least one result
+        /// </summary>
+        [JsonProperty(PropertyName = "filesErrored")]
+        public int FileErrored { get { return Files.Count(x => x.Status == ScanState.Error); } }
+
+        /// <summary>
         /// Total matches with supplied argument settings
         /// </summary>
         [JsonProperty(PropertyName = "totalMatchesCount")]

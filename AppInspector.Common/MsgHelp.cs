@@ -1,10 +1,10 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.Commands.Properties;
+using Microsoft.ApplicationInspector.Common.Properties;
 using System;
 
-namespace Microsoft.ApplicationInspector.Commands
+namespace Microsoft.ApplicationInspector.Common
 {
     public static class MsgHelp
     {

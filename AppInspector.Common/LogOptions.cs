@@ -4,12 +4,12 @@
 using CommandLine;
 using NLog;
 
-namespace Microsoft.ApplicationInspector.Commands
+namespace Microsoft.ApplicationInspector.Common
 {
     /// <summary>
     /// base for common options across all commands
     /// </summary>
-    public class CommandOptions
+    public class LogOptions
     {
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
         public string ConsoleVerbosityLevel { get; set; } = "medium";

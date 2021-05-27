@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.OAT;
 using Newtonsoft.Json;
@@ -11,7 +12,7 @@ using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
-    public class VerifyRulesOptions : CommandOptions
+    public class VerifyRulesOptions : LogOptions
     {
         public bool VerifyDefaultRules { get; set; }
         public string? CustomRulesPath { get; set; }
@@ -140,7 +141,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzer.SetOperation(new WithinOperation(analyzer));
                 analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
                 analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
-                foreach (var rule in Utils.GetDefaultRuleSet().GetOatRules())
+                foreach (var rule in RuleSetUtils.GetDefaultRuleSet().GetOatRules())
                 {
                     stati.Add(new RuleStatus()
                     {

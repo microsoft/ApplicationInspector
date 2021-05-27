@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.Common;
 using Microsoft.CST.OAT;
 using Microsoft.CST.RecursiveExtractor;
 using NLog;
@@ -124,13 +125,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public List<MatchRecord> AnalyzeFile(string contents, FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
-            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
-            var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
-            rules = rules.Union(GetUniversalRules());
-            if (tagsToIgnore?.Any() == true)
-            {
-                rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
-            }
+            var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
             List<MatchRecord> resultsList = new();
 
             TextContainer textContainer = new(contents, languageInfo.Name);
@@ -223,22 +218,40 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList;
         }
 
-        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
-        {
-            using var sr = new StreamReader(fileEntry.Content);
-            return AnalyzeFile(sr.ReadToEnd(), fileEntry, languageInfo, tagsToIgnore, numLinesContext);
-        }
-
-        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
+        private IEnumerable<ConvertedOatRule> GetRulesForFile(LanguageInfo languageInfo, FileEntry fileEntry, IEnumerable<string>? tagsToIgnore)
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
             rules = rules.Union(GetUniversalRules());
-
             if (tagsToIgnore?.Any() == true)
             {
-                rules = rules.Where(x => x.Tags.Any(y => !tagsToIgnore.Contains(y)));
+                rules = rules.Where(x => x.AppInspectorRule?.Tags?.Any(y => !tagsToIgnore.Contains(y)) ?? false);
             }
+            return rules;
+        }
+
+        public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
+        {
+            using var sr = new StreamReader(fileEntry.Content);
+            var contents = string.Empty;
+            try
+            {
+                contents = sr.ReadToEnd();
+            }
+            catch(Exception e)
+            {
+                WriteOnce.SafeLog($"Failed to analyze file {fileEntry.FullPath}. {e.GetType()}:{e.Message}. ({e.StackTrace})", LogLevel.Debug);
+            }
+            if (!string.IsNullOrEmpty(contents))
+            {
+                return AnalyzeFile(contents, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
+            }
+            return new List<MatchRecord>();
+        }
+
+        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
+        {
+            var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
 
             List<MatchRecord> resultsList = new();
 
@@ -362,7 +375,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(input);
 
-            if (EnableCache && filteredRules.Any())
+            if (EnableCache)
             {
                 _languageRulesCache.TryAdd(input, filteredRules);
             }
@@ -407,7 +420,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByFilename(input);
 
-            if (EnableCache && filteredRules.Any())
+            if (EnableCache)
             {
                 _fileRulesCache.TryAdd(input, filteredRules);
             }
@@ -454,8 +467,19 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             var excerptStartLine = Math.Max(0, startLineNumber - context);
             var excerptEndLine = Math.Min(text.LineEnds.Count - 1, startLineNumber + context);
-
-            return text.FullContent[text.LineStarts[excerptStartLine]..(text.LineEnds[excerptEndLine]+1)];
+            var startIndex = text.LineStarts[excerptStartLine];
+            var endIndex = text.LineEnds[excerptEndLine] + 1;
+            var maxCharacterContext = context * 100;
+            // Only gather 100*lines context characters to avoid gathering super long lines
+            if (text.LineStarts[startLineNumber] - startIndex > maxCharacterContext)
+            {
+                startIndex = Math.Max(0, startIndex - maxCharacterContext);
+            }
+            if (endIndex - text.LineEnds[startLineNumber] > maxCharacterContext)
+            {
+                endIndex = Math.Min(text.FullContent.Length - 1, endIndex + maxCharacterContext);
+            }
+            return text.FullContent[startIndex..endIndex];
         }
 
         #endregion Private Methods

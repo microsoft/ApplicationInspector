@@ -8,10 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.ApplicationInspector.Common;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
-    public class PackRulesOptions : CommandOptions
+    public class PackRulesOptions : LogOptions
     {
         public bool RepackDefaultRules { get; set; }
         public string? CustomRulesPath { get; set; }
@@ -24,7 +25,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             Success = 0,
             Error = 1,
-            CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
+            CriticalError = Common.Utils.ExitCode.CriticalError //ensure common value for final exit log mention
         }
 
         [JsonProperty(Order = 2)]
@@ -52,7 +53,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                _options.Log ??= Utils.SetupLogging(_options);
+                _options.Log ??= Common.Utils.SetupLogging(_options);
                 WriteOnce.Log ??= _options.Log;
 
                 ConfigureConsoleOutput();
@@ -76,7 +77,7 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("PackRulesCommand::ConfigureConsoleOutput", LogLevel.Trace);
 
             //Set console verbosity based on run context (none for DLL use) and caller arguments
-            if (!Utils.CLIExecutionContext)
+            if (!Common.Utils.CLIExecutionContext)
             {
                 WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
             }
@@ -98,7 +99,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             WriteOnce.SafeLog("PackRulesCommand::ConfigRules", LogLevel.Trace);
 
-            if (_options.RepackDefaultRules && !Utils.CLIExecutionContext)
+            if (_options.RepackDefaultRules && !Common.Utils.CLIExecutionContext)
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NO_CLI_DEFAULT));
             }
@@ -106,12 +107,12 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
-            else if (_options.RepackDefaultRules && !Directory.Exists(Utils.GetPath(Utils.AppPath.defaultRulesSrc)))
+            else if (_options.RepackDefaultRules && !Directory.Exists(Common.Utils.GetPath(Common.Utils.AppPath.defaultRulesSrc)))
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.PACK_RULES_NO_DEFAULT));
             }
 
-            _rules_path = _options.RepackDefaultRules ? Utils.GetPath(Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
+            _rules_path = _options.RepackDefaultRules ? Common.Utils.GetPath(Common.Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
         }
 
         #endregion configure
@@ -125,7 +126,7 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("PackRules::Run", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Pack Rules"));
 
-            if (!Utils.CLIExecutionContext)
+            if (!Common.Utils.CLIExecutionContext)
             { //requires output format and filepath only supported via CLI use
                 WriteOnce.Error("Command not supported for DLL calls");
                 throw new Exception("Command not supported for DLL calls");
@@ -133,7 +134,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             PackRulesResult packRulesResult = new PackRulesResult()
             {
-                AppVersion = Utils.GetVersionString()
+                AppVersion = Common.Utils.GetVersionString()
             };
 
             try

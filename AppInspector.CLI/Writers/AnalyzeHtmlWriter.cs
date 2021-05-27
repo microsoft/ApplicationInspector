@@ -3,6 +3,7 @@
 
 using DotLiquid;
 using DotLiquid.FileSystems;
+using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Newtonsoft.Json;
@@ -46,7 +47,6 @@ namespace Microsoft.ApplicationInspector.CLI
             _appMetaData = _analyzeResult.Metadata;
 
             PopulateTagGroups();
-            WriteJsonResult();//dep link from html content
             WriteHtmlResult();
         }
 
@@ -99,27 +99,6 @@ namespace Microsoft.ApplicationInspector.CLI
             var htmlResult = htmlTemplate.Render(hashData);
             TextWriter?.Write(htmlResult);
             FlushAndClose();
-        }
-
-        private void WriteJsonResult()
-        {
-            //writes out json report for convenient link from report summary page(s)
-            CLIAnalyzeCmdOptions jsonOptions = new CLIAnalyzeCmdOptions()
-            {
-                OutputFileFormat = "json",
-                OutputFilePath = "output.json"
-            };
-
-            //quiet normal write noise for json writter to just gen the file; then restore
-            WriteOnce.ConsoleVerbosity saveVerbosity = WriteOnce.Verbosity;
-            WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
-            CommandResultsWriter? resultsWriter = WriterFactory.GetWriter(jsonOptions);
-            AnalyzeJsonWriter? jsonWriter = resultsWriter != null ? (AnalyzeJsonWriter)resultsWriter : null;
-            if (_analyzeResult != null)
-            {
-                jsonWriter?.WriteResults(_analyzeResult, jsonOptions);
-            }
-            WriteOnce.Verbosity = saveVerbosity;
         }
 
         private void RegisterSafeType(Type type)

@@ -11,7 +11,7 @@
     <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.194" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.203" />
   </ItemGroup>
 
   <ItemGroup>

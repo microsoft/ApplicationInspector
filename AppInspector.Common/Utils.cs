@@ -1,18 +1,12 @@
-﻿// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License.
-
-using Microsoft.ApplicationInspector.RulesEngine;
-using NLog;
+﻿using NLog;
 using NLog.Config;
 using NLog.Targets;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
-namespace Microsoft.ApplicationInspector.Commands
+namespace Microsoft.ApplicationInspector.Common
 {
-    //Miscellenous common methods needed from several places throughout
     public static class Utils
     {
         public enum ExitCode
@@ -27,90 +21,9 @@ namespace Microsoft.ApplicationInspector.Commands
         public static Logger? Logger { get; set; }
 
         public enum AppPath { basePath, defaultRulesSrc, defaultRulesPackedFile, defaultLog, tagGroupPref, tagCounterPref };
-
-        public static string GetVersionString()
-        {
-            return string.Format("Microsoft Application Inspector {0}", GetVersion());
-        }
-
-        public static string GetVersion()
-        {
-            return (Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false) as AssemblyInformationalVersionAttribute[])?[0].InformationalVersion ?? "Unknown";
-        }
-
-        public static bool CLIExecutionContext { get; set; }
-
-        public static string GetPath(AppPath pathType)
-        {
-            string result = "";
-            switch (pathType)
-            {
-                case AppPath.basePath:
-                    result = GetBaseAppPath();
-                    break;
-
-                case AppPath.defaultLog:
-                    result = "appinspector.log.txt";
-                    break;
-
-                case AppPath.defaultRulesSrc://Packrules source use
-                    result = Path.GetFullPath(Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "rules", "default"));//used to ref project folder
-                    break;
-
-                case AppPath.defaultRulesPackedFile://Packrules default output use
-                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "Resources", "defaultRulesPkd.json");//packed default file in project resources
-                    break;
-
-                case AppPath.tagGroupPref://CLI use only
-                    result = Path.Combine(GetBaseAppPath(), "preferences", "tagreportgroups.json");
-                    break;
-
-                case AppPath.tagCounterPref://CLI use only
-                    result = Path.Combine(GetBaseAppPath(), "preferences", "tagcounters.json");
-                    break;
-            }
-
-            result = Path.GetFullPath(result);
-            return result;
-        }
-
-        private static string GetBaseAppPath()
-        {
-            if (!string.IsNullOrEmpty(_basePath))
-            {
-                return _basePath;
-            }
-
-            _basePath = Path.GetFullPath(System.AppContext.BaseDirectory);
-            return _basePath;
-        }
-
-        /// <summary>
-        /// Common method of retrieving rules from AppInspector.Commands manifest
-        /// </summary>
-        /// <param name="logger"></param>
-        /// <returns></returns>
-        public static RuleSet GetDefaultRuleSet(Logger? logger = null)
-        {
-            RuleSet ruleSet = new RuleSet(logger);
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string filePath = "Microsoft.ApplicationInspector.Commands.defaultRulesPkd.json";
-            Stream? resource = assembly.GetManifestResourceStream(filePath);
-            using (StreamReader file = new StreamReader(resource ?? new MemoryStream()))
-            {
-                ruleSet.AddString(file.ReadToEnd(), filePath, null);
-            }
-
-            return ruleSet;
-        }
-
-        /// <summary>
-        /// For use when logging is needed and was not called via CLI
-        /// </summary>
-        /// <returns></returns>
         public static Logger SetupLogging()
         {
-            CommandOptions opts = new CommandOptions();//defaults used
+            LogOptions opts = new LogOptions();//defaults used
 
             return SetupLogging(opts);
         }
@@ -120,7 +33,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="opts"></param>
         /// <returns></returns>
-        public static Logger SetupLogging(CommandOptions opts, bool onErrorConsole = false)
+        public static Logger SetupLogging(LogOptions opts, bool onErrorConsole = false)
         {
             //prevent being called again if already set unless closed first
             if (Logger != null)
@@ -136,7 +49,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (string.IsNullOrEmpty(opts.LogFilePath))
             {
-                opts.LogFilePath = Utils.GetPath(Utils.AppPath.defaultLog);
+                opts.LogFilePath = "appinspector.log.txt";
             }
 
             //clean up previous for convenience in reading
@@ -218,6 +131,62 @@ namespace Microsoft.ApplicationInspector.Commands
             LogManager.Configuration = config;
             Logger = LogManager.GetLogger("Microsoft.CST.ApplicationInspector");
             return Logger;
+        }
+        public static string GetVersionString()
+        {
+            return string.Format("Microsoft Application Inspector {0}", GetVersion());
+        }
+
+        public static string GetVersion()
+        {
+            return (Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false) as AssemblyInformationalVersionAttribute[])?[0].InformationalVersion ?? "Unknown";
+        }
+
+        public static bool CLIExecutionContext { get; set; }
+
+        public static string GetPath(AppPath pathType)
+        {
+            string result = "";
+            switch (pathType)
+            {
+                case AppPath.basePath:
+                    result = GetBaseAppPath();
+                    break;
+
+                case AppPath.defaultLog:
+                    result = "appinspector.log.txt";
+                    break;
+
+                case AppPath.defaultRulesSrc://Packrules source use
+                    result = Path.GetFullPath(Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "rules", "default"));//used to ref project folder
+                    break;
+
+                case AppPath.defaultRulesPackedFile://Packrules default output use
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector", "Resources", "defaultRulesPkd.json");//packed default file in project resources
+                    break;
+
+                case AppPath.tagGroupPref://CLI use only
+                    result = Path.Combine(GetBaseAppPath(), "preferences", "tagreportgroups.json");
+                    break;
+
+                case AppPath.tagCounterPref://CLI use only
+                    result = Path.Combine(GetBaseAppPath(), "preferences", "tagcounters.json");
+                    break;
+            }
+
+            result = Path.GetFullPath(result);
+            return result;
+        }
+
+        private static string GetBaseAppPath()
+        {
+            if (!string.IsNullOrEmpty(_basePath))
+            {
+                return _basePath;
+            }
+
+            _basePath = Path.GetFullPath(System.AppContext.BaseDirectory);
+            return _basePath;
         }
     }
 }

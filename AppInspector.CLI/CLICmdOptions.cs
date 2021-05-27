@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using CommandLine;
-using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.Common;
 using System.Collections.Generic;
 
 namespace Microsoft.ApplicationInspector.CLI
@@ -11,7 +11,7 @@ namespace Microsoft.ApplicationInspector.CLI
     /// CLI command option classes add output arguments to common properties for each command verb
     /// </summary>
     ///
-    public class CLICommandOptions : CommandOptions
+    public class CLICommandOptions : LogOptions
     {
         [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string? OutputFilePath { get; set; }
@@ -38,7 +38,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; } = "high,medium";
 
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
+        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
 
         public IEnumerable<string> FilePathExclusions { get; set; } = new string[0];
 
@@ -60,7 +60,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option("no-show-progress", Required = false, HelpText = "Disable progress information.")]
         public bool NoShowProgressBar { get; set; }
 
-        [Option("context-lines", Required = false, HelpText = "Number of lines of context on each side to include in excerpt. -1 to not extract samples or excerpts.")]
+        [Option("context-lines", Required = false, HelpText = "Number of lines of context on each side to include in excerpt (up to a maximum of 100 * NumLines characters on each side). 0 to skip exerpt. -1 to not extract samples or excerpts (implied by -t).")]
         public int ContextLines { get; set; } = 3;
 
         [Option("scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
@@ -68,6 +68,10 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('t',"tags-only", Required = false, HelpText = "Only get tags (no detailed match data).")]
         public bool TagsOnly { get; set; }
+
+        [Option('n', "no-file-metadata", Required = false, HelpText = "Don't collect metadata about each individual file.")]
+        public bool NoFileMetadata { get; set; }
+
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]
@@ -82,7 +86,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('t', "test-type", Required = false, HelpText = "Type of test to run [equality|inequality]", Default = "equality")]
         public string TestType { get; set; } = "equality";
 
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \".git,**Tests**\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
+        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
         public IEnumerable<string> FilePathExclusions { get; set; } = new string[] { };
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]

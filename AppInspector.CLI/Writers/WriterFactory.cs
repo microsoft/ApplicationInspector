@@ -3,7 +3,7 @@
 
 using Microsoft.ApplicationInspector.CLI.Writers;
 using Microsoft.ApplicationInspector.Commands;
-
+using Microsoft.ApplicationInspector.Common;
 using System;
 using System.IO;
 
