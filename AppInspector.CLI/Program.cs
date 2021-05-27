@@ -260,7 +260,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 ProcessingTimeOut = cliOptions.ProcessingTimeOut,
                 ContextLines = cliOptions.ContextLines,
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
-                TagsOnly = cliOptions.TagsOnly
+                TagsOnly = cliOptions.TagsOnly,
+                NoFileMetadata = cliOptions.NoFileMetadata
             });
 
             if (!cliOptions.NoShowProgressBar)

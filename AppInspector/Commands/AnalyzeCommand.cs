@@ -38,6 +38,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public int ProcessingTimeOut { get; set; } = 0;
         public int ContextLines { get; set; } = 3;
         public bool ScanUnknownTypes { get; set; }
+        public bool NoFileMetadata { get; set; }
     }
 
     /// <summary>
@@ -446,7 +447,10 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 fileRecord.ScanTime = sw.Elapsed;
 
-                _metaDataHelper.Files.Add(fileRecord);
+                if (!opts.NoFileMetadata)
+                {
+                    _metaDataHelper.Files.Add(fileRecord);
+                }
             }
         }
 
@@ -656,7 +660,7 @@ namespace Microsoft.ApplicationInspector.Commands
             var exitCode = await PopulateRecordsAsync(cancellationToken);
 
             //wrapup result status
-            if (_metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
+            if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
@@ -788,7 +792,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //wrapup result status
-            if (_metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
+            if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
             {
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;

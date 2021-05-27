@@ -68,6 +68,10 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('t',"tags-only", Required = false, HelpText = "Only get tags (no detailed match data).")]
         public bool TagsOnly { get; set; }
+
+        [Option('n', "no-file-metadata", Required = false, HelpText = "Don't collect metadata about each individual file.")]
+        public bool NoFileMetadata { get; set; }
+
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]
