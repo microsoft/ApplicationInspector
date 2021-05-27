@@ -60,7 +60,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option("no-show-progress", Required = false, HelpText = "Disable progress information.")]
         public bool NoShowProgressBar { get; set; }
 
-        [Option("context-lines", Required = false, HelpText = "Number of lines of context on each side to include in excerpt. -1 to not extract samples or excerpts.")]
+        [Option("context-lines", Required = false, HelpText = "Number of lines of context on each side to include in excerpt (up to a maximum of 100 * NumLines characters on each side). 0 to skip exerpt. -1 to not extract samples or excerpts (implied by -t).")]
         public int ContextLines { get; set; } = 3;
 
         [Option("scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
