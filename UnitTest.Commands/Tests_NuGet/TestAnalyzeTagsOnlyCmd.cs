@@ -88,22 +88,17 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\main.zip") },
                 FilePathExclusions = Array.Empty<string>(),
-                TagsOnly = true
+                TagsOnly = true,
+                SingleThread = true
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                AnalyzeCommand command = new AnalyzeCommand(options);
-                AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
+            
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = command.GetResult();
+            exitCode = result.ResultCode;
 
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
         }
 
         [TestMethod]
@@ -303,6 +298,31 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
             Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
+        }
+
+        [TestMethod]
+        public void ExpectedTagCountTwoFiles()
+        {
+            AnalyzeOptions options = new AnalyzeOptions()
+            {
+                SourcePath = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"), Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\onetag.js")},
+                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                SingleThread = true,
+                TagsOnly = true
+            };
+
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(result.ResultCode, AnalyzeResult.ExitCode.Success);
+            Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(8, result.Metadata.UniqueTags.Count);
+
+            options.SingleThread = false;
+            command = new AnalyzeCommand(options);
+            result = command.GetResult();
+            Assert.AreEqual(result.ResultCode, AnalyzeResult.ExitCode.Success);
+            Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(8, result.Metadata.UniqueTags.Count);
         }
 
         [TestMethod]
