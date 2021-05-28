@@ -43,7 +43,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void BasicHTMLOutput_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -f html -k none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
+            string args = string.Format(@"analyze -s {0} -f html -g none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
             var exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
@@ -53,7 +53,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void UnknownFormat_Fail() //dupliacte tags not supported for html format
         {
-            string args = string.Format(@"analyze -b -s {0} -f unknown -k none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
+            string args = string.Format(@"analyze -b -s {0} -f unknown -g none", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
             var exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
             Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
@@ -62,7 +62,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void ZipReadHTMLOutput_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -f html -k none -l {1}",
+            string args = string.Format(@"analyze -s {0} -f html -g none -l {1}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\mainx.zip"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -74,7 +74,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void InvalidOutputfilePath_Fail()
         {
-            string args = string.Format(@"analyze -s {0} -f json -k none -o {1}",
+            string args = string.Format(@"analyze -s {0} -f json -g none -o {1}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"badir\output.txt"));
 
@@ -86,7 +86,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void InvalidSourcePath_Fail()
         {
-            string args = string.Format(@"analyze -s {0} -f json -k none -o {1}",
+            string args = string.Format(@"analyze -s {0} -f json -g none -o {1}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -98,7 +98,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void InvalidRulesPath_Fail()
         {            
-            string args = string.Format(@"analyze -s {0} -r badrulespath -f json -k none -o {1}",
+            string args = string.Format(@"analyze -s {0} -r badrulespath -f json -g none -o {1}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -111,7 +111,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
-            string args = string.Format(@"analyze -s {0} -i -f json -k none -o {1}",
+            string args = string.Format(@"analyze -s {0} -i -f json -g none -o {1}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -123,7 +123,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void NoDefaultCustomRules_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -i -r {1} -f json -k none -o {2}",
+            string args = string.Format(@"analyze -s {0} -i -r {1} -f json -g none -o {2}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
@@ -136,7 +136,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void DefaultWithCustomRules_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -r {1} -f json -k none -o {2}",
+            string args = string.Format(@"analyze -s {0} -r {1} -f json -g none -o {2}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
@@ -149,7 +149,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void DefaultAndCustomRulesPosMatches_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -r {1} -f json -k none -o {2}",
+            string args = string.Format(@"analyze -s {0} -r {1} -f json -g none -o {2}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
@@ -164,7 +164,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void ExclusionFilter_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -r {1} -f json -o {2} -k {3}",
+            string args = string.Format(@"analyze -s {0} -r {1} -f json -o {2} -g {3}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
@@ -179,7 +179,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         public void MultiFiles()
         {
             var mainduptags = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp");
-            string args = string.Format(@"analyze -s {0} -f json -o {1} -k none",
+            string args = string.Format(@"analyze -s {0} -f json -o {1} -g none",
                 $"{mainduptags}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -191,7 +191,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             var matches = result.Metadata.TotalMatchesCount;
             var uniqueMatches = result.Metadata.UniqueMatchesCount;
             mainduptags = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp");
-            args = string.Format(@"analyze -s {0} -f json -o {1} -k none",
+            args = string.Format(@"analyze -s {0} -f json -o {1} -g none",
                 $"{mainduptags},{mainduptags}",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -208,7 +208,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void ExpectedTagCountDupsAllowed_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -f json -o {1} -k none --single-threaded",
+            string args = string.Format(@"analyze -s {0} -f json -o {1} -g none --single-threaded",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -221,7 +221,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
             
-            args = string.Format(@"analyze -s {0} -f json -o {1} -k none",
+            args = string.Format(@"analyze -s {0} -f json -o {1} -g none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -237,7 +237,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void NoMatchesFound_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -f json -o {1} -k none",
+            string args = string.Format(@"analyze -s {0} -f json -o {1} -g none",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
@@ -249,7 +249,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void LogTraceLevel_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -f json -l {1} -v trace -k none",
+            string args = string.Format(@"analyze -s {0} -f json -l {1} -v trace -g none",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log1.txt"));
 
@@ -263,7 +263,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -f json -l {1} -v error -k none",
+            string args = string.Format(@"analyze -s {0} -f json -l {1} -v error -g none",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\nofile.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log2.txt"));
 
@@ -276,7 +276,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void LogDebugLevel_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -f json -l {1} -v debug -k none",
+            string args = string.Format(@"analyze -s {0} -f json -l {1} -v debug -g none",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log3.txt"));
 
@@ -290,7 +290,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         public void InvalidLogPath_Fail()
         {
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            string args = string.Format(@"analyze -s {0} -f json -l {1} -k none",
+            string args = string.Format(@"analyze -s {0} -f json -l {1} -g none",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"badir\log.txt"));
 
@@ -302,7 +302,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
-            string args = string.Format(@"analyze -s {0} -f json -l {1} -k none",
+            string args = string.Format(@"analyze -s {0} -f json -l {1} -g none",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
 
@@ -315,7 +315,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         {
             string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
 
-            string args = string.Format(@"analyze -s {0} -x none -f text -k none -o {1} --no-show-progress",
+            string args = string.Format(@"analyze -s {0} -x none -f text -g none -o {1} --no-show-progress",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
@@ -328,7 +328,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void NoConsoleNoFileOutput_Fail()
         {
-            string args = string.Format(@"analyze -s {0} -x none -f text -k none -l {1} --no-show-progress",
+            string args = string.Format(@"analyze -s {0} -x none -f text -g none -l {1} --no-show-progress",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
