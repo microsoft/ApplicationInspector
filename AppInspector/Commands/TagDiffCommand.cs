@@ -20,6 +20,10 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool IgnoreDefaultRules { get; set; }
         public int FileTimeOut { get; set; }
         public int ProcessingTimeOut { get; set; }
+        public bool ScanUnknownTypes { get; set; }
+        public bool SingleThread { get; set; }
+        public bool NoFileMetadata { get; set; }
+        public string ConfidenceFilters { get; set; } = "high,medium";
     }
 
     /// <summary>
@@ -170,7 +174,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                #region setup analyze calls
                 if (_options is null)
                 {
                     throw new ArgumentNullException("_options");
@@ -184,6 +187,13 @@ namespace Microsoft.ApplicationInspector.Commands
                     ConsoleVerbosityLevel = "none",
                     Log = _options.Log,
                     TagsOnly = true,
+                    ConfidenceFilters = _options.ConfidenceFilters,
+                    FileTimeOut = _options.FileTimeOut,
+                    ProcessingTimeOut = _options.ProcessingTimeOut,
+                    NoFileMetadata = _options.NoFileMetadata,
+                    NoShowProgress = true,
+                    ScanUnknownTypes = _options.ScanUnknownTypes,
+                    SingleThread = _options.SingleThread,
                 });
                 AnalyzeCommand cmd2 = new(new AnalyzeOptions()
                 {
@@ -193,7 +203,14 @@ namespace Microsoft.ApplicationInspector.Commands
                     FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
                     Log = _options.Log,
-                    TagsOnly = true
+                    TagsOnly = true,
+                    ConfidenceFilters = _options.ConfidenceFilters,
+                    FileTimeOut = _options.FileTimeOut,
+                    ProcessingTimeOut = _options.ProcessingTimeOut,
+                    NoFileMetadata = _options.NoFileMetadata,
+                    NoShowProgress = true,
+                    ScanUnknownTypes = _options.ScanUnknownTypes,
+                    SingleThread = _options.SingleThread,
                 });
 
                 AnalyzeResult analyze1 = cmd1.GetResult();
@@ -201,8 +218,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 //restore
                 WriteOnce.Verbosity = saveVerbosity;
-
-                #endregion setup analyze calls
 
                 //process results for each analyze call before comparing results
                 if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)

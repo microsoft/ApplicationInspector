@@ -323,7 +323,15 @@ namespace Microsoft.ApplicationInspector.CLI
                 FilePathExclusions = cliOptions.FilePathExclusions,
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
                 TestType = cliOptions.TestType,
-                Log = cliOptions.Log
+                Log = cliOptions.Log,
+                ConfidenceFilters = cliOptions.ConfidenceFilters,
+                FileTimeOut = cliOptions.FileTimeOut,
+                ProcessingTimeOut = cliOptions.ProcessingTimeOut,
+                NoFileMetadata = cliOptions.NoFileMetadata,
+                ScanUnknownTypes = cliOptions.ScanUnknownTypes,
+                SingleThread = cliOptions.SingleThread,
+                LogFilePath = cliOptions.LogFilePath,
+                LogFileLevel = cliOptions.LogFileLevel
             });
 
             TagDiffResult tagDiffResult = command.GetResult();
