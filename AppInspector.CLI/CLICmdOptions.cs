@@ -107,9 +107,6 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('S', "single-threaded", Required = false, HelpText = "Disables parallel processing.")]
         public bool SingleThread { get; set; }
 
-        [Option('n', "no-file-metadata", Required = false, HelpText = "Don't collect metadata about each individual file.")]
-        public bool NoFileMetadata { get; set; }
-
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; } = "high,medium";
     }

@@ -22,7 +22,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public int ProcessingTimeOut { get; set; }
         public bool ScanUnknownTypes { get; set; }
         public bool SingleThread { get; set; }
-        public bool NoFileMetadata { get; set; }
         public string ConfidenceFilters { get; set; } = "high,medium";
     }
 
@@ -190,7 +189,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     ConfidenceFilters = _options.ConfidenceFilters,
                     FileTimeOut = _options.FileTimeOut,
                     ProcessingTimeOut = _options.ProcessingTimeOut,
-                    NoFileMetadata = _options.NoFileMetadata,
+                    NoFileMetadata = true,
                     NoShowProgress = true,
                     ScanUnknownTypes = _options.ScanUnknownTypes,
                     SingleThread = _options.SingleThread,
@@ -207,7 +206,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     ConfidenceFilters = _options.ConfidenceFilters,
                     FileTimeOut = _options.FileTimeOut,
                     ProcessingTimeOut = _options.ProcessingTimeOut,
-                    NoFileMetadata = _options.NoFileMetadata,
+                    NoFileMetadata = true,
                     NoShowProgress = true,
                     ScanUnknownTypes = _options.ScanUnknownTypes,
                     SingleThread = _options.SingleThread,

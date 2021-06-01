@@ -327,7 +327,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
                 FileTimeOut = cliOptions.FileTimeOut,
                 ProcessingTimeOut = cliOptions.ProcessingTimeOut,
-                NoFileMetadata = cliOptions.NoFileMetadata,
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
                 SingleThread = cliOptions.SingleThread,
                 LogFilePath = cliOptions.LogFilePath,
