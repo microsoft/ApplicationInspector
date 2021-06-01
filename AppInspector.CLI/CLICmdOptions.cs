@@ -48,10 +48,10 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('e', "text-format", Required = false, HelpText = "Match text format specifiers", Default = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m")]
         public string TextOutputFormat { get; set; } = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";
 
-        [Option('F',"file-timeout", Required = false, HelpText = "If non-zero, maximum amount of time in milliseconds to allow for processing each file. Default: 60000.", Default = 60000)]
+        [Option('F',"file-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each file. 0 is infinity. Default: 60000.", Default = 60000)]
         public int FileTimeOut { get; set; } = 60000;
 
-        [Option('p',"processing-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing overall.", Default = 0)]
+        [Option('p',"processing-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing overall. 0 is infinity. Default: 0.", Default = 0)]
         public int ProcessingTimeOut { get; set; }
 
         [Option('S',"single-threaded", Required = false, HelpText = "Disables parallel processing.")]
@@ -95,10 +95,10 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
-        [Option('F', "file-timeout", Required = false, HelpText = "If non-zero, maximum amount of time in milliseconds to allow for processing each file. Default: 60000.", Default = 60000)]
+        [Option('F', "file-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each file. 0 is infinity.  Default: 60000.", Default = 60000)]
         public int FileTimeOut { get; set; } = 60000;
 
-        [Option('p',"processing-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each source.", Default = 0)]
+        [Option('p',"processing-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each source. 0 is infinity. Default: 0.", Default = 0)]
         public int ProcessingTimeOut { get; set; }
 
         [Option('u', "scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
