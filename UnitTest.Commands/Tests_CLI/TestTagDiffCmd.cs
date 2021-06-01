@@ -45,7 +45,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -65,7 +65,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -85,7 +85,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\mainx.zip"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -106,7 +106,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -t inequality -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -t inequality -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -126,7 +126,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -t inequality -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -t inequality -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -146,7 +146,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -167,7 +167,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -188,7 +188,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -209,7 +209,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -i -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -i -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -230,7 +230,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -i -r {2} -k none -l {3}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -i -r {2} -g none -l {3}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
@@ -252,7 +252,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -r {2} -k none -l {3}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -r {2} -g none -l {3}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
@@ -274,7 +274,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f text -k none -o {2} -l {3}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f text -g none -o {2} -l {3}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
@@ -310,7 +310,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f json -k none -o {2} -l {3}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f json -g none -o {2} -l {3}",
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
@@ -344,7 +344,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f unknown -k none -o {2} -l {3}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f unknown -g none -o {2} -l {3}",
                   Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                   Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                   Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
@@ -371,7 +371,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2} -o {3}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2} -o {3}",
                      Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                      Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                      Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\badir\tagdiffout.txt"),
@@ -393,7 +393,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -v trace -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -v trace -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -416,7 +416,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
@@ -439,7 +439,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -r {2} -k none -v debug -l {3}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -r {2} -g none -v debug -l {3}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\baddir\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"mybadrule.json"),
@@ -466,7 +466,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\log.txt"));
@@ -486,7 +486,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp"));
@@ -508,7 +508,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             {
                 string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
 
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -x none -f text -k none -o {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -x none -f text -g none -o {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
@@ -534,7 +534,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -x none -f text -k none -l {2}",
+                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -x none -f text -g none -l {2}",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));

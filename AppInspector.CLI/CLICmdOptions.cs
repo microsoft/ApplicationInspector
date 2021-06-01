@@ -38,7 +38,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
         public string ConfidenceFilters { get; set; } = "high,medium";
 
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
+        [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
 
         public IEnumerable<string> FilePathExclusions { get; set; } = new string[0];
 
@@ -48,22 +48,22 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('e', "text-format", Required = false, HelpText = "Match text format specifiers", Default = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m")]
         public string TextOutputFormat { get; set; } = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";
 
-        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 60000)]
+        [Option('F',"file-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each file. 0 is infinity. Default: 60000.", Default = 60000)]
         public int FileTimeOut { get; set; } = 60000;
 
-        [Option("processing-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing overall.", Default = 0)]
-        public int ProcessingTimeOut { get; set; } = 0;
+        [Option('p',"processing-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing overall. 0 is infinity. Default: 0.", Default = 0)]
+        public int ProcessingTimeOut { get; set; }
 
-        [Option("single-threaded", Required = false, HelpText = "Disables parallel processing.")]
+        [Option('S',"single-threaded", Required = false, HelpText = "Disables parallel processing.")]
         public bool SingleThread { get; set; }
 
-        [Option("no-show-progress", Required = false, HelpText = "Disable progress information.")]
+        [Option('N',"no-show-progress", Required = false, HelpText = "Disable progress information.")]
         public bool NoShowProgressBar { get; set; }
 
-        [Option("context-lines", Required = false, HelpText = "Number of lines of context on each side to include in excerpt (up to a maximum of 100 * NumLines characters on each side). 0 to skip exerpt. -1 to not extract samples or excerpts (implied by -t).")]
+        [Option('C',"context-lines", Required = false, HelpText = "Number of lines of context on each side to include in excerpt (up to a maximum of 100 * NumLines characters on each side). 0 to skip exerpt. -1 to not extract samples or excerpts (implied by -t).")]
         public int ContextLines { get; set; } = 3;
 
-        [Option("scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
+        [Option('u',"scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
         public bool ScanUnknownTypes { get; set; }
 
         [Option('t',"tags-only", Required = false, HelpText = "Only get tags (no detailed match data).")]
@@ -86,7 +86,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('t', "test-type", Required = false, HelpText = "Type of test to run [equality|inequality]", Default = "equality")]
         public string TestType { get; set; } = "equality";
 
-        [Option('k', "file-path-exclusions", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
+        [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
         public IEnumerable<string> FilePathExclusions { get; set; } = new string[] { };
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
@@ -95,11 +95,20 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
-        [Option("file-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing each file.", Default = 60000)]
+        [Option('F', "file-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each file. 0 is infinity.  Default: 60000.", Default = 60000)]
         public int FileTimeOut { get; set; } = 60000;
 
-        [Option("processing-timeout", Required = false, HelpText = "If set, maximum amount of time in milliseconds to allow for processing overall.", Default = 0)]
-        public int ProcessingTimeOut { get; set; } = 0;
+        [Option('p',"processing-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each source. 0 is infinity. Default: 0.", Default = 0)]
+        public int ProcessingTimeOut { get; set; }
+
+        [Option('u', "scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
+        public bool ScanUnknownTypes { get; set; }
+
+        [Option('S', "single-threaded", Required = false, HelpText = "Disables parallel processing.")]
+        public bool SingleThread { get; set; }
+
+        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
+        public string ConfidenceFilters { get; set; } = "high,medium";
     }
 
     [Verb("exporttags", HelpText = "Export unique rule tags to view what code features may be detected")]
