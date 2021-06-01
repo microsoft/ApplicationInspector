@@ -27,8 +27,8 @@ of the [Releases](https://github.com/microsoft/ApplicationInspector/releases).
 
 ## Run Application Inspector
 
-Nuget Tool: `appinspector analyze -s path/to/src`.
-Platform Specific: `applicationinspector.cli.exe analyze -s path/to/src`
+- Nuget Tool: `appinspector analyze -s path/to/src`.
+- Platform Specific: `applicationinspector.cli.exe analyze -s path/to/src`
 
 # Goals
 
