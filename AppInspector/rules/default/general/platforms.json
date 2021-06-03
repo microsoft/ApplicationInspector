@@ -8,7 +8,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "netcore",
+        "pattern": "netcore|net[5-9]",
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ]
@@ -51,9 +51,7 @@
     "name": "Platform: Google Android",
     "id": "AI028800",
     "description": "Platform: Google Android",
-    "tags": [
-      "Metadata.Platform.OS.Google.Android"
-    ],
+    "tags":[ "Metadata.Platform.OS.Google.Android" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -62,46 +60,6 @@
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
-      },
-      {
-        "pattern": "kitkat|jellybean|lollipop|marshmallow|nougat|oreo",
-        "type": "regexword",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
-      }
-    ]
-  },
-  {
-    "name": "Platform: Google Android",
-    "id": "AI028801",
-    "description": "Platform: Google Android",
-    "tags": [
-      "Metadata.Platform.OS.Google.Android"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "pie",
-        "type": "string",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
-      }
-    ],
-    "conditions": [
-      {
-        "pattern": {
-          "pattern": "chart",
-          "type": "regexword",
-          "scopes": [
-            "code"
-          ],
-          "modifiers": [ "i" ],
-          "_comment": ""
-        },
-        "search_in": "finding-region(-10,10)",
-        "negate_finding": true
       }
     ]
   },
@@ -109,9 +67,7 @@
     "name": "Platform: Apple iOS",
     "id": "AI028900",
     "description": "Platform: Apple iOS",
-    "tags": [
-      "Metadata.Platform.OS.Apple.iOS"
-    ],
+    "tags":[ "Metadata.Platform.OS.Apple.iOS" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -127,9 +83,7 @@
     "name": "Platform: Apple MacOS",
     "id": "AI029000",
     "description": "Platform: Apple MacOS",
-    "tags": [
-      "Metadata.Platform.OS.Apple.MacOS"
-    ],
+    "tags":[ "Metadata.Platform.OS.Apple.MacOS" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -145,9 +99,7 @@
     "name": "Platform: Microsoft Windows",
     "id": "AI029100",
     "description": "Platform: Microsoft Windows Server",
-    "tags": [
-      "Metadata.Platform.OS.Microsoft.WindowsServer"
-    ],
+    "tags":[ "Metadata.Platform.OS.Microsoft.WindowsServer" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -163,9 +115,7 @@
     "name": "Platform: Microsoft Windows",
     "id": "AI029200",
     "description": "Platform: Microsoft Windows",
-    "tags": [
-      "Metadata.Platform.OS.Microsoft.WindowsStandard"
-    ],
+    "tags":[ "Metadata.Platform.OS.Microsoft.WindowsStandard" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -182,9 +132,7 @@
     "name": "Platform: Microsoft Windows",
     "id": "AI029300",
     "description": "Platform: Microsoft Windows",
-    "tags": [
-      "Metadata.Platform.OS.Microsoft.WindowsCE"
-    ],
+    "tags":[ "Metadata.Platform.OS.Microsoft.WindowsCE" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -200,9 +148,7 @@
     "name": "Development Framework: Windows Universal Platform",
     "id": "AI029400",
     "description": "Development Framework: Windows Universal Platform",
-    "tags": [
-      "Metadata.Platform.OS.Microsoft.WindowsUniversalPlatform"
-    ],
+    "tags":[ "Metadata.Platform.OS.Microsoft.WindowsUniversalPlatform" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -217,9 +163,7 @@
     "name": "Platform: Linux",
     "id": "AI029500",
     "description": "Platform: Linux",
-    "tags": [
-      "Metadata.Platform.OS.Linux.Distro"
-    ],
+    "tags":[ "Metadata.Platform.OS.Linux.Distro" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -235,9 +179,7 @@
     "name": "Platform: Microsoft XBox",
     "id": "AI029600",
     "description": "Platform: Microsoft XBox",
-    "tags": [
-      "Metadata.Platform.OS.Microsoft.XBox"
-    ],
+    "tags":[ "Metadata.Platform.OS.Microsoft.XBox" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -253,9 +195,7 @@
         "pattern": {
           "pattern": "areapath",
           "type": "regex",
-          "scopes": [
-            "code"
-          ],
+          "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": ""
         },
@@ -268,9 +208,7 @@
     "name": "Platform: Mobile Device",
     "id": "AI029700",
     "description": "Platform: Mobile Device",
-    "tags": [
-      "Metadata.Platform.Device.Mobile"
-    ],
+    "tags":[ "Metadata.Platform.Device.Mobile" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -286,9 +224,7 @@
         "pattern": {
           "pattern": "address|(first|last|sur)name|contact|gender|email",
           "type": "regex",
-          "scopes": [
-            "code"
-          ],
+          "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": ""
         },
@@ -301,14 +237,12 @@
     "name": "Platform: IOT",
     "id": "AI029800",
     "description": "Platform: IOT",
-    "tags": [
-      "Metadata.Platform.Device.IOT"
-    ],
+    "tags":[ "Metadata.Platform.Device.IOT" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "IOT",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high",
@@ -320,14 +254,12 @@
     "name": "Hardware: Microsoft Kinex",
     "id": "AI029900",
     "description": "Platform: Microsoft Kinex",
-    "tags": [
-      "Hardware.Accessory.Microsoft.Kinex"
-    ],
+    "tags":[ "Hardware.Accessory.Microsoft.Kinex" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "kinex",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -338,14 +270,12 @@
     "name": "Hardware: Reference Design",
     "id": "AI030000",
     "description": "Hardware: Reference Design",
-    "tags": [
-      "Hardware.ReferenceDesign"
-    ],
+    "tags":[ "Hardware.ReferenceDesign" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Reference Design",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"

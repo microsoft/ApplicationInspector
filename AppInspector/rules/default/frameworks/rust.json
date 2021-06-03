@@ -24,7 +24,7 @@
     "patterns": [
       {
         "pattern": "use actix_web",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code" ]
       }
     ]
@@ -39,7 +39,7 @@
     "patterns": [
       {
         "pattern": "use Nickel",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code" ]
       }
     ]
@@ -54,7 +54,7 @@
     "patterns": [
       {
         "pattern": "use yew",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code" ]
       }
     ]
@@ -69,7 +69,7 @@
     "patterns": [
       {
         "pattern": "use azul",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code" ]
       }
     ]

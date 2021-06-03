@@ -9,9 +9,7 @@
       "cpp",
       "csharp"
     ],
-    "tags": [
-      "Cryptography.Protocol.TLS.WeakSSL"
-    ],
+    "tags":[ "Cryptography.Protocol.TLS.WeakSSL" ],
     "severity": "critical",
     "rule_info": "",
     "patterns": [

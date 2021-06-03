@@ -3,20 +3,14 @@
     "name": "Cryptography: SSL/TLS Protocol",
     "id": "AI009600",
     "description": "Cryptography: SSL/TLS Protocol",
-    "applies_to": [
-      "csharp"
-    ],
-    "tags": [
-      "Cryptography.Protocol.TLS"
-    ],
+    "applies_to":[ "csharp" ],
+    "tags":[ "Cryptography.Protocol.TLS" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "(SSL|TLS)(v)?([123]{1,2})",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
@@ -35,9 +29,7 @@
       "c",
       "cpp"
     ],
-    "tags": [
-      "Cryptography.Protocol.TLS"
-    ],
+    "tags":[ "Cryptography.Protocol.TLS" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -70,9 +62,7 @@
       "objective-c",
       "swift"
     ],
-    "tags": [
-      "Cryptography.Protocol.TLS"
-    ],
+    "tags":[ "Cryptography.Protocol.TLS" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -137,9 +127,7 @@
     "name": "Cryptography: SSH Protocol",
     "id": "AI009900",
     "description": "Cryptography: SSH Protocol",
-    "tags": [
-      "Cryptography.Protocol.SSH"
-    ],
+    "tags":[ "Cryptography.Protocol.SSH" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -154,9 +142,7 @@
     "name": "Cryptography: SSH Protocol",
     "id": "AI009910",
     "description": "Cryptography: SSH Protocol",
-    "tags": [
-      "Cryptography.Protocol.KeyExchange"
-    ],
+    "tags":[ "Cryptography.Protocol.KeyExchange" ],
     "severity": "moderate",
     "patterns": [
       {

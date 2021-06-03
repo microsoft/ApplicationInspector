@@ -3,9 +3,7 @@
     "name": "Data: Financial (Account)",
     "id": "AI015000",
     "description": "Data: Financial (Account)",
-    "tags": [
-      "Data.Sensitive.Financial.BankAccount"
-    ],
+    "tags":[ "Data.Sensitive.Financial.BankAccount" ],
     "severity": "critical",
     "patterns": [
       {
@@ -28,9 +26,7 @@
     "name": "Data: Financial (Income)",
     "id": "AI015100",
     "description": "Data: Financial (Income)",
-    "tags": [
-      "Data.Sensitive.Financial.General"
-    ],
+    "tags":[ "Data.Sensitive.Financial.General" ],
     "severity": "critical",
     "patterns": [
       {
@@ -46,9 +42,7 @@
     "name": "Data: Financial (Currency)",
     "id": "AI015200",
     "description": "Data: Financial (Currency)",
-    "tags": [
-      "Data.Sensitive.Financial.Currency"
-    ],
+    "tags":[ "Data.Sensitive.Financial.Currency" ],
     "patterns": [
       {
         "pattern": "currency|usd|money|dollar|coins|euro|peso|deutsche-mark|dinar|franc|krone|pound|rupee|shekel|yen",
@@ -64,9 +58,7 @@
     "name": "Data: Financial (Credit Card)",
     "id": "AI015300",
     "description": "Data: Financial (Credit Card)",
-    "tags": [
-      "Data.Sensitive.Financial.CreditCard"
-    ],
+    "tags":[ "Data.Sensitive.Financial.CreditCard" ],
     "severity": "critical",
     "patterns": [
       {
@@ -82,9 +74,7 @@
     "name": "Data: Financial (Payroll)",
     "id": "AI015400",
     "description": "Data: Financial (Payroll)",
-    "tags": [
-      "Data.Sensitive.Financial.Payroll"
-    ],
+    "tags":[ "Data.Sensitive.Financial.Payroll" ],
     "severity": "important",
     "patterns": [
       {
@@ -100,14 +90,12 @@
     "name": "Data: Financial (Salesdata)",
     "id": "AI015500",
     "description": "Data: Financial (Salesdata)",
-    "tags": [
-      "Data.Sensitive.Financial.Salesdata"
-    ],
+    "tags":[ "Data.Sensitive.Financial.Salesdata" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "sales",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high",

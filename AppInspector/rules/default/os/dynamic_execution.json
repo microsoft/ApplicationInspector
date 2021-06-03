@@ -7,26 +7,20 @@
       "objective-c",
       "swift"
     ],
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "stringByEvaluatingJavaScriptFromString",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high",
         "_comment": "https://developer.apple.com/documentation/uikit/uiwebview/1617963-stringbyevaluatingjavascriptfrom?language=objc"
       },
       {
         "pattern": "evaluateJavaScript",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high",
         "_comment": "https://developer.apple.com/documentation/webkit/wkwebview/1415017-evaluatejavascript?language=objc"
       }
@@ -43,9 +37,7 @@
       "javascriptreact",
       "rust"
     ],
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -82,17 +74,13 @@
     "id": "AI035000",
     "description": "OS: Dynamic Execution",
     "recommendation": "",
-    "applies_to": [
-      "csharp"
-    ],
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "applies_to":[ "csharp" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "process.start",
-        "type": "substring",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -104,12 +92,8 @@
     "id": "AI035010",
     "description": "OS: Dynamic Execution",
     "recommendation": "",
-    "applies_to": [
-      "rust"
-    ],
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "applies_to":[ "rust" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -125,12 +109,8 @@
     "name": "OS: Dynamic Execution",
     "id": "AI035100",
     "description": "OS: Dynamic Execution",
-    "applies_to": [
-      "powershell"
-    ],
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "applies_to":[ "powershell" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -157,33 +137,25 @@
       "c",
       "cpp"
     ],
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "ksh|bash|csh|sh",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "system(",
         "type": "substring",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "shellexecute|createprocess|execl|execlp|execlp|execv|execve|execvp|execvpe|execle|fork|QProcess",
         "type": "regexword",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
       }
@@ -193,20 +165,14 @@
     "name": "OS: Dynamic Execution",
     "id": "AI035300",
     "description": "OS: Dynamic Execution",
-    "applies_to": [
-      "java"
-    ],
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "applies_to":[ "java" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Runtime.getRuntime().exec",
         "type": "substring",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -215,20 +181,14 @@
     "name": "OS: Dynamic Execution",
     "id": "AI035400",
     "description": "OS: Dynamic Execution",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "subprocess.Popen",
         "type": "substring",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
@@ -243,9 +203,7 @@
     "name": "OS: Dynamic Execution",
     "id": "AI035500",
     "description": "OS: Dynamic Execution",
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -261,9 +219,7 @@
     "name": "OS: Dynamic Execution",
     "id": "AI035510",
     "description": "OS: Dynamic Execution",
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -293,52 +249,38 @@
     "name": "OS: Dynamic Execution",
     "id": "AI035520",
     "description": "OS: Dynamic Execution",
-    "applies_to": [
-      "php"
-    ],
-    "tags": [
-      "OS.Process.DynamicExecution"
-    ],
+    "applies_to":[ "php" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": " shell_exec[ ]*\\(",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": " exec[ ]*\\(",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": " system[ ]*\\(",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "medium"
       },
       {
         "pattern": " passthru[ ]*\\(",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": " proc_open[ ]*\\(",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -347,9 +289,7 @@
     "name": "OS: Dynamic Execution through Android Intent",
     "id": "AI035530",
     "description": "OS: Indirect Dynamic Execution through Android Intent",
-    "tags": [
-      "OS.Process.DynamicExecution.Intent"
-    ],
+    "tags":[ "OS.Process.DynamicExecution.Intent" ],
     "applies_to": [ "java" ],
     "severity": "moderate",
     "patterns": [
@@ -371,9 +311,7 @@
     "name": "OS: Dynamic Execution through Android Intent",
     "id": "AI035531",
     "description": "OS: Indirect Dynamic Execution through Android Intent",
-    "tags": [
-      "OS.Process.DynamicExecution.Intent"
-    ],
+    "tags":[ "OS.Process.DynamicExecution.Intent" ],
     "applies_to": [ "csharp" ],
     "severity": "moderate",
     "patterns": [
@@ -389,10 +327,7 @@
         "pattern": {
           "pattern": "import android",
           "type": "string",
-          "scopes": [
-            "code"
-          ],
-          "_comment": ""
+          "scopes": [ "code" ],
         },
         "search_in": "finding-region(-200,0)",
         "negate_finding": false
@@ -403,9 +338,7 @@
     "name": "OS: Dynamic Execution through Android Intent",
     "id": "AI035532",
     "description": "OS: Indirect Dynamic Execution through Android Intent",
-    "tags": [
-      "OS.Process.DynamicExecution.Intent"
-    ],
+    "tags":[ "OS.Process.DynamicExecution.Intent" ],
     "applies_to": [ "cpp" ],
     "severity": "moderate",
     "patterns": [

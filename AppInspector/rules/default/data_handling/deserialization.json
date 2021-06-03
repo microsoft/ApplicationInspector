@@ -7,17 +7,13 @@
       "python",
       "rust"
     ],
-    "tags": [
-      "Data.Serialization"
-    ],
+    "tags":[ "Data.Serialization" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "Serialize",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "medium"
       }
@@ -27,20 +23,14 @@
     "name": "Data: Serialization",
     "id": "AI012200",
     "description": "Data: Serialization",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "Data.Serialization"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "Data.Serialization" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "import .*c?pickle",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -49,20 +39,14 @@
     "name": "Data: Serialization",
     "id": "AI012300",
     "description": "Data: Serialization",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "Data.Serialization"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "Data.Serialization" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "c?pickle\\.dump",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -71,20 +55,14 @@
     "name": "Data: Deserialization",
     "id": "AI012400",
     "description": "Data: Deserialization",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "Data.Deserialization"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "Data.Deserialization" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "c?pickle\\.load",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -93,20 +71,14 @@
     "name": "Data: Deserialization",
     "id": "AI012500",
     "description": "Data: Deserialization",
-    "applies_to": [
-      "java"
-    ],
-    "tags": [
-      "Data.Deserialization"
-    ],
+    "applies_to":[ "java" ],
+    "tags":[ "Data.Deserialization" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": ".readObject",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "type": "substring",
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -115,20 +87,14 @@
     "name": "Data: Deserialization",
     "id": "AI012600",
     "description": "Data: Deserialization",
-    "applies_to": [
-      "php"
-    ],
-    "tags": [
-      "Data.Deserialization"
-    ],
+    "applies_to":[ "php" ],
+    "tags":[ "Data.Deserialization" ],
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "unserialize\\(",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "pattern": "unserialize(",
+        "type": "substring",
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -137,20 +103,14 @@
     "name": "Data: Deserialization",
     "id": "AI012700",
     "description": "Data: Deserialization",
-    "applies_to": [
-      "ruby"
-    ],
-    "tags": [
-      "Data.Deserialization"
-    ],
+    "applies_to":[ "ruby" ],
+    "tags":[ "Data.Deserialization" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "(YAML|Syck|Marshal)\\.load",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -159,20 +119,14 @@
     "name": "Data: Serialization",
     "id": "AI012800",
     "description": "Data: Serialization",
-    "applies_to": [
-      "csharp"
-    ],
-    "tags": [
-      "Data.Serialization"
-    ],
+    "applies_to":[ "csharp" ],
+    "tags":[ "Data.Serialization" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "SerializeObject|JavaScriptSerializer|Newtonsoft|json\\.net|Utf8Json|MessagePack",
         "type": "regexword",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -181,44 +135,32 @@
     "name": "Data: Deserialization",
     "id": "AI012900",
     "description": "Data: Deserialization",
-    "applies_to": [
-      "csharp"
-    ],
-    "tags": [
-      "Data.Deserialization"
-    ],
+    "applies_to":[ "csharp" ],
+    "tags":[ "Data.Deserialization" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "DeserializeObject",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "PopulateObject",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "TypeNameHandling",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "(De)?[Ss]erialize",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -227,36 +169,26 @@
     "name": "Data: Deserialization",
     "id": "AI013000",
     "description": "Data: Deserialization",
-    "applies_to": [
-      "csharp"
-    ],
-    "tags": [
-      "Data.Deserialization"
-    ],
+    "applies_to":[ "csharp" ],
+    "tags":[ "Data.Deserialization" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "System.Runtime.Serialization",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "BinaryFormatter",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "TypeNameHandling",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -269,17 +201,13 @@
       "python",
       "rust"
     ],
-    "tags": [
-      "Data.Deserialization"
-    ],
+    "tags":[ "Data.Deserialization" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "Deserialize",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "medium"
       }
@@ -289,18 +217,14 @@
     "name": "Data: Bluetooth Serialization",
     "id": "AI013100",
     "description": "Data: Bluetooth Serialization",
-    "tags": [
-      "Data.Deserialization.Signal.Bluetooth"
-    ],
+    "tags":[ "Data.Deserialization.Signal.Bluetooth" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "Bluetooth",
         "type": "string",
         "modifiers": [ "i" ],
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -309,18 +233,14 @@
     "name": "Data: Cellular Serialization",
     "id": "AI013200",
     "description": "Data: Cellular Serialization",
-    "tags": [
-      "Data.Deserialization.Signal.Cellular"
-    ],
+    "tags":[ "Data.Deserialization.Signal.Cellular" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "Cellular",
         "type": "string",
         "modifiers": [ "i" ],
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -329,18 +249,14 @@
     "name": "Data: USB",
     "id": "AI013300",
     "description": "Data: USB Serialization",
-    "tags": [
-      "Data.Deserialization.Signal.USB"
-    ],
+    "tags":[ "Data.Deserialization.Signal.USB" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "USB",
         "type": "string",
         "modifiers": [ "i" ],
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -349,18 +265,14 @@
     "name": "Data: Ethernet",
     "id": "AI013400",
     "description": "Data: Ethernet Serialization",
-    "tags": [
-      "Data.Deserialization.Signal.Ethernet"
-    ],
+    "tags":[ "Data.Deserialization.Signal.Ethernet" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "Ethernet",
         "type": "string",
         "modifiers": [ "i" ],
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -369,18 +281,14 @@
     "name": "Data: Modem",
     "id": "AI013500",
     "description": "Data: Modem Serialization",
-    "tags": [
-      "Data.Deserialization.Signal.Modem"
-    ],
+    "tags":[ "Data.Deserialization.Signal.Modem" ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "Modem",
         "type": "string",
         "modifiers": [ "i" ],
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]

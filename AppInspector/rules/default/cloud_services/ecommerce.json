@@ -3,9 +3,7 @@
     "name": "CloudServices: Financial (eCommerce)",
     "id": "AI003600",
     "description": "Data: Financial (eCommerce)",
-    "tags": [
-      "CloudServices.Finance.eCommerce"
-    ],
+    "tags":[ "CloudServices.Finance.eCommerce" ],
     "severity": "critical",
     "patterns": [
       {

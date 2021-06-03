@@ -3,9 +3,7 @@
     "name": "Hygiene: Todo Comment",
     "id": "AI027300",
     "description": "Hygiene: Todo Comment",
-    "tags": [
-      "Miscellaneous.CodeHygiene.Comment.Todo"
-    ],
+    "tags":[ "Miscellaneous.CodeHygiene.Comment.Todo" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -20,9 +18,7 @@
     "name": "Hygiene: Fix Comment",
     "id": "AI027400",
     "description": "Hygiene: Fix Comment",
-    "tags": [
-      "Miscellaneous.CodeHygiene.Comment.Fix"
-    ],
+    "tags":[ "Miscellaneous.CodeHygiene.Comment.Fix" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -37,9 +33,7 @@
     "name": "Hygiene: Suspicious Comment",
     "id": "AI027500",
     "description": "Hygiene: Suspicious Comment",
-    "tags": [
-      "Miscellaneous.CodeHygiene.Comment.Suspicious"
-    ],
+    "tags":[ "Miscellaneous.CodeHygiene.Comment.Suspicious" ],
     "severity": "moderate",
     "patterns": [
       {

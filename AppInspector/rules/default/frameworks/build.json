@@ -11,7 +11,8 @@
         "pattern": "Maven",
         "type": "regex",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -24,10 +25,11 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "target",
-        "type": "regex",
+        "pattern": "project",
+        "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -43,7 +45,8 @@
         "pattern": "sourceSets",
         "type": "regex",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -59,7 +62,8 @@
         "pattern": "pipeline",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -75,7 +79,8 @@
         "pattern": "build",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -91,7 +96,8 @@
         "pattern": "bamboo",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -107,7 +113,8 @@
         "pattern": "teamcity",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -123,7 +130,8 @@
         "pattern": "grape",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -139,7 +147,8 @@
         "pattern": "ivy",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -155,7 +164,8 @@
         "pattern": "plug-ins|repositories|build|java",
         "type": "regexword",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -171,7 +181,8 @@
         "pattern": "VisualStudio|Visual Studio",
         "type": "regex",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   }

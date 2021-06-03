@@ -4,9 +4,7 @@
     "id": "AI009300",
     "description": "Cryptography: Key Derivation",
     "applies_to": ["csharp"],
-    "tags": [
-      "Cryptography.KeyDerivation.General"
-    ],
+    "tags":[ "Cryptography.KeyDerivation.General" ],
     "severity": "moderate",
     "patterns": [
       {

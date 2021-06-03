@@ -3,15 +3,13 @@
     "name": "Dependency: Included Source",
     "id": "AI026400",
     "description": "Dependency: Included Source",
-    "tags": [
-      "Dependency.SourceInclude"
-    ],
+    "tags":[ "Dependency.SourceInclude" ],
     "applies_to": [ "c", "cpp" ],
     "severity": "moderate",
     "confidence": "high",
     "patterns": [
       {
-        "pattern": "#include ?[\\\"<](.*)[\\\">]",
+        "pattern": "#include ?[\\\"<]([A-Za-z])[\\\">]",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -22,14 +20,12 @@
     "name": "Dependency: Included Source",
     "id": "AI026500",
     "description": "Dependency: Included Source",
-    "tags": [
-      "Dependency.SourceInclude"
-    ],
+    "tags":[ "Dependency.SourceInclude" ],
     "applies_to": [ "php" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "(include|require) .*;",
+        "pattern": "(include|require) [A-Za-z];",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -40,14 +36,12 @@
     "name": "Dependency: Included Source",
     "id": "AI026600",
     "description": "Dependency: Included Source",
-    "tags": [
-      "Dependency.SourceInclude"
-    ],
+    "tags":[ "Dependency.SourceInclude" ],
     "applies_to": [ "objective-c" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "#import .*",
+        "pattern": "#import [A-Za-z]",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -58,14 +52,12 @@
     "name": "Dependency: Included Source",
     "id": "AI026700",
     "description": "Dependency: Included Source",
-    "tags": [
-      "Dependency.SourceInclude"
-    ],
+    "tags":[ "Dependency.SourceInclude" ],
     "applies_to": [ "groovy" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "import .*",
+        "pattern": "import [A-Za-z]",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -77,12 +69,12 @@
         "confidence": "high"
       },
       {
-        "pattern": "evaluate ?\\(.*",
+        "pattern": "evaluate ?\\(",
         "type": "regex",
         "scopes": [ "code" ]
       },
       {
-        "pattern": "shell\\.parse ?\\(*",
+        "pattern": "shell\\.parse ?\\(?",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -93,20 +85,18 @@
     "name": "Dependency: Included Source",
     "id": "AI026800",
     "description": "Dependency: Included Source",
-    "tags": [
-      "Dependency.SourceInclude"
-    ],
+    "tags":[ "Dependency.SourceInclude" ],
     "applies_to": [ "python", "java", "swift", "go" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "import .*",
+        "pattern": "import [A-Za-z]",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
       },
       {
-        "pattern": "package .*",
+        "pattern": "package [A-Za-z]",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -117,20 +107,18 @@
     "name": "Dependency: Included Source",
     "id": "AI026900",
     "description": "Dependency: Included Source",
-    "tags": [
-      "Dependency.SourceInclude"
-    ],
+    "tags":[ "Dependency.SourceInclude" ],
     "applies_to": [ "perl", "rust"],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "use .*;",
+        "pattern": "use [A-Za-z];",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
       },
       {
-        "pattern": "package .*;",
+        "pattern": "package [A-Za-z];",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -141,20 +129,18 @@
     "name": "Dependency: Included Source",
     "id": "AI027000",
     "description": "Dependency: Included Source",
-    "tags": [
-      "Dependency.SourceInclude"
-    ],
+    "tags":[ "Dependency.SourceInclude" ],
     "applies_to": [ "ruby" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "load .*",
+        "pattern": "load [A-Za-z]",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
       },
       {
-        "pattern": "require .*",
+        "pattern": "require [A-Za-z]",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -165,14 +151,12 @@
     "name": "Dependency: Included Source",
     "id": "AI027100",
     "description": "Dependency: Included Source",
-    "tags": [
-      "Dependency.SourceInclude"
-    ],
+    "tags":[ "Dependency.SourceInclude" ],
     "applies_to": [ "csharp" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "using .*;",
+        "pattern": "using [A-Za-z];",
         "type": "regex",
         "scopes": [ "code" ]
       }
@@ -182,20 +166,18 @@
     "name": "Dependency: Included Source",
     "id": "AI027200",
     "description": "Dependency: Included Source",
-    "tags": [
-      "Dependency.SourceInclude"
-    ],
+    "tags":[ "Dependency.SourceInclude" ],
     "applies_to": [ "javascript" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "import .*;",
+        "pattern": "import [A-Za-z];",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
       },
       {
-        "pattern": "fetchInject ?\\(.*",
+        "pattern": "fetchInject ?\\([A-Za-z]",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -207,7 +189,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "\\$\\.getScript\\(.*",
+        "pattern": "\\$\\.getScript\\([A-Za-z]",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"

@@ -11,7 +11,8 @@
         "pattern": "netcore",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -78,13 +79,15 @@
         "pattern": "ServiceContract|using System\\.ServiceModel|WSHttpBinding",
         "type": "regexword",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       },
       {
         "pattern": "Controller\\b|\\[HttpGet\\]|\\[HttpPut\\]",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -164,16 +167,15 @@
     "name": "Development Framework: Microsoft Dynamics",
     "id": "AI023200",
     "description": "Development Framework: Microsoft Dynamics",
-    "tags": [
-      "Framework.Development.Microsoft.Server.Dynamics"
-    ],
+    "tags":[ "Framework.Development.Microsoft.Server.Dynamics" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Microsoft Dynamics|dynamics.com",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -181,16 +183,15 @@
     "name": "Development Framework: Microsoft Exchange",
     "id": "AI023300",
     "description": "Development Framework: Microsoft Exchange",
-    "tags": [
-      "Framework.Development.Microsoft.Server.Exchange"
-    ],
+    "tags":[ "Framework.Development.Microsoft.Server.Exchange" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Microsoft Exchange",
         "type": "string",
         "scopes": [ "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -225,7 +226,8 @@
         "pattern": "ASP\\.NET|\\b\\.MVC\\b",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -247,9 +249,7 @@
       {
         "pattern": "CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER|CoCreateInstance",
         "type": "regexword",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]

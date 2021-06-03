@@ -3,9 +3,7 @@
     "name": "Web App Media Audio",
     "id": "AI055900",
     "description": "Web App Media Audio",
-    "tags": [
-      "WebApp.Media.Audio"
-    ],
+    "tags":[ "WebApp.Media.Audio" ],
     "applies_to": [
       "javascript",
       "python",
@@ -32,9 +30,7 @@
     "name": "Web App Media GetUserMedia",
     "id": "AI056000",
     "description": "Web App Media GetUserMedia",
-    "tags": [
-      "WebApp.Media.GetUserMedia"
-    ],
+    "tags":[ "WebApp.Media.GetUserMedia" ],
     "applies_to": [
       "javascript",
       "python",

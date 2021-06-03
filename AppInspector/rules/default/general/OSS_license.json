@@ -3,9 +3,7 @@
     "name": "Open Source License: MIT",
     "id": "AI027600",
     "description": "Open Source License: MIT",
-    "tags": [
-      "Miscellaneous.OpenSourceLicense.MIT"
-    ],
+    "tags":[ "Miscellaneous.OpenSourceLicense.MIT" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -21,9 +19,7 @@
     "name": "Open Source License: Apache",
     "id": "AI027700",
     "description": "Open Source License: Apache",
-    "tags": [
-      "Miscellaneous.OpenSourceLicense.Apache"
-    ],
+    "tags":[ "Miscellaneous.OpenSourceLicense.Apache" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -39,9 +35,7 @@
     "name": "Open Source License: BSD",
     "id": "AI027800",
     "description": "Open Source License: BSD",
-    "tags": [
-      "Miscellaneous.OpenSourceLicense.BSD"
-    ],
+    "tags":[ "Miscellaneous.OpenSourceLicense.BSD" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -57,9 +51,7 @@
     "name": "Open Source License: GPL",
     "id": "AI027900",
     "description": "Open Source License: GPL",
-    "tags": [
-      "Miscellaneous.OpenSourceLicense.GPL"
-    ],
+    "tags":[ "Miscellaneous.OpenSourceLicense.GPL" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -75,9 +67,7 @@
     "name": "Open Source License: LGPL",
     "id": "AI028000",
     "description": "Open Source License: LGPL",
-    "tags": [
-      "Miscellaneous.OpenSourceLicense.LGPL"
-    ],
+    "tags":[ "Miscellaneous.OpenSourceLicense.LGPL" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -93,9 +83,7 @@
     "name": "Open Source License: Mozilla",
     "id": "AI028100",
     "description": "Open Source License: Mozilla",
-    "tags": [
-      "Miscellaneous.OpenSourceLicense.Mozilla"
-    ],
+    "tags":[ "Miscellaneous.OpenSourceLicense.Mozilla" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -111,9 +99,7 @@
     "name": "Open Source License: Eclipse",
     "id": "AI028200",
     "description": "Open Source License: Eclipse",
-    "tags": [
-      "Miscellaneous.OpenSourceLicense.Eclipse"
-    ],
+    "tags":[ "Miscellaneous.OpenSourceLicense.Eclipse" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -129,9 +115,7 @@
     "name": "Open Source License: Creative Commons",
     "id": "AI028300",
     "description": "Open Source License: Creative Commons",
-    "tags": [
-      "Miscellaneous.OpenSourceLicense.CreativeCommons"
-    ],
+    "tags":[ "Miscellaneous.OpenSourceLicense.CreativeCommons" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -147,9 +131,7 @@
     "name": "Open Source License: Microsoft",
     "id": "AI028400",
     "description": "Open Source License: Microsoft",
-    "tags": [
-      "Miscellaneous.OpenSourceLicense.Microsoft"
-    ],
+    "tags":[ "Miscellaneous.OpenSourceLicense.Microsoft" ],
     "severity": "moderate",
     "patterns": [
       {

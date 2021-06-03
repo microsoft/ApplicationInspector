@@ -9,7 +9,7 @@
     "patterns": [
       {
         "pattern": "Angular",
-        "type": "regex",
+        "type": "substring",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -26,7 +26,7 @@
     "patterns": [
       {
         "pattern": "Vue",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -43,7 +43,7 @@
     "patterns": [
       {
         "pattern": "ember",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -298,9 +298,7 @@
     "id": "AI021610",
     "description": "Development Framework: Node",
     "applies_to": [ "javascript" ],
-    "tags": [
-      "Metadata.Application.Type.Web.Service"
-    ],
+    "tags":[ "Metadata.Application.Type.Web.Service" ],
     "severity": "moderate",
     "patterns": [
       {

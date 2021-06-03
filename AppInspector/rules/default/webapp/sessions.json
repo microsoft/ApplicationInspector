@@ -3,9 +3,7 @@
     "name": "Web App Cookie HttpOnly",
     "id": "AI056100",
     "description": "Web App Cookie Attributes HttpOnly",
-    "tags": [
-      "WebApp.Cookies.Attr.HttpOnly"
-    ],
+    "tags":[ "WebApp.Cookies.Attr.HttpOnly" ],
     "severity": "critical",
     "patterns": [
       {
@@ -21,9 +19,7 @@
         "pattern": {
           "pattern": "cookie",
           "type": "regexword",
-          "scopes": [
-            "code"
-          ],
+          "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": ""
         },
@@ -36,9 +32,7 @@
     "name": "Web App Cookie Secure",
     "id": "AI056200",
     "description": "Web App Cookie Attributes Secure",
-    "tags": [
-      "WebApp.Cookies.Attr.Secure"
-    ],
+    "tags":[ "WebApp.Cookies.Attr.Secure" ],
     "severity": "critical",
     "patterns": [
       {
@@ -54,9 +48,7 @@
         "pattern": {
           "pattern": "cookie",
           "type": "regexword",
-          "scopes": [
-            "code"
-          ],
+          "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": ""
         },
@@ -69,9 +61,7 @@
     "name": "Web App Cookie Attributes Lifetime",
     "id": "AI056300",
     "description": "Web App Cookie Attributes Lifetime",
-    "tags": [
-      "WebApp.Cookies.Attr.Lifetime"
-    ],
+    "tags":[ "WebApp.Cookies.Attr.Lifetime" ],
     "severity": "critical",
     "patterns": [
       {
@@ -87,9 +77,7 @@
         "pattern": {
           "pattern": "cookie",
           "type": "regexword",
-          "scopes": [
-            "code"
-          ],
+          "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": ""
         },
@@ -102,9 +90,7 @@
     "name": "Web App Cookie Attributes Strict",
     "id": "AI056400",
     "description": "Web App Cookie Attributes Strict",
-    "tags": [
-      "WebApp.Cookies.Attr.Strict"
-    ],
+    "tags":[ "WebApp.Cookies.Attr.Strict" ],
     "severity": "critical",
     "patterns": [
       {
@@ -120,9 +106,7 @@
         "pattern": {
           "pattern": "cookie",
           "type": "regexword",
-          "scopes": [
-            "code"
-          ],
+          "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": ""
         },
@@ -135,9 +119,7 @@
     "name": "Web App Cookie Attributes SameSite",
     "id": "AI056500",
     "description": "Web App Cookie Attributes SameSite",
-    "tags": [
-      "WebApp.Cookies.Attr.SameSite"
-    ],
+    "tags":[ "WebApp.Cookies.Attr.SameSite" ],
     "severity": "critical",
     "patterns": [
       {
@@ -153,9 +135,7 @@
         "pattern": {
           "pattern": "cookie",
           "type": "regexword",
-          "scopes": [
-            "code"
-          ],
+          "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": ""
         },
@@ -168,9 +148,7 @@
     "name": "Web App Cookie Attributes Expires",
     "id": "AI056600",
     "description": "Web App Cookie Attributes Expires",
-    "tags": [
-      "WebApp.Cookies.Attr.Expires"
-    ],
+    "tags":[ "WebApp.Cookies.Attr.Expires" ],
     "severity": "critical",
     "patterns": [
       {
@@ -186,9 +164,7 @@
         "pattern": {
           "pattern": "cookie",
           "type": "regexword",
-          "scopes": [
-            "code"
-          ],
+          "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": ""
         },
@@ -201,9 +177,7 @@
     "name": "Web App Cookie Attributes Domain",
     "id": "AI056700",
     "description": "Web App Cookie Attributes Domain",
-    "tags": [
-      "WebApp.Cookies.Attr.Domain"
-    ],
+    "tags":[ "WebApp.Cookies.Attr.Domain" ],
     "severity": "critical",
     "patterns": [
       {
@@ -219,9 +193,7 @@
         "pattern": {
           "pattern": "cookie",
           "type": "regexword",
-          "scopes": [
-            "code"
-          ],
+          "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": ""
         },
@@ -234,9 +206,7 @@
     "name": "Web App Session History Update",
     "id": "AI056800",
     "description": "Web App Session History Update",
-    "tags": [
-      "WebApp.History.Update"
-    ],
+    "tags":[ "WebApp.History.Update" ],
     "severity": "critical",
     "patterns": [
       {
@@ -251,9 +221,7 @@
     "name": "Web App Session Worker",
     "id": "AI056900",
     "description": "Web App Session Worker Used",
-    "tags": [
-      "WebApp.Worker"
-    ],
+    "tags":[ "WebApp.Worker" ],
     "severity": "critical",
     "patterns": [
       {

@@ -3,9 +3,7 @@
     "name": "Cloud Service: Hosting (Amazon Web Services)",
     "id": "AI000500",
     "description": "Cloud Service: Hosting (Amazon Web Services)",
-    "tags": [
-      "Metadata.CloudServices.Hosting.Amazon.AWS"
-    ],
+    "tags":[ "Metadata.CloudServices.Hosting.Amazon.AWS" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -21,9 +19,7 @@
     "name": "Cloud Service: Hosting (Apple iCloud)",
     "id": "AI000600",
     "description": "Cloud Service: Hosting (Apple iCloud)",
-    "tags": [
-      "Metadata.CloudServices.Hosting.Apple.iCloud"
-    ],
+    "tags":[ "Metadata.CloudServices.Hosting.Apple.iCloud" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -45,9 +41,7 @@
     "name": "Cloud Service: Hosting (Microsoft Azure)",
     "id": "AI000700",
     "description": "Cloud Service: Hosting (Microsoft Azure)",
-    "tags": [
-      "Metadata.CloudServices.Hosting.Microsoft.Azure"
-    ],
+    "tags":[ "Metadata.CloudServices.Hosting.Microsoft.Azure" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -63,9 +57,7 @@
     "name": "Cloud Service: Application (Microsoft Office 365)",
     "id": "AI000800",
     "description": "Cloud Service: Application (Microsoft Office 365)",
-    "tags": [
-      "CloudServices.Application.Microsoft.O365"
-    ],
+    "tags":[ "CloudServices.Application.Microsoft.O365" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -87,9 +79,7 @@
     "id": "AI000810",
     "description": "Cloud Service: Application (Telemetry)",
     "applies_to": [ "csharp" ],
-    "tags": [
-      "CloudServices.Application.Microsoft.Telemetry"
-    ],
+    "tags":[ "CloudServices.Application.Microsoft.Telemetry" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -105,9 +95,7 @@
     "id": "AI000820",
     "description": "Cloud Service: Application (Telemetry)",
     "applies_to": [ "javascript" ],
-    "tags": [
-      "CloudServices.Application.Microsoft.Telemetry"
-    ],
+    "tags":[ "CloudServices.Application.Microsoft.Telemetry" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -122,9 +110,7 @@
     "name": "Cloud Service: Application (Telemetry)",
     "id": "AI000830",
     "description": "Cloud Service: Application (Telemetry)",
-    "tags": [
-      "CloudServices.Application.Microsoft.Telemetry"
-    ],
+    "tags":[ "CloudServices.Application.Microsoft.Telemetry" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -140,9 +126,7 @@
     "name": "Cloud Service: Hosting (Google Cloud)",
     "id": "AI000900",
     "description": "Cloud Service: Hosting (Google Cloud)",
-    "tags": [
-      "Metadata.CloudServices.Hosting.Google"
-    ],
+    "tags":[ "Metadata.CloudServices.Hosting.Google" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -158,9 +142,7 @@
     "name": "Cloud Service: Hosting (DigitalOcean Cloud)",
     "id": "AI001000",
     "description": "Cloud Service: Hosting (DigitalOcean Cloud)",
-    "tags": [
-      "Metadata.CloudServices.Hosting.DigitalOcean"
-    ],
+    "tags":[ "Metadata.CloudServices.Hosting.DigitalOcean" ],
     "severity": "moderate",
     "rule_info": "",
     "patterns": [
@@ -177,9 +159,7 @@
     "name": "Cloud Service: Application (SendGrid)",
     "id": "AI001100",
     "description": "Cloud Service: Application (SendGrid)",
-    "tags": [
-      "CloudServices.Application.SendGrid.Mail"
-    ],
+    "tags":[ "CloudServices.Application.SendGrid.Mail" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -195,9 +175,7 @@
     "name": "Cloud Service: Code Repository (GitHub)",
     "id": "AI001200",
     "description": "Cloud Service: Code Repository (GitHub)",
-    "tags": [
-      "Metadata.CloudServices.Code.Repo.GitHub"
-    ],
+    "tags":[ "Metadata.CloudServices.Code.Repo.GitHub" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -213,9 +191,7 @@
     "name": "Cloud Service: Code Repository (GitLab)",
     "id": "AI001300",
     "description": "Cloud Service: Code Repository (GitLab)",
-    "tags": [
-      "Metadata.CloudServices.Code.Repo.GitLab"
-    ],
+    "tags":[ "Metadata.CloudServices.Code.Repo.GitLab" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -231,9 +207,7 @@
     "name": "Cloud Service: Code Repository (BitBucket)",
     "id": "AI001400",
     "description": "Cloud Service: Code Repository (BitBucket)",
-    "tags": [
-      "Metadata.CloudServices.Code.Repo.BitBucket"
-    ],
+    "tags":[ "Metadata.CloudServices.Code.Repo.BitBucket" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -249,9 +223,7 @@
     "name": "Cloud Service: Code Repository (SourceForge)",
     "id": "AI001500",
     "description": "Cloud Service: Code Repository (SourceForge)",
-    "tags": [
-      "Metadata.CloudServices.Code.Repo.SourceForge"
-    ],
+    "tags":[ "Metadata.CloudServices.Code.Repo.SourceForge" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -267,9 +239,7 @@
     "name": "Cloud Service: Code Repository (Savannah)",
     "id": "AI001600",
     "description": "Cloud Service: Code Repository (Savannah)",
-    "tags": [
-      "Metadata.CloudServices.Code.Repo.Savannah"
-    ],
+    "tags":[ "Metadata.CloudServices.Code.Repo.Savannah" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -285,9 +255,7 @@
     "name": "Cloud Service: Code Package Repository (NuGet)",
     "id": "AI001700",
     "description": "Cloud Service: Code Package Repository (NuGet)",
-    "tags": [
-      "Metadata.CloudServices.Code.Repo.Microsoft.NuGet"
-    ],
+    "tags":[ "Metadata.CloudServices.Code.Repo.Microsoft.NuGet" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -303,9 +271,7 @@
     "name": "Cloud Service: Code Package Repository (NPM)",
     "id": "AI001800",
     "description": "Cloud Service: Code Package Repository (NPM)",
-    "tags": [
-      "Metadata.CloudServices.Code.Repo.NPM"
-    ],
+    "tags":[ "Metadata.CloudServices.Code.Repo.NPM" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -320,9 +286,7 @@
     "name": "Cloud Service: Code Package Repository (PyPI)",
     "id": "AI001900",
     "description": "Cloud Service: Code Package Repository (PyPI)",
-    "tags": [
-      "Metadata.CloudServices.Code.Repo.PyPI"
-    ],
+    "tags":[ "Metadata.CloudServices.Code.Repo.PyPI" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -338,9 +302,7 @@
     "name": "Cloud Service: Code Package Repository (LaunchPad)",
     "id": "AI002000",
     "description": "Cloud Service: Code Package Repository (LaunchPad)",
-    "tags": [
-      "Metadata.CloudServices.Code.Repo.LaunchPad"
-    ],
+    "tags":[ "Metadata.CloudServices.Code.Repo.LaunchPad" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -356,9 +318,7 @@
     "name": "Cloud Service: Code Repository (Visual Studio)",
     "id": "AI001410",
     "description": "Cloud Service: Code Repository (Visual Studio)",
-    "tags": [
-      "Metadata.CloudServices.Code.Repo.VisualStudio"
-    ],
+    "tags":[ "Metadata.CloudServices.Code.Repo.VisualStudio" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -374,12 +334,8 @@
     "name": "Cloud Service: CI (TravisCI)",
     "id": "AI002100",
     "description": "Cloud Service: CI (TravisCI)",
-    "applies_to": [
-      "yaml"
-    ],
-    "tags": [
-      "Metadata.CloudServices.Code.CI.TravisCI"
-    ],
+    "applies_to":[ "yaml" ],
+    "tags":[ "Metadata.CloudServices.Code.CI.TravisCI" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -395,12 +351,8 @@
     "name": "Cloud Service: CI (Circle CI)",
     "id": "AI002200",
     "description": "Cloud Service: CI (Circle CI)",
-    "applies_to": [
-      "yaml"
-    ],
-    "tags": [
-      "Metadata.CloudServices.Code.CI.CircleCI"
-    ],
+    "applies_to":[ "yaml" ],
+    "tags":[ "Metadata.CloudServices.Code.CI.CircleCI" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -415,12 +367,8 @@
     "name": "Cloud Service: CI (Azure Pipelines)",
     "id": "AI002300",
     "description": "Cloud Service: CI (Azure Pipelines)",
-    "applies_to": [
-      "yaml"
-    ],
-    "tags": [
-      "Metadata.CloudServices.Code.CI.Microsoft.Azure"
-    ],
+    "applies_to":[ "yaml" ],
+    "tags":[ "Metadata.CloudServices.Code.CI.Microsoft.Azure" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -435,9 +383,7 @@
     "name": "Cloud Service: Hosting App Store (Windows)",
     "id": "AI002400",
     "description": "Cloud Service: Hosting App Store (Windows)",
-    "tags": [
-      "Metadata.CloudServices.Hosting.Microsoft.AppStore"
-    ],
+    "tags":[ "Metadata.CloudServices.Hosting.Microsoft.AppStore" ],
     "severity": "moderate",
     "patterns": [
       {

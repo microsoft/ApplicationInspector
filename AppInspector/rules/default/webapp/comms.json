@@ -3,9 +3,7 @@
     "name": "Web App Communications Post Message",
     "id": "AI054500",
     "description": "Web App Communications Post Message",
-    "tags": [
-      "WebApp.Communications.PostMessage"
-    ],
+    "tags":[ "WebApp.Communications.PostMessage" ],
     "applies_to": [
       "javascript",
       "csharp",
@@ -34,9 +32,7 @@
     "name": "Web App Communications Sockets",
     "id": "AI054600",
     "description": "Web App Communications Sockets",
-    "tags": [
-      "WebApp.Communications.Sockets"
-    ],
+    "tags":[ "WebApp.Communications.Sockets" ],
     "applies_to": [
       "javascript",
       "csharp",
@@ -65,9 +61,7 @@
     "name": "Web App Communications Server Events",
     "id": "AI054700",
     "description": "Web App Communications Server Events",
-    "tags": [
-      "WebApp.Communications.ServerEvent"
-    ],
+    "tags":[ "WebApp.Communications.ServerEvent" ],
     "applies_to": [
       "javascript",
       "csharp",
@@ -87,7 +81,8 @@
         "pattern": "EventSource",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": [ "i" ]
       }
     ]
   }
