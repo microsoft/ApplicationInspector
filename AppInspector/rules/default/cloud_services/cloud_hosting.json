@@ -30,7 +30,7 @@
         "confidence": "high"
       },
       {
-        "pattern": "NSUbiquitousKeyValueStore",
+        "pattern": "NSUbiquitousKeyValueStore|URLForUbiquityContainerIdentifier",
         "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -61,7 +61,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "office365|office\\.com",
+        "pattern": "o365|m365|office365|office\\.com",
         "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -99,8 +99,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "appInsights\\.trackMetric",
-        "type": "regex",
+        "pattern": "appInsights.trackMetric",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -115,7 +115,7 @@
     "patterns": [
       {
         "pattern": "applicationinsights",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high",
         "modifiers": [ "i" ]
