@@ -13,7 +13,6 @@
         "pattern": "springframework",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -32,7 +31,6 @@
         "pattern": "hibernate",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -51,7 +49,6 @@
         "pattern": "blade",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -89,7 +86,6 @@
         "pattern": "google.gwt",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -108,7 +104,6 @@
         "pattern": "http://xmlns.jcp.org/jsf/html",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -162,7 +157,6 @@
         "pattern": "import play.",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -199,7 +193,6 @@
         "pattern": "import spark.",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -218,7 +211,6 @@
         "pattern": "struts",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -237,7 +229,6 @@
         "pattern": "tapestry",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -256,7 +247,6 @@
         "pattern": "vaadin",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]

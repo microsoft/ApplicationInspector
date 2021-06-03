@@ -117,13 +117,12 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "Common OpenSSL commands"
       },
       {
         "pattern": "---BEGIN CERTIFICATE---",
-        "type": "regexword",
+        "type": "substring",
         "scopes": [
           "code"
         ],
@@ -131,7 +130,7 @@
       },
       {
         "pattern": "---BEGIN PKCS",
-        "type": "regex",
+        "type": "substring",
         "scopes": [
           "code"
         ],
@@ -144,7 +143,6 @@
         "scopes": [
           "comment"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "Common OpenSSL commands or comments"
       }
@@ -197,7 +195,7 @@
       },
       {
         "pattern": "DSA",
-        "type": "regexword",
+        "type": "string",
         "scopes": [
           "code"
         ],

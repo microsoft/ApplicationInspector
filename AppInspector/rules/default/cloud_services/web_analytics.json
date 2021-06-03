@@ -30,7 +30,7 @@
         "pattern": "connect.facebook.net",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -47,7 +47,7 @@
         "pattern": "googletagmanager.com",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -64,7 +64,7 @@
         "pattern": "bat.bing.com",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -81,7 +81,7 @@
         "pattern": "static.ads-twitter.com",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -98,7 +98,7 @@
         "pattern": "amplify.outbrain.com",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -115,7 +115,7 @@
         "pattern": "s.pinimg.com",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   }

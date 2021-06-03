@@ -159,6 +159,19 @@
         },
         "search_in": "finding-region(-10,10)",
         "negate_finding": true
+      },
+      {
+        "pattern": {
+          "pattern": "UnauthorizedAccessException",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [ "i" ],
+          "_comment": "This may not indicate that actual authorization is going on."
+        },
+        "search_in": "same-line",
+        "negate_finding": true
       }
     ]
   }

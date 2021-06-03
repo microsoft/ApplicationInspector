@@ -124,7 +124,7 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "(NS)*Hashset|Hashtable|Hashmap",
+          "pattern": "Hashset|Hashtable|Hashmap",
           "type": "regexword",
           "scopes": [
             "code"

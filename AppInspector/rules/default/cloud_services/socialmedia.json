@@ -81,14 +81,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "reddit|snapchat|whatsapp|tumblr|qzone|weibo|pinterest|ask\\.fm|flickr|linkedin|odnoklassniki|meetup",
-        "type": "regex",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
-      },
-      {
-        "pattern": "discord|diaspora|sociall\\.io|mastodon",
+        "pattern": "reddit|snapchat|whatsapp|tumblr|qzone|weibo|pinterest|ask\\.fm|flickr|linkedin|odnoklassniki|meetup|discord|diaspora|sociall\\.io|mastodon",
         "type": "regex",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],

@@ -97,12 +97,12 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "= CreateObject\\(",
-        "type": "regex",
+        "pattern": "= CreateObject(",
+        "type": "substring",
         "scopes": [
           "code"
         ],
-        "confidence": "high"
+        "confidence": "low"
       }
     ]
   },
@@ -172,7 +172,8 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": [ "i" ]
       }
     ]
   },

@@ -56,7 +56,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -80,7 +79,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "Qt TCP Server"
       }
@@ -105,7 +103,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "Qt TCP Server"
       },
@@ -115,7 +112,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "Boost::AsynchIO"
       },
@@ -125,7 +121,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "Standard C Library"
       }
@@ -172,7 +167,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "Python socket"
       }
@@ -302,7 +296,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "Common Node.js HTTP libraries"
       }
@@ -326,7 +319,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high",
         "_comment": "Common Python HTTP libraries"
       }
@@ -349,7 +341,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "low",
         "_comment": "HTTP URL with or without TLS"
       },
@@ -359,7 +350,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "medium"
       }
     ]
@@ -380,7 +370,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -401,7 +390,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -422,7 +410,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -443,7 +430,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -464,7 +450,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -485,7 +470,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -506,7 +490,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -527,7 +510,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -547,7 +529,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "high"
       },
       {
@@ -556,7 +537,6 @@
         "scopes": [
           "code"
         ],
-        "modifiers": [],
         "confidence": "medium"
       }
     ]

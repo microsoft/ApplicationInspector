@@ -37,7 +37,6 @@
         "pattern": "NSUbiquitousKeyValueStore",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -73,14 +72,12 @@
         "pattern": "office365|office\\.com",
         "type": "regexword",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       },
       {
         "pattern": "graph\\.microsoft\\.com|MicrosoftGraph",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -99,7 +96,6 @@
         "pattern": "TelemetryClient|Microsoft\\.ApplicationInsights|MetricTelemetry",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -118,7 +114,6 @@
         "pattern": "appInsights\\.trackMetric",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -136,8 +131,8 @@
         "pattern": "applicationinsights",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -412,7 +407,6 @@
         "pattern": "circleci",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]
@@ -433,7 +427,6 @@
         "pattern": "steps:",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
         "confidence": "high"
       }
     ]

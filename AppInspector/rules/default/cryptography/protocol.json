@@ -42,10 +42,8 @@
     "patterns": [
       {
         "pattern": "SECURITY_FLAG_",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "type": "substring",
+        "scopes": [ "code" ],
         "confidence": "high",
         "_comment": "get all non-ignore (see weakssl.json) indicators of ssl"
       }
@@ -54,10 +52,8 @@
       {
         "pattern": {
           "pattern": "SECURITY_FLAG_IGNORE",
-          "type": "regex",
-          "scopes": [
-            "code"
-          ],
+          "type": "substring",
+          "scopes": [ "code" ],
           "_comment": ""
         },
         "search_in": "finding-region(-1,1)",
@@ -99,9 +95,10 @@
       },
       {
         "pattern": "ssl",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high",
+        "modifiers": [ "i" ],
         "_comment": "e.g. ssl_crl, ssl_ecdh_curve, others"
       },
       {
@@ -147,7 +144,7 @@
     "patterns": [
       {
         "pattern": "ssh",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"
       }

@@ -13,7 +13,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "CloudStorageAccount|Microsoft\\.Azure\\.Storage|Microsoft\\.Azure\\.Cosmos\\.Table|Microsoft\\.Azure\\.Documents|Microsoft.WindowsAzure.Storage",
+        "pattern": "CloudStorageAccount|Microsoft\\.Azure\\.Storage|Microsoft\\.Azure\\.Cosmos\\.Table|Microsoft\\.Azure\\.Documents|Microsoft\\.WindowsAzure\\.Storage",
         "type": "regexword",
         "scopes": [
           "code"
@@ -22,10 +22,10 @@
       },
       {
         "pattern": "cosmosdb",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -58,7 +58,8 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -75,12 +76,20 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "\\.createBlobService|azure/storage-blob",
+        "pattern": "\\.createBlobService",
         "type": "regex",
         "scopes": [
           "code"
         ],
-        "confidence": "high"
+        "confidence": "medium"
+      },
+      {
+        "pattern": "azure/storage-blob",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium"
       }
     ]
   },
@@ -132,12 +141,21 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "azure\\.keyvault|KeyVaultClient|azure\\.mgmt\\.keyvault",
+        "pattern": "KeyVaultClient",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "confidence": "high"
+      },
+      {
+        "pattern": "azure\\.keyvault|azure\\.mgmt\\.keyvault",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -231,7 +249,7 @@
     "patterns": [
       {
         "pattern": "OneDrive",
-        "type": "regex",
+        "type": "string",
         "scopes": [
           "code"
         ],
@@ -299,7 +317,7 @@
     "patterns": [
       {
         "pattern": "import boto3",
-        "type": "regex",
+        "type": "string",
         "scopes": [
           "code"
         ],
@@ -322,7 +340,8 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -341,7 +360,8 @@
         "scopes": [
           "code"
         ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -356,11 +376,12 @@
     "patterns": [
       {
         "pattern": "MediaFire",
-        "type": "regex",
+        "type": "substring",
         "scopes": [
           "code"
         ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   }
