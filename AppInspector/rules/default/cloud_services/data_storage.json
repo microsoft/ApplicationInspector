@@ -88,7 +88,7 @@
     "patterns": [
       {
         "pattern": "new ClientSecret|KeyVaultClient|Microsoft\\.Azure\\.KeyVault|Microsoft\\.Azure\\.Management\\.KeyVault",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },
@@ -98,28 +98,6 @@
         "scopes": [ "code", "comment" ],
         "modifiers": ["i"],
         "confidence": "medium"
-      }
-    ]
-  },
-  {
-    "name": "CloudServices: DataStorage (AzureKeyVault)",
-    "id": "AI002720",
-    "description": "CloudServices: DataStorage (AzureKeyVault)",
-    "applies_to": [
-      "python",
-      "java"
-    ],
-    "tags": [
-      "CloudServices.DataStorage.Microsoft.AzureKeyVault",
-      "Data.Sensitive.Secret"
-    ],
-    "severity": "moderate",
-    "patterns": [
-      {
-        "pattern": "KeyVaultClient",
-        "type": "regex",
-        "scopes": [ "code" ],
-        "confidence": "high"
       },
       {
         "pattern": "azure\\.keyvault|azure\\.mgmt\\.keyvault",
@@ -239,7 +217,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "using Amazon.S3;",
+        "pattern": "Amazon.S3",
         "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"
@@ -255,7 +233,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "import boto3",
+        "pattern": "boto3",
         "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"

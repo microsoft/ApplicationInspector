@@ -72,7 +72,7 @@
     "patterns": [
       {
         "pattern": "reddit|snapchat|whatsapp|tumblr|qzone|weibo|pinterest|ask\\.fm|flickr|linkedin|odnoklassniki|meetup|discord|diaspora|sociall\\.io|mastodon",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"

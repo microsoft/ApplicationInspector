@@ -3,7 +3,7 @@
     "name": "Miscellaneous: Analytics Service",
     "id": "AI004200",
     "description": "Miscellaneous: Analytics Service",
-    "tags":[ "CloudServices.Web.Analytics.Facebook" ],
+    "tags":[ "CloudServices.Web.Analytics" ],
     "severity": "moderate",
     "patterns": [
       {
