@@ -45,8 +45,7 @@
         "pattern": {
           "pattern": "SECURITY_FLAG_IGNORE",
           "type": "substring",
-          "scopes": [ "code" ],
-          "_comment": ""
+          "scopes": [ "code" ]
         },
         "search_in": "finding-region(-1,1)",
         "negate_finding": true

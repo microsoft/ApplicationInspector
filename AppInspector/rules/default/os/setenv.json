@@ -126,8 +126,7 @@
           "pattern": "SetValue",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-10,10)",
         "negate_finding": false
@@ -243,8 +242,7 @@
           "pattern": "GetValue",
           "type": "substring",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-10,10)",
         "negate_finding": false

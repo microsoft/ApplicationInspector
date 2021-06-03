@@ -26,7 +26,6 @@
         "pattern": "Arquillian",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -42,7 +41,6 @@
         "pattern": "AssertJ",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]

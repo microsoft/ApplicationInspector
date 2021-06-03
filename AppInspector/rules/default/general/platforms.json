@@ -196,8 +196,7 @@
           "pattern": "areapath",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": true
@@ -225,8 +224,7 @@
           "pattern": "address|(first|last|sur)name|contact|gender|email",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-7,7)",
         "negate_finding": true

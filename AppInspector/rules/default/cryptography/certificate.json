@@ -78,8 +78,7 @@
         "pattern": {
           "pattern": "AcquireTokenForClient|ConfidentialClientApplicationBuilder",
           "type": "regex",
-          "scopes": [ "code" ],
-          "_comment": ""
+          "scopes": [ "code" ]
         },
         "search_in": "finding-region(-10,10)",
         "negate_finding": false
@@ -190,8 +189,7 @@
           "pattern": "shared access|SAS",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-30,30)",
         "negate_finding": true

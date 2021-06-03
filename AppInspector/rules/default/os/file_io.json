@@ -462,8 +462,7 @@
           "pattern": "use std::io::Write|use std::io::File|use std:fs:File",
           "type": "regexword",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-240,240)",
         "negate_finding": false

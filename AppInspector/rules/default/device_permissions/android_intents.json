@@ -23,8 +23,7 @@
           "pattern": "Uri\\.parse\\(\"https?:\\/\\/www\\.\\);",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -55,8 +54,7 @@
           "pattern": "Uri\\.parse\\(\"geo:",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -66,8 +64,7 @@
           "pattern": "Uri\\.parse(\"http:\/\/maps\\.google\\.com\/maps\");",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -117,8 +114,7 @@
           "pattern": "sms|mms|smsto",
           "type": "regexword",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -149,8 +145,7 @@
           "pattern": "Intent\\.EXTRA_EMAIL|Intent\\.EXTRA_SUBJECT",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -160,8 +155,7 @@
           "pattern": "mailto:",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -192,8 +186,7 @@
           "pattern": "Media\\.INTERNAL_CONTENT_URI|mp3|mp4",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -281,8 +274,7 @@
           "pattern": "Events\\.TITLE",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false

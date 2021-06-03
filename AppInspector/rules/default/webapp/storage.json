@@ -166,8 +166,7 @@
         "pattern": {
           "pattern": "FileReader",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "_comment": ""
+          "scopes": [ "code" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -206,8 +205,7 @@
           "pattern": "PUT",
           "type": "string",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false

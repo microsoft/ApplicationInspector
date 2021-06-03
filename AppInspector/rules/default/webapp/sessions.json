@@ -18,10 +18,9 @@
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regexword",
+          "type": "string",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-1,1)",
         "negate_finding": false
@@ -47,10 +46,9 @@
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regexword",
+          "type": "string",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-1,1)",
         "negate_finding": false
@@ -76,10 +74,9 @@
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regexword",
+          "type": "string",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-1,1)",
         "negate_finding": false
@@ -105,10 +102,9 @@
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regexword",
+          "type": "string",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-1,1)",
         "negate_finding": false
@@ -134,10 +130,9 @@
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regexword",
+          "type": "string",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-1,1)",
         "negate_finding": false
@@ -163,10 +158,9 @@
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regexword",
+          "type": "string",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-1,1)",
         "negate_finding": false
@@ -192,10 +186,9 @@
       {
         "pattern": {
           "pattern": "cookie",
-          "type": "regexword",
+          "type": "string",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-1,1)",
         "negate_finding": false

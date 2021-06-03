@@ -54,8 +54,7 @@
         "pattern": {
           "pattern": "HKEY_|Registry",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "_comment": ""
+          "scopes": [ "code" ]
         },
         "search_in": "finding-region(-40,40)",
         "negate_finding": false
@@ -106,8 +105,7 @@
         "pattern": {
           "pattern": "Set-ItemProperty",
           "type": "regex",
-          "scopes": [ "code" ],
-          "_comment": ""
+          "scopes": [ "code" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -175,8 +173,7 @@
         "pattern": {
           "pattern": "Get-ItemProperty",
           "type": "string",
-          "scopes": [ "code" ],
-          "_comment": ""
+          "scopes": [ "code" ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -203,8 +200,7 @@
         "pattern": {
           "pattern": "HKEY_",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "_comment": ""
+          "scopes": [ "code" ]
         },
         "search_in": "finding-region(-40,40)",
         "negate_finding": false
@@ -231,8 +227,7 @@
         "pattern": {
           "pattern": "HKEY_",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "_comment": ""
+          "scopes": [ "code" ]
         },
         "search_in": "finding-region(-40,40)",
         "negate_finding": false

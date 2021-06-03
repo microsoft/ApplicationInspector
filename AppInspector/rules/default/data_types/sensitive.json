@@ -122,8 +122,7 @@
           "pattern": "user",
           "type": "substring",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-30,30)",
         "negate_finding": false
@@ -167,8 +166,7 @@
           "pattern": "user",
           "type": "regex",
           "scopes": [ "code" ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-40,40)",
         "negate_finding": false
