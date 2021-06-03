@@ -318,7 +318,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(0, result.Metadata.FilesSkipped);
             Assert.AreEqual(2, result.Metadata.FilesAffected);
-            Assert.AreEqual(65, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(69, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(22, result.Metadata.UniqueMatchesCount);
         }
 
@@ -338,7 +338,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(1, result.Metadata.FilesSkipped);
             Assert.AreEqual(1, result.Metadata.FilesAffected);
-            Assert.AreEqual(35, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(37, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(21, result.Metadata.UniqueMatchesCount);
         }
 
