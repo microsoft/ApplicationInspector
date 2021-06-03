@@ -32,7 +32,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "_CERT|CERT_",
+        "pattern": "_?CERT_?",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"

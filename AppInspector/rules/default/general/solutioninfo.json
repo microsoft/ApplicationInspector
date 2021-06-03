@@ -106,7 +106,7 @@
     "name": "Metadata: Application Type (Windows Forms)",
     "id": "AI030400",
     "description": "Metadata: Application Type (Windows Forms)",
-    "tags":[ "Metadata.Application.Type.Client.Winforms" ],
+    "tags":[ "Application.Type.Client.Winforms" ],
     "applies_to": [ "csharp" ],
     "severity": "moderate",
     "patterns": [
@@ -123,7 +123,7 @@
     "name": "Metadata: Application Type (Service)",
     "id": "AI030500",
     "description": "Metadata: Application Type (Service)",
-    "tags":[ "Metadata.Application.Type.Client.Service.Windows" ],
+    "tags":[ "Application.Type.Client.Service.Windows" ],
     "applies_to": [ "csharp" ],
     "severity": "moderate",
     "patterns": [
@@ -139,7 +139,7 @@
     "name": "Metadata: Application Type (Service)",
     "id": "AI030600",
     "description": "Metadata: Application Type (Service)",
-    "tags":[ "Metadata.Application.Type.Client.Service.Windows" ],
+    "tags":[ "Application.Type.Client.Service.Windows" ],
     "applies_to": [ "c", "cpp", "shellscript" ],
     "severity": "moderate",
     "patterns": [
@@ -155,7 +155,7 @@
     "name": "Metadata: Application Type (Service)",
     "id": "AI030700",
     "description": "Metadata: Application Type (Service)",
-    "tags":[ "Metadata.Application.Type.Client.Service.Windows" ],
+    "tags":[ "Application.Type.Client.Service.Windows" ],
     "applies_to": [ "cpp" ],
     "severity": "moderate",
     "patterns": [
@@ -268,7 +268,7 @@
     "name": "Metadata: Target Framework",
     "id": "AI031500",
     "description": "Metadata: Target Framework",
-    "tags":[ "Metadata.Application.Target.Framework" ],
+    "tags":[ "Application.Target.Framework" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -283,7 +283,7 @@
     "name": "Metadata: Application Container (Kubernetes)",
     "id": "AI031510",
     "description": "Metadata: Application Container (Kubernetes)",
-    "tags":[ "Metadata.Application.Container.Kubernetes" ],
+    "tags":[ "Application.Container.Kubernetes" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -299,7 +299,7 @@
     "name": "Metadata: Application Container (Docker)",
     "id": "AI031520",
     "description": "Metadata: Application Container (Docker)",
-    "tags":[ "Metadata.Application.Container.Docker" ],
+    "tags":[ "Application.Container.Docker" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -315,7 +315,7 @@
     "name": "Metadata: Application Container (rktlet)",
     "id": "AI031530",
     "description": "Metadata: Application Container (rktlet)",
-    "tags":[ "Metadata.Application.Container.rktlet" ],
+    "tags":[ "Application.Container.rktlet" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -331,7 +331,7 @@
     "name": "Metadata: Application Container (CRI-O)",
     "id": "AI031540",
     "description": "Metadata: Application Container (CRI-O)",
-    "tags":[ "Metadata.Application.Container.CRI-O" ],
+    "tags":[ "Application.Container.CRI-O" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -347,7 +347,7 @@
     "name": "Metadata: Application Container (Microsoft Hyper-V)",
     "id": "AI031550",
     "description": "Metadata: Application Container (Microsoft Hyper-V)",
-    "tags":[ "Metadata.Application.Container.Microsoft.Hyper-V" ],
+    "tags":[ "Application.Container.Microsoft.Hyper-V" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -363,7 +363,7 @@
     "name": "Metadata: Application Container (Microsoft Server)",
     "id": "AI031560",
     "description": "Metadata: Application Container (Microsoft Server)",
-    "tags":[ "Metadata.Application.Container.Microsoft.Core" ],
+    "tags":[ "Application.Container.Microsoft.Core" ],
     "severity": "moderate",
     "patterns": [
       {

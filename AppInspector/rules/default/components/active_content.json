@@ -147,7 +147,7 @@
     "patterns": [
       {
         "pattern": "silverlight|\\.xap",
-        "type": "string",
+        "type": "regex",
         "modifiers": [ "i" ],
         "scopes": [ "code" ],
         "confidence": "high"

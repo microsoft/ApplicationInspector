@@ -40,8 +40,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "LoadLibrary|libloading|use std::unstable::dynamic_lib::DynamicLibrary",
-        "type": "regex",
+        "pattern": "LoadLibrary|libloading|std::unstable::dynamic_lib::DynamicLibrary",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -57,7 +57,7 @@
     "patterns": [
       {
         "pattern": "System\\.Load|ctypes\\.WinDLL",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
