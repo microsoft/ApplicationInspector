@@ -62,7 +62,7 @@
       {
         "pattern": {
           "pattern": "License|copyright|readme.md",
-          "type": "regex",
+          "type": "regexword",
           "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": "eliminate notices"
@@ -83,7 +83,7 @@
     "patterns": [
       {
         "pattern": "claims*",
-        "type": "regexword",
+        "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -93,7 +93,7 @@
       {
         "pattern": {
           "pattern": "License|copyright|Permission to use|readme.md",
-          "type": "regex",
+          "type": "regexword",
           "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": "eliminate notices"
@@ -114,7 +114,7 @@
     "patterns": [
       {
         "pattern": "authorize|authorized|authorization|isauthorized",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -124,7 +124,7 @@
       {
         "pattern": {
           "pattern": "SAS|SharedAccess",
-          "type": "regex",
+          "type": "regexword",
           "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": "since already covered by another rule if SAS related"

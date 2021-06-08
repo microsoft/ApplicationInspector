@@ -8,7 +8,7 @@
     "patterns": [
       {
         "pattern": "GHUnit",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -72,7 +72,7 @@
     "patterns": [
       {
         "pattern": "Quick",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"

@@ -408,8 +408,8 @@
     "tags":[ "Framework.Testing.JSTest" ],
     "patterns": [
       {
-        "pattern": "JSTest\\.net",
-        "type": "regex",
+        "pattern": "JSTest.net",
+        "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"

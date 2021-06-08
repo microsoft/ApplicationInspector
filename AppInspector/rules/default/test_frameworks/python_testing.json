@@ -69,7 +69,7 @@
     "patterns": [
       {
         "pattern": "import .*nose|nosetests|nose\\.run",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }

@@ -26,9 +26,7 @@
         "pattern": "rspec",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [
-          "i"
-        ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -44,9 +42,7 @@
         "pattern": "shoulda",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [
-          "i"
-        ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -62,9 +58,7 @@
         "pattern": "microtest",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [
-          "i"
-        ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -80,9 +74,7 @@
         "pattern": "bacon",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [
-          "i"
-        ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -98,9 +90,7 @@
         "pattern": "minitest",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [
-          "i"
-        ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -116,9 +106,7 @@
         "pattern": "TMF",
         "type": "string",
         "scopes": [ "code", "comment" ],
-        "modifiers": [
-          "i"
-        ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
