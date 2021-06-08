@@ -160,7 +160,7 @@
     "patterns": [
       {
         "pattern": "connect|port",
-        "type": "string",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "medium",
@@ -302,7 +302,7 @@
     "patterns": [
       {
         "pattern": "RPC|RemotableTypeclass|System\\.Runtime\\.Remoting|RemotingConfiguration|TcpClient|TcpChannel",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -318,7 +318,7 @@
     "patterns": [
       {
         "pattern": "fastrpc|xmlrpc|SimpleXMLRPCServer|jsonrpc|rpc\\.server|client\\.rpc",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -334,7 +334,7 @@
     "patterns": [
       {
         "pattern": "capnp/ez-rpc\\.h|rpc/server\\.h",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -350,7 +350,7 @@
     "patterns": [
       {
         "pattern": "RmiServiceExporter|RmiProxyFactoryBean|remoting|jaxrpc|RemoteAccountService|io\\.grpc|RPCClient",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -415,7 +415,7 @@
         "pattern": "send.*message",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high"
+        "confidence": "low"
       },
       {
         "pattern": "send\\(",

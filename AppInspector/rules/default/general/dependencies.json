@@ -25,7 +25,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "(include|require) [A-Za-z];",
+        "pattern": "(include|require) [^\\s;]{1,50};",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
