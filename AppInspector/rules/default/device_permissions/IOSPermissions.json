@@ -8,8 +8,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.contacts",
-        "type": "regex",
+        "pattern": "permission.contacts",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -25,8 +25,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.locationAlways",
-        "type": "regex",
+        "pattern": "permission.locationAlways",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -42,8 +42,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.locationWhenInUse",
-        "type": "regex",
+        "pattern": "permission.locationWhenInUse",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -59,8 +59,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.notifications",
-        "type": "regex",
+        "pattern": "permission.notifications",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -76,8 +76,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.microphone",
-        "type": "regex",
+        "pattern": "permission.microphone",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -93,8 +93,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.camera",
-        "type": "regex",
+        "pattern": "permission.camera",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -111,7 +111,7 @@
     "patterns": [
       {
         "pattern": "permission\\.photos|permission\\.mediaLibrary",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -127,8 +127,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.reminders",
-        "type": "regex",
+        "pattern": "permission.reminders",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -144,8 +144,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.events",
-        "type": "regex",
+        "pattern": "permission.events",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -161,8 +161,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.bluetooth",
-        "type": "regex",
+        "pattern": "permission.bluetooth",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -178,8 +178,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.motion",
-        "type": "regex",
+        "pattern": "permission.motion",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -195,8 +195,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.speechRecognizer",
-        "type": "regex",
+        "pattern": "permission.speechRecognizer",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -212,8 +212,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.siri",
-        "type": "regex",
+        "pattern": "permission.siri",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -229,8 +229,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "permission\\.never",
-        "type": "regex",
+        "pattern": "permission.never",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"

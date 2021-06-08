@@ -585,7 +585,7 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.AllowUnsafeUri\\.Android" ],
+    "tags":[ "Device.Permissions.AllowUnsafeUri.Android" ],
     "severity": "moderate",
     "patterns": [
       {

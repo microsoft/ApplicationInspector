@@ -171,8 +171,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "Microsoft Dynamics|dynamics.com",
-        "type": "string",
+        "pattern": "Microsoft Dynamics|dynamics.com|dynamic365",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"

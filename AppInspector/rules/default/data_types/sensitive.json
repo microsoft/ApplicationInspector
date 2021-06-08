@@ -164,7 +164,7 @@
       {
         "pattern": {
           "pattern": "user",
-          "type": "regex",
+          "type": "string",
           "scopes": [ "code" ],
           "modifiers": [ "i" ]
         },
