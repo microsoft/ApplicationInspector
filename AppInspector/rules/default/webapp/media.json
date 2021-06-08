@@ -47,7 +47,7 @@
     "patterns": [
       {
         "pattern": "getUserMedia|webkitGetUserMedia|mozGetUserMedia|msGetUserMedia",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }

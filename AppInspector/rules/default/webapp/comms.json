@@ -21,7 +21,7 @@
     "patterns": [
       {
         "pattern": "window\\.parent\\.postMessage|contentWindow\\.postMessage",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"

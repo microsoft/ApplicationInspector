@@ -102,7 +102,7 @@
     "patterns": [
       {
         "pattern": "indexedDB|mozIndexedDB|webkitIndexedDB|msIndexedDB",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }

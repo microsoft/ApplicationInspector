@@ -56,7 +56,7 @@
     "patterns": [
       {
         "pattern": "CodeSign",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code"],
         "modifiers": [ "i" ],
         "confidence": "high",
