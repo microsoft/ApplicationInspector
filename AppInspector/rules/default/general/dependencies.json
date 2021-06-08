@@ -167,7 +167,7 @@
     "id": "AI027200",
     "description": "Dependency: Included Source",
     "tags":[ "Dependency.SourceInclude" ],
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "severity": "moderate",
     "patterns": [
       {

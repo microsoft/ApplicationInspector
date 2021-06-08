@@ -99,7 +99,7 @@
     "name": "Data: DBMS (PostgreSQL)",
     "id": "AI011000",
     "description": "Data: DBMS (PostgreSQL)",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags":[ "Data.DBMS.PostgreSQL" ],
     "severity": "moderate",
     "patterns": [

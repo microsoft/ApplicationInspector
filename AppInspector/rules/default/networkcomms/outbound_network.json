@@ -360,7 +360,7 @@
     "name": "Network Connection: RPC",
     "description": "Network Connection: RPC",
     "id": "AI033200",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags":[ "OS.Network.Connection.RPC" ],
     "severity": "moderate",
     "patterns": [

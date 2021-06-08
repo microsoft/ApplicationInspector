@@ -3,7 +3,7 @@
     "name": "Data: Parses JSON",
     "id": "AI013600",
     "description": "Data: Parses JSON",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags":[ "Data.Parsing.JSON" ],
     "severity": "moderate",
     "patterns": [

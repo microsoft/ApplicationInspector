@@ -94,7 +94,7 @@
     "name": "Cloud Service: Application (Telemetry)",
     "id": "AI000820",
     "description": "Cloud Service: Application (Telemetry)",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags":[ "CloudServices.Application.Microsoft.Telemetry" ],
     "severity": "moderate",
     "patterns": [

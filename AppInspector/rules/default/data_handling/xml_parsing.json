@@ -34,7 +34,7 @@
     "name": "Data: Parses XML",
     "id": "AI014300",
     "description": "Data: Parses XML",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags":[ "Data.Parsing.XML" ],
     "severity": "critical",
     "patterns": [
@@ -98,7 +98,7 @@
     "name": "Data: XSLT Transformations",
     "id": "AI014700",
     "description": "Data: XSLT Transformations",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags":[ "Data.Parsing.XSLT" ],
     "severity": "critical",
     "patterns": [
