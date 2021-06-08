@@ -4,7 +4,7 @@
     "id": "AI031565",
     "description": "Infrastructure As Code: Packers (Hashicorp)",
     "applies_to":[ "json" ],
-    "tags":[ "Metadata.Infrastructure.Packers.Hashicorp" ],
+    "tags":[ "Infrastructure.Packers.Hashicorp" ],
     "severity": "moderate",
     "patterns": [
       {

@@ -235,7 +235,7 @@
     "id": "AI034700",
     "description": "OS Operation: Enable Elevated Permissions",
     "applies_to":[ "package.json" ],
-    "tags":[ "Metadata.OS.ACL.Write.Unsafe" ],
+    "tags":[ "OS.ACL.Write.Unsafe" ],
     "severity": "moderate",
     "patterns": [
       {

@@ -4,7 +4,7 @@
     "id": "AI016800",
     "description": "Development: Build Tool (Maven)",
     "applies_to": [ "pom.xml" ],
-    "tags": [ "Metadata.Development.Build.Maven" ],
+    "tags": [ "Development.Build.Maven" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -21,7 +21,7 @@
     "id": "AI016900",
     "description": "Development: Build Tool (Ant)",
     "applies_to": [ "build.xml" ],
-    "tags": [ "Metadata.Development.Build.Ant" ],
+    "tags": [ "Development.Build.Ant" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -38,7 +38,7 @@
     "id": "AI017000",
     "description": "Development: Build Tool (Gradle)",
     "applies_to": [ "build.gradle" ],
-    "tags": [ "Metadata.Development.Build.Gradle" ],
+    "tags": [ "Development.Build.Gradle" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -55,7 +55,7 @@
     "id": "AI017100",
     "description": "Development: Build Tool (Jenkins)",
     "applies_to": [ "jenkins" ],
-    "tags": [ "Metadata.Development.Build.Jenkins" ],
+    "tags": [ "Development.Build.Jenkins" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -72,7 +72,7 @@
     "id": "AI017200",
     "description": "Development: Build Tool (SBT)",
     "applies_to": [ "sbt" ],
-    "tags": [ "Metadata.Development.Build.SBT" ],
+    "tags": [ "Development.Build.SBT" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -89,7 +89,7 @@
     "id": "AI017300",
     "description": "Development: Build Tool (Bamboo)",
     "applies_to": [ "yaml" ],
-    "tags": [ "Metadata.Development.Build.Bamboo" ],
+    "tags": [ "Development.Build.Bamboo" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -106,7 +106,7 @@
     "id": "AI017400",
     "description": "Development: Build Tool (TeamCity)",
     "recommendation": "",
-    "tags": [ "Metadata.Development.Build.TeamCity" ],
+    "tags": [ "Development.Build.TeamCity" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -123,7 +123,7 @@
     "id": "AI017500",
     "description": "Development: Build Tool (Grape)",
     "applies_to": [ "java" ],
-    "tags": [ "Metadata.Development.Build.Grape" ],
+    "tags": [ "Development.Build.Grape" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -140,7 +140,7 @@
     "id": "AI017600",
     "description": "Development: Build Tool (Ivy)",
     "applies_to": [ "build.xml" ],
-    "tags": [ "Metadata.Development.Build.Ivy" ],
+    "tags": [ "Development.Build.Ivy" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -157,7 +157,7 @@
     "id": "AI017700",
     "description": "Development: Build Tool (Leiningen)",
     "applies_to": [ "project.clj" ],
-    "tags": [ "Metadata.Development.Build.Leiningen" ],
+    "tags": [ "Development.Build.Leiningen" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -174,7 +174,7 @@
     "id": "AI017800",
     "description": "Development: Build Tool (Studio)",
     "applies_to": [ "VSSolution", "VSProject" ],
-    "tags": [ "Metadata.Development.Build.VisualStudio" ],
+    "tags": [ "Development.Build.VisualStudio" ],
     "severity": "moderate",
     "patterns": [
       {

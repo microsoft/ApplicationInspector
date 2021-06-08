@@ -4,7 +4,7 @@
     "id": "AI031567",
     "description": "Infrastructure As Code: Deployment (Microsoft ARM)",
     "applies_to":[ "csharp" ],
-    "tags":[ "Metadata.Infrastructure.ARM.Deployment" ],
+    "tags":[ "Infrastructure.ARM.Deployment" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -32,7 +32,7 @@
     "id": "AI031568",
     "description": "Infrastructure As Code: Tag AddUpdate (Microsoft ARM)",
     "applies_to":[ "powershell" ],
-    "tags":[ "Metadata.Infrastructure.ARM.TagAddUpdate" ],
+    "tags":[ "Infrastructure.ARM.TagAddUpdate" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -54,7 +54,7 @@
     "id": "AI031569",
     "description": "Infrastructure As Code: ResourceGroupAddUpdate (Microsoft ARM)",
     "applies_to":[ "powershell" ],
-    "tags":[ "Metadata.Infrastructure.ARM.ResourceGroupAddUpdate" ],
+    "tags":[ "Infrastructure.ARM.ResourceGroupAddUpdate" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -76,7 +76,7 @@
     "id": "AI031570",
     "description": "Infrastructure As Code: SubscriptionAddUpdate (Microsoft ARM)",
     "applies_to":[ "powershell" ],
-    "tags":[ "Metadata.Infrastructure.ARM.SubscriptionAddUpdate" ],
+    "tags":[ "Infrastructure.ARM.SubscriptionAddUpdate" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -98,7 +98,7 @@
     "id": "AI031571",
     "description": "Infrastructure As Code: TemplateSpecUpdate (Microsoft ARM)",
     "applies_to":[ "powershell" ],
-    "tags":[ "Metadata.Infrastructure.ARM.TemplateSpecAddUpdate" ],
+    "tags":[ "Infrastructure.ARM.TemplateSpecAddUpdate" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -121,7 +121,7 @@
     "description": "Infrastructure As Code: API Based (Microsoft ARM)",
     "applies_to": [
     ],
-    "tags":[ "Metadata.Infrastructure.ARM.API.General" ],
+    "tags":[ "Infrastructure.ARM.API.General" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -149,7 +149,7 @@
     "id": "AI031573",
     "description": "Infrastructure As Code: Deployment (Microsoft ARM)",
     "applies_to":[ "java" ],
-    "tags":[ "Metadata.Infrastructure.ARM.Deployment" ],
+    "tags":[ "Infrastructure.ARM.Deployment" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -166,7 +166,7 @@
     "id": "AI031574",
     "description": "Infrastructure As Code: General (Microsoft ARM)",
     "applies_to":[ "java" ],
-    "tags":[ "Metadata.Infrastructure.ARM.General" ],
+    "tags":[ "Infrastructure.ARM.General" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -183,7 +183,7 @@
     "id": "AI031575",
     "description": "Infrastructure As Code: (Microsoft ARM)",
     "applies_to":[ "python" ],
-    "tags":[ "Metadata.Infrastructure.ARM.General" ],
+    "tags":[ "Infrastructure.ARM.General" ],
     "severity": "moderate",
     "patterns": [
       {

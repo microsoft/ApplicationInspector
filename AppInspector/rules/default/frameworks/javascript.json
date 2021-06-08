@@ -298,7 +298,7 @@
     "id": "AI021610",
     "description": "Development Framework: Node",
     "applies_to": [ "javascript" ],
-    "tags":[ "Metadata.Application.Type.Web.Service" ],
+    "tags":[ "Application.Type.Web.Service" ],
     "severity": "moderate",
     "patterns": [
       {
