@@ -35,7 +35,7 @@
     "id": "AI010100",
     "description": "Cryptography: PRNG",
     "tags":[ "Cryptography.Randomness.PRNG" ],
-    "applies_to":[ "javascript" ],
+    "applies_to":[ "javascript","typescript" ],
     "severity": "critical",
     "patterns": [
       {
