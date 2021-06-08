@@ -49,7 +49,7 @@
       },
       {
         "pattern": "exec(Sync)?\\(",
-        "type": "substring",
+        "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -98,7 +98,7 @@
     "patterns": [
       {
         "pattern": "use std::process::Command;|Command::new",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -115,14 +115,14 @@
     "patterns": [
       {
         "pattern": "(iex|invoke-expression).*[.]*webclient",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
       },
       {
         "pattern": "(iex|invoke-expression).*[.]*downloadstring",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -142,7 +142,7 @@
     "patterns": [
       {
         "pattern": "ksh|bash|csh|sh",
-        "type": "string",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },

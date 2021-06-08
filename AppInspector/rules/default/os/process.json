@@ -49,13 +49,13 @@
     "patterns": [
       {
         "pattern": "BackgroundWorker|Task\\.Run|Async|System.Threading",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "(new System\\.Diagnostics.Process\\(\\)| new Process\\(\\))",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -71,13 +71,13 @@
     "patterns": [
       {
         "pattern": "thread::spawn",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "(new System\\.Diagnostics.Process\\(\\)| new Process\\(\\))",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }

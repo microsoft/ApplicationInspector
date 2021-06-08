@@ -28,7 +28,7 @@
     "patterns": [
       {
         "pattern": "Registry(Key)?(.*)?.(SetValue|CreateSubKey|Delete)",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -104,7 +104,7 @@
       {
         "pattern": {
           "pattern": "Set-ItemProperty",
-          "type": "regex",
+          "type": "string",
           "scopes": [ "code" ]
         },
         "search_in": "finding-region(-5,5)",
@@ -157,7 +157,7 @@
     "patterns": [
       {
         "pattern": "Registry",
-        "type": "regex",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"
       },
@@ -190,7 +190,7 @@
     "patterns": [
       {
         "pattern": "Registry(Key)?(.*)?.GetValue",
-        "type": "string",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -199,7 +199,7 @@
       {
         "pattern": {
           "pattern": "HKEY_",
-          "type": "regexword",
+          "type": "string",
           "scopes": [ "code" ]
         },
         "search_in": "finding-region(-40,40)",
@@ -226,7 +226,7 @@
       {
         "pattern": {
           "pattern": "HKEY_",
-          "type": "regexword",
+          "type": "string",
           "scopes": [ "code" ]
         },
         "search_in": "finding-region(-40,40)",

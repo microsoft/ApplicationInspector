@@ -191,7 +191,7 @@
     "patterns": [
       {
         "pattern": "GetEnvironmentVariable|\\$env:|Env:\\\\",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }

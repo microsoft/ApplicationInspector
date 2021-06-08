@@ -18,7 +18,7 @@
       {
         "pattern": {
           "pattern": "SetAccessControl|RemoveAccessRule",
-          "type": "regex",
+          "type": "regexword",
           "scopes": [ "code" ],
           "modifiers": [ "i" ]
         },
@@ -224,7 +224,7 @@
     "patterns": [
       {
         "pattern": "chmod|chgrp|chown|setfacl",
-        "type": "string",
+        "type": "regexword",
         "scopes": [ "code" ],
         "confidence": "high"
       }
