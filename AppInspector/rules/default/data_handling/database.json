@@ -111,11 +111,10 @@
         "confidence": "high"
       },
       {
-        "pattern": "require(�pg�);",
-        "type": "string",
+        "pattern": "require(['\"]pg['\"]);",
+        "type": "regexword",
         "scopes": [ "code" ],
-        "confidence": "high",
-        "_comment": "What are these characters supposed to be?"
+        "confidence": "high"
       }
     ]
   },
