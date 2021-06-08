@@ -72,7 +72,7 @@
     "patterns": [
       {
         "pattern": "XslTransform|System\\.Xml\\.Xsl|XslCompiledTransform|transformNode",
-        "type": "regex",
+        "type": "regexword",
         "confidence": "high",
         "scopes": [ "code" ]
       }
@@ -88,7 +88,7 @@
     "patterns": [
       {
         "pattern": "TransformerFactory|XSLDocument|javax\\.xml\\.transform",
-        "type": "regex",
+        "type": "regexword",
         "confidence": "high",
         "scopes": [ "code" ]
       }
@@ -104,7 +104,7 @@
     "patterns": [
       {
         "pattern": "XSLTProcessor",
-        "type": "regex",
+        "type": "regexword",
         "confidence": "high",
         "scopes": [ "code" ]
       }
@@ -118,8 +118,8 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "\\.xslt",
-        "type": "regex",
+        "pattern": ".xslt",
+        "type": "string",
         "confidence": "high",
         "scopes": [ "code" ]
       }

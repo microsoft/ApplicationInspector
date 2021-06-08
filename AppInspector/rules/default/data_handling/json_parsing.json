@@ -26,7 +26,7 @@
       {
         "pattern": "JSON\\.createParser|JObject\\.Parse|JsonConvert|JsonSerializer",
         "confidence": "high",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ]
       }
     ]
@@ -39,9 +39,9 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "json.*parser",
+        "pattern": "json.{0,5}parser",
         "confidence": "high",
-        "type": "regex",
+        "type": "regexword",
         "scopes": [ "code" ]
       }
     ]
