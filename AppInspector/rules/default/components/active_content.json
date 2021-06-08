@@ -111,7 +111,7 @@
     "id": "AI005010",
     "description": "Component: Active-X",
     "applies_to": [
-      "javascript",
+      "javascript"
     ],
     "tags": [
       "Component.Executable.Microsoft.ActiveX"
