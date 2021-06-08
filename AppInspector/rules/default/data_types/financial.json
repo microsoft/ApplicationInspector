@@ -34,7 +34,7 @@
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high"
+        "confidence": "low"
       }
     ]
   },
@@ -98,7 +98,7 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high",
+        "confidence": "low",
         "_comment": "sales data or forecast"
       }
     ]
