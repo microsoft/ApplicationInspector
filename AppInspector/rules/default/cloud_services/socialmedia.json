@@ -3,9 +3,7 @@
     "name": "Social Media: Facebook",
     "id": "AI003700",
     "description": "Social Media Facebook",
-    "tags": [
-      "CloudServices.SocialMedia.Facebook"
-    ],
+    "tags":[ "CloudServices.SocialMedia.Facebook" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -21,9 +19,7 @@
     "name": "Social Media: Twitter",
     "id": "AI003800",
     "description": "Social Media (Twitter)",
-    "tags": [
-      "CloudServices.SocialMedia.Twitter"
-    ],
+    "tags":[ "CloudServices.SocialMedia.Twitter" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -39,9 +35,7 @@
     "name": "Social Media: YouTube",
     "id": "AI003900",
     "description": "Social Media (YouTube)",
-    "tags": [
-      "CloudServices.SocialMedia.YouTube"
-    ],
+    "tags":[ "CloudServices.SocialMedia.YouTube" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -57,9 +51,7 @@
     "name": "Social Media: Instagram",
     "id": "AI004000",
     "description": "Social Media: Instagram",
-    "tags": [
-      "CloudServices.SocialMedia.Instagram"
-    ],
+    "tags":[ "CloudServices.SocialMedia.Instagram" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -75,21 +67,12 @@
     "name": "Social Media: Misc",
     "id": "AI004100",
     "description": "Social Media: Misc",
-    "tags": [
-      "CloudServices.SocialMedia.Misc"
-    ],
+    "tags":[ "CloudServices.SocialMedia.Misc" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "reddit|snapchat|whatsapp|tumblr|qzone|weibo|pinterest|ask\\.fm|flickr|linkedin|odnoklassniki|meetup",
-        "type": "regex",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
-        "confidence": "high"
-      },
-      {
-        "pattern": "discord|diaspora|sociall\\.io|mastodon",
-        "type": "regex",
+        "pattern": "reddit|snapchat|whatsapp|tumblr|qzone|weibo|pinterest|ask\\.fm|flickr|linkedin|odnoklassniki|meetup|discord|diaspora|sociall\\.io|mastodon",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "high"

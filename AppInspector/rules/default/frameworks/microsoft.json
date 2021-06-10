@@ -11,7 +11,8 @@
         "pattern": "netcore",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -52,7 +53,7 @@
     "applies_to": [ "csharp" ],
     "tags": [
       "Framework.Development.Microsoft.Azure",
-      "Metadata.Application.Type.Web.Application"
+      "Application.Type.Web.Application"
     ],
     "severity": "moderate",
     "patterns": [
@@ -70,7 +71,7 @@
     "applies_to": [ "csharp" ],
     "tags": [
       "Framework.Development.Microsoft.WCF",
-      "Metadata.Application.Type.Web.Service"
+      "Application.Type.Web.Service"
     ],
     "severity": "moderate",
     "patterns": [
@@ -78,13 +79,15 @@
         "pattern": "ServiceContract|using System\\.ServiceModel|WSHttpBinding",
         "type": "regexword",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       },
       {
         "pattern": "Controller\\b|\\[HttpGet\\]|\\[HttpPut\\]",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -95,7 +98,7 @@
     "applies_to": [ "c", "cpp", "csharp" ],
     "tags": [
       "Framework.Development.Microsoft.MFC",
-      "Metadata.Application.Type.Client.Windows"
+      "Application.Type.Client.Windows"
     ],
     "severity": "moderate",
     "patterns": [
@@ -147,7 +150,7 @@
     "applies_to": [ "c", "cpp", "csharp" ],
     "tags": [
       "Framework.Development.Microsoft.WindowsSDK",
-      "Metadata.Application.Type.Client.Windows"
+      "Application.Type.Client.Windows"
     ],
     "severity": "moderate",
     "patterns": [
@@ -164,16 +167,15 @@
     "name": "Development Framework: Microsoft Dynamics",
     "id": "AI023200",
     "description": "Development Framework: Microsoft Dynamics",
-    "tags": [
-      "Framework.Development.Microsoft.Server.Dynamics"
-    ],
+    "tags":[ "Framework.Development.Microsoft.Server.Dynamics" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "Microsoft Dynamics|dynamics.com",
-        "type": "string",
+        "pattern": "Microsoft Dynamics|dynamics.com|dynamic365",
+        "type": "regexword",
         "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -181,16 +183,15 @@
     "name": "Development Framework: Microsoft Exchange",
     "id": "AI023300",
     "description": "Development Framework: Microsoft Exchange",
-    "tags": [
-      "Framework.Development.Microsoft.Server.Exchange"
-    ],
+    "tags":[ "Framework.Development.Microsoft.Server.Exchange" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Microsoft Exchange",
         "type": "string",
         "scopes": [ "comment" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -200,7 +201,7 @@
     "description": "Development Framework: Microsoft IIS",
     "tags": [
       "Framework.Development.Microsoft.Server.IIS",
-      "Metadata.Application.Type.Web.Application"
+      "Application.Type.Web.Application"
     ],
     "severity": "moderate",
     "patterns": [
@@ -217,7 +218,7 @@
     "description": "Development Framework: Microsoft ASP.NET",
     "tags": [
       "Framework.Development.Microsoft.NET.ASP",
-      "Metadata.Application.Type.Web.Application"
+      "Application.Type.Web.Application"
     ],
     "severity": "moderate",
     "patterns": [
@@ -225,7 +226,8 @@
         "pattern": "ASP\\.NET|\\b\\.MVC\\b",
         "type": "regex",
         "scopes": [ "code" ],
-        "modifiers": [ "i" ]
+        "modifiers": [ "i" ],
+        "confidence": "high"
       }
     ]
   },
@@ -247,9 +249,7 @@
       {
         "pattern": "CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER|CoCreateInstance",
         "type": "regexword",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]

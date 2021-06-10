@@ -3,22 +3,14 @@
     "name": "Testing Framework: AutoTest",
     "id": "AI051900",
     "description": "Testing Framework: AutoTest",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "Framework.Testing.AutoTest"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "Framework.Testing.AutoTest" ],
     "patterns": [
       {
         "pattern": "autotest",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -27,19 +19,13 @@
     "name": "Testing Framework: UnitTest",
     "id": "AI052000",
     "description": "Testing Framework: UnitTest",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "Framework.Testing.unittest"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "Framework.Testing.unittest" ],
     "patterns": [
       {
         "pattern": "unittest",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -48,19 +34,13 @@
     "name": "Testing Framework: XPyUnit",
     "id": "AI052100",
     "description": "Testing Framework: XPyUnit",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "Framework.Testing.XPyUnit"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "Framework.Testing.XPyUnit" ],
     "patterns": [
       {
         "pattern": "xpyunit",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -69,19 +49,13 @@
     "name": "Testing Framework: DocTest",
     "id": "AI052200",
     "description": "Testing Framework: DocTest",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "Framework.Testing.Doctest"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "Framework.Testing.Doctest" ],
     "patterns": [
       {
         "pattern": "doctest",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -90,19 +64,13 @@
     "name": "Testing Framework: Nose",
     "id": "AI052300",
     "description": "Testing Framework: Nose",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "Framework.Testing.Nose"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "Framework.Testing.Nose" ],
     "patterns": [
       {
         "pattern": "import .*nose|nosetests|nose\\.run",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "type": "regexword",
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -111,19 +79,13 @@
     "name": "Testing Framework: PyTest",
     "id": "AI052400",
     "description": "Testing Framework: PyTest",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "Framework.Testing.PyTest"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "Framework.Testing.PyTest" ],
     "patterns": [
       {
         "pattern": "pytest",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -132,19 +94,13 @@
     "name": "Testing Framework: Should DSL",
     "id": "AI052500",
     "description": "Testing Framework: Should DSL",
-    "applies_to": [
-      "python"
-    ],
-    "tags": [
-      "Framework.Testing.ShouldDSL"
-    ],
+    "applies_to":[ "python" ],
+    "tags":[ "Framework.Testing.ShouldDSL" ],
     "patterns": [
       {
         "pattern": "should_dsl",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]

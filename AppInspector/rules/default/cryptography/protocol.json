@@ -3,20 +3,14 @@
     "name": "Cryptography: SSL/TLS Protocol",
     "id": "AI009600",
     "description": "Cryptography: SSL/TLS Protocol",
-    "applies_to": [
-      "csharp"
-    ],
-    "tags": [
-      "Cryptography.Protocol.TLS"
-    ],
+    "applies_to":[ "csharp" ],
+    "tags":[ "Cryptography.Protocol.TLS" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "(SSL|TLS)(v)?([123]{1,2})",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
@@ -35,17 +29,13 @@
       "c",
       "cpp"
     ],
-    "tags": [
-      "Cryptography.Protocol.TLS"
-    ],
+    "tags":[ "Cryptography.Protocol.TLS" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "SECURITY_FLAG_",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "type": "substring",
+        "scopes": [ "code" ],
         "confidence": "high",
         "_comment": "get all non-ignore (see weakssl.json) indicators of ssl"
       }
@@ -54,11 +44,8 @@
       {
         "pattern": {
           "pattern": "SECURITY_FLAG_IGNORE",
-          "type": "regex",
-          "scopes": [
-            "code"
-          ],
-          "_comment": ""
+          "type": "substring",
+          "scopes": [ "code" ]
         },
         "search_in": "finding-region(-1,1)",
         "negate_finding": true
@@ -74,9 +61,7 @@
       "objective-c",
       "swift"
     ],
-    "tags": [
-      "Cryptography.Protocol.TLS"
-    ],
+    "tags":[ "Cryptography.Protocol.TLS" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -99,9 +84,10 @@
       },
       {
         "pattern": "ssl",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high",
+        "modifiers": [ "i" ],
         "_comment": "e.g. ssl_crl, ssl_ecdh_curve, others"
       },
       {
@@ -140,14 +126,12 @@
     "name": "Cryptography: SSH Protocol",
     "id": "AI009900",
     "description": "Cryptography: SSH Protocol",
-    "tags": [
-      "Cryptography.Protocol.SSH"
-    ],
+    "tags":[ "Cryptography.Protocol.SSH" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "ssh",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -157,9 +141,7 @@
     "name": "Cryptography: SSH Protocol",
     "id": "AI009910",
     "description": "Cryptography: SSH Protocol",
-    "tags": [
-      "Cryptography.Protocol.KeyExchange"
-    ],
+    "tags":[ "Cryptography.Protocol.KeyExchange" ],
     "severity": "moderate",
     "patterns": [
       {

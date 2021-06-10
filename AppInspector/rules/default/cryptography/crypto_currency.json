@@ -3,9 +3,7 @@
     "name": "Cryptography: CryptoCurrency",
     "id": "AI007700",
     "description": "Cryptography: CryptoCurrency",
-    "tags": [
-      "Cryptography.CryptoCurrency"
-    ],
+    "tags":[ "Cryptography.CryptoCurrency" ],
     "severity": "moderate",
     "patterns": [
       {

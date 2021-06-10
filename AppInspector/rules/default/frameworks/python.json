@@ -4,9 +4,7 @@
     "id": "AI023800",
     "description": "Development Framework: Django",
     "applies_to": [ "python" ],
-    "tags": [
-      "Framework.Development.Django"
-    ],
+    "tags":[ "Framework.Development.Django" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -209,9 +207,7 @@
     "name": "Development Framework: TurboGears",
     "id": "AI025000",
     "description": "Development Framework: TurboGears",
-    "applies_to": [
-      "python"
-    ],
+    "applies_to":[ "python" ],
     "tags": [ "Framework.Development.TurboGears" ],
     "severity": "moderate",
     "patterns": [
@@ -228,9 +224,7 @@
     "name": "Development Framework: Giotto",
     "id": "AI025100",
     "description": "Development Framework: Giotto",
-    "applies_to": [
-      "python"
-    ],
+    "applies_to":[ "python" ],
     "tags": [ "Framework.Development.Giotto" ],
     "severity": "moderate",
     "patterns": [
@@ -247,9 +241,7 @@
     "name": "Development Framework: Pylons",
     "id": "AI025200",
     "description": "Development Framework: Pylons",
-    "applies_to": [
-      "python"
-    ],
+    "applies_to":[ "python" ],
     "tags": [ "Framework.Development.Pylons" ],
     "severity": "moderate",
     "patterns": [

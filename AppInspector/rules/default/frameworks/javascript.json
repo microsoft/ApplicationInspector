@@ -3,13 +3,13 @@
     "name": "Development Framework: Angular.JS",
     "id": "AI019900",
     "description": "Development Framework: Angular.JS",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.AngularJS" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Angular",
-        "type": "regex",
+        "type": "substring",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -20,13 +20,13 @@
     "name": "Development Framework: Vue",
     "id": "AI020000",
     "description": "Development Framework: Vue",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.Vue" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Vue",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
@@ -37,13 +37,13 @@
     "name": "Development Framework: EmberJS",
     "id": "AI020100",
     "description": "Development Framework: EmberJS",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.EmberJS" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "ember",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code" ],
         "confidence": "high"
       }
@@ -53,7 +53,7 @@
     "name": "Development Framework: Backbone",
     "id": "AI020200",
     "description": "Development Framework: Backbone",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.Backbone" ],
     "severity": "moderate",
     "patterns": [
@@ -68,7 +68,7 @@
     "name": "Development Framework: jQuery",
     "id": "AI020300",
     "description": "Development Framework: jQuery",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.jQuery" ],
     "severity": "moderate",
     "patterns": [
@@ -85,7 +85,7 @@
     "name": "Development Framework: Redux",
     "id": "AI020400",
     "description": "Development Framework: Redux",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.Redux" ],
     "severity": "moderate",
     "patterns": [
@@ -101,7 +101,7 @@
     "name": "Development Framework: Redux-Saga",
     "id": "AI020500",
     "description": "Development Framework: Redux-Saga",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.Redux-Saga" ],
     "severity": "moderate",
     "patterns": [
@@ -117,7 +117,7 @@
     "name": "Development Framework: React",
     "id": "AI020600",
     "description": "Development Framework: React",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.React" ],
     "severity": "moderate",
     "patterns": [
@@ -134,7 +134,7 @@
     "name": "Development Framework: RITEWay",
     "id": "AI020700",
     "description": "Development Framework: RITEWay",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.RITEWay" ],
     "severity": "moderate",
     "patterns": [
@@ -150,7 +150,7 @@
     "name": "Development Framework: Meteor",
     "id": "AI020800",
     "description": "Development Framework: Meteor",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.Meteor" ],
     "severity": "moderate",
     "patterns": [
@@ -166,7 +166,7 @@
     "name": "Development Framework: Mithril",
     "id": "AI020900",
     "description": "Development Framework: Mithril",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.Mithril" ],
     "severity": "moderate",
     "patterns": [
@@ -197,7 +197,7 @@
     "name": "Development Framework: Aurelia",
     "id": "AI021100",
     "description": "Development Framework: Aurelia",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.Aurelia" ],
     "severity": "moderate",
     "patterns": [
@@ -281,7 +281,7 @@
     "name": "Development Framework: Google API's",
     "id": "AI021600",
     "description": "Development Framework: Google API's",
-    "applies_to": [ "javascript" ],
+    "applies_to": [ "javascript", "typescript" ],
     "tags": [ "Framework.Development.Google.API" ],
     "severity": "moderate",
     "patterns": [
@@ -297,10 +297,8 @@
     "name": "Development Framework: Node",
     "id": "AI021610",
     "description": "Development Framework: Node",
-    "applies_to": [ "javascript" ],
-    "tags": [
-      "Metadata.Application.Type.Web.Service"
-    ],
+    "applies_to": [ "javascript", "typescript" ],
+    "tags":[ "Application.Type.Web.Service" ],
     "severity": "moderate",
     "patterns": [
       {

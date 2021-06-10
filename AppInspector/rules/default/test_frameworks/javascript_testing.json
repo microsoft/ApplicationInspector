@@ -3,19 +3,13 @@
     "name": "Testing Framework: Ava",
     "id": "AI041800",
     "description": "Testing Framework: Ava",
-    "applies_to": [
-      "package.json"
-    ],
-    "tags": [
-      "Framework.Testing.Ava"
-    ],
+    "applies_to":[ "package.json" ],
+    "tags":[ "Framework.Testing.Ava" ],
     "patterns": [
       {
         "pattern": "(^|\")ava[@\"]",
         "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "modifiers": [
         ],
         "confidence": "high"
@@ -26,23 +20,14 @@
     "name": "Testing Framework: DOH",
     "id": "AI041900",
     "description": "Testing Framework: DOH",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.DOH"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.DOH" ],
     "patterns": [
       {
         "pattern": "require\\(['\\\"]doh['\\\"]\\)",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -51,23 +36,14 @@
     "name": "Testing Framework: JSUnit",
     "id": "AI042000",
     "description": "Testing Framework: JSUnit",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.JSUnit"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.JSUnit" ],
     "patterns": [
       {
         "pattern": "jsunit",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -76,23 +52,14 @@
     "name": "Testing Framework: EnhanceJS",
     "id": "AI042100",
     "description": "Testing Framework: EnhanceJS",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.EnhanceJS"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.EnhanceJS" ],
     "patterns": [
       {
         "pattern": "enhancejs",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -101,23 +68,14 @@
     "name": "Testing Framework: QUnit",
     "id": "AI042200",
     "description": "Testing Framework: QUnit",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.QUnit"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.QUnit" ],
     "patterns": [
       {
         "pattern": "qunit",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -126,23 +84,14 @@
     "name": "Testing Framework: UnitJS",
     "id": "AI042300",
     "description": "Testing Framework: UnitJS",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.UnitJS"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.UnitJS" ],
     "patterns": [
       {
         "pattern": "unit.js",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -151,23 +100,14 @@
     "name": "Testing Framework: RHUnit",
     "id": "AI042400",
     "description": "Testing Framework: RHUnit",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.RhUnit"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.RhUnit" ],
     "patterns": [
       {
         "pattern": "rhunit",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -176,23 +116,14 @@
     "name": "Testing Framework: Crosscheck",
     "id": "AI042500",
     "description": "Testing Framework: Crosscheck",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Crosscheck"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Crosscheck" ],
     "patterns": [
       {
         "pattern": "crosscheck",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -201,23 +132,14 @@
     "name": "Testing Framework: J3Unit",
     "id": "AI042600",
     "description": "Testing Framework: J3Unit",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.J3Unit"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.J3Unit" ],
     "patterns": [
       {
         "pattern": "j3unit",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -226,23 +148,14 @@
     "name": "Testing Framework: Mocha",
     "id": "AI042700",
     "description": "Testing Framework: Mocha",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Mocha"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Mocha" ],
     "patterns": [
       {
         "pattern": "mocha",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -251,23 +164,14 @@
     "name": "Testing Framework: Intern",
     "id": "AI042800",
     "description": "Testing Framework: Intern",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Intern"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Intern" ],
     "patterns": [
       {
         "pattern": "intern",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -276,23 +180,14 @@
     "name": "Testing Framework: JSNUnit",
     "id": "AI042900",
     "description": "Testing Framework: JSNUnit",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.JSNUnit"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.JSNUnit" ],
     "patterns": [
       {
         "pattern": "jsnunit",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -301,23 +196,14 @@
     "name": "Testing Framework: YUITest",
     "id": "AI043000",
     "description": "Testing Framework: YUITest",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.YUITest"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.YUITest" ],
     "patterns": [
       {
         "pattern": "yuitest",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -326,23 +212,14 @@
     "name": "Testing Framework: JSSpec",
     "id": "AI043100",
     "description": "Testing Framework: JSSpec",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.JSSpec"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.JSSpec" ],
     "patterns": [
       {
         "pattern": "jsspec",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -351,23 +228,14 @@
     "name": "Testing Framework: UnitTesting",
     "id": "AI043200",
     "description": "Testing Framework: UnitTesting",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.UnitTesting"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.UnitTesting" ],
     "patterns": [
       {
         "pattern": "unittesting",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -376,23 +244,14 @@
     "name": "Testing Framework: JSpec",
     "id": "AI043300",
     "description": "Testing Framework: JSpec",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.JSpec"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.JSpec" ],
     "patterns": [
       {
         "pattern": "jspec",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -401,23 +260,14 @@
     "name": "Testing Framework: Jasmine",
     "id": "AI043400",
     "description": "Testing Framework: Jasmine",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Jasmine"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Jasmine" ],
     "patterns": [
       {
         "pattern": "jasmine",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -426,23 +276,14 @@
     "name": "Testing Framework: Screw.Unit",
     "id": "AI043500",
     "description": "Testing Framework: Screw.Unit",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.screw-unit"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.screw-unit" ],
     "patterns": [
       {
         "pattern": "screw-unit",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -451,23 +292,14 @@
     "name": "Testing Framework: Tape",
     "id": "AI043600",
     "description": "Testing Framework: Tape",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Tape"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Tape" ],
     "patterns": [
       {
         "pattern": "require\\s*\\(\\s*['\\\"]tape['\\\"]\\)",
         "type": "regex",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -476,23 +308,14 @@
     "name": "Testing Framework: Teenytest",
     "id": "AI043700",
     "description": "Testing Framework: Teenytest",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Teenytest"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Teenytest" ],
     "patterns": [
       {
         "pattern": "teenytest",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -501,23 +324,14 @@
     "name": "Testing Framework: Simple",
     "id": "AI043800",
     "description": "Testing Framework: Simple",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Test.Simple"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Test.Simple" ],
     "patterns": [
       {
         "pattern": "test.simple",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -526,23 +340,14 @@
     "name": "Testing Framework: TestCase",
     "id": "AI043900",
     "description": "Testing Framework: TestCase",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.TestCase"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.TestCase" ],
     "patterns": [
       {
         "pattern": "testcase",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -551,23 +356,14 @@
     "name": "Testing Framework: TestIt",
     "id": "AI044000",
     "description": "Testing Framework: TestIt",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.TestIt"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.TestIt" ],
     "patterns": [
       {
         "pattern": "testit",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -576,23 +372,14 @@
     "name": "Testing Framework: testdouble.js",
     "id": "AI044100",
     "description": "Testing Framework: testdouble.js",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.testdouble.js"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.testdouble.js" ],
     "patterns": [
       {
         "pattern": "testdouble.js",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -601,23 +388,14 @@
     "name": "Testing Framework: jsUnitTest",
     "id": "AI044200",
     "description": "Testing Framework: jsUnitTest",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.jsUnitTest"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.jsUnitTest" ],
     "patterns": [
       {
         "pattern": "jsunittest",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -626,23 +404,14 @@
     "name": "Testing Framework: JSTest",
     "id": "AI044300",
     "description": "Testing Framework: JSTest",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.JSTest"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.JSTest" ],
     "patterns": [
       {
-        "pattern": "JSTest\\.net",
-        "type": "regex",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "pattern": "JSTest.net",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -651,23 +420,14 @@
     "name": "Testing Framework: jsUnity",
     "id": "AI044400",
     "description": "Testing Framework: jsUnity",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.jsUnity"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.jsUnity" ],
     "patterns": [
       {
         "pattern": "jsunity",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -676,23 +436,14 @@
     "name": "Testing Framework: RhinoUnit",
     "id": "AI044500",
     "description": "Testing Framework: RhinoUnit",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.RhinoUnit"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.RhinoUnit" ],
     "patterns": [
       {
         "pattern": "rhinounit",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -701,23 +452,14 @@
     "name": "Testing Framework: JasUnit",
     "id": "AI044600",
     "description": "Testing Framework: JasUnit",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.JasUnit"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.JasUnit" ],
     "patterns": [
       {
         "pattern": "jasunit",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -726,22 +468,14 @@
     "name": "Testing Framework: FireUnit",
     "id": "AI044700",
     "description": "Testing Framework: FireUnit",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.FireUnit"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.FireUnit" ],
     "patterns": [
       {
         "pattern": "fireunit",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -750,23 +484,14 @@
     "name": "Testing Framework: JSTestDriver",
     "id": "AI044800",
     "description": "Testing Framework: JSTestDriver",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.JSTestDriver"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.JSTestDriver" ],
     "patterns": [
       {
         "pattern": "js-test-driver",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -775,23 +500,14 @@
     "name": "Testing Framework: JS Test Runner",
     "id": "AI044900",
     "description": "Testing Framework: JS Test Runner",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Js-test-runner"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Js-test-runner" ],
     "patterns": [
       {
         "pattern": "js-test-runner",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -800,23 +516,14 @@
     "name": "Testing Framework: SinonJS",
     "id": "AI045000",
     "description": "Testing Framework: SinonJS",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.SinonJS"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.SinonJS" ],
     "patterns": [
       {
         "pattern": "sinon.js",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -825,23 +532,14 @@
     "name": "Testing Framework: SOAtest",
     "id": "AI045100",
     "description": "Testing Framework: SOAtest",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.SOAtest"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.SOAtest" ],
     "patterns": [
       {
         "pattern": "soatest",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -850,23 +548,14 @@
     "name": "Testing Framework: Vows",
     "id": "AI045200",
     "description": "Testing Framework: Vows",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Vows"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Vows" ],
     "patterns": [
       {
         "pattern": "vows",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -875,23 +564,14 @@
     "name": "Testing Framework: Nodeunit",
     "id": "AI045300",
     "description": "Testing Framework: Nodeunit",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Nodeunit"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Nodeunit" ],
     "patterns": [
       {
         "pattern": "nodeunit",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -900,23 +580,14 @@
     "name": "Testing Framework: Tyrtle",
     "id": "AI045400",
     "description": "Testing Framework: Tyrtle",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Tyrtle"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Tyrtle" ],
     "patterns": [
       {
         "pattern": "tyrtle",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -925,24 +596,15 @@
     "name": "Testing Framework: WRU",
     "id": "AI045500",
     "description": "Testing Framework: WRU",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.wru"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.wru" ],
     "_comment": "https://github.com/WebReflection/wru",
     "patterns": [
       {
         "pattern": "wru",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -951,23 +613,14 @@
     "name": "Testing Framework: BusterJS",
     "id": "AI045600",
     "description": "Testing Framework: BusterJS",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.BusterJS"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.BusterJS" ],
     "patterns": [
       {
         "pattern": "buster.js",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -976,23 +629,14 @@
     "name": "Testing Framework: Lighttest",
     "id": "AI045700",
     "description": "Testing Framework: Lighttest",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Lighttest"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Lighttest" ],
     "patterns": [
       {
         "pattern": "lighttest",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -1001,23 +645,14 @@
     "name": "Testing Framework: Chai",
     "id": "AI045800",
     "description": "Testing Framework: Chai",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Chai"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Chai" ],
     "patterns": [
       {
         "pattern": "chai",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -1026,23 +661,14 @@
     "name": "Testing Framework: JSUS",
     "id": "AI045900",
     "description": "Testing Framework: JSUS",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.JSUS"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.JSUS" ],
     "patterns": [
       {
         "pattern": "jsus",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -1051,23 +677,14 @@
     "name": "Testing Framework: WallabyJS",
     "id": "AI046000",
     "description": "Testing Framework: WallabyJS",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.WallabyJS"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.WallabyJS" ],
     "patterns": [
       {
         "pattern": "wallaby.js",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -1076,23 +693,14 @@
     "name": "Testing Framework: Fast-Check",
     "id": "AI046100",
     "description": "Testing Framework: Fast-Check",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.fast-check"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.fast-check" ],
     "patterns": [
       {
         "pattern": "fast-check",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -1101,23 +709,14 @@
     "name": "Testing Framework: Jest",
     "id": "AI046200",
     "description": "Testing Framework: Jest",
-    "applies_to": [
-      "javascript"
-    ],
-    "tags": [
-      "Framework.Testing.Jest"
-    ],
+    "applies_to":[ "javascript" ],
+    "tags":[ "Framework.Testing.Jest" ],
     "patterns": [
       {
         "pattern": "jest",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]

@@ -3,9 +3,7 @@
     "name": "Miscellaneous: Analytics Service",
     "id": "AI004200",
     "description": "Miscellaneous: Analytics Service",
-    "tags": [
-      "CloudServices.Web.Analytics.Facebook"
-    ],
+    "tags":[ "CloudServices.Web.Analytics" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -21,16 +19,14 @@
     "name": "Miscellaneous: Analytics Service (Facebook)",
     "id": "AI004300",
     "description": "Miscellaneous: Analytics Service (Facebook)",
-    "tags": [
-      "CloudServices.Web.Analytics.Facebook"
-    ],
+    "tags":[ "CloudServices.Web.Analytics.Facebook" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "connect.facebook.net",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -38,16 +34,14 @@
     "name": "Miscellaneous: Analytics Service (Google GTag)",
     "id": "AI004400",
     "description": "Miscellaneous: Analytics Service (Google GTag)",
-    "tags": [
-      "CloudServices.Web.Analytics.Google.GTag"
-    ],
+    "tags":[ "CloudServices.Web.Analytics.Google.GTag" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "googletagmanager.com",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -55,16 +49,14 @@
     "name": "Miscellaneous: Analytics Service (Bing)",
     "id": "AI004500",
     "description": "Miscellaneous: Analytics Service (Bing)",
-    "tags": [
-      "CloudServices.Web.Analytics.Microsoft.Bing"
-    ],
+    "tags":[ "CloudServices.Web.Analytics.Microsoft.Bing" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "bat.bing.com",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -72,16 +64,14 @@
     "name": "Miscellaneous: Analytics Service (Twitter)",
     "id": "AI004600",
     "description": "Miscellaneous: Analytics Service (Twitter)",
-    "tags": [
-      "CloudServices.Web.Analytics.Twitter"
-    ],
+    "tags":[ "CloudServices.Web.Analytics.Twitter" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "static.ads-twitter.com",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -89,16 +79,14 @@
     "name": "Miscellaneous: Analytics Service (Outbrain)",
     "id": "AI004700",
     "description": "Miscellaneous: Analytics Service (Outbrain)",
-    "tags": [
-      "CloudServices.Web.Analytics.Outbrain"
-    ],
+    "tags":[ "CloudServices.Web.Analytics.Outbrain" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "amplify.outbrain.com",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   },
@@ -106,16 +94,14 @@
     "name": "Miscellaneous: Analytics Service (Pinterest)",
     "id": "AI004800",
     "description": "Miscellaneous: Analytics Service (Pinterest)",
-    "tags": [
-      "CloudServices.Web.Analytics.Pinterest"
-    ],
+    "tags":[ "CloudServices.Web.Analytics.Pinterest" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "s.pinimg.com",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": []
+        "modifiers": [ "i" ]
       }
     ]
   }

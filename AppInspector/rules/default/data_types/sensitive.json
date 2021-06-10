@@ -3,9 +3,7 @@
     "name": "Data: Sensitive (Identification)",
     "id": "AI016200",
     "description": "Data: Sensitive (Identification)",
-    "tags": [
-      "Data.Sensitive.Identification"
-    ],
+    "tags":[ "Data.Sensitive.Identification" ],
     "severity": "critical",
     "patterns": [
       {
@@ -42,9 +40,7 @@
     "name": "Data: Sensitive (Identification)",
     "id": "AI016300",
     "description": "Data: Sensitive (Identification)",
-    "tags": [
-      "Data.Sensitive.Identification"
-    ],
+    "tags":[ "Data.Sensitive.Identification" ],
     "severity": "important",
     "patterns": [
       {
@@ -56,7 +52,7 @@
       },
       {
         "pattern": "age",
-        "type": "regexword",
+        "type": "string",
         "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "medium"
@@ -67,11 +63,8 @@
         "pattern": {
           "pattern": "address|(first|last|sur)name|gender|contact|email|user|mother|father",
           "type": "regexword",
-          "scopes": [
-            "code"
-          ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "scopes": [ "code" ],
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-40,40)",
         "negate_finding": false
@@ -82,9 +75,7 @@
     "name": "Data: Sensitive (Identification)",
     "id": "AI016400",
     "description": "Data: Sensitive (Identification)",
-    "tags": [
-      "Data.Sensitive.Identification"
-    ],
+    "tags":[ "Data.Sensitive.Identification" ],
     "severity": "important",
     "patterns": [
       {
@@ -100,9 +91,7 @@
         "pattern": {
           "pattern": "author|package.json",
           "type": "regex",
-          "scopes": [
-            "code"
-          ],
+          "scopes": [ "code" ],
           "modifiers": [ "i" ],
           "_comment": "special case for package.json for SF"
         },
@@ -116,9 +105,7 @@
     "name": "Data: Sensitive (Identification)",
     "id": "AI016500",
     "description": "Data: Sensitive (Identification)",
-    "tags": [
-      "Data.Sensitive.Identification"
-    ],
+    "tags":[ "Data.Sensitive.Identification" ],
     "severity": "important",
     "patterns": [
       {
@@ -133,12 +120,9 @@
       {
         "pattern": {
           "pattern": "user",
-          "type": "regex",
-          "scopes": [
-            "code"
-          ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "type": "substring",
+          "scopes": [ "code" ],
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-30,30)",
         "negate_finding": false
@@ -149,9 +133,7 @@
     "name": "Data: Sensitive (Medical)",
     "id": "AI016600",
     "description": "Data: Sensitive (Medical)",
-    "tags": [
-      "Data.Sensitive.Medical"
-    ],
+    "tags":[ "Data.Sensitive.Medical" ],
     "severity": "important",
     "patterns": [
       {
@@ -167,9 +149,7 @@
     "name": "Data: Sensitive (Account)",
     "id": "AI016700",
     "description": "Data: Sensitive (Account)",
-    "tags": [
-      "Data.Sensitive.UserAccount"
-    ],
+    "tags":[ "Data.Sensitive.UserAccount" ],
     "severity": "critical",
     "patterns": [
       {
@@ -184,12 +164,9 @@
       {
         "pattern": {
           "pattern": "user",
-          "type": "regex",
-          "scopes": [
-            "code"
-          ],
-          "modifiers": [ "i" ],
-          "_comment": ""
+          "type": "string",
+          "scopes": [ "code" ],
+          "modifiers": [ "i" ]
         },
         "search_in": "finding-region(-40,40)",
         "negate_finding": false

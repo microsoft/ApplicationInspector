@@ -3,22 +3,14 @@
     "name": "Testing Framework: TestUnit",
     "id": "AI052600",
     "description": "Testing Framework: TestUnit",
-    "applies_to": [
-      "ruby"
-    ],
-    "tags": [
-      "Framework.Testing.TestUnit"
-    ],
+    "applies_to":[ "ruby" ],
+    "tags":[ "Framework.Testing.TestUnit" ],
     "patterns": [
       {
         "pattern": "test::unit",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -27,23 +19,14 @@
     "name": "Testing Framework: RSpec",
     "id": "AI052700",
     "description": "Testing Framework: RSpec",
-    "applies_to": [
-      "ruby"
-    ],
-    "tags": [
-      "Framework.Testing.RSpec"
-    ],
+    "applies_to":[ "ruby" ],
+    "tags":[ "Framework.Testing.RSpec" ],
     "patterns": [
       {
         "pattern": "rspec",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -52,23 +35,14 @@
     "name": "Testing Framework: Shoulda",
     "id": "AI052800",
     "description": "Testing Framework: Shoulda",
-    "applies_to": [
-      "ruby"
-    ],
-    "tags": [
-      "Framework.Testing.Shoulda"
-    ],
+    "applies_to":[ "ruby" ],
+    "tags":[ "Framework.Testing.Shoulda" ],
     "patterns": [
       {
         "pattern": "shoulda",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -77,23 +51,14 @@
     "name": "Testing Framework: MicroTest",
     "id": "AI052900",
     "description": "Testing Framework: MicroTest",
-    "applies_to": [
-      "ruby"
-    ],
-    "tags": [
-      "Framework.Testing.Microtest"
-    ],
+    "applies_to":[ "ruby" ],
+    "tags":[ "Framework.Testing.Microtest" ],
     "patterns": [
       {
         "pattern": "microtest",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -102,23 +67,14 @@
     "name": "Testing Framework: Bacon",
     "id": "AI053000",
     "description": "Testing Framework: Bacon",
-    "applies_to": [
-      "ruby"
-    ],
-    "tags": [
-      "Framework.Testing.Bacon"
-    ],
+    "applies_to":[ "ruby" ],
+    "tags":[ "Framework.Testing.Bacon" ],
     "patterns": [
       {
         "pattern": "bacon",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -127,23 +83,14 @@
     "name": "Testing Framework: MiniTest",
     "id": "AI053100",
     "description": "Testing Framework: MiniTest",
-    "applies_to": [
-      "ruby"
-    ],
-    "tags": [
-      "Framework.Testing.Minitest"
-    ],
+    "applies_to":[ "ruby" ],
+    "tags":[ "Framework.Testing.Minitest" ],
     "patterns": [
       {
         "pattern": "minitest",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]
@@ -152,23 +99,14 @@
     "name": "Testing Framework: TMF",
     "id": "AI053200",
     "description": "Testing Framework: TMF",
-    "applies_to": [
-      "ruby"
-    ],
-    "tags": [
-      "Framework.Testing.TMF"
-    ],
+    "applies_to":[ "ruby" ],
+    "tags":[ "Framework.Testing.TMF" ],
     "patterns": [
       {
         "pattern": "TMF",
         "type": "string",
-        "scopes": [
-          "code",
-          "comment"
-        ],
-        "modifiers": [
-          "i"
-        ],
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
         "confidence": "high"
       }
     ]

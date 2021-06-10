@@ -4,9 +4,7 @@
     "id": "AI009300",
     "description": "Cryptography: Key Derivation",
     "applies_to": ["csharp"],
-    "tags": [
-      "Cryptography.KeyDerivation.General"
-    ],
+    "tags":[ "Cryptography.KeyDerivation.General" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -28,11 +26,23 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "pbkdf(1)?",
-        "type": "regex",
+        "pattern": "pbkdf",
+        "type": "substring",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
         "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "pbkdf2",
+          "type": "substring",
+          "scopes": [ "code" ],
+          "modifiers": [ "i" ]
+        },
+        "search_in": "same-line",
+        "negate_finding": true
       }
     ]
   },

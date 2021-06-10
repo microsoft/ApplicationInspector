@@ -3,25 +3,19 @@
     "name": "OS: Multiprocessing / Multithreading",
     "id": "AI036700",
     "description": "OS: Multiprocessing / Multithreading",
-    "tags": [
-      "OS.Process.Multiprocessing"
-    ],
+    "tags":[ "OS.Process.Multiprocessing" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "mutex|semaphore|thread|lock|fork",
         "type": "regexword",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "async|await",
         "type": "regexword",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "medium"
       }
     ]
@@ -34,17 +28,13 @@
       "c",
       "cpp"
     ],
-    "tags": [
-      "OS.Process.Multiprocessing"
-    ],
+    "tags":[ "OS.Process.Multiprocessing" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "WaitForSingleObject|WaitForMultipleObjects",
         "type": "regexword",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -53,28 +43,20 @@
     "name": "OS: Multiprocessing / Multithreading",
     "id": "AI036900",
     "description": "OS: Multiprocessing / Multithreading",
-    "applies_to": [
-      "csharp"
-    ],
-    "tags": [
-      "OS.Process.Multiprocessing"
-    ],
+    "applies_to":[ "csharp" ],
+    "tags":[ "OS.Process.Multiprocessing" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "BackgroundWorker|Task\\.Run|Async|System.Threading",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "type": "regexword",
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "(new System\\.Diagnostics.Process\\(\\)| new Process\\(\\))",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "type": "regexword",
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -83,28 +65,20 @@
     "name": "OS: Multiprocessing / Multithreading",
     "id": "AI036910",
     "description": "OS: Multiprocessing / Multithreading",
-    "applies_to": [
-      "rust"
-    ],
-    "tags": [
-      "OS.Process.Multiprocessing"
-    ],
+    "applies_to":[ "rust" ],
+    "tags":[ "OS.Process.Multiprocessing" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "thread::spawn",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "type": "regexword",
+        "scopes": [ "code" ],
         "confidence": "high"
       },
       {
         "pattern": "(new System\\.Diagnostics.Process\\(\\)| new Process\\(\\))",
-        "type": "regex",
-        "scopes": [
-          "code"
-        ],
+        "type": "regexword",
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -113,20 +87,14 @@
     "name": "OS: Multiprocessing / Multithreading",
     "id": "AI037000",
     "description": "OS: Multiprocessing / Multithreading",
-    "applies_to": [
-      "java"
-    ],
-    "tags": [
-      "OS.Process.Multiprocessing"
-    ],
+    "applies_to":[ "java" ],
+    "tags":[ "OS.Process.Multiprocessing" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Runnable",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -135,20 +103,14 @@
     "name": "OS: Multiprocessing / Multithreading",
     "id": "AI037100",
     "description": "OS: Multiprocessing / Multithreading",
-    "applies_to": [
-      "go"
-    ],
-    "tags": [
-      "OS.Process.Multiprocessing"
-    ],
+    "applies_to":[ "go" ],
+    "tags":[ "OS.Process.Multiprocessing" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "<-",
         "type": "string",
-        "scopes": [
-          "code"
-        ],
+        "scopes": [ "code" ],
         "confidence": "high"
       }
     ]
@@ -163,31 +125,23 @@
       "csharp",
       "python"
     ],
-    "tags": [
-      "OS.Process.ListRequest"
-    ],
+    "tags":[ "OS.Process.ListRequest" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Process.GetProcesses()",
         "type": "string",
-        "scopes": [
-          "code"
-        ]
+        "scopes": [ "code" ]
       },
       {
         "pattern": "ReadProcessMemory|OpenProcess|VirtualQueryEx",
         "type": "regexword",
-        "scopes": [
-          "code"
-        ]
+        "scopes": [ "code" ]
       },
       {
         "pattern": "system32\\tasklist.exe",
         "type": "string",
-        "scopes": [
-          "code"
-        ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -195,20 +149,14 @@
     "name": "OS: Process Access (Read)",
     "id": "AI037300",
     "description": "OS: Process Access (Read)",
-    "applies_to": [
-      "powershell"
-    ],
-    "tags": [
-      "OS.Process.ListRequest"
-    ],
+    "applies_to":[ "powershell" ],
+    "tags":[ "OS.Process.ListRequest" ],
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "get-Process ",
+        "pattern": "Get-Process ",
         "type": "substring",
-        "scopes": [
-          "code"
-        ]
+        "scopes": [ "code" ]
       }
     ]
   },
@@ -216,20 +164,14 @@
     "name": "OS: Process Access (Read)",
     "id": "AI037400",
     "description": "OS: Process Access (Read)",
-    "applies_to": [
-      "java"
-    ],
-    "tags": [
-      "OS.Process.ListRequest"
-    ],
+    "applies_to":[ "java" ],
+    "tags":[ "OS.Process.ListRequest" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "exec.*['\\\"]ps ",
-        "type": "substring",
-        "scopes": [
-          "code"
-        ],
+        "type": "regexword",
+        "scopes": [ "code" ],
         "modifiers": [ "i" ]
       }
     ]

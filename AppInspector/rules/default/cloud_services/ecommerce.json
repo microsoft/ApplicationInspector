@@ -3,15 +3,13 @@
     "name": "CloudServices: Financial (eCommerce)",
     "id": "AI003600",
     "description": "Data: Financial (eCommerce)",
-    "tags": [
-      "CloudServices.Finance.eCommerce"
-    ],
+    "tags":[ "CloudServices.Finance.eCommerce" ],
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "pci|wallet|fips-140",
+        "pattern": "wallet|fips-140",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [ "code", "comment" ],
         "modifiers": [ "i" ],
         "confidence": "medium"
       },

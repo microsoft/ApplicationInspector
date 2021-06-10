@@ -4,16 +4,14 @@
     "id": "AI018200",
     "description": "Development Framework: Spring",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.Spring"
-    ],
+    "tags":[ "Framework.Development.Spring" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "springframework",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
+        "modifiers": ["i"],
         "confidence": "high"
       }
     ]
@@ -23,17 +21,15 @@
     "id": "AI018300",
     "description": "Development Framework: Hibernate",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.Hibernate"
-    ],
+    "tags":[ "Framework.Development.Hibernate" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "hibernate",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -42,17 +38,15 @@
     "id": "AI018400",
     "description": "Development Framework: Blade",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.Blade"
-    ],
+    "tags":[ "Framework.Development.Blade" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "blade",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -61,9 +55,7 @@
     "id": "AI018500",
     "description": "Development Framework: DropWizard",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.DropWizard"
-    ],
+    "tags":[ "Framework.Development.DropWizard" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -80,17 +72,15 @@
     "id": "AI018600",
     "description": "Development Framework: GWT",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.GWT"
-    ],
+    "tags":[ "Framework.Development.GWT" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "google.gwt",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -99,17 +89,15 @@
     "id": "AI018700",
     "description": "Development Framework: JSF",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.JSF"
-    ],
+    "tags":[ "Framework.Development.JSF" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "http://xmlns.jcp.org/jsf/html",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -117,16 +105,15 @@
     "name": "Development Framework: JHipster",
     "id": "AI018800",
     "description": "Development Framework: JHipster",
-    "tags": [
-      "Framework.Development.JHipster"
-    ],
+    "tags":[ "Framework.Development.JHipster" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "jhipster",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -135,16 +122,15 @@
     "id": "AI018900",
     "description": "Development Framework: MyBatis",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.MyBatis"
-    ],
+    "tags":[ "Framework.Development.MyBatis" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "mybatis|iobatis",
         "type": "regexword",
         "scopes": [ "code" ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -153,17 +139,15 @@
     "id": "AI019000",
     "description": "Development Framework: Play Framework",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.PlayFramework"
-    ],
+    "tags":[ "Framework.Development.PlayFramework" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "import play.",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -172,16 +156,15 @@
     "id": "AI019100",
     "description": "Development Framework: PrimeFaces",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.PrimeFaces"
-    ],
+    "tags":[ "Framework.Development.PrimeFaces" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "primefaces",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -190,17 +173,15 @@
     "id": "AI019200",
     "description": "Development Framework: Spark",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.Spark"
-    ],
+    "tags":[ "Framework.Development.Spark" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "import spark.",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -209,17 +190,15 @@
     "id": "AI019300",
     "description": "Development Framework: Apache Struts",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.ApacheStruts"
-    ],
+    "tags":[ "Framework.Development.ApacheStruts" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "struts",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -228,17 +207,15 @@
     "id": "AI019400",
     "description": "Development Framework: Apache Tapestry",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.ApacheTapestry"
-    ],
+    "tags":[ "Framework.Development.ApacheTapestry" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "tapestry",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -247,17 +224,15 @@
     "id": "AI019500",
     "description": "Development Framework: Vaadin",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.Vaadin"
-    ],
+    "tags":[ "Framework.Development.Vaadin" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "vaadin",
         "type": "string",
         "scopes": [ "code" ],
-        "modifiers": [],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -266,9 +241,7 @@
     "id": "AI019600",
     "description": "Development Framework: Vertx",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.Vertx"
-    ],
+    "tags":[ "Framework.Development.Vertx" ],
     "severity": "moderate",
     "patterns": [
       {
@@ -276,7 +249,8 @@
         "type": "string",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -285,16 +259,15 @@
     "id": "AI019700",
     "description": "Development Framework: Wicket",
     "applies_to": [ "java" ],
-    "tags": [
-      "Framework.Development.Wicket"
-    ],
+    "tags":[ "Framework.Development.Wicket" ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "wicket",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   },
@@ -310,7 +283,8 @@
         "pattern": "googleapis",
         "type": "substring",
         "scopes": [ "code" ],
-        "confidence": "high"
+        "confidence": "high",
+        "modifiers": ["i"]
       }
     ]
   }
