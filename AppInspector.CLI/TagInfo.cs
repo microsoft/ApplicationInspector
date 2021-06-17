@@ -137,18 +137,10 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             get => _confidence;
             set
-            {
-                RulesEngine.Confidence test;
-                try
+            {                
+                if (Enum.TryParse(value, true, out RulesEngine.Confidence test))
                 {
-                    if (Enum.TryParse(value, true, out test))
-                    {
-                        _confidence = value;
-                    }
-                }
-                catch (Exception)//control error description
-                {
-                    throw new Exception("Invalid argument value set attempt for Confidence");
+                    _confidence = value;
                 }
             }
         }

@@ -231,7 +231,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
                     foreach (TagSearchPattern pattern in tagGroup.Patterns ?? new List<TagSearchPattern>())
                     {
-                        pattern.Detected = _appMetaData?.UniqueTags is not null && _appMetaData.UniqueTags.Any(v => v.Contains(pattern.SearchPattern));
+                        pattern.Detected = _appMetaData?.UniqueTags is not null && _appMetaData.UniqueTags.Any(v => v == pattern.SearchPattern);
                         if (unSupportedGroupsOrPatterns.Any(x => pattern.SearchPattern.ToLower().Contains(x)))
                         {
                             WriteOnce.Log?.Warn($"Unsupported tag group or pattern detected '{pattern.SearchPattern}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags");
@@ -317,56 +317,76 @@ namespace Microsoft.ApplicationInspector.CLI
                 if (pattern.Detected)//set at program.RollUp already so don't search for again
                 {
                     var tagPatternRegex = pattern.Expression;
-
-                    foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
+                    if (_appMetaData?.TotalMatchesCount > 0)
                     {
-                        foreach (var tagItem in match.Tags ?? new string[] { })
+                        foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                         {
-                            if (tagPatternRegex.IsMatch(tagItem))
+                            foreach (var tagItem in match.Tags ?? new string[] { })
                             {
-                                if (!hashSet.Contains(pattern.SearchPattern))
+                                if (tagPatternRegex.IsMatch(tagItem))
                                 {
-                                    result.Add(new TagInfo
+                                    if (!hashSet.Contains(pattern.SearchPattern))
                                     {
-                                        Tag = tagItem,
-                                        Confidence = match.Confidence.ToString(),
-                                        Severity = match.Severity.ToString(),
-                                        ShortTag = pattern.DisplayName,
-                                        StatusIcon = pattern.DetectedIcon,
-                                        Detected = true
-                                    });
-
-                                    hashSet.Add(pattern.SearchPattern);
-
-                                    pattern.Confidence = match.Confidence.ToString();
-                                }
-                                else
-                                {
-                                    //ensure we get highest confidence, severity as there are likely multiple matches for this tag pattern
-                                    foreach (TagInfo updateItem in result)
-                                    {
-                                        if (updateItem.Tag == tagItem)
+                                        result.Add(new TagInfo
                                         {
-                                            Confidence oldConfidence;
-                                            Enum.TryParse(updateItem.Confidence, out oldConfidence);
+                                            Tag = tagItem,
+                                            Confidence = match.Confidence.ToString(),
+                                            Severity = match.Severity.ToString(),
+                                            ShortTag = pattern.DisplayName,
+                                            StatusIcon = pattern.DetectedIcon,
+                                            Detected = true
+                                        });
 
-                                            if (match.Confidence > oldConfidence)
+                                        hashSet.Add(pattern.SearchPattern);
+
+                                        pattern.Confidence = match.Confidence.ToString();
+                                    }
+                                    else
+                                    {
+                                        //ensure we get highest confidence, severity as there are likely multiple matches for this tag pattern
+                                        foreach (TagInfo updateItem in result)
+                                        {
+                                            if (updateItem.Tag == tagItem)
                                             {
-                                                updateItem.Confidence = match.Confidence.ToString();
-                                                pattern.Confidence = match.Confidence.ToString();
-                                            }
+                                                Confidence oldConfidence;
+                                                Enum.TryParse(updateItem.Confidence, out oldConfidence);
 
-                                            Severity oldSeverity;
-                                            Enum.TryParse(updateItem.Severity, out oldSeverity);
-                                            if (match.Severity > oldSeverity)
-                                            {
-                                                updateItem.Severity = match.Severity.ToString();
-                                            }
+                                                if (match.Confidence > oldConfidence)
+                                                {
+                                                    updateItem.Confidence = match.Confidence.ToString();
+                                                    pattern.Confidence = match.Confidence.ToString();
+                                                }
 
-                                            break;
+                                                Severity oldSeverity;
+                                                Enum.TryParse(updateItem.Severity, out oldSeverity);
+                                                if (match.Severity > oldSeverity)
+                                                {
+                                                    updateItem.Severity = match.Severity.ToString();
+                                                }
+
+                                                break;
+                                            }
                                         }
                                     }
                                 }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var tagItem in _appMetaData?.UniqueTags ?? new List<string>())
+                        {
+                            if (tagPatternRegex.IsMatch(tagItem) && !hashSet.Contains(pattern.SearchPattern))
+                            {
+                                result.Add(new TagInfo
+                                {
+                                    Tag = tagItem,
+                                    ShortTag = pattern.DisplayName,
+                                    StatusIcon = pattern.DetectedIcon,
+                                    Detected = true
+                                });
+
+                                hashSet.Add(tagItem);
                             }
                         }
                     }
@@ -475,26 +495,37 @@ namespace Microsoft.ApplicationInspector.CLI
 
             foreach (string tag in _appMetaData?.UniqueTags ?? new List<string>())
             {
-                foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
+                if (_appMetaData?.TotalMatchesCount > 0)
                 {
-                    foreach (string testTag in match.Tags ?? new string[] { })
+                    foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                     {
-                        if (tag == testTag)
+                        foreach (string testTag in match.Tags ?? new string[] { })
                         {
-                            if (dupCheck.Add(testTag))
+                            if (tag == testTag)
                             {
-                                result.Add(new TagInfo
+                                if (dupCheck.Add(testTag))
                                 {
-                                    Tag = testTag,
-                                    Confidence = match.Confidence.ToString(),
-                                    Severity = match.Severity.ToString(),
-                                    ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
-                                });
+                                    result.Add(new TagInfo
+                                    {
+                                        Tag = testTag,
+                                        Confidence = match.Confidence.ToString(),
+                                        Severity = match.Severity.ToString(),
+                                        ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
+                                    });
 
-                                break;
+                                    break;
+                                }
                             }
                         }
                     }
+                }
+                else
+                {
+                    result.Add(new TagInfo
+                    {
+                        Tag = tag,
+                        ShortTag = tag.Substring(tag.LastIndexOf('.') + 1),
+                    });
                 }
             }
 
