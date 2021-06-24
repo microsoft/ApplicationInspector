@@ -327,7 +327,7 @@
         "pattern": {
           "pattern": "import android",
           "type": "string",
-          "scopes": [ "code" ],
+          "scopes": [ "code" ]
         },
         "search_in": "finding-region(-200,0)",
         "negate_finding": false
