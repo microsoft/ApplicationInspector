@@ -127,7 +127,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "require \\'pg\\'|(pgsql|PG)\\.connect|PG::Connection",
+        "pattern": "require 'pg'|(pgsql|PG)\\.connect|PG::Connection",
         "type": "regex",
         "scopes": [ "code" ],
         "modifiers": [ "i" ],
