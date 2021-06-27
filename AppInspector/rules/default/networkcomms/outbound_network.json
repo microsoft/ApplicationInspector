@@ -381,7 +381,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "NetworkInterfaceType\\.Wman|NetworkInterfaceType\\Wwanpp|NetworkInterfaceType\\.Wwanpp2",
+        "pattern": "NetworkInterfaceType\\.Wman|NetworkInterfaceType\\.Wwanpp|NetworkInterfaceType\\.Wwanpp2",
         "type": "regex",
         "scopes": [ "code" ],
         "confidence": "high"
