@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Microsoft.ApplicationInspector.Common</RootNamespace>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <Authors>Microsoft</Authors>
+    <AssemblyName>ApplicationInspector.Common</AssemblyName>
+    <Company>Microsoft</Company>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
