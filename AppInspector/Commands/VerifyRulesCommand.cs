@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Microsoft.ApplicationInspector.Commands
@@ -141,7 +142,24 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzer.SetOperation(new WithinOperation(analyzer));
                 analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
                 analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
-                foreach (var rule in RuleSetUtils.GetDefaultRuleSet().GetOatRules())
+
+                RuleSet? ruleSet = new RuleSet(_options.Log);
+                if (_options.VerifyDefaultRules)
+                {
+                    ruleSet = RuleSetUtils.GetDefaultRuleSet(_options.Log);
+                }
+                if (_options.CustomRulesPath != null)
+                {
+                    if (Directory.Exists(_options.CustomRulesPath))
+                    {
+                        ruleSet.AddDirectory(_options.CustomRulesPath);
+                    }
+                    else if (File.Exists(_options.CustomRulesPath))
+                    {
+                        ruleSet.AddFile(_options.CustomRulesPath);
+                    }
+                }
+                foreach (var rule in ruleSet.GetOatRules())
                 {
                     stati.Add(new RuleStatus()
                     {
