@@ -148,16 +148,25 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     ruleSet = RuleSetUtils.GetDefaultRuleSet(_options.Log);
                 }
-                if (_options.CustomRulesPath != null)
+                try
                 {
-                    if (Directory.Exists(_options.CustomRulesPath))
+                    if (_options.CustomRulesPath != null)
                     {
-                        ruleSet.AddDirectory(_options.CustomRulesPath);
+                        if (Directory.Exists(_options.CustomRulesPath))
+                        {
+                            ruleSet.AddDirectory(_options.CustomRulesPath);
+                        }
+                        else if (File.Exists(_options.CustomRulesPath))
+                        {
+                            ruleSet.AddFile(_options.CustomRulesPath);
+                        }
                     }
-                    else if (File.Exists(_options.CustomRulesPath))
-                    {
-                        ruleSet.AddFile(_options.CustomRulesPath);
-                    }
+                }
+                catch(JsonSerializationException e)
+                {
+                    WriteOnce.Error(e.Message);
+                    verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.CriticalError;
+                    return verifyRulesResult;
                 }
                 foreach (var rule in ruleSet.GetOatRules())
                 {
