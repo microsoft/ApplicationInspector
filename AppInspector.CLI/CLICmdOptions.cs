@@ -124,7 +124,7 @@ namespace Microsoft.ApplicationInspector.CLI
     [Verb("verifyrules", HelpText = "Verify custom rules syntax is valid")]
     public class CLIVerifyRulesCmdOptions : CLICommandOptions
     {
-        [Option('d', "verify-default-rules", Required = false, HelpText = "Verify default rules")]
+        [Option('d', "verify-default-rules", Required = false, Default = false, HelpText = "Verify default rules")]
         public bool VerifyDefaultRules { get; set; }
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]

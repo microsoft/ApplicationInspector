@@ -165,31 +165,20 @@ namespace ApplicationInspector.Unitprocess.Commands
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logerror.txt"),
             };
 
-            VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
-            try
+            
+            VerifyRulesCommand command = new VerifyRulesCommand(options);
+            VerifyRulesResult result = command.GetResult();
+            Assert.AreEqual(VerifyRulesResult.ExitCode.CriticalError, result.ResultCode);
+
+            string testLogContent = File.ReadAllText(options.LogFilePath);
+            if (String.IsNullOrEmpty(testLogContent) || !testLogContent.ToLower().Contains("error"))
             {
-                VerifyRulesCommand command = new VerifyRulesCommand(options);
-                VerifyRulesResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
-                {
-                    exitCode = VerifyRulesResult.ExitCode.Verified;
-                }
-                else
-                {
-                    exitCode = VerifyRulesResult.ExitCode.CriticalError;
-                }
+                Assert.Fail();
             }
 
             //because these are static and each test is meant to be indpendent null assign the references to create the log
             WriteOnce.Log = null;
             Utils.Logger = null;
-
-            Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
 
         [TestMethod]
