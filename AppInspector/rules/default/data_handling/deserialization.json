@@ -92,7 +92,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "unserialize(",
+        "pattern": "unserialize\\(",
         "type": "substring",
         "scopes": [ "code" ],
         "confidence": "high"
