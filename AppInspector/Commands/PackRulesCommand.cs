@@ -127,12 +127,6 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("PackRules::Run", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Pack Rules"));
 
-            if (!Common.Utils.CLIExecutionContext)
-            { //requires output format and filepath only supported via CLI use
-                WriteOnce.Error("Command not supported for DLL calls");
-                throw new Exception("Command not supported for DLL calls");
-            }
-
             PackRulesResult packRulesResult = new PackRulesResult()
             {
                 AppVersion = Common.Utils.GetVersionString()
@@ -145,7 +139,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     verifier.LoadRuleSet(RuleSetUtils.GetDefaultRuleSet());
                 }
-                verifier.Verify();
+                var ruleStati = verifier.Verify();
                 if (!verifier.IsVerified)
                 {
                     throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));

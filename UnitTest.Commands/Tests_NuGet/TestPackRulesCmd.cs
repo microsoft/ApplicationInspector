@@ -81,7 +81,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void NoDefaultNoCustomEmbeddedRules_Pass()
         {
-            PackRulesOptions options = new PackRulesOptions();
+            PackRulesOptions options = new PackRulesOptions() { PackEmbeddedRules = true };
 
             try
             {
@@ -89,7 +89,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 PackRulesResult result = command.GetResult();
                 Assert.AreEqual(PackRulesResult.ExitCode.Success, result.ResultCode);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Assert.Fail();
                 //check for specific error if desired

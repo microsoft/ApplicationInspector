@@ -55,9 +55,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, _rulesPath));
                 }
-
-                CheckIntegrity();
             }
+
+            CheckIntegrity();
 
             return _ruleStatuses;
         }
