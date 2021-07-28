@@ -57,7 +57,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         }
 
         [TestMethod]
-        public void NoDefaultNoCustomRules_Fail()
+        public void NoDefaultNoCustomNoEmbeddedRules_Fail()
         {
             PackRulesOptions options = new PackRulesOptions()
             {
@@ -78,7 +78,23 @@ namespace ApplicationInspector.Unitprocess.Commands
             Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
         }
 
+        [TestMethod]
+        public void NoDefaultNoCustomEmbeddedRules_Pass()
+        {
+            PackRulesOptions options = new PackRulesOptions() { PackEmbeddedRules = true };
 
+            try
+            {
+                PackRulesCommand command = new PackRulesCommand(options);
+                PackRulesResult result = command.GetResult();
+                Assert.AreEqual(PackRulesResult.ExitCode.Success, result.ResultCode);
+            }
+            catch (Exception)
+            {
+                Assert.Fail();
+                //check for specific error if desired
+            }
+        }
 
         [TestMethod]
         public void InvalidLogPath_Fail()
