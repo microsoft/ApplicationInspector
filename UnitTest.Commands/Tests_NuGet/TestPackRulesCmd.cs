@@ -89,7 +89,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                 PackRulesResult result = command.GetResult();
                 Assert.AreEqual(PackRulesResult.ExitCode.Success, result.ResultCode);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Assert.Fail();
                 //check for specific error if desired

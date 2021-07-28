@@ -139,7 +139,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     verifier.LoadRuleSet(RuleSetUtils.GetDefaultRuleSet());
                 }
-                var ruleStati = verifier.Verify();
+                verifier.Verify();
                 if (!verifier.IsVerified)
                 {
                     throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
