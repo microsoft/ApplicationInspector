@@ -381,10 +381,11 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "NetworkInterfaceType\\.Wman|NetworkInterfaceType\\.Wwanpp|NetworkInterfaceType\\.Wwanpp2",
+        "pattern": "NetworkInterfaceType\\.(Wman|Wwanpp|Wwanpp2)",
         "type": "regex",
         "scopes": [ "code" ],
-        "confidence": "high"
+        "confidence": "high",
+        "_comment": "https://docs.microsoft.com/en-us/dotnet/api/system.net.networkinformation.networkinterfacetype?view=net-5.0"
       }
     ]
   },
