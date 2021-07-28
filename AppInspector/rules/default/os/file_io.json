@@ -147,10 +147,7 @@
     "name": "File Operation (Delete)",
     "id": "AI036000",
     "description": "File Operation (Delete)",
-    "applies_to": [
-      "c",
-      "cpp"
-    ],
+    "applies_to": [ "c", "cpp" ],
     "tags":[ "OS.FileOperation.Delete" ],
     "severity": "moderate",
     "patterns": [
@@ -289,8 +286,7 @@
         "pattern": "StreamWriter",
         "type": "string",
         "scopes": [ "code" ],
-        "confidence": "high",
-
+        "confidence": "high"
       }
     ]
   },
