@@ -18,13 +18,12 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     internal class RulesVerifier
     {
-        private RuleSet? _rules;
+        public RuleSet CompiledRuleset { get; set; }
         private readonly string? _rulesPath;
         private readonly Logger? _logger;
         private readonly bool _failFast;
         private bool _verified;
         public bool IsVerified => _verified;
-        public RuleSet? CompiledRuleset => _rules;
         private List<RuleStatus>? _ruleStatuses;
 
         public RulesVerifier(string? rulePath, Logger? logger, bool failFast = true)
@@ -32,7 +31,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _logger = logger;
             _rulesPath = rulePath;
             _failFast = failFast;
-            _rules = new RuleSet(_logger);
+            CompiledRuleset = new RuleSet(_logger);
         }
 
         /// <summary>
@@ -72,7 +71,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _verified = true;
 
-            foreach (Rule rule in _rules?.AsEnumerable() ?? Array.Empty<Rule>())
+            foreach (Rule rule in CompiledRuleset.AsEnumerable() ?? Array.Empty<Rule>())
             {
                 bool ruleVerified = CheckIntegrity(rule);
                 _ruleStatuses?.Add(new RuleStatus()
@@ -103,7 +102,7 @@ namespace Microsoft.ApplicationInspector.Commands
             else
             {
                 // Check for same ID
-                if (_rules?.Count(x => x.Id == rule.Id) > 1)
+                if (CompiledRuleset.Count(x => x.Id == rule.Id) > 1)
                 {
                     _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Id));
                     isValid = false;
@@ -209,8 +208,7 @@ namespace Microsoft.ApplicationInspector.Commands
             return isValid;
         }
 
-        #region basicFileIO
-        private void LoadDirectory(string? path)
+        public void LoadDirectory(string? path)
         {
             if (path is null) { return; }
             foreach (string filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
@@ -219,11 +217,11 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        private void LoadFile(string file)
+        public void LoadFile(string file)
         {
             try
             {
-                _rules?.AddFile(file, null);
+                CompiledRuleset.AddFile(file, null);
             }
             catch (Exception e)
             {
@@ -233,6 +231,17 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        #endregion
+        public void LoadRuleSet(RuleSet ruleSet)
+        {
+            foreach(Rule rule in ruleSet)
+            {
+                CompiledRuleset.AddRule(rule);
+            }
+        }
+
+        public void ClearRules()
+        {
+            CompiledRuleset = new RuleSet(_logger);
+        }
     }
 }

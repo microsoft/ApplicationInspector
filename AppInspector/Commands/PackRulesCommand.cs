@@ -17,6 +17,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool RepackDefaultRules { get; set; }
         public string? CustomRulesPath { get; set; }
         public bool NotIndented { get; set; }
+        public bool PackEmbeddedRules { get; set; }
     }
 
     public class PackRulesResult : Result
@@ -103,7 +104,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NO_CLI_DEFAULT));
             }
-            else if (!_options.RepackDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath))
+            else if (!_options.RepackDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath) && !_options.PackEmbeddedRules)
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
@@ -140,6 +141,10 @@ namespace Microsoft.ApplicationInspector.Commands
             try
             {
                 RulesVerifier verifier = new RulesVerifier(_rules_path, _options?.Log);
+                if (_options?.PackEmbeddedRules ?? false)
+                {
+                    verifier.LoadRuleSet(RuleSetUtils.GetDefaultRuleSet());
+                }
                 verifier.Verify();
                 if (!verifier.IsVerified)
                 {

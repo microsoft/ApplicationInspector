@@ -379,7 +379,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 RepackDefaultRules = cliOptions.RepackDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
-                Log = cliOptions.Log
+                Log = cliOptions.Log,
+                PackEmbeddedRules = cliOptions.PackEmbeddedRules
             });
 
             PackRulesResult exportTagsResult = command.GetResult();

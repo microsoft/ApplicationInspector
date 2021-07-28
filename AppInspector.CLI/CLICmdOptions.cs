@@ -137,8 +137,11 @@ namespace Microsoft.ApplicationInspector.CLI
     [Verb("packrules", HelpText = "Combine multiple rule files into one file for ease in distribution")]
     public class CLIPackRulesCmdOptions : CLICommandOptions
     {
-        [Option('d', "pack-default-rules", Required = false, HelpText = "Repack default rules. Automatic on Application Inspector build.  Not intended for use outside of build.")]
+        [Option('d', "pack-default-rules", Required = false, HelpText = "Repack rules from default rules path. Deprecated and will be removed in a future update.")]
         public bool RepackDefaultRules { get; set; }
+
+        [Option('e', "pack-embedded-rules", Required = false, HelpText = "Pack the rules that are embedded in the DevSkim binary.")]
+        public bool PackEmbeddedRules { get; set; }
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
