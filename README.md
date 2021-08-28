@@ -150,7 +150,6 @@ For additional help on use of the console interface see [CLI Usage](https://gith
 
 For help using the NuGet package see [NuGet Support](https://github.com/microsoft/ApplicationInspector/wiki/2.-NuGet-Support)
 
-```
 # Build Instructions
 
 See [build.md](https://github.com/microsoft/ApplicationInspector/blob/main/BUILD.md)
