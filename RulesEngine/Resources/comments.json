@@ -27,7 +27,6 @@
       "perl6",
       "r",
       "shellscript",
-      "ruby",
       "yaml",
       "powershell",
       "python"
@@ -52,5 +51,13 @@
       "vb"
     ],
     "inline": "'"
+  },
+  {
+    "language": [
+      "ruby"
+    ],
+    "inline": "#",
+    "prefix": "=begin",
+    "suffix": "=end"
   }
 ]
