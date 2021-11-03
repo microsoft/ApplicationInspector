@@ -199,23 +199,29 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> Location </returns>
         public Location GetLocation(int index)
         {
-            Location result = new();
+            Location result = new()
+            {
+                Line = 1,
+                Column = 1
+            };
 
-            if (index == 0)
+            if (index != 0)
             {
-                result.Line = 1;
-                result.Column = 1;
-            }
-            else
-            {
-                for (int i = 0; i < LineEnds.Count; i++)
+                try
                 {
-                    if (LineEnds[i] >= index)
+                    for (int i = 0; i < LineEnds.Count; i++)
                     {
-                        result.Line = i;
-                        result.Column = index - LineStarts[i];
-                        break;
+                        if (LineEnds[i] >= index)
+                        {
+                            result.Line = i;
+                            result.Column = index - LineStarts[i];
+                            break;
+                        }
                     }
+                }
+                catch (Exception)
+                {
+                    //harmless i.e. default returned and better than a crash but unlogged 
                 }
             }
             return result;
