@@ -32,10 +32,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 LineEnds.Add(pos);
 
-                if (pos > 0 && pos + 1 < FullContent.Length)
+                if (pos + 1 < FullContent.Length)
                 {
                     LineStarts.Add(pos + 1);
                 }
+
                 pos = FullContent.IndexOf('\n', pos + 1);
             }
 
