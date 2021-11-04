@@ -199,26 +199,19 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> Location </returns>
         public Location GetLocation(int index)
         {
-            Location result = new();
-
-            if (index == 0)
+            for (int i = 1; i < LineEnds.Count; i++)
             {
-                result.Line = 1;
-                result.Column = 1;
-            }
-            else
-            {
-                for (int i = 0; i < LineEnds.Count; i++)
+                if (LineEnds[i] >= index)
                 {
-                    if (LineEnds[i] >= index)
+                    return new()
                     {
-                        result.Line = i;
-                        result.Column = index - LineStarts[i];
-                        break;
-                    }
+                        Column = index - LineStarts[i],
+                        Line = i
+                    };
                 }
             }
-            return result;
+
+            return new();
         }
 
         public bool IsCommented(int index)
