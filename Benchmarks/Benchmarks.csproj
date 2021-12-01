@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.0" />
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.0" />
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.203" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.1" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.244" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
