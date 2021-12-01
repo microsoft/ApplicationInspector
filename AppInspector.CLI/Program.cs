@@ -261,7 +261,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 ContextLines = cliOptions.ContextLines,
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
                 TagsOnly = cliOptions.TagsOnly,
-                NoFileMetadata = cliOptions.NoFileMetadata
+                NoFileMetadata = cliOptions.NoFileMetadata,
+                AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles
             });
 
             if (!cliOptions.NoShowProgressBar)

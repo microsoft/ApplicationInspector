@@ -72,6 +72,8 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('n', "no-file-metadata", Required = false, HelpText = "Don't collect metadata about each individual file.")]
         public bool NoFileMetadata { get; set; }
 
+        [Option('A', "allow-all-tags-in-build-files", Required = false, HelpText = "Allow all tags (not just Metadata tags) in files of type Build.")]
+        public bool AllowAllTagsInBuildFiles { get; internal set; }
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]

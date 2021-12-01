@@ -31,7 +31,12 @@ namespace Microsoft.ApplicationInspector.Commands
         public string ConfidenceFilters { get; set; } = "high,medium";
         public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
         public bool SingleThread { get; set; } = false;
-        public bool TreatEverythingAsCode { get; set; } = false;
+        /// <summary>
+        /// Treat <see cref="LanguageInfo.LangFileType.Build"/> files as if they were code when determining if tags apply.
+        /// </summary>
+        public bool AllowAllTagsInBuildFiles { get; set; } = false;
+        [Obsolete("Use AllowAllTagsInBuildFiles")]
+        public bool TreatEverythingAsCode => AllowAllTagsInBuildFiles;
         public bool NoShowProgress { get; set; } = true;
         public bool TagsOnly { get; set; } = false;
         public int FileTimeOut { get; set; } = 0;
@@ -270,9 +275,9 @@ namespace Microsoft.ApplicationInspector.Commands
             var rpo = new RuleProcessorOptions()
             {
                 logger = _options.Log,
-                treatEverythingAsCode = _options.TreatEverythingAsCode,
+                allowAllTagsInBuildFiles = _options.AllowAllTagsInBuildFiles,
                 confidenceFilter = _confidence,
-                Parallel = !_options.SingleThread
+                Parallel = !_options.SingleThread,
             };
 
             _rulesProcessor = new RuleProcessor(rulesSet, rpo);
