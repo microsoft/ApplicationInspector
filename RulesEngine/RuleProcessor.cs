@@ -26,7 +26,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public bool Parallel = true;
         public Confidence confidenceFilter;
         public Logger? logger;
-        public bool treatEverythingAsCode = false;
+        public bool allowAllTagsInBuildFiles = false;
+
+        [Obsolete("Use allowAllTagsInBuildFiles")]
+        public bool treatEverythingAsCode => allowAllTagsInBuildFiles;
     }
 
     /// <summary>
@@ -36,9 +39,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     {
         private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
-        private Confidence ConfidenceLevelFilter { get; }
-        private readonly Logger? _logger;
-        private readonly bool _treatEverythingAsCode;
+        private readonly RuleProcessorOptions _opts;
+
+        private Confidence ConfidenceLevelFilter => _opts.confidenceFilter;
+        private Logger? _logger => _opts.logger;
+
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new();
@@ -60,11 +65,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         public RuleProcessor(RuleSet rules, RuleProcessorOptions opts)
         {
+            _opts = opts;
             _ruleset = rules;
             EnableCache = true;
-            _logger = opts.logger;
-            _treatEverythingAsCode = opts.treatEverythingAsCode;
-            ConfidenceLevelFilter = opts.confidenceFilter;
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
 
             analyzer = new Analyzer(new AnalyzerOptions(false, opts.Parallel));
@@ -151,9 +154,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 {
                                     var patternIndex = match.Item1;
                                     var boundary = match.Item2;
-
                                     //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                                    if (!_treatEverythingAsCode && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+                                    if (!_opts.allowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
                                     {
                                         continue;
                                     }
@@ -285,7 +287,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     var boundary = match.Item2;
 
                                     //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                                    if (!_treatEverythingAsCode && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+                                    if (!_opts.allowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
                                     {
                                         continue;
                                     }

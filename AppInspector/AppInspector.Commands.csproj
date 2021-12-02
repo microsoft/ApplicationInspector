@@ -57,14 +57,14 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
-    <PackageReference Include="DotLiquid" Version="2.1.436" />
-    <PackageReference Include="Glob" Version="1.1.8" />
-    <PackageReference Include="Microsoft.CST.OAT" Version="1.0.85" />
-    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.0.64" />
+    <PackageReference Include="DotLiquid" Version="2.2.585" />
+    <PackageReference Include="Glob" Version="1.1.9" />
+    <PackageReference Include="Microsoft.CST.OAT" Version="1.1.15" />
+    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NLog" Version="4.7.10" />
+    <PackageReference Include="NLog" Version="4.7.12" />
     <PackageReference Include="ShellProgressBar" Version="5.1.0" />
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.203" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.244" />
   </ItemGroup>
 
   <ItemGroup>
