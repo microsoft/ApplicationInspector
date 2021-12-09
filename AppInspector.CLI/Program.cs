@@ -262,7 +262,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
                 TagsOnly = cliOptions.TagsOnly,
                 NoFileMetadata = cliOptions.NoFileMetadata,
-                AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles
+                AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles,
+                MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag
             });
 
             if (!cliOptions.NoShowProgressBar)
