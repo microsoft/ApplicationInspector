@@ -91,7 +91,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path,
-                MaxNumMatchesPerTag = 0
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -127,7 +126,6 @@ namespace ApplicationInspector.Unitprocess.Commands
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path,
-                MaxNumMatchesPerTag = 1
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
