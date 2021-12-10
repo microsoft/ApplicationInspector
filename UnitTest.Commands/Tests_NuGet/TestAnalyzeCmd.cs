@@ -67,6 +67,76 @@ namespace ApplicationInspector.Unitprocess.Commands
         }
 
         [TestMethod]
+        public void MaxNumMatches_Pass()
+        {
+            AnalyzeOptions options = new AnalyzeOptions()
+            {
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path,
+                MaxNumMatchesPerTag = 1
+            };
+
+            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(1, result.Metadata.Matches.Count(x => x.Tags.Contains("Platform.OS.Microsoft.WindowsStandard")));
+            exitCode = result.ResultCode;
+            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+        }
+
+        [TestMethod]
+        public void MaxNumMatchesDisabled_Pass()
+        {
+            AnalyzeOptions options = new AnalyzeOptions()
+            {
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path,
+            };
+
+            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(3, result.Metadata.Matches.Count(x => x.Tags.Contains("Platform.OS.Microsoft.WindowsStandard")));
+            exitCode = result.ResultCode;
+            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+        }
+
+        [TestMethod]
+        public async Task MaxNumMatchesAsync_Pass()
+        {
+            AnalyzeOptions options = new AnalyzeOptions()
+            {
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path,
+                MaxNumMatchesPerTag = 1
+            };
+
+            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = await command.GetResultAsync(new CancellationTokenSource().Token);
+            Assert.AreEqual(1, result.Metadata.Matches.Count(x => x.Tags.Contains("Platform.OS.Microsoft.WindowsStandard")));
+            exitCode = result.ResultCode;
+            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+        }
+
+        [TestMethod]
+        public async Task MaxNumMatchesAsyncDisabled_Pass()
+        {
+            AnalyzeOptions options = new AnalyzeOptions()
+            {
+                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path,
+            };
+
+            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
+            AnalyzeCommand command = new AnalyzeCommand(options);
+            AnalyzeResult result = await command.GetResultAsync(new CancellationTokenSource().Token);
+            Assert.AreEqual(3, result.Metadata.Matches.Count(x => x.Tags.Contains("Platform.OS.Microsoft.WindowsStandard")));
+            exitCode = result.ResultCode;
+            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
+        }
+
+        [TestMethod]
         public void BasicAnalyze_Pass()
         {
             AnalyzeOptions options = new AnalyzeOptions()

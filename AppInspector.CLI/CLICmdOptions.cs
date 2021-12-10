@@ -74,6 +74,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('A', "allow-all-tags-in-build-files", Required = false, HelpText = "Allow all tags (not just Metadata tags) in files of type Build.")]
         public bool AllowAllTagsInBuildFiles { get; internal set; }
+
+        [Option('M', "max-num-matches-per-tag", Required = false, HelpText = "If non-zero, and TagsOnly is not set, will ignore rules based on if all of their tags have been found the set value number of times.")]
+        public int MaxNumMatchesPerTag { get; set; } = 0;
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]

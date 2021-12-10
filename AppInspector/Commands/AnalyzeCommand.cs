@@ -44,6 +44,10 @@ namespace Microsoft.ApplicationInspector.Commands
         public int ContextLines { get; set; } = 3;
         public bool ScanUnknownTypes { get; set; }
         public bool NoFileMetadata { get; set; }
+        /// <summary>
+        /// If non-zero, and <see cref="TagsOnly"/> is not set, will ignore rules based on if all of their tags have been found the set value number of times.
+        /// </summary>
+        public int MaxNumMatchesPerTag { get; set; } = 0;
     }
 
     /// <summary>
@@ -294,6 +298,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="cancellationToken"></param>
         /// <param name="opts"></param>
         /// <param name="populatedEntries"></param>
+        [Obsolete("Instead PopulateRecords with no options argument and set the options when creating the AnalyzeCommand.")]
         public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts, IEnumerable<FileEntry> populatedEntries)
         {
             WriteOnce.SafeLog("AnalyzeCommand::PopulateRecords", LogLevel.Trace);
@@ -372,7 +377,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             _metaDataHelper.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
-                            if (!_options.ScanUnknownTypes)
+                            if (!opts.ScanUnknownTypes)
                             {
                                 fileRecord.Status = ScanState.Skipped;
                             }
@@ -390,6 +395,10 @@ namespace Microsoft.ApplicationInspector.Commands
                                     if (opts.TagsOnly)
                                     {
                                         results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Keys, -1);
+                                    }
+                                    else if (opts.MaxNumMatchesPerTag > 0)
+                                    {
+                                        results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Where(x => x.Value < opts.MaxNumMatchesPerTag).Select(x => x.Key), opts.ContextLines);
                                     }
                                     else
                                     {
@@ -421,6 +430,10 @@ namespace Microsoft.ApplicationInspector.Commands
                                 {
                                     results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Keys, -1);
                                 }
+                                else if (opts.MaxNumMatchesPerTag > 0)
+                                {
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Where(x => x.Value < opts.MaxNumMatchesPerTag).Select(x => x.Key), opts.ContextLines);
+                                }
                                 else
                                 {
                                     results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
@@ -438,6 +451,13 @@ namespace Microsoft.ApplicationInspector.Commands
                                 if (opts.TagsOnly)
                                 {
                                     _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                                }
+                                else if (opts.MaxNumMatchesPerTag > 0)
+                                {
+                                    if (matchRecord.Tags?.Any(x => _metaDataHelper.UniqueTags.TryGetValue(x, out int value) is bool foundValue && (!foundValue || foundValue && value < opts.MaxNumMatchesPerTag)) ?? true)
+                                    {
+                                        _metaDataHelper.AddMatchRecord(matchRecord);
+                                    }
                                 }
                                 else
                                 {
@@ -458,6 +478,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
         }
+
+        /// <summary>
+        /// Populate the MetaDataHelper with the data from the FileEntries
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <param name="populatedEntries"></param>
+        /// <returns></returns>
+        public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, IEnumerable<FileEntry> populatedEntries) => PopulateRecords(cancellationToken, _options, populatedEntries);
 
         /// <summary>
         /// Populate the records in the metadata asynchronously.
@@ -525,9 +553,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         if (fileRecord.Status != ScanState.Skipped)
                         {
-                            var results = _options.TagsOnly ?
-                                await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, _metaDataHelper.UniqueTags.Keys, -1) :
-                                await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, null, _options.ContextLines);
+                            var contextLines = _options.TagsOnly ? -1 : _options.ContextLines;
+                            var ignoredTags = _options.TagsOnly ? _metaDataHelper.UniqueTags.Keys : _options.MaxNumMatchesPerTag > 0 ? _metaDataHelper.UniqueTags.Where(x => x.Value < _options.MaxNumMatchesPerTag).Select(x => x.Key) : null;
+                            var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken, ignoredTags, contextLines);
                             fileRecord.Status = ScanState.Analyzed;
 
                             if (results.Any())
@@ -540,6 +568,13 @@ namespace Microsoft.ApplicationInspector.Commands
                                 if (_options.TagsOnly)
                                 {
                                     _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                                }
+                                else if (_options.MaxNumMatchesPerTag > 0)
+                                {
+                                    if (matchRecord.Tags?.Any(x => _metaDataHelper.UniqueTags.TryGetValue(x, out int value) is bool foundValue && (!foundValue || foundValue && value < _options.MaxNumMatchesPerTag)) ?? true)
+                                    {
+                                        _metaDataHelper.AddMatchRecord(matchRecord);
+                                    }
                                 }
                                 else
                                 {
@@ -827,7 +862,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 if (_options.ProcessingTimeOut > 0)
                 {
                     using var cts = new CancellationTokenSource();
-                    var t = Task.Run(() => PopulateRecords(cts.Token, _options, fileEntries), cts.Token);
+                    var t = Task.Run(() => PopulateRecords(cts.Token, fileEntries), cts.Token);
                     if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.ProcessingTimeOut)))
                     {
                         timedOut = true;
@@ -845,7 +880,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    PopulateRecords(new CancellationToken(), _options, fileEntries);
+                    PopulateRecords(new CancellationToken(), fileEntries);
                 }
             }
         }

@@ -23,7 +23,7 @@ namespace Microsoft.ApplicationInspector.Commands
         internal ConcurrentDictionary<string, byte> UniqueDependencies { get; set; } = new ConcurrentDictionary<string, byte>();
 
         private ConcurrentDictionary<string, byte> AppTypes { get; set; } = new ConcurrentDictionary<string, byte>();
-        internal ConcurrentDictionary<string, byte> UniqueTags { get; set; } = new ConcurrentDictionary<string, byte>();
+        internal ConcurrentDictionary<string, int> UniqueTags { get; set; } = new ConcurrentDictionary<string, int>();
         private ConcurrentDictionary<string, byte> Outputs { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> Targets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> CPUTargets { get; set; } = new ConcurrentDictionary<string, byte>();
@@ -122,7 +122,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 //update list of unique tags as we go
                 foreach (string tag in matchRecord.Tags ?? Array.Empty<string>())
                 {
-                    UniqueTags.TryAdd(tag, 0);
+                    if (!UniqueTags.TryAdd(tag, 1))
+                    {
+                        UniqueTags[tag]++;
+                    }
                 }
             }
         }
@@ -196,7 +199,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 //update list of unique tags as we go
                 foreach (string tag in nonCounters)
                 {
-                    UniqueTags.TryAdd(tag, 0);
+                    if (!UniqueTags.TryAdd(tag, 1))
+                    {
+                        UniqueTags[tag]++;
+                    }
                 }
 
                 Matches.Add(matchRecord);
