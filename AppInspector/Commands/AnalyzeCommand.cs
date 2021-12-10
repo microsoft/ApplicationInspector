@@ -32,9 +32,12 @@ namespace Microsoft.ApplicationInspector.Commands
         public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
         public bool SingleThread { get; set; } = false;
         /// <summary>
-        /// Treat <see cref="LanguageInfo.LangFileType.Build"/> files as if they were code when determining if tags apply.
+        /// Treat <see cref="LanguageInfo.LangFileType.Build"/> files as if they were <see cref="LanguageInfo.LangFileType.Code"/> when determining if tags should apply.
         /// </summary>
         public bool AllowAllTagsInBuildFiles { get; set; } = false;
+        /// <summary>
+        /// Sets <see cref="AllowAllTagsInBuildFiles"/>
+        /// </summary>
         [Obsolete("Use AllowAllTagsInBuildFiles")]
         public bool TreatEverythingAsCode => AllowAllTagsInBuildFiles;
         public bool NoShowProgress { get; set; } = true;
