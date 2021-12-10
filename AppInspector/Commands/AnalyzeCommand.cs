@@ -36,9 +36,9 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         public bool AllowAllTagsInBuildFiles { get; set; } = false;
         /// <summary>
-        /// Sets <see cref="AllowAllTagsInBuildFiles"/>
+        /// Alias for <see cref="AllowAllTagsInBuildFiles"/>.
         /// </summary>
-        [Obsolete("Use AllowAllTagsInBuildFiles")]
+        [Obsolete("Use AllowAllTagsInBuildFiles.")]
         public bool TreatEverythingAsCode => AllowAllTagsInBuildFiles;
         public bool NoShowProgress { get; set; } = true;
         public bool TagsOnly { get; set; } = false;
