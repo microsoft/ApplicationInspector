@@ -73,7 +73,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public bool NoFileMetadata { get; set; }
 
         [Option('A', "allow-all-tags-in-build-files", Required = false, HelpText = "Allow all tags (not just Metadata tags) in files of type Build.")]
-        public bool AllowAllTagsInBuildFiles { get; internal set; }
+        public bool AllowAllTagsInBuildFiles { get; set; }
 
         [Option('M', "max-num-matches-per-tag", Required = false, HelpText = "If non-zero, and TagsOnly is not set, will ignore rules based on if all of their tags have been found the set value number of times.")]
         public int MaxNumMatchesPerTag { get; set; } = 0;
