@@ -249,8 +249,11 @@ namespace Microsoft.ApplicationInspector.CLI
 
             // If we are outputting sarif we don't use any of the context information so we want to set context to 0.
             // If the user manually specified -1 this means they also don't even want the snippet in sarif, so we respect that option
-            int numContextLines = cliOptions.ContextLines == -1 ? cliOptions.ContextLines : cliOptions.OutputFileFormat.Equals("sarif",StringComparison.InvariantCultureIgnoreCase) ? 0 : cliOptions.ContextLines;
-            AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
+            bool isSarif = cliOptions.OutputFileFormat.Equals("sarif", StringComparison.InvariantCultureIgnoreCase);
+            int numContextLines = cliOptions.ContextLines == -1 ? cliOptions.ContextLines : isSarif ? 0 : cliOptions.ContextLines;
+            // tagsOnly isn't compatible with sarif output, we choose to prioritize the choice of sarif.
+            bool tagsOnly = !isSarif && cliOptions.TagsOnly;
+            AnalyzeCommand command = new(new AnalyzeOptions()
             {
                 SourcePath = cliOptions.SourcePath ?? Array.Empty<string>(),
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
@@ -265,7 +268,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 ProcessingTimeOut = cliOptions.ProcessingTimeOut,
                 ContextLines = numContextLines,
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
-                TagsOnly = cliOptions.TagsOnly,
+                TagsOnly = tagsOnly,
                 NoFileMetadata = cliOptions.NoFileMetadata,
                 AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles,
                 MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag

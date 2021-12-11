@@ -60,13 +60,13 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('N',"no-show-progress", Required = false, HelpText = "Disable progress information.")]
         public bool NoShowProgressBar { get; set; }
 
-        [Option('C',"context-lines", Required = false, HelpText = "Number of lines of context on each side to include in excerpt (up to a maximum of 100 * NumLines characters on each side). 0 to skip exerpt. -1 to not extract samples or excerpts (implied by -t).")]
+        [Option('C',"context-lines", Required = false, HelpText = "Number of lines of context on each side to include in excerpt (up to a maximum of 100 * NumLines characters on each side). 0 to skip exerpt. -1 to not extract samples or excerpts (implied by -t). When outputting sarif use -1 for no snippets, all other values ignored.")]
         public int ContextLines { get; set; } = 3;
 
         [Option('u',"scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
         public bool ScanUnknownTypes { get; set; }
 
-        [Option('t',"tags-only", Required = false, HelpText = "Only get tags (no detailed match data).")]
+        [Option('t',"tags-only", Required = false, HelpText = "Only get tags (no detailed match data). Ignored if output format is sarif.")]
         public bool TagsOnly { get; set; }
 
         [Option('n', "no-file-metadata", Required = false, HelpText = "Don't collect metadata about each individual file.")]
