@@ -246,6 +246,10 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
         {
+
+            // If we are outputting sarif we don't use any of the context information so we want to set context to 0.
+            // If the user manually specified -1 this means they also don't even want the snippet in sarif, so we respect that option
+            int numContextLines = cliOptions.ContextLines == -1 ? cliOptions.ContextLines : cliOptions.OutputFileFormat.Equals("sarif",StringComparison.InvariantCultureIgnoreCase) ? 0 : cliOptions.ContextLines;
             AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
             {
                 SourcePath = cliOptions.SourcePath ?? Array.Empty<string>(),
@@ -259,7 +263,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 NoShowProgress = cliOptions.NoShowProgressBar,
                 FileTimeOut = cliOptions.FileTimeOut,
                 ProcessingTimeOut = cliOptions.ProcessingTimeOut,
-                ContextLines = cliOptions.ContextLines,
+                ContextLines = numContextLines,
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
                 TagsOnly = cliOptions.TagsOnly,
                 NoFileMetadata = cliOptions.NoFileMetadata,
