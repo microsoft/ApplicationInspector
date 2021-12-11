@@ -80,6 +80,12 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option("base-path", Required = false, HelpText = "If set, when outputting sarif, will have paths made relative to the provided path.")]
         public string? BasePath { get; set; } = null;
+
+        [Option("repository-uri", Required = false, HelpText = "If set, when outputting sarif, include this information.")]
+        public string? RepositoryUri { get; set; } = null;
+
+        [Option("commit-hash", Required = false, HelpText = "If set, when outputting sarif, include this information.")]
+        public string? CommitHash { get; set; } = null;
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]

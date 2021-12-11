@@ -47,91 +47,104 @@ namespace Microsoft.ApplicationInspector.CLI
             if (commandOptions is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)
             {
                 basePath = cLIAnalyzeCmdOptions.BasePath;
-            }
-            if (result is AnalyzeResult analyzeResult)
-            {
-                SarifLog log = new SarifLog();
-                SarifVersion sarifVersion = SarifVersion.Current;
-                log.SchemaUri = sarifVersion.ConvertToSchemaUri();
-                log.Version = sarifVersion;
-                log.Runs = new List<Run>();
-                var run = new Run();
-                var artifacts = new List<Artifact>();
-                run.Tool = new Tool
+
+                if (result is AnalyzeResult analyzeResult)
                 {
-                    Driver = new ToolComponent
+                    SarifLog log = new SarifLog();
+                    SarifVersion sarifVersion = SarifVersion.Current;
+                    log.SchemaUri = sarifVersion.ConvertToSchemaUri();
+                    log.Version = sarifVersion;
+                    log.Runs = new List<Run>();
+                    var run = new Run();
+
+                    if (Uri.TryCreate(cLIAnalyzeCmdOptions.RepositoryUri, UriKind.RelativeOrAbsolute, out Uri? uri))
                     {
-                        Name = $"Application Inspector",
-                        InformationUri = new Uri("https://github.com/microsoft/ApplicationInspector/"),
-                        Organization = "Microsoft",
-                        Version = Helpers.GetVersionString(),
-                    }
-                };
-                var reportingDescriptors = new List<ReportingDescriptor>();
-                run.Results = new List<CodeAnalysis.Sarif.Result>();
-                foreach (var match in analyzeResult.Metadata.Matches)
-                {
-                    var sarifResult = new CodeAnalysis.Sarif.Result();
-
-                    if (match.Rule is not null)
-                    {
-                        if (!reportingDescriptors.Any(r => r.Id == match.Rule.Id))
+                        run.VersionControlProvenance = new List<VersionControlDetails>()
                         {
-                            ReportingDescriptor reportingDescriptor = new()
+                            new VersionControlDetails()
                             {
-                                FullDescription = new MultiformatMessageString() { Text = match.Rule.Description },
-                                Id = match.Rule.Id,
-                                Name = match.Rule.Name,
-                                DefaultConfiguration = new ReportingConfiguration()
-                                {
-                                    Level = GetSarifFailureLevel(match.Rule.Severity)
-                                }
-                            };
-                            reportingDescriptor.Tags.AddRange(match.Rule.Tags);
-                            reportingDescriptors.Add(reportingDescriptor);
-                        }
-
-                        sarifResult.Level = GetSarifFailureLevel(match.Rule.Severity);
-                        sarifResult.RuleId = match.Rule.Id;
-                        sarifResult.Tags.AddRange(match.Rule.Tags);
-                        sarifResult.Message = new Message()
-                        {
-                            Text = match.Rule.Description
-                        };
-
-                        if (match.FileName is not null)
-                        {
-                            string fileName = match.FileName;
-                            if (basePath is not null)
-                            {
-                                fileName = Path.GetRelativePath(basePath, fileName);
+                                RepositoryUri = uri,
+                                RevisionId = cLIAnalyzeCmdOptions.CommitHash
                             }
-                            if (Uri.TryCreate(fileName, UriKind.RelativeOrAbsolute, out Uri? outUri))
+                        };
+                    }
+                    
+                    var artifacts = new List<Artifact>();
+                    run.Tool = new Tool
+                    {
+                        Driver = new ToolComponent
+                        {
+                            Name = $"Application Inspector",
+                            InformationUri = new Uri("https://github.com/microsoft/ApplicationInspector/"),
+                            Organization = "Microsoft",
+                            Version = Helpers.GetVersionString(),
+                        }
+                    };
+                    var reportingDescriptors = new List<ReportingDescriptor>();
+                    run.Results = new List<CodeAnalysis.Sarif.Result>();
+                    foreach (var match in analyzeResult.Metadata.Matches)
+                    {
+                        var sarifResult = new CodeAnalysis.Sarif.Result();
+
+                        if (match.Rule is not null)
+                        {
+                            if (!reportingDescriptors.Any(r => r.Id == match.Rule.Id))
                             {
-                                int artifactIndex = artifacts.FindIndex(a => a.Location.Uri.Equals(outUri));
-                                if (artifactIndex == -1)
+                                ReportingDescriptor reportingDescriptor = new()
                                 {
-                                    Artifact artifact = new()
+                                    FullDescription = new MultiformatMessageString() { Text = match.Rule.Description },
+                                    Id = match.Rule.Id,
+                                    Name = match.Rule.Name,
+                                    DefaultConfiguration = new ReportingConfiguration()
                                     {
-                                        Location = new ArtifactLocation()
-                                        {
-                                            Index = artifacts.Count,
-                                            Uri = outUri
-                                        },
-                                    };
-                                    artifactIndex = artifact.Location.Index;
-                                    artifact.Tags.AddRange(match.Rule.Tags);
-                                    if (Language.FromFileNameOut(fileName, out LanguageInfo languageInfo))
-                                    {
-                                        artifact.SourceLanguage = languageInfo.Name;
+                                        Level = GetSarifFailureLevel(match.Rule.Severity)
                                     }
-                                    artifacts.Add(artifact);
-                                }
-                                else
+                                };
+                                reportingDescriptor.Tags.AddRange(match.Rule.Tags);
+                                reportingDescriptors.Add(reportingDescriptor);
+                            }
+
+                            sarifResult.Level = GetSarifFailureLevel(match.Rule.Severity);
+                            sarifResult.RuleId = match.Rule.Id;
+                            sarifResult.Tags.AddRange(match.Rule.Tags);
+                            sarifResult.Message = new Message()
+                            {
+                                Text = match.Rule.Description
+                            };
+
+                            if (match.FileName is not null)
+                            {
+                                string fileName = match.FileName;
+                                if (basePath is not null)
                                 {
-                                    artifacts[artifactIndex].Tags.AddRange(match.Rule.Tags);
+                                    fileName = Path.GetRelativePath(basePath, fileName);
                                 }
-                                sarifResult.Locations = new List<Location>()
+                                if (Uri.TryCreate(fileName, UriKind.RelativeOrAbsolute, out Uri? outUri))
+                                {
+                                    int artifactIndex = artifacts.FindIndex(a => a.Location.Uri.Equals(outUri));
+                                    if (artifactIndex == -1)
+                                    {
+                                        Artifact artifact = new()
+                                        {
+                                            Location = new ArtifactLocation()
+                                            {
+                                                Index = artifacts.Count,
+                                                Uri = outUri
+                                            },
+                                        };
+                                        artifactIndex = artifact.Location.Index;
+                                        artifact.Tags.AddRange(match.Rule.Tags);
+                                        if (Language.FromFileNameOut(fileName, out LanguageInfo languageInfo))
+                                        {
+                                            artifact.SourceLanguage = languageInfo.Name;
+                                        }
+                                        artifacts.Add(artifact);
+                                    }
+                                    else
+                                    {
+                                        artifacts[artifactIndex].Tags.AddRange(match.Rule.Tags);
+                                    }
+                                    sarifResult.Locations = new List<Location>()
                                 {
                                     new Location()
                                     {
@@ -155,24 +168,29 @@ namespace Microsoft.ApplicationInspector.CLI
                                         }
                                     }
                                 };
+                                }
                             }
                         }
-                    }
-                    
-                    run.Artifacts = artifacts;
-                    run.Tool.Driver.Rules = reportingDescriptors;
-                    run.Results.Add(sarifResult);
-                }
 
-                log.Runs.Add(run);
-                JsonSerializerSettings serializerSettings = new();
-                var serializer = new JsonSerializer();
-                serializer.Serialize(TextWriter, log);
-                FlushAndClose();
+                        run.Artifacts = artifacts;
+                        run.Tool.Driver.Rules = reportingDescriptors;
+                        run.Results.Add(sarifResult);
+                    }
+
+                    log.Runs.Add(run);
+                    JsonSerializerSettings serializerSettings = new();
+                    var serializer = new JsonSerializer();
+                    serializer.Serialize(TextWriter, log);
+                    FlushAndClose();
+                }
+                else
+                {
+                    throw new ArgumentException("This writer can only write Analyze results.", nameof(result));
+                }
             }
             else
             {
-                throw new ArgumentException("This writer can only write Analyze results.", nameof(result));
+                throw new ArgumentException("This writer requires a CLIAnalyzeCmdOptions options argument.", nameof(commandOptions));
             }
         }
 
