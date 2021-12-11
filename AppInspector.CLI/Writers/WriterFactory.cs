@@ -76,6 +76,10 @@ namespace Microsoft.ApplicationInspector.CLI
                     writer = new AnalyzeHtmlWriter();
                     break;
 
+                case "sarif":
+                    writer = new AnalyzeSarifWriter();
+                    break;
+
                 default:
                     WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
                     throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));

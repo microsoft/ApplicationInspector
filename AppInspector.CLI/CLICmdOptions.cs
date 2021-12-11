@@ -77,6 +77,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('M', "max-num-matches-per-tag", Required = false, HelpText = "If non-zero, and TagsOnly is not set, will ignore rules based on if all of their tags have been found the set value number of times.")]
         public int MaxNumMatchesPerTag { get; set; } = 0;
+
+        [Option("base-path", Required = false, HelpText = "If set, when outputting sarif, will have paths made relative to the provided path.")]
+        public string? BasePath { get; set; } = null;
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]

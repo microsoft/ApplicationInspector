@@ -177,7 +177,8 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 "html",
                 "text",
-                "json"
+                "json",
+                "sarif"
             };
 
             string[] checkFormats;
