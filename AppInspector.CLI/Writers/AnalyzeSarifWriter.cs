@@ -3,6 +3,7 @@
 
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Common;
+using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CodeAnalysis.Sarif;
 using Microsoft.CST.OAT.Utils;
 using Newtonsoft.Json;
@@ -10,10 +11,22 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Location = Microsoft.CodeAnalysis.Sarif.Location;
 using Result = Microsoft.ApplicationInspector.Commands.Result;
 
 namespace Microsoft.ApplicationInspector.CLI
 {
+    internal static class AnalyzeSarifWriterExtensions
+    {
+        internal static void AddRange(this TagsCollection tc, IEnumerable<string>? tagsToAdd)
+        {
+            if (tagsToAdd is null) return;
+            foreach (string tag in tagsToAdd)
+            {
+                tc.Add(tag);
+            }
+        }
+    }
     /// <summary>
     /// Writes in sarif format
     /// </summary>
@@ -26,6 +39,10 @@ namespace Microsoft.ApplicationInspector.CLI
 
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
+            if (TextWriter is null)
+            {
+                throw new ArgumentNullException(nameof(TextWriter));
+            }
             string? basePath = null;
             if (commandOptions is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)
             {
@@ -56,7 +73,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     var sarifResult = new CodeAnalysis.Sarif.Result();
 
-                    // Maybe should instead populate all the rules being used and then match them here
                     if (match.Rule is not null)
                     {
                         if (!reportingDescriptors.Any(r => r.Id == match.Rule.Id))
@@ -66,71 +82,74 @@ namespace Microsoft.ApplicationInspector.CLI
                                 FullDescription = new MultiformatMessageString() { Text = match.Rule.Description },
                                 Id = match.Rule.Id,
                                 Name = match.Rule.Name,
-                            };
-
-                            reportingDescriptor.DefaultConfiguration = new ReportingConfiguration()
-                            {
-                                Level = GetSarifFailureLevel(match.Rule.Severity)
-                            };
-                            if (match.Rule.Tags is not null)
-                            {
-                                foreach (var tag in match.Rule.Tags)
+                                DefaultConfiguration = new ReportingConfiguration()
                                 {
-                                    reportingDescriptor.Tags.Add(tag);
+                                    Level = GetSarifFailureLevel(match.Rule.Severity)
                                 }
-                            }
+                            };
+                            reportingDescriptor.Tags.AddRange(match.Rule.Tags);
+                            reportingDescriptors.Add(reportingDescriptor);
                         }
 
                         sarifResult.Level = GetSarifFailureLevel(match.Rule.Severity);
                         sarifResult.RuleId = match.Rule.Id;
-                        sarifResult.Message = new Message() { Text = match.Rule.Description };
-                    }
-
-                    if (match.FileName is not null)
-                    {
-                        string fileName = match.FileName;
-                        if (basePath is not null)
+                        sarifResult.Tags.AddRange(match.Rule.Tags);
+                        if (match.FileName is not null)
                         {
-                            fileName = Path.GetRelativePath(basePath, fileName);
-                        }
-                        if (Uri.TryCreate(fileName, UriKind.RelativeOrAbsolute, out Uri? outUri))
-                        {
-                            int artifactIndex = artifacts.FindIndex(a => a.Location.Uri.Equals(outUri));
-                            if (artifactIndex == -1)
+                            string fileName = match.FileName;
+                            if (basePath is not null)
                             {
-                                Artifact artifact = new()
-                                {
-                                    Location = new ArtifactLocation()
-                                    {
-                                        Index = artifacts.Count,
-                                        Uri = outUri
-                                    },
-                                };
-                                artifactIndex = artifact.Location.Index;
-                                artifacts.Add(artifact);
+                                fileName = Path.GetRelativePath(basePath, fileName);
                             }
-                            sarifResult.Locations = new List<Location>()
+                            if (Uri.TryCreate(fileName, UriKind.RelativeOrAbsolute, out Uri? outUri))
                             {
-                                new Location()
+                                int artifactIndex = artifacts.FindIndex(a => a.Location.Uri.Equals(outUri));
+                                if (artifactIndex == -1)
                                 {
-                                    PhysicalLocation = new PhysicalLocation()
+                                    Artifact artifact = new()
                                     {
-                                        ArtifactLocation = new ArtifactLocation()
+                                        Location = new ArtifactLocation()
                                         {
-                                            Index = artifactIndex
+                                            Index = artifacts.Count,
+                                            Uri = outUri
                                         },
-                                        Region = new Region()
+                                    };
+                                    artifactIndex = artifact.Location.Index;
+                                    artifact.Tags.AddRange(match.Rule.Tags);
+                                    if (Language.FromFileNameOut(fileName, out LanguageInfo languageInfo))
+                                    {
+                                        artifact.SourceLanguage = languageInfo.Name;
+                                    }
+                                    artifacts.Add(artifact);
+                                }
+                                else
+                                {
+                                    artifacts[artifactIndex].Tags.AddRange(match.Rule.Tags);
+                                }
+                                sarifResult.Locations = new List<Location>()
+                                {
+                                    new Location()
+                                    {
+                                        PhysicalLocation = new PhysicalLocation()
                                         {
-                                            StartLine = match.StartLocationLine,
-                                            StartColumn = match.StartLocationColumn,
-                                            EndLine = match.EndLocationLine,
-                                            EndColumn = match.EndLocationColumn
+                                            ArtifactLocation = new ArtifactLocation()
+                                            {
+                                                Index = artifactIndex
+                                            },
+                                            Region = new Region()
+                                            {
+                                                StartLine = match.StartLocationLine,
+                                                StartColumn = match.StartLocationColumn,
+                                                EndLine = match.EndLocationLine,
+                                                EndColumn = match.EndLocationColumn
+                                            }
                                         }
                                     }
-                                }
-                            };
+                                };
+                            }
                         }
                     }
+                    
                     run.Artifacts = artifacts;
                     run.Tool.Driver.Rules = reportingDescriptors;
                     run.Results.Add(sarifResult);
@@ -138,15 +157,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
                 log.Runs.Add(run);
                 JsonSerializerSettings serializerSettings = new();
-                string theOutput = JsonConvert.SerializeObject(log, serializerSettings);
-                if (commandOptions.OutputFilePath is null)
-                {
-                    WriteOnce.Info(theOutput);
-                }
-                else
-                {
-                    File.WriteAllText(commandOptions.OutputFilePath, theOutput);
-                }
+                var serializer = new JsonSerializer();
+                serializer.Serialize(TextWriter, log);
+                FlushAndClose();
             }
             else
             {
