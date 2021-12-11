@@ -370,7 +370,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
 
-                        LanguageInfo languageInfo = new LanguageInfo();
+                        LanguageInfo languageInfo = new();
 
                         if (Language.FromFileName(file.FullPath, ref languageInfo))
                         {
@@ -388,25 +388,30 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         if (fileRecord.Status != ScanState.Skipped)
                         {
-                            List<MatchRecord> results = new List<MatchRecord>();
+                            List<MatchRecord> results = new();
+
+                            void ProcessLambda()
+                            {
+                                if (opts.TagsOnly)
+                                {
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Keys, -1);
+                                }
+                                else if (opts.MaxNumMatchesPerTag > 0)
+                                {
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Where(x => x.Value < opts.MaxNumMatchesPerTag).Select(x => x.Key), opts.ContextLines);
+                                }
+                                else
+                                {
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
+                                }
+                            }
 
                             if (opts.FileTimeOut > 0)
                             {
                                 using var cts = new CancellationTokenSource();
                                 var t = Task.Run(() =>
                                 {
-                                    if (opts.TagsOnly)
-                                    {
-                                        results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Keys, -1);
-                                    }
-                                    else if (opts.MaxNumMatchesPerTag > 0)
-                                    {
-                                        results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Where(x => x.Value < opts.MaxNumMatchesPerTag).Select(x => x.Key), opts.ContextLines);
-                                    }
-                                    else
-                                    {
-                                        results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
-                                    }
+                                    ProcessLambda();
                                 }, cts.Token);
                                 try
                                 {
@@ -429,18 +434,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                             else
                             {
-                                if (opts.TagsOnly)
-                                {
-                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Keys, -1);
-                                }
-                                else if (opts.MaxNumMatchesPerTag > 0)
-                                {
-                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Where(x => x.Value < opts.MaxNumMatchesPerTag).Select(x => x.Key), opts.ContextLines);
-                                }
-                                else
-                                {
-                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
-                                }
+                                ProcessLambda();
                                 fileRecord.Status = ScanState.Analyzed;
                             }
 
@@ -457,7 +451,7 @@ namespace Microsoft.ApplicationInspector.Commands
                                 }
                                 else if (opts.MaxNumMatchesPerTag > 0)
                                 {
-                                    if (matchRecord.Tags?.Any(x => _metaDataHelper.UniqueTags.TryGetValue(x, out int value) is bool foundValue && (!foundValue || foundValue && value < opts.MaxNumMatchesPerTag)) ?? true)
+                                    if (matchRecord.Tags?.Any(x => _metaDataHelper.UniqueTags.TryGetValue(x, out int value) is bool foundValue && (!foundValue || foundValue && value < opts.MaxNumMatchesPerTag)) ?? false)
                                     {
                                         _metaDataHelper.AddMatchRecord(matchRecord);
                                     }
