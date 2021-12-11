@@ -48,7 +48,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool ScanUnknownTypes { get; set; }
         public bool NoFileMetadata { get; set; }
         /// <summary>
-        /// If non-zero, and <see cref="TagsOnly"/> is not set, will ignore rules based on if all of their tags have been found the set value number of times.
+        /// If non-zero, and <see cref="TagsOnly"/> is not set, will ignore matches if all of the matches tags have already been found the set value number of times.
         /// </summary>
         public int MaxNumMatchesPerTag { get; set; } = 0;
     }

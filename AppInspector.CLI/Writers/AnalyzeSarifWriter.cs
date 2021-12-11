@@ -94,6 +94,11 @@ namespace Microsoft.ApplicationInspector.CLI
                         sarifResult.Level = GetSarifFailureLevel(match.Rule.Severity);
                         sarifResult.RuleId = match.Rule.Id;
                         sarifResult.Tags.AddRange(match.Rule.Tags);
+                        sarifResult.Message = new Message()
+                        {
+                            Text = match.Rule.Description
+                        };
+
                         if (match.FileName is not null)
                         {
                             string fileName = match.FileName;
@@ -141,7 +146,11 @@ namespace Microsoft.ApplicationInspector.CLI
                                                 StartLine = match.StartLocationLine,
                                                 StartColumn = match.StartLocationColumn,
                                                 EndLine = match.EndLocationLine,
-                                                EndColumn = match.EndLocationColumn
+                                                EndColumn = match.EndLocationColumn,
+                                                Snippet = new ArtifactContent()
+                                                {
+                                                    Text = match.Sample
+                                                }
                                             }
                                         }
                                     }

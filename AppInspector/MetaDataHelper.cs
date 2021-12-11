@@ -244,7 +244,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             foreach (MetricTagCounter metricTagCounter in TagCounters.Values)
             {
-                Metadata?.TagCounters?.Add(metricTagCounter);
+                Metadata.TagCounters?.Add(metricTagCounter);
             }
         }
 
