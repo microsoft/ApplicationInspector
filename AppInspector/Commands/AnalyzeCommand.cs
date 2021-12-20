@@ -398,7 +398,7 @@ namespace Microsoft.ApplicationInspector.Commands
                                 }
                                 else if (opts.MaxNumMatchesPerTag > 0)
                                 {
-                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Where(x => x.Value < opts.MaxNumMatchesPerTag).Select(x => x.Key), opts.ContextLines);
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Where(x => x.Value >= opts.MaxNumMatchesPerTag).Select(x => x.Key), opts.ContextLines);
                                 }
                                 else
                                 {
