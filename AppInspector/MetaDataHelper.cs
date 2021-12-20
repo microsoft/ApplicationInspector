@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -82,7 +83,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     case "Dependency.SourceInclude":
                         return; //design to keep noise out of detailed match list
                     default:
-                        if (tag.Contains("Metric."))
+                        if (tag.Split('.').Contains("Metric"))
                         {
                             _ = TagCounters.TryAdd(tag, new MetricTagCounter()
                             {
