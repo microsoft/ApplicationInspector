@@ -177,7 +177,8 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 "html",
                 "text",
-                "json"
+                "json",
+                "sarif"
             };
 
             string[] checkFormats;
@@ -245,7 +246,13 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
         {
-            AnalyzeCommand command = new AnalyzeCommand(new AnalyzeOptions()
+            // If the user manually specified -1 this means they also don't even want the snippet in sarif, so we respect that option
+            // Otherwise if we are outputting sarif we don't use any of the context information so we set context to 0, if not sarif leave it alone.
+            bool isSarif = cliOptions.OutputFileFormat.Equals("sarif", StringComparison.InvariantCultureIgnoreCase);
+            int numContextLines = cliOptions.ContextLines == -1 ? cliOptions.ContextLines : isSarif ? 0 : cliOptions.ContextLines;
+            // tagsOnly isn't compatible with sarif output, we choose to prioritize the choice of sarif.
+            bool tagsOnly = !isSarif && cliOptions.TagsOnly;
+            AnalyzeCommand command = new(new AnalyzeOptions()
             {
                 SourcePath = cliOptions.SourcePath ?? Array.Empty<string>(),
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
@@ -258,9 +265,9 @@ namespace Microsoft.ApplicationInspector.CLI
                 NoShowProgress = cliOptions.NoShowProgressBar,
                 FileTimeOut = cliOptions.FileTimeOut,
                 ProcessingTimeOut = cliOptions.ProcessingTimeOut,
-                ContextLines = cliOptions.ContextLines,
+                ContextLines = numContextLines,
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
-                TagsOnly = cliOptions.TagsOnly,
+                TagsOnly = tagsOnly,
                 NoFileMetadata = cliOptions.NoFileMetadata,
                 AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles,
                 MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag

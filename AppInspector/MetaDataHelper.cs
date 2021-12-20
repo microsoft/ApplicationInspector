@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -82,7 +83,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     case "Dependency.SourceInclude":
                         return; //design to keep noise out of detailed match list
                     default:
-                        if (tag.Contains("Metric."))
+                        if (tag.Split('.').Contains("Metric"))
                         {
                             _ = TagCounters.TryAdd(tag, new MetricTagCounter()
                             {
@@ -137,74 +138,13 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="matchRecord"></param>
         public void AddMatchRecord(MatchRecord matchRecord)
         {
-            //special handling for standard characteristics in report
-            foreach (var tag in matchRecord.Tags ?? Array.Empty<string>())
-            {
-                switch (tag)
-                {
-                    case "Metadata.Application.Author":
-                    case "Metadata.Application.Publisher":
-                        Metadata.Authors = ExtractValue(matchRecord.Sample);
-                        break;
-                    case "Metadata.Application.Description":
-                        Metadata.Description = ExtractValue(matchRecord.Sample);
-                        break;
-                    case "Metadata.Application.Name":
-                        Metadata.ApplicationName = ExtractValue(matchRecord.Sample);
-                        break;
-                    case "Metadata.Application.Version":
-                        Metadata.SourceVersion = ExtractValue(matchRecord.Sample);
-                        break;
-                    case "Metadata.Application.Target.Processor":
-                        CPUTargets.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
-                        break;
-                    case "Metadata.Application.Output.Type":
-                        Outputs.TryAdd(ExtractValue(matchRecord.Sample).ToLower(), 0);
-                        break;
-                    case "Dependency.SourceInclude":
-                        return; //design to keep noise out of detailed match list
-                    default:
-                        if (tag.Contains("Metric."))
-                        {
-                            TagCounters.TryAdd(tag, new MetricTagCounter()
-                            {
-                                Tag = tag
-                            });
-                            TagCounters[tag].IncrementCount();
-                        }
-                        else if (tag.Contains(".Platform.OS"))
-                        {
-                            OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
-                        }
-                        else if (tag.Contains("CloudServices.Hosting"))
-                        {
-                            CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
-                        }
-                        break;
-                }
-            }
-
-            //Special handling; attempt to detect app types...review for multiple pattern rule limitation
-            string solutionType = DetectSolutionType(matchRecord);
-            if (!string.IsNullOrEmpty(solutionType))
-            {
-                AppTypes.TryAdd(solutionType, 0);
-            }
+            AddTagsFromMatchRecord(matchRecord);
 
             var nonCounters = matchRecord.Tags?.Where(x => !TagCounters.Any(y => y.Key == x)) ?? Array.Empty<string>();
 
             //omit adding if it if all the tags were counters
             if (nonCounters.Any())
             {
-                //update list of unique tags as we go
-                foreach (string tag in nonCounters)
-                {
-                    if (!UniqueTags.TryAdd(tag, 1))
-                    {
-                        UniqueTags[tag]++;
-                    }
-                }
-
                 Matches.Add(matchRecord);
             }
         }
@@ -244,7 +184,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             foreach (MetricTagCounter metricTagCounter in TagCounters.Values)
             {
-                Metadata?.TagCounters?.Add(metricTagCounter);
+                Metadata.TagCounters?.Add(metricTagCounter);
             }
         }
 

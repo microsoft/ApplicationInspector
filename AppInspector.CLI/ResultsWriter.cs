@@ -41,7 +41,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 commandCompletedMsg = "Analyze";
 
                 //additional prechecks required for analyze html format
-                if (cLIAnalyzeCmdOptions.OutputFileFormat == "html")
+                if (writer is AnalyzeHtmlWriter)
                 {
                     int MAX_HTML_REPORT_FILE_SIZE = 1024 * 1000 * 3;  //warn about potential slow rendering
 

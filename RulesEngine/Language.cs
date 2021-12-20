@@ -36,6 +36,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 Languages = JsonConvert.DeserializeObject<List<LanguageInfo>>(file.ReadToEnd()) ?? new List<LanguageInfo>();
             }
         }
+
+        /// <summary>
+        /// Returns the language for a given file name if detected.
+        /// </summary>
+        /// <param name="fileName">The FileName to check.</param>
+        /// <param name="info">If this returns true, a valid LanguageInfo object. If false, undefined.</param>
+        /// <returns>True if the language could be detected based on the filename.</returns>
+        public static bool FromFileNameOut(string fileName, out LanguageInfo info)
+        {
+            info = new LanguageInfo();
+
+            return FromFileName(fileName, ref info);
+        }
+
         /// <summary>
         /// Returns language for given file name
         /// </summary>
