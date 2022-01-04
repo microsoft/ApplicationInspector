@@ -59,14 +59,24 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private string[]? _appliesTo;
 
         [JsonProperty(PropertyName = "applies_to_file_regex")]
-        public string[]? FileRegexes { get; set; }
+        public string[]? FileRegexes
+        {
+            get => _fileRegexes;
+            set
+            {
+                _fileRegexes = value;
+                _updateCompiledFileRegex = true;
+            }
+        }
+
+        private string[]? _fileRegexes;
 
         [JsonIgnore]
         public IEnumerable<Regex> CompiledFileRegexes
         {
             get
             {
-                if (_updateCompiled)
+                if (_updateCompiledFileRegex)
                 {
                     _compiled = FileRegexes?.Select(x => new Regex(x, RegexOptions.Compiled)) ?? Array.Empty<Regex>();
                     _updateCompiled = false;
@@ -77,6 +87,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         private IEnumerable<Regex> _compiled = Array.Empty<Regex>();
         private bool _updateCompiled = false;
+        private bool _updateCompiledFileRegex = false;
 
         [JsonProperty(PropertyName = "tags")]
         public string[]? Tags { get; set; }
