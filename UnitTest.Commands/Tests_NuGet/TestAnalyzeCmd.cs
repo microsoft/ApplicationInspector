@@ -79,7 +79,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             AnalyzeCommand command = new AnalyzeCommand(options);
             AnalyzeResult result = command.GetResult();
-            Assert.AreEqual(1, result.Metadata.Matches.Count(x => x.Tags.Contains("Platform.OS.Microsoft.WindowsStandard")));
+            Assert.AreEqual(1, result.Metadata.Matches.Count(x => x.Tags?.Contains("Platform.OS.Microsoft.WindowsStandard") ?? false));
             exitCode = result.ResultCode;
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
@@ -96,7 +96,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             AnalyzeCommand command = new AnalyzeCommand(options);
             AnalyzeResult result = command.GetResult();
-            Assert.AreEqual(3, result.Metadata.Matches.Count(x => x.Tags.Contains("Platform.OS.Microsoft.WindowsStandard")));
+            Assert.AreEqual(3, result.Metadata.Matches.Count(x => x.Tags?.Contains("Platform.OS.Microsoft.WindowsStandard") ?? false));
             exitCode = result.ResultCode;
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
@@ -114,7 +114,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             AnalyzeCommand command = new AnalyzeCommand(options);
             AnalyzeResult result = await command.GetResultAsync(new CancellationTokenSource().Token);
-            Assert.AreEqual(1, result.Metadata.Matches.Count(x => x.Tags.Contains("Platform.OS.Microsoft.WindowsStandard")));
+            Assert.AreEqual(1, result.Metadata.Matches.Count(x => x.Tags?.Contains("Platform.OS.Microsoft.WindowsStandard") ?? false));
             exitCode = result.ResultCode;
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
@@ -131,7 +131,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             AnalyzeCommand command = new AnalyzeCommand(options);
             AnalyzeResult result = await command.GetResultAsync(new CancellationTokenSource().Token);
-            Assert.AreEqual(3, result.Metadata.Matches.Count(x => x.Tags.Contains("Platform.OS.Microsoft.WindowsStandard")));
+            Assert.AreEqual(3, result.Metadata.Matches.Count(x => x.Tags?.Contains("Platform.OS.Microsoft.WindowsStandard") ?? false));
             exitCode = result.ResultCode;
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
@@ -324,8 +324,8 @@ namespace ApplicationInspector.Unitprocess.Commands
                 AnalyzeCommand command = new AnalyzeCommand(options);
                 AnalyzeResult result = command.GetResult();
                 Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-                Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Cryptography.Encryption.General")));
-                Assert.IsTrue(result.Metadata.UniqueTags.Any(v => v.Contains("Data.Custom1")));
+                Assert.IsTrue(result.Metadata.UniqueTags?.Any(v => v.Contains("Cryptography.Encryption.General")));
+                Assert.IsTrue(result.Metadata.UniqueTags?.Any(v => v.Contains("Data.Custom1")));
             }
             catch (Exception)
             {
@@ -639,30 +639,28 @@ namespace ApplicationInspector.Unitprocess.Commands
             try
             {
                 // Attempt to open output file.
-                using (var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt")))
-                {
-                    // Redirect standard output from the console to the output file.
-                    Console.SetOut(writer);
+                using var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                // Redirect standard output from the console to the output file.
+                Console.SetOut(writer);
 
-                    AnalyzeCommand command = new AnalyzeCommand(options);
-                    AnalyzeResult result = command.GetResult();
-                    exitCode = result.ResultCode;
-                    try
+                AnalyzeCommand command = new AnalyzeCommand(options);
+                AnalyzeResult result = command.GetResult();
+                exitCode = result.ResultCode;
+                try
+                {
+                    string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                    if (String.IsNullOrEmpty(testContent))
                     {
-                        string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
-                        if (String.IsNullOrEmpty(testContent))
-                        {
-                            exitCode = AnalyzeResult.ExitCode.Success;
-                        }
-                        else
-                        {
-                            exitCode = AnalyzeResult.ExitCode.NoMatches;
-                        }
+                        exitCode = AnalyzeResult.ExitCode.Success;
                     }
-                    catch (Exception)
+                    else
                     {
-                        exitCode = AnalyzeResult.ExitCode.Success;//no console output file found
+                        exitCode = AnalyzeResult.ExitCode.NoMatches;
                     }
+                }
+                catch (Exception)
+                {
+                    exitCode = AnalyzeResult.ExitCode.Success;//no console output file found
                 }
             }
             catch (Exception)

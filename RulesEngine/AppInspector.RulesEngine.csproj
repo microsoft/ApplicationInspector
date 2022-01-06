@@ -2,7 +2,7 @@
 
   <PropertyGroup>
   	<OutputType>Library</OutputType>
-    <TargetFramework>net5.0</TargetFramework>    
+    <TargetFramework>net6.0</TargetFramework>    
     <PackageId>Microsoft.ApplicationInspector.RulesEngine</PackageId>
     <PackageVersion>0.0.0-placeholder</PackageVersion>
     <Authors>Microsoft</Authors>
@@ -21,7 +21,7 @@
     <FileVersion>0.0.0.0</FileVersion>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <Nullable>enable</Nullable>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

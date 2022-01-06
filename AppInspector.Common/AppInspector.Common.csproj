@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+	<Nullable>enable</Nullable>
+	<LangVersion>10.0</LangVersion>
     <RootNamespace>Microsoft.ApplicationInspector.Common</RootNamespace>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright>
     <Authors>Microsoft</Authors>
