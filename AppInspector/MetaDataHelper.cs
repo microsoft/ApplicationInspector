@@ -40,6 +40,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
         internal MetaData Metadata { get; set; }
 
+        internal bool HasFindings
+        {
+            get
+            {
+                return Matches.Any() || TagCounters.Any() || UniqueTags.Any();
+            }
+        }
+
         public MetaDataHelper(string sourcePath)
         {
             if (!sourcePath.Contains(','))
