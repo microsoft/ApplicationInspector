@@ -40,7 +40,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         internal MetaData Metadata { get; set; }
 
-        internal bool HasContent => Matches.Any() || Files.Any() || TagCounters.Any() || UniqueTags.Any();
+        internal bool HasFindings => Matches.Any() || TagCounters.Any() || UniqueTags.Any();
 
         public MetaDataHelper(string sourcePath)
         {
