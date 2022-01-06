@@ -29,7 +29,7 @@ stages:
   jobs:
   - template: templates/dotnet-test-job.yml
     parameters:
-      dotnetVersion: 5.0.x
+      dotnetVersion: 6.0.x
       projectPath: 'UnitTest.Commands/UnitTest.Commands.csproj'
       
 - stage: SDL
@@ -44,14 +44,14 @@ stages:
   jobs:
   - template: templates/dotnet-publish-linux-mac-job.yml
     parameters:
-      dotnetVersion: '5.0.x'
+      dotnetVersion: '6.0.x'
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
       projectName: 'ApplicationInspector'
       preBuild:
       - template: templates/nbgv-set-version-steps.yml
   - template: templates/dotnet-publish-win-netcore-job.yml
     parameters:
-      dotnetVersion: '5.0.x'
+      dotnetVersion: '6.0.x'
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
       projectName: 'ApplicationInspector'
       preBuild:
@@ -59,13 +59,13 @@ stages:
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_lib'
-      dotnetVersion: '5.0.x'
+      dotnetVersion: '6.0.x'
       projectPath: 'AppInspector/AppInspector.Commands.csproj'
       projectName: 'ApplicationInspector_Commands'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_cli'
-      dotnetVersion: '5.0.x'
+      dotnetVersion: '6.0.x'
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
       projectName: 'ApplicationInspector_CLI'
 
@@ -83,7 +83,7 @@ stages:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
-        version: '5.0.x'
+        version: '6.0.x'
     - script: 'dotnet tool install -g nbgv'
       displayName: 'Install GitVersioning'
     - task: PowerShell@2
