@@ -30,7 +30,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private ConcurrentDictionary<string, byte> CPUTargets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> CloudTargets { get; set; } = new ConcurrentDictionary<string, byte>();
         private ConcurrentDictionary<string, byte> OSTargets { get; set; } = new ConcurrentDictionary<string, byte>();
-        internal ConcurrentDictionary<string, MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
+        private ConcurrentDictionary<string, MetricTagCounter> TagCounters { get; set; } = new ConcurrentDictionary<string, MetricTagCounter>();
         private ConcurrentDictionary<string, int> Languages { get; set; } = new ConcurrentDictionary<string, int>();
 
         internal ConcurrentBag<MatchRecord> Matches { get; set; } = new ConcurrentBag<MatchRecord>();
@@ -40,7 +40,13 @@ namespace Microsoft.ApplicationInspector.Commands
 
         internal MetaData Metadata { get; set; }
 
-        internal bool HasFindings => Matches.Any() || TagCounters.Any() || UniqueTags.Any();
+        internal bool HasFindings
+        {
+            get
+            {
+                return Matches.Any() || TagCounters.Any() || UniqueTags.Any();
+            }
+        }
 
         public MetaDataHelper(string sourcePath)
         {
