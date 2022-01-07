@@ -188,6 +188,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
                 
             string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
+            Assert.IsNotNull(result);
             var matches = result.Metadata.TotalMatchesCount;
             var uniqueMatches = result.Metadata.UniqueMatchesCount;
             mainduptags = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp");
@@ -200,7 +201,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             var result2 = JsonConvert.DeserializeObject<AnalyzeResult>(content);
-
+            Assert.IsNotNull(result2);
             Assert.AreEqual(matches * 2, result2.Metadata.TotalMatchesCount);
             Assert.AreEqual(uniqueMatches, result2.Metadata.UniqueMatchesCount);
         }
@@ -217,7 +218,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
-                
+            Assert.IsNotNull(result);
             Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
             
@@ -230,6 +231,7 @@ namespace ApplicationInspector.Unitprocess.CLICommands
 
             content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
+            Assert.IsNotNull(result);
             Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
         }

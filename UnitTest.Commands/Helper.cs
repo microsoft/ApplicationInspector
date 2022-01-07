@@ -49,9 +49,9 @@ namespace ApplicationInspector.Unitprocess.Misc
 
                 case AppPath.appInspectorCLI:
 #if DEBUG
-                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "debug", "net5.0", "applicationinspector.cli.exe");
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "debug", "net6.0", "applicationinspector.cli.exe");
 #else
-                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "release", "net5.0", "applicationinspector.cli.exe");
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "release", "net6.0", "applicationinspector.cli.exe");
 #endif
                     break;
             }

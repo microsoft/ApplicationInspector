@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Microsoft.ApplicationInspector.CLI</RootNamespace>
     <AssemblyName>ApplicationInspector.CLI</AssemblyName>
     <copyright>© Microsoft Corporation. All rights reserved.</copyright> 
@@ -25,7 +25,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Nullable>enable</Nullable>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -66,7 +66,7 @@
   
   <ItemGroup>
     <PackageReference Include="DotLiquid" Version="2.2.585" />
-    <PackageReference Include="NLog" Version="4.7.12" />
+    <PackageReference Include="NLog" Version="4.7.13" />
     <PackageReference Include="Sarif.Sdk" Version="2.4.12" />
     <PackageReference Include="ShellProgressBar" Version="5.1.0" />
     <PackageReference Update="Nerdbank.GitVersioning" Version="3.4.244" />

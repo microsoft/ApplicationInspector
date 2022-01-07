@@ -296,12 +296,12 @@ namespace Microsoft.ApplicationInspector.Commands
         #endregion configureMethods
 
         /// <summary>
-        /// Populate the MetaDataHelper with the data from the FileEntries.
+        /// Populate the MetaDataHelper with the data from the FileEntries. Ignores the options already set in this Analyze Command.  
+        /// It is recommended to use <see cref="PopulateRecords(CancellationToken, IEnumerable{FileEntry})" />  instead and to set the options on the <see cref="AnalyzeCommand"/> object.
         /// </summary>
         /// <param name="cancellationToken"></param>
-        /// <param name="opts"></param>
+        /// <param name="opts">The options to use when populating records.</param>
         /// <param name="populatedEntries"></param>
-        [Obsolete("Instead PopulateRecords with no options argument and set the options when creating the AnalyzeCommand.")]
         public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts, IEnumerable<FileEntry> populatedEntries)
         {
             WriteOnce.SafeLog("AnalyzeCommand::PopulateRecords", LogLevel.Trace);
@@ -333,7 +333,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             ProcessAndAddToMetadata(entry);
                         }
-                        catch(Exception e)
+                        catch(Exception)
                         {
                             throw;
                         }
