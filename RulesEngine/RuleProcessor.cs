@@ -244,7 +244,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 WriteOnce.SafeLog($"Failed to analyze file {fileEntry.FullPath}. {e.GetType()}:{e.Message}. ({e.StackTrace})", LogLevel.Debug);
             }
-            if (!string.IsNullOrEmpty(contents))
+            if (contents is not null)
             {
                 return AnalyzeFile(contents, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
             }
