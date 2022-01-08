@@ -19,7 +19,7 @@ Be sure to see our complete project wiki page https://Github.com/Microsoft/Appli
 - Download and install the .NET Core 5.0 [SDK](https://dotnet.microsoft.com/download/dotnet-core/5.0)
 - Run `dotnet tool install --global Microsoft.CST.ApplicationInspector.CLI` 
 
-See more in the [wiki](https://github.com/microsoft/ApplicationInspector/wiki/7.-NuGet-Support)
+See more in the [wiki](https://github.com/microsoft/ApplicationInspector/wiki/2.-NuGet-Support)
 
 ### Platform Dependent Binary
 - Download Application Inspector by selecting the pre-built package for the operating system of choice shown under the Assets section
