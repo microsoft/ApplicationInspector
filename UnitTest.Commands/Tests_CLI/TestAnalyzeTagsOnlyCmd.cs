@@ -1,13 +1,13 @@
-﻿using ApplicationInspector.Unitprocess.Misc;
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using System;
-using System.IO;
-
-namespace ApplicationInspector.Unitprocess.CLICommands
+﻿namespace ApplicationInspector.Unitprocess.CLICommands
 {
+    using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Newtonsoft.Json;
+    using System;
+    using System.IO;
+
     /// <summary>
     /// Test class for Analyze Commands
     /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so

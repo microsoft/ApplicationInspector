@@ -1,17 +1,16 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.RulesEngine;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using Microsoft.ApplicationInspector.RulesEngine;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.IO;
+    using System.Linq;
+
     /// <summary>
     /// Provides utilty help specific to aggregating metadata from analyze cmd matches while isolating scanned data from that process
     /// Hides complexity i.e. threaded scanning so that caller gets simple list<T> that is presorted and consistent each scan
@@ -65,7 +64,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public void AddTagsFromMatchRecord(MatchRecord matchRecord)
         {
             //special handling for standard characteristics in report
-            foreach (var tag in matchRecord.Tags ?? new string[] { })
+            foreach (var tag in matchRecord.Tags ?? Array.Empty<string>())
             {
                 switch (tag)
                 {
@@ -100,11 +99,11 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                         else if (tag.Contains(".Platform.OS"))
                         {
-                            OSTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
+                            OSTargets.TryAdd(tag[(tag.LastIndexOf('.', tag.Length - 1) + 1)..], 0);
                         }
                         else if (tag.Contains("CloudServices.Hosting"))
                         {
-                            CloudTargets.TryAdd(tag.Substring(tag.LastIndexOf('.', tag.Length - 1) + 1), 0);
+                            CloudTargets.TryAdd(tag[(tag.LastIndexOf('.', tag.Length - 1) + 1)..], 0);
                         }
                         break;
                 }
@@ -247,12 +246,12 @@ namespace Microsoft.ApplicationInspector.Commands
             string result = "";
             if (match.Tags is not null && match.Tags.Any(s => s.Contains("Application.Type")))
             {
-                foreach (string tag in match.Tags ?? new string[] { })
+                foreach (string tag in match.Tags ?? Array.Empty<string>())
                 {
                     int index = tag.IndexOf("Application.Type");
                     if (-1 != index)
                     {
-                        result = tag.Substring(index + 17);
+                        result = tag[(index + 17)..];
                         break;
                     }
                 }

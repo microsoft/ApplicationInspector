@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using System;
-using System.IO;
-
 namespace Microsoft.ApplicationInspector.CLI
 {
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using System;
+    using System.IO;
+
     /// <summary>
     /// Wrapper for CLI only output arg validation which may be unique to a command
     /// and for allocating the correct writter type and format writter object

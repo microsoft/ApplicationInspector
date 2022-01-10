@@ -1,14 +1,13 @@
 ﻿// Copyright(C) Microsoft.All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using NLog;
-using NLog.Config;
-using System;
-using System.Collections.Concurrent;
-using System.IO;
-
 namespace Microsoft.ApplicationInspector.Common
 {
+    using NLog;
+    using System;
+    using System.Collections.Concurrent;
+    using System.IO;
+
     /// <summary>
     /// Wraps Console, TextWriter and Log Writes for convenience to write "once" from calling
     /// code to increase readability and support verbosity and color support conveniently
@@ -142,7 +141,7 @@ namespace Microsoft.ApplicationInspector.Common
             }
         }
 
-        static ConcurrentBag<ConsoleWrite> pausedWrites = new ConcurrentBag<ConsoleWrite>();
+        static ConcurrentBag<ConsoleWrite> pausedWrites = new();
         
         class ConsoleWrite
         {

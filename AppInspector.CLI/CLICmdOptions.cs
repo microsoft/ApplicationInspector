@@ -1,12 +1,12 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using CommandLine;
-using Microsoft.ApplicationInspector.Common;
-using System.Collections.Generic;
-
 namespace Microsoft.ApplicationInspector.CLI
 {
+    using CommandLine;
+    using Microsoft.ApplicationInspector.Common;
+    using System.Collections.Generic;
+
     /// <summary>
     /// CLI command option classes add output arguments to common properties for each command verb
     /// </summary>
@@ -27,7 +27,7 @@ namespace Microsoft.ApplicationInspector.CLI
     public class CLIAnalyzeCmdOptions : CLICommandOptions
     {
         [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect, comma separated", Separator = ',')]
-        public IEnumerable<string> SourcePath { get; set; } = new string[0];
+        public IEnumerable<string> SourcePath { get; set; } = System.Array.Empty<string>();
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
@@ -40,7 +40,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
 
-        public IEnumerable<string> FilePathExclusions { get; set; } = new string[0];
+        public IEnumerable<string> FilePathExclusions { get; set; } = System.Array.Empty<string>();
 
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [html|json|text]", Default = "html")]
         public new string OutputFileFormat { get; set; } = "html";
@@ -101,7 +101,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public string TestType { get; set; } = "equality";
 
         [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
-        public IEnumerable<string> FilePathExclusions { get; set; } = new string[] { };
+        public IEnumerable<string> FilePathExclusions { get; set; } = System.Array.Empty<string>();
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }

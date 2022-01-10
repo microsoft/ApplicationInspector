@@ -1,12 +1,12 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Newtonsoft.Json;
-
 namespace Microsoft.ApplicationInspector.CLI
 {
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Newtonsoft.Json;
+
     /// <summary>
     /// Writes in json format
     /// Users can select arguments to filter output to 1. only simple tags 2. only matchlist without rollup metadata etc. 3. everything
@@ -36,7 +36,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 WriteOnce.Result("Results");
             }
 
-            JsonSerializer jsonSerializer = new JsonSerializer();
+            JsonSerializer jsonSerializer = new();
             jsonSerializer.Formatting = Formatting.Indented;
             if (TextWriter != null)
             {

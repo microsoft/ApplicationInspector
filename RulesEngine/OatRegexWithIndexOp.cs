@@ -1,16 +1,15 @@
-﻿using Microsoft.CST.OAT;
-using Microsoft.CST.OAT.Operations;
-using Microsoft.CST.OAT.Utils;
-using Serilog;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
-
-namespace Microsoft.ApplicationInspector.RulesEngine
+﻿namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using Microsoft.CST.OAT;
+    using Microsoft.CST.OAT.Operations;
+    using Microsoft.CST.OAT.Utils;
+    using Serilog;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text.RegularExpressions;
+
     /// <summary>
     /// The Custom Operation to enable identification of pattern index in result used by Application Inspector to report why a given
     /// result was matched and to retrieve other pattern level meta-data

@@ -1,14 +1,14 @@
-﻿using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Newtonsoft.Json;
-
-namespace Microsoft.ApplicationInspector.CLI.Writers
+﻿namespace Microsoft.ApplicationInspector.CLI.Writers
 {
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Newtonsoft.Json;
+
     internal class JsonWriter : CommandResultsWriter
     {
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
-            JsonSerializer jsonSerializer = new JsonSerializer();
+            JsonSerializer jsonSerializer = new();
             jsonSerializer.Formatting = Formatting.Indented;
             jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
             jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;

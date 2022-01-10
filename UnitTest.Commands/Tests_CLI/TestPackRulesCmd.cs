@@ -1,12 +1,12 @@
-﻿using ApplicationInspector.Unitprocess.Misc;
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-
-namespace ApplicationInspector.Unitprocess.CLICommands
+﻿namespace ApplicationInspector.Unitprocess.CLICommands
 {
+    using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.IO;
+
     [TestClass]
     public class CLITestPackRulesCmd
     {

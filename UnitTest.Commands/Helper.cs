@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-
-namespace ApplicationInspector.Unitprocess.Misc
+﻿namespace ApplicationInspector.Unitprocess.Misc
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+
     public static class Helper
     {
         public enum AppPath { basePath, testSource, testRules, testOutput, defaultRules, appInspectorCLI };
 
-        private static string _basePath;
+        private static string _basePath = string.Empty;
 
         private static string GetBaseAppPath()
         {
-            if (!String.IsNullOrEmpty(_basePath))
+            if (!string.IsNullOrEmpty(_basePath))
             {
                 return _basePath;
             }
 
-            _basePath = Path.GetFullPath(System.AppContext.BaseDirectory);
+            _basePath = Path.GetFullPath(AppContext.BaseDirectory);
             return _basePath;
         }
 
@@ -62,7 +62,7 @@ namespace ApplicationInspector.Unitprocess.Misc
 
         public static List<string> GetTagsFromFile(string[] contentLines)
         {
-            List<string> results = new List<string>();
+            List<string> results = new();
 
             int i;
             for (i = 0; i < contentLines.Length; i++)
@@ -89,7 +89,7 @@ namespace ApplicationInspector.Unitprocess.Misc
         public static int RunProcess(string appFilePath, string arguments)
         {
             int result = 2;
-            using (Process process = new Process())
+            using (Process process = new())
             {
                 process.StartInfo.FileName = appFilePath;
                 process.StartInfo.Arguments = arguments;
@@ -104,7 +104,7 @@ namespace ApplicationInspector.Unitprocess.Misc
         public static int RunProcess(string appFilePath, string arguments, out string consoleContent)
         {
             int result;
-            using (Process process = new Process())
+            using (Process process = new())
             {
                 process.StartInfo.FileName = appFilePath;
                 process.StartInfo.Arguments = arguments;
@@ -114,11 +114,9 @@ namespace ApplicationInspector.Unitprocess.Misc
                 process.WaitForExit();
                 result = process.ExitCode;
 
-                using (StreamWriter standardOutput = new StreamWriter(Console.OpenStandardOutput()))
-                {
-                    standardOutput.AutoFlush = true;
-                    Console.SetOut(standardOutput);
-                }
+                using StreamWriter standardOutput = new(Console.OpenStandardOutput());
+                standardOutput.AutoFlush = true;
+                Console.SetOut(standardOutput);
             }
 
             return result;

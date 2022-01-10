@@ -1,15 +1,15 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.ApplicationInspector.RulesEngine;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-
 namespace Microsoft.ApplicationInspector.CLI
 {
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.ApplicationInspector.RulesEngine;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Text;
+
     public class AnalyzeTextWriter : CommandResultsWriter
     {
         private readonly int COLUMN_MAX = 80;
@@ -65,7 +65,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private string StringList(ImmutableSortedDictionary<string, string> data)
         {
-            StringBuilder build = new StringBuilder();
+            StringBuilder build = new();
 
             foreach (string s in data.Values)
             {
@@ -83,7 +83,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <returns></returns>
         private string MakeHeading(string header)
         {
-            StringBuilder build = new StringBuilder();
+            StringBuilder build = new();
             build.Append(string.Format("[{0}]", header));
             for (int i = header.Length; i < COLUMN_MAX; i++)
             {
@@ -151,7 +151,7 @@ namespace Microsoft.ApplicationInspector.CLI
             output = output.Replace("%X", match.Confidence.ToString());
             output = output.Replace("%D", match.RuleDescription);
             output = output.Replace("%m", match.Sample);
-            output = output.Replace("%T", string.Join(',', match.Tags ?? new string[] { }));
+            output = output.Replace("%T", string.Join(',', match.Tags ?? System.Array.Empty<string>()));
 
             WriteOnce.General(output);
         }

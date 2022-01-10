@@ -1,12 +1,12 @@
-﻿using ApplicationInspector.Unitprocess.Misc;
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-
-namespace ApplicationInspector.Unitprocess.Commands
+﻿namespace ApplicationInspector.Unitprocess.Commands
 {
+    using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.IO;
+
     [TestClass]
     public class TestExportTagsCmd
     {
@@ -36,7 +36,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void Export_Pass()
         {
-            ExportTagsOptions options = new ExportTagsOptions()
+            ExportTagsOptions options = new()
             {
                 //empty
             };
@@ -44,7 +44,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                ExportTagsCommand command = new ExportTagsCommand(options);
+                ExportTagsCommand command = new(options);
                 ExportTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -59,7 +59,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
-            ExportTagsOptions options = new ExportTagsOptions()
+            ExportTagsOptions options = new()
             {
                 IgnoreDefaultRules = true
             };
@@ -67,7 +67,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                ExportTagsCommand command = new ExportTagsCommand(options);
+                ExportTagsCommand command = new(options);
                 ExportTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -82,7 +82,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void NoDefaultCustomRules_Pass()
         {
-            ExportTagsOptions options = new ExportTagsOptions()
+            ExportTagsOptions options = new()
             {
                 IgnoreDefaultRules = true,
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json")
@@ -91,7 +91,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                ExportTagsCommand command = new ExportTagsCommand(options);
+                ExportTagsCommand command = new(options);
                 ExportTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -106,7 +106,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void DefaultWithCustomRules_Pass()
         {
-            ExportTagsOptions options = new ExportTagsOptions()
+            ExportTagsOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
@@ -114,7 +114,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                ExportTagsCommand command = new ExportTagsCommand(options);
+                ExportTagsCommand command = new(options);
                 ExportTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -129,7 +129,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void LogTraceLevel_Pass()
         {
-            ExportTagsOptions options = new ExportTagsOptions()
+            ExportTagsOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 LogFileLevel = "trace",
@@ -139,7 +139,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                ExportTagsCommand command = new ExportTagsCommand(options);
+                ExportTagsCommand command = new(options);
                 ExportTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
 
@@ -167,7 +167,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
-            ExportTagsOptions options = new ExportTagsOptions()
+            ExportTagsOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"mybadrule.json"),
                 LogFileLevel = "error",
@@ -177,7 +177,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                ExportTagsCommand command = new ExportTagsCommand(options);
+                ExportTagsCommand command = new(options);
                 ExportTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -200,7 +200,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void LogDebugLevel_Pass()
         {
-            ExportTagsOptions options = new ExportTagsOptions()
+            ExportTagsOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 LogFileLevel = "debug",
@@ -210,7 +210,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                ExportTagsCommand command = new ExportTagsCommand(options);
+                ExportTagsCommand command = new(options);
                 ExportTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
 
@@ -235,7 +235,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
-            ExportTagsOptions options = new ExportTagsOptions()
+            ExportTagsOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\logdebug.txt"),
@@ -244,7 +244,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.Success;
             try
             {
-                ExportTagsCommand command = new ExportTagsCommand(options);
+                ExportTagsCommand command = new(options);
                 ExportTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -259,7 +259,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
-            ExportTagsOptions options = new ExportTagsOptions()
+            ExportTagsOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
@@ -268,7 +268,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
             try
             {
-                ExportTagsCommand command = new ExportTagsCommand(options);
+                ExportTagsCommand command = new(options);
                 ExportTagsResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }

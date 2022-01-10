@@ -1,11 +1,11 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
+    using System;
+
     /// <summary>
     ///     Issue severity
     /// </summary>

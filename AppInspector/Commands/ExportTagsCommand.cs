@@ -1,17 +1,17 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.RulesEngine;
-using Newtonsoft.Json;
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Microsoft.ApplicationInspector.Common;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using Microsoft.ApplicationInspector.RulesEngine;
+    using Newtonsoft.Json;
+    using NLog;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using Microsoft.ApplicationInspector.Common;
+
     /// <summary>
     /// Options for the Export Tags command.
     /// </summary>
@@ -149,19 +149,19 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("ExportTagsCommand::Run", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Export Tags"));
 
-            ExportTagsResult exportTagsResult = new ExportTagsResult()
+            ExportTagsResult exportTagsResult = new()
             {
                 AppVersion = Common.Utils.GetVersionString()
             };
 
-            SortedDictionary<string, string> uniqueTags = new SortedDictionary<string, string>();
+            SortedDictionary<string, string> uniqueTags = new();
 
             try
             {
                 foreach (Rule? r in _rules)
                 {
                     //builds a list of unique tags
-                    foreach (string t in r?.Tags ?? new string[] { })
+                    foreach (string t in r?.Tags ?? Array.Empty<string>())
                     {
                         if (uniqueTags.ContainsKey(t))
                         {

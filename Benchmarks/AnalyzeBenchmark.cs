@@ -1,11 +1,11 @@
-﻿using BenchmarkDotNet.Attributes;
-using Microsoft.ApplicationInspector.Commands;
-using System;
-using System.IO;
-using System.Reflection;
-
-namespace Benchmarks
+﻿namespace Benchmarks
 {
+    using BenchmarkDotNet.Attributes;
+    using Microsoft.ApplicationInspector.Commands;
+    using System;
+    using System.IO;
+    using System.Reflection;
+
     //[ConcurrencyVisualizerProfiler]
     public class AnalyzeBenchmark
     {

@@ -1,18 +1,18 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.ApplicationInspector.RulesEngine;
-using Microsoft.CST.OAT;
-using Newtonsoft.Json;
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.ApplicationInspector.RulesEngine;
+    using Microsoft.CST.OAT;
+    using Newtonsoft.Json;
+    using NLog;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+
     public class VerifyRulesOptions : LogOptions
     {
         public bool VerifyDefaultRules { get; set; }
@@ -131,11 +131,11 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("VerifyRulesCommand::Run", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Verify Rules"));
 
-            VerifyRulesResult verifyRulesResult = new VerifyRulesResult() { AppVersion = Utils.GetVersionString() };
+            VerifyRulesResult verifyRulesResult = new() { AppVersion = Utils.GetVersionString() };
 
             try
             {
-                RulesVerifier verifier = new RulesVerifier(null, _options.Log);
+                RulesVerifier verifier = new(null, _options.Log);
                 verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
                 var stati = new List<RuleStatus>();
                 var analyzer = new Analyzer();
@@ -143,7 +143,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
                 analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
 
-                RuleSet? ruleSet = new RuleSet(_options.Log);
+                RuleSet? ruleSet = new(_options.Log);
                 if (_options.VerifyDefaultRules)
                 {
                     ruleSet = RuleSetUtils.GetDefaultRuleSet(_options.Log);

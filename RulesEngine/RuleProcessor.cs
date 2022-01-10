@@ -1,23 +1,21 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.CST.OAT;
-using Microsoft.CST.RecursiveExtractor;
-using NLog;
-using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.CST.OAT;
+    using Microsoft.CST.RecursiveExtractor;
+    using NLog;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public class RuleProcessorOptions
     {
         public RuleProcessorOptions()
@@ -42,7 +40,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly RuleProcessorOptions _opts;
 
         private Confidence ConfidenceLevelFilter => _opts.confidenceFilter;
-        private Logger? _logger => _opts.logger;
+        private Logger? Logger => _opts.logger;
 
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
@@ -294,7 +292,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                     if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
                                     {
-                                        _logger?.Error("Index out of range for patterns for rule: " + oatRule.AppInspectorRule.Name);
+                                        Logger?.Error("Index out of range for patterns for rule: " + oatRule.AppInspectorRule.Name);
                                         continue;
                                     }
 

@@ -1,12 +1,12 @@
-﻿using NLog;
-using NLog.Config;
-using NLog.Targets;
-using System;
-using System.IO;
-using System.Reflection;
-
-namespace Microsoft.ApplicationInspector.Common
+﻿namespace Microsoft.ApplicationInspector.Common
 {
+    using NLog;
+    using NLog.Config;
+    using NLog.Targets;
+    using System;
+    using System.IO;
+    using System.Reflection;
+
     public static class Utils
     {
         public enum ExitCode
@@ -23,7 +23,7 @@ namespace Microsoft.ApplicationInspector.Common
         public enum AppPath { basePath, defaultRulesSrc, defaultRulesPackedFile, defaultLog, tagGroupPref, tagCounterPref };
         public static Logger SetupLogging()
         {
-            LogOptions opts = new LogOptions();//defaults used
+            LogOptions opts = new();//defaults used
 
             return SetupLogging(opts);
         }
@@ -56,7 +56,7 @@ namespace Microsoft.ApplicationInspector.Common
             if (File.Exists(opts.LogFilePath))
             {
                 // Read the file and display it line by line.
-                StreamReader file = new StreamReader(opts.LogFilePath);
+                StreamReader file = new(opts.LogFilePath);
                 string line = file?.ReadLine() ?? "";
                 file?.Close();
                 if (!string.IsNullOrEmpty(line))

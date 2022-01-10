@@ -1,8 +1,8 @@
-﻿using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Running;
-
-namespace ApplicationInspector.Benchmarks
+﻿namespace ApplicationInspector.Benchmarks
 {
+    using BenchmarkDotNet.Configs;
+    using BenchmarkDotNet.Running;
+
     public class Program
     {
         public static void Main(string[] args)

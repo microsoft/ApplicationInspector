@@ -1,18 +1,18 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.RulesEngine;
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Microsoft.ApplicationInspector.Common;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using Microsoft.ApplicationInspector.RulesEngine;
+    using NLog;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using Microsoft.ApplicationInspector.Common;
+
     /// <summary>
     /// Common helper used by VerifyRulesCommand and PackRulesCommand classes to reduce duplication
     /// </summary>
@@ -142,7 +142,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //valid search pattern
-            foreach (SearchPattern searchPattern in rule.Patterns ?? new SearchPattern[] { })
+            foreach (SearchPattern searchPattern in rule.Patterns ?? Array.Empty<SearchPattern>())
             {
                 if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.Regex)
                 {

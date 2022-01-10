@@ -1,11 +1,11 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.Common.Properties;
-using System;
-
 namespace Microsoft.ApplicationInspector.Common
 {
+    using Microsoft.ApplicationInspector.Common.Properties;
+    using System;
+
     public static class MsgHelp
     {
         /// <summary>
@@ -97,7 +97,7 @@ namespace Microsoft.ApplicationInspector.Common
 
         public static string FormatString(MsgHelp.ID id, params object[]? parameters)
         {
-            return string.Format(GetString(id), parameters ?? new object[] { });
+            return string.Format(GetString(id), parameters ?? Array.Empty<object>());
         }
 
         public static string FormatString(MsgHelp.ID id, int value)

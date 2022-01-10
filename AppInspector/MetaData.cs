@@ -1,15 +1,15 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.RulesEngine;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using Microsoft.ApplicationInspector.RulesEngine;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Linq;
+
     /// <summary>
     /// Contains the analyze scanned meta data elements including rollup data for reporting purposes
     /// </summary>
@@ -91,7 +91,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Total number of files scanned
         /// </summary>
         [JsonProperty(PropertyName = "filesAnalyzed")]
-        public int FilesAnalyzed { get { return Files.Count(x => x.Status == ScanState.Analyzed || x.Status == ScanState.Affected); } }
+        public int FilesAnalyzed { get { return Files.Count(x => x.Status is ScanState.Analyzed or ScanState.Affected); } }
 
         /// <summary>
         /// Total number of skipped files based on supported formats

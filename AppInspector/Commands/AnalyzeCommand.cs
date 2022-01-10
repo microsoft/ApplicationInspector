@@ -1,25 +1,24 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using GlobExpressions;
-using Microsoft.ApplicationInspector.RulesEngine;
-using Microsoft.CST.RecursiveExtractor;
-using Newtonsoft.Json;
-using NLog;
-using ShellProgressBar;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.ApplicationInspector.Common;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using GlobExpressions;
+    using Microsoft.ApplicationInspector.RulesEngine;
+    using Microsoft.CST.RecursiveExtractor;
+    using Newtonsoft.Json;
+    using NLog;
+    using ShellProgressBar;
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.ApplicationInspector.Common;
+
     /// <summary>
     /// Options specific to analyze operation not to be confused with CLIAnalyzeCmdOptions which include CLI only args
     /// </summary>
@@ -176,8 +175,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 string[] confidences = _options.ConfidenceFilters.Split(',');
                 foreach (string confidence in confidences)
                 {
-                    Confidence single;
-                    if (Enum.TryParse(confidence, true, out single))
+                    if (Enum.TryParse(confidence, true, out Confidence single))
                     {
                         _confidence |= single;
                     }
@@ -308,7 +306,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_metaDataHelper is null)
             {
                 WriteOnce.Error("MetadataHelper is null");
-                throw new ArgumentNullException("_metaDataHelper");
+                throw new NullReferenceException("_metaDataHelper");
             }
             if (_rulesProcessor is null || populatedEntries is null)
             {
@@ -495,7 +493,7 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_metaDataHelper is null)
             {
                 WriteOnce.Error("MetadataHelper is null");
-                throw new ArgumentNullException("_metaDataHelper");
+                throw new NullReferenceException("_metaDataHelper");
             }
             if (_rulesProcessor is null)
             {
@@ -532,7 +530,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
 
-                        LanguageInfo languageInfo = new LanguageInfo();
+                        LanguageInfo languageInfo = new();
 
                         if (Language.FromFileName(file.FullPath, ref languageInfo))
                         {
@@ -643,7 +641,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
 
         // Follows Perl's model, if there are NULs or too many non printable characters, this is probably a binary file
-        private bool IsBinary(Stream fileContents)
+        private static bool IsBinary(Stream fileContents)
         {
             var numRead = 1;
             var span = new Span<byte>(new byte[8192]);
@@ -687,9 +685,9 @@ namespace Microsoft.ApplicationInspector.Commands
             if (_metaDataHelper is null)
             {
                 WriteOnce.Error("MetadataHelper is null");
-                throw new ArgumentNullException("_metaDataHelper");
+                throw new NullReferenceException("_metaDataHelper");
             }
-            AnalyzeResult analyzeResult = new AnalyzeResult()
+            AnalyzeResult analyzeResult = new()
             {
                 AppVersion = Common.Utils.GetVersionString()
             };
@@ -738,7 +736,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.Error("MetadataHelper is null");
                 throw new ArgumentNullException("_metaDataHelper");
             }
-            AnalyzeResult analyzeResult = new AnalyzeResult()
+            AnalyzeResult analyzeResult = new()
             {
                 AppVersion = Common.Utils.GetVersionString()
             };

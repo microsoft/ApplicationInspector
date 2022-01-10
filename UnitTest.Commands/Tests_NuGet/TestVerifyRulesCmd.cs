@@ -1,12 +1,12 @@
-﻿using ApplicationInspector.Unitprocess.Misc;
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-
-namespace ApplicationInspector.Unitprocess.Commands
+﻿namespace ApplicationInspector.Unitprocess.Commands
 {
+    using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.IO;
+
     [TestClass]
     public class TestVerifyRulesCmd
     {
@@ -35,7 +35,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void DefaultRules_Pass()
         {
-            VerifyRulesOptions options = new VerifyRulesOptions()
+            VerifyRulesOptions options = new()
             {
                 VerifyDefaultRules = true
             };
@@ -43,7 +43,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                VerifyRulesCommand command = new VerifyRulesCommand(options);
+                VerifyRulesCommand command = new(options);
                 VerifyRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -63,14 +63,14 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
-            VerifyRulesOptions options = new VerifyRulesOptions()
+            VerifyRulesOptions options = new()
             {
             };
 
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                VerifyRulesCommand command = new VerifyRulesCommand(options);
+                VerifyRulesCommand command = new(options);
                 VerifyRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -89,7 +89,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void CustomRules_Pass()
         {
-            VerifyRulesOptions options = new VerifyRulesOptions()
+            VerifyRulesOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
@@ -97,7 +97,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                VerifyRulesCommand command = new VerifyRulesCommand(options);
+                VerifyRulesCommand command = new(options);
                 VerifyRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -116,7 +116,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void LogTraceLevel_Pass()
         {
-            VerifyRulesOptions options = new VerifyRulesOptions()
+            VerifyRulesOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 LogFileLevel = "trace",
@@ -126,7 +126,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                VerifyRulesCommand command = new VerifyRulesCommand(options);
+                VerifyRulesCommand command = new(options);
                 VerifyRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
 
@@ -158,7 +158,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
-            VerifyRulesOptions options = new VerifyRulesOptions()
+            VerifyRulesOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"mybadrule.json"),
                 LogFileLevel = "error",
@@ -166,7 +166,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             };
 
             
-            VerifyRulesCommand command = new VerifyRulesCommand(options);
+            VerifyRulesCommand command = new(options);
             VerifyRulesResult result = command.GetResult();
             Assert.AreEqual(VerifyRulesResult.ExitCode.CriticalError, result.ResultCode);
 
@@ -184,7 +184,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
-            VerifyRulesOptions options = new VerifyRulesOptions()
+            VerifyRulesOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\logdebug.txt"),
@@ -193,7 +193,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                VerifyRulesCommand command = new VerifyRulesCommand(options);
+                VerifyRulesCommand command = new(options);
                 VerifyRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -212,7 +212,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
-            VerifyRulesOptions options = new VerifyRulesOptions()
+            VerifyRulesOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp")
@@ -221,7 +221,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             VerifyRulesResult.ExitCode exitCode = VerifyRulesResult.ExitCode.CriticalError;
             try
             {
-                VerifyRulesCommand command = new VerifyRulesCommand(options);
+                VerifyRulesCommand command = new(options);
                 VerifyRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
