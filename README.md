@@ -16,10 +16,10 @@ Be sure to see our complete project wiki page https://Github.com/Microsoft/Appli
 # Quick Start
 ## Obtain Application Inspector
 ### .NET Tool (recommended)
-- Download and install the .NET Core 5.0 [SDK](https://dotnet.microsoft.com/download/dotnet-core/5.0)
+- Download and install the .NET 6 [SDK](https://dotnet.microsoft.com/download/)
 - Run `dotnet tool install --global Microsoft.CST.ApplicationInspector.CLI` 
 
-See more in the [wiki](https://github.com/microsoft/ApplicationInspector/wiki/7.-NuGet-Support)
+See more in the [wiki](https://github.com/microsoft/ApplicationInspector/wiki/2.-NuGet-Support)
 
 ### Platform Dependent Binary
 - Download Application Inspector by selecting the pre-built package for the operating system of choice shown under the Assets section
@@ -56,7 +56,7 @@ The C# library is available on NuGet as [Microsoft.CST.ApplicationInspector.Comm
 
 The .NET Global Tool is available on NuGet as [Microsoft.CST.ApplicationInspector.CLI](https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.CLI/).
 
-If you use the .NET Core version, you will need to have .NET Core 5.0 or later installed.  See the [JustRunIt.md](https://github.com/microsoft/ApplicationInspector/blob/master/JustRunIt.md) or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/master/BUILD.md) files for more.
+If you use the .NET Core version, you will need to have .NET Core 6.0 or later installed.  See the [JustRunIt.md](https://github.com/microsoft/ApplicationInspector/blob/master/JustRunIt.md) or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/master/BUILD.md) files for more.
 
 # CLI Usage Information
 
