@@ -1,21 +1,20 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.ApplicationInspector.RulesEngine;
-using Microsoft.CodeAnalysis.Sarif;
-using Microsoft.CST.OAT.Utils;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Location = Microsoft.CodeAnalysis.Sarif.Location;
-using Result = Microsoft.ApplicationInspector.Commands.Result;
-
 namespace Microsoft.ApplicationInspector.CLI
 {
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.RulesEngine;
+    using Microsoft.CodeAnalysis.Sarif;
+    using Microsoft.CST.OAT.Utils;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using Location = Microsoft.CodeAnalysis.Sarif.Location;
+    using Result = Microsoft.ApplicationInspector.Commands.Result;
+
     internal static class AnalyzeSarifWriterExtensions
     {
         internal static void AddRange(this TagsCollection tc, IEnumerable<string>? tagsToAdd)
@@ -50,7 +49,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
                 if (result is AnalyzeResult analyzeResult)
                 {
-                    SarifLog log = new SarifLog();
+                    SarifLog log = new();
                     SarifVersion sarifVersion = SarifVersion.Current;
                     log.SchemaUri = sarifVersion.ConvertToSchemaUri();
                     log.Version = sarifVersion;

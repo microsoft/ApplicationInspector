@@ -1,22 +1,22 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using DotLiquid;
-using DotLiquid.FileSystems;
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.RulesEngine;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-
 namespace Microsoft.ApplicationInspector.CLI
 {
+    using DotLiquid;
+    using DotLiquid.FileSystems;
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.RulesEngine;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     public class AnalyzeHtmlWriter : CommandResultsWriter
     {
         public Dictionary<string, List<TagInfo>> KeyedTagInfoLists { get; } = new Dictionary<string, List<TagInfo>>();
@@ -109,7 +109,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private string MergeResourceFiles(string inputPath)
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
 
             if (Directory.Exists(inputPath))
             {
@@ -261,7 +261,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <returns></returns>
         public List<TagGroup> GetCategoryTagGroups(string category)
         {
-            List<TagGroup> result = new List<TagGroup>();
+            List<TagGroup> result = new();
             //get all tag groups for specified category
             foreach (TagCategory categoryTagGroup in TagGroupPreferences ?? new List<TagCategory>())
             {
@@ -287,11 +287,11 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <returns></returns>
         private HashSet<string> GetUniqueTags()
         {
-            HashSet<string> results = new HashSet<string>();
+            HashSet<string> results = new();
 
             foreach (MatchRecord match in _appMetaData?.Matches ?? new List<MatchRecord>())
             {
-                foreach (string tag in match.Tags ?? new string[] { })
+                foreach (string tag in match.Tags ?? Array.Empty<string>())
                 {
                     results.Add(tag);
                 }
@@ -309,8 +309,8 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <returns></returns>
         private List<TagInfo> GetTagInfoListByTagGroup(TagGroup tagGroup, bool addNotFound = true)
         {
-            List<TagInfo> result = new List<TagInfo>();
-            HashSet<string> hashSet = new HashSet<string>();
+            List<TagInfo> result = new();
+            HashSet<string> hashSet = new();
 
             foreach (TagSearchPattern pattern in tagGroup.Patterns ?? new List<TagSearchPattern>())
             {
@@ -321,7 +321,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     {
                         foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                         {
-                            foreach (var tagItem in match.Tags ?? new string[] { })
+                            foreach (var tagItem in match.Tags ?? Array.Empty<string>())
                             {
                                 if (tagPatternRegex.IsMatch(tagItem))
                                 {
@@ -393,7 +393,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 }
                 else if (addNotFound) //allow to report on false presense items
                 {
-                    TagInfo tagInfo = new TagInfo
+                    TagInfo tagInfo = new()
                     {
                         Tag = pattern.SearchPattern,
                         Detected = false,
@@ -420,8 +420,8 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <returns></returns>
         private List<TagInfo> GetAllMatchingTagInfoList(TagGroup tagGroup, bool addNotFound = true)
         {
-            List<TagInfo> result = new List<TagInfo>();
-            HashSet<string> hashSet = new HashSet<string>();
+            List<TagInfo> result = new();
+            HashSet<string> hashSet = new();
 
             foreach (TagSearchPattern pattern in tagGroup.Patterns ?? new List<TagSearchPattern>())
             {
@@ -431,7 +431,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
                     foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                     {
-                        foreach (var tagItem in match.Tags ?? new string[] { })
+                        foreach (var tagItem in match.Tags ?? Array.Empty<string>())
                         {
                             if (tagPatternRegex.IsMatch(tagItem))
                             {
@@ -442,7 +442,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                         Tag = tagItem,
                                         Confidence = match.Confidence.ToString(),
                                         Severity = match.Severity.ToString(),
-                                        ShortTag = tagItem.Substring(tagItem.LastIndexOf('.') + 1),
+                                        ShortTag = tagItem[(tagItem.LastIndexOf('.') + 1)..],
                                         StatusIcon = pattern.DetectedIcon,
                                         Detected = true
                                     });
@@ -490,8 +490,8 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <returns></returns>
         private List<TagInfo> GetTagInfoListByName()
         {
-            HashSet<string> dupCheck = new HashSet<string>();
-            List<TagInfo> result = new List<TagInfo>();
+            HashSet<string> dupCheck = new();
+            List<TagInfo> result = new();
 
             foreach (string tag in _appMetaData?.UniqueTags ?? new List<string>())
             {
@@ -499,7 +499,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                     {
-                        foreach (string testTag in match.Tags ?? new string[] { })
+                        foreach (string testTag in match.Tags ?? Array.Empty<string>())
                         {
                             if (tag == testTag)
                             {
@@ -510,7 +510,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                         Tag = testTag,
                                         Confidence = match.Confidence.ToString(),
                                         Severity = match.Severity.ToString(),
-                                        ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
+                                        ShortTag = testTag[(testTag.LastIndexOf('.') + 1)..],
                                     });
 
                                     break;
@@ -524,7 +524,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     result.Add(new TagInfo
                     {
                         Tag = tag,
-                        ShortTag = tag.Substring(tag.LastIndexOf('.') + 1),
+                        ShortTag = tag[(tag.LastIndexOf('.') + 1)..],
                     });
                 }
             }
@@ -538,8 +538,8 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <returns></returns>
         private List<TagInfo> GetTagInfoListByConfidence()
         {
-            List<TagInfo> result = new List<TagInfo>();
-            HashSet<string> dupCheck = new HashSet<string>();
+            List<TagInfo> result = new();
+            HashSet<string> dupCheck = new();
             RulesEngine.Confidence[] confidences = { Confidence.High, Confidence.Medium, Confidence.Low };
 
             foreach (string tag in _appMetaData?.UniqueTags ?? new List<string>())
@@ -549,7 +549,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                     {
-                        foreach (string testTag in match.Tags ?? new string[] { })
+                        foreach (string testTag in match.Tags ?? Array.Empty<string>())
                         {
                             if (searchPattern.IsMatch(testTag))
                             {
@@ -560,7 +560,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                         Tag = testTag,
                                         Confidence = confidence.ToString(),
                                         Severity = match.Severity.ToString(),
-                                        ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
+                                        ShortTag = testTag[(testTag.LastIndexOf('.') + 1)..],
                                     });
                                 }
                             }
@@ -577,8 +577,8 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <returns></returns>
         private List<TagInfo> GetTagInfoListBySeverity()
         {
-            List<TagInfo> result = new List<TagInfo>();
-            HashSet<string> dupCheck = new HashSet<string>();
+            List<TagInfo> result = new();
+            HashSet<string> dupCheck = new();
             Severity[] severities = { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview };
 
             foreach (string tag in _appMetaData?.UniqueTags ?? new List<string>())
@@ -588,7 +588,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                     {
-                        foreach (string testTag in match.Tags ?? new string[] { })
+                        foreach (string testTag in match.Tags ?? Array.Empty<string>())
                         {
                             if (searchPattern.IsMatch(testTag))
                             {
@@ -599,7 +599,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                         Tag = testTag,
                                         Confidence = match.Confidence.ToString(),
                                         Severity = severity.ToString(),
-                                        ShortTag = testTag.Substring(testTag.LastIndexOf('.') + 1),
+                                        ShortTag = testTag[(testTag.LastIndexOf('.') + 1)..],
                                     });
                                 }
                             }
@@ -616,7 +616,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         public List<TagCounterUI> ConvertTagCounters(IEnumerable<MetricTagCounter> metricTagCounters)
         {
-            List<TagCounterUI> result = new List<TagCounterUI>();
+            List<TagCounterUI> result = new();
             //TagCountersUI is liquid compatible while TagCounters is not to support json serialization; the split prevents exception
             //not fixable via json iteration disabling
 

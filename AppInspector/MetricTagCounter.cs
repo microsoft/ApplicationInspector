@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Newtonsoft.Json;
-using System.Threading;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using Newtonsoft.Json;
+    using System.Threading;
+
     /// <summary>
     /// Used for metric results not included in match details reported other than count of instances for given tag i.e. Metrics.[value].[value]
     /// </summary>

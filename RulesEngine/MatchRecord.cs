@@ -1,11 +1,10 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Newtonsoft.Json;
-using System;
-
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using Newtonsoft.Json;
+
     /// <summary>
     /// Represents augmented record of result issue from rules engine
     /// </summary>

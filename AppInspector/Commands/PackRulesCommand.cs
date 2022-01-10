@@ -1,17 +1,17 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.RulesEngine;
-using Newtonsoft.Json;
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Microsoft.ApplicationInspector.Common;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using Microsoft.ApplicationInspector.RulesEngine;
+    using Newtonsoft.Json;
+    using NLog;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using Microsoft.ApplicationInspector.Common;
+
     public class PackRulesOptions : LogOptions
     {
         public bool RepackDefaultRules { get; set; }
@@ -127,14 +127,14 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("PackRules::Run", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Pack Rules"));
 
-            PackRulesResult packRulesResult = new PackRulesResult()
+            PackRulesResult packRulesResult = new()
             {
                 AppVersion = Common.Utils.GetVersionString()
             };
 
             try
             {
-                RulesVerifier verifier = new RulesVerifier(_rules_path, _options?.Log);
+                RulesVerifier verifier = new(_rules_path, _options?.Log);
                 if (_options?.PackEmbeddedRules ?? false)
                 {
                     verifier.LoadRuleSet(RuleSetUtils.GetDefaultRuleSet());

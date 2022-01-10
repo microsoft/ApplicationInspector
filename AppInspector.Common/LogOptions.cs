@@ -1,11 +1,11 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using CommandLine;
-using NLog;
-
 namespace Microsoft.ApplicationInspector.Common
 {
+    using CommandLine;
+    using NLog;
+
     /// <summary>
     /// base for common options across all commands
     /// </summary>

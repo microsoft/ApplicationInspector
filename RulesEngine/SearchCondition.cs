@@ -1,9 +1,9 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-using Newtonsoft.Json;
-
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using Newtonsoft.Json;
+
     public class SearchCondition
     {
         [JsonProperty(PropertyName = "negate_finding")]

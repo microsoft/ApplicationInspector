@@ -1,12 +1,12 @@
-﻿using ApplicationInspector.Unitprocess.Misc;
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-
-namespace ApplicationInspector.Unitprocess.Commands
+﻿namespace ApplicationInspector.Unitprocess.Commands
 {
+    using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.IO;
+
     [TestClass]
     public class TestPackRulesCmd
     {
@@ -36,7 +36,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void DefaultRules_Fail()
         {
-            PackRulesOptions options = new PackRulesOptions()
+            PackRulesOptions options = new()
             {
                 RepackDefaultRules = true
             };
@@ -44,7 +44,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                PackRulesCommand command = new PackRulesCommand(options);
+                PackRulesCommand command = new(options);
                 PackRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -59,14 +59,14 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void NoDefaultNoCustomNoEmbeddedRules_Fail()
         {
-            PackRulesOptions options = new PackRulesOptions()
+            PackRulesOptions options = new()
             {
             };
 
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                PackRulesCommand command = new PackRulesCommand(options);
+                PackRulesCommand command = new(options);
                 PackRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -81,11 +81,11 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void NoDefaultNoCustomEmbeddedRules_Pass()
         {
-            PackRulesOptions options = new PackRulesOptions() { PackEmbeddedRules = true };
+            PackRulesOptions options = new() { PackEmbeddedRules = true };
 
             try
             {
-                PackRulesCommand command = new PackRulesCommand(options);
+                PackRulesCommand command = new(options);
                 PackRulesResult result = command.GetResult();
                 Assert.AreEqual(PackRulesResult.ExitCode.Success, result.ResultCode);
             }
@@ -99,7 +99,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
-            PackRulesOptions options = new PackRulesOptions()
+            PackRulesOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\logdebug.txt"),
@@ -108,7 +108,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                PackRulesCommand command = new PackRulesCommand(options);
+                PackRulesCommand command = new(options);
                 PackRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -124,7 +124,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
-            PackRulesOptions options = new PackRulesOptions()
+            PackRulesOptions options = new()
             {
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"main.cpp")
@@ -133,7 +133,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
             try
             {
-                PackRulesCommand command = new PackRulesCommand(options);
+                PackRulesCommand command = new(options);
                 PackRulesResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }

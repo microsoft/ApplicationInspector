@@ -1,17 +1,17 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using Newtonsoft.Json;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+
     /// <summary>
     ///     Class to hold search pattern
     /// </summary>
     public class SearchPattern
     {
-        private Dictionary<RegexOptions, Regex> _compiled = new Dictionary<RegexOptions, Regex>();
+        private Dictionary<RegexOptions, Regex> _compiled = new();
         private string? _pattern;
 
         [JsonProperty(PropertyName = "confidence")]

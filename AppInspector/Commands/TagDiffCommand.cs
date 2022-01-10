@@ -1,21 +1,21 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.Common;
-using Newtonsoft.Json;
-using NLog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using Microsoft.ApplicationInspector.Common;
+    using Newtonsoft.Json;
+    using NLog;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class TagDiffOptions : LogOptions
     {
         public IEnumerable<string> SourcePath1 { get; set; } = Array.Empty<string>();
         public IEnumerable<string> SourcePath2 { get; set; } = Array.Empty<string>();
         public string TestType { get; set; } = "equality";
-        public IEnumerable<string> FilePathExclusions { get; set; } = new string[] { };
+        public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
         public int FileTimeOut { get; set; }
@@ -166,7 +166,7 @@ namespace Microsoft.ApplicationInspector.Commands
             WriteOnce.SafeLog("TagDiffCommand::Run", LogLevel.Trace);
             WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Tag Diff"));
 
-            TagDiffResult tagDiffResult = new TagDiffResult() { AppVersion = Common.Utils.GetVersionString() };
+            TagDiffResult tagDiffResult = new() { AppVersion = Common.Utils.GetVersionString() };
 
             //save to quiet analyze cmd and restore
             WriteOnce.ConsoleVerbosity saveVerbosity = WriteOnce.Verbosity;

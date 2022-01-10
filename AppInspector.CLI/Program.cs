@@ -1,20 +1,19 @@
 ﻿//Copyright(c) Microsoft Corporation.All rights reserved.
 // Licensed under the MIT License.
 
-using CommandLine;
-using Microsoft.ApplicationInspector.Commands;
-using NLog;
-using ShellProgressBar;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.ApplicationInspector.Common;
-
 namespace Microsoft.ApplicationInspector.CLI
 {
+    using CommandLine;
+    using Microsoft.ApplicationInspector.Commands;
+    using NLog;
+    using ShellProgressBar;
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.ApplicationInspector.Common;
+
     public static class Program
     {
         /// <summary>
@@ -151,9 +150,9 @@ namespace Microsoft.ApplicationInspector.CLI
             //analyze with html format limit checks
             if (options.OutputFileFormat == "html")
             {
-                options.OutputFilePath = options.OutputFilePath ?? "output.html";
+                options.OutputFilePath ??= "output.html";
                 string extensionCheck = Path.GetExtension(options.OutputFilePath);
-                if (extensionCheck != ".html" && extensionCheck != ".htm")
+                if (extensionCheck is not ".html" and not ".htm")
                 {
                     WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_HTML_EXTENSION));
                 }
@@ -323,7 +322,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunTagDiffCommand(CLITagDiffCmdOptions cliOptions)
         {
-            TagDiffCommand command = new TagDiffCommand(new TagDiffOptions()
+            TagDiffCommand command = new(new TagDiffOptions()
             {
                 SourcePath1 = cliOptions.SourcePath1,
                 SourcePath2 = cliOptions.SourcePath2,
@@ -350,7 +349,7 @@ namespace Microsoft.ApplicationInspector.CLI
         
         private static int RunExportTagsCommand(CLIExportTagsCmdOptions cliOptions)
         {
-            ExportTagsCommand command = new ExportTagsCommand(new ExportTagsOptions()
+            ExportTagsCommand command = new(new ExportTagsOptions()
             {
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,
@@ -366,7 +365,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunVerifyRulesCommand(CLIVerifyRulesCmdOptions cliOptions)
         {
-            VerifyRulesCommand command = new VerifyRulesCommand(new VerifyRulesOptions()
+            VerifyRulesCommand command = new(new VerifyRulesOptions()
             {
                 VerifyDefaultRules = cliOptions.VerifyDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,
@@ -383,7 +382,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int RunPackRulesCommand(CLIPackRulesCmdOptions cliOptions)
         {
-            PackRulesCommand command = new PackRulesCommand(new PackRulesOptions()
+            PackRulesCommand command = new(new PackRulesOptions()
             {
                 RepackDefaultRules = cliOptions.RepackDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,

@@ -1,14 +1,14 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+
     /// <summary>
     /// Class to hold the Rule
     /// </summary>
@@ -43,20 +43,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public string? Description { get; set; } = "";
 
         [JsonProperty(PropertyName = "applies_to")]
-        public string[]? AppliesTo
-        {
-            get
-            {
-                return _appliesTo;
-            }
-            set
-            {
-                _updateCompiled = true;
-                _appliesTo = value;
-            }
-        }
-
-        private string[]? _appliesTo;
+        public string[]? AppliesTo { get; set; }
 
         [JsonProperty(PropertyName = "applies_to_file_regex")]
         public string[]? FileRegexes
@@ -79,14 +66,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 if (_updateCompiledFileRegex)
                 {
                     _compiled = FileRegexes?.Select(x => new Regex(x, RegexOptions.Compiled)) ?? Array.Empty<Regex>();
-                    _updateCompiled = false;
+                    _updateCompiledFileRegex = false;
                 }
                 return _compiled;
             }
         }
 
         private IEnumerable<Regex> _compiled = Array.Empty<Regex>();
-        private bool _updateCompiled = false;
         private bool _updateCompiledFileRegex = false;
 
         [JsonProperty(PropertyName = "tags")]

@@ -1,10 +1,10 @@
 ﻿// Copyright(C) Microsoft.All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Newtonsoft.Json;
-
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using Newtonsoft.Json;
+
     /// <summary>
     /// Content Type class
     /// </summary>

@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-
-namespace Microsoft.ApplicationInspector.Commands
+﻿namespace Microsoft.ApplicationInspector.Commands
 {
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
+    using System;
+
     public class FileRecord
     {
         public string FileName { get; set; } = string.Empty;

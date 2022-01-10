@@ -1,13 +1,13 @@
-﻿using ApplicationInspector.Unitprocess.Misc;
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using System;
-using System.IO;
-
-namespace ApplicationInspector.Unitprocess.CLICommands
+﻿namespace ApplicationInspector.Unitprocess.CLICommands
 {
+    using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Newtonsoft.Json;
+    using System;
+    using System.IO;
+
     /// <summary>
     /// Test class for Analyze Commands
     /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so
@@ -291,12 +291,11 @@ namespace ApplicationInspector.Unitprocess.CLICommands
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             string args = string.Format(@"analyze -s {0} -f json -l {1} -g none",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"badir\log.txt"));
 
-            exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
+            AnalyzeResult.ExitCode exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             
             Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);//test fails even when values match unless this case run individually -mstest bug?
         }

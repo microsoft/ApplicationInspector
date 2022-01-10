@@ -1,28 +1,28 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-using Microsoft.CST.OAT;
-using Newtonsoft.Json;
-using NLog;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using Microsoft.CST.OAT;
+    using Newtonsoft.Json;
+    using NLog;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
     /// <summary>
     ///     Storage for rules
     /// </summary>
     public class RuleSet : IEnumerable<Rule>
     {
         private readonly Logger? _logger;
-        private List<ConvertedOatRule> _oatRules = new();//used for analyze cmd primarily
+        private readonly List<ConvertedOatRule> _oatRules = new();//used for analyze cmd primarily
         private IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
-        private Regex searchInRegex = new Regex("\\((.*),(.*)\\)", RegexOptions.Compiled);
+        private Regex searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
 
         /// <summary>
         ///     Creates instance of Ruleset
@@ -155,7 +155,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     var scopes = pattern.Scopes ?? new PatternScope[] { PatternScope.All };
                     var modifiers = pattern.Modifiers ?? Array.Empty<string>();
-                    if (pattern.PatternType == PatternType.String || pattern.PatternType == PatternType.Substring)
+                    if (pattern.PatternType is PatternType.String or PatternType.Substring)
                     {
                         clauses.Add(new OATSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String)
                         {
@@ -323,10 +323,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return _rules.GetEnumerator();
         }
 
-        internal IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)
+        internal static IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)
         {
             List<Rule>? ruleList = JsonConvert.DeserializeObject<List<Rule>>(jsonstring);
-            if (ruleList is List<Rule>)
+            if (ruleList is not null)
             {
                 foreach (Rule r in ruleList)
                 {

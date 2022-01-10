@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Newtonsoft.Json;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using Newtonsoft.Json;
+
     /// <summary>
     /// base for all command operation results
     /// </summary>

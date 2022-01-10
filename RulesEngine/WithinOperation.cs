@@ -1,13 +1,13 @@
-﻿using Microsoft.CST.OAT;
-using Microsoft.CST.OAT.Operations;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
-
-namespace Microsoft.ApplicationInspector.RulesEngine
+﻿namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using Microsoft.CST.OAT;
+    using Microsoft.CST.OAT.Operations;
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+
     public class WithinOperation : OatOperation
     {
         public WithinOperation(Analyzer analyzer) : base(Operation.Custom, analyzer)
@@ -94,13 +94,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             {
                                 if (match is Match m)
                                 {
-                                    Boundary translatedBoundary = new Boundary()
+                                    Boundary translatedBoundary = new()
                                     {
                                         Length = m.Length,
                                         Index = targetBoundary.Index + m.Index
                                     };
                                     // Should return only scoped matches
-                                    if (tc.ScopeMatch(wc.Scopes ?? new PatternScope[] { }, translatedBoundary))
+                                    if (tc.ScopeMatch(wc.Scopes ?? Array.Empty<PatternScope>(), translatedBoundary))
                                     {
                                         boundaries.Add(translatedBoundary);
                                     }

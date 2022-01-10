@@ -1,12 +1,12 @@
-﻿using ApplicationInspector.Unitprocess.Misc;
-using Microsoft.ApplicationInspector.Commands;
-using Microsoft.ApplicationInspector.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-
-namespace ApplicationInspector.Unitprocess.Commands
+﻿namespace ApplicationInspector.Unitprocess.Commands
 {
+    using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.IO;
+
     /// <summary>
     /// Test class for Analyze Commands
     /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so
@@ -42,7 +42,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void Equality_Pass()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
@@ -52,7 +52,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -67,7 +67,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void Equality_Fail()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
@@ -77,7 +77,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -92,7 +92,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void BasicZipReadDiff_Pass()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\mainx.zip") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
@@ -102,7 +102,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -117,7 +117,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InEquality_Pass()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
@@ -129,7 +129,7 @@ namespace ApplicationInspector.Unitprocess.Commands
 
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -144,7 +144,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InEquality_Fail()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
@@ -155,7 +155,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -170,7 +170,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void OneSrcResult_Fail()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
@@ -179,7 +179,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -194,7 +194,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InvalidSourcePath_Fail()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\nofilehere.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
@@ -204,7 +204,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -219,7 +219,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void NoResults_Fail()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp") },
@@ -229,7 +229,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -244,7 +244,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
@@ -255,7 +255,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -270,7 +270,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void NoDefaultCustomRules_Pass()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
@@ -282,7 +282,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -297,7 +297,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void DefaultWithCustomRules_Pass()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
@@ -309,7 +309,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -324,7 +324,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void DefaultWithCustomRules_Fail()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
@@ -335,7 +335,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -350,7 +350,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void LogTraceLevel_Pass()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
@@ -362,7 +362,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
 
                 exitCode = result.ResultCode;
@@ -387,7 +387,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void LogErrorLevel_Pass()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\nofilehere.cpp") },
@@ -399,7 +399,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -422,7 +422,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void LogDebugLevel_Pass()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
@@ -434,7 +434,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
 
                 exitCode = result.ResultCode;
@@ -459,7 +459,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
@@ -470,7 +470,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -484,7 +484,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
@@ -495,7 +495,7 @@ namespace ApplicationInspector.Unitprocess.Commands
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new TagDiffCommand(options);
+                TagDiffCommand command = new(options);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -509,7 +509,7 @@ namespace ApplicationInspector.Unitprocess.Commands
         [TestMethod]
         public void NoConsoleOutput_Pass()
         {
-            TagDiffOptions options = new TagDiffOptions()
+            TagDiffOptions options = new()
             {
                 SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
@@ -526,7 +526,7 @@ namespace ApplicationInspector.Unitprocess.Commands
                     // Redirect standard output from the console to the output file.
                     Console.SetOut(writer);
 
-                    TagDiffCommand command = new TagDiffCommand(options);
+                    TagDiffCommand command = new(options);
                     TagDiffResult result = command.GetResult();
                     exitCode = result.ResultCode;
                     try

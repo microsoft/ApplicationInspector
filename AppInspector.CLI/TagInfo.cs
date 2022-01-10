@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using DotLiquid;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
 namespace Microsoft.ApplicationInspector.Commands
 {
+    using DotLiquid;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
+
     /// <summary>
     /// Root parent for tag group preferences file and used in Writers\AnalyzeHtmlWriter.cs
     /// </summary>
