@@ -6,7 +6,7 @@ the .NET Core pre-requisites.
 ## Get Application Inspector
 ### .NET Tool (recommended)
 #### Pre-Requisite
-- Download and install the .NET Core 5.0 [SDK](https://dotnet.microsoft.com/download/dotnet-core/5.0)
+- Download and install the .NET 6.0 [SDK](https://dotnet.microsoft.com/download/)
 
 #### Install
 - Use the dotnet command `dotnet tool install --global Microsoft.CST.ApplicationInspector.CLI` See more in the [wiki](https://github.com/microsoft/ApplicationInspector/wiki/7.-NuGet-Support)
