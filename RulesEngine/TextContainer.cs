@@ -6,6 +6,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     ///     Class to handle text as a searchable container
@@ -231,7 +232,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns> True if boundary is in a provided scope </returns>
         public bool ScopeMatch(IEnumerable<PatternScope> scopes, Boundary boundary)
         {
-            if (scopes is null)
+            if (scopes is null || !scopes.Any() || scopes.Contains(PatternScope.All))
             {
                 return true;
             }

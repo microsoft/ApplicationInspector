@@ -14,7 +14,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public int After { get; set; }
         public int Before { get; set; }
         public bool FindingOnly { get; set; }
-        public bool SameLineOnly { get; internal set; }
-        public PatternScope[]? Scopes { get; }
+        public bool SameLineOnly { get; set; }
+        public PatternScope[] Scopes { get; set; } = new PatternScope[1] { PatternScope.All };
     }
 }
