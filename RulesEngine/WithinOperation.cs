@@ -100,7 +100,7 @@
                                         Index = targetBoundary.Index + m.Index
                                     };
                                     // Should return only scoped matches
-                                    if (tc.ScopeMatch(wc.Scopes ?? Array.Empty<PatternScope>(), translatedBoundary))
+                                    if (tc.ScopeMatch(wc.Scopes, translatedBoundary))
                                     {
                                         boundaries.Add(translatedBoundary);
                                     }

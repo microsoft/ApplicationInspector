@@ -230,7 +230,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Invert = condition.NegateFinding,
                             Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
                             FindingOnly = true,
-                            CustomOperation = "Within"
+                            CustomOperation = "Within",
+                            Scopes = condition.Pattern.Scopes
                         });
                         expression.Append(" AND ");
                         expression.Append(clauseNumber);
@@ -265,7 +266,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 FindingOnly = false,
                                 CustomOperation = "Within",
                                 Before = argList[0],
-                                After = argList[1]
+                                After = argList[1],
+                                Scopes = condition.Pattern.Scopes
                             });
                             expression.Append(" AND ");
                             expression.Append(clauseNumber);
@@ -281,7 +283,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Invert = condition.NegateFinding,
                             Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
                             SameLineOnly = true,
-                            CustomOperation = "Within"
+                            CustomOperation = "Within",
+                            Scopes = condition.Pattern.Scopes
                         });
                         expression.Append(" AND ");
                         expression.Append(clauseNumber);
