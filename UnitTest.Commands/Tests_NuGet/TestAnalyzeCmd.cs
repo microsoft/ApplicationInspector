@@ -387,8 +387,8 @@
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(0, result.Metadata.FilesSkipped);
             Assert.AreEqual(2, result.Metadata.FilesAffected);
-            Assert.AreEqual(69, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(22, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(67, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(21, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -407,8 +407,8 @@
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(1, result.Metadata.FilesSkipped);
             Assert.AreEqual(1, result.Metadata.FilesAffected);
-            Assert.AreEqual(37, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(21, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(35, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(20, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
