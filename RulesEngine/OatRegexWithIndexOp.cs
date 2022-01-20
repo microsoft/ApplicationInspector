@@ -31,7 +31,7 @@
 
         public static IEnumerable<Violation> RegexWithIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
         {
-            if (clause.Data?.Count == null || clause.Data?.Count == 0)
+            if (clause.Data?.Count is null or 0)
             {
                 yield return new Violation(string.Format(Strings.Get("Err_ClauseNoData"), rule.Name, clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)), rule, clause);
             }

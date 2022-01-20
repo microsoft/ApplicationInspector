@@ -22,7 +22,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly Logger? _logger;
         private readonly List<ConvertedOatRule> _oatRules = new();//used for analyze cmd primarily
         private IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
-        private Regex searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
+        private readonly Regex searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
 
         /// <summary>
         ///     Creates instance of Ruleset
@@ -231,7 +231,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
                             FindingOnly = true,
                             CustomOperation = "Within",
-                            Scopes = condition.Pattern.Scopes
+                            Scopes = condition.Pattern.Scopes ?? new PatternScope[] { PatternScope.All }
                         });
                         expression.Append(" AND ");
                         expression.Append(clauseNumber);
@@ -267,7 +267,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 CustomOperation = "Within",
                                 Before = argList[0],
                                 After = argList[1],
-                                Scopes = condition.Pattern.Scopes
+                                Scopes = condition.Pattern.Scopes ?? new PatternScope[] { PatternScope.All }
                             });
                             expression.Append(" AND ");
                             expression.Append(clauseNumber);
@@ -284,7 +284,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
                             SameLineOnly = true,
                             CustomOperation = "Within",
-                            Scopes = condition.Pattern.Scopes
+                            Scopes = condition.Pattern.Scopes ?? new PatternScope[]{ PatternScope.All }
                         });
                         expression.Append(" AND ");
                         expression.Append(clauseNumber);

@@ -40,7 +40,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             if (TextWriter is null)
             {
-                throw new ArgumentNullException(nameof(TextWriter));
+                throw new NullReferenceException(nameof(TextWriter));
             }
             string? basePath = null;
             if (commandOptions is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)

@@ -91,14 +91,11 @@
                 TagsOnly = true,
                 SingleThread = true
             };
-
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             
             AnalyzeCommand command = new(options);
             AnalyzeResult result = command.GetResult();
-            exitCode = result.ResultCode;
 
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
         }
 
         [TestMethod]
@@ -190,19 +187,16 @@
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
                 AnalyzeCommand command = new(options);
                 AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
+                Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                Assert.Fail();
             }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
         [TestMethod]
@@ -216,19 +210,16 @@
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
                 AnalyzeCommand command = new(options);
                 AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
+                Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                Assert.Fail();
             }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
         [TestMethod]
@@ -376,19 +367,16 @@
                 TagsOnly = true
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
                 AnalyzeCommand command = new(options);
                 AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
+                Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, result.ResultCode);
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                Assert.Fail();
             }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.NoMatches);
         }
 
         [TestMethod]
@@ -403,28 +391,19 @@
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logtrace.txt"),
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
                 AnalyzeCommand command = new(options);
                 AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
+                Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
                 string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (String.IsNullOrEmpty(testLogContent))
-                {
-                    exitCode = AnalyzeResult.ExitCode.CriticalError;
-                }
-                else if (testLogContent.ToLower().Contains("trace"))
-                {
-                    exitCode = AnalyzeResult.ExitCode.Success;
-                }
+                Assert.IsFalse(string.IsNullOrEmpty(testLogContent));
+                Assert.IsTrue(testLogContent.ToLower().Contains("trace"));
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                Assert.Fail();
             }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
         }
 
         [TestMethod]
@@ -538,30 +517,28 @@
             try
             {
                 // Attempt to open output file.
-                using (var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt")))
-                {
-                    // Redirect standard output from the console to the output file.
-                    Console.SetOut(writer);
+                using var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                // Redirect standard output from the console to the output file.
+                Console.SetOut(writer);
 
-                    AnalyzeCommand command = new(options);
-                    AnalyzeResult result = command.GetResult();
-                    exitCode = result.ResultCode;
-                    try
+                AnalyzeCommand command = new(options);
+                AnalyzeResult result = command.GetResult();
+                exitCode = result.ResultCode;
+                try
+                {
+                    string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                    if (String.IsNullOrEmpty(testContent))
                     {
-                        string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
-                        if (String.IsNullOrEmpty(testContent))
-                        {
-                            exitCode = AnalyzeResult.ExitCode.Success;
-                        }
-                        else
-                        {
-                            exitCode = AnalyzeResult.ExitCode.NoMatches;
-                        }
+                        exitCode = AnalyzeResult.ExitCode.Success;
                     }
-                    catch (Exception)
+                    else
                     {
-                        exitCode = AnalyzeResult.ExitCode.Success;//no console output file found
+                        exitCode = AnalyzeResult.ExitCode.NoMatches;
                     }
+                }
+                catch (Exception)
+                {
+                    exitCode = AnalyzeResult.ExitCode.Success;//no console output file found
                 }
             }
             catch (Exception)
@@ -570,8 +547,10 @@
             }
 
             //reset to normal
-            var standardOutput = new StreamWriter(Console.OpenStandardOutput());
-            standardOutput.AutoFlush = true;
+            StreamWriter standardOutput = new(Console.OpenStandardOutput())
+            {
+                AutoFlush = true
+            };
             Console.SetOut(standardOutput);
 
             Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);

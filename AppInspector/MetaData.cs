@@ -46,8 +46,6 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(PropertyName = "description")]
         public string? Description { get; set; }
 
-        private readonly DateTime _lastUpdated = DateTime.MinValue;
-
         /// <summary>
         /// Last modified date for source code scanned
         /// </summary>
@@ -145,7 +143,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// List of detected unique tags 
         /// </summary>
         [JsonProperty(PropertyName = "uniqueTags")]
-        public List<string>? UniqueTags { get; set; } = new List<string>();
+        public List<string> UniqueTags { get; set; } = new List<string>();
 
         /// <summary>
         /// List of detected unique code dependency includes

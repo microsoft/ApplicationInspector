@@ -165,6 +165,6 @@
             }
         }
 
-        private RegexOperation regexEngine;
+        private readonly RegexOperation regexEngine;
     }
 }
