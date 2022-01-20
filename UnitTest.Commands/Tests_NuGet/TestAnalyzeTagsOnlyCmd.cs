@@ -297,7 +297,7 @@
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
         }
 
         [TestMethod]
@@ -315,14 +315,14 @@
             AnalyzeResult result = command.GetResult();
             Assert.AreEqual(result.ResultCode, AnalyzeResult.ExitCode.Success);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(8, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
 
             options.SingleThread = false;
             command = new AnalyzeCommand(options);
             result = command.GetResult();
             Assert.AreEqual(result.ResultCode, AnalyzeResult.ExitCode.Success);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(8, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
         }
 
         [TestMethod]
@@ -336,42 +336,34 @@
                 TagsOnly = true
             };
 
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
                 AnalyzeCommand command = new(options);
                 AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
-                if (exitCode == AnalyzeResult.ExitCode.Success)
-                {
-                    exitCode = result.Metadata.TotalMatchesCount == 0 && result.Metadata.UniqueMatchesCount == 0 && result.Metadata.UniqueTags.Count == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
-                }
+                Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+                Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+                Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
+                Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
             }
             catch (Exception)
             {
-                exitCode = AnalyzeResult.ExitCode.CriticalError;
+                Assert.Fail();
             }
 
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
-
-            AnalyzeResult.ExitCode exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
             options.SingleThread = false;
             try
             {
                 AnalyzeCommand command = new(options);
                 AnalyzeResult result = command.GetResult();
-                exitCodeMultiThread = result.ResultCode;
-                if (exitCodeMultiThread == AnalyzeResult.ExitCode.Success)
-                {
-                    exitCodeMultiThread = result.Metadata.TotalMatchesCount == 0 && result.Metadata.UniqueMatchesCount == 0 && result.Metadata.UniqueTags.Count == 7 ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.NoMatches;
-                }
+                Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+                Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+                Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
+                Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
             }
             catch (Exception)
             {
-                exitCodeMultiThread = AnalyzeResult.ExitCode.CriticalError;
+                Assert.Fail();
             }
-
-            Assert.IsTrue(exitCodeMultiThread == AnalyzeResult.ExitCode.Success);
         }
 
         [TestMethod]

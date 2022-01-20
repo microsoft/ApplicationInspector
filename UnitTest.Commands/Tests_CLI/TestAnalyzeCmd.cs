@@ -219,7 +219,7 @@
             string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
             Assert.IsNotNull(result);
-            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(10, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
             
             args = string.Format(@"analyze -s {0} -f json -o {1} -g none",
