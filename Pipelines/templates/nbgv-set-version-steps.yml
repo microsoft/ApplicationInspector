@@ -1,5 +1,5 @@
 steps:
-- script: 'dotnet tool install -g nbgv'
+- script: 'dotnet tool update -g nbgv'
   displayName: 'Install GitVersioning'
 - task: PowerShell@2
   displayName: Set Release Version
