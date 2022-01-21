@@ -75,9 +75,9 @@
                             {
                                 var startLine = tc.GetLocation(capture.Index).Line;
                                 // Before is already a negative number
-                                var start = tc.LineEnds[Math.Max(1, startLine + wc.Before)];
+                                var start = tc.LineStarts[Math.Max(1, startLine + wc.Before)];
                                 var end = tc.LineEnds[Math.Min(tc.LineEnds.Count - 1, startLine + wc.After)];
-                                var res = ProcessLambda(tc.FullContent[start..end], capture);
+                                var res = ProcessLambda(tc.FullContent[start..(end+1)], capture);
                                 if (res.Result)
                                 {
                                     if (res.Capture is TypedClauseCapture<List<Boundary>> boundaryList)
