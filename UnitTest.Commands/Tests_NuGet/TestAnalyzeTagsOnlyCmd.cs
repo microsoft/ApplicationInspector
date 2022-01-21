@@ -391,19 +391,12 @@
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logtrace.txt"),
             };
 
-            try
-            {
-                AnalyzeCommand command = new(options);
-                AnalyzeResult result = command.GetResult();
-                Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-                string testLogContent = File.ReadAllText(options.LogFilePath);
-                Assert.IsFalse(string.IsNullOrEmpty(testLogContent));
-                Assert.IsTrue(testLogContent.ToLower().Contains("trace"));
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+            AnalyzeCommand command = new(options);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, result.ResultCode);
+            string testLogContent = File.ReadAllText(options.LogFilePath);
+            Assert.IsFalse(string.IsNullOrEmpty(testLogContent));
+            Assert.IsTrue(testLogContent.ToLower().Contains("trace"));
         }
 
         [TestMethod]

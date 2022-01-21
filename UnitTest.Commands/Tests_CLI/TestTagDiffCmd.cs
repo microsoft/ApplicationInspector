@@ -42,258 +42,143 @@
         [TestMethod]
         public void Equality_Pass()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
+            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void Equality_Fail()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
+            Assert.AreEqual(TagDiffResult.ExitCode.TestFailed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void ZipReadDiff_Pass()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\mainx.zip"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\mainx.zip"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
+            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void InEquality_Pass()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -t inequality -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -t inequality -g none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
+            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void InEquality_Fail()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -t inequality -g none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -t inequality -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
+            Assert.AreEqual(TagDiffResult.ExitCode.TestFailed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void OneSrcResult_Fail()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
+            Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void InvalidSourcePath_Fail()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
+            Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void NoResults_Fail()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
+            Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void NoDefaultNoCustomRules_Fail()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -i -g none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -i -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
+            Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void NoDefaultCustomRules_Pass()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -i -r {2} -g none -l {3}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -i -r {2} -g none -l {3}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
+            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void DefaultWithCustomRules_Pass()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -r {2} -g none -l {3}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -r {2} -g none -l {3}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
+            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void TagdiffToTextFilePath_Pass()
         {
-            try
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f text -g none -o {2} -l {3}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+
+            if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")))
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f text -g none -o {2} -l {3}",
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-
-                if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")))
-                {
-                    File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
-                }
-
-                if ((TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')) == TagDiffResult.ExitCode.TestFailed)//looking for diff list
-                {
-                    if (!File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")) ||
-                        new FileInfo(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")).Length == 0)
-                    {
-                        Assert.Fail();
-                    }
-                }
+                File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             }
-            catch (Exception)
+
+            Assert.AreEqual(TagDiffResult.ExitCode.TestFailed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
+            if (!File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")) ||
+                new FileInfo(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt")).Length == 0)
             {
                 Assert.Fail();
             }
@@ -302,165 +187,105 @@
         [TestMethod]
         public void TagdiffToJsonFilePath_Pass()
         {
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f json -g none -o {2} -l {3}",
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
-                   Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f json -g none -o {2} -l {3}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json")))
-                {
-                    File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
-                }
-
-                if ((TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')) == TagDiffResult.ExitCode.TestPassed)
-                {
-                    string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
-                    var result = JsonConvert.DeserializeObject<TagDiffResult>(content);
-                    Assert.IsNotNull(result);
-                    Assert.IsTrue(result.TagDiffList.Count > 0);
-                }
-            }
-            catch (Exception)
+            if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json")))
             {
-                Assert.Fail();
+                File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
             }
+
+            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
+            string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
+            var result = JsonConvert.DeserializeObject<TagDiffResult>(content);
+            Assert.IsNotNull(result);
         }
 
         [TestMethod]
         public void TagdiffToUnknownFormatFilePath_Fail()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f unknown -g none -o {2} -l {3}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+
+            if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json")))
             {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -f unknown -g none -o {2} -l {3}",
-                  Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                  Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
-                  Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
-                  Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-
-                if (File.Exists(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json")))
-                {
-                    File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
-                }
-
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
+                File.Delete(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
             }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
+            Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void TagdiffToOutFilePath_Fail()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2} -o {3}",
-                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
-                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\badir\tagdiffout.txt"),
-                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2} -o {3}",
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\badir\tagdiffout.txt"),
+                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
 
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
+            Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void LogTraceLevel_Pass()
         {
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -v trace -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -v trace -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-                Assert.IsTrue(testContent.ToLower().Contains("trace"));
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+            Assert.AreEqual(TagDiffResult.ExitCode.TestFailed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
+            string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            Assert.IsTrue(testContent.ToLower().Contains("trace"));
         }
 
         [TestMethod]
-        public void LogErrorLevel_Pass()
+        public void LogErrorLevel_Fail()
         {
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-
-                Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-                Assert.IsTrue(testContent.ToLower().Contains("error"));
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
+            string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            Assert.IsTrue(testContent.ToLower().Contains("error"));
         }
 
         [TestMethod]
         public void LogDebugLevel_Pass()
         {
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -r {2} -g none -v debug -l {3}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\baddir\mainx.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"mybadrule.json"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -r {2} -g none -v debug -l {3}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\baddir\mainx.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"mybadrule.json"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
-                Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-                Assert.IsTrue(testContent.ToLower().Contains("debug"));
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+            Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
+            string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            Assert.IsTrue(testContent.ToLower().Contains("debug"));
         }
 
         [TestMethod]
         public void InvalidLogPath_Fail()
         {
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\log.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"\baddir\log.txt"));
 
-                Assert.AreEqual(TagDiffResult.ExitCode.CriticalError,(TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+            Assert.AreEqual(TagDiffResult.ExitCode.CriticalError,(TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
 
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
                 string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -g none -l {2}",
@@ -470,50 +295,34 @@
 
                 Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Assert.Fail();
+                Assert.Fail(e.Message);
             }
         }
 
         [TestMethod]
         public void NoConsoleOutput_Pass()
         {
-            try
-            {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
+            string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
 
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -x none -f text -g none -o {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -x none -f text -g none -o {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
 
-                Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args, out string testContent));
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, (TagDiffResult.ExitCode)Helper.RunProcess(appInspectorPath, args, out string testContent));
+            Assert.AreEqual(string.Empty, testContent);
         }
 
         [TestMethod]
         public void NoConsoleNoFileOutput_Fail()
         {
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -x none -f text -g none -l {2}",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-
-                exitCode = (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
+            string args = string.Format(@"tagdiff --src1 {0} --src2 {1} -x none -f text -g none -l {2}",
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp"),
+                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+            Assert.AreEqual(TagDiffResult.ExitCode.CriticalError, (TagDiffResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' ')));
         }
     }
 }
