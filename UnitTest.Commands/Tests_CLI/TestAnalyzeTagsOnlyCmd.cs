@@ -199,6 +199,7 @@
 
             string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
+            Assert.IsNotNull(result);
             var matches = result.Metadata.TotalMatchesCount;
             var uniqueMatches = result.Metadata.UniqueMatchesCount;
             mainduptags = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp");
@@ -211,6 +212,7 @@
 
             content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             var result2 = JsonConvert.DeserializeObject<AnalyzeResult>(content);
+            Assert.IsNotNull(result2);
 
             Assert.AreEqual(matches * 2, result2.Metadata.TotalMatchesCount);
             Assert.AreEqual(uniqueMatches, result2.Metadata.UniqueMatchesCount);
@@ -227,9 +229,10 @@
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
             string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
+            Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
             
             args = string.Format(@"analyze -s {0} -f json -o {1} -g none -t",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
@@ -240,9 +243,10 @@
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
             content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
+            Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
             
         }
 

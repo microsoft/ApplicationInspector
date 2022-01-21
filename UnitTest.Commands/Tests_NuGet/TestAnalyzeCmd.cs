@@ -368,8 +368,8 @@
             AnalyzeCommand command = new(options);
             AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(10, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(6, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -458,16 +458,16 @@
             AnalyzeCommand command = new(options);
             AnalyzeResult result = command.GetResult();
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(10, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(6, result.Metadata.UniqueMatchesCount);
 
 
             options.SingleThread = false;
             command = new AnalyzeCommand(options);
             result = command.GetResult();
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(10, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(6, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]

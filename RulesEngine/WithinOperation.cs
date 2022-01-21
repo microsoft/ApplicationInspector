@@ -36,7 +36,8 @@
                 {
                     if (captureHolder is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
-                        foreach (var capture in tcc.Result.Select(x => x.Item2))
+                        List<(int, Boundary)> toRemove = new();
+                        foreach ((int clauseNum, Boundary capture) in tcc.Result)
                         {
                             if (wc.FindingOnly)
                             {
@@ -47,6 +48,10 @@
                                     {
                                         passed.AddRange(boundaryList.Result);
                                     }
+                                }
+                                else
+                                {
+                                    toRemove.Add((clauseNum, capture));
                                 }
                             }
                             else if (wc.SameLineOnly)
@@ -61,12 +66,16 @@
                                         passed.AddRange(boundaryList.Result);
                                     }
                                 }
+                                else
+                                {
+                                    toRemove.Add((clauseNum, capture));
+                                }
                             }
                             else
                             {
                                 var startLine = tc.GetLocation(capture.Index).Line;
                                 // Before is already a negative number
-                                var start = tc.LineEnds[Math.Max(0, startLine + wc.Before)];
+                                var start = tc.LineEnds[Math.Max(1, startLine + wc.Before)];
                                 var end = tc.LineEnds[Math.Min(tc.LineEnds.Count - 1, startLine + wc.After)];
                                 var res = ProcessLambda(tc.FullContent[start..end], capture);
                                 if (res.Result)
@@ -76,8 +85,13 @@
                                         passed.AddRange(boundaryList.Result);
                                     }
                                 }
+                                else
+                                {
+                                    toRemove.Add((clauseNum, capture));
+                                }
                             }
                         }
+                        tcc.Result.RemoveAll(x => toRemove.Contains(x));
                     }
                 }
                 return new OperationResult(passed.Any() ^ wc.Invert, passed.Any() ? new TypedClauseCapture<List<Boundary>>(wc, passed) : null);
@@ -151,6 +165,6 @@
             }
         }
 
-        private RegexOperation regexEngine;
+        private readonly RegexOperation regexEngine;
     }
 }

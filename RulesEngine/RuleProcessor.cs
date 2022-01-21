@@ -130,7 +130,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             List<MatchRecord> resultsList = new();
 
             TextContainer textContainer = new(contents, languageInfo.Name);
-            var caps = analyzer.GetCaptures(rules, textContainer).ToList();
+            var caps = analyzer.GetCaptures(rules, textContainer);
             foreach (var ruleCapture in caps)
             {
                 foreach (var cap in ruleCapture.Captures)
