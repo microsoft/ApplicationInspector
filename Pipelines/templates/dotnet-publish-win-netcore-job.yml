@@ -86,7 +86,11 @@ jobs:
   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
     displayName: 'Generation Task'
     inputs:
-        BuildDropPath: 'bin'
+        BuildDropPath: 'bin/netcoreapp'
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Generation Task'
+    inputs:
+        BuildDropPath: 'bin/win'
   - task: ArchiveFiles@2
     displayName: Archive Builds
     inputs:

@@ -75,7 +75,11 @@ jobs:
   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
     displayName: 'Generation Task'
     inputs:
-        BuildDropPath: 'bin'
+        BuildDropPath: 'bin/linux'
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Generation Task'
+    inputs:
+        BuildDropPath: 'bin/macos'
   - task: ArchiveFiles@2
     displayName: Archive Builds
     inputs:
