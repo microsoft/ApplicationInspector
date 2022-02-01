@@ -72,6 +72,10 @@ jobs:
       arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o bin/macos/${{ parameters.projectName }}_macos_$(ReleaseVersion) -r osx-x64'
       publishWebProjects: false
       zipAfterPublish: false
+  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+    displayName: 'Generation Task'
+    inputs:
+        BuildDropPath: 'bin'
   - task: ArchiveFiles@2
     displayName: Archive Builds
     inputs:
