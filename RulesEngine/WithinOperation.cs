@@ -71,7 +71,7 @@
                                     toRemove.Add((clauseNum, capture));
                                 }
                             }
-                            else
+                            else if (wc.FindingRegion)
                             {
                                 var startLine = tc.GetLocation(capture.Index).Line;
                                 // Before is already a negative number
@@ -144,9 +144,17 @@
             }
             if (clause is WithinClause wc)
             {
-                if (!wc.FindingOnly && !wc.SameLineOnly && (wc.Before == 0 && wc.After == 0))
+                if (!wc.FindingOnly && !wc.SameLineOnly && !wc.FindingRegion)
                 {
-                    yield return new Violation($"Either FindingOnly, SameLineOnly or some Combination of Before and After being set to non-zero values", rule, clause);
+                    yield return new Violation($"Either FindingOnly, SameLineOnly or Finding Region must be set", rule, clause);
+                }
+                if (wc.FindingRegion && wc.Before > 0)
+                {
+                    yield return new Violation($"The first parameter for finding region, representing number of lines before, must be 0 or negative", rule, clause);
+                }
+                if (wc.FindingRegion && wc.After < 0)
+                {
+                    yield return new Violation($"The second parameter for finding region, representing number of lines after, must be 0 or positive", rule, clause);
                 }
                 if (!wc.Data?.Any() ?? true)
                 {
