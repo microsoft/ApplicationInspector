@@ -306,14 +306,14 @@
             AnalyzeResult result = command.GetResult();
             Assert.AreEqual(result.ResultCode, AnalyzeResult.ExitCode.Success);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(8, result.Metadata.UniqueTags.Count);
 
             options.SingleThread = false;
             command = new AnalyzeCommand(options);
             result = command.GetResult();
             Assert.AreEqual(result.ResultCode, AnalyzeResult.ExitCode.Success);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(8, result.Metadata.UniqueTags.Count);
         }
 
         [TestMethod]

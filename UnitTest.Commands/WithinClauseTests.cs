@@ -1,4 +1,4 @@
-﻿namespace UnitTest.Commands
+﻿namespace ApplicationInspector.Unitprocess.Clauses
 {
     using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
