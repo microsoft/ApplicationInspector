@@ -232,7 +232,7 @@
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-            Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
             
             args = string.Format(@"analyze -s {0} -f json -o {1} -g none -t",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
