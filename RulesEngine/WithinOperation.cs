@@ -94,6 +94,7 @@
                         tcc.Result.RemoveAll(x => toRemove.Contains(x));
                     }
                 }
+                // In the case that we have inverted the lambda, the captures are null and thus the passed list will be empty. We thus need to invert this again to get true correctly in that case.
                 return new OperationResult(passed.Any() ^ wc.Invert, passed.Any() ? new TypedClauseCapture<List<Boundary>>(wc, passed) : null);
 
                 OperationResult ProcessLambda(string target, Boundary targetBoundary)
@@ -122,6 +123,7 @@
                             }
                         }
                     }
+                    // Invert the result of the operation if requested
                     return new OperationResult(boundaries.Any() ^ wc.Invert, boundaries.Any() ? new TypedClauseCapture<List<Boundary>>(wc, boundaries) : null);
                 }
             }
