@@ -122,7 +122,7 @@
                             }
                         }
                     }
-                    return new OperationResult(boundaries.Any(), boundaries.Any() ? new TypedClauseCapture<List<Boundary>>(wc, boundaries) : null);
+                    return new OperationResult(boundaries.Any() ^ wc.Invert, boundaries.Any() ? new TypedClauseCapture<List<Boundary>>(wc, boundaries) : null);
                 }
             }
             return new OperationResult(false, null);
