@@ -179,9 +179,9 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             if (int.TryParse(splits[0], out int int1) && int.TryParse(splits[1], out int int2))
                             {
-                                if (int1 == 0 && int2 == 0)
+                                if (int1 > 0 && int2 < 0)
                                 {
-                                    _logger?.Error("At least one finding region specifier must be non 0. {0}", rule.Id);
+                                    _logger?.Error("The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {0}", rule.Id);
                                     return false;
                                 }
                             }
