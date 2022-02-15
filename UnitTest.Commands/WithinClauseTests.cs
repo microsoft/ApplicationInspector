@@ -72,6 +72,32 @@
             }
         }
 
+        [DataRow(true, 1, new int[] { 2 })]
+        [DataRow(false, 1, new int[] { 3 })]
+        [DataTestMethod]
+        public void WithinClauseInvertTestForFindingRange0(bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
+        {
+            RuleSet rules = new(null);
+            var newRule = findingRangeZeroRule.Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
+            rules.AddString(newRule, "TestRules");
+            RuleProcessor processor = new(rules, new RuleProcessorOptions());
+            if (Language.FromFileNameOut("test.c", out LanguageInfo info))
+            {
+                List<MatchRecord> matches = processor.AnalyzeFile(insideFindingData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
+                Assert.AreEqual(expectedMatches, matches.Count);
+                foreach (int expectedMatchLineStart in expectedMatchesLineStarts)
+                {
+                    MatchRecord? correctLineMatch = matches.FirstOrDefault(match => match.StartLocationLine == expectedMatchLineStart);
+                    Assert.IsNotNull(correctLineMatch);
+                    matches.Remove(correctLineMatch);
+                }
+            }
+            else
+            {
+                Assert.Fail();
+            }
+        }
+
         Dictionary<string, (string testData, string conditionRegion, bool negate, int expectedNumMatches, int[] expectedMatchesLineStarts)> testData = new()
         {
             {
@@ -124,6 +150,45 @@
                     ]
                 },
                 ""search_in"": ""finding-only"",
+                ""negate_finding"": REPLACE_NEGATE
+            }
+        ],
+        ""_comment"": """"
+    }
+]";
+
+        private const string findingRangeZeroRule = @"[
+    {
+        ""id"": ""SA000005"",
+        ""name"": ""Testing.Rules.MallocNotFree1"",
+        ""tags"": [
+            ""Testing.Rules.MallocNotFree1""
+        ],
+        ""severity"": ""Critical"",
+        ""description"": ""this rule aims to find malloc() that does NOT have free() in 1 line range"",
+        ""patterns"": [
+            {
+                ""pattern"": ""racecar"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""modifiers"": [
+                    ""i""
+                ],
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""conditions"": [
+            {
+                ""pattern"": {
+                    ""pattern"": ""car"",
+                    ""type"": ""regex"",
+                    ""scopes"": [
+                        ""code""
+                    ]
+                },
+                ""search_in"": ""finding-region(0,0)"",
                 ""negate_finding"": REPLACE_NEGATE
             }
         ],
