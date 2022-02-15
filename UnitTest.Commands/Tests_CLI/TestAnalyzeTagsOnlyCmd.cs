@@ -246,7 +246,7 @@
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-            Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
             
         }
 

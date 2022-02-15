@@ -368,8 +368,8 @@
             AnalyzeCommand command = new(options);
             AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(10, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(6, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -387,8 +387,8 @@
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(0, result.Metadata.FilesSkipped);
             Assert.AreEqual(2, result.Metadata.FilesAffected);
-            Assert.AreEqual(67, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(21, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(68, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(22, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -407,8 +407,8 @@
             Assert.AreEqual(2, result.Metadata.TotalFiles);
             Assert.AreEqual(1, result.Metadata.FilesSkipped);
             Assert.AreEqual(1, result.Metadata.FilesAffected);
-            Assert.AreEqual(35, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(20, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(36, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(21, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
@@ -458,8 +458,8 @@
             AnalyzeCommand command = new(options);
             AnalyzeResult result = command.GetResult();
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.AreEqual(10, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(6, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
 
 
             options.SingleThread = false;

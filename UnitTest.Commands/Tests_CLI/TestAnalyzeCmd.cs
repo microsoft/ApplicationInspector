@@ -232,8 +232,8 @@
             content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
             result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
             Assert.IsNotNull(result);
-            Assert.AreEqual(10, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(6, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(11, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(7, result.Metadata.UniqueMatchesCount);
         }
 
         [TestMethod]
