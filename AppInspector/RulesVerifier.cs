@@ -22,8 +22,8 @@ namespace Microsoft.ApplicationInspector.Commands
         private readonly string? _rulesPath;
         private readonly Logger? _logger;
         private readonly bool _failFast;
-        private bool _verified;
-        public bool IsVerified => _verified;
+
+        public bool IsVerified { get; private set; }
         private List<RuleStatus>? _ruleStatuses;
 
         public RulesVerifier(string? rulePath, Logger? logger, bool failFast = true)
@@ -69,7 +69,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private void CheckIntegrity()
         {
-            _verified = true;
+            IsVerified = true;
 
             foreach (Rule rule in CompiledRuleset.AsEnumerable() ?? Array.Empty<Rule>())
             {
@@ -81,7 +81,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     Verified = ruleVerified
                 });
 
-                _verified = ruleVerified && _verified;
+                IsVerified = ruleVerified && IsVerified;
 
                 if (_failFast && !ruleVerified)
                 {
