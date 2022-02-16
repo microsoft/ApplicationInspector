@@ -22,7 +22,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
         }
         public bool Parallel = true;
-        public Confidence confidenceFilter;
+        public Confidence confidenceFilter = Confidence.Unspecified | Confidence.Low | Confidence.Medium | Confidence.High;
         public Logger? logger;
         public bool allowAllTagsInBuildFiles = false;
 

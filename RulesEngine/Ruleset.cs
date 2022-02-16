@@ -263,7 +263,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                                 Invert = condition.NegateFinding,
                                 Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
-                                FindingOnly = false,
+                                FindingRegion = true,
                                 CustomOperation = "Within",
                                 Before = argList[0],
                                 After = argList[1],

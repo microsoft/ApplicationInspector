@@ -71,7 +71,7 @@
                                     toRemove.Add((clauseNum, capture));
                                 }
                             }
-                            else
+                            else if (wc.FindingRegion)
                             {
                                 var startLine = tc.GetLocation(capture.Index).Line;
                                 // Before is already a negative number
@@ -94,6 +94,7 @@
                         tcc.Result.RemoveAll(x => toRemove.Contains(x));
                     }
                 }
+                // In the case that we have inverted the lambda, the captures are null and thus the passed list will be empty. We thus need to invert this again to get true correctly in that case.
                 return new OperationResult(passed.Any() ^ wc.Invert, passed.Any() ? new TypedClauseCapture<List<Boundary>>(wc, passed) : null);
 
                 OperationResult ProcessLambda(string target, Boundary targetBoundary)
@@ -122,7 +123,8 @@
                             }
                         }
                     }
-                    return new OperationResult(boundaries.Any(), boundaries.Any() ? new TypedClauseCapture<List<Boundary>>(wc, boundaries) : null);
+                    // Invert the result of the operation if requested
+                    return new OperationResult(boundaries.Any() ^ wc.Invert, boundaries.Any() ? new TypedClauseCapture<List<Boundary>>(wc, boundaries) : null);
                 }
             }
             return new OperationResult(false, null);
@@ -142,9 +144,17 @@
             }
             if (clause is WithinClause wc)
             {
-                if (!wc.FindingOnly && !wc.SameLineOnly && (wc.Before == 0 && wc.After == 0))
+                if (!wc.FindingOnly && !wc.SameLineOnly && !wc.FindingRegion)
                 {
-                    yield return new Violation($"Either FindingOnly, SameLineOnly or some Combination of Before and After being set to non-zero values", rule, clause);
+                    yield return new Violation($"Either FindingOnly, SameLineOnly or Finding Region must be set", rule, clause);
+                }
+                if (wc.FindingRegion && wc.Before > 0)
+                {
+                    yield return new Violation($"The first parameter for finding region, representing number of lines before, must be 0 or negative", rule, clause);
+                }
+                if (wc.FindingRegion && wc.After < 0)
+                {
+                    yield return new Violation($"The second parameter for finding region, representing number of lines after, must be 0 or positive", rule, clause);
                 }
                 if (!wc.Data?.Any() ?? true)
                 {

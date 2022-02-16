@@ -288,7 +288,7 @@
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-            Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
         }
 
         [TestMethod]
@@ -306,14 +306,14 @@
             AnalyzeResult result = command.GetResult();
             Assert.AreEqual(result.ResultCode, AnalyzeResult.ExitCode.Success);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(8, result.Metadata.UniqueTags.Count);
 
             options.SingleThread = false;
             command = new AnalyzeCommand(options);
             result = command.GetResult();
             Assert.AreEqual(result.ResultCode, AnalyzeResult.ExitCode.Success);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
-            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
+            Assert.AreEqual(8, result.Metadata.UniqueTags.Count);
         }
 
         [TestMethod]
@@ -327,34 +327,31 @@
                 TagsOnly = true
             };
 
-            try
-            {
-                AnalyzeCommand command = new(options);
-                AnalyzeResult result = command.GetResult();
-                Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-                Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
-                Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-                Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+            AnalyzeCommand command = new(options);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
+            Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
 
-            options.SingleThread = false;
-            try
-            {
+        }
+        
+        [TestMethod]
+        public void ExpectedTagCountMultiThread()
+        {
+                AnalyzeOptions options = new()
+                {
+                    SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
+                    FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                    SingleThread = false,
+                    TagsOnly = true
+                };
                 AnalyzeCommand command = new(options);
                 AnalyzeResult result = command.GetResult();
                 Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
                 Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
                 Assert.AreEqual(0, result.Metadata.UniqueMatchesCount);
-                Assert.AreEqual(6, result.Metadata.UniqueTags.Count);
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-            }
+                Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
         }
 
         [TestMethod]

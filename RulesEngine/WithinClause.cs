@@ -16,5 +16,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public bool FindingOnly { get; set; }
         public bool SameLineOnly { get; set; }
         public PatternScope[] Scopes { get; set; } = new PatternScope[1] { PatternScope.All };
+        public bool FindingRegion { get; set; }
     }
 }
