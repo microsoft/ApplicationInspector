@@ -50,6 +50,8 @@ namespace Microsoft.ApplicationInspector.Commands
         /// If non-zero, and <see cref="TagsOnly"/> is not set, will ignore matches if all of the matches tags have already been found the set value number of times.
         /// </summary>
         public int MaxNumMatchesPerTag { get; set; } = 0;
+        public string? CustomCommentsPath { get; set; }
+        public string? CustomLanguagesPath { get; set; }
     }
 
     /// <summary>
@@ -88,6 +90,7 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         private readonly List<string> _srcfileList = new();
         private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
+        private Languages _languages = new();
         private RuleProcessor? _rulesProcessor;
         private const int _sleepDelay = 100;
         private DateTime DateScanned { get; }
@@ -255,7 +258,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else if (File.Exists(_options.CustomRulesPath)) //verify custom rules before use
                 {
-                    RulesVerifier verifier = new(_options.CustomRulesPath, _options.Log);
+                    RulesVerifier verifier = new(new RulesVerifier.RulesVerifierOptions()
+                    {
+                        Logger = _options.Log,
+                        CustomRulesPath = _options.CustomRulesPath,
+                        FailFast = false,
+                        CustomCommentPath = _options.CustomCommentsPath,
+                        CustomLanguagesPath = _options.CustomLanguagesPath
+                    });
                     verifier.Verify();
                     if (!verifier.IsVerified)
                     {
@@ -285,7 +295,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 Parallel = !_options.SingleThread,
             };
 
-            _rulesProcessor = new RuleProcessor(rulesSet, rpo);
+            _languages = new Languages(_options.CustomCommentsPath, _options.CustomLanguagesPath);
+
+            _rulesProcessor = new RuleProcessor(rulesSet, rpo, _languages);
 
             //create metadata helper to wrap and help populate metadata from scan
             _metaDataHelper = new MetaDataHelper(string.Join(',',_options.SourcePath));
@@ -370,7 +382,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         LanguageInfo languageInfo = new();
 
-                        if (Language.FromFileName(file.FullPath, ref languageInfo))
+                        if (_languages.FromFileName(file.FullPath, ref languageInfo))
                         {
                             _metaDataHelper.AddLanguage(languageInfo.Name);
                         }
@@ -532,7 +544,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         LanguageInfo languageInfo = new();
 
-                        if (Language.FromFileName(file.FullPath, ref languageInfo))
+                        if (_languages.FromFileName(file.FullPath, ref languageInfo))
                         {
                             _metaDataHelper.AddLanguage(languageInfo.Name);
                         }

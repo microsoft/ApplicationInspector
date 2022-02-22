@@ -18,6 +18,8 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? CustomRulesPath { get; set; }
         public bool NotIndented { get; set; }
         public bool PackEmbeddedRules { get; set; }
+        public string? CustomLanguagesPath { get; set; }
+        public string? CustomCommentsPath { get; set; }
     }
 
     public class PackRulesResult : Result
@@ -134,7 +136,13 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                RulesVerifier verifier = new(_rules_path, _options?.Log);
+                RulesVerifier verifier = new(new RulesVerifier.RulesVerifierOptions()
+                {
+                    CustomRulesPath = _rules_path,
+                    CustomLanguagesPath = _options.CustomLanguagesPath,
+                    CustomCommentPath = _options.CustomCommentsPath,
+                    Logger = _options.Log
+                });
                 if (_options?.PackEmbeddedRules ?? false)
                 {
                     verifier.LoadRuleSet(RuleSetUtils.GetDefaultRuleSet());

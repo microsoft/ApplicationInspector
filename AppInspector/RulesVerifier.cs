@@ -18,20 +18,32 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     internal class RulesVerifier
     {
-        public RuleSet CompiledRuleset { get; set; }
-        private readonly string? _rulesPath;
-        private readonly Logger? _logger;
-        private readonly bool _failFast;
+        public RuleSet CompiledRuleset { get; private set; }
+        public Languages Languages { get; }
+
+        private string? _rulesPath => _opts.CustomRulesPath;
+        private Logger? _logger => _opts.Logger;
+        private bool _failFast => _opts.FailFast;
 
         public bool IsVerified { get; private set; }
         private List<RuleStatus>? _ruleStatuses;
 
-        public RulesVerifier(string? rulePath, Logger? logger, bool failFast = true)
+        public class RulesVerifierOptions
         {
-            _logger = logger;
-            _rulesPath = rulePath;
-            _failFast = failFast;
+            public string? CustomRulesPath { get; set; }
+            public Logger? Logger { get; set; }
+            public bool FailFast { get; set; }
+            public string? CustomCommentPath { get; set; }
+            public string? CustomLanguagesPath { get; set; }
+        }
+
+        private RulesVerifierOptions _opts;
+
+        public RulesVerifier(RulesVerifierOptions rulesVerifierOptions)
+        {
+            _opts = rulesVerifierOptions;
             CompiledRuleset = new RuleSet(_logger);
+            Languages = new Languages(rulesVerifierOptions.CustomCommentPath, rulesVerifierOptions.CustomLanguagesPath);
         }
 
         /// <summary>
@@ -112,7 +124,7 @@ namespace Microsoft.ApplicationInspector.Commands
             //applicability
             if (rule.AppliesTo != null)
             {
-                string[] languages = Language.GetNames();
+                string[] languages = Languages.GetNames();
                 // Check for unknown language
                 foreach (string lang in rule.AppliesTo)
                 {

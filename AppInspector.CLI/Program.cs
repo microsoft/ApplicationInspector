@@ -255,6 +255,8 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 SourcePath = cliOptions.SourcePath ?? Array.Empty<string>(),
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
                 FilePathExclusions = cliOptions.FilePathExclusions,
@@ -327,6 +329,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 SourcePath1 = cliOptions.SourcePath1,
                 SourcePath2 = cliOptions.SourcePath2,
                 CustomRulesPath = cliOptions.CustomRulesPath,
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 FilePathExclusions = cliOptions.FilePathExclusions,
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
@@ -369,6 +373,8 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 VerifyDefaultRules = cliOptions.VerifyDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
                 Failfast = cliOptions.Failfast,
                 Log = cliOptions.Log
@@ -386,6 +392,8 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 RepackDefaultRules = cliOptions.RepackDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
                 Log = cliOptions.Log,
                 PackEmbeddedRules = cliOptions.PackEmbeddedRules

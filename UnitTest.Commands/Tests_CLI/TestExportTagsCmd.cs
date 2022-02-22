@@ -239,7 +239,7 @@
                 {
                     string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
                     var result = JsonConvert.DeserializeObject<ExportTagsResult>(content);
-                    exitCode = result.TagsList.Count > 0 ? ExportTagsResult.ExitCode.Success : ExportTagsResult.ExitCode.CriticalError;
+                    exitCode = result?.TagsList.Count > 0 ? ExportTagsResult.ExitCode.Success : ExportTagsResult.ExitCode.CriticalError;
                 }
             }
             catch (Exception)

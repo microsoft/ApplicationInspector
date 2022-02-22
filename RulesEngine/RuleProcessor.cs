@@ -47,7 +47,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new();
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _languageRulesCache = new();
         private IEnumerable<ConvertedOatRule>? _universalRulesCache;
-
+        private readonly Languages _languages;
         /// <summary>
         /// Sets severity levels for analysis
         /// </summary>
@@ -61,10 +61,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Creates instance of RuleProcessor
         /// </summary>
-        public RuleProcessor(RuleSet rules, RuleProcessorOptions opts)
+        public RuleProcessor(RuleSet rules, RuleProcessorOptions opts, Languages? languages = null)
         {
             _opts = opts;
             _ruleset = rules;
+            _languages = languages ?? new();
             EnableCache = true;
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
 
@@ -129,7 +130,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
             List<MatchRecord> resultsList = new();
 
-            TextContainer textContainer = new(contents, languageInfo.Name);
+            TextContainer textContainer = new(contents, languageInfo.Name, _languages);
             var caps = analyzer.GetCaptures(rules, textContainer);
             foreach (var ruleCapture in caps)
             {
@@ -257,7 +258,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             using var sr = new StreamReader(fileEntry.Content);
 
-            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name);
+            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name, _languages);
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
                 if (cancellationToken.IsCancellationRequested)

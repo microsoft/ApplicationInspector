@@ -17,6 +17,8 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         public bool VerifyDefaultRules { get; set; }
         public string? CustomRulesPath { get; set; }
+        public string? CustomCommentsPath { get; set; }
+        public string? CustomLanguagesPath { get; set; }
         public bool Failfast { get; set; }
     }
 
@@ -135,7 +137,12 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                RulesVerifier verifier = new(null, _options.Log);
+                RulesVerifier verifier = new(new RulesVerifier.RulesVerifierOptions()
+                {
+                    Logger = _options.Log,
+                    CustomLanguagesPath = _options.CustomLanguagesPath,
+                    CustomCommentPath = _options.CustomCommentsPath
+                });
                 verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
                 var stati = new List<RuleStatus>();
                 var analyzer = new Analyzer();

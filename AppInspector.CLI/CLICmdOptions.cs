@@ -32,6 +32,12 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
 
+        [Option("custom-languages-path", Required = false, HelpText = "Replace the default languages set with a custom languages.json.")]
+        public string? CustomLanguagesPath { get; set; }
+
+        [Option("custom-comments-path", Required = false, HelpText = "Replace the default comment specification set with a custom comments.json.")]
+        public string? CustomCommentsPath { get; set; }
+
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
@@ -106,6 +112,12 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
 
+        [Option("custom-languages-path", Required = false, HelpText = "Replace the default languages set with a custom languages.json.")]
+        public string? CustomLanguagesPath { get; set; }
+
+        [Option("custom-comments-path", Required = false, HelpText = "Replace the default comment specification set with a custom comments.json.")]
+        public string? CustomCommentsPath { get; set; }
+
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
@@ -125,7 +137,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public string ConfidenceFilters { get; set; } = "high,medium";
     }
 
-    [Verb("exporttags", HelpText = "Export unique rule tags to view what code features may be detected")]
+    [Verb("exporttags", HelpText = "Export the full set of tags associated with the specified rules. Does not scan source code.")]
     public class CLIExportTagsCmdOptions : CLICommandOptions
     {
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
@@ -144,6 +156,12 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
 
+        [Option("custom-languages-path", Required = false, HelpText = "Replace the default languages set with a custom languages.json.")]
+        public string? CustomLanguagesPath { get; set; }
+
+        [Option("custom-comments-path", Required = false, HelpText = "Replace the default comment specification set with a custom comments.json.")]
+        public string? CustomCommentsPath { get; set; }
+
         [Option('a', "fail-fast", Required = false, HelpText = "Fail fast", Default = false)]
         public bool Failfast { get; set; }
     }
@@ -159,6 +177,12 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
+
+        [Option("custom-languages-path", Required = false, HelpText = "Replace the default languages set with a custom languages.json.")]
+        public string? CustomLanguagesPath { get; set; }
+
+        [Option("custom-comments-path", Required = false, HelpText = "Replace the default comment specification set with a custom comments.json.")]
+        public string? CustomCommentsPath { get; set; }
 
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [json]", Default = "json")]
         public new string OutputFileFormat { get; set; } = "json";

@@ -23,6 +23,8 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool ScanUnknownTypes { get; set; }
         public bool SingleThread { get; set; }
         public string ConfidenceFilters { get; set; } = "high,medium";
+        public string? CustomCommentsPath { get; set; }
+        public string? CustomLanguagesPath { get; set; }
     }
 
     /// <summary>
@@ -181,6 +183,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     SourcePath = _options.SourcePath1,
                     CustomRulesPath = _options.CustomRulesPath,
+                    CustomCommentsPath = _options.CustomCommentsPath,
+                    CustomLanguagesPath = _options.CustomLanguagesPath,
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
@@ -198,6 +202,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     SourcePath = _options.SourcePath2,
                     CustomRulesPath = _options.CustomRulesPath,
+                    CustomCommentsPath = _options.CustomCommentsPath,
+                    CustomLanguagesPath = _options.CustomLanguagesPath,
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",

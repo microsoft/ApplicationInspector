@@ -29,7 +29,8 @@
             var newRule = baseRule.Replace("REPLACE_REGION", condition_region).Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
             rules.AddString(newRule, "TestRules");
             RuleProcessor processor = new(rules, new RuleProcessorOptions());
-            if (Language.FromFileNameOut("test.c", out LanguageInfo info))
+            Languages languages = new();
+            if (languages.FromFileNameOut("test.c", out LanguageInfo info))
             {
                 List<MatchRecord> matches = processor.AnalyzeFile(testData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
                 Assert.AreEqual(expectedMatches, matches.Count);
@@ -55,7 +56,8 @@
             var newRule = findingOnlyRule.Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
             rules.AddString(newRule, "TestRules");
             RuleProcessor processor = new(rules, new RuleProcessorOptions());
-            if (Language.FromFileNameOut("test.c", out LanguageInfo info))
+            Languages languages = new();
+            if (languages.FromFileNameOut("test.c", out LanguageInfo info))
             {
                 List<MatchRecord> matches = processor.AnalyzeFile(insideFindingData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
                 Assert.AreEqual(expectedMatches, matches.Count);
@@ -81,7 +83,8 @@
             var newRule = findingRangeZeroRule.Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
             rules.AddString(newRule, "TestRules");
             RuleProcessor processor = new(rules, new RuleProcessorOptions());
-            if (Language.FromFileNameOut("test.c", out LanguageInfo info))
+            Languages languages = new();
+            if (languages.FromFileNameOut("test.c", out LanguageInfo info))
             {
                 List<MatchRecord> matches = processor.AnalyzeFile(insideFindingData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
                 Assert.AreEqual(expectedMatches, matches.Count);
