@@ -6,6 +6,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
 
     /// <summary>
     /// The Custom Operation to enable identification of pattern index in result used by Application Inspector to report why a given
@@ -36,6 +37,38 @@
             }
         }
 
+        private static IEnumerable<(int,Boundary)> MakeMatches(List<string> stringList, StringComparison comparisonType, string target, bool useWordBoundaries)
+        {
+            for (int i = 0; i < stringList.Count; i++)
+            {
+                var idx = target.IndexOf(stringList[i], comparisonType);
+                while (idx != -1)
+                {
+                    bool skip = false;
+                    if (useWordBoundaries)
+                    {
+                        if (idx > 0 && char.IsLetterOrDigit(target[idx - 1]))
+                        {
+                            skip = true;
+                        }
+                        if (idx + stringList[i].Length < target.Length && char.IsLetterOrDigit(target[idx + stringList[i].Length]))
+                        {
+                            skip = true;
+                        }
+                    }
+                    if (!skip)
+                    {
+                        yield return (i, new()
+                            {
+                                Length = stringList[i].Length,
+                                Index = idx
+                            });
+                    }
+                    idx = target.IndexOf(stringList[i], idx + stringList[i].Length, comparisonType);
+                }
+            }
+        }
+
         /// <summary>
         /// Returns results with pattern index and Boundary as a tuple to enable retrieval of Rule pattern level meta-data like Confidence and report the
         /// pattern that was responsible for the match
@@ -52,43 +85,19 @@
             {
                 if (clause.Data is List<string> stringList && stringList.Count > 0)
                 {
-                    var outmatches = new List<(int, Boundary)>();//tuple results i.e. pattern index and where
-
-                    for (int i = 0; i < stringList.Count; i++)
+                    if (src.Paths is SearchPath[] paths && paths.Any())
                     {
-                        var idx = tc.FullContent.IndexOf(stringList[i], comparisonType);
-                        while (idx != -1)
+                        foreach(var path in paths)
                         {
-                            bool skip = false;
-                            if (src.UseWordBoundaries)
-                            {
-                                if (idx > 0 && char.IsLetterOrDigit(tc.FullContent[idx - 1]))
-                                {
-                                    skip = true;
-                                }
-                                if (idx + stringList[i].Length < tc.FullContent.Length && char.IsLetterOrDigit(tc.FullContent[idx + stringList[i].Length]))
-                                {
-                                    skip = true;
-                                }
-                            }
-                            if (!skip)
-                            {
-                                Boundary newBoundary = new()
-                                {
-                                    Length = stringList[i].Length,
-                                    Index = idx
-                                };
-                                if (tc.ScopeMatch(src.Scopes, newBoundary))
-                                {
-                                    outmatches.Add((i, newBoundary));
-                                }
-                            }
-                            idx = tc.FullContent.IndexOf(stringList[i], idx + stringList[i].Length, comparisonType);
+                            var ele = tc.GetElementByPath(path);
                         }
                     }
-
-                    var result = src.Invert ? outmatches.Count == 0 : outmatches.Count > 0;
-                    return new OperationResult(result, result && src.Capture ? new TypedClauseCapture<List<(int, Boundary)>>(clause, outmatches, state1) : null);
+                    else
+                    {
+                        var matches = MakeMatches(stringList, comparisonType, tc.FullContent, src.UseWordBoundaries).Where(x => tc.ScopeMatch(src.Scopes, x.Item2)).ToList();
+                        var result = matches.Any() ? !src.Invert : src.Invert;
+                        return new OperationResult(result, result && src.Capture ? new TypedClauseCapture<List<(int, Boundary)>>(clause, matches, state1) : null);
+                    }
                 }
             }
             return new OperationResult(false, null);

@@ -2,11 +2,13 @@
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
+    using JsonCons.JsonPath;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Cryptography.X509Certificates;
+    using System.Text.Json;
 
     /// <summary>
     ///     Class to handle text as a searchable container
@@ -134,6 +136,40 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 CommentedStates[inIndex] = CommentedStates[index];
             }
+        }
+
+        private JsonDocument? jsonDocument;
+        private bool attemptedParseJsonDocument;
+
+        /// <summary>
+        /// If the document is XML or JSON you can get a substring of the content using an XQuery/JSONPath query
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>Success if the path was matched, and Content for the matches.</returns>
+        public (bool Success, IEnumerable<string> Content) GetElementByPath(SearchPath path)
+        {
+            if (path?.Path is null)
+            {
+                return (false, Enumerable.Empty<string>());
+            }
+            if (Language.Equals("json", StringComparison.CurrentCultureIgnoreCase))
+            {
+                if (jsonDocument is null && !attemptedParseJsonDocument)
+                {
+                    attemptedParseJsonDocument = true;
+                    try
+                    {
+                        jsonDocument = JsonDocument.Parse(FullContent);
+                    }
+                    catch (Exception)
+                    {
+                        return (false, Enumerable.Empty<string>());
+                    }
+                    IList<JsonElement> elements = JsonSelector.Select(jsonDocument.RootElement, path.Path);
+                    return (elements.Count > 0, elements.Select(x => x.ToString()));
+                }
+            }
+            return (false, Enumerable.Empty<string>());
         }
 
         /// <summary>

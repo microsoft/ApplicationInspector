@@ -16,5 +16,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public PatternScope[] Scopes { get; }
 
         public bool UseWordBoundaries {get;}
+        public SearchPath[]? Paths { get; set; }
     }
 }

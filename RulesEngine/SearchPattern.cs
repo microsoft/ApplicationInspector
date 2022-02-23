@@ -20,6 +20,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         [JsonProperty(PropertyName = "modifiers")]
         public string[]? Modifiers { get; set; }
 
+        [JsonProperty(PropertyName = "paths")]
+        public SearchPath[]? Paths { get; set; }
+
         [JsonProperty(PropertyName = "pattern")]
         public string? Pattern
         {

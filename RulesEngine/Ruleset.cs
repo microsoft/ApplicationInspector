@@ -143,8 +143,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             return _oatRules.Where(x => (x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Length == 0) && (x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0));
         }
-
-        public ConvertedOatRule? AppInspectorRuleToOatRule(Rule rule)
+        
+        private ConvertedOatRule? RegularAppInspectorRuleToOatRule(Rule rule)
         {
             var clauses = new List<Clause>();
             int clauseNumber = 0;
@@ -161,7 +161,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { pattern.Pattern },
-                            Capture = true
+                            Capture = true,
+                            Paths = rule.Paths
                         });
                         if (clauseNumber > 0)
                         {
@@ -197,7 +198,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
                             CustomOperation = "RegexWithIndex"
                         });
-                    
+
                         if (clauseNumber > 0)
                         {
                             expression.Append(" OR ");
@@ -284,7 +285,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
                             SameLineOnly = true,
                             CustomOperation = "Within",
-                            Scopes = condition.Pattern.Scopes ?? new PatternScope[]{ PatternScope.All }
+                            Scopes = condition.Pattern.Scopes ?? new PatternScope[] { PatternScope.All }
                         });
                         expression.Append(" AND ");
                         expression.Append(clauseNumber);
@@ -297,6 +298,24 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 Clauses = clauses,
                 Expression = expression.ToString()
             };
+        }
+
+        private ConvertedOatRule? PathAppInspectorRuleToOatRule(Rule rule)
+        {
+
+        }
+
+        public ConvertedOatRule? AppInspectorRuleToOatRule(Rule rule)
+        {
+            // This is a JSON/XML Parsing rule
+            if (rule.Paths?.Any() is true)
+            {
+                return PathAppInspectorRuleToOatRule(rule);
+            }
+            else
+            {
+                return RegularAppInspectorRuleToOatRule(rule);
+            }
         }
 
         public IEnumerable<ConvertedOatRule> GetOatRules() => _oatRules;
