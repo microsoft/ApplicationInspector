@@ -837,13 +837,16 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
-            
+            else
+            {
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
+            }
+
             if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
             {
                 _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
                 _metaDataHelper.PrepareReport();
                 analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
             }
 
             if (timedOut)
