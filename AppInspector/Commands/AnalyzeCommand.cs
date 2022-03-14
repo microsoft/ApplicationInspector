@@ -745,7 +745,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!_options.NoShowProgress)
             {
-                var done = false;
+                var doneEnumerating = false;
                 ConcurrentBag<FileEntry> fileQueue = new();
 
                 _ = Task.Factory.StartNew(() =>
@@ -761,7 +761,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         WriteOnce.Error($"Overflowed while extracting file entries. Check the input for quines or zip bombs. {e.Message}");
                     }
-                    done = true;
+                    doneEnumerating = true;
                 });
 
                 var options = new ProgressBarOptions
@@ -775,7 +775,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 using (var pbar = new IndeterminateProgressBar("Enumerating Files.", options))
                 {
-                    while (!done)
+                    while (!doneEnumerating)
                     {
                         Thread.Sleep(_sleepDelay);
                         pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
@@ -785,7 +785,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     pbar.Finished();
                 }
                 Console.WriteLine();
-                done = false;
+                var doneProcessing = false;
 
                 var options2 = new ProgressBarOptions
                 {
@@ -803,10 +803,10 @@ namespace Microsoft.ApplicationInspector.Commands
                     _ = Task.Factory.StartNew(() =>
                     {
                         DoProcessing(fileQueue);
-                        done = true;
+                        doneProcessing = true;
                     });
 
-                    while (!done)
+                    while (!doneProcessing)
                     {
                         Thread.Sleep(_sleepDelay);
                         var current = _metaDataHelper.Files.Count;
@@ -837,16 +837,22 @@ namespace Microsoft.ApplicationInspector.Commands
                 WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
-            else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
+            else
+            {
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
+            }
+
+            if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
             {
                 _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
                 _metaDataHelper.PrepareReport();
                 analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
             }
 
             if (timedOut)
             {
+                WriteOnce.Error("Overall processing timed out.");
+                analyzeResult.Metadata.TimedOut = true;
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.TimedOut;
             }
 
@@ -861,7 +867,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.ProcessingTimeOut)))
                     {
                         timedOut = true;
-                        WriteOnce.Error($"Processing timed out.");
                         cts.Cancel();
                         if (_metaDataHelper is not null)
                         {

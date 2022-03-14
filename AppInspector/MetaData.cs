@@ -71,8 +71,14 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(PropertyName = "dateScanned")]
         public string? DateScanned { get; set; }
 
-        //stats
 
+        /// <summary>
+        /// True if the overall analysis timed out
+        /// </summary>
+        [JsonProperty(PropertyName = "timedOut")]
+        public bool TimedOut { get; set; }
+        
+        //stats
         /// <summary>
         /// Total number of files in source path
         /// </summary>
@@ -80,7 +86,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public int TotalFiles { get { return Files.Count; } }
 
         /// <summary>
-        /// Total number of files Timed out 
+        /// Total number of files Timed out on an individual timeout
         /// </summary>
         [JsonProperty(PropertyName = "filesTimedOut")]
         public int FilesTimedOut { get { return Files.Count(x => x.Status == ScanState.TimedOut); } }
@@ -98,13 +104,19 @@ namespace Microsoft.ApplicationInspector.Commands
         public int FilesSkipped { get { return Files.Count(x => x.Status == ScanState.Skipped); } }
 
         /// <summary>
+        /// Total number of skipped files based on overall timeout
+        /// </summary>
+        [JsonProperty(PropertyName = "filesTimeOutSkipped")]
+        public int FilesTimeOutSkipped { get { return Files.Count(x => x.Status == ScanState.TimeOutSkipped); } }
+
+        /// <summary>
         /// Total files with at least one result
         /// </summary>
         [JsonProperty(PropertyName = "filesAffected")]
         public int FilesAffected { get { return Files.Count(x => x.Status == ScanState.Affected); } }
 
         /// <summary>
-        /// Total files with at least one result
+        /// Number of files which encountered an error when processing other than timing out.
         /// </summary>
         [JsonProperty(PropertyName = "filesErrored")]
         public int FileErrored { get { return Files.Count(x => x.Status == ScanState.Error); } }
