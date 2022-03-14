@@ -1,0 +1,20 @@
+name: Action Test
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: microsoft/ApplicationInspector-Action@v1
+      with:
+        arguments: -g **/rulesFolder/**,**/.github/actions/**,**/node_modules/**,**/.git/**,**/target/**,**/package-lock.json,*.mock*,*.jpg,*.png,*.gif,*.woff,*.woff2,*.svg,*.ttf -f json --processing-timeout 600000 -M 20
+    - uses: actions/upload-artifact@v2
+      with:
+        name: AppInspectorResults
+        path: AppInspectorResults.json
