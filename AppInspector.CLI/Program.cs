@@ -13,9 +13,30 @@ namespace Microsoft.ApplicationInspector.CLI
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.ApplicationInspector.Common;
+    using Serilog;
+    using Microsoft.Extensions.Logging;
 
     public static class Program
     {
+        private static ILoggerFactory GetLoggerFactory(LogOptions logOptions)
+        {
+            var consoleLevel = Enum.TryParse<Serilog.Events.LogEventLevel>(logOptions.ConsoleVerbosityLevel, out var level) ? level :
+#if DEBUG
+                Serilog.Events.LogEventLevel.Debug;
+#else
+                Serilog.Events.LogEventLevel.Information;
+#endif
+            var fileLogLevel = Enum.TryParse<Serilog.Events.LogEventLevel>(logOptions.LogFileLevel, out var fileLevel) ? fileLevel : Serilog.Events.LogEventLevel.Error;
+            var serilogger = new LoggerConfiguration()
+                .MinimumLevel.Is(consoleLevel < fileLogLevel ? consoleLevel : fileLogLevel)
+                .WriteTo.Console(consoleLevel)
+                .WriteTo.File(logOptions.LogFilePath ?? "appinspector.log.txt", fileLogLevel)
+                .CreateLogger();
+            return new LoggerFactory().AddSerilog(serilogger);
+        }
+
+        private static ILoggerFactory loggerFactory = new LoggerFactory();
+
         /// <summary>
         /// CLI program entry point which defines command verbs and options to running
         /// </summary>
@@ -83,7 +104,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return finalResult;
         }
 
-        #region OutputArgsCheckandRun
+#region OutputArgsCheckandRun
 
         //idea is to check output args which are not applicable to NuGet callers before the command operation is run for max efficiency
 
@@ -143,21 +164,17 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int VerifyOutputArgsRun(CLIAnalyzeCmdOptions options)
         {
-            Logger logger = Common.Utils.SetupLogging(options, true);
-            WriteOnce.Log = logger;
-            options.Log = logger;
-
             //analyze with html format limit checks
+            loggerFactory = GetLoggerFactory(options);
             if (options.OutputFileFormat == "html")
             {
                 options.OutputFilePath ??= "output.html";
                 string extensionCheck = Path.GetExtension(options.OutputFilePath);
                 if (extensionCheck is not ".html" and not ".htm")
                 {
-                    WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_HTML_EXTENSION));
+                    loggerFactory.CreateLogger("Program").LogInformation(MsgHelp.GetString(MsgHelp.ID.ANALYZE_HTML_EXTENSION));
                 }
             }
-
             CommonOutputChecks(options);
             return RunAnalyzeCommand(options);
         }
@@ -239,9 +256,9 @@ namespace Microsoft.ApplicationInspector.CLI
             }
         }
 
-        #endregion OutputArgsCheckandRun
+#endregion OutputArgsCheckandRun
 
-        #region RunCmdsWriteResults
+#region RunCmdsWriteResults
 
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
         {
@@ -270,7 +287,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 NoFileMetadata = cliOptions.NoFileMetadata,
                 AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles,
                 MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag
-            });
+            }, loggerFactory);
 
             if (!cliOptions.NoShowProgressBar)
             {
@@ -397,6 +414,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return (int)exportTagsResult.ResultCode;
         }
 
-        #endregion RunCmdsWriteResults
+#endregion RunCmdsWriteResults
     }
 }

@@ -225,6 +225,7 @@ namespace Microsoft.ApplicationInspector.Common
         /// <param name="logLevel"></param>
         public static void SafeLog(string message, NLog.LogLevel logLevel)
         {
+            return;
             if (Log == null)
             {
                 Log = Utils.SetupLogging();

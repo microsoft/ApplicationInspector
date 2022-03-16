@@ -19,7 +19,7 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -183,6 +183,15 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         internal static string ANALYZE_NOSUPPORTED_FILETYPES {
             get {
                 return ResourceManager.GetString("ANALYZE_NOSUPPORTED_FILETYPES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overall processing timeout hit..
+        /// </summary>
+        internal static string ANALYZE_PROCESSING_TIMED_OUT {
+            get {
+                return ResourceManager.GetString("ANALYZE_PROCESSING_TIMED_OUT", resourceCulture);
             }
         }
         

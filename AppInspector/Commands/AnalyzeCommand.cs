@@ -7,7 +7,6 @@ namespace Microsoft.ApplicationInspector.Commands
     using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.CST.RecursiveExtractor;
     using Newtonsoft.Json;
-    using NLog;
     using ShellProgressBar;
     using System;
     using System.Collections.Concurrent;
@@ -18,6 +17,7 @@ namespace Microsoft.ApplicationInspector.Commands
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
 
     /// <summary>
     /// Options specific to analyze operation not to be confused with CLIAnalyzeCmdOptions which include CLI only args
@@ -86,6 +86,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class AnalyzeCommand
     {
+        private readonly ILogger _logger;
         private readonly List<string> _srcfileList = new();
         private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
         private RuleProcessor? _rulesProcessor;
@@ -99,9 +100,11 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <summary>
         /// Constructor for AnalyzeCommand.
         /// </summary>
-        /// <param name="opt"></param>
-        public AnalyzeCommand(AnalyzeOptions opt)
+        /// <param name="opt">The <see cref="AnalyzeOptions"/> to use for this analysis.</param>
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> use for log messages.</param>
+        public AnalyzeCommand(AnalyzeOptions opt, ILoggerFactory? loggerFactory = null)
         {
+            _logger = loggerFactory?.CreateLogger("AnalyzeCommand");
             _options = opt;
 
             if (opt.FilePathExclusions.Any(x => !x.Equals("none"))){
@@ -116,17 +119,13 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                _options.Log ??= Common.Utils.SetupLogging(_options);
-                WriteOnce.Log ??= _options.Log;
-
-                ConfigureConsoleOutput();
                 ConfigSourcetoScan();
                 ConfigConfidenceFilters();
                 ConfigRules();
             }
             catch (OpException e) //group error handling
             {
-                WriteOnce.Error(e.Message);
+                _logger.LogError(e.Message);
                 throw;
             }
         }
@@ -134,37 +133,11 @@ namespace Microsoft.ApplicationInspector.Commands
         #region configureMethods
 
         /// <summary>
-        /// Establish console verbosity
-        /// For NuGet DLL use, console is automatically muted overriding any arguments sent
-        /// </summary>
-        private void ConfigureConsoleOutput()
-        {
-            WriteOnce.SafeLog("AnalyzeCommand::ConfigureConsoleOutput", LogLevel.Trace);
-
-            //Set console verbosity based on run context (none for DLL use) and caller arguments
-            if (!Common.Utils.CLIExecutionContext)
-            {
-                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
-            }
-            else
-            {
-                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out WriteOnce.ConsoleVerbosity verbosity))
-                {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
-                }
-                else
-                {
-                    WriteOnce.Verbosity = verbosity;
-                }
-            }
-        }
-
-        /// <summary>
         /// Expects user to supply all that apply impacting which rule pattern matches are returned
         /// </summary>
         private void ConfigConfidenceFilters()
         {
-            WriteOnce.SafeLog("AnalyzeCommand::ConfigConfidenceFilters", LogLevel.Trace);
+            _logger.LogTrace("AnalyzeCommand::ConfigConfidenceFilters");
             //parse and verify confidence values
             if (string.IsNullOrEmpty(_options.ConfidenceFilters))
             {
@@ -192,7 +165,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         private void ConfigSourcetoScan()
         {
-            WriteOnce.SafeLog("AnalyzeCommand::ConfigSourcetoScan", LogLevel.Trace);
+            _logger.LogTrace("AnalyzeCommand::ConfigSourcetoScan");
 
             if (!_options.SourcePath.Any())
             {
@@ -233,7 +206,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         private void ConfigRules()
         {
-            WriteOnce.SafeLog("AnalyzeCommand::ConfigRules", LogLevel.Trace);
+            _logger.LogTrace("AnalyzeCommand::ConfigRules");
 
             RuleSet? rulesSet = null;
 
@@ -302,7 +275,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="populatedEntries"></param>
         public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts, IEnumerable<FileEntry> populatedEntries)
         {
-            WriteOnce.SafeLog("AnalyzeCommand::PopulateRecords", LogLevel.Trace);
+            _logger.LogTrace("AnalyzeCommand::PopulateRecords");
             if (_metaDataHelper is null)
             {
                 WriteOnce.Error("MetadataHelper is null");
@@ -354,14 +327,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 if (_fileExclusionList.Any(x => x.IsMatch(file.FullPath)))
                 {
-                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
+                    _logger.LogDebug(MsgHelp.GetString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED), fileRecord.FileName);
                     fileRecord.Status = ScanState.Skipped;
                 }
                 else
                 {
                     if (IsBinary(file.Content))
                     {
-                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
+                        _logger.LogDebug(MsgHelp.GetString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY), fileRecord.FileName);
                         fileRecord.Status = ScanState.Skipped;
                     }
                     else
@@ -426,7 +399,7 @@ namespace Microsoft.ApplicationInspector.Commands
                                 }
                                 catch(Exception e)
                                 {
-                                    WriteOnce.SafeLog($"Failed to analyze file {file.FullPath}. {e.GetType()}:{e.Message}. ({e.StackTrace})", LogLevel.Debug);
+                                    _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace}), fileRecord.FileName", file.FullPath, e.GetType(), e.Message, e.StackTrace);
                                     fileRecord.Status = ScanState.Error;
                                 }
                             }
@@ -489,10 +462,10 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns>Result code.</returns>
         public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken)
         {
-            WriteOnce.SafeLog("AnalyzeCommand::PopulateRecordsAsync", LogLevel.Trace);
+            _logger.LogTrace("AnalyzeCommand::PopulateRecordsAsync");
             if (_metaDataHelper is null)
             {
-                WriteOnce.Error("MetadataHelper is null");
+                _logger.LogError("MetadataHelper is null");
                 throw new NullReferenceException("_metaDataHelper");
             }
             if (_rulesProcessor is null)
@@ -516,14 +489,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 if (_fileExclusionList.Any(x => x.IsMatch(file.FullPath)))
                 {
-                    WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED, fileRecord.FileName), LogLevel.Debug);
+                    _logger.LogDebug(MsgHelp.GetString(MsgHelp.ID.ANALYZE_EXCLUDED_TYPE_SKIPPED), fileRecord.FileName);
                     fileRecord.Status = ScanState.Skipped;
                 }
                 else
                 {
                     if (IsBinary(file.Content))
                     {
-                        WriteOnce.SafeLog(MsgHelp.FormatString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY, fileRecord.FileName), LogLevel.Debug);
+                        _logger.LogDebug(MsgHelp.GetString(MsgHelp.ID.ANALYZE_EXCLUDED_BINARY), fileRecord.FileName);
                         fileRecord.Status = ScanState.Skipped;
                     }
                     else
@@ -594,22 +567,22 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns>An Enumerable of FileEntries.</returns>
         private IEnumerable<FileEntry> GetFileEntries()
         {
-            WriteOnce.SafeLog("AnalyzeCommand::GetFileEntries", LogLevel.Trace);
+            _logger.LogTrace("AnalyzeCommand::GetFileEntries");
 
             Extractor extractor = new();
             // For every file, if the file isn't excluded return it, and if it is track the exclusion in the metadata
             foreach (var srcFile in _srcfileList)
             {
-                if (!_fileExclusionList.Any(x => x.IsMatch(srcFile)))
+                if (_fileExclusionList.Any(x => x.IsMatch(srcFile)))
+                {
+                    _metaDataHelper?.Metadata.Files.Add(new FileRecord() { FileName = srcFile, Status = ScanState.Skipped });
+                }
+                else
                 {
                     foreach (var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1 }))
                     {
                         yield return entry;
                     }
-                }
-                else
-                {
-                    _metaDataHelper?.Metadata.Files.Add(new FileRecord() { FileName = srcFile, Status = ScanState.Skipped });
                 }
             }
         }
@@ -620,21 +593,21 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns>An enumeration of FileEntries</returns>
         private async IAsyncEnumerable<FileEntry> GetFileEntriesAsync()
         {
-            WriteOnce.SafeLog("AnalyzeCommand::GetFileEntriesAsync", LogLevel.Trace);
+            _logger.LogTrace("AnalyzeCommand::GetFileEntriesAsync");
 
             Extractor extractor = new();
             foreach (var srcFile in _srcfileList ?? new List<string>())
             {
-                if (!_fileExclusionList.Any(x => x.IsMatch(srcFile)))
+                if (_fileExclusionList.Any(x => x.IsMatch(srcFile)))
+                {
+                    _metaDataHelper?.Metadata.Files.Add(new FileRecord() { FileName = srcFile, Status = ScanState.Skipped });
+                }
+                else
                 {
                     await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1 }))
                     {
                         yield return entry;
                     }
-                }
-                else
-                {
-                    _metaDataHelper?.Metadata.Files.Add(new FileRecord() { FileName = srcFile, Status = ScanState.Skipped });
                 }
             }
         }
@@ -680,11 +653,11 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         public async Task<AnalyzeResult> GetResultAsync(CancellationToken cancellationToken)
         {
-            WriteOnce.SafeLog("AnalyzeCommand::GetResultAsync", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+            _logger.LogTrace("AnalyzeCommand::GetResultAsync");
+            _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Analyze");
             if (_metaDataHelper is null)
             {
-                WriteOnce.Error("MetadataHelper is null");
+                _logger.LogError("MetadataHelper is null");
                 throw new NullReferenceException("_metaDataHelper");
             }
             AnalyzeResult analyzeResult = new()
@@ -729,12 +702,12 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         public AnalyzeResult GetResult()
         {
-            WriteOnce.SafeLog("AnalyzeCommand::GetResult", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Analyze"));
+            _logger.LogTrace("AnalyzeCommand::GetResultAsync");
+            _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Analyze");
             if (_metaDataHelper is null)
             {
-                WriteOnce.Error("MetadataHelper is null");
-                throw new ArgumentNullException("_metaDataHelper");
+                _logger.LogError("MetadataHelper is null");
+                throw new NullReferenceException("_metaDataHelper");
             }
             AnalyzeResult analyzeResult = new()
             {
@@ -829,12 +802,12 @@ namespace Microsoft.ApplicationInspector.Commands
             //wrapup result status
             if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
             {
-                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
+                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
             else if (!_metaDataHelper.HasFindings)
             {
-                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
+                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
             else
@@ -851,7 +824,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (timedOut)
             {
-                WriteOnce.Error("Overall processing timed out.");
+                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_PROCESSING_TIMED_OUT));
                 analyzeResult.Metadata.TimedOut = true;
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.TimedOut;
             }

@@ -11,7 +11,7 @@ namespace Microsoft.ApplicationInspector.Common
     /// </summary>
     public class LogOptions
     {
-        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [high|medium|low|none]", Default = "medium")]
+        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [Verbose|Debug|Information|Warning|Error|Fatal|Off]", Default = "Information")]
         public string ConsoleVerbosityLevel { get; set; } = "medium";
 
         public Logger? Log { get; set; }
@@ -19,7 +19,7 @@ namespace Microsoft.ApplicationInspector.Common
         [Option('l', "log-file-path", Required = false, HelpText = "Log file path")]
         public string? LogFilePath { get; set; }
 
-        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Debug|Info|Warn|Error|Trace|Fatal|Off]", Default = "Error")]
+        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Verbose|Debug|Information|Warning|Error|Fatal|Off]", Default = "Error")]
         public string LogFileLevel { get; set; } = "Error";
 
         public bool CloseLogOnCommandExit { get; set; }

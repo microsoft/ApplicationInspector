@@ -156,6 +156,9 @@
   <data name="ANALYZE_NOPATTERNS" xml:space="preserve">
     <value>No pattern matches were detected for files in source path</value>
   </data>
+    <data name="ANALYZE_PROCESSING_TIMED_OUT" xml:space="preserve">
+    <value>Overall processing timeout hit.</value>
+  </data>
   <data name="ANALYZE_NOSUPPORTED_FILETYPES" xml:space="preserve">
     <value>No file types found in source path that are supported</value>
   </data>
