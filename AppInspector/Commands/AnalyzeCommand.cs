@@ -278,7 +278,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _logger.LogTrace("AnalyzeCommand::PopulateRecords");
             if (_metaDataHelper is null)
             {
-                WriteOnce.Error("MetadataHelper is null");
+                _logger.LogError("MetadataHelper is null");
                 throw new NullReferenceException("_metaDataHelper");
             }
             if (_rulesProcessor is null || populatedEntries is null)
@@ -388,7 +388,7 @@ namespace Microsoft.ApplicationInspector.Commands
                                 {
                                     if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
                                     {
-                                        WriteOnce.Error($"{file.FullPath} timed out.");
+                                        _logger.LogError("{path} timed out.", file.FullPath);
                                         fileRecord.Status = ScanState.TimedOut;
                                         cts.Cancel();
                                     }
@@ -670,12 +670,12 @@ namespace Microsoft.ApplicationInspector.Commands
             //wrapup result status
             if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
             {
-                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
+                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
             else if (!_metaDataHelper.HasFindings)
             {
-                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
+                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
             else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
@@ -732,7 +732,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     catch (OverflowException e)
                     {
-                        WriteOnce.Error($"Overflowed while extracting file entries. Check the input for quines or zip bombs. {e.Message}");
+                        _logger.LogError("Overflowed while extracting file entries. Check the input for quines or zip bombs. {message}", e.Message);
                     }
                     doneEnumerating = true;
                 });
