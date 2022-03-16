@@ -5,6 +5,7 @@ namespace Microsoft.ApplicationInspector.CLI
 {
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.IO;
 
@@ -12,9 +13,16 @@ namespace Microsoft.ApplicationInspector.CLI
     /// Wrapper for CLI only output arg validation which may be unique to a command
     /// and for allocating the correct writter type and format writter object
     /// </summary>
-    public static class ResultsWriter
+    public class ResultsWriter
     {
-        public static void Write(Result result, CLICommandOptions options)
+        public ResultsWriter(ILoggerFactory loggerFactory)
+        {
+            _logger = loggerFactory.CreateLogger<ResultsWriter>();
+        }
+
+        private ILogger _logger;
+
+        public void Write(Result result, CLICommandOptions options)
         {
             CommandResultsWriter? writer = WriterFactory.GetWriter(options);
             string commandCompletedMsg;
@@ -57,7 +65,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     //post checks
                     if (options.OutputFilePath is not null && File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
                     {
-                        WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_REPORTSIZE_WARN));
+                        _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.ANALYZE_REPORTSIZE_WARN));
                     }
 
                     Finalize(writer, "Analyze");
@@ -80,15 +88,15 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         /// <param name="_outputWriter"></param>
         /// <param name="options"></param>
-        public static void Finalize(CommandResultsWriter? outputWriter, string commandName)
+        internal void Finalize(CommandResultsWriter? outputWriter, string commandName)
         {
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_COMPLETED, commandName));
+            _logger.LogInformation(MsgHelp.FormatString(MsgHelp.ID.CMD_COMPLETED, commandName);
 
             if (outputWriter != null && outputWriter.TextWriter != null)
             {
                 if (outputWriter.TextWriter != Console.Out) //target writer was to a file so inform where to find results
                 {
-                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE, outputWriter?.OutputFileName ?? ""), true, WriteOnce.ConsoleVerbosity.Medium, false);
+                    _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE), outputWriter?.OutputFileName ?? "");
                 }
             }
         }

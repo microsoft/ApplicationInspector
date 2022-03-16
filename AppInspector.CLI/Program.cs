@@ -110,12 +110,10 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int VerifyOutputArgsRun(CLITagDiffCmdOptions options)
         {
-            Logger logger = Common.Utils.SetupLogging(options, true);
-            WriteOnce.Log = logger;
-            options.Log = logger;
+            loggerFactory = GetLoggerFactory(options);
 
             CommonOutputChecks(options);
-            return RunTagDiffCommand(options);
+            return RunTagDiffCommand(options, loggerFactory);
         }
         private static int VerifyOutputArgsRun(CLIExportTagsCmdOptions options)
         {
@@ -164,8 +162,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int VerifyOutputArgsRun(CLIAnalyzeCmdOptions options)
         {
-            //analyze with html format limit checks
             loggerFactory = GetLoggerFactory(options);
+
+            //analyze with html format limit checks
             if (options.OutputFileFormat == "html")
             {
                 options.OutputFilePath ??= "output.html";
@@ -296,9 +295,10 @@ namespace Microsoft.ApplicationInspector.CLI
 
             AnalyzeResult analyzeResult = command.GetResult();
 
+            ResultsWriter writer = new(loggerFactory);
             if (cliOptions.NoShowProgressBar)
             {
-                ResultsWriter.Write(analyzeResult, cliOptions);
+                writer.Write(analyzeResult, cliOptions);
             }
             else
             {
@@ -306,7 +306,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
                 _ = Task.Factory.StartNew(() =>
                 {
-                    ResultsWriter.Write(analyzeResult, cliOptions);
+                    writer.Write(analyzeResult, cliOptions);
                     done = true;
                 });
 

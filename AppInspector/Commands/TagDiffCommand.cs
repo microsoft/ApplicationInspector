@@ -4,6 +4,7 @@
 namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using NLog;
     using System;
@@ -84,58 +85,29 @@ namespace Microsoft.ApplicationInspector.Commands
         private enum TagTestType { Equality, Inequality }
 
         private readonly TagDiffOptions? _options;
+        private readonly ILoggerFactory? _factory;
+        private readonly ILogger<TagDiffCommand> _logger;
         private TagTestType _arg_tagTestType;
 
-        public TagDiffCommand(TagDiffOptions opt)
+        public TagDiffCommand(TagDiffOptions opt, ILoggerFactory? loggerFactory)
         {
             _options = opt;
             _options.TestType ??= "equality";
-
+            _factory = loggerFactory;
+            _logger = loggerFactory?.CreateLogger<TagDiffCommand>();
             try
             {
-                _options.Log ??= Common.Utils.SetupLogging(_options);
-                WriteOnce.Log ??= _options.Log;
-
-                ConfigureConsoleOutput();
                 ConfigureCompareType();
                 ConfigSourceToScan();
             }
             catch (OpException e) //group error handling
             {
-                WriteOnce.Error(e.Message);
+                _logger.LogError(e.Message);
                 throw;
             }
         }
 
         #region config
-
-        /// <summary>
-        /// Establish console verbosity
-        /// For NuGet DLL use, console is muted overriding any arguments sent
-        /// Pre: Always call again after ConfigureFileOutput
-        /// </summary>
-        private void ConfigureConsoleOutput()
-        {
-            WriteOnce.SafeLog("TagDiffCommand::ConfigureConsoleOutput", LogLevel.Trace);
-
-            //Set console verbosity based on run context (none for DLL use) and caller arguments
-            if (!Common.Utils.CLIExecutionContext)
-            {
-                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
-            }
-            else
-            {
-                WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_options?.ConsoleVerbosityLevel, true, out verbosity))
-                {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
-                }
-                else
-                {
-                    WriteOnce.Verbosity = verbosity;
-                }
-            }
-        }
 
         private void ConfigureCompareType()
         {
@@ -147,7 +119,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         private void ConfigSourceToScan()
         {
-            WriteOnce.SafeLog("TagDiff::ConfigRules", LogLevel.Trace);
+            _logger.LogTrace("TagDiff::ConfigRules");
 
             if ((!_options?.SourcePath1.Any() ?? true) || (!_options?.SourcePath2.Any() ?? true))
             {
@@ -163,13 +135,10 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         public TagDiffResult GetResult()
         {
-            WriteOnce.SafeLog("TagDiffCommand::Run", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Tag Diff"));
+            _logger.LogTrace("TagDiffCommand::Run");
+            _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Tag Diff");
 
             TagDiffResult tagDiffResult = new() { AppVersion = Common.Utils.GetVersionString() };
-
-            //save to quiet analyze cmd and restore
-            WriteOnce.ConsoleVerbosity saveVerbosity = WriteOnce.Verbosity;
 
             try
             {
@@ -193,7 +162,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     NoShowProgress = true,
                     ScanUnknownTypes = _options.ScanUnknownTypes,
                     SingleThread = _options.SingleThread,
-                });
+                }, _factory);
                 AnalyzeCommand cmd2 = new(new AnalyzeOptions()
                 {
                     SourcePath = _options.SourcePath2,
@@ -210,18 +179,15 @@ namespace Microsoft.ApplicationInspector.Commands
                     NoShowProgress = true,
                     ScanUnknownTypes = _options.ScanUnknownTypes,
                     SingleThread = _options.SingleThread,
-                });
+                }, _factory);
 
                 AnalyzeResult analyze1 = cmd1.GetResult();
                 AnalyzeResult analyze2 = cmd2.GetResult();
 
-                //restore
-                WriteOnce.Verbosity = saveVerbosity;
-
                 //process results for each analyze call before comparing results
                 if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, string.Join(',',_options.SourcePath1)));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, string.Join(',', _options.SourcePath1)));
                 }
                 else if (analyze2.ResultCode == AnalyzeResult.ExitCode.CriticalError)
                 {
@@ -233,14 +199,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.Success)
                 {
-                    
+
                     var list1 = analyze1.Metadata.UniqueTags ?? new List<string>();
                     var list2 = analyze2.Metadata.UniqueTags ?? new List<string>();
 
                     var removed = list1.Except(list2);
                     var added = list2.Except(list1);
 
-                    foreach(var add in added)
+                    foreach (var add in added)
                     {
                         tagDiffResult.TagDiffList.Add(new TagDiff()
                         {
@@ -272,8 +238,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             catch (OpException e)
             {
-                WriteOnce.Verbosity = saveVerbosity;
-                WriteOnce.Error(e.Message);
+                _logger.LogError(e.Message);
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }
