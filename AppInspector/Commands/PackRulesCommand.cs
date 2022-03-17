@@ -5,12 +5,12 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.RulesEngine;
     using Newtonsoft.Json;
-    using NLog;
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
 
     public class PackRulesOptions : LogOptions
     {
@@ -46,59 +46,23 @@ namespace Microsoft.ApplicationInspector.Commands
     public class PackRulesCommand
     {
         private readonly PackRulesOptions _options;
+        private readonly ILogger<PackRulesCommand> _logger;
+        private readonly ILoggerFactory? _loggerFactory;
         private string? _rules_path;
 
-        public PackRulesCommand(PackRulesOptions opt)
+        public PackRulesCommand(PackRulesOptions opt, ILoggerFactory? loggerFactory = null)
         {
             _options = opt;
-
-            try
-            {
-                _options.Log ??= Common.Utils.SetupLogging(_options);
-                WriteOnce.Log ??= _options.Log;
-
-                ConfigureConsoleOutput();
-                ConfigRules();
-            }
-            catch (OpException e)
-            {
-                WriteOnce.Error(e.Message);
-                throw;
-            }
+            _logger = loggerFactory?.CreateLogger<PackRulesCommand>() ?? NullLogger<PackRulesCommand>.Instance;
+            _loggerFactory = loggerFactory;
+            ConfigRules();
         }
 
         #region configure
 
-        /// <summary>
-        /// Establish console verbosity
-        /// For NuGet DLL use, console is muted overriding any arguments sent
-        /// </summary>
-        private void ConfigureConsoleOutput()
-        {
-            WriteOnce.SafeLog("PackRulesCommand::ConfigureConsoleOutput", LogLevel.Trace);
-
-            //Set console verbosity based on run context (none for DLL use) and caller arguments
-            if (!Common.Utils.CLIExecutionContext)
-            {
-                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
-            }
-            else
-            {
-                WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out verbosity))
-                {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
-                }
-                else
-                {
-                    WriteOnce.Verbosity = verbosity;
-                }
-            }
-        }
-
         private void ConfigRules()
         {
-            WriteOnce.SafeLog("PackRulesCommand::ConfigRules", LogLevel.Trace);
+            _logger.LogTrace("PackRulesCommand::ConfigRules");
 
             if (_options.RepackDefaultRules && !Common.Utils.CLIExecutionContext)
             {
@@ -124,8 +88,8 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns></returns>
         public PackRulesResult GetResult()
         {
-            WriteOnce.SafeLog("PackRules::Run", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Pack Rules"));
+            _logger.LogTrace("PackRulesCommand::ConfigRules");
+            _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Pack Rules");
 
             PackRulesResult packRulesResult = new()
             {
@@ -134,7 +98,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                RulesVerifier verifier = new(_rules_path, _options?.Log);
+                RulesVerifier verifier = new(_rules_path, _loggerFactory);
                 if (_options?.PackEmbeddedRules ?? false)
                 {
                     verifier.LoadRuleSet(RuleSetUtils.GetDefaultRuleSet());
@@ -149,7 +113,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             catch (OpException e)
             {
-                WriteOnce.Error(e.Message);
+                _logger.LogError(e.Message);
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }

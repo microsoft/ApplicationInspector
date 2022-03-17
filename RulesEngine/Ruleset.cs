@@ -3,8 +3,9 @@
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     using Microsoft.CST.OAT;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Newtonsoft.Json;
-    using NLog;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class RuleSet : IEnumerable<Rule>
     {
-        private readonly Logger? _logger;
+        private readonly ILogger _logger;
         private readonly List<ConvertedOatRule> _oatRules = new();//used for analyze cmd primarily
         private IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
         private readonly Regex searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
@@ -27,9 +28,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         ///     Creates instance of Ruleset
         /// </summary>
-        public RuleSet(Logger? log)
+        public RuleSet(ILoggerFactory? loggerFactory = null)
         {
-            _logger = log;
+            _logger = loggerFactory?.CreateLogger<RuleSet>() ?? NullLogger<RuleSet>.Instance; ;
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (string.IsNullOrEmpty(filename))
                 throw new ArgumentException(null, nameof(filename));
 
-            _logger?.Debug("Attempting to read rule file: " + filename);
+            _logger?.LogDebug("Attempting to read rule file: " + filename);
 
             if (!File.Exists(filename))
                 throw new FileNotFoundException();
@@ -81,7 +82,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (rule != null)
                 {
-                    _logger?.Debug("Attempting to add rule: " + rule.Name);
+                    _logger?.LogDebug("Attempting to add rule: " + rule.Name);
                     _oatRules.Add(rule);
                 }
             }
@@ -95,7 +96,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             if (AppInspectorRuleToOatRule(rule) is ConvertedOatRule cor)
             {
-                _logger?.Debug("Attempting to add rule: " + rule.Name);
+                _logger?.LogDebug("Attempting to add rule: " + rule.Name);
                 _oatRules.Add(cor);
             }
         }

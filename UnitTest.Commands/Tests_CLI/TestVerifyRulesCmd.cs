@@ -26,10 +26,6 @@
             catch
             {
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
         }
 
         [TestMethod]
@@ -189,7 +185,7 @@
                 if (exitCode == VerifyRulesResult.ExitCode.Verified)
                 {
                     string testLogContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-                    if (String.IsNullOrEmpty(testLogContent))
+                    if (string.IsNullOrEmpty(testLogContent))
                     {
                         exitCode = VerifyRulesResult.ExitCode.CriticalError;
                     }
@@ -226,7 +222,7 @@
                 if (exitCode == VerifyRulesResult.ExitCode.CriticalError)
                 {
                     string testLogContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-                    if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
+                    if (!string.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
                     {
                         exitCode = VerifyRulesResult.ExitCode.Verified;
                     }
@@ -298,7 +294,7 @@
 
                 if (exitCode == VerifyRulesResult.ExitCode.Verified)
                 {
-                    exitCode = String.IsNullOrEmpty(testContent) ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.CriticalError;
+                    exitCode = string.IsNullOrEmpty(testContent) ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.CriticalError;
                 }
             }
             catch (Exception)

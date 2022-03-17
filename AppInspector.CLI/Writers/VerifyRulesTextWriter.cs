@@ -5,37 +5,43 @@ namespace Microsoft.ApplicationInspector.CLI
 {
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using System;
+    using System.IO;
 
     internal class VerifyRulesTextWriter : CommandResultsWriter
     {
+        private readonly ILogger<VerifyRulesTextWriter> _logger;
+
+        public VerifyRulesTextWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+        {
+            _logger = loggerFactory?.CreateLogger<VerifyRulesTextWriter>() ?? NullLogger<VerifyRulesTextWriter>.Instance;
+        }
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
             VerifyRulesResult verifyRulesResult = (VerifyRulesResult)result;
 
-            //For console output, update write once for same results to console or file
-            WriteOnce.TextWriter = TextWriter;
-
             if (string.IsNullOrEmpty(commandOptions.OutputFilePath))
             {
-                WriteOnce.Result("Results");
+                TextWriter.WriteLine("Results");
             }
 
             if (verifyRulesResult.ResultCode != VerifyRulesResult.ExitCode.Verified)
             {
-                WriteOnce.Any(MsgHelp.GetString(MsgHelp.ID.TAGTEST_RESULTS_FAIL), true, ConsoleColor.Red, WriteOnce.ConsoleVerbosity.Low);
+                TextWriter.WriteLine(MsgHelp.ID.TAGTEST_RESULTS_FAIL);
             }
             else
             {
-                WriteOnce.Any(MsgHelp.GetString(MsgHelp.ID.TAGTEST_RESULTS_SUCCESS), true, ConsoleColor.Green, WriteOnce.ConsoleVerbosity.Low);
+                TextWriter.WriteLine(MsgHelp.ID.TAGTEST_RESULTS_SUCCESS);
             }
 
             if (verifyRulesResult.RuleStatusList.Count > 0)
             {
-                WriteOnce.Result("Rule status");
+                TextWriter.WriteLine("Rule status");
                 foreach (RuleStatus ruleStatus in verifyRulesResult.RuleStatusList)
                 {
-                    WriteOnce.Result(string.Format("Ruleid: {0}, Rulename: {1}, Status: {2}", ruleStatus.RulesId, ruleStatus.RulesName, ruleStatus.Verified));
+                    TextWriter.WriteLine("Ruleid: {0}, Rulename: {1}, Status: {2}", ruleStatus.RulesId, ruleStatus.RulesName, ruleStatus.Verified);
                 }
             }
 

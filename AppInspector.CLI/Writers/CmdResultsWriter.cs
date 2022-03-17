@@ -4,7 +4,6 @@
 namespace Microsoft.ApplicationInspector.CLI
 {
     using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.ApplicationInspector.Common;
     using System.IO;
 
     /// <summary>
@@ -12,14 +11,16 @@ namespace Microsoft.ApplicationInspector.CLI
     /// </summary>
     public abstract class CommandResultsWriter
     {
-        public TextWriter? TextWriter { get; set; }
-        public string? OutputFileName { get; set; }
+        protected CommandResultsWriter(TextWriter writer)
+        {
+            TextWriter = writer;
+        }
+        public TextWriter TextWriter { get; }
         public abstract void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true);
         public void FlushAndClose()
         {
             TextWriter?.Flush();
             TextWriter?.Close();
-            WriteOnce.TextWriter = null;
         }
     }
 }

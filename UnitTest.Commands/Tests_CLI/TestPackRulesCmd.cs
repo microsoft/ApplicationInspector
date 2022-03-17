@@ -26,10 +26,6 @@
             catch
             {
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
         }
 
         [TestMethod]
@@ -172,7 +168,7 @@
                 if (exitCode == PackRulesResult.ExitCode.Success)
                 {
                     string testLogContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-                    if (String.IsNullOrEmpty(testLogContent))
+                    if (string.IsNullOrEmpty(testLogContent))
                     {
                         exitCode = PackRulesResult.ExitCode.CriticalError;
                     }
@@ -209,7 +205,7 @@
                 if (exitCode == PackRulesResult.ExitCode.CriticalError)
                 {
                     string testLogContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-                    if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
+                    if (!string.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
                     {
                         exitCode = PackRulesResult.ExitCode.Success;
                     }
@@ -243,7 +239,7 @@
                 if (exitCode == PackRulesResult.ExitCode.Success)
                 {
                     string testLogContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-                    if (String.IsNullOrEmpty(testLogContent))
+                    if (string.IsNullOrEmpty(testLogContent))
                     {
                         exitCode = PackRulesResult.ExitCode.CriticalError;
                     }
@@ -319,7 +315,7 @@
 
                 if (exitCode == PackRulesResult.ExitCode.Success)
                 {
-                    exitCode = String.IsNullOrEmpty(testContent) ? PackRulesResult.ExitCode.Success : PackRulesResult.ExitCode.Error;
+                    exitCode = string.IsNullOrEmpty(testContent) ? PackRulesResult.ExitCode.Success : PackRulesResult.ExitCode.Error;
                 }
             }
             catch (Exception)

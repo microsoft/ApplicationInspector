@@ -18,6 +18,7 @@ namespace Microsoft.ApplicationInspector.Commands
     using System.Threading.Tasks;
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
 
     /// <summary>
     /// Options specific to analyze operation not to be confused with CLIAnalyzeCmdOptions which include CLI only args
@@ -86,6 +87,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// </summary>
     public class AnalyzeCommand
     {
+        private readonly ILoggerFactory? _loggerFactory;
         private readonly ILogger _logger;
         private readonly List<string> _srcfileList = new();
         private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
@@ -104,7 +106,8 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> use for log messages.</param>
         public AnalyzeCommand(AnalyzeOptions opt, ILoggerFactory? loggerFactory = null)
         {
-            _logger = loggerFactory?.CreateLogger("AnalyzeCommand");
+            _loggerFactory = loggerFactory;
+            _logger = _loggerFactory?.CreateLogger<AnalyzeCommand>() ?? NullLogger<AnalyzeCommand>.Instance;
             _options = opt;
 
             if (opt.FilePathExclusions.Any(x => !x.Equals("none"))){
@@ -116,18 +119,9 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             DateScanned = DateTime.Now;
-
-            try
-            {
-                ConfigSourcetoScan();
-                ConfigConfidenceFilters();
-                ConfigRules();
-            }
-            catch (OpException e) //group error handling
-            {
-                _logger.LogError(e.Message);
-                throw;
-            }
+            ConfigSourcetoScan();
+            ConfigConfidenceFilters();
+            ConfigRules();
         }
 
         #region configureMethods
@@ -212,14 +206,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!_options.IgnoreDefaultRules)
             {
-                rulesSet = RuleSetUtils.GetDefaultRuleSet(_options.Log);
+                rulesSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
             }
 
             if (!string.IsNullOrEmpty(_options.CustomRulesPath))
             {
                 if (rulesSet == null)
                 {
-                    rulesSet = new RuleSet(_options.Log);
+                    rulesSet = new RuleSet(_loggerFactory);
                 }
 
                 if (Directory.Exists(_options.CustomRulesPath))
@@ -228,7 +222,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else if (File.Exists(_options.CustomRulesPath)) //verify custom rules before use
                 {
-                    RulesVerifier verifier = new(_options.CustomRulesPath, _options.Log);
+                    RulesVerifier verifier = new(_options.CustomRulesPath, _loggerFactory);
                     verifier.Verify();
                     if (!verifier.IsVerified)
                     {
@@ -252,7 +246,7 @@ namespace Microsoft.ApplicationInspector.Commands
             //instantiate a RuleProcessor with the added rules and exception for dependency
             var rpo = new RuleProcessorOptions()
             {
-                logger = _options.Log,
+                loggerFactory = _loggerFactory,
                 allowAllTagsInBuildFiles = _options.AllowAllTagsInBuildFiles,
                 confidenceFilter = _confidence,
                 Parallel = !_options.SingleThread,

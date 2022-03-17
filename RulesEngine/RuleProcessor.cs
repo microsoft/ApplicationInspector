@@ -6,7 +6,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.CST.OAT;
     using Microsoft.CST.RecursiveExtractor;
-    using NLog;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
         public bool Parallel = true;
         public Confidence confidenceFilter = Confidence.Unspecified | Confidence.Low | Confidence.Medium | Confidence.High;
-        public Logger? logger;
+        public ILoggerFactory? loggerFactory;
         public bool allowAllTagsInBuildFiles = false;
 
         [Obsolete("Use allowAllTagsInBuildFiles")]
@@ -38,9 +39,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
         private readonly RuleProcessorOptions _opts;
+        private readonly ILogger<RuleProcessor> _logger;
 
         private Confidence ConfidenceLevelFilter => _opts.confidenceFilter;
-        private Logger? Logger => _opts.logger;
 
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
@@ -64,6 +65,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public RuleProcessor(RuleSet rules, RuleProcessorOptions opts)
         {
             _opts = opts;
+            _logger = opts.loggerFactory?.CreateLogger<RuleProcessor>() ?? NullLogger<RuleProcessor>.Instance;
+
             _ruleset = rules;
             EnableCache = true;
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
@@ -240,7 +243,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             catch(Exception e)
             {
-                WriteOnce.SafeLog($"Failed to analyze file {fileEntry.FullPath}. {e.GetType()}:{e.Message}. ({e.StackTrace})", LogLevel.Debug);
+                _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace}), fileRecord.FileName", fileEntry.FullPath, e.GetType(), e.Message, e.StackTrace);
             }
             if (contents is not null)
             {
@@ -292,7 +295,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
                                     if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
                                     {
-                                        Logger?.Error("Index out of range for patterns for rule: " + oatRule.AppInspectorRule.Name);
+                                        _logger.LogError("Index out of range for patterns for rule: {ruleName}", oatRule.AppInspectorRule.Name);
                                         continue;
                                     }
 

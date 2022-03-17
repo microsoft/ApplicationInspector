@@ -27,8 +27,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CST.OAT" Version="1.2.4" />
     <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NLog" Version="4.7.13" />
   </ItemGroup>
 
   <ItemGroup>

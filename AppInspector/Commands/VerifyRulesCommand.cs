@@ -6,8 +6,9 @@ namespace Microsoft.ApplicationInspector.Commands
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.CST.OAT;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Newtonsoft.Json;
-    using NLog;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -56,60 +57,23 @@ namespace Microsoft.ApplicationInspector.Commands
     public class VerifyRulesCommand
     {
         private readonly VerifyRulesOptions _options;
+        private readonly ILogger<VerifyRulesCommand> _logger;
+        private readonly ILoggerFactory? _loggerFactory;
         private string? _rules_path;
 
-        public VerifyRulesCommand(VerifyRulesOptions opt)
+        public VerifyRulesCommand(VerifyRulesOptions opt, ILoggerFactory? loggerFactory = null)
         {
             _options = opt;
-
-            try
-            {
-                _options.Log ??= Utils.SetupLogging(_options);
-                WriteOnce.Log ??= _options.Log;
-
-                ConfigureConsoleOutput();
-                ConfigRules();
-            }
-            catch (OpException e) //group error handling
-            {
-                WriteOnce.Error(e.Message);
-                throw;
-            }
+            _logger = loggerFactory?.CreateLogger<VerifyRulesCommand>() ?? NullLogger<VerifyRulesCommand>.Instance;
+            _loggerFactory = loggerFactory;
+            ConfigRules();
         }
 
         #region configure
 
-        /// <summary>
-        /// Establish console verbosity
-        /// For NuGet DLL use, console is muted overriding any arguments sent
-        /// </summary>
-        private void ConfigureConsoleOutput()
-        {
-            WriteOnce.SafeLog("VerifyRulesCommand::ConfigureConsoleOutput", LogLevel.Trace);
-
-            //Set console verbosity based on run context (none for DLL use) and caller arguments
-            if (!Utils.CLIExecutionContext)
-            {
-                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
-            }
-            else
-            {
-                WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out verbosity))
-                {
-                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
-                }
-                else
-                {
-                    WriteOnce.Verbosity = verbosity;
-                }
-            }
-        }
-
         private void ConfigRules()
         {
-            WriteOnce.SafeLog("VerifyRulesCommand::ConfigRules", LogLevel.Trace);
+            _logger.LogTrace("VerifyRulesCommand::ConfigRules");
 
             if (!_options.VerifyDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath))
             {
@@ -128,14 +92,14 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <returns>output results</returns>
         public VerifyRulesResult GetResult()
         {
-            WriteOnce.SafeLog("VerifyRulesCommand::Run", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Verify Rules"));
+            _logger.LogTrace("VerifyRulesCommand::Run");
+            _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Verify Rules");
 
             VerifyRulesResult verifyRulesResult = new() { AppVersion = Utils.GetVersionString() };
 
             try
             {
-                RulesVerifier verifier = new(null, _options.Log);
+                RulesVerifier verifier = new(null, _loggerFactory);
                 verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
                 var stati = new List<RuleStatus>();
                 var analyzer = new Analyzer();
@@ -143,10 +107,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
                 analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
 
-                RuleSet? ruleSet = new(_options.Log);
+                RuleSet? ruleSet = new(_loggerFactory);
                 if (_options.VerifyDefaultRules)
                 {
-                    ruleSet = RuleSetUtils.GetDefaultRuleSet(_options.Log);
+                    ruleSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
                 }
                 try
                 {
@@ -164,7 +128,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch(JsonSerializationException e)
                 {
-                    WriteOnce.Error(e.Message);
+                    _logger.LogTrace(e.Message);
                     verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.CriticalError;
                     return verifyRulesResult;
                 }
@@ -183,7 +147,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             catch (OpException e)
             {
-                WriteOnce.Error(e.Message);
+                _logger.LogTrace(e.Message);
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }

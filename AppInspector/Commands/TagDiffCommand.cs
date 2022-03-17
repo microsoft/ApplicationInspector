@@ -5,8 +5,8 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Newtonsoft.Json;
-    using NLog;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -89,12 +89,12 @@ namespace Microsoft.ApplicationInspector.Commands
         private readonly ILogger<TagDiffCommand> _logger;
         private TagTestType _arg_tagTestType;
 
-        public TagDiffCommand(TagDiffOptions opt, ILoggerFactory? loggerFactory)
+        public TagDiffCommand(TagDiffOptions opt, ILoggerFactory? loggerFactory = null)
         {
             _options = opt;
             _options.TestType ??= "equality";
             _factory = loggerFactory;
-            _logger = loggerFactory?.CreateLogger<TagDiffCommand>();
+            _logger = loggerFactory?.CreateLogger<TagDiffCommand>() ?? NullLogger<TagDiffCommand>.Instance;
             try
             {
                 ConfigureCompareType();
@@ -153,7 +153,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
-                    Log = _options.Log,
                     TagsOnly = true,
                     ConfidenceFilters = _options.ConfidenceFilters,
                     FileTimeOut = _options.FileTimeOut,
@@ -170,7 +169,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
                     ConsoleVerbosityLevel = "none",
-                    Log = _options.Log,
                     TagsOnly = true,
                     ConfidenceFilters = _options.ConfidenceFilters,
                     FileTimeOut = _options.FileTimeOut,

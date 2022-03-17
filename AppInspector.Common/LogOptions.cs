@@ -4,7 +4,6 @@
 namespace Microsoft.ApplicationInspector.Common
 {
     using CommandLine;
-    using NLog;
 
     /// <summary>
     /// base for common options across all commands
@@ -14,14 +13,10 @@ namespace Microsoft.ApplicationInspector.Common
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [Verbose|Debug|Information|Warning|Error|Fatal|Off]", Default = "Information")]
         public string ConsoleVerbosityLevel { get; set; } = "medium";
 
-        public Logger? Log { get; set; }
-
         [Option('l', "log-file-path", Required = false, HelpText = "Log file path")]
         public string? LogFilePath { get; set; }
 
         [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Verbose|Debug|Information|Warning|Error|Fatal|Off]", Default = "Error")]
         public string LogFileLevel { get; set; } = "Error";
-
-        public bool CloseLogOnCommandExit { get; set; }
     }
 }

@@ -32,10 +32,6 @@
             catch
             {
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
         }
 
 
@@ -367,7 +363,7 @@
 
                 exitCode = result.ResultCode;
                 string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (String.IsNullOrEmpty(testLogContent))
+                if (string.IsNullOrEmpty(testLogContent))
                 {
                     exitCode = TagDiffResult.ExitCode.CriticalError;
                 }
@@ -406,7 +402,7 @@
             catch (Exception)
             {
                 string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
+                if (!string.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
                 {
                     exitCode = TagDiffResult.ExitCode.TestPassed;
                 }
@@ -439,7 +435,7 @@
 
                 exitCode = result.ResultCode;
                 string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (String.IsNullOrEmpty(testLogContent))
+                if (string.IsNullOrEmpty(testLogContent))
                 {
                     exitCode = TagDiffResult.ExitCode.CriticalError;
                 }
@@ -521,30 +517,28 @@
             try
             {
                 // Attempt to open output file.
-                using (var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt")))
-                {
-                    // Redirect standard output from the console to the output file.
-                    Console.SetOut(writer);
+                using var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                // Redirect standard output from the console to the output file.
+                Console.SetOut(writer);
 
-                    TagDiffCommand command = new(options);
-                    TagDiffResult result = command.GetResult();
-                    exitCode = result.ResultCode;
-                    try
+                TagDiffCommand command = new(options);
+                TagDiffResult result = command.GetResult();
+                exitCode = result.ResultCode;
+                try
+                {
+                    string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                    if (string.IsNullOrEmpty(testContent))
                     {
-                        string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
-                        if (String.IsNullOrEmpty(testContent))
-                        {
-                            exitCode = TagDiffResult.ExitCode.TestPassed;
-                        }
-                        else
-                        {
-                            exitCode = TagDiffResult.ExitCode.TestFailed;
-                        }
+                        exitCode = TagDiffResult.ExitCode.TestPassed;
                     }
-                    catch (Exception)
+                    else
                     {
-                        exitCode = TagDiffResult.ExitCode.TestPassed;//no console output file found
+                        exitCode = TagDiffResult.ExitCode.TestFailed;
                     }
+                }
+                catch (Exception)
+                {
+                    exitCode = TagDiffResult.ExitCode.TestPassed;//no console output file found
                 }
             }
             catch (Exception)

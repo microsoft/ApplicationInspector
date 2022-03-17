@@ -6,27 +6,30 @@ namespace Microsoft.ApplicationInspector.CLI
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.ApplicationInspector.RulesEngine;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.IO;
     using System.Text;
 
     public class AnalyzeTextWriter : CommandResultsWriter
     {
         private readonly int COLUMN_MAX = 80;
-
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
         {
             CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions = (CLIAnalyzeCmdOptions)commandOptions;
             AnalyzeResult analyzeResult = (AnalyzeResult)result;
-
-            //For console output, update write once for same results to console or file
-            WriteOnce.TextWriter = TextWriter;
-
-            WriteOnce.Result("Results");
+            if (TextWriter is null)
+            {
+                throw new ArgumentNullException(nameof(TextWriter));
+            }
+            TextWriter.WriteLine("Results");
 
             WriteAppMeta(analyzeResult.Metadata);
             WriteDependencies(analyzeResult.Metadata);
-            WriteOnce.General(MakeHeading("Match Details"));
+            TextWriter.WriteLine(MakeHeading("Match Details"));
 
             foreach (MatchRecord match in analyzeResult.Metadata.Matches ?? new List<MatchRecord>())
             {
@@ -39,8 +42,9 @@ namespace Microsoft.ApplicationInspector.CLI
             }
         }
 
-        public AnalyzeTextWriter(string formatString)
+        public AnalyzeTextWriter(TextWriter textWriter, string formatString, ILoggerFactory? loggerFactory = null) : base(textWriter)
         {
+            _logger = loggerFactory?.CreateLogger<AnalyzeJsonWriter>() ?? NullLogger<AnalyzeJsonWriter>.Instance;
             if (string.IsNullOrEmpty(formatString))
             {
                 _formatString = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Language:%l,SourceType:%tLine:%L,%C,Sample:%m";
@@ -97,47 +101,55 @@ namespace Microsoft.ApplicationInspector.CLI
 
         public void WriteAppMeta(MetaData metaData)
         {
+            if (TextWriter is null)
+            {
+                throw new ArgumentNullException(nameof(TextWriter));
+            }
             //write predefined characteristics
-            WriteOnce.General(string.Format(MakeHeading("Project Info")));
-            WriteOnce.General(string.Format("Name: {0}", metaData.ApplicationName + " " + metaData.SourceVersion));
-            WriteOnce.General(string.Format("Description: {0}", metaData.Description));
-            WriteOnce.General(string.Format("Source path: {0}", metaData.SourcePath));
-            WriteOnce.General(string.Format("Authors: {0}", metaData.Authors));
-            WriteOnce.General(string.Format("Last Updated: {0}", metaData.LastUpdated));
-            WriteOnce.General(string.Format("Languages: {0}", StringList(metaData.Languages?.ToImmutableSortedDictionary() ?? new Dictionary<string, int>().ToImmutableSortedDictionary())));
-            WriteOnce.General(string.Format(MakeHeading("Scan Settings")));
-            WriteOnce.General(string.Format("Date scanned: {0}", metaData.DateScanned));
-            WriteOnce.General(string.Format(MakeHeading("Source Info")));
-            WriteOnce.General(string.Format("Application type: {0}", StringList(metaData.AppTypes ?? new List<string>())));
-            WriteOnce.General(string.Format("Package types: {0}", StringList(metaData.PackageTypes ?? new List<string>())));
-            WriteOnce.General(string.Format("File extensions: {0}", StringList(metaData.FileExtensions ?? new List<string>())));
-            WriteOnce.General(string.Format(MakeHeading("Detetected Targets")));
-            WriteOnce.General(string.Format("Output types: {0}", StringList(metaData.Outputs ?? new List<string>())));
-            WriteOnce.General(string.Format("OS Targets: {0}", StringList(metaData.OSTargets ?? new List<string>())));
-            WriteOnce.General(string.Format("CPU Targets: {0}", StringList(metaData.CPUTargets ?? new List<string>())));
-            WriteOnce.General(string.Format("Cloud targets: {0}", StringList(metaData.CloudTargets ?? new List<string>())));
-            WriteOnce.General(string.Format(MakeHeading("Stats")));
-            WriteOnce.General(string.Format("Files analyzed: {0}", metaData.FilesAnalyzed));
-            WriteOnce.General(string.Format("Files skipped: {0}", metaData.FilesSkipped));
-            WriteOnce.General(string.Format("Total files: {0}", metaData.TotalFiles));
-            WriteOnce.General(string.Format("Total matches: {0} in {1} file(s)", metaData.TotalMatchesCount, metaData.FilesAffected));
-            WriteOnce.General(string.Format("Unique matches: {0}", metaData.UniqueMatchesCount));
+            TextWriter.WriteLine(string.Format(MakeHeading("Project Info")));
+            TextWriter.WriteLine(string.Format("Name: {0}", metaData.ApplicationName + " " + metaData.SourceVersion));
+            TextWriter.WriteLine(string.Format("Description: {0}", metaData.Description));
+            TextWriter.WriteLine(string.Format("Source path: {0}", metaData.SourcePath));
+            TextWriter.WriteLine(string.Format("Authors: {0}", metaData.Authors));
+            TextWriter.WriteLine(string.Format("Last Updated: {0}", metaData.LastUpdated));
+            TextWriter.WriteLine(string.Format("Languages: {0}", StringList(metaData.Languages?.ToImmutableSortedDictionary() ?? new Dictionary<string, int>().ToImmutableSortedDictionary())));
+            TextWriter.WriteLine(string.Format(MakeHeading("Scan Settings")));
+            TextWriter.WriteLine(string.Format("Date scanned: {0}", metaData.DateScanned));
+            TextWriter.WriteLine(string.Format(MakeHeading("Source Info")));
+            TextWriter.WriteLine(string.Format("Application type: {0}", StringList(metaData.AppTypes ?? new List<string>())));
+            TextWriter.WriteLine(string.Format("Package types: {0}", StringList(metaData.PackageTypes ?? new List<string>())));
+            TextWriter.WriteLine(string.Format("File extensions: {0}", StringList(metaData.FileExtensions ?? new List<string>())));
+            TextWriter.WriteLine(string.Format(MakeHeading("Detetected Targets")));
+            TextWriter.WriteLine(string.Format("Output types: {0}", StringList(metaData.Outputs ?? new List<string>())));
+            TextWriter.WriteLine(string.Format("OS Targets: {0}", StringList(metaData.OSTargets ?? new List<string>())));
+            TextWriter.WriteLine(string.Format("CPU Targets: {0}", StringList(metaData.CPUTargets ?? new List<string>())));
+            TextWriter.WriteLine(string.Format("Cloud targets: {0}", StringList(metaData.CloudTargets ?? new List<string>())));
+            TextWriter.WriteLine(string.Format(MakeHeading("Stats")));
+            TextWriter.WriteLine(string.Format("Files analyzed: {0}", metaData.FilesAnalyzed));
+            TextWriter.WriteLine(string.Format("Files skipped: {0}", metaData.FilesSkipped));
+            TextWriter.WriteLine(string.Format("Total files: {0}", metaData.TotalFiles));
+            TextWriter.WriteLine(string.Format("Total matches: {0} in {1} file(s)", metaData.TotalMatchesCount, metaData.FilesAffected));
+            TextWriter.WriteLine(string.Format("Unique matches: {0}", metaData.UniqueMatchesCount));
 
-            WriteOnce.General(MakeHeading("UniqueTags"));
+            TextWriter.WriteLine(MakeHeading("UniqueTags"));
             foreach (string tag in metaData.UniqueTags ?? new List<string>())
             {
-                WriteOnce.General(tag);
+                TextWriter.WriteLine(tag);
             }
 
-            WriteOnce.General(MakeHeading("Select Counters"));
+            TextWriter.WriteLine(MakeHeading("Select Counters"));
             foreach (MetricTagCounter tagCounter in metaData.TagCounters ?? new List<MetricTagCounter>())
             {
-                WriteOnce.General(string.Format("Tagname: {0}, Count: {1}", tagCounter.Tag, tagCounter.Count));
+                TextWriter.WriteLine(string.Format("Tagname: {0}, Count: {1}", tagCounter.Tag, tagCounter.Count));
             }
         }
 
         public void WriteMatch(MatchRecord match)
         {
+            if (TextWriter is null)
+            {
+                throw new ArgumentNullException(nameof(TextWriter));
+            }
             string output = _formatString.Replace("%F", match.FileName);
             output = output.Replace("%l", match.LanguageInfo.Name);
             output = output.Replace("%t", match.LanguageInfo.Type.ToString());
@@ -153,19 +165,24 @@ namespace Microsoft.ApplicationInspector.CLI
             output = output.Replace("%m", match.Sample);
             output = output.Replace("%T", string.Join(',', match.Tags ?? System.Array.Empty<string>()));
 
-            WriteOnce.General(output);
+            TextWriter.WriteLine(output);
         }
 
         private void WriteDependencies(MetaData metaData)
         {
-            WriteOnce.General(MakeHeading("Dependencies"));
+            if (TextWriter is null)
+            {
+                throw new ArgumentNullException(nameof(TextWriter));
+            }
+            TextWriter.WriteLine(MakeHeading("Dependencies"));
 
             foreach (string s in metaData.UniqueDependencies ?? new List<string>())
             {
-                WriteOnce.General(s);
+                TextWriter.WriteLine(s);
             }
         }
 
         private readonly string _formatString;
+        private readonly ILogger<AnalyzeJsonWriter> _logger;
     }
 }

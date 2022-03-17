@@ -35,10 +35,6 @@
             catch
             {
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
         }
 
         [TestMethod]
@@ -513,7 +509,7 @@
                 AnalyzeResult result = command.GetResult();
                 exitCode = result.ResultCode;
                 string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (String.IsNullOrEmpty(testLogContent))
+                if (string.IsNullOrEmpty(testLogContent))
                 {
                     exitCode = AnalyzeResult.ExitCode.CriticalError;
                 }
@@ -550,7 +546,7 @@
             catch (Exception)
             {
                 string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
+                if (!string.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
                 {
                     exitCode = AnalyzeResult.ExitCode.Success;
                 }
@@ -572,7 +568,6 @@
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 LogFileLevel = "debug",
                 LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logdebug.txt"),
-                CloseLogOnCommandExit = true
             };
 
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
@@ -582,7 +577,7 @@
                 AnalyzeResult result = command.GetResult();
                 exitCode = result.ResultCode;
                 string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (String.IsNullOrEmpty(testLogContent))
+                if (string.IsNullOrEmpty(testLogContent))
                 {
                     exitCode = AnalyzeResult.ExitCode.CriticalError;
                 }
@@ -648,7 +643,7 @@
                 try
                 {
                     string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
-                    if (String.IsNullOrEmpty(testContent))
+                    if (string.IsNullOrEmpty(testContent))
                     {
                         exitCode = AnalyzeResult.ExitCode.Success;
                     }

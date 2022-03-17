@@ -18,13 +18,16 @@ namespace Microsoft.ApplicationInspector.CLI
         public ResultsWriter(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<ResultsWriter>();
+            _loggerFactory = loggerFactory;
         }
 
         private ILogger _logger;
+        private readonly ILoggerFactory _loggerFactory;
 
         public void Write(Result result, CLICommandOptions options)
         {
-            CommandResultsWriter? writer = WriterFactory.GetWriter(options);
+            WriterFactory writerFactory = new WriterFactory(_loggerFactory);
+            CommandResultsWriter? writer = writerFactory.GetWriter(options);
             string commandCompletedMsg;
 
             //perform type checking and assign final msg string
@@ -90,15 +93,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// <param name="options"></param>
         internal void Finalize(CommandResultsWriter? outputWriter, string commandName)
         {
-            _logger.LogInformation(MsgHelp.FormatString(MsgHelp.ID.CMD_COMPLETED, commandName);
-
-            if (outputWriter != null && outputWriter.TextWriter != null)
-            {
-                if (outputWriter.TextWriter != Console.Out) //target writer was to a file so inform where to find results
-                {
-                    _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_VIEW_OUTPUT_FILE), outputWriter?.OutputFileName ?? "");
-                }
-            }
+            _logger.LogInformation(MsgHelp.FormatString(MsgHelp.ID.CMD_COMPLETED, commandName));
         }
     }
 }

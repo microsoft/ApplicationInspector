@@ -7,6 +7,8 @@ namespace Microsoft.ApplicationInspector.CLI
     using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.CodeAnalysis.Sarif;
     using Microsoft.CST.OAT.Utils;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -31,9 +33,11 @@ namespace Microsoft.ApplicationInspector.CLI
     /// </summary>
     public class AnalyzeSarifWriter : CommandResultsWriter
     {
-        public AnalyzeSarifWriter()
-        {
+        private readonly ILogger<AnalyzeSarifWriter> _logger;
 
+        public AnalyzeSarifWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+        {
+            _logger = loggerFactory?.CreateLogger<AnalyzeSarifWriter>() ?? NullLogger<AnalyzeSarifWriter>.Instance;
         }
 
         public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)

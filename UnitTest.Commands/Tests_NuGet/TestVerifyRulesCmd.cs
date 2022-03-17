@@ -26,10 +26,6 @@
             catch
             {
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
         }
 
         [TestMethod]
@@ -53,10 +49,6 @@
                 //check for specific error if desired
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
 
@@ -78,10 +70,6 @@
             {
                 //check for specific error if desired
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);
         }
@@ -106,10 +94,6 @@
                 //check for specific error if desired
             }
 
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
-
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
 
@@ -133,7 +117,7 @@
                 if (exitCode == VerifyRulesResult.ExitCode.Verified)
                 {
                     string testLogContent = File.ReadAllText(options.LogFilePath);
-                    if (String.IsNullOrEmpty(testLogContent))
+                    if (string.IsNullOrEmpty(testLogContent))
                     {
                         exitCode = VerifyRulesResult.ExitCode.CriticalError;
                     }
@@ -147,10 +131,6 @@
             {
                 exitCode = VerifyRulesResult.ExitCode.CriticalError;
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.Verified);
         }
@@ -171,14 +151,10 @@
             Assert.AreEqual(VerifyRulesResult.ExitCode.CriticalError, result.ResultCode);
 
             string testLogContent = File.ReadAllText(options.LogFilePath);
-            if (String.IsNullOrEmpty(testLogContent) || !testLogContent.ToLower().Contains("error"))
+            if (string.IsNullOrEmpty(testLogContent) || !testLogContent.ToLower().Contains("error"))
             {
                 Assert.Fail();
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
         }
 
         [TestMethod]
@@ -201,10 +177,6 @@
             {
                 exitCode = VerifyRulesResult.ExitCode.CriticalError;
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
         }
@@ -229,10 +201,6 @@
             {
                 exitCode = VerifyRulesResult.ExitCode.CriticalError;
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
 
             Assert.IsTrue(exitCode == VerifyRulesResult.ExitCode.CriticalError);
         }

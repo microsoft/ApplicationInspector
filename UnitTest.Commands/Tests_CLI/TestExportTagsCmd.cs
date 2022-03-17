@@ -27,10 +27,6 @@
             catch
             {
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
         }
 
         [TestMethod]
@@ -239,7 +235,7 @@
                 {
                     string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.json"));
                     var result = JsonConvert.DeserializeObject<ExportTagsResult>(content);
-                    exitCode = result.TagsList.Count > 0 ? ExportTagsResult.ExitCode.Success : ExportTagsResult.ExitCode.CriticalError;
+                    exitCode = result is not null ? (result.TagsList.Count > 0 ? ExportTagsResult.ExitCode.Success : ExportTagsResult.ExitCode.CriticalError) : ExportTagsResult.ExitCode.CriticalError;
                 }
             }
             catch (Exception)
@@ -388,7 +384,7 @@
 
                 if (exitCode == ExportTagsResult.ExitCode.Success)
                 {
-                    exitCode = String.IsNullOrEmpty(testContent) ? ExportTagsResult.ExitCode.Success : ExportTagsResult.ExitCode.CriticalError;
+                    exitCode = string.IsNullOrEmpty(testContent) ? ExportTagsResult.ExitCode.Success : ExportTagsResult.ExitCode.CriticalError;
                 }
             }
             catch (Exception)

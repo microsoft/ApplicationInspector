@@ -5,11 +5,21 @@ namespace Microsoft.ApplicationInspector.CLI
 {
     using Microsoft.ApplicationInspector.CLI.Writers;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using System;
     using System.IO;
 
-    public static class WriterFactory
+    public class WriterFactory
     {
+        private readonly ILoggerFactory? _loggerFactory;
+        private readonly ILogger<WriterFactory> _logger;
+
+        public WriterFactory(ILoggerFactory? loggerFactory = null)
+        {
+            _loggerFactory = loggerFactory;
+            _logger = _loggerFactory?.CreateLogger<WriterFactory>() ?? NullLogger<WriterFactory>.Instance;
+        }
         /// <summary>
         /// Responsible for returning the correct cmd and format writer for output of cmd results.  An an output
         /// file will be opened as a stream if provided otherwise the console.out stream is used
@@ -19,7 +29,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static CommandResultsWriter? GetWriter(CLICommandOptions options)
+        public CommandResultsWriter? GetWriter(CLICommandOptions options)
         {
             CommandResultsWriter? writer;
 
@@ -57,143 +67,71 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        private static CommandResultsWriter GetAnalyzeWriter(CLIAnalyzeCmdOptions options)
+        private CommandResultsWriter GetAnalyzeWriter(CLIAnalyzeCmdOptions options)
         {
-            CommandResultsWriter? writer;
-
-            switch (options.OutputFileFormat.ToLower())
+            TextWriter textWriter = GetTextWriter(options.OutputFilePath);
+            return options.OutputFileFormat.ToLower() switch
             {
-                case "json":
-                    writer = new AnalyzeJsonWriter();
-                    break;
-
-                case "text":
-                    writer = new AnalyzeTextWriter(options.TextOutputFormat);
-                    break;
-
-                case "html":
-                    writer = new AnalyzeHtmlWriter();
-                    break;
-
-                case "sarif":
-                    writer = new AnalyzeSarifWriter();
-                    break;
-
-                default:
-                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
-                    throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
-            }
-
-            //assign the stream as a file or console
-            writer.OutputFileName = options.OutputFilePath;
-            writer.TextWriter = GetTextWriter(writer.OutputFileName);
-
-            return writer;
+                "json" => new AnalyzeJsonWriter(textWriter, _loggerFactory),
+                "text" => new AnalyzeTextWriter(textWriter, options.TextOutputFormat, _loggerFactory),
+                "html" => new AnalyzeHtmlWriter(textWriter, _loggerFactory),
+                "sarif" => new AnalyzeSarifWriter(textWriter, _loggerFactory),
+                _ => throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"))
+            };
         }
 
-        public static CommandResultsWriter GetExportTagsWriter(CLIExportTagsCmdOptions options)
+        public CommandResultsWriter GetExportTagsWriter(CLIExportTagsCmdOptions options)
         {
-            CommandResultsWriter? writer;
-
-            switch (options.OutputFileFormat.ToLower())
+            TextWriter writer = GetTextWriter(options.OutputFilePath);
+            return options.OutputFileFormat.ToLower() switch
             {
-                case "json":
-                    writer = new JsonWriter();
-                    break;
-
-                case "text":
-                    writer = new ExportTagsTextWriter();
-                    break;
-
-                default:
-                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
-                    throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
-            }
-
-            //assign the stream as a file or console
-            writer.OutputFileName = options.OutputFilePath;
-            writer.TextWriter = GetTextWriter(writer.OutputFileName);
-
-            return writer;
+                "json" => new JsonWriter(writer, _loggerFactory),
+                "text" => new ExportTagsTextWriter(writer, _loggerFactory),
+                _ => throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")))
+            };
         }
 
-        private static CommandResultsWriter GetTagDiffWriter(CLITagDiffCmdOptions options)
+        private CommandResultsWriter GetTagDiffWriter(CLITagDiffCmdOptions options)
         {
-            CommandResultsWriter? writer;
-
-            switch (options.OutputFileFormat.ToLower())
+            TextWriter writer = GetTextWriter(options.OutputFilePath);
+            return options.OutputFileFormat.ToLower() switch
             {
-                case "json":
-                    writer = new JsonWriter();
-                    break;
-
-                case "text":
-                    writer = new TagDiffTextWriter();
-                    break;
-
-                default:
-                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
-                    throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
-            }
-
-            //assign the stream as a file or console
-            writer.OutputFileName = options.OutputFilePath;
-            writer.TextWriter = GetTextWriter(writer.OutputFileName);
-
-            return writer;
+                "json" => new JsonWriter(writer, _loggerFactory),
+                "text" => new TagDiffTextWriter(writer, _loggerFactory),
+                _ => throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")))
+            };
         }
 
-        private static CommandResultsWriter GetVerifyRulesWriter(CLIVerifyRulesCmdOptions options)
+        private CommandResultsWriter GetVerifyRulesWriter(CLIVerifyRulesCmdOptions options)
         {
-            CommandResultsWriter? writer;
-
-            switch (options.OutputFileFormat.ToLower())
+            TextWriter writer = GetTextWriter(options.OutputFilePath);
+            return options.OutputFileFormat.ToLower() switch
             {
-                case "json":
-                    writer = new JsonWriter();
-                    break;
-
-                case "text":
-                    writer = new VerifyRulesTextWriter();
-                    break;
-
-                default:
-                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
-                    throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
-            }
-
-            //assign the stream as a file or console
-            writer.OutputFileName = options.OutputFilePath;
-            writer.TextWriter = GetTextWriter(writer.OutputFileName);
-
-            return writer;
+                "json" => new JsonWriter(writer, _loggerFactory),
+                "text" => new VerifyRulesTextWriter(writer, _loggerFactory),
+                _ => throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")))
+            };
         }
 
-        private static CommandResultsWriter GetPackRulesWriter(CLIPackRulesCmdOptions options)
+        private CommandResultsWriter GetPackRulesWriter(CLIPackRulesCmdOptions options)
         {
-            CommandResultsWriter? writer;
-
-            switch (options.OutputFileFormat.ToLower())
+            TextWriter writer = GetTextWriter(options.OutputFilePath);
+            return options.OutputFileFormat.ToLower() switch
             {
-                case "json":
-                    writer = new JsonWriter();
-                    break;
-
-                default:
-                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
-                    throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")));
-            }
-
-            //assign the stream as a file or console
-            writer.OutputFileName = options.OutputFilePath;
-            writer.TextWriter = GetTextWriter(writer.OutputFileName);
-            return writer;
+                "json" => new JsonWriter(writer, _loggerFactory),
+                _ => throw new OpException((MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f")))
+            };
         }
 
-        private static TextWriter GetTextWriter(string? outputFileName)
+        /// <summary>
+        /// Create a TextWriter for the given path or console.
+        /// </summary>
+        /// <param name="outputFileName">The path to create, if null or empty will use Console.Out.</param>
+        /// <returns></returns>
+        private TextWriter GetTextWriter(string? outputFileName)
         {
             TextWriter textWriter;
-            if (String.IsNullOrEmpty(outputFileName))
+            if (string.IsNullOrEmpty(outputFileName))
             {
                 textWriter = Console.Out;
             }
@@ -203,10 +141,10 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     textWriter = File.CreateText(outputFileName);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, outputFileName));
-                    throw new OpException(e.Message);
+                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR), outputFileName);
+                    throw;
                 }
             }
 

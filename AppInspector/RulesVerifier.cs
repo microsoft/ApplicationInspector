@@ -4,7 +4,6 @@
 namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.RulesEngine;
-    using NLog;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -12,6 +11,8 @@ namespace Microsoft.ApplicationInspector.Commands
     using System.Linq;
     using System.Text.RegularExpressions;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
 
     /// <summary>
     /// Common helper used by VerifyRulesCommand and PackRulesCommand classes to reduce duplication
@@ -20,18 +21,20 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         public RuleSet CompiledRuleset { get; set; }
         private readonly string? _rulesPath;
-        private readonly Logger? _logger;
+        private readonly ILogger _logger;
+        private readonly ILoggerFactory? _loggerFactory;
         private readonly bool _failFast;
 
         public bool IsVerified { get; private set; }
         private List<RuleStatus>? _ruleStatuses;
 
-        public RulesVerifier(string? rulePath, Logger? logger, bool failFast = true)
+        public RulesVerifier(string? rulePath, ILoggerFactory? loggerFactory = null, bool failFast = true)
         {
-            _logger = logger;
             _rulesPath = rulePath;
             _failFast = failFast;
-            CompiledRuleset = new RuleSet(_logger);
+            _logger = loggerFactory?.CreateLogger<RulesVerifier>() ?? NullLogger<RulesVerifier>.Instance;
+            _loggerFactory = loggerFactory;
+            CompiledRuleset = new RuleSet(loggerFactory);
         }
 
         /// <summary>
@@ -96,7 +99,7 @@ namespace Microsoft.ApplicationInspector.Commands
             // Check for null Id
             if (rule.Id == null)
             {
-                _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_NULLID_FAIL, rule.Name));
+                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NULLID_FAIL), rule.Name);
                 isValid = false;
             }
             else
@@ -104,7 +107,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 // Check for same ID
                 if (CompiledRuleset.Count(x => x.Id == rule.Id) > 1)
                 {
-                    _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Id));
+                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL), rule.Id);
                     isValid = false;
                 }
             }
@@ -120,7 +123,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         if (!languages.Any(x => x.Equals(lang, StringComparison.CurrentCultureIgnoreCase)))
                         {
-                            _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL, rule.Id ?? ""));
+                            _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL), rule.Id ?? "");
                             return false;
                         }
                     }
@@ -135,7 +138,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch (Exception e)
                 {
-                    _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", pattern ?? "", e.Message));
+                    _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "", pattern ?? "", e.Message);
 
                     return false;
                 }
@@ -156,7 +159,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     catch (Exception e)
                     {
-                        _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
+                        _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "", searchPattern.Pattern ?? "", e.Message);
                         return false;
                     }
                 }
@@ -166,7 +169,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 if (condition.SearchIn is null)
                 {
-                    _logger?.Error("SearchIn is null in {0}",rule.Id);
+                    _logger?.LogError("SearchIn is null in {ruleId}",rule.Id);
                     return false;
                 }
                 if (condition.SearchIn.StartsWith("finding-region"))
@@ -181,20 +184,20 @@ namespace Microsoft.ApplicationInspector.Commands
                             {
                                 if (int1 > 0 && int2 < 0)
                                 {
-                                    _logger?.Error("The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {0}", rule.Id);
+                                    _logger?.LogError("The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {0}", rule.Id);
                                     return false;
                                 }
                             }
                         }
                         else
                         {
-                            _logger?.Error("Improperly specified finding region. {0}", rule.Id);
+                            _logger?.LogError("Improperly specified finding region. {0}", rule.Id);
                             return false;
                         }
                     }
                     else
                     {
-                        _logger?.Error("Improperly specified finding region. {0}", rule.Id);
+                        _logger?.LogError("Improperly specified finding region. {0}", rule.Id);
                         return false;
                     }
                 }
@@ -225,8 +228,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             catch (Exception e)
             {
-                Debug.Write(e.Message);//Ensure console message indicates problem for Build process
-                WriteOnce.SafeLog(e.Message, NLog.LogLevel.Error);
+                _logger.LogError(e.Message);
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED, file));
             }
         }
@@ -241,7 +243,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
         public void ClearRules()
         {
-            CompiledRuleset = new RuleSet(_logger);
+            CompiledRuleset = new RuleSet(_loggerFactory);
         }
     }
 }

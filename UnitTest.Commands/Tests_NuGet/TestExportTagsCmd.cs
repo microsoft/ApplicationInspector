@@ -26,10 +26,6 @@
             catch
             {
             }
-
-            //because these are static and each test is meant to be indpendent null assign the references to create the log
-            WriteOnce.Log = null;
-            Utils.Logger = null;
         }
 
 
@@ -146,7 +142,7 @@
                 if (exitCode == ExportTagsResult.ExitCode.Success)
                 {
                     string testLogContent = File.ReadAllText(options.LogFilePath);
-                    if (String.IsNullOrEmpty(testLogContent))
+                    if (string.IsNullOrEmpty(testLogContent))
                     {
                         exitCode = ExportTagsResult.ExitCode.CriticalError;
                     }
@@ -184,7 +180,7 @@
             catch (Exception)
             {
                 string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (!String.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
+                if (!string.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
                 {
                     exitCode = ExportTagsResult.ExitCode.Success;
                 }
@@ -215,7 +211,7 @@
                 exitCode = result.ResultCode;
 
                 string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (String.IsNullOrEmpty(testLogContent))
+                if (string.IsNullOrEmpty(testLogContent))
                 {
                     exitCode = ExportTagsResult.ExitCode.CriticalError;
                 }
