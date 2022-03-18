@@ -295,7 +295,7 @@ namespace Microsoft.ApplicationInspector.Commands.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The requested log file {0}) exist but is not recognized as an application log. Provide a different value or delete the file and try again..
+        ///   Looks up a localized string similar to The requested log file {0} cannot be written..
         /// </summary>
         internal static string CMD_INVALID_LOG_PATH {
             get {

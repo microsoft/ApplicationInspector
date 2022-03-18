@@ -91,54 +91,5 @@
                 //check for specific error if desired
             }
         }
-
-        [TestMethod]
-        public void InvalidLogPath_Fail()
-        {
-            PackRulesOptions options = new()
-            {
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\logdebug.txt"),
-            };
-
-            PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
-            try
-            {
-                PackRulesCommand command = new(options);
-                PackRulesResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                exitCode = PackRulesResult.ExitCode.CriticalError;
-            }
-
-            Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
-        }
-
-        [Ignore]
-        [TestMethod]
-        public void InsecureLogPath_Fail()
-        {
-            PackRulesOptions options = new()
-            {
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"main.cpp")
-            };
-
-            PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
-            try
-            {
-                PackRulesCommand command = new(options);
-                PackRulesResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                exitCode = PackRulesResult.ExitCode.CriticalError;
-            }
-
-            Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
-        }
     }
 }

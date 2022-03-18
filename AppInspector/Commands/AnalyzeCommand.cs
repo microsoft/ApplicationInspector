@@ -23,7 +23,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Options specific to analyze operation not to be confused with CLIAnalyzeCmdOptions which include CLI only args
     /// </summary>
-    public class AnalyzeOptions : LogOptions
+    public class AnalyzeOptions
     {
         public IEnumerable<string> SourcePath { get; set; } = Array.Empty<string>();
         public string? CustomRulesPath { get; set; }
@@ -35,11 +35,6 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Treat <see cref="LanguageInfo.LangFileType.Build"/> files as if they were <see cref="LanguageInfo.LangFileType.Code"/> when determining if tags should apply.
         /// </summary>
         public bool AllowAllTagsInBuildFiles { get; set; } = false;
-        /// <summary>
-        /// Alias for <see cref="AllowAllTagsInBuildFiles"/>.
-        /// </summary>
-        [Obsolete("Use AllowAllTagsInBuildFiles.")]
-        public bool TreatEverythingAsCode => AllowAllTagsInBuildFiles;
         public bool NoShowProgress { get; set; } = true;
         public bool TagsOnly { get; set; } = false;
         public int FileTimeOut { get; set; } = 0;
@@ -90,8 +85,8 @@ namespace Microsoft.ApplicationInspector.Commands
         private readonly ILoggerFactory? _loggerFactory;
         private readonly ILogger _logger;
         private readonly List<string> _srcfileList = new();
-        private MetaDataHelper? _metaDataHelper; //wrapper containing MetaData object to be assigned to result
-        private RuleProcessor? _rulesProcessor;
+        private MetaDataHelper _metaDataHelper; //wrapper containing MetaData object to be assigned to result
+        private RuleProcessor _rulesProcessor;
         private const int _sleepDelay = 100;
         private DateTime DateScanned { get; }
 
@@ -118,6 +113,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 _fileExclusionList = new List<Glob>();
             }
 
+            //create metadata helper to wrap and help populate metadata from scan
+            _metaDataHelper = new MetaDataHelper(string.Join(',', _options.SourcePath));
             DateScanned = DateTime.Now;
             ConfigSourcetoScan();
             ConfigConfidenceFilters();
@@ -253,9 +250,6 @@ namespace Microsoft.ApplicationInspector.Commands
             };
 
             _rulesProcessor = new RuleProcessor(rulesSet, rpo);
-
-            //create metadata helper to wrap and help populate metadata from scan
-            _metaDataHelper = new MetaDataHelper(string.Join(',',_options.SourcePath));
         }
 
         #endregion configureMethods
@@ -573,9 +567,22 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    foreach (var entry in extractor.Extract(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1 }))
+                    Stream? contents = null;
+                    try
                     {
-                        yield return entry;
+                        contents = File.OpenRead(srcFile);
+                    }
+                    catch(Exception ex)
+                    {
+                        _logger.LogError("Failed to open source file '{filename}' for reading. {type}:{message}.", srcFile, ex.GetType().Name, ex.Message);
+                        _metaDataHelper?.Metadata.Files.Add(new FileRecord() { FileName = srcFile, Status = ScanState.Error });
+                    }
+                    if (contents != null)
+                    {
+                        foreach (var entry in extractor.Extract(srcFile, contents, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1 }))
+                        {
+                            yield return entry;
+                        }
                     }
                 }
             }

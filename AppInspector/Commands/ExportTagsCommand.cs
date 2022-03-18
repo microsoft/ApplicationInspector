@@ -16,7 +16,7 @@ namespace Microsoft.ApplicationInspector.Commands
     /// <summary>
     /// Options for the Export Tags command.
     /// </summary>
-    public class ExportTagsOptions : LogOptions
+    public class ExportTagsOptions
     {
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }

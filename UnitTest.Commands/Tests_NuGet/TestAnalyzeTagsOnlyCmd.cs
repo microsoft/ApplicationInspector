@@ -1,6 +1,7 @@
 ﻿namespace ApplicationInspector.Unitprocess.Commands
 {
     using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.CLI;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -44,14 +45,17 @@
             {
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\log.txt"),
                 TagsOnly = true
             };
-
+            var opts = new LogOptions()
+            {
+                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\log.txt")
+            };
+            var loggerFactory = opts.GetLoggerFactory();
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
-                AnalyzeCommand command = new(options);
+                AnalyzeCommand command = new(options, loggerFactory);
                 AnalyzeResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -373,121 +377,6 @@
         }
 
         [TestMethod]
-        public void LogTraceLevel_Pass()
-        {
-            AnalyzeOptions options = new()
-            {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                FilePathExclusions = Array.Empty<string>(),
-                TagsOnly = true,
-                LogFileLevel = "trace",
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logtrace.txt"),
-            };
-
-            AnalyzeCommand command = new(options);
-            AnalyzeResult result = command.GetResult();
-            Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, result.ResultCode);
-            string testLogContent = File.ReadAllText(options.LogFilePath);
-            Assert.IsFalse(string.IsNullOrEmpty(testLogContent));
-            Assert.IsTrue(testLogContent.ToLower().Contains("trace"));
-        }
-
-        [TestMethod]
-        public void LogErrorLevel_Pass()
-        {
-            AnalyzeOptions options = new()
-            {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp") },
-                FilePathExclusions = Array.Empty<string>(),
-                TagsOnly = true,
-                LogFileLevel = "error",
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logerror.txt"),
-            };
-
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                AnalyzeCommand command = new(options);
-            }
-            catch (Exception)
-            {
-                string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (!string.IsNullOrEmpty(testLogContent) && testLogContent.ToLower().Contains("error"))
-                {
-                    exitCode = AnalyzeResult.ExitCode.Success;
-                }
-                else
-                {
-                    exitCode = AnalyzeResult.ExitCode.CriticalError;
-                }
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
-        }
-
-        [TestMethod]
-        public void LogDebugLevel_Pass()
-        {
-            AnalyzeOptions options = new()
-            {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(),
-                TagsOnly = true,
-                LogFileLevel = "debug",
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"logdebug.txt"),
-            };
-
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                AnalyzeCommand command = new(options);
-                AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
-                string testLogContent = File.ReadAllText(options.LogFilePath);
-                if (string.IsNullOrEmpty(testLogContent))
-                {
-                    exitCode = AnalyzeResult.ExitCode.CriticalError;
-                }
-                else if (testLogContent.ToLower().Contains("debug"))
-                {
-                    exitCode = AnalyzeResult.ExitCode.Success;
-                }
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.Success);
-        }
-
-        [TestMethod]
-        public void InsecureLogPath_Fail()
-        {
-            AnalyzeOptions options = new()
-            {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(),
-                TagsOnly = true,
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
-            };
-
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                AnalyzeCommand command = new(options);
-                AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
-        }
-
-        [TestMethod]
         public void NoConsoleOutput_Pass()
         {
             AnalyzeOptions options = new()
@@ -495,9 +384,8 @@
                 SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
                 FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
-                ConsoleVerbosityLevel = "none"
             };
-
+            LogOptions logOpts = new();
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
@@ -506,7 +394,7 @@
                 // Redirect standard output from the console to the output file.
                 Console.SetOut(writer);
 
-                AnalyzeCommand command = new(options);
+                AnalyzeCommand command = new(options, logOpts.GetLoggerFactory(noConsole: true));
                 AnalyzeResult result = command.GetResult();
                 exitCode = result.ResultCode;
                 try

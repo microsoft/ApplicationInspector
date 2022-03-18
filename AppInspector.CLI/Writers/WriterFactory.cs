@@ -29,37 +29,18 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         /// <param name="options"></param>
         /// <returns></returns>
-        public CommandResultsWriter? GetWriter(CLICommandOptions options)
+        public CommandResultsWriter GetWriter(CLICommandOptions options)
         {
-            CommandResultsWriter? writer;
+            return options switch
+            {
+                CLIAnalyzeCmdOptions cliAnalyzeCmdOptions => GetAnalyzeWriter(cliAnalyzeCmdOptions),
+                CLITagDiffCmdOptions cliTagDiffCmdOptions => GetTagDiffWriter(cliTagDiffCmdOptions),
+                CLIExportTagsCmdOptions cliExportTagsCmdOptions => GetExportTagsWriter(cliExportTagsCmdOptions),
+                CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions => GetVerifyRulesWriter(cliVerifyRulesCmdOptions),
+                CLIPackRulesCmdOptions cliPackRulesCmdOptions => GetPackRulesWriter(cliPackRulesCmdOptions),
+                _ => throw new OpException($"Unrecognized object type {options.GetType().Name} in writer request")
 
-            //allocate the right writer by cmd (options) type
-            if (options is CLIAnalyzeCmdOptions cliAnalyzeCmdOptions)
-            {
-                writer = GetAnalyzeWriter(cliAnalyzeCmdOptions);
-            }
-            else if (options is CLITagDiffCmdOptions cliTagDiffCmdOptions)
-            {
-                writer = GetTagDiffWriter(cliTagDiffCmdOptions);
-            }
-            else if (options is CLIExportTagsCmdOptions cliExportTagsCmdOptions)
-            {
-                writer = GetExportTagsWriter(cliExportTagsCmdOptions);
-            }
-            else if (options is CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions)
-            {
-                writer = GetVerifyRulesWriter(cliVerifyRulesCmdOptions);
-            }
-            else if (options is CLIPackRulesCmdOptions cliPackRulesCmdOptions)
-            {
-                writer = GetPackRulesWriter(cliPackRulesCmdOptions);
-            }
-            else
-            {
-                throw new Exception("Unrecognized object type in writer request");
-            }
-
-            return writer;
+            };
         }
 
         /// <summary>

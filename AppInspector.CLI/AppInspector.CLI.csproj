@@ -66,7 +66,7 @@
   
   <ItemGroup>
     <PackageReference Include="DotLiquid" Version="2.2.595" />
-    <PackageReference Include="Sarif.Sdk" Version="2.4.12" />
+    <PackageReference Include="Sarif.Sdk" Version="2.4.13" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />

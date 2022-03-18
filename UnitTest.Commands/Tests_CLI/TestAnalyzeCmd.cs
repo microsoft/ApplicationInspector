@@ -3,10 +3,12 @@
     using ApplicationInspector.Unitprocess.Misc;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.CodeAnalysis.Sarif;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Newtonsoft.Json;
     using System;
     using System.IO;
+    using System.Threading;
 
     /// <summary>
     /// Test class for Analyze Commands
@@ -26,15 +28,28 @@
         [TestCleanup]
         public void CleanUp()
         {
-            try
-            {
-                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
-            }
-            catch
-            {
-            }
+            innerCleanUp(0, 10, 50);
         }
 
+        private void innerCleanUp(int iteration, int maxTries, int timeOutInMs)
+        {
+            if (iteration < maxTries)
+            {
+                try
+                {
+                    Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+                }
+                catch (Exception ex) when (ex is not FileNotFoundException)
+                {
+                    Thread.Sleep(timeOutInMs);
+                    innerCleanUp(iteration + 1, maxTries, timeOutInMs);
+                }
+            }
+            else
+            {
+                throw new Exception($"Could not delete the test output after {maxTries} attempts.");
+            }
+        }
 
         [TestMethod]
         public void BasicHTMLOutput_Pass()
@@ -244,67 +259,16 @@
             Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, exitCode);
         }
 
-        [TestMethod]
-        public void LogTraceLevel_Pass()
-        {
-            string args = string.Format(@"analyze -s {0} -f json -l {1} -v trace -g none",
-                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log1.txt"));
-
-            var exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
-
-            string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log1.txt"));
-            Assert.IsTrue(testContent.Contains("trace", StringComparison.OrdinalIgnoreCase));
-        }
-
-        [TestMethod]
-        public void LogErrorLevel_Pass()
-        {
-            string args = string.Format(@"analyze -s {0} -f json -l {1} -v error -g none",
-                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\nofile.cpp"),
-                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log2.txt"));
-
-            var exitCode  = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
-            string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log2.txt"));
-            Assert.IsTrue(testContent.Contains("error", StringComparison.OrdinalIgnoreCase));
-        }
-
-        [TestMethod]
-        public void LogDebugLevel_Pass()
-        {
-            string args = string.Format(@"analyze -s {0} -f json -l {1} -v debug -g none",
-                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
-                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log3.txt"));
-
-            var exitCode  = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, exitCode);
-            string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log3.txt"));
-            Assert.IsTrue(testContent.Contains("debug", StringComparison.OrdinalIgnoreCase));
-        }
-
-        [TestMethod]
-        public void InvalidLogPath_Fail()
-        {
-            string args = string.Format(@"analyze -s {0} -f json -l {1} -g none",
-                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
-                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"badir\log.txt"));
-
-            AnalyzeResult.ExitCode exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            
-            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);//test fails even when values match unless this case run individually -mstest bug?
-        }
-
+        // This test fails because we try to scan the log file. It is already open for logging so it will throw us an error in the logs - but continue scanning other files. In this case we get no matches because it is the only file.
         [TestMethod]
         public void InsecureLogPath_Fail()
         {
-            string args = string.Format(@"analyze -s {0} -f json -l {1} -g none",
+            string args = string.Format(@"analyze -s {0} -f json -l {1} -g none --no-show-progress",
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
 
             var exitCode  = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
+            Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, exitCode);
         }
 
         [TestMethod]
@@ -312,10 +276,9 @@
         {
             string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
 
-            string args = string.Format(@"analyze -s {0} -x none -f text -g none -o {1} --no-show-progress",
+            string args = string.Format(@"analyze -s {0} -x Off -f text -g Off -o {1} --no-show-progress",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
-
 
             var exitCode = (AnalyzeResult.ExitCode)Helper.RunProcess(appInspectorPath, args, out string testContent);
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
@@ -323,14 +286,14 @@
         }
 
         [TestMethod]
-        public void NoConsoleNoFileOutput_Fail()
+        public void NoConsoleNoFileOutput_Pass()
         {
-            string args = string.Format(@"analyze -s {0} -x none -f text -g none -l {1} --no-show-progress",
+            string args = string.Format(@"analyze -s {0} -x Off -f text -g Off -l {1} --no-show-progress",
                 Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
                 Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
 
             var  exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
-            Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
         }
     }
 }

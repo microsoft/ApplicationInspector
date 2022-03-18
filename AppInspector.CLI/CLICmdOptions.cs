@@ -4,7 +4,6 @@
 namespace Microsoft.ApplicationInspector.CLI
 {
     using CommandLine;
-    using Microsoft.ApplicationInspector.Common;
     using System.Collections.Generic;
 
     /// <summary>

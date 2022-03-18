@@ -14,7 +14,7 @@ namespace Microsoft.ApplicationInspector.Commands
     using System.IO;
     using System.Linq;
 
-    public class VerifyRulesOptions : LogOptions
+    public class VerifyRulesOptions
     {
         public bool VerifyDefaultRules { get; set; }
         public string? CustomRulesPath { get; set; }

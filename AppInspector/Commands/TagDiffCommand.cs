@@ -11,7 +11,7 @@ namespace Microsoft.ApplicationInspector.Commands
     using System.Collections.Generic;
     using System.Linq;
 
-    public class TagDiffOptions : LogOptions
+    public class TagDiffOptions
     {
         public IEnumerable<string> SourcePath1 { get; set; } = Array.Empty<string>();
         public IEnumerable<string> SourcePath2 { get; set; } = Array.Empty<string>();
@@ -152,7 +152,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     CustomRulesPath = _options.CustomRulesPath,
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
-                    ConsoleVerbosityLevel = "none",
                     TagsOnly = true,
                     ConfidenceFilters = _options.ConfidenceFilters,
                     FileTimeOut = _options.FileTimeOut,
@@ -168,7 +167,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     CustomRulesPath = _options.CustomRulesPath,
                     IgnoreDefaultRules = _options.IgnoreDefaultRules,
                     FilePathExclusions = _options.FilePathExclusions,
-                    ConsoleVerbosityLevel = "none",
                     TagsOnly = true,
                     ConfidenceFilters = _options.ConfidenceFilters,
                     FileTimeOut = _options.FileTimeOut,

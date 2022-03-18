@@ -12,7 +12,7 @@ namespace Microsoft.ApplicationInspector.Commands
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
 
-    public class PackRulesOptions : LogOptions
+    public class PackRulesOptions
     {
         public bool RepackDefaultRules { get; set; }
         public string? CustomRulesPath { get; set; }
