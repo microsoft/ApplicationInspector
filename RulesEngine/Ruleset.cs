@@ -82,7 +82,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (rule != null)
                 {
-                    _logger?.LogDebug("Attempting to add rule: " + rule.Name);
+                    _logger?.LogTrace("Attempting to add rule: " + rule.Name);
                     _oatRules.Add(rule);
                 }
             }

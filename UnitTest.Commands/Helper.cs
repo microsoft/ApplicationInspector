@@ -1,5 +1,7 @@
 ﻿namespace ApplicationInspector.Unitprocess.Misc
 {
+    using Microsoft.ApplicationInspector.CLI;
+    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -7,7 +9,14 @@
 
     public static class Helper
     {
-        public enum AppPath { basePath, testSource, testRules, testOutput, defaultRules, appInspectorCLI };
+        public static ILoggerFactory GenerateLoggerFactory(string logName = "testLog.txt", string fileLevel = "Verbose", string consoleLevel = "Debug") =>
+            new LogOptions()
+            {
+                LogFileLevel = fileLevel,
+                LogFilePath = Path.Combine(GetPath(AppPath.testLogOutput), logName),
+                ConsoleVerbosityLevel = consoleLevel
+            }.GetLoggerFactory();
+        public enum AppPath { basePath, testSource, testRules, testOutput, defaultRules, appInspectorCLI, testLogOutput };
 
         private static string _basePath = string.Empty;
 
@@ -53,6 +62,9 @@
 #else
                     result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "release", "net6.0", "applicationinspector.cli.exe");
 #endif
+                    break;
+                case AppPath.testLogOutput:
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "UnitTest.Commands", "logs");
                     break;
             }
 

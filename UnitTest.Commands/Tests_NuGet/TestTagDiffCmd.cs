@@ -1,11 +1,14 @@
 ﻿namespace ApplicationInspector.Unitprocess.Commands
 {
     using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.CLI;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.IO;
+    using System.Threading;
 
     /// <summary>
     /// Test class for Analyze Commands
@@ -16,22 +19,19 @@
     [TestClass]
     public class TestTagDiffCmd
     {
+        private ILoggerFactory loggerFactory;
         [TestInitialize]
         public void InitOutput()
         {
             Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+            loggerFactory = Helper.GenerateLoggerFactory();
         }
 
         [TestCleanup]
         public void CleanUp()
         {
-            try
-            {
-                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
-            }
-            catch
-            {
-            }
+            loggerFactory.Dispose();
+            Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
         }
 
 
@@ -45,19 +45,10 @@
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
             };
 
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
-            }
+            TagDiffCommand command = new(options, loggerFactory);
+            TagDiffResult result = command.GetResult();
 
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
+            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, result.ResultCode);
         }
 
         [TestMethod]
@@ -71,16 +62,10 @@
             };
 
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
+
+            TagDiffCommand command = new(options, loggerFactory);
+            TagDiffResult result = command.GetResult();
+            exitCode = result.ResultCode;
 
             Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
         }
@@ -98,7 +83,7 @@
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new(options);
+                TagDiffCommand command = new(options, loggerFactory);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -125,7 +110,7 @@
 
             try
             {
-                TagDiffCommand command = new(options);
+                TagDiffCommand command = new(options, loggerFactory);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -151,7 +136,7 @@
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new(options);
+                TagDiffCommand command = new(options, loggerFactory);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -175,7 +160,7 @@
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new(options);
+                TagDiffCommand command = new(options, loggerFactory);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -200,7 +185,7 @@
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new(options);
+                TagDiffCommand command = new(options, loggerFactory);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -225,7 +210,7 @@
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new(options);
+                TagDiffCommand command = new(options, loggerFactory);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -251,7 +236,7 @@
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new(options);
+                TagDiffCommand command = new(options, loggerFactory);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -275,19 +260,10 @@
                 CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
             };
 
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
-            }
+            TagDiffCommand command = new(options, loggerFactory);
+            TagDiffResult result = command.GetResult();
 
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
+            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, result.ResultCode);
         }
 
         [TestMethod]
@@ -305,7 +281,7 @@
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new(options);
+                TagDiffCommand command = new(options, loggerFactory);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -331,7 +307,7 @@
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
             try
             {
-                TagDiffCommand command = new(options);
+                TagDiffCommand command = new(options, loggerFactory);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
             }
@@ -361,7 +337,7 @@
                 // Redirect standard output from the console to the output file.
                 Console.SetOut(writer);
 
-                TagDiffCommand command = new(options);
+                TagDiffCommand command = new(options, loggerFactory);
                 TagDiffResult result = command.GetResult();
                 exitCode = result.ResultCode;
                 try

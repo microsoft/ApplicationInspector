@@ -39,34 +39,6 @@
         }
 
         [TestMethod]
-        public void InvalidLogPath_Fail()
-        {
-            AnalyzeOptions options = new()
-            {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                TagsOnly = true
-            };
-            var opts = new LogOptions()
-            {
-                LogFilePath = Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"baddir\log.txt")
-            };
-            var loggerFactory = opts.GetLoggerFactory();
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                AnalyzeCommand command = new(options, loggerFactory);
-                AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);//test fails even when values match unless this case run individually -mstest bug?
-        }
-
-        [TestMethod]
         public void BasicAnalyze_Pass()
         {
             AnalyzeOptions options = new()
@@ -96,57 +68,6 @@
             AnalyzeResult result = command.GetResult();
 
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
-        }
-
-        [TestMethod]
-        public void InvalidSourcePath_Fail()
-        {
-            AnalyzeOptions options = new()
-            {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"baddir\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(),
-                TagsOnly = true
-            };
-
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                AnalyzeCommand command = new(options);
-                AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
-        }
-
-        [TestMethod]
-        public void InvalidRulesPath_Fail()
-        {
-            AnalyzeOptions options = new()
-            {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(),
-                TagsOnly = true,
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"notfound.json")
-            };
-
-            AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
-            try
-            {
-                AnalyzeCommand command = new(options);
-                AnalyzeResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == AnalyzeResult.ExitCode.CriticalError);
         }
 
         [TestMethod]

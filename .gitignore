@@ -263,13 +263,9 @@ __pycache__/
 # App Inspector artifacts
 /AppInspector/Resources/defaultRulesPkd.json
 /UnitTest.Commands/output
-/RulesPacker/log.txt
 /AppInspector/ApplicationInspector.Commands.xml
 AppInspector/Resources/defaultRulesPkd.json
 /AppInspector.CLI/Properties/launchSettings.json
-RulesPacker/appinspector.log.txt
-AppInspector/appinspector.log.txt
 output.html
 result.json
-log.txt
-appinspector.log.txt
+UnitTest.Commands/logs/
