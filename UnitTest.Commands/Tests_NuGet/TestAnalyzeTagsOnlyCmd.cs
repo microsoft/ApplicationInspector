@@ -23,7 +23,7 @@
         [TestInitialize]
         public void InitOutput()
         {
-            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+            Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         }
 
         [TestCleanup]
@@ -31,7 +31,7 @@
         {
             try
             {
-                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+                Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
             }
             catch
             {
@@ -43,7 +43,7 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true
             };
@@ -58,7 +58,7 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\main.zip") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"zipped\main.zip") },
                 FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 SingleThread = true
@@ -75,7 +75,7 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 IgnoreDefaultRules = true,
@@ -101,11 +101,11 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
                 IgnoreDefaultRules = true,
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
             };
 
             try
@@ -125,10 +125,10 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
             };
 
             try
@@ -148,10 +148,10 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json")
+                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json")
             };
 
             try
@@ -173,7 +173,7 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\project\one") },
                 FilePathExclusions = new string[] { "main.cpp" },
                 TagsOnly = true
             };
@@ -198,7 +198,7 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 SingleThread = true,
                 TagsOnly = true
@@ -217,7 +217,7 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"), Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\onetag.js")},
+                SourcePath = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"), Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\onetag.js")},
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 SingleThread = true,
                 TagsOnly = true
@@ -242,7 +242,7 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 SingleThread = true,
                 TagsOnly = true
@@ -262,7 +262,7 @@
         {
                 AnalyzeOptions options = new()
                 {
-                    SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
+                    SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainduptags.cpp") },
                     FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                     SingleThread = false,
                     TagsOnly = true
@@ -280,7 +280,7 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\empty.cpp") },
                 FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true
             };
@@ -302,25 +302,28 @@
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = new string[1] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
+                SourcePath = new string[1] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\empty.cpp") },
                 FilePathExclusions = Array.Empty<string>(),
                 TagsOnly = true,
             };
-            LogOptions logOpts = new();
+            LogOptions logOpts = new()
+            {
+                DisableConsoleOutput = true
+            };
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
                 // Attempt to open output file.
-                using var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                using var writer = new StreamWriter(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"consoleout.txt"));
                 // Redirect standard output from the console to the output file.
                 Console.SetOut(writer);
 
-                AnalyzeCommand command = new(options, logOpts.GetLoggerFactory(noConsole: true));
+                AnalyzeCommand command = new(options, logOpts.GetLoggerFactory());
                 AnalyzeResult result = command.GetResult();
                 exitCode = result.ResultCode;
                 try
                 {
-                    string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                    string testContent = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"consoleout.txt"));
                     if (string.IsNullOrEmpty(testContent))
                     {
                         exitCode = AnalyzeResult.ExitCode.Success;

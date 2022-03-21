@@ -13,13 +13,13 @@
         [TestInitialize]
         public void InitOutput()
         {
-            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+            Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         }
 
         [TestCleanup]
         public void CleanUp()
         {
-            Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
         }
 
 
@@ -75,7 +75,7 @@
             ExportTagsOptions options = new()
             {
                 IgnoreDefaultRules = true,
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json")
+                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json")
             };
 
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
@@ -98,7 +98,7 @@
         {
             ExportTagsOptions options = new()
             {
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
             };
 
             ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;

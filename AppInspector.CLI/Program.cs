@@ -60,7 +60,6 @@ namespace Microsoft.ApplicationInspector.CLI
             return finalResult;
         }
 
-#region OutputArgsCheckandRun
 
         //idea is to check output args which are not applicable to NuGet callers before the command operation is run for max efficiency
 
@@ -201,9 +200,24 @@ namespace Microsoft.ApplicationInspector.CLI
             return true;
         }
 
-#endregion OutputArgsCheckandRun
 
-#region RunCmdsWriteResults
+
+        /// <summary>
+        /// This method gets a logging factory with Console disabled when the progress bar is enabled. Does not change the original options.
+        /// </summary>
+        /// <param name="cliOptions">The original options.</param>
+        /// <returns>A logging factory with adjusted settings.</returns>
+        private static ILoggerFactory GetAdjustedFactory(CLIAnalyzeCmdOptions cliOptions)
+        {
+            return new LogOptions()
+            {
+                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                DisableLogFileOutput = cliOptions.DisableLogFileOutput,
+                LogFileLevel = cliOptions.LogFileLevel,
+                LogFilePath = cliOptions.LogFilePath,
+                DisableConsoleOutput = cliOptions.NoShowProgressBar ? cliOptions.DisableConsoleOutput : false
+            }.GetLoggerFactory();
+        }
 
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
         {
@@ -218,7 +232,7 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 logger.LogInformation("Progress bar is enabled so console output will be supressed. To receive log messages with the progress bar check the log file.");
             }
-            ILoggerFactory adjustedFactory = !cliOptions.NoShowProgressBar ? cliOptions.GetLoggerFactory(noConsole:true) : loggerFactory;
+            ILoggerFactory adjustedFactory = GetAdjustedFactory(cliOptions);
             AnalyzeCommand command = new(new AnalyzeOptions()
             {
                 SourcePath = cliOptions.SourcePath ?? Array.Empty<string>(),
@@ -236,7 +250,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 NoFileMetadata = cliOptions.NoFileMetadata,
                 AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles,
                 MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag
-            }, loggerFactory);
+            }, adjustedFactory);
 
             AnalyzeResult analyzeResult = command.GetResult();
 
@@ -355,6 +369,5 @@ namespace Microsoft.ApplicationInspector.CLI
             return (int)exportTagsResult.ResultCode;
         }
 
-#endregion RunCmdsWriteResults
     }
 }

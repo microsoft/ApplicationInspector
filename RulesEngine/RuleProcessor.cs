@@ -361,8 +361,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList;
         }
 
-        #region Private Support Methods
-
+        
         /// <summary>
         ///     Filters the rules for those matching the content type. Resolves all the overrides
         /// </summary>
@@ -485,6 +484,5 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return text.FullContent[startIndex..endIndex];
         }
 
-        #endregion Private Methods
-    }
+            }
 }

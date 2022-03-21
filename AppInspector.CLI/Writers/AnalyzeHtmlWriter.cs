@@ -141,8 +141,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return stringBuilder.ToString();
         }
 
-        #region UIAndReportResultsHelp
-
+        
         /// <summary>
         /// Renders code i.e. user input safe for html display for default report
         /// Delayed html encoding allows original values to be rendered for the output form i.e.
@@ -634,8 +633,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return result;
         }
 
-        #endregion UIAndReportResultsHelp
-    }
+            }
 
     /// <summary>
     /// Compatible for liquid; used to avoid use in MetaData as it adds unwanted properties to json serialization

@@ -23,15 +23,15 @@
         [TestInitialize]
         public void InitOutput()
         {
-            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
-            loggerFactory = Helper.GenerateLoggerFactory();
+            Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
+            loggerFactory = TestHelpers.GenerateLoggerFactory();
         }
 
         [TestCleanup]
         public void CleanUp()
         {
             loggerFactory.Dispose();
-            Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
         }
 
 
@@ -40,8 +40,8 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
             };
 
@@ -56,8 +56,8 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
             };
 
@@ -75,8 +75,8 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"zipped\mainx.zip") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"zipped\mainx.zip") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
             };
 
@@ -100,8 +100,8 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 TestType = "Inequality"
             };
@@ -127,8 +127,8 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 TestType = "Inequality"
             };
@@ -153,8 +153,8 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\empty.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
             };
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
@@ -177,8 +177,8 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\nofilehere.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\nofilehere.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
             };
 
@@ -202,8 +202,8 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\blank.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\empty.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\blank.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
             };
 
@@ -227,8 +227,8 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 IgnoreDefaultRules = true
             };
@@ -253,11 +253,11 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 IgnoreDefaultRules = false,
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
             };
 
             TagDiffCommand command = new(options, loggerFactory);
@@ -271,11 +271,11 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 IgnoreDefaultRules = true,
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
             };
 
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
@@ -298,10 +298,10 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                CustomRulesPath = Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
+                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
             };
 
             TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
@@ -324,8 +324,8 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
+                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
+                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
                 FilePathExclusions = Array.Empty<string>(),
             };
 
@@ -333,7 +333,7 @@
             try
             {
                 // Attempt to open output file.
-                using var writer = new StreamWriter(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                using var writer = new StreamWriter(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"consoleout.txt"));
                 // Redirect standard output from the console to the output file.
                 Console.SetOut(writer);
 
@@ -342,7 +342,7 @@
                 exitCode = result.ResultCode;
                 try
                 {
-                    string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"consoleout.txt"));
+                    string testContent = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"consoleout.txt"));
                     if (string.IsNullOrEmpty(testContent))
                     {
                         exitCode = TagDiffResult.ExitCode.TestPassed;

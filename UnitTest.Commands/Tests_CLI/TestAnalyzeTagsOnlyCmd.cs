@@ -20,7 +20,7 @@
         [TestInitialize]
         public void InitOutput()
         {
-            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+            Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         }
 
         [TestCleanup]
@@ -28,7 +28,7 @@
         {
             try
             {
-                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+                Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
             }
             catch
             {
@@ -39,7 +39,7 @@
         [TestMethod]
         public void UnknownFormat_Fail()
         {
-            string args = string.Format(@"analyze -b -s {0} -f unknown -g none -t", Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
+            string args = string.Format(@"analyze -b -s {0} -f unknown -g none -t", Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"));
             var exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
         }
@@ -48,8 +48,8 @@
         public void InvalidOutputfilePath_Fail()
         {
             string args = string.Format(@"analyze -s {0} -f json -g none -o {1} -t",
-                     Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                     Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"badir\output.txt"));
+                     Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                     Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"badir\output.txt"));
 
             var exitCode  = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
@@ -59,8 +59,8 @@
         public void InvalidSourcePath_Fail()
         {
             string args = string.Format(@"analyze -s {0} -f json -g none -o {1} -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\badfilepath.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
             var exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             Assert.AreEqual(AnalyzeResult.ExitCode.CriticalError, exitCode);
@@ -73,8 +73,8 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -r badrulespath -f json -g none -o {1} -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
@@ -92,8 +92,8 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -i -f json -g none -o {1} -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
@@ -111,9 +111,9 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -i -r {1} -f json -g none -o {2} -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
@@ -131,9 +131,9 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -r {1} -f json -g none -o {2} -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
@@ -149,13 +149,13 @@
         {
             
             string args = string.Format(@"analyze -s {0} -r {1} -f json -g none -o {2} -t",
-                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
+                Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
             var exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
-            string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            string testContent = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
             Assert.IsTrue(testContent.Contains("Cryptography.HashAlgorithm.Legacy"));
             Assert.IsTrue(testContent.Contains("Data.Custom1"));
@@ -168,9 +168,9 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -r {1} -f json -o {2} -g {3} -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\project\one"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testRules), @"myrule.json"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\project\one"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"),
                     "*.cpp");
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
@@ -185,28 +185,28 @@
         [TestMethod]
         public void MultiFiles()
         {
-            var mainduptags = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp");
+            var mainduptags = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainduptags.cpp");
             string args = string.Format(@"analyze -s {0} -f json -o {1} -g none -t",
                 $"{mainduptags}",
-                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
             var exitCodeSingleThread = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCodeSingleThread);
 
-            string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            string content = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
             var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
             Assert.IsNotNull(result);
             var matches = result.Metadata.TotalMatchesCount;
             var uniqueMatches = result.Metadata.UniqueMatchesCount;
-            mainduptags = Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp");
+            mainduptags = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainduptags.cpp");
             args = string.Format(@"analyze -s {0} -f json -o {1} -g none -t",
                 $"{mainduptags},{mainduptags}",
-                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
             exitCodeSingleThread = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCodeSingleThread);
 
-            content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            content = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
             var result2 = JsonConvert.DeserializeObject<AnalyzeResult>(content);
             Assert.IsNotNull(result2);
 
@@ -218,12 +218,12 @@
         public void ExpectedTagCountDupsAllowed_Pass()
         {
             string args = string.Format(@"analyze -s {0} -f json -o {1} -g none --single-threaded -t",
-                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
-                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
+                Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
             var exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
-            string content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            string content = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
             var result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
@@ -231,13 +231,13 @@
             Assert.AreEqual(7, result.Metadata.UniqueTags.Count);
             
             args = string.Format(@"analyze -s {0} -f json -o {1} -g none -t",
-                Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
-                Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainduptags.cpp"),
+                Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
             exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, exitCode);
-            content = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+            content = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
             result = JsonConvert.DeserializeObject<AnalyzeResult>(content);
             Assert.IsNotNull(result);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
@@ -253,8 +253,8 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -f json -o {1} -g none -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"output.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"output.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
@@ -272,12 +272,12 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -f json -l {1} -v trace -g none -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log1.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"log1.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log1.txt"));
+                string testContent = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"log1.txt"));
                 exitCode = testContent.ToLower().Contains("trace") ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.CriticalError;
             }
             catch (Exception)
@@ -294,12 +294,12 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -f json -l {1} -v error -g none -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\nofile.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log2.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\nofile.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"log2.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log2.txt"));
+                string testContent = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"log2.txt"));
                 exitCode = testContent.ToLower().Contains("error") ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.CriticalError;
             }
             catch (Exception)
@@ -316,12 +316,12 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -f json -l {1} -v debug -g none -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\empty.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log3.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\empty.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"log3.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
 
-                string testContent = File.ReadAllText(Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log3.txt"));
+                string testContent = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"log3.txt"));
                 exitCode = testContent.ToLower().Contains("debug") ? AnalyzeResult.ExitCode.Success : AnalyzeResult.ExitCode.CriticalError;
             }
             catch (Exception)
@@ -338,8 +338,8 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -f json -l {1} -g none -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"badir\log.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\badfile.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"badir\log.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
@@ -357,8 +357,8 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -f json -l {1} -g none -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }
@@ -375,13 +375,13 @@
             AnalyzeResult.ExitCode exitCode = AnalyzeResult.ExitCode.CriticalError;
             try
             {
-                string appInspectorPath = Helper.GetPath(Helper.AppPath.appInspectorCLI);
+                string appInspectorPath = TestHelpers.GetPath(TestHelpers.AppPath.appInspectorCLI);
 
                 string args = string.Format(@"analyze -s {0} -x none -f text -g none -o {1} --no-show-progress -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"log.txt"));
 
-                exitCode = (AnalyzeResult.ExitCode)Helper.RunProcess(appInspectorPath, args, out string testContent);
+                exitCode = (AnalyzeResult.ExitCode)TestHelpers.RunProcess(appInspectorPath, args, out string testContent);
 
                 if (exitCode == AnalyzeResult.ExitCode.Success)
                 {
@@ -402,8 +402,8 @@
             try
             {
                 string args = string.Format(@"analyze -s {0} -x none -f text -g none -l {1} --no-show-progress -t",
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testSource), @"unzipped\simple\main.cpp"),
-                    Path.Combine(Helper.GetPath(Helper.AppPath.testOutput), @"log.txt"));
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp"),
+                    Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"log.txt"));
 
                 exitCode = (AnalyzeResult.ExitCode)Microsoft.ApplicationInspector.CLI.Program.Main(args.Split(' '));
             }

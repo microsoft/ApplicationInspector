@@ -55,8 +55,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
         }
 
-        #region helpers
-
+        
         private string StringList(List<string> data)
         {
             return string.Join(' ', data);
@@ -97,8 +96,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return build.ToString();
         }
 
-        #endregion helpers
-
+        
         public void WriteAppMeta(MetaData metaData)
         {
             if (TextWriter is null)

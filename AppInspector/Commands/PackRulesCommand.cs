@@ -58,8 +58,7 @@ namespace Microsoft.ApplicationInspector.Commands
             ConfigRules();
         }
 
-        #region configure
-
+        
         private void ConfigRules()
         {
             _logger.LogTrace("PackRulesCommand::ConfigRules");
@@ -80,8 +79,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _rules_path = _options.RepackDefaultRules ? Common.Utils.GetPath(Common.Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
         }
 
-        #endregion configure
-
+        
         /// <summary>
         /// Intentional as no identified value in calling from DLL at this time
         /// </summary>

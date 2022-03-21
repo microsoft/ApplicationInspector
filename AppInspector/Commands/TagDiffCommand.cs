@@ -107,8 +107,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        #region config
-
+        
         private void ConfigureCompareType()
         {
             if (!Enum.TryParse(_options?.TestType, true, out _arg_tagTestType))
@@ -127,8 +126,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        #endregion config
-
+        
         /// <summary>
         /// Main entry from CLI
         /// </summary>

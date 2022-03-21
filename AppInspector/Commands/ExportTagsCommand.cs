@@ -68,8 +68,7 @@ namespace Microsoft.ApplicationInspector.Commands
             ConfigRules();
         }
 
-        #region ConfigMethods
-
+        
         private void ConfigRules()
         {
             _logger.LogTrace("ExportTagsCommand::ConfigRules");
@@ -102,8 +101,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        #endregion ConfigMethods
-
+        
         public ExportTagsResult GetResult()
         {
             _logger.LogTrace("ExportTagsCommand::Run");

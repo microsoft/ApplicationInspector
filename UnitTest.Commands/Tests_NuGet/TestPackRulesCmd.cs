@@ -13,7 +13,7 @@
         [TestInitialize]
         public void InitOutput()
         {
-            Directory.CreateDirectory(Helper.GetPath(Helper.AppPath.testOutput));
+            Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         }
 
         [TestCleanup]
@@ -21,7 +21,7 @@
         {
             try
             {
-                Directory.Delete(Helper.GetPath(Helper.AppPath.testOutput), true);
+                Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
             }
             catch
             {

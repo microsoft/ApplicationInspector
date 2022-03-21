@@ -7,9 +7,9 @@
     using System.Diagnostics;
     using System.IO;
 
-    public static class Helper
+    public static class TestHelpers
     {
-        public static ILoggerFactory GenerateLoggerFactory(string logName = "testLog.txt", string fileLevel = "Verbose", string consoleLevel = "Debug") =>
+        public static ILoggerFactory GenerateLoggerFactory(string logName = "testLog.txt", Serilog.Events.LogEventLevel fileLevel = Serilog.Events.LogEventLevel.Verbose, Serilog.Events.LogEventLevel consoleLevel = Serilog.Events.LogEventLevel.Debug) =>
             new LogOptions()
             {
                 LogFileLevel = fileLevel,

@@ -69,8 +69,7 @@ namespace Microsoft.ApplicationInspector.Commands
             ConfigRules();
         }
 
-        #region configure
-
+        
         private void ConfigRules()
         {
             _logger.LogTrace("VerifyRulesCommand::ConfigRules");
@@ -83,8 +82,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _rules_path = _options.VerifyDefaultRules ? null : _options.CustomRulesPath;
         }
 
-        #endregion configure
-
+        
         /// <summary>
         /// Option for DLL use as alternate to Run which only outputs a file to return results as string
         /// CommandOption defaults will not have been set when used as DLL via CLI processing so some checks added

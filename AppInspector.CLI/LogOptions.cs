@@ -13,35 +13,32 @@ namespace Microsoft.ApplicationInspector.CLI
     /// </summary>
     public class LogOptions
     {
-        private const string DEFAULT_LOG_NAME = "appinspector.log.txt";
+        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [Verbose|Debug|Information|Warning|Error|Fatal]", Default = Serilog.Events.LogEventLevel.Information)]
+        public Serilog.Events.LogEventLevel ConsoleVerbosityLevel { get; set; } = Serilog.Events.LogEventLevel.Information;
 
-        [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [Verbose|Debug|Information|Warning|Error|Fatal|Off]", Default = "Information")]
-        public string ConsoleVerbosityLevel { get; set; } = "Information";
+        [Option("disable-console", Required = false, HelpText = "Disable console output of logging messages.", Default = false)]
+        public bool DisableConsoleOutput { get; set; } = false;
 
-        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Verbose|Debug|Information|Warning|Error|Fatal|Off]", Default = "Error")]
-        public string LogFileLevel { get; set; } = "Error";
+        [Option('v', "log-file-level", Required = false, HelpText = "Log file level [Verbose|Debug|Information|Warning|Error|Fatal]", Default = Serilog.Events.LogEventLevel.Error)]
+        public Serilog.Events.LogEventLevel LogFileLevel { get; set; } = Serilog.Events.LogEventLevel.Error;
+
+        [Option("disable-log-file", Required = false, HelpText = "Disable file output of logging messages.", Default = false)]
+        public bool DisableLogFileOutput { get; set; } = false;
 
         [Option('l', "log-file-path", Required = false, HelpText = $"Log file path. If not set, will not log to file.")]
         public string? LogFilePath { get; set; }
 
-        public ILoggerFactory GetLoggerFactory(bool noConsole = false)
+        public ILoggerFactory GetLoggerFactory()
         {
-            var consoleLevel = Enum.TryParse<Serilog.Events.LogEventLevel>(ConsoleVerbosityLevel, out var level) ? level :
-#if DEBUG
-                Serilog.Events.LogEventLevel.Debug;
-#else
-                Serilog.Events.LogEventLevel.Information;
-#endif
-            var fileLogLevel = Enum.TryParse<Serilog.Events.LogEventLevel>(LogFileLevel, out var fileLevel) ? fileLevel : Serilog.Events.LogEventLevel.Error;
             var configuration = new LoggerConfiguration()
-                .MinimumLevel.Is(consoleLevel < fileLogLevel ? consoleLevel : fileLogLevel);
-            if (!string.IsNullOrEmpty(LogFilePath))
+                .MinimumLevel.Is(ConsoleVerbosityLevel < LogFileLevel ? ConsoleVerbosityLevel : LogFileLevel);
+            if (!DisableLogFileOutput && !string.IsNullOrEmpty(LogFilePath))
             {
-                configuration.WriteTo.File(LogFilePath, fileLogLevel);
+                configuration.WriteTo.File(LogFilePath, LogFileLevel);
             }
-            if (!noConsole && !ConsoleVerbosityLevel.Equals("off", StringComparison.InvariantCultureIgnoreCase))
+            if (!DisableConsoleOutput)
             {
-                configuration.WriteTo.Console(consoleLevel);
+                configuration.WriteTo.Console(ConsoleVerbosityLevel);
             }
             var serilogger = configuration
                 .CreateLogger();

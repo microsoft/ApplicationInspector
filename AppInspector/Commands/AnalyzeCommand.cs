@@ -120,9 +120,7 @@ namespace Microsoft.ApplicationInspector.Commands
             ConfigConfidenceFilters();
             ConfigRules();
         }
-
-        #region configureMethods
-
+        
         /// <summary>
         /// Expects user to supply all that apply impacting which rule pattern matches are returned
         /// </summary>
@@ -252,16 +250,13 @@ namespace Microsoft.ApplicationInspector.Commands
             _rulesProcessor = new RuleProcessor(rulesSet, rpo);
         }
 
-        #endregion configureMethods
-
         /// <summary>
-        /// Populate the MetaDataHelper with the data from the FileEntries. Ignores the options already set in this Analyze Command.  
-        /// It is recommended to use <see cref="PopulateRecords(CancellationToken, IEnumerable{FileEntry})" />  instead and to set the options on the <see cref="AnalyzeCommand"/> object.
+        /// Populate the MetaDataHelper with the data from the FileEntries
         /// </summary>
         /// <param name="cancellationToken"></param>
-        /// <param name="opts">The options to use when populating records.</param>
         /// <param name="populatedEntries"></param>
-        public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, AnalyzeOptions opts, IEnumerable<FileEntry> populatedEntries)
+        /// <returns></returns>
+        public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, IEnumerable<FileEntry> populatedEntries)
         {
             _logger.LogTrace("AnalyzeCommand::PopulateRecords");
             if (_metaDataHelper is null)
@@ -274,7 +269,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 return AnalyzeResult.ExitCode.CriticalError;
             }
 
-            if (opts.SingleThread)
+            if (_options.SingleThread)
             {
                 foreach (var entry in populatedEntries)
                 {
@@ -292,7 +287,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             ProcessAndAddToMetadata(entry);
                         }
-                        catch(Exception)
+                        catch (Exception)
                         {
                             throw;
                         }
@@ -339,7 +334,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             _metaDataHelper.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
-                            if (!opts.ScanUnknownTypes)
+                            if (!_options.ScanUnknownTypes)
                             {
                                 fileRecord.Status = ScanState.Skipped;
                             }
@@ -351,21 +346,21 @@ namespace Microsoft.ApplicationInspector.Commands
 
                             void ProcessLambda()
                             {
-                                if (opts.TagsOnly)
+                                if (_options.TagsOnly)
                                 {
                                     results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Keys, -1);
                                 }
-                                else if (opts.MaxNumMatchesPerTag > 0)
+                                else if (_options.MaxNumMatchesPerTag > 0)
                                 {
-                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Where(x => x.Value >= opts.MaxNumMatchesPerTag).Select(x => x.Key), opts.ContextLines);
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, _metaDataHelper.UniqueTags.Where(x => x.Value >= _options.MaxNumMatchesPerTag).Select(x => x.Key), _options.ContextLines);
                                 }
                                 else
                                 {
-                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, opts.ContextLines);
+                                    results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, _options.ContextLines);
                                 }
                             }
 
-                            if (opts.FileTimeOut > 0)
+                            if (_options.FileTimeOut > 0)
                             {
                                 using var cts = new CancellationTokenSource();
                                 var t = Task.Run(() =>
@@ -374,7 +369,7 @@ namespace Microsoft.ApplicationInspector.Commands
                                 }, cts.Token);
                                 try
                                 {
-                                    if (!t.Wait(new TimeSpan(0, 0, 0, 0, opts.FileTimeOut)))
+                                    if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.FileTimeOut)))
                                     {
                                         _logger.LogError("{path} timed out.", file.FullPath);
                                         fileRecord.Status = ScanState.TimedOut;
@@ -385,7 +380,7 @@ namespace Microsoft.ApplicationInspector.Commands
                                         fileRecord.Status = ScanState.Analyzed;
                                     }
                                 }
-                                catch(Exception e)
+                                catch (Exception e)
                                 {
                                     _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace}), fileRecord.FileName", file.FullPath, e.GetType(), e.Message, e.StackTrace);
                                     fileRecord.Status = ScanState.Error;
@@ -404,13 +399,13 @@ namespace Microsoft.ApplicationInspector.Commands
                             }
                             foreach (var matchRecord in results)
                             {
-                                if (opts.TagsOnly)
+                                if (_options.TagsOnly)
                                 {
                                     _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
                                 }
-                                else if (opts.MaxNumMatchesPerTag > 0)
+                                else if (_options.MaxNumMatchesPerTag > 0)
                                 {
-                                    if (matchRecord.Tags?.Any(x => _metaDataHelper.UniqueTags.TryGetValue(x, out int value) is bool foundValue && (!foundValue || foundValue && value < opts.MaxNumMatchesPerTag)) ?? false)
+                                    if (matchRecord.Tags?.Any(x => _metaDataHelper.UniqueTags.TryGetValue(x, out int value) is bool foundValue && (!foundValue || foundValue && value < _options.MaxNumMatchesPerTag)) ?? false)
                                     {
                                         _metaDataHelper.AddMatchRecord(matchRecord);
                                     }
@@ -428,20 +423,12 @@ namespace Microsoft.ApplicationInspector.Commands
 
                 fileRecord.ScanTime = sw.Elapsed;
 
-                if (!opts.NoFileMetadata)
+                if (!_options.NoFileMetadata)
                 {
                     _metaDataHelper.Files.Add(fileRecord);
                 }
             }
         }
-
-        /// <summary>
-        /// Populate the MetaDataHelper with the data from the FileEntries
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <param name="populatedEntries"></param>
-        /// <returns></returns>
-        public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, IEnumerable<FileEntry> populatedEntries) => PopulateRecords(cancellationToken, _options, populatedEntries);
 
         /// <summary>
         /// Populate the records in the metadata asynchronously.
@@ -579,11 +566,15 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     if (contents != null)
                     {
+                        // This call to extract will implicitly create a new FileEntry and copy the contents stream into a new backing stream used by the FileEntry
                         foreach (var entry in extractor.Extract(srcFile, contents, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1 }))
                         {
                             yield return entry;
                         }
                     }
+
+                    // Be sure to close the stream after we are done processing it.
+                    contents?.Close();
                 }
             }
         }
@@ -712,7 +703,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             AnalyzeResult analyzeResult = new()
             {
-                AppVersion = Common.Utils.GetVersionString()
+                AppVersion = Utils.GetVersionString()
             };
 
             var timedOut = false;
