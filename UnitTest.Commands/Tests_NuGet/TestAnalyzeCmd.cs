@@ -1,7 +1,6 @@
 ﻿namespace ApplicationInspector.Unitprocess.Commands
 {
     using ApplicationInspector.Unitprocess.Misc;
-    using Microsoft.ApplicationInspector.CLI;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.ApplicationInspector.RulesEngine;
@@ -10,7 +9,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -25,11 +23,8 @@
     {
         /*
 TODO, these parameters are not currently tested:
-ALlowAllTagsInBuildfiles
 FileTimeout
 ProcessingTimeout
-ContextLines
-NoFileMetadata
         */
 
         private string testFilePath = string.Empty;
@@ -96,9 +91,10 @@ NoFileMetadata
         string fourWindows =
 @"windows
 windows
-windows
 linux
-windows";
+windows
+windows
+";
 
         /// <summary>
         /// Checks that the parameter to restrict the maximum number of matches for a tag works
@@ -399,5 +395,98 @@ windows";
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             Assert.AreEqual(ActualExpectedNumberOfMatches, result.Metadata.Matches.Count);
         }
+
+        [TestMethod]
+        public void TagsInBuildFiles()
+        {
+            string innerTestFilePath = $"{Path.GetTempFileName()}.json"; // JSON is considered a build file, it does not have code/comment sections.
+            File.WriteAllText(innerTestFilePath, fourWindows);
+
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { innerTestFilePath },
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                AllowAllTagsInBuildFiles = true
+            };
+
+            AnalyzeCommand command = new(options);
+            AnalyzeResult result = command.GetResult();
+
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(5, result.Metadata.Matches.Count);
+            Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
+
+            AnalyzeOptions dontAllowAllTagsOptions = new()
+            {
+                SourcePath = new string[1] { innerTestFilePath },
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                AllowAllTagsInBuildFiles = false
+            };
+
+            AnalyzeCommand dontAllowAllTagsCommand = new(dontAllowAllTagsOptions);
+            AnalyzeResult dontAllowAllTagsResult = dontAllowAllTagsCommand.GetResult();
+
+            File.Delete(innerTestFilePath);
+
+            Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, dontAllowAllTagsResult.ResultCode);
+            Assert.AreEqual(0, dontAllowAllTagsResult.Metadata.Matches.Count);
+            Assert.AreEqual(0, dontAllowAllTagsResult.Metadata.Matches.Count);
+        }
+
+        [DataRow(1, 3)]
+        [DataRow(2, 5)]
+        [DataRow(3, 5)]
+        [DataRow(50, 5)]
+        [DataRow(0, 0)]
+        [DataTestMethod]
+        public void ContextLines(int numLinesContextArgument, int expectedNewLinesInResult)
+        {
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { testFilePath },
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                ContextLines = numLinesContextArgument
+            };
+
+            AnalyzeCommand command = new(options);
+            AnalyzeResult result = command.GetResult();
+
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            var linuxResult = result.Metadata.Matches.Where(x => x.RuleId == "AI_TEST_LINUX");
+            Assert.AreEqual(expectedNewLinesInResult, linuxResult.First().Excerpt.Count(x => x == '\n'));
+        }
+
+        [TestMethod]
+        public void FileMetadata()
+        {
+            AnalyzeOptions optionsWithoutMetadata = new()
+            {
+                SourcePath = new string[1] { testFilePath },
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                NoFileMetadata = true
+            };
+
+            AnalyzeOptions optionsWithMetadata = new()
+            {
+                SourcePath = new string[1] { testFilePath },
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                NoFileMetadata = false
+            };
+
+            AnalyzeCommand commandWithoutMetadata = new(optionsWithoutMetadata);
+            AnalyzeResult resultWithoutMetadata = commandWithoutMetadata.GetResult();
+
+            AnalyzeCommand commandWithMetadata = new(optionsWithMetadata);
+            AnalyzeResult resultWithMetadata = commandWithMetadata.GetResult();
+
+            Assert.AreEqual(1, resultWithMetadata.Metadata.TotalFiles);
+            Assert.AreEqual(0, resultWithoutMetadata.Metadata.TotalFiles);
+        }
+
     }
 }
