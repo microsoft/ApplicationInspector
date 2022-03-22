@@ -12,6 +12,8 @@
     using System.IO;
     using System.Linq;
 
+    // TODO: This does not intentionally try to make the OAT rule maker fail
+    // The OAT rules are being validated but there aren't test cases that intentionally try to break it.
     [TestClass]
     public class TestVerifyRulesCmd
     {

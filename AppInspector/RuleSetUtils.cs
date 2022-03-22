@@ -6,6 +6,7 @@ namespace Microsoft.ApplicationInspector.Commands
     using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.Extensions.Logging;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
 
     //Miscellenous common methods needed from several places throughout
@@ -20,11 +21,12 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             RuleSet ruleSet = new(loggerFactory);
             Assembly assembly = Assembly.GetExecutingAssembly();
-            string filePath = "Microsoft.ApplicationInspector.Commands.defaultRulesPkd.json";
-            Stream? resource = assembly.GetManifestResourceStream(filePath);
-            using (StreamReader file = new(resource ?? new MemoryStream()))
+            string[] resNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            foreach (string resName in resNames.Where(x => x.StartsWith("Microsoft.ApplicationInspector.Commands.rules.default")))
             {
-                ruleSet.AddString(file.ReadToEnd(), filePath, null);
+                Stream? resource = assembly.GetManifestResourceStream(resName);
+                using StreamReader file = new(resource ?? new MemoryStream());
+                ruleSet.AddString(file.ReadToEnd(), resName, null);
             }
 
             return ruleSet;

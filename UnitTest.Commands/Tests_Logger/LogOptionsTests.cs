@@ -1,4 +1,4 @@
-﻿namespace UnitTest.Commands.Tests_DefaultRules
+﻿namespace UnitTest.Commands.Tests_Logger
 {
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,19 +9,6 @@
     [TestClass]
     public class LogOptionsTests
     {
-        // This test ensures that the rules that are bundled with Application Inspector are valid.
-        [TestMethod]
-        public void VerifyDefaultRules()
-        {
-            VerifyRulesOptions options = new()
-            {
-                VerifyDefaultRules = true
-            };
-
-            VerifyRulesCommand command = new(options);
-            VerifyRulesResult result = command.GetResult();
-
-            Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
-        }
+        // TODO: Make a few log options items, call GetLoggerFactory and ensure the settings on the logger factory are accurate.
     }
 }

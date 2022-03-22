@@ -1,8 +1,11 @@
 ﻿namespace ApplicationInspector.Unitprocess.Commands
 {
     using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.CLI;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.IO;
@@ -10,10 +13,18 @@
     [TestClass]
     public class TestExportTagsCmd
     {
+        private string testRulesPath = string.Empty;
+
+        private LogOptions logOptions = new();
+        private ILoggerFactory factory = new NullLoggerFactory();
+
         [TestInitialize]
         public void InitOutput()
         {
+            factory = logOptions.GetLoggerFactory();
             Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
+            testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
+            File.WriteAllText(testRulesPath, findWindows);
         }
 
         [TestCleanup]
@@ -22,98 +33,121 @@
             Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
         }
 
+        string findWindows = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+                ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ]
+},
+{
+    ""name"": ""Platform: Linux"",
+    ""id"": ""AI_TEST_LINUX"",
+    ""description"": ""This rule checks for the string 'linux'"",
+    ""tags"": [
+      ""Test.Tags.Linux""
+    ],
+    ""severity"": ""Moderate"",
+    ""patterns"": [
+      {
+                ""confidence"": ""High"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""linux"",
+        ""type"": ""String"",
+      }
+    ]
+},
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS_2"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+                ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ]
+},
+{
+    ""name"": ""Platform: Linux"",
+    ""id"": ""AI_TEST_LINUX_2"",
+    ""description"": ""This rule checks for the string 'linux'"",
+    ""tags"": [
+      ""Test.Tags.Linux""
+    ],
+    ""severity"": ""Moderate"",
+    ""patterns"": [
+      {
+                ""confidence"": ""High"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""linux"",
+        ""type"": ""String"",
+      }
+    ]
+}
+]";
 
         [TestMethod]
-        public void Export_Pass()
+        public void ExportCustom()
         {
             ExportTagsOptions options = new()
             {
-                //empty
+                IgnoreDefaultRules = true,
+                CustomRulesPath = testRulesPath
             };
-
-            ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
-            try
-            {
-                ExportTagsCommand command = new(options);
-                ExportTagsResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
+            ExportTagsCommand command = new(options, factory);
+            ExportTagsResult result = command.GetResult();
+            Assert.IsTrue(result.TagsList.Contains("Test.Tags.Linux"));
+            Assert.IsTrue(result.TagsList.Contains("Test.Tags.Windows"));
+            Assert.AreEqual(2, result.TagsList.Count);
+            Assert.AreEqual(ExportTagsResult.ExitCode.Success, result.ResultCode);
         }
 
         [TestMethod]
-        public void NoDefaultNoCustomRules_Fail()
+        public void ExportDefault()
+        {
+            ExportTagsOptions options = new()
+            {
+                IgnoreDefaultRules = false
+            };
+            ExportTagsCommand command = new(options, factory);
+            ExportTagsResult result = command.GetResult();
+            Assert.AreEqual(ExportTagsResult.ExitCode.Success, result.ResultCode);
+        }
+
+        [TestMethod]
+        public void NoDefaultNoCustomRules()
         {
             ExportTagsOptions options = new()
             {
                 IgnoreDefaultRules = true
             };
-
-            ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
-            try
-            {
-                ExportTagsCommand command = new(options);
-                ExportTagsResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.CriticalError);
-        }
-
-        [TestMethod]
-        public void NoDefaultCustomRules_Pass()
-        {
-            ExportTagsOptions options = new()
-            {
-                IgnoreDefaultRules = true,
-                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json")
-            };
-
-            ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
-            try
-            {
-                ExportTagsCommand command = new(options);
-                ExportTagsResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
-        }
-
-        [TestMethod]
-        public void DefaultWithCustomRules_Pass()
-        {
-            ExportTagsOptions options = new()
-            {
-                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
-            };
-
-            ExportTagsResult.ExitCode exitCode = ExportTagsResult.ExitCode.CriticalError;
-            try
-            {
-                ExportTagsCommand command = new(options);
-                ExportTagsResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == ExportTagsResult.ExitCode.Success);
+            Assert.ThrowsException<OpException>(() => new ExportTagsCommand(options));
         }
     }
 }

@@ -48,11 +48,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\defaultRulesPkd.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\defaultRulesPkd.json" Link="defaultRulesPkd.json" />
+    <EmbeddedResource Include="rules\default\**\*.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,9 +93,4 @@
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\icon-128.png" Pack="true" PackagePath="" />
   </ItemGroup>
-
-  <Target Name="PreBuild" BeforeTargets="BeforeCompile">
-    <MakeDir Directories="Resources" />
-    <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRulesPkd.json -v debug" />
-  </Target>
 </Project>

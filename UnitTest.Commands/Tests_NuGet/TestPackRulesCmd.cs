@@ -29,43 +29,18 @@
         }
 
         [TestMethod]
-        public void NoDefaultNoCustomNoEmbeddedRules_Fail()
+        public void NoCustomNoEmbeddedRules()
         {
-            PackRulesOptions options = new()
-            {
-            };
-
-            PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
-            try
-            {
-                PackRulesCommand command = new(options);
-                PackRulesResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
+            Assert.ThrowsException<OpException>(() => new PackRulesCommand(new()));
         }
 
         [TestMethod]
-        public void NoDefaultNoCustomEmbeddedRules_Pass()
+        public void PackEmbeddedRules()
         {
             PackRulesOptions options = new() { PackEmbeddedRules = true };
-
-            try
-            {
-                PackRulesCommand command = new(options);
-                PackRulesResult result = command.GetResult();
-                Assert.AreEqual(PackRulesResult.ExitCode.Success, result.ResultCode);
-            }
-            catch (Exception)
-            {
-                Assert.Fail();
-                //check for specific error if desired
-            }
+            PackRulesCommand command = new(options);
+            PackRulesResult result = command.GetResult();
+            Assert.AreEqual(PackRulesResult.ExitCode.Success, result.ResultCode);
         }
     }
 }
