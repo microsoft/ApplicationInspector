@@ -16,7 +16,7 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         public IEnumerable<string> SourcePath1 { get; set; } = Array.Empty<string>();
         public IEnumerable<string> SourcePath2 { get; set; } = Array.Empty<string>();
-        public string TestType { get; set; } = "equality";
+        public TagTestType TestType { get; set; } = TagTestType.Equality;
         public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
@@ -77,43 +77,31 @@ namespace Microsoft.ApplicationInspector.Commands
             TagDiffList = new List<TagDiff>();
         }
     }
+    public enum TagTestType { Equality, Inequality }
 
     /// <summary>
     /// Used to compare two source paths and report tag differences
     /// </summary>
     public class TagDiffCommand
     {
-        private enum TagTestType { Equality, Inequality }
 
         private readonly TagDiffOptions? _options;
         private readonly ILoggerFactory? _factory;
         private readonly ILogger<TagDiffCommand> _logger;
-        private TagTestType _arg_tagTestType;
 
         public TagDiffCommand(TagDiffOptions opt, ILoggerFactory? loggerFactory = null)
         {
             _options = opt;
-            _options.TestType ??= "equality";
             _factory = loggerFactory;
             _logger = loggerFactory?.CreateLogger<TagDiffCommand>() ?? NullLogger<TagDiffCommand>.Instance;
             try
             {
-                ConfigureCompareType();
                 ConfigSourceToScan();
             }
             catch (OpException e) //group error handling
             {
                 _logger.LogError(e.Message);
                 throw;
-            }
-        }
-
-        
-        private void ConfigureCompareType()
-        {
-            if (!Enum.TryParse(_options?.TestType, true, out _arg_tagTestType))
-            {
-                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, _options?.TestType ?? ""));
             }
         }
 
@@ -188,10 +176,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR, string.Join(',', _options.SourcePath2)));
                 }
-                else if (analyze1.ResultCode == AnalyzeResult.ExitCode.NoMatches || analyze2.ResultCode == AnalyzeResult.ExitCode.NoMatches)
-                {
-                    throw new OpException(MsgHelp.GetString(MsgHelp.ID.TAGDIFF_NO_TAGS_FOUND));
-                }
                 else //compare tag results; assumed (result1&2 == AnalyzeCommand.ExitCode.Success)
                 {
 
@@ -221,11 +205,11 @@ namespace Microsoft.ApplicationInspector.Commands
 
                     if (tagDiffResult.TagDiffList.Count > 0)
                     {
-                        tagDiffResult.ResultCode = _arg_tagTestType == TagTestType.Inequality ? TagDiffResult.ExitCode.TestPassed : TagDiffResult.ExitCode.TestFailed;
+                        tagDiffResult.ResultCode = _options.TestType == TagTestType.Inequality ? TagDiffResult.ExitCode.TestPassed : TagDiffResult.ExitCode.TestFailed;
                     }
                     else
                     {
-                        tagDiffResult.ResultCode = _arg_tagTestType == TagTestType.Inequality ? TagDiffResult.ExitCode.TestFailed : TagDiffResult.ExitCode.TestPassed;
+                        tagDiffResult.ResultCode = _options.TestType == TagTestType.Inequality ? TagDiffResult.ExitCode.TestFailed : TagDiffResult.ExitCode.TestPassed;
                     }
 
                     return tagDiffResult;

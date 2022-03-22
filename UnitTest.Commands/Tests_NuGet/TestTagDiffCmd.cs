@@ -5,171 +5,147 @@
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.IO;
+    using System.Linq;
     using System.Threading;
 
     /// <summary>
-    /// Test class for Analyze Commands
-    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so
-    /// doesn't create a set of shared objects
-    ///
+    /// Test class for TagDiff Command
     /// </summary>
     [TestClass]
     public class TestTagDiffCmd
     {
-        private ILoggerFactory loggerFactory;
+        private string testFileFourWindowsOneLinuxPath = string.Empty;
+        private string testFileFourWindowsOneLinuxCopyPath = string.Empty;
+        private string testFileFourWindowsNoLinuxPath = string.Empty;
+        private string testRulesPath = string.Empty;
+
+        private LogOptions logOptions = new();
+        private ILoggerFactory loggerFactory = new NullLoggerFactory();
+
         [TestInitialize]
         public void InitOutput()
         {
+            loggerFactory = logOptions.GetLoggerFactory();
             Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
-            loggerFactory = TestHelpers.GenerateLoggerFactory();
+            testFileFourWindowsOneLinuxPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFile.js");
+            File.WriteAllText(testFileFourWindowsOneLinuxPath, fourWindowsOneLinux);
+
+            testFileFourWindowsOneLinuxCopyPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFileCopy.js");
+            File.WriteAllText(testFileFourWindowsOneLinuxCopyPath, fourWindowsOneLinux);
+
+            testFileFourWindowsNoLinuxPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFileNoLinux.js");
+            File.WriteAllText(testFileFourWindowsNoLinuxPath, fourWindowsNoLinux);
+
+            testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
+            File.WriteAllText(testRulesPath, findWindows);
         }
 
         [TestCleanup]
         public void CleanUp()
         {
-            loggerFactory.Dispose();
             Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
         }
 
+        // These simple test rules rules look for the string "windows" and "linux"
+        string findWindows = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+                ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ]
+},
+{
+    ""name"": ""Platform: Linux"",
+    ""id"": ""AI_TEST_LINUX"",
+    ""description"": ""This rule checks for the string 'linux'"",
+    ""tags"": [
+      ""Test.Tags.Linux""
+    ],
+    ""severity"": ""Moderate"",
+    ""patterns"": [
+      {
+                ""confidence"": ""High"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""linux"",
+        ""type"": ""String"",
+      }
+    ]
+}
+]";
+        // This string contains windows four times and linux once.
+        string fourWindowsOneLinux =
+@"windows
+windows
+linux
+windows
+windows
+";
+        string fourWindowsNoLinux =
+@"windows
+windows
+windows
+windows
+";
 
+        [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestPassed)]
+        [DataRow(TagTestType.Inequality, TagDiffResult.ExitCode.TestFailed)]
         [TestMethod]
-        public void Equality_Pass()
+        public void Equality(TagTestType tagTestType, TagDiffResult.ExitCode expectedExitCode)
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
+                SourcePath1 = new string[] { testFileFourWindowsOneLinuxPath },
+                SourcePath2 = new string[] { testFileFourWindowsOneLinuxCopyPath },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                IgnoreDefaultRules = true,
+                TestType = tagTestType,
+                CustomRulesPath = testRulesPath
             };
 
             TagDiffCommand command = new(options, loggerFactory);
             TagDiffResult result = command.GetResult();
 
-            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, result.ResultCode);
+            Assert.AreEqual(expectedExitCode, result.ResultCode);
         }
 
+        [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestFailed)]
+        [DataRow(TagTestType.Inequality, TagDiffResult.ExitCode.TestPassed)]
         [TestMethod]
-        public void Equality_Fail()
+        public void Inequality(TagTestType tagTestType, TagDiffResult.ExitCode expectedExitCode)
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
+                SourcePath1 = new string[] { testFileFourWindowsOneLinuxPath },
+                SourcePath2 = new string[] { testFileFourWindowsNoLinuxPath },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                IgnoreDefaultRules = true,
+                TestType = tagTestType,
+                CustomRulesPath = testRulesPath
             };
-
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
 
             TagDiffCommand command = new(options, loggerFactory);
             TagDiffResult result = command.GetResult();
-            exitCode = result.ResultCode;
 
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
-        }
-
-        [TestMethod]
-        public void BasicZipReadDiff_Pass()
-        {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"zipped\mainx.zip") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-            };
-
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options, loggerFactory);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
-        }
-
-        [TestMethod]
-        public void InEquality_Pass()
-        {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                TestType = "Inequality"
-            };
-
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-
-            try
-            {
-                TagDiffCommand command = new(options, loggerFactory);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
-        }
-
-        [TestMethod]
-        public void InEquality_Fail()
-        {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                TestType = "Inequality"
-            };
-
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options, loggerFactory);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
-        }
-
-        [TestMethod]
-        public void OneSrcResult_Fail()
-        {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-            };
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options, loggerFactory);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
+            Assert.AreEqual(expectedExitCode, result.ResultCode);
         }
 
         [TestMethod]
@@ -177,49 +153,12 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\nofilehere.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
+                SourcePath1 = new string[] { $"{testFileFourWindowsOneLinuxPath}.not.a.path" },
+                SourcePath2 = new string[] { testFileFourWindowsOneLinuxPath },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
             };
-
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options, loggerFactory);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
-        }
-
-        [TestMethod]
-        public void NoResults_Fail()
-        {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\empty.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\blank.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-            };
-
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options, loggerFactory);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
+            var cmd = new TagDiffCommand(options, loggerFactory);
+            Assert.ThrowsException<OpException>(() => cmd.GetResult());
         }
 
         [TestMethod]
@@ -227,147 +166,14 @@
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
+                SourcePath1 = new string[] { testFileFourWindowsOneLinuxPath },
+                SourcePath2 = new string[] { testFileFourWindowsOneLinuxCopyPath },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 IgnoreDefaultRules = true
             };
 
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options, loggerFactory);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.CriticalError);
-        }
-
-        [TestMethod]
-        public void NoDefaultCustomRules_Pass()
-        {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                IgnoreDefaultRules = false,
-                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
-            };
-
-            TagDiffCommand command = new(options, loggerFactory);
-            TagDiffResult result = command.GetResult();
-
-            Assert.AreEqual(TagDiffResult.ExitCode.TestPassed, result.ResultCode);
-        }
-
-        [TestMethod]
-        public void DefaultWithCustomRules_Pass()
-        {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                IgnoreDefaultRules = true,
-                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
-            };
-
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options, loggerFactory);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
-        }
-
-        [TestMethod]
-        public void DefaultWithCustomRules_Fail()
-        {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\mainx.cpp") },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                CustomRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testRules), @"myrule.json"),
-            };
-
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                TagDiffCommand command = new(options, loggerFactory);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                exitCode = TagDiffResult.ExitCode.CriticalError;
-            }
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestFailed);
-        }
-
-        [TestMethod]
-        public void NoConsoleOutput_Pass()
-        {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\main.cpp") },
-                SourcePath2 = new string[] { Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testSource), @"unzipped\simple\maincopy.cpp") },
-                FilePathExclusions = Array.Empty<string>(),
-            };
-
-            TagDiffResult.ExitCode exitCode = TagDiffResult.ExitCode.CriticalError;
-            try
-            {
-                // Attempt to open output file.
-                using var writer = new StreamWriter(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"consoleout.txt"));
-                // Redirect standard output from the console to the output file.
-                Console.SetOut(writer);
-
-                TagDiffCommand command = new(options, loggerFactory);
-                TagDiffResult result = command.GetResult();
-                exitCode = result.ResultCode;
-                try
-                {
-                    string testContent = File.ReadAllText(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), @"consoleout.txt"));
-                    if (string.IsNullOrEmpty(testContent))
-                    {
-                        exitCode = TagDiffResult.ExitCode.TestPassed;
-                    }
-                    else
-                    {
-                        exitCode = TagDiffResult.ExitCode.TestFailed;
-                    }
-                }
-                catch (Exception)
-                {
-                    exitCode = TagDiffResult.ExitCode.TestPassed;//no console output file found
-                }
-            }
-            catch (Exception)
-            {
-                exitCode = TagDiffResult.ExitCode.TestPassed;
-            }
-
-            //reset to normal
-            var standardOutput = new StreamWriter(Console.OpenStandardOutput());
-            standardOutput.AutoFlush = true;
-            Console.SetOut(standardOutput);
-
-            Assert.IsTrue(exitCode == TagDiffResult.ExitCode.TestPassed);
+            TagDiffCommand command = new TagDiffCommand(options, loggerFactory);
+            Assert.ThrowsException<OpException>(() => command.GetResult());
         }
     }
 }

@@ -4,6 +4,7 @@
 namespace Microsoft.ApplicationInspector.CLI
 {
     using CommandLine;
+    using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.RulesEngine;
     using System.Collections.Generic;
 
@@ -97,8 +98,8 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option("src2", Required = true, HelpText = "Source 2 to compare (commaa separated)")]
         public IEnumerable<string> SourcePath2 { get; set; } = System.Array.Empty<string>();
 
-        [Option('t', "test-type", Required = false, HelpText = "Type of test to run [equality|inequality]", Default = "equality")]
-        public string TestType { get; set; } = "equality";
+        [Option('t', "test-type", Required = false, HelpText = "Type of test to run [Equality|Inequality]", Default = TagTestType.Equality)]
+        public TagTestType TestType { get; set; } = TagTestType.Equality;
 
         [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
         public IEnumerable<string> FilePathExclusions { get; set; } = System.Array.Empty<string>();
