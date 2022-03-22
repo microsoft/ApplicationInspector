@@ -28,30 +28,6 @@
             }
         }
 
-        [Ignore]
-        [TestMethod]
-        public void DefaultRules_Fail()
-        {
-            PackRulesOptions options = new()
-            {
-                RepackDefaultRules = true
-            };
-
-            PackRulesResult.ExitCode exitCode = PackRulesResult.ExitCode.CriticalError;
-            try
-            {
-                PackRulesCommand command = new(options);
-                PackRulesResult result = command.GetResult();
-                exitCode = result.ResultCode;
-            }
-            catch (Exception)
-            {
-                //check for specific error if desired
-            }
-
-            Assert.IsTrue(exitCode == PackRulesResult.ExitCode.CriticalError);
-        }
-
         [TestMethod]
         public void NoDefaultNoCustomNoEmbeddedRules_Fail()
         {

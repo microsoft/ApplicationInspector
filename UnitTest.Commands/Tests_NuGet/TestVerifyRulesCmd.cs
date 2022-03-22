@@ -4,11 +4,13 @@
     using Microsoft.ApplicationInspector.CLI;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.IO;
+    using System.Linq;
 
     [TestClass]
     public class TestVerifyRulesCmd
@@ -238,6 +240,62 @@
             File.Delete(path);
             Assert.AreEqual(VerifyRulesResult.ExitCode.CriticalError, result.ResultCode);
         }
-        
+
+        [TestMethod]
+        public void NullId()
+        {
+            RuleSet set = new RuleSet();
+            set.AddString(validJsonInvalidRule_NoId, "NoIdTest");
+            RulesVerifier rulesVerifier = new RulesVerifier(null, failFast: false);
+            Assert.IsFalse(rulesVerifier.Verify(set).Verified);
+        }
+
+        [TestMethod]
+        public void DuplicateId()
+        {
+            string path = Path.GetTempFileName();
+            File.WriteAllText(path, sameId);
+            VerifyRulesOptions options = new()
+            {
+                CustomRulesPath = path,
+            };
+
+            VerifyRulesCommand command = new(options, factory);
+            VerifyRulesResult result = command.GetResult();
+            File.Delete(path);
+            Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        }
+
+        [TestMethod]
+        public void InvalidRegex()
+        {
+            string path = Path.GetTempFileName();
+            File.WriteAllText(path, invalidFileRegexes);
+            VerifyRulesOptions options = new()
+            {
+                CustomRulesPath = path,
+            };
+
+            VerifyRulesCommand command = new(options, factory);
+            VerifyRulesResult result = command.GetResult();
+            File.Delete(path);
+            Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        }
+
+        [TestMethod]
+        public void UnknownLanguage()
+        {
+            string path = Path.GetTempFileName();
+            File.WriteAllText(path, knownLanguages);
+            VerifyRulesOptions options = new()
+            {
+                CustomRulesPath = path,
+            };
+
+            VerifyRulesCommand command = new(options, factory);
+            VerifyRulesResult result = command.GetResult();
+            File.Delete(path);
+            Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        }
     }
 }

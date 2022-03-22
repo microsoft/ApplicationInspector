@@ -14,7 +14,6 @@ namespace Microsoft.ApplicationInspector.Commands
 
     public class PackRulesOptions
     {
-        public bool RepackDefaultRules { get; set; }
         public string? CustomRulesPath { get; set; }
         public bool NotIndented { get; set; }
         public bool PackEmbeddedRules { get; set; }
@@ -48,7 +47,6 @@ namespace Microsoft.ApplicationInspector.Commands
         private readonly PackRulesOptions _options;
         private readonly ILogger<PackRulesCommand> _logger;
         private readonly ILoggerFactory? _loggerFactory;
-        private string? _rules_path;
 
         public PackRulesCommand(PackRulesOptions opt, ILoggerFactory? loggerFactory = null)
         {
@@ -63,20 +61,10 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _logger.LogTrace("PackRulesCommand::ConfigRules");
 
-            if (_options.RepackDefaultRules && !Common.Utils.CLIExecutionContext)
-            {
-                throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NO_CLI_DEFAULT));
-            }
-            else if (!_options.RepackDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath) && !_options.PackEmbeddedRules)
+            if (string.IsNullOrEmpty(_options.CustomRulesPath) && !_options.PackEmbeddedRules)
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
-            else if (_options.RepackDefaultRules && !Directory.Exists(Common.Utils.GetPath(Common.Utils.AppPath.defaultRulesSrc)))
-            {
-                throw new OpException(MsgHelp.GetString(MsgHelp.ID.PACK_RULES_NO_DEFAULT));
-            }
-
-            _rules_path = _options.RepackDefaultRules ? Common.Utils.GetPath(Common.Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
         }
 
         
@@ -96,17 +84,18 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                RulesVerifier verifier = new(_rules_path, _loggerFactory);
-                if (_options?.PackEmbeddedRules ?? false)
+                RulesVerifier verifier = new(_loggerFactory);
+                RuleSet? ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();
+                if (!string.IsNullOrEmpty(_options.CustomRulesPath))
                 {
-                    verifier.LoadRuleSet(RuleSetUtils.GetDefaultRuleSet());
+                    ruleSet.AddDirectory(_options.CustomRulesPath);
                 }
-                verifier.Verify();
-                if (!verifier.IsVerified)
+                RulesVerifierResult result = verifier.Verify(ruleSet);
+                if (!result.Verified)
                 {
                     throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
                 }
-                packRulesResult.Rules = verifier.CompiledRuleset?.GetAppInspectorRules().ToList() ?? new List<Rule>();
+                packRulesResult.Rules = result.CompiledRuleSet.GetAppInspectorRules().ToList();
                 packRulesResult.ResultCode = PackRulesResult.ExitCode.Success;
             }
             catch (OpException e)

@@ -25,8 +25,9 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         public string? RulesId { get; set; }
         public string? RulesName { get; set; }
-        public bool Verified { get; set; }
-        public IEnumerable<Violation> OatIssues { get; set; } = Array.Empty<Violation>();
+        public bool Verified => !Errors.Any() && !OatIssues.Any();
+        public IEnumerable<string> Errors { get; set; } = Enumerable.Empty<string>();
+        public IEnumerable<Violation> OatIssues { get; set; } = Enumerable.Empty<Violation>();
     }
 
     public class VerifyRulesResult : Result
@@ -97,13 +98,14 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                RulesVerifier verifier = new(null, _loggerFactory);
-                verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
-                var stati = new List<RuleStatus>();
                 var analyzer = new Analyzer();
                 analyzer.SetOperation(new WithinOperation(analyzer));
                 analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
                 analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
+
+                RulesVerifier verifier = new(_loggerFactory, false, analyzer);
+                verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
+                var stati = new List<RuleStatus>();
 
                 RuleSet? ruleSet = new(_loggerFactory);
                 if (_options.VerifyDefaultRules)
@@ -130,18 +132,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.CriticalError;
                     return verifyRulesResult;
                 }
-                foreach (var rule in ruleSet.GetOatRules())
-                {
-                    stati.Add(new RuleStatus()
-                    {
-                        RulesId = rule.AppInspectorRule.Id,
-                        RulesName = rule.Name,
-                        Verified = verifier.CheckIntegrity(rule.AppInspectorRule),
-                        OatIssues = analyzer.EnumerateRuleIssues(rule)
-                    });
-                }
-                verifyRulesResult.RuleStatusList = stati;
-                verifyRulesResult.ResultCode = stati.All(x => x.Verified && !x.OatIssues.Any()) ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
+                var verifyResult = verifier.Verify(ruleSet);
+                verifyRulesResult.RuleStatusList = verifyResult.RuleStatuses;
+                verifyRulesResult.ResultCode = verifyResult.Verified ? VerifyRulesResult.ExitCode.Verified : VerifyRulesResult.ExitCode.NotVerified;
             }
             catch (OpException e)
             {

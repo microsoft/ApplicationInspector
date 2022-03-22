@@ -356,7 +356,6 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             PackRulesCommand command = new(new PackRulesOptions()
             {
-                RepackDefaultRules = cliOptions.RepackDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,
                 PackEmbeddedRules = cliOptions.PackEmbeddedRules
             }, loggerFactory);

@@ -33,6 +33,22 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             _logger = loggerFactory?.CreateLogger<RuleSet>() ?? NullLogger<RuleSet>.Instance; ;
         }
 
+        public void AddPath(string path, string? tag = null)
+        {
+            if (Directory.Exists(path))
+            {
+                AddDirectory(path, tag);
+            }
+            else if (File.Exists(path))
+            {
+                AddFile(path, tag);
+            }
+            else
+            {
+                throw new ArgumentException("The path must exist.", nameof(path));
+            }
+        }
+
         /// <summary>
         ///     Parse a directory with rule files and loads the rules
         /// </summary>

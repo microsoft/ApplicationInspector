@@ -192,14 +192,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else if (File.Exists(_options.CustomRulesPath)) //verify custom rules before use
                 {
-                    RulesVerifier verifier = new(_options.CustomRulesPath, _loggerFactory);
-                    verifier.Verify();
-                    if (!verifier.IsVerified)
+                    RulesVerifier verifier = new(_loggerFactory);
+                    var verification = verifier.Verify(_options.CustomRulesPath);
+                    if (!verification.Verified)
                     {
                         throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED, _options.CustomRulesPath));
                     }
 
-                    rulesSet.AddRange(verifier.CompiledRuleset);
+                    rulesSet.AddRange(verification.CompiledRuleSet);
                 }
                 else
                 {
