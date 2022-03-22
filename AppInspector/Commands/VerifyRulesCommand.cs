@@ -126,7 +126,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch(JsonSerializationException e)
                 {
-                    _logger.LogTrace(e.Message);
+                    _logger.LogError(e.Message);
                     verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.CriticalError;
                     return verifyRulesResult;
                 }
@@ -136,7 +136,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         RulesId = rule.AppInspectorRule.Id,
                         RulesName = rule.Name,
-                        Verified = verifier.Verify(rule.AppInspectorRule),
+                        Verified = verifier.CheckIntegrity(rule.AppInspectorRule),
                         OatIssues = analyzer.EnumerateRuleIssues(rule)
                     });
                 }

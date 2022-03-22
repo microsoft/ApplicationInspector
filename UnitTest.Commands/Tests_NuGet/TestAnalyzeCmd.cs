@@ -1,9 +1,12 @@
 ﻿namespace ApplicationInspector.Unitprocess.Commands
 {
     using ApplicationInspector.Unitprocess.Misc;
+    using Microsoft.ApplicationInspector.CLI;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.ApplicationInspector.RulesEngine;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.Collections.Generic;
@@ -13,10 +16,7 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Test class for Analyze Commands
-    /// Each method really needs to be complete i.e. options and command objects created and checked for exceptions etc. based on inputs so
-    /// doesn't create a set of shared objects
-    /// Note: in order to avoid log reuse, include the optional parameter CloseLogOnCommandExit = true
+    /// Test class for the Analyze Command
     /// </summary>
     [TestClass]
     public class TestAnalyzeCmd
@@ -25,14 +25,22 @@
 TODO, these parameters are not currently tested:
 FileTimeout
 ProcessingTimeout
+
+Add a finished output for the Analyze Command, it has started but not completed.
+
+LogOptions should have tests for GetLoggerFactory();
         */
 
         private string testFilePath = string.Empty;
         private string testRulesPath = string.Empty;
 
+        private LogOptions logOptions = new();
+        private ILoggerFactory factory = new NullLoggerFactory();
+
         [TestInitialize]
         public void InitOutput()
         {
+            factory = logOptions.GetLoggerFactory();
             Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
             testFilePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),"TestFile.js");
             testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
@@ -46,7 +54,7 @@ ProcessingTimeout
             Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
         }
 
-        // This rule looks for the string "windows"
+        // These simple test rules rules look for the string "windows" and "linux"
         string findWindows = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
@@ -87,7 +95,7 @@ ProcessingTimeout
     ]
 }
 ]";
-        // This string contains windows four times.
+        // This string contains windows four times and linux once.
         string fourWindows =
 @"windows
 windows
@@ -118,7 +126,7 @@ windows
                 IgnoreDefaultRules = true
             };
 
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
 
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
@@ -147,7 +155,7 @@ windows
                 IgnoreDefaultRules = true
             };
 
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = await command.GetResultAsync(new CancellationToken());
 
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
@@ -216,7 +224,7 @@ windows
                 IgnoreDefaultRules = true
             };
 
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
             Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, result.ResultCode);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
@@ -232,7 +240,7 @@ windows
                 IgnoreDefaultRules = true
             };
 
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = await command.GetResultAsync();
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             Assert.AreEqual(5, result.Metadata.TotalMatchesCount);
@@ -249,7 +257,7 @@ windows
                 IgnoreDefaultRules = true
             };
 
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             Assert.AreEqual(5, result.Metadata.TotalMatchesCount);
@@ -270,7 +278,7 @@ windows
                 ScanUnknownTypes = true,
                 IgnoreDefaultRules= true
             };
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
 
             File.Delete(scanPath);
@@ -302,7 +310,7 @@ windows
                 IgnoreDefaultRules = true
             };
 
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             Assert.AreEqual(5 * 2, result.Metadata.TotalMatchesCount);
@@ -320,7 +328,7 @@ windows
                 TagsOnly = true
             };
 
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
 
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
@@ -358,10 +366,10 @@ windows
                 ScanUnknownTypes = true
             };
 
-            AnalyzeCommand commandSingle = new(optionsSingle);
+            AnalyzeCommand commandSingle = new(optionsSingle, factory);
             AnalyzeResult resultSingle = commandSingle.GetResult();
 
-            AnalyzeCommand commandMulti = new(optionsMulti);
+            AnalyzeCommand commandMulti = new(optionsMulti, factory);
             AnalyzeResult resultMulti = commandMulti.GetResult();
 
             foreach(var testFile in testFiles)
@@ -389,7 +397,7 @@ windows
                 IgnoreDefaultRules = true
             };
 
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
 
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
@@ -410,7 +418,7 @@ windows
                 AllowAllTagsInBuildFiles = true
             };
 
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
 
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
@@ -451,7 +459,7 @@ windows
                 ContextLines = numLinesContextArgument
             };
 
-            AnalyzeCommand command = new(options);
+            AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
 
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
@@ -478,10 +486,10 @@ windows
                 NoFileMetadata = false
             };
 
-            AnalyzeCommand commandWithoutMetadata = new(optionsWithoutMetadata);
+            AnalyzeCommand commandWithoutMetadata = new(optionsWithoutMetadata, factory);
             AnalyzeResult resultWithoutMetadata = commandWithoutMetadata.GetResult();
 
-            AnalyzeCommand commandWithMetadata = new(optionsWithMetadata);
+            AnalyzeCommand commandWithMetadata = new(optionsWithMetadata, factory);
             AnalyzeResult resultWithMetadata = commandWithMetadata.GetResult();
 
             Assert.AreEqual(1, resultWithMetadata.Metadata.TotalFiles);

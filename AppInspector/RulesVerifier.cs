@@ -65,11 +65,6 @@ namespace Microsoft.ApplicationInspector.Commands
             return _ruleStatuses;
         }
 
-        public bool Verify(Rule rule)
-        {
-            return CheckIntegrity(rule);
-        }
-
         private void CheckIntegrity()
         {
             IsVerified = true;
