@@ -435,7 +435,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns>Result code.</returns>
-        public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken)
+        public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken? cancellationToken = null)
         {
             _logger.LogTrace("AnalyzeCommand::PopulateRecordsAsync");
             if (_metaDataHelper is null)
@@ -449,13 +449,13 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             await foreach (var entry in GetFileEntriesAsync())
             {
-                if (cancellationToken.IsCancellationRequested) { return AnalyzeResult.ExitCode.Canceled; }
+                if (cancellationToken?.IsCancellationRequested is true) { return AnalyzeResult.ExitCode.Canceled; }
                 await ProcessAndAddToMetadata(entry, cancellationToken);
             }
 
             return AnalyzeResult.ExitCode.Success;
 
-            async Task ProcessAndAddToMetadata(FileEntry file, CancellationToken cancellationToken)
+            async Task ProcessAndAddToMetadata(FileEntry file, CancellationToken? cancellationToken = null)
             {
                 var fileRecord = new FileRecord() { FileName = file.FullPath, ModifyTime = file.ModifyTime, CreateTime = file.CreateTime, AccessTime = file.AccessTime };
 
@@ -643,7 +643,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="cancellationToken">Cancellation token to stop analysis and return results found so far.</param>
         /// <returns></returns>
-        public async Task<AnalyzeResult> GetResultAsync(CancellationToken cancellationToken)
+        public async Task<AnalyzeResult> GetResultAsync(CancellationToken? cancellationToken = null)
         {
             _logger.LogTrace("AnalyzeCommand::GetResultAsync");
             _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Analyze");
@@ -678,7 +678,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
             }
 
-            if (cancellationToken.IsCancellationRequested)
+            if (cancellationToken?.IsCancellationRequested is true)
             {
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.Canceled;
             }

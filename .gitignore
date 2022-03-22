@@ -269,3 +269,4 @@ AppInspector/Resources/defaultRulesPkd.json
 output.html
 result.json
 UnitTest.Commands/logs/
+RulesPacker/appinspector.log.txt

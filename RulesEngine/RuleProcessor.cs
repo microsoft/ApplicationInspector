@@ -252,7 +252,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return new List<MatchRecord>();
         }
 
-        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
+        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken? cancellationToken = null, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
             var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
 
@@ -263,7 +263,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name);
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
-                if (cancellationToken.IsCancellationRequested)
+                if (cancellationToken?.IsCancellationRequested is true)
                 {
                     return resultsList;
                 }
@@ -337,7 +337,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides?.Length > 0))
             {
-                if (cancellationToken.IsCancellationRequested)
+                if (cancellationToken?.IsCancellationRequested is true)
                 {
                     return resultsList;
                 }
