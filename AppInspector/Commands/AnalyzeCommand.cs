@@ -28,7 +28,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public IEnumerable<string> SourcePath { get; set; } = Array.Empty<string>();
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
-        public string ConfidenceFilters { get; set; } = "high,medium";
+        public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
         public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
         public bool SingleThread { get; set; } = false;
         /// <summary>
@@ -91,7 +91,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private DateTime DateScanned { get; }
 
         private readonly List<Glob> _fileExclusionList = new();
-        private Confidence _confidence;
+        private Confidence _confidence = Confidence.Unspecified;
         private readonly AnalyzeOptions _options; //copy of incoming caller options
 
         /// <summary>
@@ -116,37 +116,12 @@ namespace Microsoft.ApplicationInspector.Commands
             //create metadata helper to wrap and help populate metadata from scan
             _metaDataHelper = new MetaDataHelper(string.Join(',', _options.SourcePath));
             DateScanned = DateTime.Now;
+            foreach(Confidence confidence in _options.ConfidenceFilters)
+            {
+                _confidence |= confidence;
+            }
             ConfigSourcetoScan();
-            ConfigConfidenceFilters();
             ConfigRules();
-        }
-        
-        /// <summary>
-        /// Expects user to supply all that apply impacting which rule pattern matches are returned
-        /// </summary>
-        private void ConfigConfidenceFilters()
-        {
-            _logger.LogTrace("AnalyzeCommand::ConfigConfidenceFilters");
-            //parse and verify confidence values
-            if (string.IsNullOrEmpty(_options.ConfidenceFilters))
-            {
-                _confidence = Confidence.High | Confidence.Medium; //excludes low by default
-            }
-            else
-            {
-                string[] confidences = _options.ConfidenceFilters.Split(',');
-                foreach (string confidence in confidences)
-                {
-                    if (Enum.TryParse(confidence, true, out Confidence single))
-                    {
-                        _confidence |= single;
-                    }
-                    else
-                    {
-                        throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "x"));
-                    }
-                }
-            }
         }
 
         /// <summary>

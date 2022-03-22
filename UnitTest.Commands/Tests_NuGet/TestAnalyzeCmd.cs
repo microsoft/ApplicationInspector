@@ -4,10 +4,13 @@
     using Microsoft.ApplicationInspector.CLI;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -20,6 +23,15 @@
     [TestClass]
     public class TestAnalyzeCmd
     {
+        /*
+TODO, these parameters are not currently tested:
+ALlowAllTagsInBuildfiles
+FileTimeout
+ProcessingTimeout
+ContextLines
+NoFileMetadata
+        */
+
         private string testFilePath = string.Empty;
         private string testRulesPath = string.Empty;
 
@@ -48,10 +60,10 @@
     ""tags"": [
       ""Test.Tags.Windows""
     ],
-    ""severity"": ""Moderate"",
+    ""severity"": ""Important"",
     ""patterns"": [
       {
-                ""confidence"": ""High"",
+                ""confidence"": ""Medium"",
         ""modifiers"": [
           ""i""
         ],
@@ -318,6 +330,74 @@ windows";
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             Assert.AreEqual(0, result.Metadata.Matches.Count);
             Assert.AreEqual(2, result.Metadata.UniqueTags.Count);
+        }
+
+        [TestMethod]
+        public void SingleVsMultiThread()
+        {
+            List<string> testFiles = new();
+            int iterations = 1000;
+            for (int i = 0; i < iterations; i++)
+            {
+                string innerFileName = Path.GetTempFileName();
+                File.WriteAllText(innerFileName, fourWindows);
+                testFiles.Add(innerFileName);
+            }
+
+            AnalyzeOptions optionsSingle = new()
+            {
+                SourcePath = testFiles,
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                SingleThread = true,
+                ScanUnknownTypes = true // Temp files are named .tmp so we need to scan unknown types.
+            };
+
+            AnalyzeOptions optionsMulti = new()
+            {
+                SourcePath = testFiles,
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                SingleThread = false,
+                ScanUnknownTypes = true
+            };
+
+            AnalyzeCommand commandSingle = new(optionsSingle);
+            AnalyzeResult resultSingle = commandSingle.GetResult();
+
+            AnalyzeCommand commandMulti = new(optionsMulti);
+            AnalyzeResult resultMulti = commandMulti.GetResult();
+
+            foreach(var testFile in testFiles)
+            {
+                File.Delete(testFile);
+            }
+
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, resultSingle.ResultCode);
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, resultMulti.ResultCode);
+            Assert.AreEqual(5 * iterations, resultSingle.Metadata.TotalMatchesCount);
+            Assert.AreEqual(5 * iterations, resultMulti.Metadata.TotalMatchesCount);
+            Assert.IsTrue(resultSingle.Metadata.Matches.All(x => resultMulti.Metadata.Matches.Any(y => y.Tags?.All(z => x.Tags?.All(w => w.Contains(z)) ?? false) ?? false)));
+        }
+
+        [DataRow(new Confidence[] { Confidence.High }, 1)]
+        [DataRow(new Confidence[] { Confidence.Medium }, 4)]
+        [DataTestMethod]
+        public void ConfidenceFilters(Confidence[] confidenceFilter, int ActualExpectedNumberOfMatches)
+        {
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { testFilePath },
+                CustomRulesPath = testRulesPath,
+                ConfidenceFilters = confidenceFilter,
+                IgnoreDefaultRules = true
+            };
+
+            AnalyzeCommand command = new(options);
+            AnalyzeResult result = command.GetResult();
+
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(ActualExpectedNumberOfMatches, result.Metadata.Matches.Count);
         }
     }
 }

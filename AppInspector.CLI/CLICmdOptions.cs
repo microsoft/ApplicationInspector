@@ -4,6 +4,7 @@
 namespace Microsoft.ApplicationInspector.CLI
 {
     using CommandLine;
+    using Microsoft.ApplicationInspector.RulesEngine;
     using System.Collections.Generic;
 
     /// <summary>
@@ -34,8 +35,8 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
-        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
-        public string ConfidenceFilters { get; set; } = "high,medium";
+        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [High|Medium|Low]", Default = "high,medium")]
+        public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
 
         [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
 
@@ -121,7 +122,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public bool SingleThread { get; set; }
 
         [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
-        public string ConfidenceFilters { get; set; } = "high,medium";
+        public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
     }
 
     [Verb("exporttags", HelpText = "Export unique rule tags to view what code features may be detected")]

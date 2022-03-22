@@ -4,6 +4,7 @@
 namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
     using Newtonsoft.Json;
@@ -23,7 +24,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public int ProcessingTimeOut { get; set; }
         public bool ScanUnknownTypes { get; set; }
         public bool SingleThread { get; set; }
-        public string ConfidenceFilters { get; set; } = "high,medium";
+        public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
     }
 
     /// <summary>
