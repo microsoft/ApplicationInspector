@@ -203,6 +203,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     // Find all overriden rules and mark them for removal from issues list
                     foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
                     {
+                        // If the overridden match is a subset of the overriding match
                         if (om.Boundary?.Index >= m.Boundary?.Index &&
                             om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
                         {

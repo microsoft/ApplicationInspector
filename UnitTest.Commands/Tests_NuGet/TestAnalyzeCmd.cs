@@ -93,6 +93,87 @@ ProcessingTimeout
     ]
 }
 ]";
+        string findWindowsWithOverride = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+                ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ]
+},
+{
+    ""name"": ""Platform: Linux"",
+    ""id"": ""AI_TEST_LINUX"",
+    ""description"": ""This rule checks for the string 'windows2000'"",
+    ""tags"": [
+      ""Test.Tags.Win2000""
+    ],
+    ""severity"": ""Moderate"",
+    ""overrides"": [ ""AI_TEST_WINDOWS"" ],
+    ""patterns"": [
+      {
+                ""confidence"": ""High"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows 2000"",
+        ""type"": ""String"",
+      }
+    ]
+}
+]";
+        string findWindowsWithOverrideRuleWithoutOverride = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+                ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ]
+},
+{
+    ""name"": ""Platform: Linux"",
+    ""id"": ""AI_TEST_LINUX"",
+    ""description"": ""This rule checks for the string 'windows2000'"",
+    ""tags"": [
+      ""Test.Tags.Win2000""
+    ],
+    ""severity"": ""Moderate"",
+    ""patterns"": [
+      {
+                ""confidence"": ""High"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows 2000"",
+        ""type"": ""String"",
+      }
+    ]
+}
+]";
         string findWindowsWithFileRegex = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
@@ -143,6 +224,52 @@ linux
 windows
 windows
 ";
+
+        // This string contains windows four times and linux once.
+        string threeWindowsOneWindows2000 =
+@"windows
+windows
+windows 2000
+windows
+";
+        [DataTestMethod]
+        public void Overrides()
+        {
+            var overridesTestRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "OverrideTestRule.json");
+            var overridesWithoutOverrideTestRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "OverrideTestRuleWithoutOverride.json");
+            var fourWindowsOne2000Path = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "FourWindowsOne2000.cs");
+            
+            File.WriteAllText(fourWindowsOne2000Path, threeWindowsOneWindows2000);
+            File.WriteAllText(overridesTestRulePath, findWindowsWithOverride);
+            File.WriteAllText(overridesWithoutOverrideTestRulePath, findWindowsWithOverrideRuleWithoutOverride);
+
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { fourWindowsOne2000Path },
+                CustomRulesPath = overridesTestRulePath,
+                IgnoreDefaultRules = true
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(4, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
+
+            // This has one additional result for the same file because the match is not being overridden.
+            options = new()
+            {
+                SourcePath = new string[1] { fourWindowsOne2000Path },
+                CustomRulesPath = overridesWithoutOverrideTestRulePath,
+                IgnoreDefaultRules = true
+            };
+
+            command = new(options, factory);
+            result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(5, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
+        }
 
         /// <summary>
         /// Checks that the parameter to restrict the maximum number of matches for a tag works
