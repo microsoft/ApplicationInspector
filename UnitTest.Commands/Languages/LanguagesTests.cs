@@ -1,11 +1,9 @@
-﻿namespace ApplicationInspector.Unitprocess.Language
-{
-    using ApplicationInspector.Unitprocess.Misc;
-    using Microsoft.ApplicationInspector.RulesEngine;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+namespace AppInspector.Tests.Languages
+{
     [TestClass]
     [ExcludeFromCodeCoverage]
     public class LanguagesTests
@@ -51,7 +49,7 @@
         [TestMethod]
         public void DetectCustomLanguage()
         {
-            var languages = new Languages(null, testCommentsPath, testLanguagesPath);
+            var languages = new Microsoft.ApplicationInspector.RulesEngine.Languages(null, testCommentsPath, testLanguagesPath);
             Assert.IsTrue(languages.FromFileNameOut("afilename.z", out var language));
             Assert.AreEqual("z", language.Name);
             Assert.IsFalse(languages.FromFileNameOut("afilename.c", out var _));

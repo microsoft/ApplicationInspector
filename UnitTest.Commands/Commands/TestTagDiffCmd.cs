@@ -1,18 +1,15 @@
-﻿namespace ApplicationInspector.Unitprocess.Commands
-{
-    using ApplicationInspector.Unitprocess.Misc;
-    using Microsoft.ApplicationInspector.CLI;
-    using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.ApplicationInspector.Common;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using Microsoft.ApplicationInspector.CLI;
+using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.Common;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+namespace AppInspector.Tests.Commands
+{
     /// <summary>
     /// Test class for TagDiff Command
     /// </summary>

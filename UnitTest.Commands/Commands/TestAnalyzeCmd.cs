@@ -1,21 +1,19 @@
-﻿namespace ApplicationInspector.Unitprocess.Commands
-{
-    using ApplicationInspector.Unitprocess.Misc;
-    using Microsoft.ApplicationInspector.CLI;
-    using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.ApplicationInspector.Common;
-    using Microsoft.ApplicationInspector.RulesEngine;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.ApplicationInspector.CLI;
+using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.Common;
+using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+namespace AppInspector.Tests.Commands
+{
     /// <summary>
     /// Test class for the Analyze Command
     /// </summary>
@@ -265,6 +263,45 @@ windows
 
             command = new(options, factory);
             result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            // This has one additional result for the same file because the match is not being overridden.
+            Assert.AreEqual(5, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
+        }
+
+        [DataTestMethod]
+        public async Task OverridesAsync()
+        {
+            var overridesTestRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "OverrideTestRule.json");
+            var overridesWithoutOverrideTestRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "OverrideTestRuleWithoutOverride.json");
+            var fourWindowsOne2000Path = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "FourWindowsOne2000.cs");
+
+            File.WriteAllText(fourWindowsOne2000Path, threeWindowsOneWindows2000);
+            File.WriteAllText(overridesTestRulePath, findWindowsWithOverride);
+            File.WriteAllText(overridesWithoutOverrideTestRulePath, findWindowsWithOverrideRuleWithoutOverride);
+
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { fourWindowsOne2000Path },
+                CustomRulesPath = overridesTestRulePath,
+                IgnoreDefaultRules = true
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = await command.GetResultAsync();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(4, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
+
+            options = new()
+            {
+                SourcePath = new string[1] { fourWindowsOne2000Path },
+                CustomRulesPath = overridesWithoutOverrideTestRulePath,
+                IgnoreDefaultRules = true
+            };
+
+            command = new(options, factory);
+            result = await command.GetResultAsync();
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
             // This has one additional result for the same file because the match is not being overridden.
             Assert.AreEqual(5, result.Metadata.TotalMatchesCount);

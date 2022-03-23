@@ -1,17 +1,20 @@
-﻿namespace ApplicationInspector.Unitprocess.Clauses
-{
-    using Microsoft.ApplicationInspector.RulesEngine;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using System.Linq;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using Microsoft.ApplicationInspector.CLI;
+using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+namespace AppInspector.Tests.RuleProcessor
+{
     [TestClass]
     [ExcludeFromCodeCoverage]
     public class WithinClauseTests
     {
-        private readonly Languages _languages = new();
+        private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
 
         [DataRow("WithinClauseWithInvertWithFindingRange")]
         [DataRow("WithinClauseWithoutInvertWithFindingRange")]
@@ -25,10 +28,10 @@
 
         internal void WithinClauseInvertTest(string testData, string condition_region, bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
         {
-            RuleSet rules = new(null);
+            RuleSet rules = new(_loggerFactory);
             var newRule = baseRule.Replace("REPLACE_REGION", condition_region).Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
             rules.AddString(newRule, "TestRules");
-            RuleProcessor processor = new(rules, new RuleProcessorOptions());
+            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
             if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
             {
                 List<MatchRecord> matches = processor.AnalyzeFile(testData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
@@ -51,10 +54,10 @@
         [DataTestMethod]
         public void WithinClauseInvertTestForSameLine(bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
         {
-            RuleSet rules = new(null);
+            RuleSet rules = new(_loggerFactory);
             var newRule = findingOnlyRule.Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
             rules.AddString(newRule, "TestRules");
-            RuleProcessor processor = new(rules, new RuleProcessorOptions());
+            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
             if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
             {
                 List<MatchRecord> matches = processor.AnalyzeFile(insideFindingData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
@@ -77,10 +80,10 @@
         [DataTestMethod]
         public void WithinClauseInvertTestForFindingRange0(bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
         {
-            RuleSet rules = new(null);
+            RuleSet rules = new(_loggerFactory);
             var newRule = findingRangeZeroRule.Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
             rules.AddString(newRule, "TestRules");
-            RuleProcessor processor = new(rules, new RuleProcessorOptions());
+            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
             if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
             {
                 List<MatchRecord> matches = processor.AnalyzeFile(insideFindingData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
@@ -91,6 +94,23 @@
                     Assert.IsNotNull(correctLineMatch);
                     matches.Remove(correctLineMatch);
                 }
+            }
+            else
+            {
+                Assert.Fail();
+            }
+        }
+
+        [TestMethod]
+        public void MultiLineRegexCondition()
+        {
+            RuleSet rules = new(_loggerFactory);
+            rules.AddString(multiLineRule, "multiline-tests");
+            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
+            if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
+            {
+                List<MatchRecord> matches = processor.AnalyzeFile(multiLineData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
+                Assert.AreEqual(1, matches.Count);
             }
             else
             {
@@ -117,6 +137,8 @@
                 (sameLineData, "same-line", false, 1, new int[] { 14 })
             }
         };
+
+        private ILoggerFactory _loggerFactory = new LogOptions().GetLoggerFactory();
 
         private const string findingOnlyRule = @"[
     {
@@ -237,6 +259,11 @@ int main(int argc, char **argv)
     strncpy(buf2R1, argv[1], BUFSIZER1 - 1);
     free(buf1R1);
 }";
+        
+        const string multiLineData = @"
+    buf2R1 = (char *)malloc(BUFSIZER1);
+    free
+();";
         private const string baseRule = @"[
     {
         ""id"": ""SA000005"",
@@ -273,6 +300,47 @@ int main(int argc, char **argv)
                 },
                 ""search_in"": ""REPLACE_REGION"",
                 ""negate_finding"": REPLACE_NEGATE
+            }
+        ],
+        ""_comment"": """"
+    }
+]";
+        private const string multiLineRule = @"[
+    {
+        ""id"": ""SA000005"",
+        ""name"": ""Testing.Rules.MallocNotFree1"",
+        ""tags"": [
+            ""Testing.Rules.MallocNotFree1""
+        ],
+        ""severity"": ""Critical"",
+        ""description"": ""this rule aims to find malloc() that does NOT have free\\r\\n() in 1 line range"",
+        ""patterns"": [
+            {
+                ""pattern"": ""malloc\\("",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""modifiers"": [
+                    ""i""
+                ],
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""conditions"": [
+            {
+                ""pattern"": {
+                    ""pattern"": ""free\\r\\n\\("",
+                    ""type"": ""regex"",
+                    ""scopes"": [
+                        ""code""
+                    ],
+                    ""modifiers"": [
+                        ""i"",
+                        ""m""
+                    ]
+                },
+                ""search_in"": ""finding_region(-3,3)""
             }
         ],
         ""_comment"": """"

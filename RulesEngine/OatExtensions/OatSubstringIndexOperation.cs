@@ -1,24 +1,30 @@
-﻿namespace Microsoft.ApplicationInspector.RulesEngine
-{
-    using Microsoft.CST.OAT;
-    using Microsoft.CST.OAT.Operations;
-    using Microsoft.CST.OAT.Utils;
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using Microsoft.CST.OAT;
+using Microsoft.CST.OAT.Operations;
+using Microsoft.CST.OAT.Utils;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
+namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
+{
     /// <summary>
     /// The Custom Operation to enable identification of pattern index in result used by Application Inspector to report why a given
     /// result was matched and to retrieve other pattern level meta-data
     /// </summary>
-    public class OATSubstringIndexOperation : OatOperation
+    public class OatSubstringIndexOperation : OatOperation
     {
+        private readonly ILoggerFactory _loggerFactory;
+
         /// <summary>
         /// Create an OatOperation given an analyzer
         /// </summary>
         /// <param name="analyzer">The analyzer context to work with</param>
-        public OATSubstringIndexOperation(Analyzer analyzer) : base(Operation.Custom, analyzer)
+        /// <param name="loggerFactory">LoggerFactory to use</param>
+        public OatSubstringIndexOperation(Analyzer analyzer, ILoggerFactory? loggerFactory = null) : base(Operation.Custom, analyzer)
         {
+            _loggerFactory = loggerFactory ?? new NullLoggerFactory();
             CustomOperation = "SubstringIndex";
             OperationDelegate = SubstringIndexOperationDelegate;
             ValidationDelegate = SubstringIndexValidationDelegate;
@@ -48,7 +54,7 @@
         public static OperationResult SubstringIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
         {
             var comparisonType = clause.Arguments.Contains("i") ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture;
-            if (state1 is TextContainer tc && clause is OATSubstringIndexClause src)
+            if (state1 is TextContainer tc && clause is OatSubstringIndexClause src)
             {
                 if (clause.Data is List<string> stringList && stringList.Count > 0)
                 {

@@ -1,6 +1,9 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     using Microsoft.ApplicationInspector.Common;
@@ -17,11 +20,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     using System.Threading;
     using System.Threading.Tasks;
 
+    [ExcludeFromCodeCoverage]
     public class RuleProcessorOptions
     {
         public RuleProcessorOptions()
         {
         }
+
         public bool Parallel { get; set; } = true;
         public Confidence ConfidenceFilter { get; set; } = Confidence.Unspecified | Confidence.Low | Confidence.Medium | Confidence.High;
         public Severity SeverityFilter { get; set; } = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice;
@@ -68,10 +73,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             _ruleset = rules;
             EnableCache = true;
 
-            analyzer = new Analyzer(new AnalyzerOptions(false, opts.Parallel));
-            analyzer.SetOperation(new WithinOperation(analyzer));
-            analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
-            analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
+            analyzer = new ApplicationInspectorAnalyzer(_opts.LoggerFactory);
         }
 
         private static string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
@@ -219,16 +221,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList;
         }
 
-        private IEnumerable<ConvertedOatRule> GetRulesForFile(LanguageInfo languageInfo, FileEntry fileEntry, IEnumerable<string>? tagsToIgnore)
+        public IEnumerable<ConvertedOatRule> GetRulesForFile(LanguageInfo languageInfo, FileEntry fileEntry, IEnumerable<string>? tagsToIgnore)
         {
-            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
-            var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
-            rules = rules.Union(GetUniversalRules().Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
-            if (tagsToIgnore?.Any() == true)
-            {
-                rules = rules.Where(x => x.AppInspectorRule?.Tags?.Any(y => !tagsToIgnore.Contains(y)) ?? false);
-            }
-            return rules;
+            return GetRulesByLanguage(languageInfo.Name)
+                .Union(GetRulesByFileName(fileEntry.FullPath))
+                .Union(GetUniversalRules())
+                .Where(x => !x.AppInspectorRule.Tags?.Any(y => tagsToIgnore?.Contains(y) ?? false) ?? true)
+                .Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
         }
 
         public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)

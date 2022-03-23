@@ -1,35 +1,42 @@
-﻿namespace Microsoft.ApplicationInspector.RulesEngine
-{
-    using Microsoft.CST.OAT;
-    using Microsoft.CST.OAT.Operations;
-    using Microsoft.CST.OAT.Utils;
-    using Serilog;
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using Microsoft.CST.OAT;
+using Microsoft.CST.OAT.Operations;
+using Microsoft.CST.OAT.Utils;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Serilog;
 
+namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
+{
     /// <summary>
     /// The Custom Operation to enable identification of pattern index in result used by Application Inspector to report why a given
     /// result was matched and to retrieve other pattern level meta-data
     /// </summary>
-    public class OATRegexWithIndexOperation : OatOperation
+    public class OatRegexWithIndexOperation : OatOperation
     {
         private readonly ConcurrentDictionary<(string, RegexOptions), Regex?> RegexCache = new();
+        private readonly ILoggerFactory _loggerFactory;
+        private readonly ILogger<OatRegexWithIndexOperation> _logger;
 
         /// <summary>
         /// Create an OatOperation given an analyzer
         /// </summary>
         /// <param name="analyzer">The analyzer context to work with</param>
-        public OATRegexWithIndexOperation(Analyzer analyzer) : base(Operation.Custom, analyzer)
+        /// <param name="loggerFactory">Logger Factory to use</param>
+        public OatRegexWithIndexOperation(Analyzer analyzer, ILoggerFactory? loggerFactory = null) : base(Operation.Custom, analyzer)
         {
+            _loggerFactory = loggerFactory ?? new NullLoggerFactory();
+            _logger = _loggerFactory.CreateLogger<OatRegexWithIndexOperation>();
             CustomOperation = "RegexWithIndex";
             OperationDelegate = RegexWithIndexOperationDelegate;
             ValidationDelegate = RegexWithIndexValidationDelegate;
         }
 
-        public static IEnumerable<Violation> RegexWithIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
+        private static IEnumerable<Violation> RegexWithIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
         {
             if (clause.Data?.Count is null or 0)
             {
@@ -45,7 +52,7 @@
                     }
                 }
             }
-            if (clause.DictData != null && clause.DictData?.Count > 0)
+            if (clause.DictData?.Count > 0)
             {
                 yield return new Violation(string.Format(Strings.Get("Err_ClauseDictDataUnexpected"), rule.Name, clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture), clause.Operation.ToString()), rule, clause);
             }
@@ -60,9 +67,9 @@
         /// <param name="state2"></param>
         /// <param name="captures"></param>
         /// <returns></returns>
-        public OperationResult RegexWithIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
+        private OperationResult RegexWithIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
         {
-            if (state1 is TextContainer tc && clause is OATRegexWithIndexClause src && clause.Data is List<string> RegexList && RegexList.Count > 0)
+            if (state1 is TextContainer tc && clause is OatRegexWithIndexClause src && clause.Data is List<string> RegexList && RegexList.Count > 0)
             {
                 RegexOptions regexOpts = new();
 
@@ -118,7 +125,7 @@
         /// <param name="built">The regex to build</param>
         /// <param name="regexOptions">The options to use.</param>
         /// <returns>The built Regex</returns>
-        public Regex? StringToRegex(string built, RegexOptions regexOptions)
+        private Regex? StringToRegex(string built, RegexOptions regexOptions)
         {
             if (!RegexCache.ContainsKey((built, regexOptions)))
             {
@@ -128,7 +135,7 @@
                 }
                 catch (ArgumentException)
                 {
-                    Log.Warning("InvalidArgumentException when creating regex. Regex {0} is invalid and will be skipped.", built);
+                    _logger.LogWarning("Provided regex {Regex} was not valid and could not be used", built);
                     RegexCache.TryAdd((built, regexOptions), null);
                 }
             }

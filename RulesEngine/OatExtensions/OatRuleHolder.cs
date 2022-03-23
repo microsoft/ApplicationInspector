@@ -1,4 +1,4 @@
-﻿namespace Microsoft.ApplicationInspector.RulesEngine
+﻿namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 {
     /// <summary>
     /// Wrapper for OAT based processing

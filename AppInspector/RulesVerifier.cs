@@ -1,6 +1,8 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+
 namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.RulesEngine;
@@ -60,7 +62,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _options = options;
             _logger = _options.LoggerFactory?.CreateLogger<RulesVerifier>() ?? NullLogger<RulesVerifier>.Instance;
-            _analyzer = GetAnalyzer(_options.Analyzer);
+            _analyzer = _options.Analyzer ?? new ApplicationInspectorAnalyzer(_options.LoggerFactory);
         }
 
         /// <summary>
@@ -94,22 +96,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public RulesVerifierResult Verify(RuleSet ruleset)
         {
             return new RulesVerifierResult(CheckIntegrity(ruleset), ruleset);
-        }
-
-        private static Analyzer GetAnalyzer(Analyzer? analyzer)
-        {
-            if (analyzer is null)
-            {
-                var _analyzer = new Analyzer();
-                _analyzer.SetOperation(new WithinOperation(_analyzer));
-                _analyzer.SetOperation(new OATRegexWithIndexOperation(_analyzer));
-                _analyzer.SetOperation(new OATSubstringIndexOperation(_analyzer));
-                return _analyzer;
-            }
-            else
-            {
-                return analyzer;
-            }
         }
 
         public List<RuleStatus> CheckIntegrity(RuleSet ruleSet)

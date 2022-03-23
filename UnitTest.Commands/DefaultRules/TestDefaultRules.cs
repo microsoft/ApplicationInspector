@@ -1,9 +1,9 @@
-﻿namespace UnitTest.Commands.Tests_DefaultRules
-{
-    using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.ApplicationInspector.Commands;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+namespace AppInspector.Tests.DefaultRules
+{
     /// <summary>
     /// Tests for the default set of rules which are embedded in the executable.
     /// </summary>

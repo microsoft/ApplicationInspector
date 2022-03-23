@@ -1,5 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
+using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     using Microsoft.CST.OAT;
@@ -174,11 +176,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     var modifiers = pattern.Modifiers ?? Array.Empty<string>();
                     if (pattern.PatternType is PatternType.String or PatternType.Substring)
                     {
-                        clauses.Add(new OATSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String)
+                        clauses.Add(new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { pattern.Pattern },
-                            Capture = true
+                            Capture = true,
+                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
                         });
                         if (clauseNumber > 0)
                         {
@@ -189,7 +192,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else if (pattern.PatternType == PatternType.Regex)
                     {
-                        clauses.Add(new OATRegexWithIndexClause(scopes)
+                        clauses.Add(new OatRegexWithIndexClause(scopes)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { pattern.Pattern },
@@ -206,7 +209,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else if (pattern.PatternType == PatternType.RegexWord)
                     {
-                        clauses.Add(new OATRegexWithIndexClause(scopes)
+                        clauses.Add(new OatRegexWithIndexClause(scopes)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { $"\\b({pattern.Pattern})\\b" },

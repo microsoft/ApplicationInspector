@@ -1,12 +1,12 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-namespace Microsoft.ApplicationInspector.RulesEngine
-{
-    using Microsoft.CST.OAT;
+using Microsoft.CST.OAT;
 
-    public class OATSubstringIndexClause : Clause
+namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
+{
+    public class OatSubstringIndexClause : Clause
     {
-        public OATSubstringIndexClause(PatternScope[] scopes, string? field = null, bool useWordBoundaries = false) : base(Operation.Custom, field)
+        public OatSubstringIndexClause(PatternScope[] scopes, string? field = null, bool useWordBoundaries = false) : base(Operation.Custom, field)
         {
             Scopes = scopes;
             CustomOperation = "SubstringIndex";

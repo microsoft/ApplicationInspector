@@ -1,9 +1,8 @@
-﻿namespace UnitTest.Commands.Tests_Logger
-{
-    using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+namespace AppInspector.Tests.Logger
+{
     /// <summary>
     /// Tests for the default set of rules which are embedded in the executable.
     /// </summary>

@@ -1,6 +1,8 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+
 namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.Common;
@@ -100,10 +102,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                var analyzer = new Analyzer();
-                analyzer.SetOperation(new WithinOperation(analyzer));
-                analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
-                analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
+                var analyzer = new ApplicationInspectorAnalyzer();
                 RulesVerifierOptions options = new()
                 {
                     Analyzer = analyzer,

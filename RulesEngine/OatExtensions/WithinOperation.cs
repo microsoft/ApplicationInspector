@@ -1,18 +1,21 @@
-﻿namespace Microsoft.ApplicationInspector.RulesEngine
-{
-    using Microsoft.CST.OAT;
-    using Microsoft.CST.OAT.Operations;
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Microsoft.CST.OAT;
+using Microsoft.CST.OAT.Operations;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
+namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
+{
     public class WithinOperation : OatOperation
     {
-        public WithinOperation(Analyzer analyzer) : base(Operation.Custom, analyzer)
+        public WithinOperation(Analyzer analyzer, ILoggerFactory? loggerFactory = null) : base(Operation.Custom, analyzer)
         {
-            regexEngine = new RegexOperation(analyzer);
+            _loggerFactory = loggerFactory ?? new NullLoggerFactory();
+            _regexEngine = new RegexOperation(analyzer);
             CustomOperation = "Within";
             OperationDelegate = WithinOperationDelegate;
             ValidationDelegate = WithinValidationDelegate;
@@ -100,7 +103,7 @@
                 OperationResult ProcessLambda(string target, Boundary targetBoundary)
                 {
                     var boundaries = new List<Boundary>();
-                    foreach (var pattern in wc.Data.Select(x => regexEngine.StringToRegex(x, regexOpts)))
+                    foreach (var pattern in wc.Data.Select(x => _regexEngine.StringToRegex(x, regexOpts)))
                     {
                         if (pattern is Regex r)
                         {
@@ -129,7 +132,7 @@
             }
             return new OperationResult(false, null);
         }
-
+        
         public IEnumerable<Violation> WithinValidationDelegate(CST.OAT.Rule rule, Clause clause)
         {
             if (rule is null)
@@ -163,7 +166,7 @@
                 }
                 foreach (var datum in wc.Data ?? new List<string>())
                 {
-                    if (regexEngine.StringToRegex(datum, RegexOptions.None) is null)
+                    if (_regexEngine.StringToRegex(datum, RegexOptions.None) is null)
                     {
                         yield return new Violation($"Regex {datum} in Rule {rule.Name} Clause {clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)} is not a valid regex.", rule, clause);
                     }
@@ -175,6 +178,7 @@
             }
         }
 
-        private readonly RegexOperation regexEngine;
+        private readonly RegexOperation _regexEngine;
+        private readonly ILoggerFactory _loggerFactory;
     }
 }

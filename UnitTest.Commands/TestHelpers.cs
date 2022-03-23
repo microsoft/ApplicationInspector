@@ -1,13 +1,13 @@
-﻿namespace ApplicationInspector.Unitprocess.Misc
-{
-    using Microsoft.ApplicationInspector.CLI;
-    using Microsoft.Extensions.Logging;
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using Microsoft.ApplicationInspector.CLI;
+using Microsoft.Extensions.Logging;
 
+namespace AppInspector.Tests
+{
     [ExcludeFromCodeCoverage]
     public static class TestHelpers
     {

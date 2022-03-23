@@ -1,13 +1,11 @@
-﻿namespace ApplicationInspector.Unitprocess.Commands
-{
-    using ApplicationInspector.Unitprocess.Misc;
-    using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.ApplicationInspector.Common;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.Common;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+namespace AppInspector.Tests.Commands
+{
     [TestClass]
     [ExcludeFromCodeCoverage]
     public class TestPackRulesCmd

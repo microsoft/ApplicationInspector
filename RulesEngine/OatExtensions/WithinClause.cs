@@ -1,9 +1,9 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-namespace Microsoft.ApplicationInspector.RulesEngine
-{
-    using Microsoft.CST.OAT;
+using Microsoft.CST.OAT;
 
+namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
+{
     internal class WithinClause : Clause
     {
         public WithinClause(string? field = null) : base(Operation.Custom, field)
