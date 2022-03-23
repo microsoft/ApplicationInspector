@@ -6,6 +6,7 @@ namespace Microsoft.ApplicationInspector.CLI
     using CommandLine;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.RulesEngine;
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -53,8 +54,11 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('u', "scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
         public bool ScanUnknownTypes { get; set; }
 
-        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]")]
+        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value>. Default: Medium,High. [High|Medium|Low]")]
         public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
+
+        [Option("severity-filters", Required = false, HelpText = "Output only matches with specified severity <value>,<value>. Default: All are enabled. [Critical|Important|Moderate|BestPractice|ManualReview]")]
+        public IEnumerable<Severity> SeverityFilters { get; set; } = (IEnumerable<Severity>)Enum.GetValues(typeof(Severity));
     }
 
     /// <summary>

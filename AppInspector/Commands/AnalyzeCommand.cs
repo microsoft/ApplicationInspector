@@ -29,6 +29,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
         public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
+        public IEnumerable<Severity> SeverityFilters { get; set; } = new Severity[] { Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice | Severity.ManualReview };
         public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
         public bool SingleThread { get; set; } = false;
         /// <summary>
@@ -94,8 +95,9 @@ namespace Microsoft.ApplicationInspector.Commands
         private DateTime DateScanned { get; }
 
         private readonly List<Glob> _fileExclusionList = new();
-        private Confidence _confidence = Confidence.Unspecified;
+        private readonly Confidence _confidence = Confidence.Unspecified;
         private readonly AnalyzeOptions _options; //copy of incoming caller options
+        private readonly Severity _severity = Severity.Unspecified;
 
         /// <summary>
         /// Constructor for AnalyzeCommand.
@@ -122,6 +124,10 @@ namespace Microsoft.ApplicationInspector.Commands
             foreach(Confidence confidence in _options.ConfidenceFilters)
             {
                 _confidence |= confidence;
+            }
+            foreach(Severity severity in _options.SeverityFilters)
+            {
+                _severity |= severity;
             }
             ConfigSourcetoScan();
             ConfigRules();
@@ -230,11 +236,12 @@ namespace Microsoft.ApplicationInspector.Commands
             //instantiate a RuleProcessor with the added rules and exception for dependency
             var rpo = new RuleProcessorOptions()
             {
-                loggerFactory = _loggerFactory,
-                allowAllTagsInBuildFiles = _options.AllowAllTagsInBuildFiles,
-                confidenceFilter = _confidence,
+                LoggerFactory = _loggerFactory,
+                AllowAllTagsInBuildFiles = _options.AllowAllTagsInBuildFiles,
+                ConfidenceFilter = _confidence,
+                SeverityFilter = _severity,
                 Parallel = !_options.SingleThread,
-                languages = _languages
+                Languages = _languages
             };
 
             _rulesProcessor = new RuleProcessor(rulesSet, rpo);

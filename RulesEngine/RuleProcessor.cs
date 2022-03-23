@@ -22,15 +22,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public RuleProcessorOptions()
         {
         }
-        public bool Parallel = true;
-        public Confidence confidenceFilter = Confidence.Unspecified | Confidence.Low | Confidence.Medium | Confidence.High;
-        public ILoggerFactory? loggerFactory;
-        public bool allowAllTagsInBuildFiles = false;
-
-        [Obsolete("Use allowAllTagsInBuildFiles")]
-        public bool treatEverythingAsCode => allowAllTagsInBuildFiles;
-
-        public Languages languages { get; set; }
+        public bool Parallel { get; set; } = true;
+        public Confidence ConfidenceFilter { get; set; } = Confidence.Unspecified | Confidence.Low | Confidence.Medium | Confidence.High;
+        public Severity SeverityFilter { get; set; } = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice;
+        public ILoggerFactory? LoggerFactory { get; set; }
+        public bool AllowAllTagsInBuildFiles { get; set; } = false;
+        public bool EnableCache { get; set; } = true;
+        public Languages Languages { get; set; } = new();
     }
 
     /// <summary>
@@ -42,9 +40,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         private readonly RuleProcessorOptions _opts;
         private readonly ILogger<RuleProcessor> _logger;
-
-        private Confidence ConfidenceLevelFilter => _opts.confidenceFilter;
-
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
         private readonly Languages _languages;
@@ -55,7 +50,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Sets severity levels for analysis
         /// </summary>
-        private Severity SeverityLevel { get; }
+        private Severity SeverityLevel => _opts.SeverityFilter;
 
         /// <summary>
         /// Enables caching of rules queries if multiple reuses per instance
@@ -68,11 +63,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public RuleProcessor(RuleSet rules, RuleProcessorOptions opts)
         {
             _opts = opts;
-            _logger = opts.loggerFactory?.CreateLogger<RuleProcessor>() ?? NullLogger<RuleProcessor>.Instance;
-            _languages = opts.languages ?? new();
+            _logger = opts.LoggerFactory?.CreateLogger<RuleProcessor>() ?? NullLogger<RuleProcessor>.Instance;
+            _languages = opts.Languages ?? new();
             _ruleset = rules;
             EnableCache = true;
-            SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
 
             analyzer = new Analyzer(new AnalyzerOptions(false, opts.Parallel));
             analyzer.SetOperation(new WithinOperation(analyzer));
@@ -159,12 +153,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     var patternIndex = match.Item1;
                                     var boundary = match.Item2;
                                     //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                                    if (!_opts.allowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+                                    if (!_opts.AllowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
                                     {
                                         continue;
                                     }
 
-                                    if (!ConfidenceLevelFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+                                    if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
                                     {
                                         continue;
                                     }
@@ -228,7 +222,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
             var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
-            rules = rules.Union(GetUniversalRules());
+            rules = rules.Union(GetUniversalRules().Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
             if (tagsToIgnore?.Any() == true)
             {
                 rules = rules.Where(x => x.AppInspectorRule?.Tags?.Any(y => !tagsToIgnore.Contains(y)) ?? false);
@@ -291,7 +285,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     var boundary = match.Item2;
 
                                     //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                                    if (!_opts.allowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+                                    if (!_opts.AllowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
                                     {
                                         continue;
                                     }
@@ -302,7 +296,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         continue;
                                     }
 
-                                    if (!ConfidenceLevelFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+                                    if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
                                     {
                                         continue;
                                     }

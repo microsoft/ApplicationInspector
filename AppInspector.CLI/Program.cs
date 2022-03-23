@@ -304,6 +304,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 FilePathExclusions = cliOptions.FilePathExclusions,
                 TestType = cliOptions.TestType,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
+                SeverityFilters = cliOptions.SeverityFilters,
                 FileTimeOut = cliOptions.FileTimeOut,
                 ProcessingTimeOut = cliOptions.ProcessingTimeOut,
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,

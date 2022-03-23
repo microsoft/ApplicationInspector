@@ -382,8 +382,31 @@ windows
             Assert.IsTrue(resultSingle.Metadata.Matches.All(x => resultMulti.Metadata.Matches.Any(y => y.Tags?.All(z => x.Tags?.All(w => w.Contains(z)) ?? false) ?? false)));
         }
 
+        [DataRow(new Severity[] { Severity.Moderate }, 1)]
+        [DataRow(new Severity[] { Severity.Important }, 4)]
+        [DataRow(new Severity[] { Severity.Important | Severity.Moderate }, 5)]
+
+        [DataTestMethod]
+        public void SeverityFilters(Severity[] severityFilter, int ActualExpectedNumberOfMatches)
+        {
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { testFilePath },
+                CustomRulesPath = testRulesPath,
+                SeverityFilters = severityFilter,
+                IgnoreDefaultRules = true
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = command.GetResult();
+
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(ActualExpectedNumberOfMatches, result.Metadata.Matches.Count);
+        }
+
         [DataRow(new Confidence[] { Confidence.High }, 1)]
         [DataRow(new Confidence[] { Confidence.Medium }, 4)]
+        [DataRow(new Confidence[] { Confidence.Medium | Confidence.High }, 5)]
         [DataTestMethod]
         public void ConfidenceFilters(Confidence[] confidenceFilter, int ActualExpectedNumberOfMatches)
         {

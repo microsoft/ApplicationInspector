@@ -25,6 +25,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool ScanUnknownTypes { get; set; }
         public bool SingleThread { get; set; }
         public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
+        public IEnumerable<Severity> SeverityFilters { get; set; } = new Severity[] { Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice | Severity.ManualReview };
         public string? CustomCommentsPath { get; set; }
         public string? CustomLanguagesPath { get; set; }
     }
@@ -143,6 +144,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     FilePathExclusions = _options.FilePathExclusions,
                     TagsOnly = true,
                     ConfidenceFilters = _options.ConfidenceFilters,
+                    SeverityFilters = _options.SeverityFilters,
                     FileTimeOut = _options.FileTimeOut,
                     ProcessingTimeOut = _options.ProcessingTimeOut,
                     NoFileMetadata = true,
@@ -158,6 +160,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     FilePathExclusions = _options.FilePathExclusions,
                     TagsOnly = true,
                     ConfidenceFilters = _options.ConfidenceFilters,
+                    SeverityFilters = _options.SeverityFilters,
                     FileTimeOut = _options.FileTimeOut,
                     ProcessingTimeOut = _options.ProcessingTimeOut,
                     NoFileMetadata = true,

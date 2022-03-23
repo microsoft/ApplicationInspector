@@ -14,7 +14,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     public enum Severity
     {
         /// <summary>
-        ///     Critial issues
+        ///     Has not been specified
+        /// </summary>
+        Unspecified = 0,
+        /// <summary>
+        ///     Critical issues
         /// </summary>
         Critical = 1,
 
