@@ -42,7 +42,7 @@ ProcessingTimeout
             Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
             testFilePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),"TestFile.js");
             testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
-            File.WriteAllText(testFilePath, fourWindows);
+            File.WriteAllText(testFilePath, fourWindowsOneLinux);
             File.WriteAllText(testRulesPath, findWindows);
         }
 
@@ -93,8 +93,50 @@ ProcessingTimeout
     ]
 }
 ]";
+        string findWindowsWithFileRegex = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""severity"": ""Important"",
+    ""applies_to_file_regex"": [""afile.js""],
+    ""patterns"": [
+      {
+                ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ]
+},
+{
+    ""name"": ""Platform: Linux"",
+    ""id"": ""AI_TEST_LINUX"",
+    ""description"": ""This rule checks for the string 'linux'"",
+    ""tags"": [
+      ""Test.Tags.Linux""
+    ],
+    ""severity"": ""Moderate"",
+    ""applies_to_file_regex"": [""adifferentfile.js""],
+    ""patterns"": [
+      {
+                ""confidence"": ""High"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""linux"",
+        ""type"": ""String"",
+      }
+    ]
+}
+]";
         // This string contains windows four times and linux once.
-        string fourWindows =
+        string fourWindowsOneLinux =
 @"windows
 windows
 linux
@@ -182,7 +224,7 @@ windows
         public void DetectMissingRulesPath()
         {
             // We need to ensure the test file exists, it doesn't matter what is in it.
-            File.WriteAllText(testFilePath, fourWindows);
+            File.WriteAllText(testFilePath, fourWindowsOneLinux);
             AnalyzeOptions options = new()
             {
                 SourcePath = new string[1] { testFilePath },
@@ -262,12 +304,36 @@ windows
             Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
         }
 
+        [DataRow("afile.js", AnalyzeResult.ExitCode.Success, 4, 1)]
+        [DataRow("adifferentfile.js", AnalyzeResult.ExitCode.Success, 1, 1)]
+        [DataTestMethod]
+        public void AppliesToFileName(string testFileName, AnalyzeResult.ExitCode expectedExitCode, int expectedTotalMatches, int expectedUniqueMatches)
+        {
+            var appliesToTestRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "AppliesToFileNameTestRule.json");
+            var appliesToTestFilePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), testFileName);
+            File.WriteAllText(appliesToTestFilePath, fourWindowsOneLinux);
+            File.WriteAllText(appliesToTestRulePath, findWindowsWithFileRegex);
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { appliesToTestFilePath },
+                CustomRulesPath = appliesToTestRulePath,
+                IgnoreDefaultRules = true
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(expectedExitCode, result.ResultCode);
+            Assert.AreEqual(expectedTotalMatches, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(expectedUniqueMatches, result.Metadata.UniqueMatchesCount);
+        }
+
+
         [TestMethod]
         public void ScanUnknownFileTypes()
         {
             string scanPath = Path.GetTempFileName();
 
-            File.WriteAllText(scanPath, fourWindows);
+            File.WriteAllText(scanPath, fourWindowsOneLinux);
 
             AnalyzeOptions options = new()
             {
@@ -294,7 +360,7 @@ windows
         {
             string scanPath = Path.GetTempFileName();
 
-            File.WriteAllText(scanPath, fourWindows);
+            File.WriteAllText(scanPath, fourWindowsOneLinux);
 
             AnalyzeOptions options = new()
             {
@@ -342,7 +408,7 @@ windows
             for (int i = 0; i < iterations; i++)
             {
                 string innerFileName = Path.GetTempFileName();
-                File.WriteAllText(innerFileName, fourWindows);
+                File.WriteAllText(innerFileName, fourWindowsOneLinux);
                 testFiles.Add(innerFileName);
             }
 
@@ -429,7 +495,7 @@ windows
         public void TagsInBuildFiles()
         {
             string innerTestFilePath = $"{Path.GetTempFileName()}.json"; // JSON is considered a build file, it does not have code/comment sections.
-            File.WriteAllText(innerTestFilePath, fourWindows);
+            File.WriteAllText(innerTestFilePath, fourWindowsOneLinux);
 
             AnalyzeOptions options = new()
             {
