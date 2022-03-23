@@ -256,7 +256,6 @@ windows
             Assert.AreEqual(4, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
 
-            // This has one additional result for the same file because the match is not being overridden.
             options = new()
             {
                 SourcePath = new string[1] { fourWindowsOne2000Path },
@@ -267,6 +266,7 @@ windows
             command = new(options, factory);
             result = command.GetResult();
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            // This has one additional result for the same file because the match is not being overridden.
             Assert.AreEqual(5, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
         }
