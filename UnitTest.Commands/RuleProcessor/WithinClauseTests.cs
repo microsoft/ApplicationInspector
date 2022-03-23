@@ -3,10 +3,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.ApplicationInspector.CLI;
+using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Serilog.Events;
 
 namespace AppInspector.Tests.RuleProcessor
 {
@@ -74,6 +77,44 @@ namespace AppInspector.Tests.RuleProcessor
                 Assert.Fail();
             }
         }
+        
+        [DataRow(true, true, true, 0, 0, 1)]
+        [DataRow(true, false, true, 0, 0, 1)]
+
+        [DataRow(true, true, false, 0, 0, 1)]
+        [DataRow(false, true, true, 0, 0, 1)]
+        [DataRow(true, false, false, 0, 0, 0)]
+        [DataRow(false, false, true, 0, 0, 0)]
+        [DataRow(false, true, false, 0, 0, 1)]
+        [DataRow(false, true, false, 0, 1, 1)]
+        [DataRow(false, true, false, 1, -1, 0)]
+        [DataRow(false, true, false, -1, 0, 1)]
+
+        [DataTestMethod]
+        public void WithinClauseValidationTest(bool findingOnlySetting, bool findingRegionSetting, bool sameLineOnlySetting, int afterSetting, int beforeSetting, int expectedNumIssues)
+        {
+            RuleSet rules = new(_loggerFactory);
+            rules.AddString(validationRule, "TestRules");
+            IEnumerable<WithinClause> withinClauses = rules
+                .GetOatRules()
+                .SelectMany(x => x.Clauses)
+                .OfType<WithinClause>();
+            foreach (WithinClause clause in withinClauses)
+            {
+                clause.FindingOnly = findingOnlySetting;
+                clause.FindingRegion = findingRegionSetting;
+                clause.SameLineOnly = sameLineOnlySetting;
+                clause.After = afterSetting;
+                clause.Before = beforeSetting;
+            }
+            RulesVerifier verifier = new(new RulesVerifierOptions() {LoggerFactory = _loggerFactory});
+            var oatIssues = verifier.CheckIntegrity(rules).SelectMany(x => x.OatIssues);
+            foreach (var violation in oatIssues)
+            {
+                _logger.LogDebug(violation.Description);
+            }
+            Assert.AreEqual(expectedNumIssues, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
+        }
 
         [DataRow(true, 1, new int[] { 2 })]
         [DataRow(false, 1, new int[] { 3 })]
@@ -138,8 +179,53 @@ namespace AppInspector.Tests.RuleProcessor
             }
         };
 
-        private ILoggerFactory _loggerFactory = new LogOptions().GetLoggerFactory();
+        [ClassInitialize]
+        public void ClassInit()
+        {
+            _logger = _loggerFactory.CreateLogger<WithinClauseTests>();
+        }
+        
+        private ILoggerFactory _loggerFactory = new LogOptions(){ ConsoleVerbosityLevel = LogEventLevel.Verbose }.GetLoggerFactory();
+        private ILogger _logger;
 
+        private const string validationRule = @"[
+    {
+        ""id"": ""SA000005"",
+        ""name"": ""Testing.Rules.MallocNotFree1"",
+        ""tags"": [
+            ""Testing.Rules.MallocNotFree1""
+        ],
+        ""severity"": ""Critical"",
+        ""description"": ""this rule aims to find malloc() that does NOT have free() in 1 line range"",
+        ""patterns"": [
+            {
+                ""pattern"": ""racecar"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""modifiers"": [
+                    ""i""
+                ],
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""conditions"": [
+            {
+                ""pattern"": {
+                    ""pattern"": ""car"",
+                    ""type"": ""regex"",
+                    ""scopes"": [
+                        ""code""
+                    ]
+                },
+                ""search_in"": ""same-line"",
+            }
+        ],
+        ""_comment"": """"
+    }
+]";
+        
         private const string findingOnlyRule = @"[
     {
         ""id"": ""SA000005"",

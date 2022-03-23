@@ -147,17 +147,33 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
             }
             if (clause is WithinClause wc)
             {
-                if (!wc.FindingOnly && !wc.SameLineOnly && !wc.FindingRegion)
+                if (new bool[] {wc.FindingOnly, wc.SameLineOnly, wc.FindingRegion}.Count(x => x) != 1)
                 {
-                    yield return new Violation($"Either FindingOnly, SameLineOnly or Finding Region must be set", rule, clause);
+                    yield return new Violation($"Exactly one of: FindingOnly, SameLineOnly or FindingRegion must be set", rule, clause);
                 }
-                if (wc.FindingRegion && wc.Before > 0)
+
+                if (wc.FindingRegion)
                 {
-                    yield return new Violation($"The first parameter for finding region, representing number of lines before, must be 0 or negative", rule, clause);
-                }
-                if (wc.FindingRegion && wc.After < 0)
-                {
-                    yield return new Violation($"The second parameter for finding region, representing number of lines after, must be 0 or positive", rule, clause);
+                    if (wc.Before == 0 && wc.After == 0)
+                    {
+                        yield return new Violation(
+                            $"Both parameters for finding-region may not be 0. Use same-line to only analyze the same line.",
+                            rule, clause);
+                    }
+
+                    if (wc.Before > 0)
+                    {
+                        yield return new Violation(
+                            $"The first parameter for finding region, representing number of lines before, must be 0 or negative",
+                            rule, clause);
+                    }
+
+                    if (wc.After < 0)
+                    {
+                        yield return new Violation(
+                            $"The second parameter for finding region, representing number of lines after, must be 0 or positive",
+                            rule, clause);
+                    }
                 }
                 if (!wc.Data?.Any() ?? true)
                 {

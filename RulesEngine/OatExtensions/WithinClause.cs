@@ -4,7 +4,7 @@ using Microsoft.CST.OAT;
 
 namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 {
-    internal class WithinClause : Clause
+    public class WithinClause : Clause
     {
         public WithinClause(string? field = null) : base(Operation.Custom, field)
         {

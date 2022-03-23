@@ -168,7 +168,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var clauses = new List<Clause>();
             int clauseNumber = 0;
             var expression = new StringBuilder("(");
-            foreach (var pattern in rule.Patterns ?? Array.Empty<SearchPattern>())
+            foreach (var pattern in rule.Patterns)
             {
                 if (pattern.Pattern != null)
                 {
@@ -309,6 +309,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         expression.Append(" AND ");
                         expression.Append(clauseNumber);
                         clauseNumber++;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Search condition {Condition} is not one of the accepted values and this condition will be ignored",condition.SearchIn);
                     }
                 }
             }
