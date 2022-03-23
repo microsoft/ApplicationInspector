@@ -2,13 +2,13 @@
 {
     using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class WithinClauseTests
     {
         private readonly Languages _languages = new();

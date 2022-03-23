@@ -9,12 +9,14 @@
     using Microsoft.Extensions.Logging.Abstractions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
 
     // TODO: This does not intentionally try to make the OAT rule maker fail
     // The OAT rules are being validated but there aren't test cases that intentionally try to break it.
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class TestVerifyRulesCmd
     {
         private string validRulesPath = string.Empty;

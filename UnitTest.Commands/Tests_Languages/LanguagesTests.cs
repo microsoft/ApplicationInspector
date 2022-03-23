@@ -3,9 +3,11 @@
     using ApplicationInspector.Unitprocess.Misc;
     using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
 
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class LanguagesTests
     {
         readonly string comments_z = @"

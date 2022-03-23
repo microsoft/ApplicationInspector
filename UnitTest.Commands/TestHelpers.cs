@@ -5,8 +5,10 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
 
+    [ExcludeFromCodeCoverage]
     public static class TestHelpers
     {
         public static ILoggerFactory GenerateLoggerFactory(string logName = "testLog.txt", Serilog.Events.LogEventLevel fileLevel = Serilog.Events.LogEventLevel.Verbose, Serilog.Events.LogEventLevel consoleLevel = Serilog.Events.LogEventLevel.Debug) =>

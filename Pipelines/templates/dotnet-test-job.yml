@@ -40,5 +40,6 @@ jobs:
   - task: DotNetCoreCLI@2
     displayName: Dotnet Test
     inputs:
-      command: 'test'
+      command: 'test --collect "Code coverage"'
       projects: ${{ parameters.projectPath }}
+      publishTestResults: true

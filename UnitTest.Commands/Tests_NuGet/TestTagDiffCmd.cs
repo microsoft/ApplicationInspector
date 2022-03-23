@@ -8,6 +8,7 @@
     using Microsoft.Extensions.Logging.Abstractions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Threading;
@@ -16,6 +17,7 @@
     /// Test class for TagDiff Command
     /// </summary>
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class TestTagDiffCmd
     {
         private string testFileFourWindowsOneLinuxPath = string.Empty;

@@ -2,11 +2,13 @@
 {
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Tests for the default set of rules which are embedded in the executable.
     /// </summary>
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class TestDefaultRules
     {
         // This test ensures that the rules that are bundled with Application Inspector are valid.

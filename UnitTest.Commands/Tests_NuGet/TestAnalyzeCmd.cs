@@ -10,6 +10,7 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Threading;
@@ -19,6 +20,7 @@
     /// Test class for the Analyze Command
     /// </summary>
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class TestAnalyzeCmd
     {
         /*

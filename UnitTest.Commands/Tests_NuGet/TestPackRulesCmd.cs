@@ -5,9 +5,11 @@
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
 
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class TestPackRulesCmd
     {
         [TestInitialize]
