@@ -29,6 +29,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         [Obsolete("Use allowAllTagsInBuildFiles")]
         public bool treatEverythingAsCode => allowAllTagsInBuildFiles;
+
+        public Languages languages { get; set; }
     }
 
     /// <summary>
@@ -45,6 +47,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
+        private readonly Languages _languages;
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new();
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _languageRulesCache = new();
         private IEnumerable<ConvertedOatRule>? _universalRulesCache;
@@ -66,7 +69,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             _opts = opts;
             _logger = opts.loggerFactory?.CreateLogger<RuleProcessor>() ?? NullLogger<RuleProcessor>.Instance;
-
+            _languages = opts.languages ?? new();
             _ruleset = rules;
             EnableCache = true;
             SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
@@ -132,7 +135,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
             List<MatchRecord> resultsList = new();
 
-            TextContainer textContainer = new(contents, languageInfo.Name);
+            TextContainer textContainer = new(contents, languageInfo.Name, _languages);
             var caps = analyzer.GetCaptures(rules, textContainer);
             foreach (var ruleCapture in caps)
             {
@@ -260,7 +263,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             using var sr = new StreamReader(fileEntry.Content);
 
-            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name);
+            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name, _languages);
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
                 if (cancellationToken?.IsCancellationRequested is true)

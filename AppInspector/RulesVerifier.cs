@@ -29,21 +29,38 @@ namespace Microsoft.ApplicationInspector.Commands
         public  bool Verified => RuleStatuses.All(x => x.Verified);
     }
 
+    public class RulesVerifierOptions
+    {
+        /// <summary>
+        /// If desired you may provide the analyzer to use. An analyzer with AI defaults will be created to use for validation.
+        /// </summary>
+        public Analyzer? Analyzer { get; set; }
+        /// <summary>
+        /// To receive log messages, provide a LoggerFactory with your preferred configuration.
+        /// </summary>
+        public ILoggerFactory? LoggerFactory { get; set; }
+        /// <summary>
+        /// If true, the verifier will stop on the first issue and will not continue reporting issues.
+        /// </summary>
+        public bool FailFast { get; set; }
+        public Languages LanguageSpecs { get; set; } = new Languages();
+    }
+
     /// <summary>
     /// Common helper used by VerifyRulesCommand and PackRulesCommand classes to reduce duplication
     /// </summary>
     public class RulesVerifier
     {
         private readonly ILogger _logger;
-        private readonly ILoggerFactory? _loggerFactory;
-        private readonly bool _failFast;
+        private readonly RulesVerifierOptions _options;
+        private bool _failFast => _options.FailFast;
+        private ILoggerFactory? _loggerFactory => _options.LoggerFactory;
         private readonly Analyzer _analyzer;
-        public RulesVerifier(ILoggerFactory? loggerFactory = null, bool failFast = true, Analyzer? analyzer = null)
+        public RulesVerifier(RulesVerifierOptions options)
         {
-            _failFast = failFast;
-            _logger = loggerFactory?.CreateLogger<RulesVerifier>() ?? NullLogger<RulesVerifier>.Instance;
-            _loggerFactory = loggerFactory;
-            _analyzer = GetAnalyzer(analyzer);
+            _options = options;
+            _logger = _options.LoggerFactory?.CreateLogger<RulesVerifier>() ?? NullLogger<RulesVerifier>.Instance;
+            _analyzer = GetAnalyzer(_options.Analyzer);
         }
 
         /// <summary>
@@ -145,7 +162,7 @@ namespace Microsoft.ApplicationInspector.Commands
             //applicability
             if (rule.AppliesTo != null)
             {
-                string[] languages = Language.GetNames();
+                string[] languages = _options.LanguageSpecs.GetNames();
                 // Check for unknown language
                 foreach (string lang in rule.AppliesTo)
                 {

@@ -232,6 +232,8 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 SourcePath = cliOptions.SourcePath ?? Array.Empty<string>(),
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
                 FilePathExclusions = cliOptions.FilePathExclusions,
@@ -296,6 +298,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 SourcePath1 = cliOptions.SourcePath1,
                 SourcePath2 = cliOptions.SourcePath2,
                 CustomRulesPath = cliOptions.CustomRulesPath,
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 FilePathExclusions = cliOptions.FilePathExclusions,
                 TestType = cliOptions.TestType,
@@ -336,6 +340,8 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 VerifyDefaultRules = cliOptions.VerifyDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 Failfast = cliOptions.Failfast,
             }, loggerFactory);
 
@@ -352,6 +358,8 @@ namespace Microsoft.ApplicationInspector.CLI
             PackRulesCommand command = new(new PackRulesOptions()
             {
                 CustomRulesPath = cliOptions.CustomRulesPath,
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 PackEmbeddedRules = cliOptions.PackEmbeddedRules
             }, loggerFactory);
 

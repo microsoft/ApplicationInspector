@@ -25,6 +25,8 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool ScanUnknownTypes { get; set; }
         public bool SingleThread { get; set; }
         public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
+        public string? CustomCommentsPath { get; set; }
+        public string? CustomLanguagesPath { get; set; }
     }
 
     /// <summary>

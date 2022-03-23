@@ -137,7 +137,7 @@ namespace Microsoft.ApplicationInspector.CLI
                                         };
                                         artifactIndex = artifact.Location.Index;
                                         artifact.Tags.AddRange(match.Rule.Tags);
-                                        if (Language.FromFileNameOut(fileName, out LanguageInfo languageInfo))
+                                        if (match.LanguageInfo is { } languageInfo)
                                         {
                                             artifact.SourceLanguage = languageInfo.Name;
                                         }

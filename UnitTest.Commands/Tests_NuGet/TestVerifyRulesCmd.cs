@@ -248,7 +248,12 @@
         {
             RuleSet set = new RuleSet();
             set.AddString(validJsonInvalidRule_NoId, "NoIdTest");
-            RulesVerifier rulesVerifier = new RulesVerifier(null, failFast: false);
+            RulesVerifierOptions options = new()
+            {
+                FailFast = false,
+                LoggerFactory = factory
+            };
+            RulesVerifier rulesVerifier = new RulesVerifier(options);
             Assert.IsFalse(rulesVerifier.Verify(set).Verified);
         }
 

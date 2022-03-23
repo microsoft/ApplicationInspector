@@ -17,6 +17,8 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? CustomRulesPath { get; set; }
         public bool NotIndented { get; set; }
         public bool PackEmbeddedRules { get; set; }
+        public string? CustomCommentsPath { get; set; }
+        public string? CustomLanguagesPath { get; set; }
     }
 
     public class PackRulesResult : Result
@@ -84,7 +86,13 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                RulesVerifier verifier = new(_loggerFactory);
+                RulesVerifierOptions options = new()
+                {
+                    FailFast = false,
+                    LoggerFactory = _loggerFactory,
+                    LanguageSpecs = new Languages(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
+                };
+                RulesVerifier verifier = new(options);
                 RuleSet? ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();
                 if (!string.IsNullOrEmpty(_options.CustomRulesPath))
                 {

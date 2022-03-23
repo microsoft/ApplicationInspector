@@ -46,6 +46,8 @@ namespace Microsoft.ApplicationInspector.Commands
         /// If non-zero, and <see cref="TagsOnly"/> is not set, will ignore matches if all of the matches tags have already been found the set value number of times.
         /// </summary>
         public int MaxNumMatchesPerTag { get; set; } = 0;
+        public string? CustomCommentsPath { get; set; }
+        public string? CustomLanguagesPath { get; set; }
     }
 
     /// <summary>
@@ -86,6 +88,7 @@ namespace Microsoft.ApplicationInspector.Commands
         private readonly ILogger _logger;
         private readonly List<string> _srcfileList = new();
         private MetaDataHelper _metaDataHelper; //wrapper containing MetaData object to be assigned to result
+        private Languages _languages = new();
         private RuleProcessor _rulesProcessor;
         private const int _sleepDelay = 100;
         private DateTime DateScanned { get; }
@@ -172,6 +175,11 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _logger.LogTrace("AnalyzeCommand::ConfigRules");
 
+            if (!string.IsNullOrEmpty(_options.CustomCommentsPath) || !string.IsNullOrEmpty(_options.CustomLanguagesPath))
+            {
+                _languages = new Languages(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath);
+            }
+
             RuleSet? rulesSet = null;
 
             if (!_options.IgnoreDefaultRules)
@@ -192,7 +200,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else if (File.Exists(_options.CustomRulesPath)) //verify custom rules before use
                 {
-                    RulesVerifier verifier = new(_loggerFactory);
+                    RulesVerifierOptions rulesVerifierOptions = new RulesVerifierOptions()
+                    {
+                        FailFast = false,
+                        LanguageSpecs = _languages,
+                        LoggerFactory = _loggerFactory,
+                    };
+                    RulesVerifier verifier = new(rulesVerifierOptions);
                     var verification = verifier.Verify(_options.CustomRulesPath);
                     if (!verification.Verified)
                     {
@@ -220,6 +234,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 allowAllTagsInBuildFiles = _options.AllowAllTagsInBuildFiles,
                 confidenceFilter = _confidence,
                 Parallel = !_options.SingleThread,
+                languages = _languages
             };
 
             _rulesProcessor = new RuleProcessor(rulesSet, rpo);
@@ -301,7 +316,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         LanguageInfo languageInfo = new();
 
-                        if (Language.FromFileName(file.FullPath, ref languageInfo))
+                        if (_languages.FromFileName(file.FullPath, ref languageInfo))
                         {
                             _metaDataHelper.AddLanguage(languageInfo.Name);
                         }
@@ -455,7 +470,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
                         LanguageInfo languageInfo = new();
 
-                        if (Language.FromFileName(file.FullPath, ref languageInfo))
+                        if (_languages.FromFileName(file.FullPath, ref languageInfo))
                         {
                             _metaDataHelper.AddLanguage(languageInfo.Name);
                         }

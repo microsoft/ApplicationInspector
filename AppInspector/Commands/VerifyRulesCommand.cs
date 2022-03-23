@@ -19,6 +19,8 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool VerifyDefaultRules { get; set; }
         public string? CustomRulesPath { get; set; }
         public bool Failfast { get; set; }
+        public string? CustomCommentsPath { get; set; }
+        public string? CustomLanguagesPath { get; set; }
     }
 
     public class RuleStatus
@@ -102,8 +104,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzer.SetOperation(new WithinOperation(analyzer));
                 analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
                 analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
-
-                RulesVerifier verifier = new(_loggerFactory, false, analyzer);
+                RulesVerifierOptions options = new()
+                {
+                    Analyzer = analyzer,
+                    FailFast = false,
+                    LoggerFactory = _loggerFactory,
+                    LanguageSpecs = new Languages(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
+                };
+                RulesVerifier verifier = new(options);
                 verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
                 var stati = new List<RuleStatus>();
 
