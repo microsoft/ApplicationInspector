@@ -21,27 +21,50 @@ namespace Microsoft.ApplicationInspector.CLI
         public string OutputFileFormat { get; set; } = "text";
     }
 
+    public class CLICustomRulesCommandOptions: CLICommandOptions
+    {
+        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
+        public string? CustomRulesPath { get; set; }
+
+        [Option("custom-languages-path", Required = false, HelpText = "Replace the default languages set with a custom languages.json.")]
+        public string? CustomLanguagesPath { get; set; }
+
+        [Option("custom-comments-path", Required = false, HelpText = "Replace the default comment specification set with a custom comments.json.")]
+        public string? CustomCommentsPath { get; set; }
+    }
+
+    public class CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions
+    {
+        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
+        public bool IgnoreDefaultRules { get; set; }
+
+        [Option('F', "file-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each file. 0 is infinity. Default: 60000.", Default = 60000)]
+        public int FileTimeOut { get; set; } = 60000;
+
+        [Option('p', "processing-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing overall. 0 is infinity. Default: 0.", Default = 0)]
+        public int ProcessingTimeOut { get; set; }
+
+        [Option('S', "single-threaded", Required = false, HelpText = "Disables parallel processing.")]
+        public bool SingleThread { get; set; }
+
+        [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
+        public IEnumerable<string> FilePathExclusions { get; set; } = System.Array.Empty<string>();
+
+        [Option('u', "scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
+        public bool ScanUnknownTypes { get; set; }
+
+        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]")]
+        public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
+    }
+
     /// <summary>
     /// CLI command distinct arguments
     /// </summary>
     [Verb("analyze", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics")]
-    public class CLIAnalyzeCmdOptions : CLICommandOptions
+    public class CLIAnalyzeCmdOptions : CLIAnalysisSharedCommandOptions
     {
         [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect, comma separated", Separator = ',')]
         public IEnumerable<string> SourcePath { get; set; } = System.Array.Empty<string>();
-
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string? CustomRulesPath { get; set; }
-
-        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
-        public bool IgnoreDefaultRules { get; set; }
-
-        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [High|Medium|Low]", Default = "high,medium")]
-        public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
-
-        [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
-
-        public IEnumerable<string> FilePathExclusions { get; set; } = System.Array.Empty<string>();
 
         [Option('f', "output-file-format", Required = false, HelpText = "Output format [html|json|text]", Default = "html")]
         public new string OutputFileFormat { get; set; } = "html";
@@ -49,23 +72,11 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('e', "text-format", Required = false, HelpText = "Match text format specifiers", Default = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m")]
         public string TextOutputFormat { get; set; } = "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m";
 
-        [Option('F',"file-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each file. 0 is infinity. Default: 60000.", Default = 60000)]
-        public int FileTimeOut { get; set; } = 60000;
-
-        [Option('p',"processing-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing overall. 0 is infinity. Default: 0.", Default = 0)]
-        public int ProcessingTimeOut { get; set; }
-
-        [Option('S',"single-threaded", Required = false, HelpText = "Disables parallel processing.")]
-        public bool SingleThread { get; set; }
-
         [Option('N',"no-show-progress", Required = false, HelpText = "Disable progress information.")]
         public bool NoShowProgressBar { get; set; }
 
         [Option('C',"context-lines", Required = false, HelpText = "Number of lines of context on each side to include in excerpt (up to a maximum of 100 * NumLines characters on each side). 0 to skip exerpt. -1 to not extract samples or excerpts (implied by -t). When outputting sarif use -1 for no snippets, all other values ignored.")]
         public int ContextLines { get; set; } = 3;
-
-        [Option('u',"scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
-        public bool ScanUnknownTypes { get; set; }
 
         [Option('t',"tags-only", Required = false, HelpText = "Only get tags (no detailed match data). Ignored if output format is sarif.")]
         public bool TagsOnly { get; set; }
@@ -90,7 +101,7 @@ namespace Microsoft.ApplicationInspector.CLI
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]
-    public class CLITagDiffCmdOptions : CLICommandOptions
+    public class CLITagDiffCmdOptions : CLIAnalysisSharedCommandOptions
     {
         [Option("src1", Required = true, HelpText = "Source 1 to compare (commaa separated)")]
         public IEnumerable<string> SourcePath1 { get; set; } = System.Array.Empty<string>();
@@ -100,33 +111,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option('t', "test-type", Required = false, HelpText = "Type of test to run [Equality|Inequality]", Default = TagTestType.Equality)]
         public TagTestType TestType { get; set; } = TagTestType.Equality;
-
-        [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
-        public IEnumerable<string> FilePathExclusions { get; set; } = System.Array.Empty<string>();
-
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string? CustomRulesPath { get; set; }
-
-        [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
-        public bool IgnoreDefaultRules { get; set; }
-
-        [Option('F', "file-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each file. 0 is infinity.  Default: 60000.", Default = 60000)]
-        public int FileTimeOut { get; set; } = 60000;
-
-        [Option('p',"processing-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each source. 0 is infinity. Default: 0.", Default = 0)]
-        public int ProcessingTimeOut { get; set; }
-
-        [Option('u', "scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
-        public bool ScanUnknownTypes { get; set; }
-
-        [Option('S', "single-threaded", Required = false, HelpText = "Disables parallel processing.")]
-        public bool SingleThread { get; set; }
-
-        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value> [high|medium|low]", Default = "high,medium")]
-        public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
     }
 
-    [Verb("exporttags", HelpText = "Export unique rule tags to view what code features may be detected")]
+    [Verb("exporttags", HelpText = "Export the list of tags associated with the specified rules. Does not scan source code.")]
     public class CLIExportTagsCmdOptions : CLICommandOptions
     {
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
@@ -137,34 +124,19 @@ namespace Microsoft.ApplicationInspector.CLI
     }
 
     [Verb("verifyrules", HelpText = "Verify custom rules syntax is valid")]
-    public class CLIVerifyRulesCmdOptions : CLICommandOptions
+    public class CLIVerifyRulesCmdOptions : CLICustomRulesCommandOptions
     {
-        [Option('d', "verify-default-rules", Required = false, Default = false, HelpText = "Verify default rules")]
+        [Option('d', "verify-default-rules", Required = false, Default = false, HelpText = "Verify the rules embedded in the binary.")]
         public bool VerifyDefaultRules { get; set; }
-
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string? CustomRulesPath { get; set; }
 
         [Option('a', "fail-fast", Required = false, HelpText = "Fail fast", Default = false)]
         public bool Failfast { get; set; }
     }
 
     [Verb("packrules", HelpText = "Combine multiple rule files into one file for ease in distribution")]
-    public class CLIPackRulesCmdOptions : CLICommandOptions
+    public class CLIPackRulesCmdOptions : CLICustomRulesCommandOptions
     {
-        [Option('d', "pack-default-rules", Required = false, HelpText = "Repack rules from default rules path. Deprecated and will be removed in a future update.")]
-        public bool RepackDefaultRules { get; set; }
-
-        [Option('e', "pack-embedded-rules", Required = false, HelpText = "Pack the rules that are embedded in the DevSkim binary.")]
+        [Option('e', "pack-embedded-rules", Required = false, HelpText = "Pack the rules that are embedded in the application inspector binary.")]
         public bool PackEmbeddedRules { get; set; }
-
-        [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
-        public string? CustomRulesPath { get; set; }
-
-        [Option('f', "output-file-format", Required = false, HelpText = "Output format [json]", Default = "json")]
-        public new string OutputFileFormat { get; set; } = "json";
-
-        [Option('i', "not-indented", Required = false, HelpText = "Remove indentation from json output", Default = false)]
-        public bool NotIndented { get; set; }
     }
 }

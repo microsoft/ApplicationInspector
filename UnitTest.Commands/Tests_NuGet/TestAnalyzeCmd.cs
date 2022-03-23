@@ -25,10 +25,6 @@
 TODO, these parameters are not currently tested:
 FileTimeout
 ProcessingTimeout
-
-Add a finished output for the Analyze Command, it has started but not completed.
-
-LogOptions should have tests for GetLoggerFactory();
         */
 
         private string testFilePath = string.Empty;

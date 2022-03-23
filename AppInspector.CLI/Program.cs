@@ -90,12 +90,7 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             loggerFactory = options.GetLoggerFactory();
             ILogger logger = loggerFactory.CreateLogger("Program");
-            if (options.RepackDefaultRules && !string.IsNullOrEmpty(options.OutputFilePath))
-            {
-                logger.LogInformation("output file argument ignored for -d option");
-            }
-
-            options.OutputFilePath = options.RepackDefaultRules ? Common.Utils.GetPath(Common.Utils.AppPath.defaultRulesPackedFile) : options.OutputFilePath;
+            
             if (string.IsNullOrEmpty(options.OutputFilePath))
             {
                 logger.LogError(MsgHelp.GetString(MsgHelp.ID.PACK_MISSING_OUTPUT_ARG));
