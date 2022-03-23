@@ -135,16 +135,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
         
         public IEnumerable<Violation> WithinValidationDelegate(CST.OAT.Rule rule, Clause clause)
         {
-            if (rule is null)
-            {
-                yield return new Violation($"Rule is null", new CST.OAT.Rule("RuleWasNull"));
-                yield break;
-            }
-            if (clause is null)
-            {
-                yield return new Violation($"Rule {rule.Name} has a null clause", rule);
-                yield break;
-            }
             if (clause is WithinClause wc)
             {
                 if (new bool[] {wc.FindingOnly, wc.SameLineOnly, wc.FindingRegion}.Count(x => x) != 1)

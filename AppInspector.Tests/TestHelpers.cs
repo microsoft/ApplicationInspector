@@ -43,15 +43,15 @@ namespace AppInspector.Tests
                     break;
 
                 case AppPath.testSource:
-                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "UnitTest.Commands", "source");
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.Tests", "source");
                     break;
 
                 case AppPath.testRules://Packrules default output use
-                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "UnitTest.Commands", "customrules");
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.Tests", "customrules");
                     break;
 
                 case AppPath.testOutput://Packrules default output use
-                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "UnitTest.Commands", "output");
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.Tests", "output");
                     break;
 
                 case AppPath.defaultRules:
@@ -66,7 +66,7 @@ namespace AppInspector.Tests
 #endif
                     break;
                 case AppPath.testLogOutput:
-                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "UnitTest.Commands", "logs");
+                    result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.Tests", "logs");
                     break;
             }
 

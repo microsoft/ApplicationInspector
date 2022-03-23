@@ -78,11 +78,10 @@ namespace AppInspector.Tests.RuleProcessor
             }
         }
         
-        [DataRow(true, true, true, 0, 0, 1)]
+        [DataRow(true, true, true, 0, 0, 2)]
         [DataRow(true, false, true, 0, 0, 1)]
-
-        [DataRow(true, true, false, 0, 0, 1)]
-        [DataRow(false, true, true, 0, 0, 1)]
+        [DataRow(true, true, false, 0, 0, 2)]
+        [DataRow(false, true, true, 0, 0, 2)]
         [DataRow(true, false, false, 0, 0, 0)]
         [DataRow(false, false, true, 0, 0, 0)]
         [DataRow(false, true, false, 0, 0, 1)]
@@ -91,7 +90,7 @@ namespace AppInspector.Tests.RuleProcessor
         [DataRow(false, true, false, -1, 0, 1)]
 
         [DataTestMethod]
-        public void WithinClauseValidationTest(bool findingOnlySetting, bool findingRegionSetting, bool sameLineOnlySetting, int afterSetting, int beforeSetting, int expectedNumIssues)
+        public void WithinClauseValidationTests(bool findingOnlySetting, bool findingRegionSetting, bool sameLineOnlySetting, int afterSetting, int beforeSetting, int expectedNumIssues)
         {
             RuleSet rules = new(_loggerFactory);
             rules.AddString(validationRule, "TestRules");
@@ -114,6 +113,50 @@ namespace AppInspector.Tests.RuleProcessor
                 _logger.LogDebug(violation.Description);
             }
             Assert.AreEqual(expectedNumIssues, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
+        }
+        
+        [TestMethod]
+        public void ValidateRuleHasData()
+        {
+            RuleSet rules = new(_loggerFactory);
+            rules.AddString(validationRule, "TestRules");
+            IEnumerable<WithinClause> withinClauses = rules
+                .GetOatRules()
+                .SelectMany(x => x.Clauses)
+                .OfType<WithinClause>();
+            foreach (WithinClause clause in withinClauses)
+            {
+                clause.Data = new List<string>();
+            }
+            RulesVerifier verifier = new(new RulesVerifierOptions() {LoggerFactory = _loggerFactory});
+            var oatIssues = verifier.CheckIntegrity(rules).SelectMany(x => x.OatIssues);
+            foreach (var violation in oatIssues)
+            {
+                _logger.LogDebug(violation.Description);
+            }
+            Assert.AreEqual(1, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
+        }
+        
+        [TestMethod]
+        public void ValidateRegexAreValid()
+        {
+            RuleSet rules = new(_loggerFactory);
+            rules.AddString(validationRule, "TestRules");
+            IEnumerable<WithinClause> withinClauses = rules
+                .GetOatRules()
+                .SelectMany(x => x.Clauses)
+                .OfType<WithinClause>();
+            foreach (WithinClause clause in withinClauses)
+            {
+                clause.Data = new List<string>(){"^($"};
+            }
+            RulesVerifier verifier = new(new RulesVerifierOptions() {LoggerFactory = _loggerFactory});
+            var oatIssues = verifier.CheckIntegrity(rules).SelectMany(x => x.OatIssues);
+            foreach (var violation in oatIssues)
+            {
+                _logger.LogDebug(violation.Description);
+            }
+            Assert.AreEqual(1, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
         }
 
         [DataRow(true, 1, new int[] { 2 })]
@@ -179,14 +222,14 @@ namespace AppInspector.Tests.RuleProcessor
             }
         };
 
-        [ClassInitialize]
-        public void ClassInit()
+        [TestInitialize]
+        public void TestInit()
         {
             _logger = _loggerFactory.CreateLogger<WithinClauseTests>();
         }
         
-        private ILoggerFactory _loggerFactory = new LogOptions(){ ConsoleVerbosityLevel = LogEventLevel.Verbose }.GetLoggerFactory();
-        private ILogger _logger;
+        private readonly ILoggerFactory _loggerFactory = new LogOptions(){ ConsoleVerbosityLevel = LogEventLevel.Verbose }.GetLoggerFactory();
+        private ILogger _logger = new NullLogger<WithinClauseTests>();
 
         private const string validationRule = @"[
     {

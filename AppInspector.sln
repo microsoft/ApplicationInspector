@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.RulesEngine", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.CLI", "AppInspector.CLI\AppInspector.CLI.csproj", "{824ED27E-A4CF-46A6-A01F-98B0821EB61C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.Tests", "UnitTest.Commands\AppInspector.Tests.csproj", "{181BD826-A428-41D9-8BEC-0D8EB2288DF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.Tests", "AppInspector.Tests\AppInspector.Tests.csproj", "{181BD826-A428-41D9-8BEC-0D8EB2288DF5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{F031887C-EA60-4390-9940-765E99E69B8F}"
 EndProject
