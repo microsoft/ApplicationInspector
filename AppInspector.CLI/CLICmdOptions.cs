@@ -54,10 +54,10 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('u', "scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
         public bool ScanUnknownTypes { get; set; }
 
-        [Option('c', "confidence-filters", Required = false, HelpText = "Output only matches with specified confidence <value>,<value>. Default: Medium,High. [High|Medium|Low]")]
+        [Option('c', "confidence-filters", Required = false, Separator = ',',  HelpText = "Output only matches with specified confidence <value>,<value>. Default: Medium,High. [High|Medium|Low]")]
         public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
 
-        [Option("severity-filters", Required = false, HelpText = "Output only matches with specified severity <value>,<value>. Default: All are enabled. [Critical|Important|Moderate|BestPractice|ManualReview]")]
+        [Option("severity-filters", Required = false, Separator = ',', HelpText = "Output only matches with specified severity <value>,<value>. Default: All are enabled. [Critical|Important|Moderate|BestPractice|ManualReview]")]
         public IEnumerable<Severity> SeverityFilters { get; set; } = (IEnumerable<Severity>)Enum.GetValues(typeof(Severity));
     }
 
