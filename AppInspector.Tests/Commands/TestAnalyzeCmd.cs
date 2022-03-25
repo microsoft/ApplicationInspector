@@ -423,7 +423,7 @@ windows
             AnalyzeOptions options = new()
             {
                 SourcePath = new string[1] { testFilePath },
-                FilePathExclusions = new string[] { "**/TestFile.js" },
+                FilePathExclusions = new[] { "**/TestFile.js" },
                 CustomRulesPath = testRulesPath,
                 IgnoreDefaultRules = true
             };
@@ -612,9 +612,9 @@ windows
             Assert.IsTrue(resultSingle.Metadata.Matches.All(x => resultMulti.Metadata.Matches.Any(y => y.Tags?.All(z => x.Tags?.All(w => w.Contains(z)) ?? false) ?? false)));
         }
 
-        [DataRow(new Severity[] { Severity.Moderate }, 1)]
-        [DataRow(new Severity[] { Severity.Important }, 4)]
-        [DataRow(new Severity[] { Severity.Important | Severity.Moderate }, 5)]
+        [DataRow(new[] { Severity.Moderate }, 1)]
+        [DataRow(new[] { Severity.Important }, 4)]
+        [DataRow(new[] { Severity.Important | Severity.Moderate }, 5)]
 
         [DataTestMethod]
         public void SeverityFilters(Severity[] severityFilter, int ActualExpectedNumberOfMatches)
@@ -634,9 +634,9 @@ windows
             Assert.AreEqual(ActualExpectedNumberOfMatches, result.Metadata.Matches.Count);
         }
 
-        [DataRow(new Confidence[] { Confidence.High }, 1)]
-        [DataRow(new Confidence[] { Confidence.Medium }, 4)]
-        [DataRow(new Confidence[] { Confidence.Medium | Confidence.High }, 5)]
+        [DataRow(new[] { Confidence.High }, 1)]
+        [DataRow(new[] { Confidence.Medium }, 4)]
+        [DataRow(new[] { Confidence.Medium | Confidence.High }, 5)]
         [DataTestMethod]
         public void ConfidenceFilters(Confidence[] confidenceFilter, int ActualExpectedNumberOfMatches)
         {

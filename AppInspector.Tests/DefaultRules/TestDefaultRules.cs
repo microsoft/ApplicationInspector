@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.ApplicationInspector.CLI;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Serilog.Events;
 
 namespace AppInspector.Tests.DefaultRules
 {
@@ -17,10 +19,10 @@ namespace AppInspector.Tests.DefaultRules
         {
             VerifyRulesOptions options = new()
             {
-                VerifyDefaultRules = true
+                VerifyDefaultRules = true,
             };
-
-            VerifyRulesCommand command = new(options);
+            var loggerFactory = new LogOptions() {ConsoleVerbosityLevel = LogEventLevel.Verbose}.GetLoggerFactory();
+            VerifyRulesCommand command = new(options, loggerFactory);
             VerifyRulesResult result = command.GetResult();
 
             Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);

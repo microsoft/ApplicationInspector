@@ -92,17 +92,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="collection"> Collection of rules </param>
         public void AddRange(IEnumerable<Rule>? collection)
         {
-            if (collection is null)
+            foreach (Rule rule in collection ?? Array.Empty<Rule>())
             {
-                return;
-            }
-            foreach (var rule in collection.Select(AppInspectorRuleToOatRule))
-            {
-                if (rule != null)
-                {
-                    _logger?.LogTrace("Attempting to add rule: " + rule.Name);
-                    _oatRules.Add(rule);
-                }
+                AddRule(rule);
             }
         }
 
@@ -112,10 +104,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="rule"> </param>
         public void AddRule(Rule rule)
         {
-            if (AppInspectorRuleToOatRule(rule) is ConvertedOatRule cor)
+            if (AppInspectorRuleToOatRule(rule) is ConvertedOatRule oatRule)
             {
-                _logger?.LogDebug("Attempting to add rule: " + rule.Name);
-                _oatRules.Add(cor);
+                _logger.LogTrace("Attempting to add rule: {RuleId}:{RuleName}", rule.Id, rule.Name);
+                _oatRules.Add(oatRule);
+            }
+            else
+            {
+                _logger.LogError("Rule '{RuleId}:{RuleName}' could not be converted into an OAT rule. There may be message in the logs indicating why. You can  run rule verification to identify the issue", rule.Id, rule.Name);
             }
         }
 
@@ -173,7 +169,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 if (pattern.Pattern != null)
                 {
                     var scopes = pattern.Scopes ?? new PatternScope[] { PatternScope.All };
-                    var modifiers = pattern.Modifiers ?? Array.Empty<string>();
+                    var modifiers = pattern.Modifiers?.ToList() ?? new List<string>();
                     if (pattern.PatternType is PatternType.String or PatternType.Substring)
                     {
                         clauses.Add(new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String)
@@ -197,7 +193,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { pattern.Pattern },
                             Capture = true,
-                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
+                            Arguments = modifiers,
                             CustomOperation = "RegexWithIndex"
                         });
                         if (clauseNumber > 0)
@@ -241,6 +237,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (condition.Pattern?.Pattern != null)
                 {
+                    List<string> conditionModifiers = condition.Pattern.Modifiers?.ToList() ?? new();
                     if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
                     {
                         clauses.Add(new WithinClause()
@@ -248,7 +245,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Data = new List<string>() { condition.Pattern.Pattern },
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             Invert = condition.NegateFinding,
-                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                            Arguments = conditionModifiers,
                             FindingOnly = true,
                             CustomOperation = "Within",
                             Scopes = condition.Pattern.Scopes ?? new PatternScope[] { PatternScope.All }
@@ -282,7 +279,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 Data = new List<string>() { condition.Pattern.Pattern },
                                 Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                                 Invert = condition.NegateFinding,
-                                Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                                Arguments = conditionModifiers,
                                 FindingRegion = true,
                                 CustomOperation = "Within",
                                 Before = argList[0],
@@ -301,7 +298,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Data = new List<string>() { condition.Pattern.Pattern },
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             Invert = condition.NegateFinding,
-                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                            Arguments = conditionModifiers,
                             SameLineOnly = true,
                             CustomOperation = "Within",
                             Scopes = condition.Pattern.Scopes ?? new PatternScope[]{ PatternScope.All }
@@ -313,6 +310,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     else
                     {
                         _logger.LogWarning("Search condition {Condition} is not one of the accepted values and this condition will be ignored",condition.SearchIn);
+                        return null;
                     }
                 }
             }

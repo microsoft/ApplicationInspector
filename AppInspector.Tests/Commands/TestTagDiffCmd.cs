@@ -112,8 +112,8 @@ windows
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { testFileFourWindowsOneLinuxPath },
-                SourcePath2 = new string[] { testFileFourWindowsOneLinuxCopyPath },
+                SourcePath1 = new[] { testFileFourWindowsOneLinuxPath },
+                SourcePath2 = new[] { testFileFourWindowsOneLinuxCopyPath },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 IgnoreDefaultRules = true,
                 TestType = tagTestType,
@@ -133,8 +133,8 @@ windows
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { testFileFourWindowsOneLinuxPath },
-                SourcePath2 = new string[] { testFileFourWindowsNoLinuxPath },
+                SourcePath1 = new[] { testFileFourWindowsOneLinuxPath },
+                SourcePath2 = new[] { testFileFourWindowsNoLinuxPath },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 IgnoreDefaultRules = true,
                 TestType = tagTestType,
@@ -152,8 +152,8 @@ windows
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { $"{testFileFourWindowsOneLinuxPath}.not.a.path" },
-                SourcePath2 = new string[] { testFileFourWindowsOneLinuxPath },
+                SourcePath1 = new[] { $"{testFileFourWindowsOneLinuxPath}.not.a.path" },
+                SourcePath2 = new[] { testFileFourWindowsOneLinuxPath },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
             };
             var cmd = new TagDiffCommand(options, loggerFactory);
@@ -165,8 +165,8 @@ windows
         {
             TagDiffOptions options = new()
             {
-                SourcePath1 = new string[] { testFileFourWindowsOneLinuxPath },
-                SourcePath2 = new string[] { testFileFourWindowsOneLinuxCopyPath },
+                SourcePath1 = new[] { testFileFourWindowsOneLinuxPath },
+                SourcePath2 = new[] { testFileFourWindowsOneLinuxCopyPath },
                 FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
                 IgnoreDefaultRules = true
             };

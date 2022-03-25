@@ -80,10 +80,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        /// Returns language for given file name
+        /// Returns <see cref="LanguageInfo"/> for a given filename. It is recommended to use <see cref="FromFileNameOut"/> instead.
         /// </summary>
         /// <param name="fileName">File name</param>
-        /// <returns>Language</returns>
+        /// <param name="info">Ref to an existing LanguageInfo object to assign the result to, if true is returned.</param>
+        /// <returns>True if the language could be detected based on the filename</returns>
         public bool FromFileName(string fileName, ref LanguageInfo info)
         {
             if (fileName == null)
@@ -95,33 +96,19 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             string ext = Path.GetExtension(file);
 
             // Look for whole filename first
-            foreach (LanguageInfo item in LanguageInfos)
+            if (LanguageInfos.FirstOrDefault(item => item.FileNames?.Contains(file,StringComparer.InvariantCultureIgnoreCase) ?? false) is LanguageInfo langInfo)
             {
-                if (item.Name == file)
-                {
-                    info = item;
-                    return true;
-                }
+                info = langInfo;
+                return true;
             }
-
+            
             // Look for extension only ext is defined
             if (!string.IsNullOrEmpty(ext))
             {
-                foreach (LanguageInfo item in LanguageInfos)
+                if (LanguageInfos.FirstOrDefault(item => item.Extensions?.Contains(ext,StringComparer.InvariantCultureIgnoreCase) ?? false) is LanguageInfo extLangInfo)
                 {
-                    if (item.Name == "typescript-config")//special case where extension used for exact match to a single type
-                    {
-                        if (item.Extensions?.Any(x => x.ToLower().Equals(file)) ?? false)
-                        {
-                            info = item;
-                            return true;
-                        }
-                    }
-                    else if (Array.Exists(item.Extensions ?? Array.Empty<string>(), x => x.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        info = item;
-                        return true;
-                    }
+                    info = extLangInfo;
+                    return true;
                 }
             }
 

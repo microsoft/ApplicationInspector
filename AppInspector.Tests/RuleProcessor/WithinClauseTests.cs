@@ -29,15 +29,15 @@ namespace AppInspector.Tests.RuleProcessor
             WithinClauseInvertTest(testData[testDataKey].testData, testData[testDataKey].conditionRegion, testData[testDataKey].negate, testData[testDataKey].expectedNumMatches, testData[testDataKey].expectedMatchesLineStarts);
         }
 
-        internal void WithinClauseInvertTest(string testData, string condition_region, bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
+        internal void WithinClauseInvertTest(string testDataString, string conditionRegion, bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
         {
             RuleSet rules = new(_loggerFactory);
-            var newRule = baseRule.Replace("REPLACE_REGION", condition_region).Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
+            var newRule = baseRule.Replace("REPLACE_REGION", conditionRegion).Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
             rules.AddString(newRule, "TestRules");
             Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
             if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
             {
-                List<MatchRecord> matches = processor.AnalyzeFile(testData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
+                List<MatchRecord> matches = processor.AnalyzeFile(testDataString, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
                 Assert.AreEqual(expectedMatches, matches.Count);
                 foreach (int expectedMatchLineStart in expectedMatchesLineStarts)
                 {
@@ -52,8 +52,8 @@ namespace AppInspector.Tests.RuleProcessor
             }
         }
 
-        [DataRow(true, 1, new int[] { 2 })]
-        [DataRow(false, 1, new int[] { 3 })]
+        [DataRow(true, 1, new [] { 2 })]
+        [DataRow(false, 1, new[] { 3 })]
         [DataTestMethod]
         public void WithinClauseInvertTestForSameLine(bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
         {
@@ -159,8 +159,8 @@ namespace AppInspector.Tests.RuleProcessor
             Assert.AreEqual(1, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
         }
 
-        [DataRow(true, 1, new int[] { 2 })]
-        [DataRow(false, 1, new int[] { 3 })]
+        [DataRow(true, 1, new[] { 2 })]
+        [DataRow(false, 1, new[] { 3 })]
         [DataTestMethod]
         public void WithinClauseInvertTestForFindingRange0(bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
         {
@@ -194,7 +194,7 @@ namespace AppInspector.Tests.RuleProcessor
             if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
             {
                 List<MatchRecord> matches = processor.AnalyzeFile(multiLineData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
-                Assert.AreEqual(1, matches.Count);
+                Assert.AreEqual(0, matches.Count);
             }
             else
             {
@@ -206,19 +206,19 @@ namespace AppInspector.Tests.RuleProcessor
         {
             {
                 "WithinClauseWithInvertWithFindingRange",
-                (findingRangeData, "finding-region(0,1)", true, 1, new int[] { 13 })
+                (findingRangeData, "finding-region(0,1)", true, 1, new[] { 13 })
             },
             {
                 "WithinClauseWithoutInvertWithFindingRange",
-                (findingRangeData, "finding-region(0,1)", false, 1, new int[] { 14 })
+                (findingRangeData, "finding-region(0,1)", false, 1, new[] { 14 })
             },
             {
                 "WithinClauseWithInvertWithSameLine",
-                (sameLineData, "same-line", true, 1, new int[] { 13 })
+                (sameLineData, "same-line", true, 1, new[] { 13 })
             },
             {
                 "WithinClauseWithoutInvertWithSameLine",
-                (sameLineData, "same-line", false, 1, new int[] { 14 })
+                (sameLineData, "same-line", false, 1, new[] { 14 })
             }
         };
 
@@ -469,7 +469,8 @@ int main(int argc, char **argv)
                         ""m""
                     ]
                 },
-                ""search_in"": ""finding_region(-3,3)""
+                ""negate_finding"": true,
+                ""search_in"": ""finding-region(-3,3)""
             }
         ],
         ""_comment"": """"

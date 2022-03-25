@@ -1,6 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq.Expressions;
+using Microsoft.ApplicationInspector.CLI;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Serilog.Events;
 
 namespace AppInspector.Tests.Languages
 {
@@ -30,7 +35,8 @@ namespace AppInspector.Tests.Languages
 
         private string testLanguagesPath = string.Empty;
         private string testCommentsPath = string.Empty;
-
+        private ILoggerFactory _factory = new NullLoggerFactory();
+        
         [TestInitialize]
         public void InitOutput()
         {
@@ -39,6 +45,7 @@ namespace AppInspector.Tests.Languages
             testCommentsPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "test_comments.json");
             File.WriteAllText(testLanguagesPath, languages_z);
             File.WriteAllText(testCommentsPath, comments_z);
+            _factory = new LogOptions() {ConsoleVerbosityLevel = LogEventLevel.Verbose}.GetLoggerFactory();
         }
 
         [TestCleanup]
@@ -49,10 +56,36 @@ namespace AppInspector.Tests.Languages
         [TestMethod]
         public void DetectCustomLanguage()
         {
-            var languages = new Microsoft.ApplicationInspector.RulesEngine.Languages(null, testCommentsPath, testLanguagesPath);
+            var languages = new Microsoft.ApplicationInspector.RulesEngine.Languages(_factory, testCommentsPath, testLanguagesPath);
             Assert.IsTrue(languages.FromFileNameOut("afilename.z", out var language));
             Assert.AreEqual("z", language.Name);
             Assert.IsFalse(languages.FromFileNameOut("afilename.c", out var _));
+        }
+        
+        [TestMethod]
+        public void EmptyLanguagesOnInvalidCommentsAndLanguages()
+        {
+            var languages = new Microsoft.ApplicationInspector.RulesEngine.Languages(_factory, testLanguagesPath, testCommentsPath);
+            Assert.AreEqual(0,languages.GetNames().Length);
+        }
+
+        [TestMethod]
+        public void DetectLanguageAsFileNameLanguage()
+        {
+            Microsoft.ApplicationInspector.RulesEngine.Languages languages = new(_factory);
+            Assert.IsTrue(languages.FromFileNameOut("package.json", out var language));
+            Assert.AreEqual("package.json",language.Name);
+        }
+        
+        [DataRow(null, false)] // No way to determine language
+        [DataRow("", false)] // No way to determine language
+        [DataRow("validfilename.json", false)] //This test uses the .z test comments and languages from this file.
+        [DataRow("validfilename.z", true)]
+        [TestMethod]
+        public void ReturnFalseWithInvalidFilename(string? filename, bool expected)
+        {
+            var languages = new Microsoft.ApplicationInspector.RulesEngine.Languages(_factory, testCommentsPath, testLanguagesPath);
+            Assert.AreEqual(expected,languages.FromFileNameOut(filename, out _));
         }
     }
 }

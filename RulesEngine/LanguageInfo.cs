@@ -18,6 +18,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         [JsonProperty(PropertyName = "extensions")]
         public string[]? Extensions { get; set; }
 
+        [JsonProperty(PropertyName = "file-names")]
+        public string[]? FileNames { get; set; }
+        
         [JsonProperty(PropertyName = "type")]
         public LangFileType Type { get; set; } = LangFileType.Code;
     }
