@@ -2,7 +2,6 @@
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    using Microsoft.ApplicationInspector.Common;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
     using Newtonsoft.Json;
@@ -34,14 +33,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             else
             {
-                if (JsonConvert.DeserializeObject<List<Comment>>(File.ReadAllText(commentPath)) is List<Comment> comments)
+                try
                 {
-                    Comments = comments;
+                    if (JsonConvert.DeserializeObject<List<Comment>>(File.ReadAllText(commentPath)) is List<Comment> comments)
+                    {
+                        Comments = comments;
+                    }
+                    else
+                    {
+                        throw new NullReferenceException($"Parsed comments from {commentPath} were null.");
+                    }
                 }
-                else
+                catch(Exception e)
                 {
                     Comments = new List<Comment>();
-                    _logger.LogWarning("Provided file {commentPath} could not be parsed as a valid List of Comment objects.", commentPath);
+                    _logger.LogWarning("Provided file {CommentPath} could not be parsed as a valid List of Comment objects: {Message}", commentPath, e.Message);
                 }
             }
 
@@ -54,14 +60,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             else
             {
-                if (JsonConvert.DeserializeObject<List<LanguageInfo>>(File.ReadAllText(languagePath)) is List<LanguageInfo> languages)
+                try
                 {
-                    LanguageInfos = languages;
+                    if (JsonConvert.DeserializeObject<List<LanguageInfo>>(File.ReadAllText(languagePath)) is List<LanguageInfo> languages)
+                    {
+                        LanguageInfos = languages;
+                    }
+                    else
+                    {
+                        throw new NullReferenceException($"Parsed languages from {languagePath} were null.");
+                    }
                 }
-                else
+                catch(Exception e)
                 {
                     LanguageInfos = new List<LanguageInfo>();
-                    _logger.LogWarning("Provided file {langPath} could not be parsed as a valid List of LanguageInfo objects.", languagePath);
+                    _logger.LogWarning("Provided file {LangPath} could not be parsed as a valid List of LanguageInfo objects. {Message}", languagePath, e.Message);
                 }
             }
         }

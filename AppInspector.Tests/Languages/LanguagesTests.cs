@@ -25,7 +25,7 @@ namespace AppInspector.Tests.Languages
   }
 ]";
         readonly string languages_z = @"
-        [
+[
   {
     ""name"": ""z"",
     ""extensions"": [ "".z"", "".xw"" ],
@@ -35,6 +35,9 @@ namespace AppInspector.Tests.Languages
 
         private string testLanguagesPath = string.Empty;
         private string testCommentsPath = string.Empty;
+        private string invalidTestLanguagesPath = string.Empty;
+        private string invalidTestCommentsPath = string.Empty;
+
         private ILoggerFactory _factory = new NullLoggerFactory();
         
         [TestInitialize]
@@ -45,6 +48,10 @@ namespace AppInspector.Tests.Languages
             testCommentsPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "test_comments.json");
             File.WriteAllText(testLanguagesPath, languages_z);
             File.WriteAllText(testCommentsPath, comments_z);
+            invalidTestLanguagesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "test_languages_invalid.json");
+            invalidTestCommentsPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "test_comments_invalid.json");
+            File.WriteAllText(invalidTestLanguagesPath, languages_z.Trim().Substring(1)); // Not a valid json array, should be missing the opening [
+            File.WriteAllText(invalidTestCommentsPath, comments_z.Trim().Substring(1)); // Not a valid json, should be missing the opening [
             _factory = new LogOptions() {ConsoleVerbosityLevel = LogEventLevel.Verbose}.GetLoggerFactory();
         }
 
@@ -65,7 +72,7 @@ namespace AppInspector.Tests.Languages
         [TestMethod]
         public void EmptyLanguagesOnInvalidCommentsAndLanguages()
         {
-            var languages = new Microsoft.ApplicationInspector.RulesEngine.Languages(_factory, testLanguagesPath, testCommentsPath);
+            var languages = new Microsoft.ApplicationInspector.RulesEngine.Languages(_factory, invalidTestLanguagesPath, invalidTestCommentsPath);
             Assert.AreEqual(0,languages.GetNames().Length);
         }
 
