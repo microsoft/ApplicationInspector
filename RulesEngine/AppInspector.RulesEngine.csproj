@@ -28,7 +28,6 @@
     <PackageReference Include="Microsoft.CST.OAT" Version="1.2.8" />
     <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.9" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>

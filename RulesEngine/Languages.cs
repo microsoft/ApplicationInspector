@@ -4,81 +4,67 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 {
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Text.Json;
 
     /// <summary>
     /// Helper class for language based commenting
     /// </summary>
     public sealed class Languages
     {
-        private readonly List<Comment> Comments;
-        private readonly List<LanguageInfo> LanguageInfos;
+        private readonly List<Comment> _comments;
+        private readonly List<LanguageInfo> _languageInfos;
         private readonly ILogger _logger;
-        public Languages(ILoggerFactory? loggerFactory = null, string? commentPath = null, string? languagePath = null)
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            _logger = loggerFactory?.CreateLogger<Languages>() ?? new NullLogger<Languages>();
-            // Load comments
-            if (string.IsNullOrEmpty(commentPath))
-            {
-                Stream? resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.comments.json");
-                using StreamReader file = new(resource ?? new MemoryStream());
-                Comments = JsonConvert.DeserializeObject<List<Comment>>(file.ReadToEnd()) ?? new List<Comment>();
-            }
-            else
-            {
-                try
-                {
-                    if (JsonConvert.DeserializeObject<List<Comment>>(File.ReadAllText(commentPath)) is List<Comment> comments)
-                    {
-                        Comments = comments;
-                    }
-                    else
-                    {
-                        throw new NullReferenceException($"Parsed comments from {commentPath} were null.");
-                    }
-                }
-                catch(Exception e)
-                {
-                    Comments = new List<Comment>();
-                    _logger.LogWarning("Provided file {CommentPath} could not be parsed as a valid List of Comment objects: {Message}", commentPath, e.Message);
-                }
-            }
 
-            // Load Languages
-            if (string.IsNullOrEmpty(languagePath))
+        private const string CommentResourcePath = "Microsoft.ApplicationInspector.RulesEngine.Resources.comments.json";
+        private const string LanguagesResourcePath = "Microsoft.ApplicationInspector.RulesEngine.Resources.languages.json";
+        public Languages(ILoggerFactory? loggerFactory = null, Stream? commentsStream = null, Stream? languagesStream = null)
+        {
+            _logger = loggerFactory?.CreateLogger<Languages>() ?? new NullLogger<Languages>();
+            Assembly assembly = typeof(Languages).Assembly;
+            Stream? commentResource = commentsStream ?? assembly.GetManifestResourceStream(CommentResourcePath);
+            if (commentResource is null)
             {
-                Stream? resource = assembly.GetManifestResourceStream("Microsoft.ApplicationInspector.RulesEngine.Resources.languages.json");
-                using StreamReader file = new(resource ?? new MemoryStream());
-                LanguageInfos = JsonConvert.DeserializeObject<List<LanguageInfo>>(file.ReadToEnd()) ?? new List<LanguageInfo>(); ;
+                _logger.LogError("Failed to load embedded comments configuration from {CommentResourcePath}", CommentResourcePath);
+                _comments = new List<Comment>();
             }
             else
             {
-                try
-                {
-                    if (JsonConvert.DeserializeObject<List<LanguageInfo>>(File.ReadAllText(languagePath)) is List<LanguageInfo> languages)
-                    {
-                        LanguageInfos = languages;
-                    }
-                    else
-                    {
-                        throw new NullReferenceException($"Parsed languages from {languagePath} were null.");
-                    }
-                }
-                catch(Exception e)
-                {
-                    LanguageInfos = new List<LanguageInfo>();
-                    _logger.LogWarning("Provided file {LangPath} could not be parsed as a valid List of LanguageInfo objects. {Message}", languagePath, e.Message);
-                }
+                _comments = JsonSerializer.Deserialize<List<Comment>>(commentResource) ?? new List<Comment>();
+            }
+            
+            Stream? languagesResource = languagesStream ?? assembly.GetManifestResourceStream(LanguagesResourcePath);
+            if (languagesResource is null)
+            {
+                _logger.LogError("Failed to load embedded languages configuration from {LanguagesResourcePath}", LanguagesResourcePath);
+                _languageInfos = new List<LanguageInfo>();
+            }
+            else
+            {
+                _languageInfos = JsonSerializer.Deserialize<List<LanguageInfo>>(languagesResource) ?? new List<LanguageInfo>();
             }
         }
 
+        public static Languages FromConfigurationFiles(ILoggerFactory? loggerFactory = null, string? commentsPath = null, string? languagesPath = null)
+        {
+            Stream? commentsStream = commentsPath is null ? null : File.OpenRead(commentsPath);
+            Stream? languagesStream = languagesPath is null ? null : File.OpenRead(languagesPath);
+            try
+            {
+                return new Languages(loggerFactory, commentsStream, languagesStream);
+            }
+            finally
+            {
+                commentsStream?.Dispose();
+                languagesStream?.Dispose(); 
+            }
+        }
+        
         /// <summary>
         /// Returns the language for a given file name if detected.
         /// </summary>
@@ -109,7 +95,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             string ext = Path.GetExtension(file);
 
             // Look for whole filename first
-            if (LanguageInfos.FirstOrDefault(item => item.FileNames?.Contains(file,StringComparer.InvariantCultureIgnoreCase) ?? false) is LanguageInfo langInfo)
+            if (_languageInfos.FirstOrDefault(item => item.FileNames?.Contains(file,StringComparer.InvariantCultureIgnoreCase) ?? false) is LanguageInfo langInfo)
             {
                 info = langInfo;
                 return true;
@@ -118,7 +104,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             // Look for extension only ext is defined
             if (!string.IsNullOrEmpty(ext))
             {
-                if (LanguageInfos.FirstOrDefault(item => item.Extensions?.Contains(ext,StringComparer.InvariantCultureIgnoreCase) ?? false) is LanguageInfo extLangInfo)
+                if (_languageInfos.FirstOrDefault(item => item.Extensions?.Contains(ext,StringComparer.InvariantCultureIgnoreCase) ?? false) is LanguageInfo extLangInfo)
                 {
                     info = extLangInfo;
                     return true;
@@ -139,7 +125,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             if (language != null)
             {
-                foreach (Comment comment in Comments)
+                foreach (Comment comment in _comments)
                 {
                     if (Array.Exists(comment.Languages ?? new string[] { "" }, x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)) && comment.Inline is { })
                         return comment.Inline;
@@ -160,7 +146,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             if (language != null)
             {
-                foreach (Comment comment in Comments)
+                foreach (Comment comment in _comments)
                 {
                     if ((comment.Languages?.Contains(language.ToLower(CultureInfo.InvariantCulture)) ?? false) && comment.Prefix is { })
                         return comment.Prefix;
@@ -181,7 +167,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             if (language != null)
             {
-                foreach (Comment comment in Comments)
+                foreach (Comment comment in _comments)
                 {
                     if (Array.Exists(comment.Languages ?? new string[] { "" }, x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)) && comment.Suffix is { })
                         return comment.Suffix;
@@ -197,7 +183,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns>Returns list of names</returns>
         public string[] GetNames()
         {
-            var names = from x in LanguageInfos
+            var names = from x in _languageInfos
                         select x.Name;
 
             return names.ToArray();

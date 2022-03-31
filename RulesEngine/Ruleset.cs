@@ -1,5 +1,6 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
+using System.Text.Json;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
@@ -7,7 +8,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     using Microsoft.CST.OAT;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
-    using Newtonsoft.Json;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -348,17 +348,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return _rules.GetEnumerator();
         }
 
-        internal static IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)
+        internal IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)
         {
-            List<Rule>? ruleList = JsonConvert.DeserializeObject<List<Rule>>(jsonstring);
+            List<Rule>? ruleList = JsonSerializer.Deserialize<List<Rule>>(jsonstring,
+                    new JsonSerializerOptions() {AllowTrailingCommas = true});
+             
             if (ruleList is not null)
             {
                 foreach (Rule r in ruleList)
                 {
                     r.Source = sourcename;
                     r.RuntimeTag = tag ?? "";
-                    if (r.Patterns == null)
-                        r.Patterns = Array.Empty<SearchPattern>();
                     yield return r;
                 }
             }

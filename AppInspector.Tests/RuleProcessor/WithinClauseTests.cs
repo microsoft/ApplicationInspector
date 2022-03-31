@@ -262,10 +262,9 @@ namespace AppInspector.Tests.RuleProcessor
                         ""code""
                     ]
                 },
-                ""search_in"": ""same-line"",
+                ""search_in"": ""same-line""
             }
-        ],
-        ""_comment"": """"
+        ]
     }
 ]";
         

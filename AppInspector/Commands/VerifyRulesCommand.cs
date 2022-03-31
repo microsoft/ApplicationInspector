@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using System.Text.Json.Serialization;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 
 namespace Microsoft.ApplicationInspector.Commands
@@ -10,8 +11,7 @@ namespace Microsoft.ApplicationInspector.Commands
     using Microsoft.CST.OAT;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
-    using Newtonsoft.Json;
-    using System;
+    using System.Text.Json;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -36,6 +36,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
     public class VerifyRulesResult : Result
     {
+        [Newtonsoft.Json.JsonConverter(typeof(JsonStringEnumConverter))]
         public enum ExitCode
         {
             Verified = 0,
@@ -43,10 +44,10 @@ namespace Microsoft.ApplicationInspector.Commands
             CriticalError = Utils.ExitCode.CriticalError
         }
 
-        [JsonProperty(Order = 2, PropertyName = "resultCode")]
+        [JsonPropertyName("resultCode")]
         public ExitCode ResultCode { get; set; }
 
-        [JsonProperty(Order = 3, PropertyName = "ruleStatusList")]
+        [JsonPropertyName("ruleStatusList")]
         public List<RuleStatus> RuleStatusList { get; set; }
 
         public VerifyRulesResult()
@@ -64,7 +65,6 @@ namespace Microsoft.ApplicationInspector.Commands
         private readonly VerifyRulesOptions _options;
         private readonly ILogger<VerifyRulesCommand> _logger;
         private readonly ILoggerFactory? _loggerFactory;
-        private string? _rules_path;
 
         public VerifyRulesCommand(VerifyRulesOptions opt, ILoggerFactory? loggerFactory = null)
         {
@@ -83,8 +83,6 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
-
-            _rules_path = _options.VerifyDefaultRules ? null : _options.CustomRulesPath;
         }
 
         
@@ -108,7 +106,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     Analyzer = analyzer,
                     FailFast = false,
                     LoggerFactory = _loggerFactory,
-                    LanguageSpecs = new Languages(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
+                    LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
                 };
                 RulesVerifier verifier = new(options);
                 verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
@@ -133,7 +131,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         }
                     }
                 }
-                catch(JsonSerializationException e)
+                catch(JsonException e)
                 {
                     _logger.LogError(e.Message);
                     verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.CriticalError;

@@ -1,11 +1,10 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
+using System.Text.Json.Serialization;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
-
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum PatternScope
     {
         All,

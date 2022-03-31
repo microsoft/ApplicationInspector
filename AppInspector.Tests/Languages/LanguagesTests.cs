@@ -1,13 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq.Expressions;
+using System.Text.Json;
 using Microsoft.ApplicationInspector.CLI;
+using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
 
-namespace AppInspector.Tests.Languages
+namespace AppInspector.Tests.LanguagesTests
 {
     [TestClass]
     [ExcludeFromCodeCoverage]
@@ -63,7 +65,7 @@ namespace AppInspector.Tests.Languages
         [TestMethod]
         public void DetectCustomLanguage()
         {
-            var languages = new Microsoft.ApplicationInspector.RulesEngine.Languages(_factory, testCommentsPath, testLanguagesPath);
+            var languages = Languages.FromConfigurationFiles(_factory, testCommentsPath, testLanguagesPath);
             Assert.IsTrue(languages.FromFileNameOut("afilename.z", out var language));
             Assert.AreEqual("z", language.Name);
             Assert.IsFalse(languages.FromFileNameOut("afilename.c", out var _));
@@ -72,8 +74,8 @@ namespace AppInspector.Tests.Languages
         [TestMethod]
         public void EmptyLanguagesOnInvalidCommentsAndLanguages()
         {
-            var languages = new Microsoft.ApplicationInspector.RulesEngine.Languages(_factory, invalidTestLanguagesPath, invalidTestCommentsPath);
-            Assert.AreEqual(0,languages.GetNames().Length);
+            Assert.ThrowsException<JsonException>(() => Languages.FromConfigurationFiles(_factory, invalidTestCommentsPath, null));
+            Assert.ThrowsException<JsonException>(() => Languages.FromConfigurationFiles(_factory, null, invalidTestLanguagesPath));
         }
 
         [TestMethod]
@@ -91,7 +93,7 @@ namespace AppInspector.Tests.Languages
         [TestMethod]
         public void ReturnFalseWithInvalidFilename(string? filename, bool expected)
         {
-            var languages = new Microsoft.ApplicationInspector.RulesEngine.Languages(_factory, testCommentsPath, testLanguagesPath);
+            var languages = Languages.FromConfigurationFiles(_factory, testCommentsPath, testLanguagesPath);
             Assert.AreEqual(expected,languages.FromFileNameOut(filename, out _));
         }
     }

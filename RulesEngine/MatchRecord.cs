@@ -2,11 +2,10 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    using Newtonsoft.Json;
-
     /// <summary>
     /// Represents augmented record of result issue from rules engine
     /// </summary>
@@ -40,35 +39,35 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Rule Id found in matching rule
         /// </summary>
-        [JsonProperty(PropertyName = "ruleId")]
+        [JsonPropertyName("ruleId")]
         [ExcludeFromCodeCoverage]
         public string RuleId { get; set; }
 
         /// <summary>
         /// Rule name found in matching rule
         /// </summary>
-        [JsonProperty(PropertyName = "ruleName")]
+        [JsonPropertyName("ruleName")]
         [ExcludeFromCodeCoverage]
         public string RuleName { get; set;  }
 
         /// <summary>
         /// Rule description found in matching rule
         /// </summary>
-        [JsonProperty(PropertyName = "ruleDescription")]
+        [JsonPropertyName("ruleDescription")]
         [ExcludeFromCodeCoverage]
         public string? RuleDescription { get; set; }
 
         /// <summary>
         /// Tags in matching rule
         /// </summary>
-        [JsonProperty(PropertyName = "tags")]
+        [JsonPropertyName("tags")]
         [ExcludeFromCodeCoverage]
         public string[]? Tags { get; set;  }
 
         /// <summary>
         /// Rule severity
         /// </summary>_rule
-        [JsonProperty(PropertyName = "severity")]
+        [JsonPropertyName("severity")]
         [ExcludeFromCodeCoverage]
         public Severity Severity { get; set;  }
 
@@ -79,21 +78,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Matching pattern found in matching rule
         /// </summary>
-        [JsonProperty(PropertyName = "pattern")]
+        [JsonPropertyName("pattern")]
         [ExcludeFromCodeCoverage]
         public string? Pattern => MatchingPattern?.Pattern;
 
         /// <summary>
         /// Pattern confidence in matching rule pattern
         /// </summary>
-        [JsonProperty(PropertyName = "confidence")]
+        [JsonPropertyName("confidence")]
         [ExcludeFromCodeCoverage]
         public Confidence Confidence => MatchingPattern?.Confidence ?? Confidence.Unspecified;
 
         /// <summary>
         /// Pattern type of matching pattern
         /// </summary>
-        [JsonProperty(PropertyName = "type")]
+        [JsonPropertyName("type")]
         [ExcludeFromCodeCoverage]
         public string? PatternType => MatchingPattern?.PatternType.ToString();
 
@@ -111,27 +110,27 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Friendly source type
         /// </summary>
-        [JsonProperty(PropertyName = "language")]
+        [JsonPropertyName("language")]
         public string? Language => LanguageInfo?.Name;
 
         /// <summary>
         /// Filename of this match
         /// </summary>
-        [JsonProperty(PropertyName = "fileName")]
+        [JsonPropertyName("fileName")]
         [ExcludeFromCodeCoverage]
         public string? FileName { get; set; }
 
         /// <summary>
         /// Matching text for this record
         /// </summary>
-        [JsonProperty(PropertyName = "sample")]
+        [JsonPropertyName("sample")]
         [ExcludeFromCodeCoverage]
         public string Sample { get; set; } = "";
 
         /// <summary>
         /// Matching surrounding context text for sample in this record
         /// </summary>
-        [JsonProperty(PropertyName = "excerpt")]
+        [JsonPropertyName("excerpt")]
         [ExcludeFromCodeCoverage]
         public string Excerpt { get; set; } = "";
 
@@ -142,28 +141,28 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Starting line location of the matching text
         /// </summary>
-        [JsonProperty(PropertyName = "startLocationLine")]
+        [JsonPropertyName("startLocationLine")]
         [ExcludeFromCodeCoverage]
         public int StartLocationLine { get; set; }
 
         /// <summary>
         /// Starting column location of the matching text
         /// </summary>
-        [JsonProperty(PropertyName = "startLocationColumn")]
+        [JsonPropertyName("startLocationColumn")]
         [ExcludeFromCodeCoverage]
         public int StartLocationColumn { get; set; }
 
         /// <summary>
         /// Ending line location of the matching text
         /// </summary>
-        [JsonProperty(PropertyName = "endLocationLine")]
+        [JsonPropertyName("endLocationLine")]
         [ExcludeFromCodeCoverage]
         public int EndLocationLine { get; set; }
 
         /// <summary>
         /// Ending column of the matching text
         /// </summary>
-        [JsonProperty(PropertyName = "endLocationColumn")]
+        [JsonPropertyName("endLocationColumn")]
         [ExcludeFromCodeCoverage]
         public int EndLocationColumn { get; set; }
     }

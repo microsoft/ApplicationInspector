@@ -90,7 +90,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     FailFast = false,
                     LoggerFactory = _loggerFactory,
-                    LanguageSpecs = new Languages(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
+                    LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
                 };
                 RulesVerifier verifier = new(options);
                 RuleSet? ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();

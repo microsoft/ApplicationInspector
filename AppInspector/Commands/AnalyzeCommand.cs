@@ -183,7 +183,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!string.IsNullOrEmpty(_options.CustomCommentsPath) || !string.IsNullOrEmpty(_options.CustomLanguagesPath))
             {
-                _languages = new Languages(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath);
+                _languages = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath);
             }
 
             RuleSet? rulesSet = null;

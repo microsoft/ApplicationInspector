@@ -1,10 +1,10 @@
 ﻿// Copyright(C) Microsoft.All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using System.Text.Json.Serialization;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    using Newtonsoft.Json;
-
     /// <summary>
     /// Content Type class
     /// </summary>
@@ -12,16 +12,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     {
         public enum LangFileType { Code, Build };
 
-        [JsonProperty(PropertyName = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; } = "";
 
-        [JsonProperty(PropertyName = "extensions")]
+        [JsonPropertyName("extensions")]
         public string[]? Extensions { get; set; }
 
-        [JsonProperty(PropertyName = "file-names")]
+        [JsonPropertyName("file-names")]
         public string[]? FileNames { get; set; }
         
-        [JsonProperty(PropertyName = "type")]
+        [JsonPropertyName("type")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public LangFileType Type { get; set; } = LangFileType.Code;
     }
 }
