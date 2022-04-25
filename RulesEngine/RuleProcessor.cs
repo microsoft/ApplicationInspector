@@ -6,7 +6,6 @@ using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    using Microsoft.ApplicationInspector.Common;
     using Microsoft.CST.OAT;
     using Microsoft.CST.RecursiveExtractor;
     using Microsoft.Extensions.Logging;

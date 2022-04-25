@@ -4,7 +4,6 @@
 namespace Microsoft.ApplicationInspector.CLI
 {
     using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.ApplicationInspector.Common;
     using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;

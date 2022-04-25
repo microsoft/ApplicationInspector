@@ -8,7 +8,6 @@ using Microsoft.CST.OAT.Operations;
 using Microsoft.CST.OAT.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Serilog;
 
 namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 {

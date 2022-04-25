@@ -8,7 +8,6 @@ namespace Microsoft.ApplicationInspector.Commands
     using Microsoft.ApplicationInspector.RulesEngine;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
@@ -16,8 +15,6 @@ namespace Microsoft.ApplicationInspector.Commands
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
     using Microsoft.CST.OAT;
-    using System.Reflection.Metadata.Ecma335;
-    using Rule = RulesEngine.Rule;
 
     public class RulesVerifierResult
     {

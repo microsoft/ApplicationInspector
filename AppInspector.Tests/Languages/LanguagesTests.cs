@@ -1,15 +1,13 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq.Expressions;
 using System.Text.Json;
-using Microsoft.ApplicationInspector.CLI;
-using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.ApplicationInspector.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
 
-namespace AppInspector.Tests.LanguagesTests
+namespace AppInspector.Tests.Languages
 {
     [TestClass]
     [ExcludeFromCodeCoverage]
@@ -65,7 +63,7 @@ namespace AppInspector.Tests.LanguagesTests
         [TestMethod]
         public void DetectCustomLanguage()
         {
-            var languages = Languages.FromConfigurationFiles(_factory, testCommentsPath, testLanguagesPath);
+            var languages = Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, testCommentsPath, testLanguagesPath);
             Assert.IsTrue(languages.FromFileNameOut("afilename.z", out var language));
             Assert.AreEqual("z", language.Name);
             Assert.IsFalse(languages.FromFileNameOut("afilename.c", out var _));
@@ -74,8 +72,8 @@ namespace AppInspector.Tests.LanguagesTests
         [TestMethod]
         public void EmptyLanguagesOnInvalidCommentsAndLanguages()
         {
-            Assert.ThrowsException<JsonException>(() => Languages.FromConfigurationFiles(_factory, invalidTestCommentsPath, null));
-            Assert.ThrowsException<JsonException>(() => Languages.FromConfigurationFiles(_factory, null, invalidTestLanguagesPath));
+            Assert.ThrowsException<JsonException>(() => Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, invalidTestCommentsPath, null));
+            Assert.ThrowsException<JsonException>(() => Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, null, invalidTestLanguagesPath));
         }
 
         [TestMethod]
@@ -93,7 +91,7 @@ namespace AppInspector.Tests.LanguagesTests
         [TestMethod]
         public void ReturnFalseWithInvalidFilename(string? filename, bool expected)
         {
-            var languages = Languages.FromConfigurationFiles(_factory, testCommentsPath, testLanguagesPath);
+            var languages = Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, testCommentsPath, testLanguagesPath);
             Assert.AreEqual(expected,languages.FromFileNameOut(filename, out _));
         }
     }

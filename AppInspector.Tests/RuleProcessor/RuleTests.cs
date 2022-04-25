@@ -1,6 +1,5 @@
 using System.Linq;
 using Microsoft.ApplicationInspector.RulesEngine;
-using Microsoft.CST.OAT;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AppInspector.Tests.RuleProcessor;

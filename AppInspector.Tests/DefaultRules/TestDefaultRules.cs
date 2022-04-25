@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.ApplicationInspector.CLI;
 using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
 

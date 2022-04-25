@@ -1,7 +1,5 @@
 ﻿namespace Microsoft.ApplicationInspector.Common
 {
-    using Microsoft.Extensions.Logging;
-    using System;
     using System.IO;
     using System.Reflection;
 

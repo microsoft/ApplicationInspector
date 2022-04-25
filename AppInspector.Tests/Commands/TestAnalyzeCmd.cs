@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.ApplicationInspector.CLI;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Common;
+using Microsoft.ApplicationInspector.Logging;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -26,17 +26,15 @@ TODO, these parameters are not currently tested:
 FileTimeout
 ProcessingTimeout
         */
-
         private string testFilePath = string.Empty;
         private string testRulesPath = string.Empty;
 
-        private LogOptions logOptions = new();
         private ILoggerFactory factory = new NullLoggerFactory();
 
         [TestInitialize]
         public void InitOutput()
         {
-            factory = logOptions.GetLoggerFactory();
+            factory = new LogOptions().GetLoggerFactory();
             Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
             testFilePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),"TestFile.js");
             testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");

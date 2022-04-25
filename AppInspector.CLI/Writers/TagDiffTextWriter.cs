@@ -7,7 +7,6 @@ namespace Microsoft.ApplicationInspector.CLI
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
-    using System;
     using System.IO;
 
     public class TagDiffTextWriter : CommandResultsWriter

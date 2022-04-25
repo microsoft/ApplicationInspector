@@ -6,7 +6,6 @@ namespace Microsoft.ApplicationInspector.Commands
     using Microsoft.ApplicationInspector.RulesEngine;
     using Newtonsoft.Json;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.Extensions.Logging;

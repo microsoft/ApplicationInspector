@@ -6,7 +6,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     ///     Class to handle text as a searchable container

@@ -1,15 +1,14 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-namespace Microsoft.ApplicationInspector.CLI
+namespace Microsoft.ApplicationInspector.Logging
 {
     using CommandLine;
     using Microsoft.Extensions.Logging;
     using Serilog;
-    using System;
 
     /// <summary>
-    /// base for common options for the CLI.
+    /// base for common options for the logging in commands
     /// </summary>
     public class LogOptions
     {

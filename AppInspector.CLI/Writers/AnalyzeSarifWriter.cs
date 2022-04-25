@@ -4,7 +4,6 @@
 namespace Microsoft.ApplicationInspector.CLI
 {
     using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.CodeAnalysis.Sarif;
     using Microsoft.CST.OAT.Utils;
     using Microsoft.Extensions.Logging;
