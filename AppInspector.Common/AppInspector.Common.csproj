@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
 	<Nullable>enable</Nullable>
 	<LangVersion>10.0</LangVersion>
     <RootNamespace>Microsoft.ApplicationInspector.Common</RootNamespace>
@@ -10,6 +9,7 @@
     <AssemblyName>ApplicationInspector.Common</AssemblyName>
     <Company>Microsoft</Company>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

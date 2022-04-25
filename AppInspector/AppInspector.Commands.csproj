@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
     <PackageId>Microsoft.CST.ApplicationInspector.Commands</PackageId>
     <PackageVersion>0.0.0-placeholder</PackageVersion>
     <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
@@ -28,6 +27,7 @@
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
+    <TargetFrameworks>net6.0;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
 
   <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
@@ -60,6 +60,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="ShellProgressBar" Version="5.1.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.3" />
   </ItemGroup>
 
   <ItemGroup>
