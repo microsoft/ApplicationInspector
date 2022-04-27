@@ -155,23 +155,23 @@ class TemplateInsertion {
         };
 
         for (let match of $this.md) {
-            let excerpt = (match.excerpt || '') || match.sample;
-            if (match.ruleId === ruleId || match.ruleName === ruleId) {
+            let excerpt = (match.Excerpt || '') || match.Sample;
+            if (match.RuleId === ruleId || match.RuleName === ruleId) {
                 let $li = $('<li>');
                 let $a = $('<a>');
-                let $l = match.startLocationLine - 3;
-                let $e = match.endLocationLine;
+                let $l = match.StartLocationLine;
+                let $e = match.EndLocationLine;
                 if ($l <= 0) $l = 1; //fix #183
                 $a.addClass('content-link')
                     .attr('href', '#')
                     .data('excerpt', excerpt)
                     .data('startLocationLine', $l)
                     .data('endLocationLine', $e)
-                    .text(removePrefix(match.fileName));
+                    .text(removePrefix(match.FileName));
                 $li.append($a);
                 $('#file_listing_modal ul').append($li);
 
-                $('#match-line-number').text('Line number: ' + match.startLocationLine.toString());
+                $('#match-line-number').text('Line number: ' + match.StartLocationLine.toString());
             }
         }
         $('#file_listing_modal').on('shown.bs.modal', function (e) {
@@ -214,7 +214,7 @@ class TemplateInsertion {
             // a tag that matches what we're looking for, we'll keep that icon visible.
             search_loop:
             for (let match of this.md) {
-                for (let tag of match.tags) {
+                for (let tag of match.Tags) {
                     if (targetRegex.exec(tag)) {
                         foundTag = true;        // We have at least one match for this icon
                         break search_loop;
@@ -275,9 +275,9 @@ class TemplateInsertion {
             const targetRegex = new RegExp(targetRegexValue, 'i');
             let identifiedRules = {};
             for (let match of this.md) {
-                for (let tag of match.tags) {
+                for (let tag of match.Tags) {
                     if (targetRegex.exec(tag)) {
-                        identifiedRules[match.ruleName] = this.combineConfidence(identifiedRules[match.ruleName], match.confidence);
+                        identifiedRules[match.RuleName] = this.combineConfidence(identifiedRules[match.RuleName], match.Confidence);
                         break;  // Only break out of inner loop, we only need one match per tag set
                     }
                 }
