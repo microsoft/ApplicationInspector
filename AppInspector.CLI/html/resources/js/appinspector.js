@@ -41,13 +41,14 @@
         const endLocationLine = $(e.target).data('endLocationLine');
         const editor = ace.edit("editor");
 
-        editor.setOption('firstLineNumber', startLocationLine);
+        editor.setOption('firstLineNumber', startLocationLine - 3);
         editor.getSession().setValue(content);
         editor.resize();
         editor.scrollToLine(0);
-        editor.gotoLine(endLocationLine - startLocationLine + 1);
+        editor.gotoLine(endLocationLine - startLocationLine + 1 + 3);
 
         $('editor-container').removeClass('d-none');
+        $('#match-line-number').text('Line number: ' + startLocationLine.toString());
     });
 
     const templateInsertion = new TemplateInsertion(data);
