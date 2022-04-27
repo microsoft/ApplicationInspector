@@ -42,6 +42,20 @@
         const editor = ace.edit("editor");
 
         editor.setOption('firstLineNumber', startLocationLine - 3);
+
+        // Decode the content (HTML encoded) for Ace to display
+        // Disabled, needs better testing, since it's prone to XSS if content contains JS.
+        // Maybe there is a better way of doing this.
+        if (false)
+        {
+            const htmlEntityDecoder = (content) => {
+                const textArea = document.createElement('textarea');
+                textArea.innerHTML = content;
+                return textArea.value;
+            }
+            content = htmlEntityDecoder(content);
+        }
+
         editor.getSession().setValue(content);
         editor.resize();
         editor.scrollToLine(0);
