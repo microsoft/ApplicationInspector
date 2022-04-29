@@ -34,5 +34,5 @@ jobs:
     inputs:
       command: 'test'
       projects: ${{ parameters.projectPath }}
-      arguments: "--collect "Code coverage"
+      arguments: '-f net6.0 --collect "Code coverage"'
       publishTestResults: true
