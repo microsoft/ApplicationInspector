@@ -9,20 +9,24 @@ trigger:
     - main
   paths:
     include:
-    - AppInspector/*
     - AppInspector.CLI/*
-    - RulesEngine/*
+    - AppInspector.Commands/*
+    - AppInspector.Common/*
+    - AppInspector.Logging/*
+    - AppInspector.RulesEngine/*
 pr:
   branches:
     include:
     - main
-    - development
   paths:
     include:
     - Pipelines
-    - AppInspector/*
     - AppInspector.CLI/*
-    - RulesEngine/*
+    - AppInspector.Commands/*
+    - AppInspector.Common/*
+    - AppInspector.Logging/*
+    - AppInspector.RulesEngine/*
+    - AppInspector.Tests/*
 
 stages:
 - stage: Test
