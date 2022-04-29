@@ -5,19 +5,19 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.RulesEngine;
     using Newtonsoft.Json;
-    using NLog;
-    using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
 
-    public class PackRulesOptions : LogOptions
+    public class PackRulesOptions
     {
-        public bool RepackDefaultRules { get; set; }
         public string? CustomRulesPath { get; set; }
         public bool NotIndented { get; set; }
         public bool PackEmbeddedRules { get; set; }
+        public string? CustomCommentsPath { get; set; }
+        public string? CustomLanguagesPath { get; set; }
     }
 
     public class PackRulesResult : Result
@@ -46,86 +46,37 @@ namespace Microsoft.ApplicationInspector.Commands
     public class PackRulesCommand
     {
         private readonly PackRulesOptions _options;
-        private string? _rules_path;
+        private readonly ILogger<PackRulesCommand> _logger;
+        private readonly ILoggerFactory? _loggerFactory;
 
-        public PackRulesCommand(PackRulesOptions opt)
+        public PackRulesCommand(PackRulesOptions opt, ILoggerFactory? loggerFactory = null)
         {
             _options = opt;
-
-            try
-            {
-                _options.Log ??= Common.Utils.SetupLogging(_options);
-                WriteOnce.Log ??= _options.Log;
-
-                ConfigureConsoleOutput();
-                ConfigRules();
-            }
-            catch (OpException e)
-            {
-                WriteOnce.Error(e.Message);
-                throw;
-            }
+            _logger = loggerFactory?.CreateLogger<PackRulesCommand>() ?? NullLogger<PackRulesCommand>.Instance;
+            _loggerFactory = loggerFactory;
+            ConfigRules();
         }
 
-        #region configure
-
-        /// <summary>
-        /// Establish console verbosity
-        /// For NuGet DLL use, console is muted overriding any arguments sent
-        /// </summary>
-        private void ConfigureConsoleOutput()
-        {
-            WriteOnce.SafeLog("PackRulesCommand::ConfigureConsoleOutput", LogLevel.Trace);
-
-            //Set console verbosity based on run context (none for DLL use) and caller arguments
-            if (!Common.Utils.CLIExecutionContext)
-            {
-                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
-            }
-            else
-            {
-                WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out verbosity))
-                {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
-                }
-                else
-                {
-                    WriteOnce.Verbosity = verbosity;
-                }
-            }
-        }
-
+        
         private void ConfigRules()
         {
-            WriteOnce.SafeLog("PackRulesCommand::ConfigRules", LogLevel.Trace);
+            _logger.LogTrace("PackRulesCommand::ConfigRules");
 
-            if (_options.RepackDefaultRules && !Common.Utils.CLIExecutionContext)
-            {
-                throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NO_CLI_DEFAULT));
-            }
-            else if (!_options.RepackDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath) && !_options.PackEmbeddedRules)
+            if (string.IsNullOrEmpty(_options.CustomRulesPath) && !_options.PackEmbeddedRules)
             {
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
             }
-            else if (_options.RepackDefaultRules && !Directory.Exists(Common.Utils.GetPath(Common.Utils.AppPath.defaultRulesSrc)))
-            {
-                throw new OpException(MsgHelp.GetString(MsgHelp.ID.PACK_RULES_NO_DEFAULT));
-            }
-
-            _rules_path = _options.RepackDefaultRules ? Common.Utils.GetPath(Common.Utils.AppPath.defaultRulesSrc) : _options.CustomRulesPath;
         }
 
-        #endregion configure
-
+        
         /// <summary>
         /// Intentional as no identified value in calling from DLL at this time
         /// </summary>
         /// <returns></returns>
         public PackRulesResult GetResult()
         {
-            WriteOnce.SafeLog("PackRules::Run", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Pack Rules"));
+            _logger.LogTrace("PackRulesCommand::ConfigRules");
+            _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Pack Rules");
 
             PackRulesResult packRulesResult = new()
             {
@@ -134,22 +85,29 @@ namespace Microsoft.ApplicationInspector.Commands
 
             try
             {
-                RulesVerifier verifier = new(_rules_path, _options?.Log);
-                if (_options?.PackEmbeddedRules ?? false)
+                RulesVerifierOptions options = new()
                 {
-                    verifier.LoadRuleSet(RuleSetUtils.GetDefaultRuleSet());
+                    FailFast = false,
+                    LoggerFactory = _loggerFactory,
+                    LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
+                };
+                RulesVerifier verifier = new(options);
+                RuleSet? ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();
+                if (!string.IsNullOrEmpty(_options.CustomRulesPath))
+                {
+                    ruleSet.AddDirectory(_options.CustomRulesPath);
                 }
-                verifier.Verify();
-                if (!verifier.IsVerified)
+                RulesVerifierResult result = verifier.Verify(ruleSet);
+                if (!result.Verified)
                 {
                     throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
                 }
-                packRulesResult.Rules = verifier.CompiledRuleset?.GetAppInspectorRules().ToList() ?? new List<Rule>();
+                packRulesResult.Rules = result.CompiledRuleSet.GetAppInspectorRules().ToList();
                 packRulesResult.ResultCode = PackRulesResult.ExitCode.Success;
             }
             catch (OpException e)
             {
-                WriteOnce.Error(e.Message);
+                _logger.LogError(e.Message);
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }

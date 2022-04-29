@@ -171,12 +171,12 @@
   },
   {
     "name": "package.json",
-    "extensions": [],
+    "file-names": ["package.json"],
     "type": "build"
   },
   {
     "name": "nugetpkg",
-    "extensions": [ "packages.config" ],
+    "file-names": [ "packages.config" ],
     "type": "build"
   },
   {
@@ -191,22 +191,22 @@
   },
   {
     "name": "pom.xml",
-    "extensions": [],
+    "file-names": [ "pom.xml" ],
     "type": "build"
   },
   {
     "name": "build.xml",
-    "extensions": [],
+    "file-names": [ "build.xml" ],
     "type": "build"
   },
   {
     "name": "build.gradle",
-    "extensions": [],
+    "file-names": [ "build.gradle" ],
     "type": "build"
   },
   {
     "name": "build.make.xml",
-    "extensions": [],
+    "file-names": [ "build.make.xml" ],
     "type": "build"
   },
   {
@@ -231,7 +231,7 @@
   },
   {
     "name": "typescript-config",
-    "extensions": [ "tsconfig.json", "typings.json" ],
+    "file-names": [ "tsconfig.json", "typings.json" ],
     "type": "build"
   },
   {

@@ -7,10 +7,6 @@ parameters:
 - name: dotnetVersion
   type: string
   default: '6.0.x'
-# Version of NuGet Tool to use
-- name: nugetVersion
-  type: string
-  default: '5.x'
 # List of paths to .csproj
 - name: projectPath
   type: string
@@ -27,10 +23,6 @@ jobs:
     inputs:
       packageType: 'sdk'
       version: ${{ parameters.dotnetVersion }}
-  - task: NuGetToolInstaller@1
-    displayName: Install Nuget Tool
-    inputs:
-      versionSpec: ${{ parameters.nugetVersion }}
   - task: DotNetCoreCLI@2
     displayName: Dotnet Restore
     inputs:
@@ -42,3 +34,5 @@ jobs:
     inputs:
       command: 'test'
       projects: ${{ parameters.projectPath }}
+      arguments: "--collect "Code coverage"
+      publishTestResults: true

@@ -4,8 +4,10 @@
 namespace Microsoft.ApplicationInspector.CLI
 {
     using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using Newtonsoft.Json;
+    using System.IO;
 
     /// <summary>
     /// Writes in json format
@@ -15,6 +17,13 @@ namespace Microsoft.ApplicationInspector.CLI
     /// </summary>
     public class AnalyzeJsonWriter : CommandResultsWriter
     {
+        private readonly ILogger<AnalyzeJsonWriter> _logger;
+
+        public AnalyzeJsonWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+        {
+            _logger = loggerFactory?.CreateLogger<AnalyzeJsonWriter>() ?? NullLogger<AnalyzeJsonWriter>.Instance;
+        }
+
         /// <summary>
         /// simple wrapper for serializing results for simple tags only during processing
         /// </summary>
@@ -28,22 +37,12 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             AnalyzeResult analyzeResult = (AnalyzeResult)result;
 
-            //For console output, update write once for same results to console or file
-            WriteOnce.TextWriter = TextWriter;
-
-            if (string.IsNullOrEmpty(commandOptions.OutputFilePath))
-            {
-                WriteOnce.Result("Results");
-            }
-
             JsonSerializer jsonSerializer = new();
             jsonSerializer.Formatting = Formatting.Indented;
             if (TextWriter != null)
             {
                 jsonSerializer.Serialize(TextWriter, analyzeResult);
             }
-
-            WriteOnce.NewLine();
 
             if (autoClose)
             {

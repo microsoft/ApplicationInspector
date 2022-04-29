@@ -54,8 +54,8 @@ jobs:
     - name: Build Tests
       run: |
          dotnet restore
-         dotnet build UnitTest.Commands.csproj
-      working-directory: ./UnitTest.Commands
+         dotnet build AppInspector.Tests.csproj
+      working-directory: ./AppInspector.Tests
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1

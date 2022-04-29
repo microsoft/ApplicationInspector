@@ -1,11 +1,12 @@
 ﻿//Copyright(c) Microsoft Corporation.All rights reserved.
 // Licensed under the MIT License.
 
+using Microsoft.ApplicationInspector.Logging;
+
 namespace Microsoft.ApplicationInspector.CLI
 {
     using CommandLine;
     using Microsoft.ApplicationInspector.Commands;
-    using NLog;
     using ShellProgressBar;
     using System;
     using System.IO;
@@ -13,9 +14,13 @@ namespace Microsoft.ApplicationInspector.CLI
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
+    using ILogger = Extensions.Logging.ILogger;
 
     public static class Program
     {
+        private static ILoggerFactory loggerFactory = new LoggerFactory();
+
         /// <summary>
         /// CLI program entry point which defines command verbs and options to running
         /// </summary>
@@ -25,8 +30,7 @@ namespace Microsoft.ApplicationInspector.CLI
             int finalResult = (int)Common.Utils.ExitCode.CriticalError;
 
             Common.Utils.CLIExecutionContext = true;//set manually at start from CLI
-
-            WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.Medium;
+            Exception? exception = null;
             try
             {
                 var argsResult = Parser.Default.ParseArguments<CLIAnalyzeCmdOptions,
@@ -40,67 +44,37 @@ namespace Microsoft.ApplicationInspector.CLI
                     (CLIExportTagsCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIVerifyRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
                     (CLIPackRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
-                    errs => 2
+                    errs => (int)Common.Utils.ExitCode.CriticalError
                   );
 
                 finalResult = argsResult;
             }
-            catch (OpException)
-            {
-                //log, output file and console have already been written to ensure all are updated for NuGet and CLI callers
-                //that may exit at different call points
-            }
             catch (Exception e)
             {
-                //unlogged exception so report out for CLI callers
-                WriteOnce.SafeLog(e.Message + "\n" + e.StackTrace, NLog.LogLevel.Error);
+                exception = e;
             }
-
-            //final exit msg to review log
-            if (finalResult == (int)Common.Utils.ExitCode.CriticalError)
+            var logger = loggerFactory.CreateLogger("Program");
+            if (exception is not null)
             {
-                if (!string.IsNullOrEmpty(Common.Utils.LogFilePath))
-                {
-                    WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.RUNTIME_ERROR_UNNAMED, Common.Utils.LogFilePath), true, WriteOnce.ConsoleVerbosity.Low, false);
-                }
-                else
-                {
-                    WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.RUNTIME_ERROR_PRELOG), true, WriteOnce.ConsoleVerbosity.Medium, false);
-                }
+                logger.LogError("Uncaught exception: {type}:{message}. {stackTrace}", exception.GetType().Name, exception.Message, exception.StackTrace);
             }
-            else
-            {
-                if (Common.Utils.LogFilePath is not null && File.Exists(Common.Utils.LogFilePath))
-                {
-                    var fileInfo = new FileInfo(Common.Utils.LogFilePath);
-                    if (fileInfo.Length > 0)
-                    {
-                        WriteOnce.Info(MsgHelp.FormatString(MsgHelp.ID.CMD_REMINDER_CHECK_LOG, Common.Utils.LogFilePath ?? Common.Utils.GetPath(Common.Utils.AppPath.defaultLog)), true, WriteOnce.ConsoleVerbosity.Low, false);
-                    }
-                }
-            }
-
+            loggerFactory.Dispose();
             return finalResult;
         }
 
-        #region OutputArgsCheckandRun
 
         //idea is to check output args which are not applicable to NuGet callers before the command operation is run for max efficiency
 
         private static int VerifyOutputArgsRun(CLITagDiffCmdOptions options)
         {
-            Logger logger = Common.Utils.SetupLogging(options, true);
-            WriteOnce.Log = logger;
-            options.Log = logger;
+            loggerFactory = options.GetLoggerFactory();
 
             CommonOutputChecks(options);
             return RunTagDiffCommand(options);
         }
         private static int VerifyOutputArgsRun(CLIExportTagsCmdOptions options)
         {
-            Logger logger = Common.Utils.SetupLogging(options, true);
-            WriteOnce.Log = logger;
-            options.Log = logger;
+            loggerFactory = options.GetLoggerFactory();
 
             CommonOutputChecks(options);
             return RunExportTagsCommand(options);
@@ -108,9 +82,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int VerifyOutputArgsRun(CLIVerifyRulesCmdOptions options)
         {
-            Logger logger = Common.Utils.SetupLogging(options, true);
-            WriteOnce.Log = logger;
-            options.Log = logger;
+            loggerFactory = options.GetLoggerFactory();
 
             CommonOutputChecks(options);
             return RunVerifyRulesCommand(options);
@@ -118,19 +90,12 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int VerifyOutputArgsRun(CLIPackRulesCmdOptions options)
         {
-            Logger logger = Common.Utils.SetupLogging(options, true);
-            WriteOnce.Log = logger;
-            options.Log = logger;
-
-            if (options.RepackDefaultRules && !string.IsNullOrEmpty(options.OutputFilePath))
-            {
-                WriteOnce.Info("output file argument ignored for -d option");
-            }
-
-            options.OutputFilePath = options.RepackDefaultRules ? Common.Utils.GetPath(Common.Utils.AppPath.defaultRulesPackedFile) : options.OutputFilePath;
+            loggerFactory = options.GetLoggerFactory();
+            ILogger logger = loggerFactory.CreateLogger("Program");
+            
             if (string.IsNullOrEmpty(options.OutputFilePath))
             {
-                WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.PACK_MISSING_OUTPUT_ARG));
+                logger.LogError(MsgHelp.GetString(MsgHelp.ID.PACK_MISSING_OUTPUT_ARG));
                 throw new OpException(MsgHelp.GetString(MsgHelp.ID.PACK_MISSING_OUTPUT_ARG));
             }
             else
@@ -143,9 +108,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
         private static int VerifyOutputArgsRun(CLIAnalyzeCmdOptions options)
         {
-            Logger logger = Common.Utils.SetupLogging(options, true);
-            WriteOnce.Log = logger;
-            options.Log = logger;
+            loggerFactory = options.GetLoggerFactory();
 
             //analyze with html format limit checks
             if (options.OutputFileFormat == "html")
@@ -154,12 +117,17 @@ namespace Microsoft.ApplicationInspector.CLI
                 string extensionCheck = Path.GetExtension(options.OutputFilePath);
                 if (extensionCheck is not ".html" and not ".htm")
                 {
-                    WriteOnce.Info(MsgHelp.GetString(MsgHelp.ID.ANALYZE_HTML_EXTENSION));
+                    loggerFactory.CreateLogger("Program").LogInformation(MsgHelp.GetString(MsgHelp.ID.ANALYZE_HTML_EXTENSION));
                 }
             }
-
-            CommonOutputChecks(options);
-            return RunAnalyzeCommand(options);
+            if (CommonOutputChecks(options))
+            {
+                return RunAnalyzeCommand(options);
+            }
+            else
+            {
+                return (int)Utils.ExitCode.CriticalError;
+            }
         }
 
         /// <summary>
@@ -168,7 +136,7 @@ namespace Microsoft.ApplicationInspector.CLI
         /// and NuGet callers are checked by the commands themselves
         /// </summary>
         /// <param name="options"></param>
-        private static void CommonOutputChecks(CLICommandOptions options)
+        private static bool CommonOutputChecks(CLICommandOptions options)
         {
             //validate requested format
             string fileFormatArg = options.OutputFileFormat;
@@ -179,7 +147,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 "json",
                 "sarif"
             };
-
+            var logger = loggerFactory.CreateLogger("Program");
             string[] checkFormats;
             if (options is CLIAnalyzeCmdOptions cliAnalyzeOptions)
             {
@@ -199,34 +167,24 @@ namespace Microsoft.ApplicationInspector.CLI
             bool isValidFormat = checkFormats.Any(v => v.Equals(fileFormatArg.ToLower()));
             if (!isValidFormat)
             {
-                WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
-                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"));
+                logger.LogError(MsgHelp.GetString(MsgHelp.ID.CMD_INVALID_ARG_VALUE), "-f");
+                return false;
             }
 
-            //validate output is not empty if no file output specified
-            if (string.IsNullOrEmpty(options.OutputFilePath))
+            if (!string.IsNullOrEmpty(options.OutputFilePath) && !CanWritePath(options.OutputFilePath))
             {
-                if (string.Equals(options.ConsoleVerbosityLevel, "none", StringComparison.OrdinalIgnoreCase))
-                {
-                    WriteOnce.Error(MsgHelp.GetString(MsgHelp.ID.CMD_NO_OUTPUT));
-                    throw new Exception(MsgHelp.GetString(MsgHelp.ID.CMD_NO_OUTPUT));
-                }
-                else if (string.Equals(options.ConsoleVerbosityLevel, "low", StringComparison.OrdinalIgnoreCase))
-                {
-                    WriteOnce.SafeLog("Verbosity set low.  Detailed output limited.", NLog.LogLevel.Info);
-                }
+                logger.LogError(MsgHelp.GetString(MsgHelp.ID.CMD_INVALID_LOG_PATH), options.OutputFilePath);
+                return false;
             }
-            else
-            {
-                ValidFileWritePath(options.OutputFilePath);
-            }
+
+            return true;
         }
 
         /// <summary>
         /// Ensure output file path can be written to
         /// </summary>
         /// <param name="filePath"></param>
-        private static void ValidFileWritePath(string filePath)
+        private static bool CanWritePath(string filePath)
         {
             try
             {
@@ -234,14 +192,29 @@ namespace Microsoft.ApplicationInspector.CLI
             }
             catch (Exception)
             {
-                WriteOnce.Error(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, filePath));
-                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, filePath));
+                return false;
             }
+            return true;
         }
 
-        #endregion OutputArgsCheckandRun
 
-        #region RunCmdsWriteResults
+
+        /// <summary>
+        /// This method gets a logging factory with Console disabled when the progress bar is enabled. Does not change the original options.
+        /// </summary>
+        /// <param name="cliOptions">The original options.</param>
+        /// <returns>A logging factory with adjusted settings.</returns>
+        private static ILoggerFactory GetAdjustedFactory(CLIAnalyzeCmdOptions cliOptions)
+        {
+            return new LogOptions()
+            {
+                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                DisableLogFileOutput = cliOptions.DisableLogFileOutput,
+                LogFileLevel = cliOptions.LogFileLevel,
+                LogFilePath = cliOptions.LogFilePath,
+                DisableConsoleOutput = cliOptions.NoShowProgressBar ? cliOptions.DisableConsoleOutput : false
+            }.GetLoggerFactory();
+        }
 
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
         {
@@ -251,15 +224,21 @@ namespace Microsoft.ApplicationInspector.CLI
             int numContextLines = cliOptions.ContextLines == -1 ? cliOptions.ContextLines : isSarif ? 0 : cliOptions.ContextLines;
             // tagsOnly isn't compatible with sarif output, we choose to prioritize the choice of sarif.
             bool tagsOnly = !isSarif && cliOptions.TagsOnly;
+            var logger = loggerFactory.CreateLogger("Program");
+            if (!cliOptions.NoShowProgressBar)
+            {
+                logger.LogInformation("Progress bar is enabled so console output will be supressed. To receive log messages with the progress bar check the log file.");
+            }
+            ILoggerFactory adjustedFactory = GetAdjustedFactory(cliOptions);
             AnalyzeCommand command = new(new AnalyzeOptions()
             {
                 SourcePath = cliOptions.SourcePath ?? Array.Empty<string>(),
                 CustomRulesPath = cliOptions.CustomRulesPath ?? "",
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
                 FilePathExclusions = cliOptions.FilePathExclusions,
-                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
-                Log = cliOptions.Log,
                 SingleThread = cliOptions.SingleThread,
                 NoShowProgress = cliOptions.NoShowProgressBar,
                 FileTimeOut = cliOptions.FileTimeOut,
@@ -270,18 +249,14 @@ namespace Microsoft.ApplicationInspector.CLI
                 NoFileMetadata = cliOptions.NoFileMetadata,
                 AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles,
                 MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag
-            });
-
-            if (!cliOptions.NoShowProgressBar)
-            {
-                WriteOnce.PauseConsoleOutput = true;
-            }
+            }, adjustedFactory);
 
             AnalyzeResult analyzeResult = command.GetResult();
 
+            ResultsWriter writer = new(loggerFactory);
             if (cliOptions.NoShowProgressBar)
             {
-                ResultsWriter.Write(analyzeResult, cliOptions);
+                writer.Write(analyzeResult, cliOptions);
             }
             else
             {
@@ -289,7 +264,7 @@ namespace Microsoft.ApplicationInspector.CLI
 
                 _ = Task.Factory.StartNew(() =>
                 {
-                    ResultsWriter.Write(analyzeResult, cliOptions);
+                    writer.Write(analyzeResult, cliOptions);
                     done = true;
                 });
 
@@ -315,8 +290,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 Console.Write(Environment.NewLine);
             }
 
-            WriteOnce.PauseConsoleOutput = false;
-
             return (int)analyzeResult.ResultCode;
         }
 
@@ -327,22 +300,23 @@ namespace Microsoft.ApplicationInspector.CLI
                 SourcePath1 = cliOptions.SourcePath1,
                 SourcePath2 = cliOptions.SourcePath2,
                 CustomRulesPath = cliOptions.CustomRulesPath,
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 FilePathExclusions = cliOptions.FilePathExclusions,
-                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
                 TestType = cliOptions.TestType,
-                Log = cliOptions.Log,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
+                SeverityFilters = cliOptions.SeverityFilters,
                 FileTimeOut = cliOptions.FileTimeOut,
                 ProcessingTimeOut = cliOptions.ProcessingTimeOut,
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
                 SingleThread = cliOptions.SingleThread,
-                LogFilePath = cliOptions.LogFilePath,
-                LogFileLevel = cliOptions.LogFileLevel
-            });
+            }, loggerFactory);
 
             TagDiffResult tagDiffResult = command.GetResult();
-            ResultsWriter.Write(tagDiffResult, cliOptions);
+
+            ResultsWriter writer = new(loggerFactory);
+            writer.Write(tagDiffResult, cliOptions);
 
             return (int)tagDiffResult.ResultCode;
         }
@@ -353,12 +327,12 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,
-                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
-                Log = cliOptions.Log
-            });
+            }, loggerFactory);
 
             ExportTagsResult exportTagsResult = command.GetResult();
-            ResultsWriter.Write(exportTagsResult, cliOptions);
+
+            ResultsWriter writer = new(loggerFactory);
+            writer.Write(exportTagsResult, cliOptions);
 
             return (int)exportTagsResult.ResultCode;
         }
@@ -369,13 +343,15 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 VerifyDefaultRules = cliOptions.VerifyDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,
-                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 Failfast = cliOptions.Failfast,
-                Log = cliOptions.Log
-            });
+            }, loggerFactory);
 
             VerifyRulesResult exportTagsResult = command.GetResult();
-            ResultsWriter.Write(exportTagsResult, cliOptions);
+
+            ResultsWriter writer = new(loggerFactory);
+            writer.Write(exportTagsResult, cliOptions);
 
             return (int)exportTagsResult.ResultCode;
         }
@@ -384,19 +360,19 @@ namespace Microsoft.ApplicationInspector.CLI
         {
             PackRulesCommand command = new(new PackRulesOptions()
             {
-                RepackDefaultRules = cliOptions.RepackDefaultRules,
                 CustomRulesPath = cliOptions.CustomRulesPath,
-                ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
-                Log = cliOptions.Log,
+                CustomCommentsPath = cliOptions.CustomCommentsPath,
+                CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 PackEmbeddedRules = cliOptions.PackEmbeddedRules
-            });
+            }, loggerFactory);
 
             PackRulesResult exportTagsResult = command.GetResult();
-            ResultsWriter.Write(exportTagsResult, cliOptions);
+
+            ResultsWriter writer = new(loggerFactory);
+            writer.Write(exportTagsResult, cliOptions);
 
             return (int)exportTagsResult.ResultCode;
         }
 
-        #endregion RunCmdsWriteResults
     }
 }

@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-  	<OutputType>Library</OutputType>
-    <TargetFramework>net6.0</TargetFramework>    
+  	<OutputType>Library</OutputType>    
     <PackageId>Microsoft.ApplicationInspector.RulesEngine</PackageId>
     <PackageVersion>0.0.0-placeholder</PackageVersion>
     <Authors>Microsoft</Authors>
@@ -22,13 +21,14 @@
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
+    <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CST.OAT" Version="1.2.4" />
-    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.6" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NLog" Version="4.7.13" />
+    <PackageReference Include="Microsoft.CST.OAT" Version="1.2.8" />
+    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
+    <PackageReference Include="System.Text.Json" Version="6.0.3" />
   </ItemGroup>
 
   <ItemGroup>

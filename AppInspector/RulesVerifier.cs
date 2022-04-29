@@ -1,118 +1,151 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+
 namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.RulesEngine;
-    using NLog;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
+    using Microsoft.CST.OAT;
+
+    public class RulesVerifierResult
+    {
+        public RulesVerifierResult(List<RuleStatus> ruleStatuses, RuleSet compiledRuleSets)
+        {
+            RuleStatuses = ruleStatuses;
+            CompiledRuleSet = compiledRuleSets;
+        }
+        public List<RuleStatus> RuleStatuses { get; }
+        public RuleSet CompiledRuleSet { get; }
+        public  bool Verified => RuleStatuses.All(x => x.Verified);
+    }
+
+    public class RulesVerifierOptions
+    {
+        /// <summary>
+        /// If desired you may provide the analyzer to use. An analyzer with AI defaults will be created to use for validation.
+        /// </summary>
+        public Analyzer? Analyzer { get; set; }
+        /// <summary>
+        /// To receive log messages, provide a LoggerFactory with your preferred configuration.
+        /// </summary>
+        public ILoggerFactory? LoggerFactory { get; set; }
+        /// <summary>
+        /// If true, the verifier will stop on the first issue and will not continue reporting issues.
+        /// </summary>
+        public bool FailFast { get; set; }
+        public Languages LanguageSpecs { get; set; } = new Languages();
+    }
 
     /// <summary>
     /// Common helper used by VerifyRulesCommand and PackRulesCommand classes to reduce duplication
     /// </summary>
-    internal class RulesVerifier
+    public class RulesVerifier
     {
-        public RuleSet CompiledRuleset { get; set; }
-        private readonly string? _rulesPath;
-        private readonly Logger? _logger;
-        private readonly bool _failFast;
-
-        public bool IsVerified { get; private set; }
-        private List<RuleStatus>? _ruleStatuses;
-
-        public RulesVerifier(string? rulePath, Logger? logger, bool failFast = true)
+        private readonly ILogger _logger;
+        private readonly RulesVerifierOptions _options;
+        private bool _failFast => _options.FailFast;
+        private ILoggerFactory? _loggerFactory => _options.LoggerFactory;
+        private readonly Analyzer _analyzer;
+        public RulesVerifier(RulesVerifierOptions options)
         {
-            _logger = logger;
-            _rulesPath = rulePath;
-            _failFast = failFast;
-            CompiledRuleset = new RuleSet(_logger);
+            _options = options;
+            _logger = _options.LoggerFactory?.CreateLogger<RulesVerifier>() ?? NullLogger<RulesVerifier>.Instance;
+            _analyzer = _options.Analyzer ?? new ApplicationInspectorAnalyzer(_options.LoggerFactory);
         }
 
         /// <summary>
-        /// Return list of rule verification results
+        /// Compile ruleset from a path to a directory or file containing a rule.json file and verify the status of the rules.
         /// </summary>
+        /// <param name="fileName">Path to rules.</param>
         /// <returns></returns>
-        public List<RuleStatus> Verify()
+        /// <exception cref="OpException"></exception>
+        public RulesVerifierResult Verify(string rulesPath)
         {
-            _ruleStatuses = new List<RuleStatus>();
-            if (!string.IsNullOrEmpty(_rulesPath))
+            RuleSet CompiledRuleset = new(_loggerFactory);
+
+            if (!string.IsNullOrEmpty(rulesPath))
             {
-                if (Directory.Exists(_rulesPath))
+                if (Directory.Exists(rulesPath))
                 {
-                    LoadDirectory(_rulesPath);
+                    CompiledRuleset.AddDirectory(rulesPath);
                 }
-                else if (File.Exists(_rulesPath))
+                else if (File.Exists(rulesPath))
                 {
-                    LoadFile(_rulesPath);
+                    CompiledRuleset.AddFile(rulesPath);
                 }
                 else
                 {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, _rulesPath));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, rulesPath));
                 }
             }
-
-            CheckIntegrity();
-
-            return _ruleStatuses;
+            return Verify(CompiledRuleset);
         }
 
-        public bool Verify(Rule rule)
+        public RulesVerifierResult Verify(RuleSet ruleset)
         {
-            return CheckIntegrity(rule);
+            return new RulesVerifierResult(CheckIntegrity(ruleset), ruleset);
         }
 
-        private void CheckIntegrity()
+        public List<RuleStatus> CheckIntegrity(RuleSet ruleSet)
         {
-            IsVerified = true;
-
-            foreach (Rule rule in CompiledRuleset.AsEnumerable() ?? Array.Empty<Rule>())
+            List<RuleStatus> ruleStatuses = new();
+            foreach (ConvertedOatRule rule in ruleSet.GetOatRules() ?? Array.Empty<ConvertedOatRule>())
             {
-                bool ruleVerified = CheckIntegrity(rule);
-                _ruleStatuses?.Add(new RuleStatus()
-                {
-                    RulesId = rule.Id,
-                    RulesName = rule.Name,
-                    Verified = ruleVerified
-                });
+                RuleStatus ruleVerified = CheckIntegrity(rule);
 
-                IsVerified = ruleVerified && IsVerified;
+                ruleStatuses.Add(ruleVerified);
 
-                if (_failFast && !ruleVerified)
+                if (_failFast && !ruleVerified.Verified)
                 {
-                    return;
+                    break;
                 }
             }
-        }
-        public bool CheckIntegrity(Rule rule)
-        {
-            bool isValid = true;
+            var duplicatedRules = ruleSet.GroupBy(x => x.Id).Where(y => y.Count() > 1);
+            if (duplicatedRules.Any())
+            {
+                foreach (var rule in duplicatedRules)
+                {
+                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL), rule.Key);
+                    var relevantStati = ruleStatuses.Where(x => x.RulesId == rule.Key);
+                    foreach(var status in relevantStati)
+                    {
+                        status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Key));
+                    }
+                    if (_failFast)
+                    {
+                        break;
+                    }
+                }
+            }
 
+            return ruleStatuses;
+        }
+        public RuleStatus CheckIntegrity(ConvertedOatRule convertedOatRule)
+        {
+            List<string> errors = new();
+
+            // App Inspector checks
+            var rule = convertedOatRule.AppInspectorRule;
             // Check for null Id
-            if (rule.Id == null)
+            if (string.IsNullOrEmpty(rule.Id))
             {
-                _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_NULLID_FAIL, rule.Name));
-                isValid = false;
-            }
-            else
-            {
-                // Check for same ID
-                if (CompiledRuleset.Count(x => x.Id == rule.Id) > 1)
-                {
-                    _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Id));
-                    isValid = false;
-                }
+                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_NULLID_FAIL), rule.Name);
+                errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_NULLID_FAIL, rule.Name));                
             }
 
             //applicability
             if (rule.AppliesTo != null)
             {
-                string[] languages = Language.GetNames();
+                string[] languages = _options.LanguageSpecs.GetNames();
                 // Check for unknown language
                 foreach (string lang in rule.AppliesTo)
                 {
@@ -120,8 +153,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         if (!languages.Any(x => x.Equals(lang, StringComparison.CurrentCultureIgnoreCase)))
                         {
-                            _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL, rule.Id ?? ""));
-                            return false;
+                            _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL), rule.Id ?? "");
+                            errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL, rule.Id ?? ""));
                         }
                     }
                 }
@@ -135,9 +168,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 catch (Exception e)
                 {
-                    _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", pattern ?? "", e.Message));
-
-                    return false;
+                    _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "", pattern ?? "", e.Message);
+                    errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", pattern ?? "", e.Message));
                 }
             }
 
@@ -156,8 +188,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     catch (Exception e)
                     {
-                        _logger?.Error(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
-                        return false;
+                        _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "", searchPattern.Pattern ?? "", e.Message);
+                        errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
                     }
                 }
             }
@@ -166,10 +198,10 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 if (condition.SearchIn is null)
                 {
-                    _logger?.Error("SearchIn is null in {0}",rule.Id);
-                    return false;
+                    _logger?.LogError("SearchIn is null in {ruleId}",rule.Id);
+                    errors.Add(string.Format("SearchIn is null in {0}", rule.Id));
                 }
-                if (condition.SearchIn.StartsWith("finding-region"))
+                else if (condition.SearchIn.StartsWith("finding-region"))
                 {
                     var parSplits = condition.SearchIn.Split(new char[] { ')', '(' });
                     if (parSplits.Length == 3)
@@ -181,67 +213,37 @@ namespace Microsoft.ApplicationInspector.Commands
                             {
                                 if (int1 > 0 && int2 < 0)
                                 {
-                                    _logger?.Error("The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {0}", rule.Id);
-                                    return false;
+                                    _logger?.LogError("The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {0}", rule.Id);
+                                    errors.Add(string.Format("The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {0}", rule.Id));
                                 }
                             }
                         }
                         else
                         {
-                            _logger?.Error("Improperly specified finding region. {0}", rule.Id);
-                            return false;
+                            _logger?.LogError("Improperly specified finding region. {0}", rule.Id);
+                            errors.Add(string.Format("Improperly specified finding region. {0}", rule.Id));
                         }
                     }
                     else
                     {
-                        _logger?.Error("Improperly specified finding region. {0}", rule.Id);
-                        return false;
+                        _logger?.LogError("Improperly specified finding region. {0}", rule.Id);
+                        errors.Add(string.Format("Improperly specified finding region. {0}", rule.Id));
                     }
                 }
             }
 
             if (rule.Tags?.Length == 0)
             {
-                isValid = false;
+                _logger?.LogError("Rule must specify tags. {0}", rule.Id);
+                errors.Add(string.Format("Rule must specify tags. {0}", rule.Id));
             }
-
-            return isValid;
-        }
-
-        public void LoadDirectory(string? path)
-        {
-            if (path is null) { return; }
-            foreach (string filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
+            return new RuleStatus()
             {
-                LoadFile(filename);
-            }
-        }
-
-        public void LoadFile(string file)
-        {
-            try
-            {
-                CompiledRuleset.AddFile(file, null);
-            }
-            catch (Exception e)
-            {
-                Debug.Write(e.Message);//Ensure console message indicates problem for Build process
-                WriteOnce.SafeLog(e.Message, NLog.LogLevel.Error);
-                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED, file));
-            }
-        }
-
-        public void LoadRuleSet(RuleSet ruleSet)
-        {
-            foreach(Rule rule in ruleSet)
-            {
-                CompiledRuleset.AddRule(rule);
-            }
-        }
-
-        public void ClearRules()
-        {
-            CompiledRuleset = new RuleSet(_logger);
+                RulesId = rule.Id,
+                RulesName = rule.Name,
+                Errors = errors,
+                OatIssues = _analyzer.EnumerateRuleIssues(convertedOatRule)
+            };
         }
     }
 }

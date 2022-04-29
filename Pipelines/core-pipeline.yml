@@ -30,7 +30,7 @@ stages:
   - template: templates/dotnet-test-job.yml
     parameters:
       dotnetVersion: 6.0.x
-      projectPath: 'UnitTest.Commands/UnitTest.Commands.csproj'
+      projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
       
 - stage: SDL
   dependsOn: Test

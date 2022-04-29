@@ -1,20 +1,24 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
+using System.Text.Json.Serialization;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
     using System;
 
     /// <summary>
     ///     Issue severity
     /// </summary>
     [Flags]
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Severity
     {
         /// <summary>
-        ///     Critial issues
+        ///     Has not been specified
+        /// </summary>
+        Unspecified = 0,
+        /// <summary>
+        ///     Critical issues
         /// </summary>
         Critical = 1,
 

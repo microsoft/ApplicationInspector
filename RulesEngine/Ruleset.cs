@@ -1,10 +1,13 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
+using System.Text.Json;
+using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     using Microsoft.CST.OAT;
-    using Newtonsoft.Json;
-    using NLog;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -19,7 +22,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public class RuleSet : IEnumerable<Rule>
     {
-        private readonly Logger? _logger;
+        private readonly ILogger _logger;
         private readonly List<ConvertedOatRule> _oatRules = new();//used for analyze cmd primarily
         private IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
         private readonly Regex searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
@@ -27,9 +30,25 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         ///     Creates instance of Ruleset
         /// </summary>
-        public RuleSet(Logger? log)
+        public RuleSet(ILoggerFactory? loggerFactory = null)
         {
-            _logger = log;
+            _logger = loggerFactory?.CreateLogger<RuleSet>() ?? NullLogger<RuleSet>.Instance; ;
+        }
+
+        public void AddPath(string path, string? tag = null)
+        {
+            if (Directory.Exists(path))
+            {
+                AddDirectory(path, tag);
+            }
+            else if (File.Exists(path))
+            {
+                AddFile(path, tag);
+            }
+            else
+            {
+                throw new ArgumentException("The path must exist.", nameof(path));
+            }
         }
 
         /// <summary>
@@ -58,7 +77,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (string.IsNullOrEmpty(filename))
                 throw new ArgumentException(null, nameof(filename));
 
-            _logger?.Debug("Attempting to read rule file: " + filename);
+            _logger?.LogDebug("Attempting to read rule file: " + filename);
 
             if (!File.Exists(filename))
                 throw new FileNotFoundException();
@@ -73,17 +92,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="collection"> Collection of rules </param>
         public void AddRange(IEnumerable<Rule>? collection)
         {
-            if (collection is null)
+            foreach (Rule rule in collection ?? Array.Empty<Rule>())
             {
-                return;
-            }
-            foreach (var rule in collection.Select(AppInspectorRuleToOatRule))
-            {
-                if (rule != null)
-                {
-                    _logger?.Debug("Attempting to add rule: " + rule.Name);
-                    _oatRules.Add(rule);
-                }
+                AddRule(rule);
             }
         }
 
@@ -93,10 +104,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="rule"> </param>
         public void AddRule(Rule rule)
         {
-            if (AppInspectorRuleToOatRule(rule) is ConvertedOatRule cor)
+            if (AppInspectorRuleToOatRule(rule) is ConvertedOatRule oatRule)
             {
-                _logger?.Debug("Attempting to add rule: " + rule.Name);
-                _oatRules.Add(cor);
+                _logger.LogTrace("Attempting to add rule: {RuleId}:{RuleName}", rule.Id, rule.Name);
+                _oatRules.Add(oatRule);
+            }
+            else
+            {
+                _logger.LogError("Rule '{RuleId}:{RuleName}' could not be converted into an OAT rule. There may be message in the logs indicating why. You can  run rule verification to identify the issue", rule.Id, rule.Name);
             }
         }
 
@@ -149,19 +164,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var clauses = new List<Clause>();
             int clauseNumber = 0;
             var expression = new StringBuilder("(");
-            foreach (var pattern in rule.Patterns ?? Array.Empty<SearchPattern>())
+            foreach (var pattern in rule.Patterns)
             {
                 if (pattern.Pattern != null)
                 {
                     var scopes = pattern.Scopes ?? new PatternScope[] { PatternScope.All };
-                    var modifiers = pattern.Modifiers ?? Array.Empty<string>();
+                    var modifiers = pattern.Modifiers?.ToList() ?? new List<string>();
                     if (pattern.PatternType is PatternType.String or PatternType.Substring)
                     {
-                        clauses.Add(new OATSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String)
+                        clauses.Add(new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { pattern.Pattern },
-                            Capture = true
+                            Capture = true,
+                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
                         });
                         if (clauseNumber > 0)
                         {
@@ -172,12 +188,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else if (pattern.PatternType == PatternType.Regex)
                     {
-                        clauses.Add(new OATRegexWithIndexClause(scopes)
+                        clauses.Add(new OatRegexWithIndexClause(scopes)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { pattern.Pattern },
                             Capture = true,
-                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
+                            Arguments = modifiers,
                             CustomOperation = "RegexWithIndex"
                         });
                         if (clauseNumber > 0)
@@ -189,7 +205,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else if (pattern.PatternType == PatternType.RegexWord)
                     {
-                        clauses.Add(new OATRegexWithIndexClause(scopes)
+                        clauses.Add(new OatRegexWithIndexClause(scopes)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { $"\\b({pattern.Pattern})\\b" },
@@ -221,6 +237,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (condition.Pattern?.Pattern != null)
                 {
+                    List<string> conditionModifiers = condition.Pattern.Modifiers?.ToList() ?? new();
                     if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
                     {
                         clauses.Add(new WithinClause()
@@ -228,7 +245,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Data = new List<string>() { condition.Pattern.Pattern },
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             Invert = condition.NegateFinding,
-                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                            Arguments = conditionModifiers,
                             FindingOnly = true,
                             CustomOperation = "Within",
                             Scopes = condition.Pattern.Scopes ?? new PatternScope[] { PatternScope.All }
@@ -262,7 +279,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                 Data = new List<string>() { condition.Pattern.Pattern },
                                 Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                                 Invert = condition.NegateFinding,
-                                Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                                Arguments = conditionModifiers,
                                 FindingRegion = true,
                                 CustomOperation = "Within",
                                 Before = argList[0],
@@ -281,7 +298,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             Data = new List<string>() { condition.Pattern.Pattern },
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             Invert = condition.NegateFinding,
-                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                            Arguments = conditionModifiers,
                             SameLineOnly = true,
                             CustomOperation = "Within",
                             Scopes = condition.Pattern.Scopes ?? new PatternScope[]{ PatternScope.All }
@@ -289,6 +306,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         expression.Append(" AND ");
                         expression.Append(clauseNumber);
                         clauseNumber++;
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Search condition {Condition} is not one of the accepted values and this condition will be ignored",condition.SearchIn);
+                        return null;
                     }
                 }
             }
@@ -326,17 +348,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return _rules.GetEnumerator();
         }
 
-        internal static IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)
+        internal IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)
         {
-            List<Rule>? ruleList = JsonConvert.DeserializeObject<List<Rule>>(jsonstring);
+            List<Rule>? ruleList = JsonSerializer.Deserialize<List<Rule>>(jsonstring,
+                    new JsonSerializerOptions() {AllowTrailingCommas = true});
+             
             if (ruleList is not null)
             {
                 foreach (Rule r in ruleList)
                 {
                     r.Source = sourcename;
                     r.RuntimeTag = tag ?? "";
-                    if (r.Patterns == null)
-                        r.Patterns = Array.Empty<SearchPattern>();
                     yield return r;
                 }
             }

@@ -5,17 +5,18 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.RulesEngine;
     using Newtonsoft.Json;
-    using NLog;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
 
     /// <summary>
     /// Options for the Export Tags command.
     /// </summary>
-    public class ExportTagsOptions : LogOptions
+    public class ExportTagsOptions
     {
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
@@ -54,73 +55,31 @@ namespace Microsoft.ApplicationInspector.Commands
     public class ExportTagsCommand
     {
         private readonly ExportTagsOptions _options;
+        private readonly ILogger _logger;
+        private readonly ILoggerFactory? _loggerFactory;
         private RuleSet _rules;
 
-        public ExportTagsCommand(ExportTagsOptions opt)
+        public ExportTagsCommand(ExportTagsOptions opt, ILoggerFactory? loggerFactory = null)
         {
             _options = opt;
-
-            try
-            {
-                _options.Log ??= Common.Utils.SetupLogging(_options);
-                WriteOnce.Log ??= _options.Log;
-                _rules = new RuleSet(_options.Log);
-
-                ConfigureConsoleOutput();
-                ConfigRules();
-            }
-            catch (Exception e)
-            {
-                WriteOnce.Error(e.Message);
-                throw new OpException(e.Message);
-            }
+            _logger = loggerFactory?.CreateLogger<ExportTagsCommand>() ?? NullLogger<ExportTagsCommand>.Instance;
+            _loggerFactory = loggerFactory;
+            _rules = new RuleSet();
+            ConfigRules();
         }
 
-        #region ConfigMethods
-
-        /// <summary>
-        /// Establish console verbosity
-        /// For NuGet DLL use, console is muted overriding any arguments sent
-        /// </summary>
-        private void ConfigureConsoleOutput()
-        {
-            WriteOnce.SafeLog("ExportTagsCommand::ConfigureConsoleOutput", LogLevel.Trace);
-
-            //Set console verbosity based on run context (none for DLL use) and caller arguments
-            if (!Common.Utils.CLIExecutionContext)
-            {
-                WriteOnce.Verbosity = WriteOnce.ConsoleVerbosity.None;
-            }
-            else
-            {
-                WriteOnce.ConsoleVerbosity verbosity = WriteOnce.ConsoleVerbosity.Medium;
-                if (!Enum.TryParse(_options.ConsoleVerbosityLevel, true, out verbosity))
-                {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-x"));
-                }
-                else
-                {
-                    WriteOnce.Verbosity = verbosity;
-                }
-            }
-        }
-
+        
         private void ConfigRules()
         {
-            WriteOnce.SafeLog("ExportTagsCommand::ConfigRules", LogLevel.Trace);
-
+            _logger.LogTrace("ExportTagsCommand::ConfigRules");
+            _rules = new RuleSet(_loggerFactory);
             if (!_options.IgnoreDefaultRules)
             {
-                _rules = RuleSetUtils.GetDefaultRuleSet(_options?.Log);
+                _rules = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
             }
 
             if (!string.IsNullOrEmpty(_options?.CustomRulesPath))
             {
-                if (_rules == null)
-                {
-                    _rules = new RuleSet(_options.Log);
-                }
-
                 if (Directory.Exists(_options.CustomRulesPath))
                 {
                     _rules.AddDirectory(_options.CustomRulesPath);
@@ -142,12 +101,11 @@ namespace Microsoft.ApplicationInspector.Commands
             }
         }
 
-        #endregion ConfigMethods
-
+        
         public ExportTagsResult GetResult()
         {
-            WriteOnce.SafeLog("ExportTagsCommand::Run", LogLevel.Trace);
-            WriteOnce.Operation(MsgHelp.FormatString(MsgHelp.ID.CMD_RUNNING, "Export Tags"));
+            _logger.LogTrace("ExportTagsCommand::Run");
+            _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Export Tags");
 
             ExportTagsResult exportTagsResult = new()
             {
@@ -184,7 +142,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             catch (OpException e)
             {
-                WriteOnce.Error(e.Message);
+                _logger.LogError(e.Message);
                 //caught for CLI callers with final exit msg about checking log or throws for DLL callers
                 throw;
             }

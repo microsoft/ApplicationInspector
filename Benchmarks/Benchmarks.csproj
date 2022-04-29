@@ -13,7 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
-    <ProjectReference Include="..\UnitTest.Commands\UnitTest.Commands.csproj" />
+    <ProjectReference Include="..\AppInspector.Tests\AppInspector.Tests.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="AnalyzeBenchmark.cs">

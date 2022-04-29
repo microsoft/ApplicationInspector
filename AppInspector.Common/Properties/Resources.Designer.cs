@@ -19,7 +19,7 @@ namespace Microsoft.ApplicationInspector.Common.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -286,7 +286,7 @@ namespace Microsoft.ApplicationInspector.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The requested log file {0}) exist but is not recognized as an application log. Provide a different value or delete the file and try again..
+        ///   Looks up a localized string similar to The requested log file {0} could not be read..
         /// </summary>
         internal static string CMD_INVALID_LOG_PATH {
             get {

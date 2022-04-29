@@ -48,8 +48,12 @@
 
         public static string GetExecutingDirectoryName()
         {
-            var location = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase);
-            return new FileInfo(location.AbsolutePath).Directory.FullName;
+            if (Assembly.GetEntryAssembly()?.GetName().CodeBase is string codeBaseLoc)
+            {
+                var location = new Uri(codeBaseLoc);
+                return new FileInfo(location.AbsolutePath).Directory?.FullName ?? string.Empty;
+            }
+            return string.Empty;
         }
     }
 }

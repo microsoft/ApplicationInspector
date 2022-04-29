@@ -204,8 +204,7 @@ namespace Microsoft.ApplicationInspector.Commands
             Languages.AddOrUpdate(language, 1, (language, count) => count + 1);
         }
 
-        #region helpers
-        /// <summary>
+                /// <summary>
         /// Initial best guess to deduce project name; if scanned metadata from project solution value is replaced later
         /// </summary>
         /// <param name="sourcePath"></param>
@@ -360,6 +359,4 @@ namespace Microsoft.ApplicationInspector.Commands
             return s;
         }
     }
-
-    #endregion
 }

@@ -6,7 +6,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     ///     Class to handle text as a searchable container
@@ -19,7 +18,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="content"> Text to work with </param>
         /// <param name="language"> The language of the test </param>
         /// <param name="lineNumber"> The line number to specify. Leave empty for full file as target. </param>
-        public TextContainer(string content, string language)
+        public TextContainer(string content, string language, Languages languages)
         {
             Language = language;
             FullContent = content;
@@ -45,9 +44,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 LineEnds.Add(FullContent.Length - 1);
             }
 
-            prefix = RulesEngine.Language.GetCommentPrefix(Language);
-            suffix = RulesEngine.Language.GetCommentSuffix(Language);
-            inline = RulesEngine.Language.GetCommentInline(Language);
+            prefix = languages.GetCommentPrefix(Language);
+            suffix = languages.GetCommentSuffix(Language);
+            inline = languages.GetCommentInline(Language);
         }
 
         /// <summary>

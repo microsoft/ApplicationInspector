@@ -16,9 +16,13 @@ namespace Microsoft.ApplicationInspector.CLI
     using System.Reflection;
     using System.Text;
     using System.Text.RegularExpressions;
+    using Microsoft.Extensions.Logging.Abstractions;
+    using Microsoft.Extensions.Logging;
 
     public class AnalyzeHtmlWriter : CommandResultsWriter
     {
+        private readonly ILogger<AnalyzeHtmlWriter> _logger;
+
         public Dictionary<string, List<TagInfo>> KeyedTagInfoLists { get; } = new Dictionary<string, List<TagInfo>>();
 
         public Dictionary<string, List<TagInfo>> KeyedSortedTagInfoLists { get; } = new Dictionary<string, List<TagInfo>>();
@@ -28,8 +32,9 @@ namespace Microsoft.ApplicationInspector.CLI
         private MetaData? _appMetaData;
         private AnalyzeResult? _analyzeResult;
 
-        public AnalyzeHtmlWriter()
+        public AnalyzeHtmlWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
         {
+            _logger = loggerFactory?.CreateLogger<AnalyzeHtmlWriter>() ?? NullLogger<AnalyzeHtmlWriter>.Instance;
             KeyedTagInfoLists = new Dictionary<string, List<TagInfo>>();
             KeyedSortedTagInfoLists = new Dictionary<string, List<TagInfo>>();
         }
@@ -136,8 +141,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return stringBuilder.ToString();
         }
 
-        #region UIAndReportResultsHelp
-
+        
         /// <summary>
         /// Renders code i.e. user input safe for html display for default report
         /// Delayed html encoding allows original values to be rendered for the output form i.e.
@@ -219,14 +223,14 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     if (string.IsNullOrEmpty(tagGroup.Title))
                     {
-                        WriteOnce.Log?.Warn($"Tag group with no title skipped");
+                        _logger.LogWarning("Tag group with no title skipped");
                         continue;
                     }
 
                     bool test = tagGroup.Title.ToLower().Contains(unSupportedGroupsOrPatterns[0]);
                     if (unSupportedGroupsOrPatterns.Any(x => tagGroup.Title.ToLower().Contains(x)))
                     {
-                        WriteOnce.Log?.Warn($"Unsupported tag group or pattern detected '{tagGroup.Title}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags");
+                        _logger.LogWarning("Unsupported tag group or pattern detected '{title}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags", tagGroup.Title);
                     }
 
                     foreach (TagSearchPattern pattern in tagGroup.Patterns ?? new List<TagSearchPattern>())
@@ -234,7 +238,7 @@ namespace Microsoft.ApplicationInspector.CLI
                         pattern.Detected = _appMetaData?.UniqueTags is not null && _appMetaData.UniqueTags.Any(v => v == pattern.SearchPattern);
                         if (unSupportedGroupsOrPatterns.Any(x => pattern.SearchPattern.ToLower().Contains(x)))
                         {
-                            WriteOnce.Log?.Warn($"Unsupported tag group or pattern detected '{pattern.SearchPattern}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags");
+                            _logger.LogWarning("Unsupported tag group or pattern detected '{pattern}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags", pattern.SearchPattern);
                         }
 
                         //create dynamic "category" groups of tags with pattern relationship established from TagReportGroups.json
@@ -629,8 +633,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return result;
         }
 
-        #endregion UIAndReportResultsHelp
-    }
+            }
 
     /// <summary>
     /// Compatible for liquid; used to avoid use in MetaData as it adds unwanted properties to json serialization

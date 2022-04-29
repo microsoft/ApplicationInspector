@@ -1,9 +1,10 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using System.Text.Json.Serialization;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -33,19 +34,19 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         [JsonIgnore]
         public bool Disabled { get; set; }
 
-        [JsonProperty(PropertyName = "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; } = "";
 
-        [JsonProperty(PropertyName = "id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; } = "";
 
-        [JsonProperty(PropertyName = "description")]
+        [JsonPropertyName("description")]
         public string? Description { get; set; } = "";
 
-        [JsonProperty(PropertyName = "applies_to")]
+        [JsonPropertyName("applies_to")]
         public string[]? AppliesTo { get; set; }
 
-        [JsonProperty(PropertyName = "applies_to_file_regex")]
+        [JsonPropertyName("applies_to_file_regex")]
         public string[]? FileRegexes
         {
             get => _fileRegexes;
@@ -75,19 +76,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private IEnumerable<Regex> _compiled = Array.Empty<Regex>();
         private bool _updateCompiledFileRegex = false;
 
-        [JsonProperty(PropertyName = "tags")]
+        [JsonPropertyName("tags")]
         public string[]? Tags { get; set; }
 
-        [JsonProperty(PropertyName = "severity")]
+        [JsonPropertyName("severity")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public Severity Severity { get; set; } = Severity.Moderate;
 
-        [JsonProperty(PropertyName = "overrides")]
+        [JsonPropertyName("overrides")]
         public string[]? Overrides { get; set; }
 
-        [JsonProperty(PropertyName = "patterns")]
+        [JsonPropertyName("patterns")]
         public SearchPattern[] Patterns { get; set; } = Array.Empty<SearchPattern>();
 
-        [JsonProperty(PropertyName = "conditions")]
+        [JsonPropertyName("conditions")]
         public SearchCondition[]? Conditions { get; set; }
     }
 }

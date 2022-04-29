@@ -1,12 +1,15 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    using Microsoft.ApplicationInspector.Common;
     using Microsoft.CST.OAT;
     using Microsoft.CST.RecursiveExtractor;
-    using NLog;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -16,18 +19,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     using System.Threading;
     using System.Threading.Tasks;
 
+    [ExcludeFromCodeCoverage]
     public class RuleProcessorOptions
     {
         public RuleProcessorOptions()
         {
         }
-        public bool Parallel = true;
-        public Confidence confidenceFilter = Confidence.Unspecified | Confidence.Low | Confidence.Medium | Confidence.High;
-        public Logger? logger;
-        public bool allowAllTagsInBuildFiles = false;
 
-        [Obsolete("Use allowAllTagsInBuildFiles")]
-        public bool treatEverythingAsCode => allowAllTagsInBuildFiles;
+        public bool Parallel { get; set; } = true;
+        public Confidence ConfidenceFilter { get; set; } = Confidence.Unspecified | Confidence.Low | Confidence.Medium | Confidence.High;
+        public Severity SeverityFilter { get; set; } = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice;
+        public ILoggerFactory? LoggerFactory { get; set; }
+        public bool AllowAllTagsInBuildFiles { get; set; } = false;
+        public bool EnableCache { get; set; } = true;
+        public Languages Languages { get; set; } = new();
     }
 
     /// <summary>
@@ -38,12 +43,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly int MAX_TEXT_SAMPLE_LENGTH = 200;//char bytes
 
         private readonly RuleProcessorOptions _opts;
-
-        private Confidence ConfidenceLevelFilter => _opts.confidenceFilter;
-        private Logger? Logger => _opts.logger;
-
+        private readonly ILogger<RuleProcessor> _logger;
         private readonly Analyzer analyzer;
         private readonly RuleSet _ruleset;
+        private readonly Languages _languages;
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new();
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _languageRulesCache = new();
         private IEnumerable<ConvertedOatRule>? _universalRulesCache;
@@ -51,7 +54,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Sets severity levels for analysis
         /// </summary>
-        private Severity SeverityLevel { get; }
+        private Severity SeverityLevel => _opts.SeverityFilter;
 
         /// <summary>
         /// Enables caching of rules queries if multiple reuses per instance
@@ -64,14 +67,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public RuleProcessor(RuleSet rules, RuleProcessorOptions opts)
         {
             _opts = opts;
+            _logger = opts.LoggerFactory?.CreateLogger<RuleProcessor>() ?? NullLogger<RuleProcessor>.Instance;
+            _languages = opts.Languages ?? new();
             _ruleset = rules;
             EnableCache = true;
-            SeverityLevel = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice; //finds all; arg not currently supported
 
-            analyzer = new Analyzer(new AnalyzerOptions(false, opts.Parallel));
-            analyzer.SetOperation(new WithinOperation(analyzer));
-            analyzer.SetOperation(new OATRegexWithIndexOperation(analyzer));
-            analyzer.SetOperation(new OATSubstringIndexOperation(analyzer));
+            analyzer = new ApplicationInspectorAnalyzer(_opts.LoggerFactory);
         }
 
         private static string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
@@ -129,7 +130,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
             List<MatchRecord> resultsList = new();
 
-            TextContainer textContainer = new(contents, languageInfo.Name);
+            TextContainer textContainer = new(contents, languageInfo.Name, _languages);
             var caps = analyzer.GetCaptures(rules, textContainer);
             foreach (var ruleCapture in caps)
             {
@@ -153,12 +154,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     var patternIndex = match.Item1;
                                     var boundary = match.Item2;
                                     //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                                    if (!_opts.allowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+                                    if (!_opts.AllowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
                                     {
                                         continue;
                                     }
 
-                                    if (!ConfidenceLevelFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+                                    if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
                                     {
                                         continue;
                                     }
@@ -203,6 +204,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     // Find all overriden rules and mark them for removal from issues list
                     foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
                     {
+                        // If the overridden match is a subset of the overriding match
                         if (om.Boundary?.Index >= m.Boundary?.Index &&
                             om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
                         {
@@ -218,16 +220,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList;
         }
 
-        private IEnumerable<ConvertedOatRule> GetRulesForFile(LanguageInfo languageInfo, FileEntry fileEntry, IEnumerable<string>? tagsToIgnore)
+        public IEnumerable<ConvertedOatRule> GetRulesForFile(LanguageInfo languageInfo, FileEntry fileEntry, IEnumerable<string>? tagsToIgnore)
         {
-            var rulesByLanguage = GetRulesByLanguage(languageInfo.Name).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
-            var rules = rulesByLanguage.Union(GetRulesByFileName(fileEntry.FullPath).Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity)));
-            rules = rules.Union(GetUniversalRules());
-            if (tagsToIgnore?.Any() == true)
-            {
-                rules = rules.Where(x => x.AppInspectorRule?.Tags?.Any(y => !tagsToIgnore.Contains(y)) ?? false);
-            }
-            return rules;
+            return GetRulesByLanguage(languageInfo.Name)
+                .Union(GetRulesByFileName(fileEntry.FullPath))
+                .Union(GetUniversalRules())
+                .Where(x => !x.AppInspectorRule.Tags?.Any(y => tagsToIgnore?.Contains(y) ?? false) ?? true)
+                .Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
         }
 
         public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
@@ -240,7 +239,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             catch(Exception e)
             {
-                WriteOnce.SafeLog($"Failed to analyze file {fileEntry.FullPath}. {e.GetType()}:{e.Message}. ({e.StackTrace})", LogLevel.Debug);
+                _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace}), fileRecord.FileName", fileEntry.FullPath, e.GetType(), e.Message, e.StackTrace);
             }
             if (contents is not null)
             {
@@ -249,7 +248,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return new List<MatchRecord>();
         }
 
-        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken cancellationToken, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
+        public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken? cancellationToken = null, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
             var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
 
@@ -257,10 +256,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             using var sr = new StreamReader(fileEntry.Content);
 
-            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name);
+            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name, _languages);
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
-                if (cancellationToken.IsCancellationRequested)
+                if (cancellationToken?.IsCancellationRequested is true)
                 {
                     return resultsList;
                 }
@@ -285,18 +284,18 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     var boundary = match.Item2;
 
                                     //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                                    if (!_opts.allowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+                                    if (!_opts.AllowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
                                     {
                                         continue;
                                     }
 
                                     if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
                                     {
-                                        Logger?.Error("Index out of range for patterns for rule: " + oatRule.AppInspectorRule.Name);
+                                        _logger.LogError("Index out of range for patterns for rule: {ruleName}", oatRule.AppInspectorRule.Name);
                                         continue;
                                     }
 
-                                    if (!ConfidenceLevelFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+                                    if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
                                     {
                                         continue;
                                     }
@@ -334,7 +333,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides?.Length > 0))
             {
-                if (cancellationToken.IsCancellationRequested)
+                if (cancellationToken?.IsCancellationRequested is true)
                 {
                     return resultsList;
                 }
@@ -358,8 +357,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList;
         }
 
-        #region Private Support Methods
-
+        
         /// <summary>
         ///     Filters the rules for those matching the content type. Resolves all the overrides
         /// </summary>
@@ -482,6 +480,5 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return text.FullContent[startIndex..endIndex];
         }
 
-        #endregion Private Methods
-    }
+            }
 }

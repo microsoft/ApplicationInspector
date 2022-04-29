@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
     <PackageId>Microsoft.CST.ApplicationInspector.Commands</PackageId>
     <PackageVersion>0.0.0-placeholder</PackageVersion>
     <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
@@ -28,6 +27,7 @@
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
+    <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
 
   <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
@@ -48,22 +48,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\defaultRulesPkd.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\defaultRulesPkd.json" Link="defaultRulesPkd.json" />
+    <EmbeddedResource Include="rules\default\**\*.json" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="DotLiquid" Version="2.2.595" />
     <PackageReference Include="Glob" Version="1.1.9" />
-    <PackageReference Include="Microsoft.CST.OAT" Version="1.2.4" />
-    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.6" />
+    <PackageReference Include="Microsoft.CST.OAT" Version="1.2.8" />
+    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="NLog" Version="4.7.13" />
     <PackageReference Include="ShellProgressBar" Version="5.1.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+    <PackageReference Include="System.Reflection.Metadata" Version="6.0.1" />
+    <PackageReference Include="System.Text.Json" Version="6.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -97,9 +96,4 @@
     <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
     <None Include="..\icon-128.png" Pack="true" PackagePath="" />
   </ItemGroup>
-
-  <Target Name="PreBuild" BeforeTargets="BeforeCompile">
-    <MakeDir Directories="Resources" />
-    <Exec Command="dotnet ../RulesPacker/ApplicationInspector.CLI.dll packrules -r rules/default -o Resources/defaultRulesPkd.json -v debug" />
-  </Target>
 </Project>

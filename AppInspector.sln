@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29411.108
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.Commands", "AppInspector\AppInspector.Commands.csproj", "{C6D58D43-481F-456F-90E8-FAC3779E6CC6}"
 EndProject
@@ -15,29 +15,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.RulesEngine", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.CLI", "AppInspector.CLI\AppInspector.CLI.csproj", "{824ED27E-A4CF-46A6-A01F-98B0821EB61C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RulesPacker", "RulesPacker", "{C464D0CE-5254-4EA5-87C9-C0C96E40C3CB}"
-	ProjectSection(SolutionItems) = preProject
-		RulesPacker\ApplicationInspector.CLI.deps.json = RulesPacker\ApplicationInspector.CLI.deps.json
-		RulesPacker\ApplicationInspector.CLI.dll = RulesPacker\ApplicationInspector.CLI.dll
-		RulesPacker\ApplicationInspector.CLI.exe = RulesPacker\ApplicationInspector.CLI.exe
-		RulesPacker\ApplicationInspector.CLI.pdb = RulesPacker\ApplicationInspector.CLI.pdb
-		RulesPacker\ApplicationInspector.CLI.runtimeconfig.dev.json = RulesPacker\ApplicationInspector.CLI.runtimeconfig.dev.json
-		RulesPacker\ApplicationInspector.CLI.runtimeconfig.json = RulesPacker\ApplicationInspector.CLI.runtimeconfig.json
-		RulesPacker\ApplicationInspector.Commands.dll = RulesPacker\ApplicationInspector.Commands.dll
-		RulesPacker\ApplicationInspector.Commands.pdb = RulesPacker\ApplicationInspector.Commands.pdb
-		RulesPacker\ApplicationInspector.RulesEngine.dll = RulesPacker\ApplicationInspector.RulesEngine.dll
-		RulesPacker\ApplicationInspector.RulesEngine.pdb = RulesPacker\ApplicationInspector.RulesEngine.pdb
-		RulesPacker\CommandLine.dll = RulesPacker\CommandLine.dll
-		RulesPacker\DotLiquid.dll = RulesPacker\DotLiquid.dll
-		RulesPacker\Newtonsoft.Json.dll = RulesPacker\Newtonsoft.Json.dll
-		RulesPacker\NLog.dll = RulesPacker\NLog.dll
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest.Commands", "UnitTest.Commands\UnitTest.Commands.csproj", "{181BD826-A428-41D9-8BEC-0D8EB2288DF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.Tests", "AppInspector.Tests\AppInspector.Tests.csproj", "{181BD826-A428-41D9-8BEC-0D8EB2288DF5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{F031887C-EA60-4390-9940-765E99E69B8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppInspector.Common", "AppInspector.Common\AppInspector.Common.csproj", "{B15415B6-6EC8-4AA1-B8AF-DF0ABE5F16DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.Common", "AppInspector.Common\AppInspector.Common.csproj", "{B15415B6-6EC8-4AA1-B8AF-DF0ABE5F16DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppInspector.Tests.CLI", "AppInspector.Tests.CLI\AppInspector.Tests.CLI.csproj", "{01D67C5A-6778-4F86-9D61-66EAFCE94763}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppInspector.Logging", "AppInspector.Logging\AppInspector.Logging.csproj", "{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,12 +55,17 @@ Global
 		{B15415B6-6EC8-4AA1-B8AF-DF0ABE5F16DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B15415B6-6EC8-4AA1-B8AF-DF0ABE5F16DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B15415B6-6EC8-4AA1-B8AF-DF0ABE5F16DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01D67C5A-6778-4F86-9D61-66EAFCE94763}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01D67C5A-6778-4F86-9D61-66EAFCE94763}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01D67C5A-6778-4F86-9D61-66EAFCE94763}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01D67C5A-6778-4F86-9D61-66EAFCE94763}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{C464D0CE-5254-4EA5-87C9-C0C96E40C3CB} = {876245F3-D7C5-4AA3-A288-2CE94BF63B8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D8F88F7-47D4-475A-B1AF-713132222341}

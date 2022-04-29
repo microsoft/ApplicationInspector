@@ -156,6 +156,9 @@
   <data name="ANALYZE_NOPATTERNS" xml:space="preserve">
     <value>No pattern matches were detected for files in source path</value>
   </data>
+    <data name="ANALYZE_PROCESSING_TIMED_OUT" xml:space="preserve">
+    <value>Overall processing timeout hit.</value>
+  </data>
   <data name="ANALYZE_NOSUPPORTED_FILETYPES" xml:space="preserve">
     <value>No file types found in source path that are supported</value>
   </data>
@@ -193,7 +196,7 @@
     <value>Invalid file or directory {0}</value>
   </data>
   <data name="CMD_INVALID_LOG_PATH" xml:space="preserve">
-    <value>The requested log file {0}) exist but is not recognized as an application log. Provide a different value or delete the file and try again.</value>
+    <value>The requested log file {0} cannot be written.</value>
   </data>
   <data name="CMD_INVALID_RULE_PATH" xml:space="preserve">
     <value>Invalid rule path {0}</value>
