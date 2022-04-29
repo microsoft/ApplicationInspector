@@ -34,5 +34,5 @@ jobs:
     inputs:
       command: 'test'
       projects: ${{ parameters.projectPath }}
-      arguments: "--collect "Code coverage"
+      arguments: '--collect "Code coverage"'
       publishTestResults: true
