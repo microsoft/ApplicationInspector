@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Hygiene: Todo Comment",
+    "id": "AI027300",
+    "description": "Hygiene: Todo Comment",
+    "tags":[ "Miscellaneous.CodeHygiene.Comment.Todo" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "todo",
+        "type": "regex",
+        "scopes": [ "comment" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Hygiene: Fix Comment",
+    "id": "AI027400",
+    "description": "Hygiene: Fix Comment",
+    "tags":[ "Miscellaneous.CodeHygiene.Comment.Fix" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "fixme|broke|broken",
+        "type": "regex",
+        "scopes": [ "comment" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Hygiene: Suspicious Comment",
+    "id": "AI027500",
+    "description": "Hygiene: Suspicious Comment",
+    "tags":[ "Miscellaneous.CodeHygiene.Comment.Suspicious" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "hack|insecure|black magic|high risk|risky|riskiest|obfuscation|obfuscate|obfuscated",
+        "type": "regex",
+        "scopes": [ "comment" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  }
+]

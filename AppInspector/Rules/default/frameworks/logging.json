@@ -1,0 +1,103 @@
+[
+  {
+    "name": "Framework: Logging (Log4J)",
+    "id": "AI021700",
+    "description": "Framework: Logging (Log4J)",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Development.Logging.Log4j" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "log4j",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Framework: Logging (NLog)",
+    "id": "AI021800",
+    "description": "Framework: Logging (NLog)",
+    "applies_to":[ "csharp" ],
+    "tags":[ "Framework.Development.Logging.NLog" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "nlog",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Framework: Logging (Serilog)",
+    "id": "AI021900",
+    "description": "Framework: Logging (Serilog)",
+    "applies_to":[ "csharp" ],
+    "tags":[ "Framework.Development.Logging.Serilog" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Serilog",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Framework: Logging (log4net)",
+    "id": "AI022000",
+    "description": "Framework: Logging (log4net)",
+    "applies_to":[ "csharp" ],
+    "tags":[ "Framework.Development.Logging.Log4Net" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "log4net",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Framework: Logging (ulog)",
+    "id": "AI022100",
+    "description": "Framework: Logging (ulog)",
+    "applies_to":[ "csharp" ],
+    "tags":[ "Framework.Development.Logging.ULog" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ulog",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Framework: Logging (Winston)",
+    "id": "AI022200",
+    "description": "Framework: Logging (Winston)",
+    "applies_to":[ "csharp" ],
+    "tags":[ "Framework.Development.Logging.Winston" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "winston",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "medium",
+        "modifiers": ["i"]
+      }
+    ]
+  }
+]

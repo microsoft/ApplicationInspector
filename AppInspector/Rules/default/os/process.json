@@ -1,0 +1,179 @@
+[
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI036700",
+    "description": "OS: Multiprocessing / Multithreading",
+    "tags":[ "OS.Process.Multiprocessing" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mutex|semaphore|thread|lock|fork",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "async|await",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI036800",
+    "description": "OS: Multiprocessing / Multithreading",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "OS.Process.Multiprocessing" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "WaitForSingleObject|WaitForMultipleObjects",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI036900",
+    "description": "OS: Multiprocessing / Multithreading",
+    "applies_to":[ "csharp" ],
+    "tags":[ "OS.Process.Multiprocessing" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "BackgroundWorker|Task\\.Run|Async|System.Threading",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "(new System\\.Diagnostics.Process\\(\\)| new Process\\(\\))",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI036910",
+    "description": "OS: Multiprocessing / Multithreading",
+    "applies_to":[ "rust" ],
+    "tags":[ "OS.Process.Multiprocessing" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "thread::spawn",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "(new System\\.Diagnostics.Process\\(\\)| new Process\\(\\))",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI037000",
+    "description": "OS: Multiprocessing / Multithreading",
+    "applies_to":[ "java" ],
+    "tags":[ "OS.Process.Multiprocessing" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Runnable",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Multiprocessing / Multithreading",
+    "id": "AI037100",
+    "description": "OS: Multiprocessing / Multithreading",
+    "applies_to":[ "go" ],
+    "tags":[ "OS.Process.Multiprocessing" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<-",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Process Access (Read)",
+    "id": "AI037200",
+    "description": "OS: Process Access (Read)",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp",
+      "python"
+    ],
+    "tags":[ "OS.Process.ListRequest" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Process.GetProcesses()",
+        "type": "string",
+        "scopes": [ "code" ]
+      },
+      {
+        "pattern": "ReadProcessMemory|OpenProcess|VirtualQueryEx",
+        "type": "regexword",
+        "scopes": [ "code" ]
+      },
+      {
+        "pattern": "system32\\tasklist.exe",
+        "type": "string",
+        "scopes": [ "code" ]
+      }
+    ]
+  },
+  {
+    "name": "OS: Process Access (Read)",
+    "id": "AI037300",
+    "description": "OS: Process Access (Read)",
+    "applies_to":[ "powershell" ],
+    "tags":[ "OS.Process.ListRequest" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Get-Process ",
+        "type": "substring",
+        "scopes": [ "code" ]
+      }
+    ]
+  },
+  {
+    "name": "OS: Process Access (Read)",
+    "id": "AI037400",
+    "description": "OS: Process Access (Read)",
+    "applies_to":[ "java" ],
+    "tags":[ "OS.Process.ListRequest" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "exec.*['\\\"]ps ",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  }
+]

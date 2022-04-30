@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Infrastructure As Code: Packers (Hashicorp)",
+    "id": "AI031565",
+    "description": "Infrastructure As Code: Packers (Hashicorp)",
+    "applies_to":[ "json" ],
+    "tags":[ "Infrastructure.Packers.Hashicorp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "builders\": \\[",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      }
+    ]
+  }
+]

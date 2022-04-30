@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Cryptography: CryptoCurrency",
+    "id": "AI007700",
+    "description": "Cryptography: CryptoCurrency",
+    "tags":[ "Cryptography.CryptoCurrency" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "cardano|ethereum|cryptocurrency",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "p2pool|miner|ripple|nxt|zcash|tether|ether|btc|monero|merkleroot|xmr|eth",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium"
+      },
+      {
+        "pattern": "(bit|lite|name|peer|doge|grid|prim|vert|pot)coin",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

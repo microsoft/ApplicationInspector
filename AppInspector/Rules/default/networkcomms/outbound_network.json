@@ -1,0 +1,429 @@
+[
+  {
+    "name": "Network Connection: FTP, Telnet or Similar",
+    "description": "Network Connection",
+    "id": "AI031600",
+    "applies_to": [
+    ],
+    "tags":[ "OS.Network.Connection.Miscellaneous" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "tftp|ntp\\.org|ntpupdate|imap|snmp|ftps|sftp|ftp|nntp|smtp|telnet|ssh|pop3|gopher",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "don't include auth api's patterns to avoid duplicate reporting"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: TCP",
+    "description": "Network Connection TCP",
+    "id": "AI031700",
+    "applies_to":[ "csharp" ],
+    "tags":[ "OS.Network.Connection.Tcp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".Listen(",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "TcpConnection",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "(Anonymous|Named)Pipe(Client|Server)Stream",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: TCP",
+    "description": "Network Connection",
+    "id": "AI031800",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "OS.Network.Connection.Tcp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "QTcpServer",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "Qt TCP Server"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: TCP",
+    "description": "Network Connection TCP",
+    "id": "AI031900",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "OS.Network.Connection.Tcp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "QTcpServer",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "Qt TCP Server"
+      },
+      {
+        "pattern": "tcp::acceptor",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "Boost::AsynchIO"
+      },
+      {
+        "pattern": "listen(",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "Standard C Library"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: TCP",
+    "description": "Network Connection",
+    "id": "AI031910",
+    "applies_to":[ "rust" ],
+    "tags":[ "OS.Network.Connection.Http" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "TcpStream::connect|HttpConnection",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+
+  {
+    "name": "Network Connection: Socket",
+    "description": "Network Connection Socket",
+    "id": "AI032000",
+    "applies_to":[ "python" ],
+    "tags":[ "OS.Network.Connection.Socket" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".bind(",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "Python socket"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: Socket",
+    "description": "Network Socket",
+    "id": "AI032100",
+    "tags":[ "OS.Network.Connection.Socket" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "socket",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "general"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: Socket",
+    "description": "Network Socket",
+    "id": "AI032110",
+    "tags":[ "OS.Network.Connection.Socket" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "connect|port",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": "general"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: HTTP",
+    "description": "Network Connection",
+    "id": "AI032200",
+    "applies_to":[ "csharp" ],
+    "tags":[ "OS.Network.Connection.Http" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "WebClient|HttpClient|HttpRequest|HttpWebRequest|HttpWebResponse|System\\.Net\\.Http|Microsoft\\.AspNetCore\\.Http",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: HTTP Content (Ajax)",
+    "description": "Network Connection: HTTP Content (Ajax)",
+    "id": "AI032300",
+    "applies_to": [
+      "javascript",
+      "html"
+    ],
+    "tags":[ "OS.Network.Connection.Http.Ajax" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(\\$|jQuery)\\.(post|get|getJSON|getScript)\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "jQuery AJAX"
+      },
+      {
+        "pattern": "fetch(",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "Fetch API"
+      },
+      {
+        "pattern": "XMLHttpRequest",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: HTTP",
+    "description": "Network Connection: HTTP",
+    "id": "AI032400",
+    "applies_to":[ "javascript" ],
+    "tags":[ "OS.Network.Connection.Http" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "require\\(['\\\"](http|https|request|axios|superagent|got)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "Common Node.js HTTP libraries"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: HTTP",
+    "description": "Network Connection: HTTP",
+    "id": "AI032500",
+    "applies_to":[ "python" ],
+    "tags":[ "OS.Network.Connection.Http" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "import .*(http|requests)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "Common Python HTTP libraries"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: HTTP",
+    "description": "Network Connection: HTTP",
+    "id": "AI032600",
+    "applies_to": [
+    ],
+    "tags":[ "OS.Network.Connection.Http" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "https?:\/",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "low",
+        "_comment": "HTTP URL with or without TLS"
+      },
+      {
+        "pattern": "curl|wpget",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: HTTP",
+    "description": "Network Connection: HTTP",
+    "id": "AI032700",
+    "applies_to": [ "ruby" ],
+    "tags":[ "OS.Network.Connection.Http" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Net::HTTP",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: RPC",
+    "description": "Network Connection: RPC",
+    "id": "AI032800",
+    "applies_to": [ "csharp" ],
+    "tags":[ "OS.Network.Connection.RPC" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RPC|RemotableTypeclass|System\\.Runtime\\.Remoting|RemotingConfiguration|TcpClient|TcpChannel",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: RPC",
+    "description": "Network Connection: RPC",
+    "id": "AI032900",
+    "applies_to": [ "python" ],
+    "tags":[ "OS.Network.Connection.RPC" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "fastrpc|xmlrpc|SimpleXMLRPCServer|jsonrpc|rpc\\.server|client\\.rpc",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: RPC",
+    "description": "Network Connection: RPC",
+    "id": "AI033000",
+    "applies_to": [ "c" ],
+    "tags":[ "OS.Network.Connection.RPC" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "capnp/ez-rpc\\.h|rpc/server\\.h",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: RPC",
+    "description": "Network Connection: RPC",
+    "id": "AI033100",
+    "applies_to": [ "java" ],
+    "tags":[ "OS.Network.Connection.RPC" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RmiServiceExporter|RmiProxyFactoryBean|remoting|jaxrpc|RemoteAccountService|io\\.grpc|RPCClient",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: RPC",
+    "description": "Network Connection: RPC",
+    "id": "AI033200",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags":[ "OS.Network.Connection.RPC" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RpcProvider|jayson|json-rpc",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: Cellular",
+    "description": "Network Connection: Cellular",
+    "id": "AI033300",
+    "applies_to": [ "c", "cpp", "csharp" ],
+    "tags":[ "OS.Network.Connection.Cellular" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "NetworkInterfaceType\\.(Wman|Wwanpp|Wwanpp2)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "https://docs.microsoft.com/en-us/dotnet/api/system.net.networkinformation.networkinterfacetype?view=net-5.0"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: Modem",
+    "description": "Network Connection: Modem",
+    "id": "AI033400",
+    "applies_to": [ "c", "cpp", "csharp", "java" ],
+    "tags":[ "OS.Network.Connection.Modem" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "modem",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Network Connection: General",
+    "description": "Network Connection: General",
+    "id": "AI033410",
+    "tags":[ "OS.Network.Connection.General" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "send.*message",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "low"
+      },
+      {
+        "pattern": "send\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      }
+    ]
+  }
+]

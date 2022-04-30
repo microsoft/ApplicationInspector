@@ -1,0 +1,146 @@
+[
+  {
+    "name": "Testing Framework: GHUnit",
+    "id": "AI050800",
+    "description": "Testing Framework: GHUnit",
+    "applies_to":[ "objective-c" ],
+    "tags":[ "Framework.Testing.GHUnit" ],
+    "patterns": [
+      {
+        "pattern": "GHUnit",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Cedar",
+    "id": "AI051000",
+    "description": "Testing Framework: Cedar",
+    "applies_to":[ "objective-c" ],
+    "tags":[ "Framework.Testing.Cedar" ],
+    "patterns": [
+      {
+        "pattern": "Cedar",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Kiwi",
+    "id": "AI051100",
+    "description": "Testing Framework: Kiwi",
+    "applies_to":[ "objective-c" ],
+    "tags":[ "Framework.Testing.Kiwi" ],
+    "patterns": [
+      {
+        "pattern": "kiwi",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Specta",
+    "id": "AI051200",
+    "description": "Testing Framework: Specta",
+    "applies_to":[ "objective-c" ],
+    "tags":[ "Framework.Testing.Specta" ],
+    "patterns": [
+      {
+        "pattern": "specta",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Quick",
+    "id": "AI051300",
+    "description": "Testing Framework: Quick",
+    "applies_to":[ "objective-c" ],
+    "tags":[ "Framework.Testing.quick" ],
+    "patterns": [
+      {
+        "pattern": "Quick",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: ObjcUnit",
+    "id": "AI051400",
+    "description": "Testing Framework: ObjcUnit",
+    "applies_to":[ "objective-c" ],
+    "tags":[ "Framework.Testing.ObjcUnit" ],
+    "patterns": [
+      {
+        "pattern": "objcunit",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: OCUnit",
+    "id": "AI051500",
+    "description": "Testing Framework: OCUnit",
+    "applies_to":[ "objective-c" ],
+    "tags":[ "Framework.Testing.OCUnit" ],
+    "patterns": [
+      {
+        "pattern": "ocunit",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: WOTest",
+    "id": "AI051600",
+    "description": "Testing Framework: WOTest",
+    "applies_to":[ "objective-c" ],
+    "tags":[ "Framework.Testing.WOTest" ],
+    "patterns": [
+      {
+        "pattern": "wotest",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: XCTest",
+    "id": "AI051700",
+    "description": "Testing Framework: XCTest",
+    "applies_to":[ "objective-c" ],
+    "tags":[ "Framework.Testing.XCTest" ],
+    "patterns": [
+      {
+        "pattern": "xctest",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

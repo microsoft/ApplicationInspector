@@ -1,0 +1,398 @@
+[
+  {
+    "name": "Cloud Service: Hosting (Amazon Web Services)",
+    "id": "AI000500",
+    "description": "Cloud Service: Hosting (Amazon Web Services)",
+    "tags":[ "CloudServices.Hosting.Amazon.AWS" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.amazonaws\\.com|aws\\.amazon\\.com",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Hosting (Apple iCloud)",
+    "id": "AI000600",
+    "description": "Cloud Service: Hosting (Apple iCloud)",
+    "tags":[ "CloudServices.Hosting.Apple.iCloud" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "icloud",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "NSUbiquitousKeyValueStore|URLForUbiquityContainerIdentifier",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Hosting (Microsoft Azure)",
+    "id": "AI000700",
+    "description": "Cloud Service: Hosting (Microsoft Azure)",
+    "tags":[ "CloudServices.Hosting.Microsoft.Azure" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "azure",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Application (Microsoft Office 365)",
+    "id": "AI000800",
+    "description": "Cloud Service: Application (Microsoft Office 365)",
+    "tags":[ "CloudServices.Application.Microsoft.O365" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "o365|m365|office365|office\\.com",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "graph\\.microsoft\\.com|MicrosoftGraph",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Application (Telemetry)",
+    "id": "AI000810",
+    "description": "Cloud Service: Application (Telemetry)",
+    "applies_to": [ "csharp" ],
+    "tags":[ "CloudServices.Application.Microsoft.Telemetry" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "TelemetryClient|Microsoft\\.ApplicationInsights|MetricTelemetry",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Application (Telemetry)",
+    "id": "AI000820",
+    "description": "Cloud Service: Application (Telemetry)",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags":[ "CloudServices.Application.Microsoft.Telemetry" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "appInsights.trackMetric",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Application (Telemetry)",
+    "id": "AI000830",
+    "description": "Cloud Service: Application (Telemetry)",
+    "tags":[ "CloudServices.Application.Microsoft.Telemetry" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "applicationinsights",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Hosting (Google Cloud)",
+    "id": "AI000900",
+    "description": "Cloud Service: Hosting (Google Cloud)",
+    "tags":[ "CloudServices.Hosting.Google" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "cloud.google.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Hosting (DigitalOcean Cloud)",
+    "id": "AI001000",
+    "description": "Cloud Service: Hosting (DigitalOcean Cloud)",
+    "tags":[ "CloudServices.Hosting.DigitalOcean" ],
+    "severity": "moderate",
+    "rule_info": "",
+    "patterns": [
+      {
+        "pattern": "digitalocean.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Application (SendGrid)",
+    "id": "AI001100",
+    "description": "Cloud Service: Application (SendGrid)",
+    "tags":[ "CloudServices.Application.SendGrid.Mail" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sendgrid.net",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Code Repository (GitHub)",
+    "id": "AI001200",
+    "description": "Cloud Service: Code Repository (GitHub)",
+    "tags":[ "CloudServices.Code.Repo.GitHub" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "github",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Code Repository (GitLab)",
+    "id": "AI001300",
+    "description": "Cloud Service: Code Repository (GitLab)",
+    "tags":[ "CloudServices.Code.Repo.GitLab" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "gitlab",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Code Repository (BitBucket)",
+    "id": "AI001400",
+    "description": "Cloud Service: Code Repository (BitBucket)",
+    "tags":[ "CloudServices.Code.Repo.BitBucket" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "bitbucket",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Code Repository (SourceForge)",
+    "id": "AI001500",
+    "description": "Cloud Service: Code Repository (SourceForge)",
+    "tags":[ "CloudServices.Code.Repo.SourceForge" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sourceforge",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Code Repository (Savannah)",
+    "id": "AI001600",
+    "description": "Cloud Service: Code Repository (Savannah)",
+    "tags":[ "CloudServices.Code.Repo.Savannah" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "savannah\\.(non)?gnu\\.org",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Code Package Repository (NuGet)",
+    "id": "AI001700",
+    "description": "Cloud Service: Code Package Repository (NuGet)",
+    "tags":[ "CloudServices.Code.Repo.Microsoft.NuGet" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "nuget",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Code Package Repository (NPM)",
+    "id": "AI001800",
+    "description": "Cloud Service: Code Package Repository (NPM)",
+    "tags":[ "CloudServices.Code.Repo.NPM" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "npm",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Code Package Repository (PyPI)",
+    "id": "AI001900",
+    "description": "Cloud Service: Code Package Repository (PyPI)",
+    "tags":[ "CloudServices.Code.Repo.PyPI" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pypi",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Code Package Repository (LaunchPad)",
+    "id": "AI002000",
+    "description": "Cloud Service: Code Package Repository (LaunchPad)",
+    "tags":[ "CloudServices.Code.Repo.LaunchPad" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "launchpad.net",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Code Repository (Visual Studio)",
+    "id": "AI001410",
+    "description": "Cloud Service: Code Repository (Visual Studio)",
+    "tags":[ "CloudServices.Code.Repo.VisualStudio" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "visualstudio.com",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: CI (TravisCI)",
+    "id": "AI002100",
+    "description": "Cloud Service: CI (TravisCI)",
+    "applies_to":[ "yaml" ],
+    "tags":[ "CloudServices.Code.CI.TravisCI" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(language|dist|matrix):",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: CI (Circle CI)",
+    "id": "AI002200",
+    "description": "Cloud Service: CI (Circle CI)",
+    "applies_to":[ "yaml" ],
+    "tags":[ "CloudServices.Code.CI.CircleCI" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "circleci",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: CI (Azure Pipelines)",
+    "id": "AI002300",
+    "description": "Cloud Service: CI (Azure Pipelines)",
+    "applies_to":[ "yaml" ],
+    "tags":[ "CloudServices.Code.CI.Microsoft.Azure" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "steps:",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cloud Service: Hosting App Store (Windows)",
+    "id": "AI002400",
+    "description": "Cloud Service: Hosting App Store (Windows)",
+    "tags":[ "CloudServices.Hosting.Microsoft.AppStore" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Windows Store|Windows App Store|WinAppStore",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

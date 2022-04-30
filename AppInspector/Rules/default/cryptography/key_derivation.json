@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Cryptography: Key Derivation",
+    "id": "AI009300",
+    "description": "Cryptography: Key Derivation",
+    "applies_to": ["csharp"],
+    "tags":[ "Cryptography.KeyDerivation.General" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "KeyDerivationAlgorithmNames|SampleDeriveKeyMaterialPbkdf|RNGCryptoServiceProvider|Rfc2898DeriveBytes|KeyDerivation|DeriveKey|PasswordDeriveBytes",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Key Derivation (PBKDF1)",
+    "id": "AI009400",
+    "description": "Cryptography: Key Derivation (PBKDF1)",
+    "tags": [
+      "Cryptography.KeyDerivation.PBKDF1",
+      "Cryptography.HashAlgorithm.PBKDF1"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pbkdf",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "pbkdf2",
+          "type": "substring",
+          "scopes": [ "code" ],
+          "modifiers": [ "i" ]
+        },
+        "search_in": "same-line",
+        "negate_finding": true
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Key Derivation (PBKDF2)",
+    "id": "AI009500",
+    "description": "Cryptography: Key Derivation (PBKDF2)",
+    "tags": [ "Cryptography.KeyDerivation.PBKDF2" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "pbkdf2",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

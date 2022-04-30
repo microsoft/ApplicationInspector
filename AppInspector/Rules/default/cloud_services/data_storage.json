@@ -1,0 +1,291 @@
+[
+  {
+    "name": "CloudServices: DataStorage (Azure)",
+    "id": "AI002500",
+    "description": "CloudServices: DataStorage (Azure Table,File,Blob)",
+    "applies_to":[ "csharp" ],
+    "tags": [
+      "CloudServices.DataStorage.Microsoft.Azure",
+      "CloudServices.Hosting.Microsoft.Azure"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "CloudStorageAccount|Microsoft\\.Azure\\.Storage|Microsoft\\.Azure\\.Cosmos\\.Table|Microsoft\\.Azure\\.Documents|Microsoft\\.WindowsAzure\\.Storage",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "cosmosdb",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Azure)",
+    "id": "AI002600",
+    "description": "CloudServices: DataStorage (Azure Table,File,Blob)",
+    "applies_to": [
+      "python",
+      "java",
+      "yaml",
+      "pom.xml"
+    ],
+    "tags":[ "CloudServices.DataStorage.Microsoft.Azure" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(BlockBlobService|azure)\\.storage|cosmosdb\\.azure\\.com|BlobStorageAccount",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "cosmosdb",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Azure)",
+    "id": "AI002700",
+    "description": "CloudServices: DataStorage (Azure Table,File,Blob)",
+    "applies_to":[ "javascript" ],
+    "tags":[ "CloudServices.DataStorage.Microsoft.Azure" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.createBlobService",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      },
+      {
+        "pattern": "azure/storage-blob",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (AzureKeyVault)",
+    "id": "AI002710",
+    "description": "CloudServices: DataStorage (AzureKeyVault)",
+    "applies_to":[ "csharp" ],
+    "tags": [
+      "CloudServices.DataStorage.Microsoft.AzureKeyVault",
+      "Data.Sensitive.Secret"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "new ClientSecret|KeyVaultClient|Microsoft\\.Azure\\.KeyVault|Microsoft\\.Azure\\.Management\\.KeyVault",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "keyvault",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": ["i"],
+        "confidence": "medium"
+      },
+      {
+        "pattern": "azure\\.keyvault|azure\\.mgmt\\.keyvault",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (HashiCorp Vault)",
+    "id": "AI002730",
+    "description": "CloudServices: DataStorage (HashiCorp Vault)",
+    "applies_to":[ "csharp" ],
+    "tags": [
+      "CloudServices.DataStorage.HashiCorp.Vault",
+      "Data.Sensitive.Secret"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "VaultClientSettings|IVaultClient",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "hashicorp|VaultSharp",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (HashiCorp Vault)",
+    "id": "AI002740",
+    "description": "CloudServices: DataStorage (HashiCorp Vault)",
+    "tags": [
+      "CloudServices.DataStorage.HashiCorp.Vault",
+      "Data.Sensitive.Secret"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "vaultSharp|hashicorp|spring vault|import org.springframework.vault",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "includes vaultsharp here for possible use in PS"
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Azure)",
+    "id": "AI002800",
+    "description": "CloudServices: DataStorage (Azure) Table,File,Blob",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "CloudServices.DataStorage.Microsoft.Azure" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "azure::storage|#include <was\/storage_account\\.h>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Microsoft OneDrive)",
+    "id": "AI002900",
+    "description": "CloudServices: DataStorage (Microsoft OneDrive)",
+    "tags":[ "CloudServices.DataStorage.Microsoft.OneDrive" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "OneDrive",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Amazon S3)",
+    "id": "AI003000",
+    "description": "CloudServices: DataStorage (Amazon S3)",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "CloudServices.DataStorage.Amazon.S3" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "aws/s3/|Aws::S3",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Amazon S3)",
+    "id": "AI003100",
+    "description": "CloudServices: DataStorage (Amazon S3)",
+    "applies_to":[ "csharp" ],
+    "tags":[ "CloudServices.DataStorage.Amazon.S3" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Amazon.S3",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Amazon S3)",
+    "id": "AI003200",
+    "description": "CloudServices: DataStorage (Amazon S3)",
+    "applies_to":[ "python" ],
+    "tags":[ "CloudServices.DataStorage.Amazon.S3" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "boto3",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (Google Drive)",
+    "id": "AI003300",
+    "description": "CloudServices: DataStorage (Google Drive)",
+    "tags":[ "CloudServices.DataStorage.Google.Drive" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "googleapis.com/upload/drive",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (DropBox)",
+    "id": "AI003400",
+    "description": "CloudServices: DataStorage (DropBox)",
+    "tags":[ "CloudServices.DataStorage.DropBox" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "api.dropboxapi.com",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "CloudServices: DataStorage (MediaFire)",
+    "id": "AI003500",
+    "description": "CloudServices: DataStorage (MediaFire)",
+    "tags":[ "CloudServices.DataStorage.MediaFire" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "MediaFire",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  }
+]

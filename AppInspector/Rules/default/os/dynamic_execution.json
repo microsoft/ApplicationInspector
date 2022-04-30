@@ -1,0 +1,359 @@
+[
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI034800",
+    "description": "OS: Dynamic Execution",
+    "applies_to": [
+      "objective-c",
+      "swift"
+    ],
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "stringByEvaluatingJavaScriptFromString",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "https://developer.apple.com/documentation/uikit/uiwebview/1617963-stringbyevaluatingjavascriptfrom?language=objc"
+      },
+      {
+        "pattern": "evaluateJavaScript",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "https://developer.apple.com/documentation/webkit/wkwebview/1415017-evaluatejavascript?language=objc"
+      }
+
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI034900",
+    "description": "OS: Dynamic Execution",
+    "applies_to": [
+      "javascript",
+      "ruby",
+      "javascriptreact",
+      "rust"
+    ],
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\beval\\(|new Function\b",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "exec(Sync)?\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "\\bspawn\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "\\bsystem\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035000",
+    "description": "OS: Dynamic Execution",
+    "recommendation": "",
+    "applies_to":[ "csharp" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "process.start",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035010",
+    "description": "OS: Dynamic Execution",
+    "recommendation": "",
+    "applies_to":[ "rust" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "use std::process::Command;|Command::new",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035100",
+    "description": "OS: Dynamic Execution",
+    "applies_to":[ "powershell" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(iex|invoke-expression).*[.]*webclient",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "(iex|invoke-expression).*[.]*downloadstring",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035200",
+    "description": "OS: Dynamic Execution",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ksh|bash|csh|sh",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "system(",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "shellexecute|createprocess|execl|execlp|execlp|execv|execve|execvp|execvpe|execle|fork|QProcess",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035300",
+    "description": "OS: Dynamic Execution",
+    "applies_to":[ "java" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Runtime.getRuntime().exec",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035400",
+    "description": "OS: Dynamic Execution",
+    "applies_to":[ "python" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "subprocess.Popen",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "\\bsystem\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035500",
+    "description": "OS: Dynamic Execution",
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "xp_cmdshell|xp_regread|xp_instance_regread|xp_regwrite|sp_makewebtask|xp_sendmail|sp_configure|sp_executesql|dbcc writepage",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035510",
+    "description": "OS: Dynamic Execution",
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "powershell|cmd|rundll32|regedit|wscript|javaw|csc|regsvr32|certutil|bitsadmin|schtasks|wmic|eqnedt32|msiexec|cmstp|mshta|curl|installutil|regsvcs|regasm|msbuild|cscript|msxsl|runonce",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "sc (config|query|start|stop)",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "reg (add|copy|delete|import|export|restore|save|unload|compare)",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution",
+    "id": "AI035520",
+    "description": "OS: Dynamic Execution",
+    "applies_to":[ "php" ],
+    "tags":[ "OS.Process.DynamicExecution" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": " shell_exec[ ]*\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": " exec[ ]*\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": " system[ ]*\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      },
+      {
+        "pattern": " passthru[ ]*\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": " proc_open[ ]*\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution through Android Intent",
+    "id": "AI035530",
+    "description": "OS: Indirect Dynamic Execution through Android Intent",
+    "tags":[ "OS.Process.DynamicExecution.Intent" ],
+    "applies_to": [ "java" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "startActivity\\(\\)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "startActivityForResult\\(\\)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution through Android Intent",
+    "id": "AI035531",
+    "description": "OS: Indirect Dynamic Execution through Android Intent",
+    "tags":[ "OS.Process.DynamicExecution.Intent" ],
+    "applies_to": [ "csharp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "new Intent\\(\\)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "import android",
+          "type": "string",
+          "scopes": [ "code" ]
+        },
+        "search_in": "finding-region(-200,0)",
+        "negate_finding": false
+      }
+    ]
+  },
+  {
+    "name": "OS: Dynamic Execution through Android Intent",
+    "id": "AI035532",
+    "description": "OS: Indirect Dynamic Execution through Android Intent",
+    "tags":[ "OS.Process.DynamicExecution.Intent" ],
+    "applies_to": [ "cpp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "startActivity",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      },
+      {
+        "pattern": "android/content/Intent",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]
