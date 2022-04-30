@@ -1,0 +1,198 @@
+[
+  {
+    "name": "Infrastructure As Code: Deployment (Microsoft ARM)",
+    "id": "AI031567",
+    "description": "Infrastructure As Code: Deployment (Microsoft ARM)",
+    "applies_to":[ "csharp" ],
+    "tags":[ "Infrastructure.ARM.Deployment" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "DeploymentOperationsExtensions|DeploymentScriptsClient|IDeploymentOperations|IDeploymentScriptsClient",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "https://schema\\.management\\.azure\\.com/schemas/.*deploymentTemplate\\.json",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "az deployment create",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: Tag AddUpdate (Microsoft ARM)",
+    "id": "AI031568",
+    "description": "Infrastructure As Code: Tag AddUpdate (Microsoft ARM)",
+    "applies_to":[ "powershell" ],
+    "tags":[ "Infrastructure.ARM.TagAddUpdate" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(New|Update|Remove)-AzTag",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "az tag create",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: ResourceGroupAddUpdate (Microsoft ARM)",
+    "id": "AI031569",
+    "description": "Infrastructure As Code: ResourceGroupAddUpdate (Microsoft ARM)",
+    "applies_to":[ "powershell" ],
+    "tags":[ "Infrastructure.ARM.ResourceGroupAddUpdate" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(New|Update|Remove)-AzResourceGroupDeployment",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "az group create",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: SubscriptionAddUpdate (Microsoft ARM)",
+    "id": "AI031570",
+    "description": "Infrastructure As Code: SubscriptionAddUpdate (Microsoft ARM)",
+    "applies_to":[ "powershell" ],
+    "tags":[ "Infrastructure.ARM.SubscriptionAddUpdate" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(New|Update|Remove)-AzSubscriptionDeployment",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "az subscription create",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: TemplateSpecUpdate (Microsoft ARM)",
+    "id": "AI031571",
+    "description": "Infrastructure As Code: TemplateSpecUpdate (Microsoft ARM)",
+    "applies_to":[ "powershell" ],
+    "tags":[ "Infrastructure.ARM.TemplateSpecAddUpdate" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(New|Update|Remove)-AzTemplateSpec",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "az ts create",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: API Based (Microsoft ARM)",
+    "id": "AI031572",
+    "description": "Infrastructure As Code: API Based (Microsoft ARM)",
+    "applies_to": [
+    ],
+    "tags":[ "Infrastructure.ARM.API.General" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "https:\/\/management\\.azure\\.com\/subscriptions\/.*\/resourcegroups\/.*\/providers\/Microsoft\\.Resources\/deployments",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "https:\/\/management\\.azure\\.com\/subscriptions/.*\/providers\/Microsoft\\.Resources\/deployments",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "https:\/\/management\\.azure\\.com\/providers\/Microsoft\\.Management\/managementGroups\/providers\/Microsoft\\.Resources\/deployments",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: Deployment (Microsoft ARM)",
+    "id": "AI031573",
+    "description": "Infrastructure As Code: Deployment (Microsoft ARM)",
+    "applies_to":[ "java" ],
+    "tags":[ "Infrastructure.ARM.Deployment" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Deployment\\.Execution",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "medium",
+        "_comment": "add conditions to raise confidence level"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: General (Microsoft ARM)",
+    "id": "AI031574",
+    "description": "Infrastructure As Code: General (Microsoft ARM)",
+    "applies_to":[ "java" ],
+    "tags":[ "Infrastructure.ARM.General" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "com\\.microsoft\\.azure\\.management\\.resources",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "medium",
+        "_comment": "add conditions to raise confidence level"
+      }
+    ]
+  },
+  {
+    "name": "Infrastructure As Code: Deployment General (Microsoft ARM)",
+    "id": "AI031575",
+    "description": "Infrastructure As Code: (Microsoft ARM)",
+    "applies_to":[ "python" ],
+    "tags":[ "Infrastructure.ARM.General" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "from azure\\.mgmt\\.resource import ResourceManagementClient",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "medium",
+        "_comment": "add conditions to raise confidence level"
+      }
+    ]
+  }
+]

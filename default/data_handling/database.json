@@ -1,0 +1,361 @@
+[
+  {
+    "name": "Data: ORM (SQL Alchemy)",
+    "id": "AI010700",
+    "description": "Data: ORM (SQL Alchemy)",
+    "applies_to": [ "python" ],
+    "tags":[ "Data.DBMS.ORM.SQLAlchemy" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sqlalchemy",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: ORM (Django)",
+    "id": "AI010800",
+    "description": "Data: ORM (Django)",
+    "applies_to": [ "python" ],
+    "tags":[ "Data.DBMS.ORM.Django" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "django",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (SQLite)",
+    "id": "AI010900",
+    "description": "Data: DBMS (SQLite)",
+    "applies_to": [ "python" ],
+    "tags":[ "Data.DBMS.SQLite" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sqlite|python3-apsw",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      },
+      {
+        "pattern": "apsw",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "medium",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (SQLite)",
+    "id": "AI010910",
+    "description": "Data: DBMS (SQLite)",
+    "applies_to": [ "csharp" ],
+    "tags":[ "Data.DBMS.SQLite" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SqliteCommand|SqliteConnection|System\\.Data\\.SQLite|Microsoft\\.Data\\.SQLite",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (SQLite)",
+    "id": "AI010920",
+    "description": "Data: DBMS (SQLite)",
+    "applies_to": [
+      "java",
+      "objective-c",
+      "php",
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Data.DBMS.SQLite" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sqlite",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (PostgreSQL)",
+    "id": "AI011000",
+    "description": "Data: DBMS (PostgreSQL)",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags":[ "Data.DBMS.PostgreSQL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(pgsql|PG)\\.connect|PG::Connection",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "require(['\"]pg['\"]);",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (PostgreSQL)",
+    "id": "AI011010",
+    "description": "Data: DBMS (PostgreSQL)",
+    "applies_to": [ "ruby" ],
+    "tags":[ "Data.DBMS.PostgreSQL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "require 'pg'|(pgsql|PG)\\.connect|PG::Connection",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (PostgreSQL)",
+    "id": "AI011100",
+    "description": "Data: DBMS (PostgreSQL)",
+    "applies_to": [ "python" ],
+    "tags":[ "Data.DBMS.PostgreSQL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "psycopg2",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (PostgreSQL)",
+    "id": "AI011200",
+    "description": "Data: DBMS (PostgreSQL)",
+    "applies_to": [ "csharp" ],
+    "tags":[ "Data.DBMS.PostgreSQL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "npgsql",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (NoSQL)",
+    "id": "AI011300",
+    "description": "Data: DBMS (NoSQL)",
+    "tags":[ "Data.DBMS.NoSQL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mongodb|mongoose|mongoclient|pymongo|redis|hbase|neo4j|cassandra|couchbase|memcached|couchdb|litedb|LiteDatabase|tinydb",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (SQL)",
+    "id": "AI011400",
+    "description": "Data: DBMS SQL",
+    "applies_to": [ "java" ],
+    "tags":[ "Data.DBMS.SQL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "import java.sql",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (SQL)",
+    "id": "AI011500",
+    "description": "Data: DBMS (SQL)",
+    "applies_to": [ "csharp" ],
+    "tags":[ "Data.DBMS.SQL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "using system.data.sqlclient",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (SQL)",
+    "id": "AI011600",
+    "description": "Data: DBMS (SQL)",
+    "applies_to": [],
+    "tags":[ "Data.DBMS.SQL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "['\\\"](select|insert|delete|update)\\s.*",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "from|where",
+          "type": "regexword",
+          "scopes": [ "code" ],
+          "modifiers": [ "i" ]
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": false
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (SQL)",
+    "id": "AI011610",
+    "description": "Data: DBMS (SQL)",
+    "applies_to": [],
+    "tags":[ "Data.DBMS.SQL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mysql",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (Oracle)",
+    "id": "AI011700",
+    "description": "Data: DBMS (Oracle)",
+    "applies_to": [ "java", "pom.xml" ],
+    "tags":[ "Data.DBMS.SQL.Oracle" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "oracle\\.jdbc|oracledriver|com.oracle",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "oracle",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (Oracle)",
+    "id": "AI011800",
+    "description": "Data: DBMS (Oracle)",
+    "applies_to": [ "python" ],
+    "tags":[ "Data.DBMS.SQL.Oracle" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "import cx_Oracle",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "oracle",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "low"
+      }
+    ]
+  },
+  {
+    "name": "Data: DBMS (General)",
+    "id": "AI011900",
+    "description": "Data: DBMS (General)",
+    "applies_to": [ "csharp", "cpp", "java", "python", "objective-c", "go" ],
+    "tags":[ "Data.DBMS.General" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "database",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: ODBC",
+    "id": "AI012000",
+    "description": "Data: ODBC",
+    "applies_to": [ "csharp" ],
+    "tags":[ "Data.DBMS.Connection.ODBC" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "OdbcConnection|OdbcCommand|OdbcDataReader",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: ODBC",
+    "id": "AI012010",
+    "description": "Data: ODBC",
+    "applies_to": [ "csharp", "cpp", "java", "python", "objective-c", "go" ],
+    "tags":[ "Data.DBMS.Connection.ODBC" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Odbc",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

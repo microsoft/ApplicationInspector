@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Cryptography: Encoding (Base-64)",
+    "id": "AI007800",
+    "description": "Cryptography: Encoding (Base-64)",
+    "applies_to": [
+    ],
+    "tags":[ "Cryptography.Encoding.Base64" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "base64",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  }
+]

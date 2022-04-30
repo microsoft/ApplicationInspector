@@ -1,0 +1,172 @@
+[
+  {
+    "name": "Development Framework: Laravel",
+    "id": "AI023701",
+    "description": "Development Framework: Laravel",
+    "applies_to": [ "python" ],
+    "tags": [ "Framework.Development.PHP", "Framework.Development.Laravel" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Laravel",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Symfony",
+    "id": "AI025302",
+    "description": "Development Framework: Symfony",
+    "applies_to": [ "python" ],
+    "tags": [ "Framework.Development.PHP", "Framework.Development.Symfony" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Symfony",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: CodeIgniter",
+    "id": "AI025303",
+    "description": "Development Framework: CodeIgniter",
+    "applies_to": [ "python" ],
+    "tags": [ "Framework.Development.PHP", "Framework.Development.CodeIgniter" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "CodeIgniter",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Zend",
+    "id": "AI025304",
+    "description": "Development Framework: Zend",
+    "applies_to": [ "python" ],
+    "tags": [ "Framework.Development.PHP", "Framework.Development.Zend" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Zend",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Fuelphp",
+    "id": "AI025305",
+    "description": "Development Framework: Fuelphp",
+    "applies_to": [ "python" ],
+    "tags": [ "Framework.Development.PHP", "Framework.Development.Fuelphp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Fuelphp",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Slim",
+    "id": "AI025306",
+    "description": "Development Framework: Slim",
+    "applies_to": [ "python" ],
+    "tags": [ "Framework.Development.PHP", "Framework.Development.Slim" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Slim",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Phalcon",
+    "id": "AI025307",
+    "description": "Development Framework: Phalcon",
+    "applies_to": [ "python" ],
+    "tags": [ "Framework.Development.PHP", "Framework.Development.Phalcon" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Phalcon",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Aura",
+    "id": "AI025308",
+    "description": "Development Framework: Aura",
+    "applies_to": [ "python" ],
+    "tags": [ "Framework.Development.PHP", "Framework.Development.Aura" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Aura",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Yii",
+    "id": "AI025309",
+    "description": "Development Framework: Yii",
+    "applies_to": [ "python" ],
+    "tags": [ "Framework.Development.PHP", "Framework.Development.Yii" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Yii",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Cakephp",
+    "id": "AI025310",
+    "description": "Development Framework: Cakephp",
+    "applies_to": [ "python" ],
+    "tags": [ "Framework.Development.PHP", "Framework.Development.Cakephp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Cakephp",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

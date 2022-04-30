@@ -1,0 +1,98 @@
+[
+  {
+    "name": "Cryptography: Hash Algorithm (SHA-256)",
+    "id": "AI008700",
+    "description": "Cryptography: Hash Algorithm Usage (SHA-256)",
+    "tags":[ "Cryptography.HashAlgorithm.SHA2" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SHA-?(2|224|256|384|512)",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm (Legacy)",
+    "id": "AI008800",
+    "description": "Cryptography: Hash Algorithm (Legacy)",
+    "tags":[ "Cryptography.HashAlgorithm.Legacy" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "MD2|MD4|MD5|SHA-?(0|1)",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm (SHA-3)",
+    "id": "AI008900",
+    "description": "Cryptography: Hash Algorithm Usage (SHA-3)",
+    "tags":[ "Cryptography.HashAlgorithm.SHA3" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SHA-?3|Keccak",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm (Misc)",
+    "id": "AI009000",
+    "description": "Cryptography: Hash Algorithm (Misc)",
+    "tags":[ "Cryptography.HashAlgorithm.Misc" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RIPEMD|Blowfish|Twofish|Threefish|Serpent|HMAC|KeyedHashAlgorithm|Blake2|Blake3",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm",
+    "id": "AI009100",
+    "description": "Cryptography: Hash Algorithm Usage",
+    "tags":[ "Cryptography.HashAlgorithm.Other" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "HashAlgorithm|MessageDigest|DigestUtils",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Hash Algorithm (General)",
+    "id": "AI009200",
+    "description": "Cryptography: Hash Algorithm (General)",
+    "tags":[ "Cryptography.HashAlgorithm.General" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "hash",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "low"
+      }
+    ]
+  }
+]

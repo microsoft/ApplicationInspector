@@ -1,0 +1,33 @@
+[
+  {
+    "name": "Audio Video Media Codec",
+    "id": "AI013900",
+    "description": "Audio Video Media Codec",
+    "tags":[ "Data.Parsing.Media" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "ffmpeg|libraw|webp|DivX|XviDH.263|H.264|HEVC|MPEG4|Theora|3GP|Windows Media|JPEG 2000",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "Quicktime|MPEG-4|VP8|VP6|MPEG1|MPEG2|MPEG-TS|MPEG-4|DNXHD|XDCAM|DVCPRO|IMX|XDCAM",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "mux",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+      
+    ]
+  }
+]

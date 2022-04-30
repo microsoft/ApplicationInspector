@@ -1,0 +1,174 @@
+[
+  {
+    "name": "Cryptography: Encryption (AES)",
+    "id": "AI006900",
+    "description": "Cryptography: Encryption (AES)",
+    "tags":[ "Cryptography.Cipher.AES" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "AES",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "AES-?(128|192|256)|Rijndael",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (3DES)",
+    "id": "AI007000",
+    "description": "Cryptography: Encryption (3DES)",
+    "tags":[ "Cryptography.Cipher.3DES" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "3DES|TripleDES",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (RC)",
+    "id": "AI007100",
+    "description": "Cryptography: Encryption (RC)",
+    "tags":[ "Cryptography.Cipher.RC" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RC([2456])",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "arc4random",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (Salsa20)",
+    "id": "AI007101",
+    "description": "Cryptography: Encryption (Salsa20)",
+    "tags":[ "Cryptography.Cipher.Salsa20" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Salsa20",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (ChaCha)",
+    "id": "AI007102",
+    "description": "Cryptography: Encryption (ChaCha)",
+    "tags":[ "Cryptography.Cipher.ChaCha" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ChaCha",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Encryption: Cipher Mode",
+    "id": "AI007200",
+    "description": "Encryption: Cipher Mode",
+    "tags":[ "Cryptography.Cipher.CipherMode" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "CBC|CTR|ECB|OFB|CFB|CTS|PCBC|GMAC|XCBC|IACBC|IAPM|EAX|OCB|CWC|AEAD|LRW|XEX|XTS|CMC|EME|CBCMAC|OMAC|PMAC",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "low"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (RSA)",
+    "id": "AI007300",
+    "description": "Cryptography: Encryption",
+    "applies_to":[ "csharp" ],
+    "tags":[ "Cryptography.Cipher.RSA" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RSACng|RSACryptoServiceProvider|RSAEncryptionPadding|RSAOAEPKeyExchangeDeformatter|X509AsymmetricSecurityKey",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "RSAOAEPKeyExchangeFormatter|RSAPKCS1KeyExchangeDeformatter|RSAPKCS1",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "RSASignaturePadding|RsaProtectedConfigurationProvider|RSACertificateExtensions",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (RSA)",
+    "id": "AI007400",
+    "description": "Cryptography: Encryption",
+    "tags":[ "Cryptography.Cipher.RSA" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RSA.*encrypt|RSA.*decrypt|public.?key|private.?key|privkey|pubkey",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      },
+      {
+        "pattern": "rsa",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "low",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Encryption (General)",
+    "id": "AI007600",
+    "description": "Cryptography: Encryption",
+    "tags":[ "Cryptography.Encryption.General" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "encrypt|decrypt|cipher|crypt|symmmetric|asymmetric",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "confidence": "medium",
+        "modifiers": [ "i" ]
+      }
+    ]
+  }
+]

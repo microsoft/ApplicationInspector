@@ -1,0 +1,283 @@
+[
+  {
+    "name": "Platform: Microsoft .NET Core",
+    "id": "AI028500",
+    "description": "Platform: .NET Core",
+    "applies_to": [ "VSProject", "csharp" ],
+    "tags": [ "Platform.Microsoft.NETCore" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "netcore|net[5-9]",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Platform: Microsoft .NET Standard",
+    "id": "AI028600",
+    "description": "Platform: Microsoft .NET Standard",
+    "applies_to": [ "VSProject", "csharp" ],
+    "tags": [ "Platform.Microsoft.NETStandard" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Microsoft.NET.Sdk",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Platform: Microsoft Mono",
+    "id": "AI028700",
+    "description": "Platform: Microsoft Mono",
+    "applies_to": [ "VSProject", "csharp" ],
+    "tags": [ "Platform.Microsoft.Mono" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "using (gtk|Glade)",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Platform: Google Android",
+    "id": "AI028800",
+    "description": "Platform: Google Android",
+    "tags":[ "Platform.OS.Google.Android" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "android",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Platform: Apple iOS",
+    "id": "AI028900",
+    "description": "Platform: Apple iOS",
+    "tags":[ "Platform.OS.Apple.iOS" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "AppleWebKit|UIKit|ios",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Platform: Apple MacOS",
+    "id": "AI029000",
+    "description": "Platform: Apple MacOS",
+    "tags":[ "Platform.OS.Apple.MacOS" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(os x)|osx|macos|macosx",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Platform: Microsoft Windows",
+    "id": "AI029100",
+    "description": "Platform: Microsoft Windows Server",
+    "tags":[ "Platform.OS.Microsoft.WindowsServer" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "windows server",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Platform: Microsoft Windows",
+    "id": "AI029200",
+    "description": "Platform: Microsoft Windows",
+    "tags":[ "Platform.OS.Microsoft.WindowsStandard" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "windows",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+
+  {
+    "name": "Platform: Microsoft Windows",
+    "id": "AI029300",
+    "description": "Platform: Microsoft Windows",
+    "tags":[ "Platform.OS.Microsoft.WindowsCE" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "PlatformID.WinCE|Windows Mobile|Windows Embedded|Windows Phone",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Windows Universal Platform",
+    "id": "AI029400",
+    "description": "Development Framework: Windows Universal Platform",
+    "tags":[ "Platform.OS.Microsoft.WindowsUniversalPlatform" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Windows universal platform|UWP",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Platform: Linux",
+    "id": "AI029500",
+    "description": "Platform: Linux",
+    "tags":[ "Platform.OS.Linux.Distro" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "linux|xubuntu|ubuntu|coreos|manjaro|archlinux|debian|mint|gentoo|opensuse|redhat|mandrake|mandriva|slackware",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Platform: Microsoft XBox",
+    "id": "AI029600",
+    "description": "Platform: Microsoft XBox",
+    "tags":[ "Platform.OS.Microsoft.XBox" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "xbox",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "areapath",
+          "type": "regex",
+          "scopes": [ "code" ],
+          "modifiers": [ "i" ]
+        },
+        "search_in": "finding-region(-5,5)",
+        "negate_finding": true
+      }
+    ]
+  },
+  {
+    "name": "Platform: Mobile Device",
+    "id": "AI029700",
+    "description": "Platform: Mobile Device",
+    "tags":[ "Platform.Device.Mobile" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mobile|tablet|iphone",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "address|(first|last|sur)name|contact|gender|email",
+          "type": "regex",
+          "scopes": [ "code" ],
+          "modifiers": [ "i" ]
+        },
+        "search_in": "finding-region(-7,7)",
+        "negate_finding": true
+      }
+    ]
+  },
+  {
+    "name": "Platform: IOT",
+    "id": "AI029800",
+    "description": "Platform: IOT",
+    "tags":[ "Platform.Device.IOT" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "IOT",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "driver?"
+      }
+    ]
+  },
+  {
+    "name": "Hardware: Microsoft Kinex",
+    "id": "AI029900",
+    "description": "Platform: Microsoft Kinex",
+    "tags":[ "Hardware.Accessory.Microsoft.Kinex" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "kinex",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Hardware: Reference Design",
+    "id": "AI030000",
+    "description": "Hardware: Reference Design",
+    "tags":[ "Hardware.ReferenceDesign" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Reference Design",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

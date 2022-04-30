@@ -1,0 +1,146 @@
+[
+  {
+    "name": "Open Source License: MIT",
+    "id": "AI027600",
+    "description": "Open Source License: MIT",
+    "tags":[ "Miscellaneous.OpenSourceLicense.MIT" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "MIT License",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Open Source License: Apache",
+    "id": "AI027700",
+    "description": "Open Source License: Apache",
+    "tags":[ "Miscellaneous.OpenSourceLicense.Apache" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Apache License",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Open Source License: BSD",
+    "id": "AI027800",
+    "description": "Open Source License: BSD",
+    "tags":[ "Miscellaneous.OpenSourceLicense.BSD" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "BSD.+License",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Open Source License: GPL",
+    "id": "AI027900",
+    "description": "Open Source License: GPL",
+    "tags":[ "Miscellaneous.OpenSourceLicense.GPL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "GNU GENERAL PUBLIC LICENSE",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Open Source License: LGPL",
+    "id": "AI028000",
+    "description": "Open Source License: LGPL",
+    "tags":[ "Miscellaneous.OpenSourceLicense.LGPL" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "GNU LESSER GENERAL PUBLIC LICENSE",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Open Source License: Mozilla",
+    "id": "AI028100",
+    "description": "Open Source License: Mozilla",
+    "tags":[ "Miscellaneous.OpenSourceLicense.Mozilla" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Mozilla Public License",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Open Source License: Eclipse",
+    "id": "AI028200",
+    "description": "Open Source License: Eclipse",
+    "tags":[ "Miscellaneous.OpenSourceLicense.Eclipse" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Eclipse Public License",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Open Source License: Creative Commons",
+    "id": "AI028300",
+    "description": "Open Source License: Creative Commons",
+    "tags":[ "Miscellaneous.OpenSourceLicense.CreativeCommons" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Creative Commons License",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Open Source License: Microsoft",
+    "id": "AI028400",
+    "description": "Open Source License: Microsoft",
+    "tags":[ "Miscellaneous.OpenSourceLicense.Microsoft" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Microsoft Public License",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

@@ -1,0 +1,318 @@
+[
+  {
+    "name": "Development Framework: Angular.JS",
+    "id": "AI019900",
+    "description": "Development Framework: Angular.JS",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.AngularJS" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Angular",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Vue",
+    "id": "AI020000",
+    "description": "Development Framework: Vue",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.Vue" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Vue",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: EmberJS",
+    "id": "AI020100",
+    "description": "Development Framework: EmberJS",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.EmberJS" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ember",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Backbone",
+    "id": "AI020200",
+    "description": "Development Framework: Backbone",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.Backbone" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "backbone",
+        "type": "string",
+        "scopes": [ "code" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: jQuery",
+    "id": "AI020300",
+    "description": "Development Framework: jQuery",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.jQuery" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "jquery",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Redux",
+    "id": "AI020400",
+    "description": "Development Framework: Redux",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.Redux" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "redux",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Redux-Saga",
+    "id": "AI020500",
+    "description": "Development Framework: Redux-Saga",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.Redux-Saga" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "redux-saga",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: React",
+    "id": "AI020600",
+    "description": "Development Framework: React",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.React" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "react",
+        "type": "string",
+        "scopes": [ "all" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: RITEWay",
+    "id": "AI020700",
+    "description": "Development Framework: RITEWay",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.RITEWay" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "riteway",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Meteor",
+    "id": "AI020800",
+    "description": "Development Framework: Meteor",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.Meteor" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "meteor",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Mithril",
+    "id": "AI020900",
+    "description": "Development Framework: Mithril",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.Mithril" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mithril",
+        "type": "string",
+        "scopes": [ "code" ]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Polymer",
+    "id": "AI021000",
+    "description": "Development Framework: Polymer",
+    "applies_to": [ "javascript", "html" ],
+    "tags": [ "Framework.Development.Polymer" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "polymer",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Aurelia",
+    "id": "AI021100",
+    "description": "Development Framework: Aurelia",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.Aurelia" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "aurelia",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Content Management Framework: Wordpress",
+    "id": "AI021200",
+    "description": "Development Framework: Wordpress",
+    "applies_to": [ "javascript", "html" ],
+    "tags": [ "Framework.CMS.Wordpress" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "wordpress",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Content Management Framework: Drupal",
+    "id": "AI021300",
+    "description": "Development Framework: Drupal",
+    "applies_to": [ "javascript", "html" ],
+    "tags": [ "Framework.CMS.Drupal" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "drupal",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Content Management Framework: Sharepoint",
+    "id": "AI021400",
+    "description": "Development Framework: Sharepoint",
+    "applies_to": [ "javascript", "html" ],
+    "tags": [ "Framework.CMS.Sharepoint" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sharepoint",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Content Management Framework: Joomla",
+    "id": "AI021500",
+    "description": "Development Framework: Joomla",
+    "applies_to": [ "javascript", "html" ],
+    "tags": [ "Framework.CMS.Joomla" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "joomla",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Google API's",
+    "id": "AI021600",
+    "description": "Development Framework: Google API's",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags": [ "Framework.Development.Google.API" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "apis\\.google\\.com/js/api\\.js",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Node",
+    "id": "AI021610",
+    "description": "Development Framework: Node",
+    "applies_to": [ "javascript", "typescript" ],
+    "tags":[ "Application.Type.Web.Service" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "app\\.listen|server\\.listen",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "\\.listen\\(",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      }
+    ]
+  }
+]

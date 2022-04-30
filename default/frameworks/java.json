@@ -1,0 +1,291 @@
+[
+  {
+    "name": "Development Framework: Spring",
+    "id": "AI018200",
+    "description": "Development Framework: Spring",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.Spring" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "springframework",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": ["i"],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Hibernate",
+    "id": "AI018300",
+    "description": "Development Framework: Hibernate",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.Hibernate" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "hibernate",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Blade",
+    "id": "AI018400",
+    "description": "Development Framework: Blade",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.Blade" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "blade",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: DropWizard",
+    "id": "AI018500",
+    "description": "Development Framework: DropWizard",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.DropWizard" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "dropwizard",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: GWT",
+    "id": "AI018600",
+    "description": "Development Framework: GWT",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.GWT" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "google.gwt",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: JSF",
+    "id": "AI018700",
+    "description": "Development Framework: JSF",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.JSF" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "http://xmlns.jcp.org/jsf/html",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: JHipster",
+    "id": "AI018800",
+    "description": "Development Framework: JHipster",
+    "tags":[ "Framework.Development.JHipster" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "jhipster",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: MyBatis",
+    "id": "AI018900",
+    "description": "Development Framework: MyBatis",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.MyBatis" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mybatis|iobatis",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Play Framework",
+    "id": "AI019000",
+    "description": "Development Framework: Play Framework",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.PlayFramework" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "import play.",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: PrimeFaces",
+    "id": "AI019100",
+    "description": "Development Framework: PrimeFaces",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.PrimeFaces" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "primefaces",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Spark",
+    "id": "AI019200",
+    "description": "Development Framework: Spark",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.Spark" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "import spark.",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Apache Struts",
+    "id": "AI019300",
+    "description": "Development Framework: Apache Struts",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.ApacheStruts" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "struts",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Apache Tapestry",
+    "id": "AI019400",
+    "description": "Development Framework: Apache Tapestry",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.ApacheTapestry" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "tapestry",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Vaadin",
+    "id": "AI019500",
+    "description": "Development Framework: Vaadin",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.Vaadin" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "vaadin",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Vertx",
+    "id": "AI019600",
+    "description": "Development Framework: Vertx",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.Vertx" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "import io.vertx",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Wicket",
+    "id": "AI019700",
+    "description": "Development Framework: Wicket",
+    "applies_to": [ "java" ],
+    "tags":[ "Framework.Development.Wicket" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "wicket",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  },
+  {
+    "name": "Development Framework: Google API's",
+    "id": "AI019800",
+    "description": "Development Framework: Google API's",
+    "applies_to": [ "java" ],
+    "tags": [ "Framework.Development.Google.API" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "googleapis",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": ["i"]
+      }
+    ]
+  }
+]

@@ -1,0 +1,157 @@
+[
+  {
+    "name": "Component: Adobe Flash",
+    "id": "AI004900",
+    "description": "Component: Adobe Flash",
+    "applies_to": [
+    ],
+    "tags":[ "Component.Executable.Adobe.Flash" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.(swf|flv)",
+        "type": "regex",
+        "scopes": [ "code", "comment" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      },
+      {
+        "pattern": "adobe flash",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "confidence": "medium",
+        "modifiers": [ "i" ]
+      },
+      {
+        "pattern": "flash",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "confidence": "low",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Component: Active-X",
+    "id": "AI005000",
+    "description": "Component: Active-X",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp",
+      "vb"
+    ],
+    "tags":[ "Component.Executable.Microsoft.ActiveX" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "CoInitialize|CoCreateInstance|comClassInterface|CLSCTX_INPROC_SERVER|ProgId|COleControlModule|ComDefaultInterface|IOleInPlaceObject|IOleControl|IOleObjective",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "Type\\.GetTypeFromProgID",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "medium"
+      },
+      {
+        "pattern": "active-?x",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Component: Active-X",
+    "id": "AI005001",
+    "description": "Component: Active-X",
+    "applies_to":[ "vb" ],
+    "tags":[ "Component.Executable.Microsoft.ActiveX" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "= CreateObject(",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "low"
+      }
+    ]
+  },
+  {
+    "name": "Component: Active-X",
+    "id": "AI005010",
+    "description": "Component: Active-X",
+    "applies_to":[ "javascript", "typescript" ],
+    "tags":[ "Component.Executable.Microsoft.ActiveX" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "new ActiveXObject",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: COM",
+    "id": "AI005100",
+    "description": "Component: COM",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp"
+    ],
+    "tags":[ "Component.Executable.Microsoft.COM" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER|CoCreateInstance",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: PDF",
+    "id": "AI005200",
+    "description": "Component: PDF",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp"
+    ],
+    "tags":[ "Component.Executable.Adobe.PDF" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": ".pdf",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Component: Microsoft Silverlight",
+    "id": "AI005300",
+    "description": "Component: Microsoft Silverlight",
+    "tags":[ "Component.Executable.Microsoft.Silverlight" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "silverlight|\\.xap",
+        "type": "regex",
+        "modifiers": [ "i" ],
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]
