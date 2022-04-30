@@ -1,0 +1,106 @@
+[
+  {
+    "name": "Data: Financial (Account)",
+    "id": "AI015000",
+    "description": "Data: Financial (Account)",
+    "tags":[ "Data.Sensitive.Financial.BankAccount" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "bank\\s*(acct|account)",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "(checking|savings|chk|401k|roth)\\s*(account|acct)",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Financial (Income)",
+    "id": "AI015100",
+    "description": "Data: Financial (Income)",
+    "tags":[ "Data.Sensitive.Financial.General" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "finances*|financial",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "low"
+      }
+    ]
+  },
+  {
+    "name": "Data: Financial (Currency)",
+    "id": "AI015200",
+    "description": "Data: Financial (Currency)",
+    "tags":[ "Data.Sensitive.Financial.Currency" ],
+    "patterns": [
+      {
+        "pattern": "currency|usd|money|dollar|coins|euro|peso|deutsche-mark|dinar|franc|krone|pound|rupee|shekel|yen",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "medium",
+        "_comment": "Currencies"
+      }
+    ]
+  },
+  {
+    "name": "Data: Financial (Credit Card)",
+    "id": "AI015300",
+    "description": "Data: Financial (Credit Card)",
+    "tags":[ "Data.Sensitive.Financial.CreditCard" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "visa|americanexpress|amex|(master|discover|credit|debit)\\s*card",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Financial (Payroll)",
+    "id": "AI015400",
+    "description": "Data: Financial (Payroll)",
+    "tags":[ "Data.Sensitive.Financial.Payroll" ],
+    "severity": "important",
+    "patterns": [
+      {
+        "pattern": "pay-*roll|salary|salaries|stock",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Data: Financial (Salesdata)",
+    "id": "AI015500",
+    "description": "Data: Financial (Salesdata)",
+    "tags":[ "Data.Sensitive.Financial.Salesdata" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "sales",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "low",
+        "_comment": "sales data or forecast"
+      }
+    ]
+  }
+]

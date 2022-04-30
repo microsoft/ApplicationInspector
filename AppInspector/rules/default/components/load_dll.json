@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Component: Windows DLL",
+    "id": "AI005400",
+    "description": "Component: Windows DLL",
+    "applies_to": [ "csharp" ],
+    "tags":[ "Component.Executable.SharedLibraryLoading" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "DllImport|Assembly\\.LoadFile|Assembly\\.LoadFrom",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: Windows DLL",
+    "id": "AI005500",
+    "description": "Component: Windows DLL",
+    "applies_to": [ "c", "cpp" ],
+    "tags":[ "Component.Executable.SharedLibraryLoading" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "LoadLibrary",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: Windows DLL",
+    "id": "AI005510",
+    "description": "Component: Windows DLL",
+    "applies_to": [ "rust" ],
+    "tags":[ "Component.Executable.SharedLibraryLoading" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "LoadLibrary|libloading|std::unstable::dynamic_lib::DynamicLibrary",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Component: Windows DLL",
+    "id": "AI005600",
+    "description": "Component: Windows DLL",
+    "applies_to": [ "python", "java" ],
+    "tags":[ "Component.Executable.SharedLibraryLoading" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "System\\.Load|ctypes\\.WinDLL",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

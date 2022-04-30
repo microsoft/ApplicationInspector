@@ -1,0 +1,206 @@
+[
+  {
+    "name": "Detect Weak Cryptography",
+    "id": "AI010500",
+    "description": "Detect use of cryptography",
+    "recommendation": "",
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp"
+    ],
+    "tags":[ "Cryptography.Protocol.TLS.WeakSSL" ],
+    "severity": "critical",
+    "rule_info": "",
+    "patterns": [
+      {
+        "pattern": "^iv.*=| +iv.*=",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "SECURITY_FLAG_IGNORE_",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "handles multiple ignore flag options for WinHttp"
+      },
+      {
+        "pattern": "SP_PROT_PCT1_",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "kSSLProtocol",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "CryptUnprotectData",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "mwc1616",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "32969|18273",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "StoreName.Root",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "OAUTHLIB_INSECURE_TRANSPORT",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": ".trustAllCerts()",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": ".trustAllHosts()",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "NXOAuth2TrustModeAnyCertificate",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "--no-check-certificate",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "--insecure",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "encrypt=false",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "encryption=false",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "OpenSSL::SSL::VERIFY_NONE",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "RelaxSSLCertificateValidation",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "setAllowsAnyHTTPSCertificate",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "continueWithoutCredentialForAuthenticationChallenge",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "disable_ssl_certificate_validation",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "CERT_NONE",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": ".ServerCertificateValidationCallback",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "IgnorableServerCertificateErrors",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "certificateValidationMode",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "CERT_CHAIN_POLICY_IGNORE_",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "WINHTTP_ENABLE_SSL_REVOCATION",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "CERT_CHAIN_REVOCATION_ACCUMULATIVE_TIMEOUT",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "ISC_REQ_MANUAL_CRED_VALIDATION",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "SECPKG_ATTR_REMOTE_CERT_CONTEXT",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "disable_ssl_certificate_validation",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  }
+]

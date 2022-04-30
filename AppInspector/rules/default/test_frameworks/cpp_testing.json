@@ -1,0 +1,194 @@
+[
+  {
+    "name": "Testing Framework: AceUnit",
+    "id": "AI040700",
+    "description": "Testing Framework: AceUnit",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Framework.Testing.AceUnit" ],
+    "patterns": [
+      {
+        "pattern": "aceunit",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Eryn",
+    "id": "AI040800",
+    "description": "Testing Framework: Eryn",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Framework.Testing.Eryn" ],
+    "patterns": [
+      {
+        "pattern": "eryn",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Autounit",
+    "id": "AI040900",
+    "description": "Testing Framework: Autounit",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Framework.Testing.Autounit" ],
+    "patterns": [
+      {
+        "pattern": "autounit",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Andit",
+    "id": "AI041000",
+    "description": "Testing Framework: Andit",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Framework.Testing.Andit" ],
+    "patterns": [
+      {
+        "pattern": "andit",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Boost",
+    "id": "AI041100",
+    "description": "Testing Framework: Boost",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Framework.Testing.Boost" ],
+    "patterns": [
+      {
+        "pattern": "boost/test",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: BugEye",
+    "id": "AI041200",
+    "description": "Testing Framework: BugEye",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Framework.Testing.BugEye" ],
+    "patterns": [
+      {
+        "pattern": "bugeye",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Catch2",
+    "id": "AI041300",
+    "description": "Testing Framework: Catch2",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Framework.Testing.Catch2" ],
+    "patterns": [
+      {
+        "pattern": "catch.hpp",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+
+  {
+    "name": "Testing Framework: Catsrunner",
+    "id": "AI041400",
+    "description": "Testing Framework: Catsrunner",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Framework.Testing.Catsrunner" ],
+    "patterns": [
+      {
+        "pattern": "catsrunner",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: cfix ",
+    "id": "AI041500",
+    "description": "Testing Framework: cfix ",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Framework.Testing.Cfix" ],
+    "_comment": "https://github.com/jpassing/cfix",
+    "patterns": [
+      {
+        "pattern": "cfix",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Cgreen",
+    "id": "AI041600",
+    "description": "Testing Framework: Cgreen",
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags":[ "Framework.Testing.Cgreen" ],
+    "patterns": [
+      {
+        "pattern": "cgreen",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]
