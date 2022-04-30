@@ -1,0 +1,199 @@
+[
+  {
+    "name": "Cryptography: x.509 Certificate Use",
+    "id": "AI006200",
+    "description": "Cryptography: x.509 Certificate Use",
+    "tags":[ "Cryptography.X509Certificates.Use" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "x509|\\.(crt|cer|spc|p7b|p7s|p7r|ca-bundle)",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "do not include pfx or pem see rule below for x509 client auth"
+      },
+      {
+        "pattern": "PKCS|PaddingMode|SubjectIdentifier|Certificate",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: x.509 Certificate Use",
+    "id": "AI006300",
+    "description": "Cryptography: x.509 Certificate Use",
+    "applies_to": [ "c", "cpp", "csharp" ],
+    "tags":[ "Cryptography.X509Certificates.Use" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "_CERT|CERT_",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: x.509 Certificate ClientAuth",
+    "id": "AI006400",
+    "description": "Cryptography: x.509 Certificate ClientAuth",
+    "tags": [
+      "Cryptography.X509Certificates.ClientAuth",
+      "Cryptography.X509Certificates.Keyfile"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.(pem|pfx)",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "use for client auth is not guaranteed"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: x.509 Certificate ClientAuth",
+    "id": "AI006410",
+    "description": "Cryptography: x.509 Certificate ClientAuth",
+    "tags":[ "Cryptography.X509Certificates.ClientAuth" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.WithClientClaims\\(.*cert.*\\)|\\.WithCertificate\\(",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "AcquireTokenForClient|ConfidentialClientApplicationBuilder",
+          "type": "regexword",
+          "scopes": [ "code" ]
+        },
+        "search_in": "finding-region(-10,10)",
+        "negate_finding": false
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: x.509 Certificate Create",
+    "id": "AI006500",
+    "description": "Cryptography: x.509 Create Certificate",
+    "tags":[ "Cryptography.X509Certificates.Create" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "genrsa|-keyout|-x509toreq|csr",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "Common OpenSSL commands"
+      },
+      {
+        "pattern": "---BEGIN CERTIFICATE---",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "---BEGIN PKCS",
+        "type": "substring",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "allow for PKCS7, other"
+      },
+      {
+        "pattern": "(create|generate) (cert|certificate)",
+        "type": "regex",
+        "scopes": [
+          "comment"
+        ],
+        "confidence": "high",
+        "_comment": "Common OpenSSL commands or comments"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Digital Signature or DSA",
+    "id": "AI006600",
+    "description": "Cryptography: Digital Signature or DSA",
+    "applies_to":[ "csharp" ],
+    "tags":[ "Cryptography.Signing.Data" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "DSACng|SignData|CreateSignature|DSACryptoServiceProvider|DSASignatureDeformatter|DSASignatureFormatter|DSAKeyValue",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "DSAParameters",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Digital Signature",
+    "id": "AI006700",
+    "description": "Cryptography: Digital Signature",
+    "tags":[ "Cryptography.Signing.Data" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sign(ing)*.?key|signature.?key|valid.?signature|data.?sign|sign.?data",
+        "type": "regexword",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "DSA",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "low"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: CodeSign",
+    "id": "AI006800",
+    "description": "Cryptography: CodeSign",
+    "tags":[ "Cryptography.Signing.Code" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "code.?sign|authenticode|sign.?code",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "shared access|SAS",
+          "type": "regexword",
+          "scopes": [ "code" ],
+          "modifiers": [ "i" ]
+        },
+        "search_in": "finding-region(-30,30)",
+        "negate_finding": true
+      }
+    ]
+  }
+]

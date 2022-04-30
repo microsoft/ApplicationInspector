@@ -1,0 +1,97 @@
+[
+  {
+    "name": "Cryptography: PRNG",
+    "id": "AI010000",
+    "description": "Cryptography: PRNG",
+    "tags":[ "Cryptography.Randomness.PRNG" ],
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "DUAL_EC_DRBG",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "pseudoRandomBytes",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "rand|srand",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "low"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: PRNG",
+    "id": "AI010100",
+    "description": "Cryptography: PRNG",
+    "tags":[ "Cryptography.Randomness.PRNG" ],
+    "applies_to":[ "javascript","typescript" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "(pseudo)?randombytes",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: PRNG",
+    "id": "AI010200",
+    "description": "Cryptography: PRNG",
+    "tags":[ "Cryptography.Randomness.PRNG" ],
+    "applies_to":[ "java" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "SecureRandom",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: PRNG",
+    "id": "AI010300",
+    "description": "Cryptography: PRNG",
+    "tags":[ "Cryptography.Randomness.PRNG" ],
+    "applies_to":[ "csharp" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "RandomNumberGenerator",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: PRNG",
+    "id": "AI010400",
+    "description": "Cryptography: PRNG",
+    "tags":[ "Cryptography.Randomness.PRNG" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "random",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "low"
+      }
+    ]
+  }
+]

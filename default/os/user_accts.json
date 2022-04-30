@@ -1,0 +1,34 @@
+[
+  {
+    "name": "OS: User Account Write (Add)",
+    "id": "AI038700",
+    "description": "OS: User Account Write (Add)",
+    "applies_to":[ "csharp" ],
+    "tags":[ "OS.UserAccount.Write" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "NetUserAdd|NetGroupAddUser|NetLocalGroupAdd",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "OS: User Account Write (Modify)",
+    "id": "AI038800",
+    "description": "OS: User Account Write (Modify)",
+    "applies_to":[ "csharp" ],
+    "tags":[ "OS.UserAccount.Write" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "NetGroupSetInfo|NetGroupSetUsers|NetLocalGroupDel|NetUserChangePassword",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

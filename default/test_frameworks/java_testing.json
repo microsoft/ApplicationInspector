@@ -1,0 +1,720 @@
+[
+  {
+    "name": "Testing Framework: Artos",
+    "id": "AI046300",
+    "description": "Testing Framework: Artos",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Artos" ],
+    "patterns": [
+      {
+        "pattern": "artos",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Arquillian",
+    "id": "AI046400",
+    "description": "Testing Framework: Arquillian",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Arquillian" ],
+    "patterns": [
+      {
+        "pattern": "Arquillian",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: AssertJ",
+    "id": "AI046500",
+    "description": "Testing Framework: AssertJ",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.AssertJ" ],
+    "patterns": [
+      {
+        "pattern": "AssertJ",
+        "type": "string",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: BeanSpec",
+    "id": "AI046600",
+    "description": "Testing Framework: BeanSpec",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.BeanSpec" ],
+    "patterns": [
+      {
+        "pattern": "beanspec",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: BeanTest",
+    "id": "AI046700",
+    "description": "Testing Framework: BeanTest",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.BeanTest" ],
+    "patterns": [
+      {
+        "pattern": "BeanTest",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Cactus",
+    "id": "AI046800",
+    "description": "Testing Framework: Cactus",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Cactus" ],
+    "patterns": [
+      {
+        "pattern": "Cactus",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Concordion",
+    "id": "AI046900",
+    "description": "Testing Framework: Concordion",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Concordion" ],
+    "patterns": [
+      {
+        "pattern": "Concordion",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Concutest",
+    "id": "AI047000",
+    "description": "Testing Framework: Concutest",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Concutest" ],
+    "patterns": [
+      {
+        "pattern": "Concutest",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Cucumber",
+    "id": "AI047100",
+    "description": "Testing Framework: Cucumber",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Cucumber" ],
+    "patterns": [
+      {
+        "pattern": "io.cucumber",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Cuppa",
+    "id": "AI047200",
+    "description": "Testing Framework: Cuppa",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Cuppa" ],
+    "patterns": [
+      {
+        "pattern": "Cuppa",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: DbUnit",
+    "id": "AI047300",
+    "description": "Testing Framework: DbUnit",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.DbUnit" ],
+    "patterns": [
+      {
+        "pattern": "DbUnit",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: EasyMock",
+    "id": "AI047400",
+    "description": "Testing Framework: EasyMock",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.EasyMock" ],
+    "patterns": [
+      {
+        "pattern": "EasyMock",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: EtlUnit",
+    "id": "AI047500",
+    "description": "Testing Framework: EtlUnit",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.EtlUnit" ],
+    "patterns": [
+      {
+        "pattern": "EtlUnit",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: EvoSuite",
+    "id": "AI047600",
+    "description": "Testing Framework: EvoSuite",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.EvoSuite" ],
+    "patterns": [
+      {
+        "pattern": "EvoSuite",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: GrandTestAuto",
+    "id": "AI047700",
+    "description": "Testing Framework: GrandTestAuto",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.GrandTestAuto" ],
+    "patterns": [
+      {
+        "pattern": "GrandTestAuto",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: GroboUtils",
+    "id": "AI047800",
+    "description": "Testing Framework: GroboUtils",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.GroboUtils" ],
+    "patterns": [
+      {
+        "pattern": "GroboUtils",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: HavaRunner",
+    "id": "AI047900",
+    "description": "Testing Framework: HavaRunner",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.HavaRunner" ],
+    "patterns": [
+      {
+        "pattern": "HavaRunner",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Instinct",
+    "id": "AI048000",
+    "description": "Testing Framework: Instinct",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Instinct" ],
+    "patterns": [
+      {
+        "pattern": "Instinct",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "low"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: JSST",
+    "id": "AI048100",
+    "description": "Testing Framework: JSST",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.JSST" ],
+    "patterns": [
+      {
+        "pattern": "JSST",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: JBehave",
+    "id": "AI048200",
+    "description": "Testing Framework: JBehave",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.JBehave" ],
+    "patterns": [
+      {
+        "pattern": "JBehave",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: JDave",
+    "id": "AI048300",
+    "description": "Testing Framework: JDave",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.JDave" ],
+    "patterns": [
+      {
+        "pattern": "JDave",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: JExample",
+    "id": "AI048400",
+    "description": "Testing Framework: JExample",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.JExample" ],
+    "patterns": [
+      {
+        "pattern": "jexample",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: JGiven",
+    "id": "AI048500",
+    "description": "Testing Framework: JGiven",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.JGiven" ],
+    "patterns": [
+      {
+        "pattern": "jgiven",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: JMock",
+    "id": "AI048600",
+    "description": "Testing Framework: JMock",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.JMock" ],
+    "patterns": [
+      {
+        "pattern": "jmock",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: JMockit",
+    "id": "AI048700",
+    "description": "Testing Framework: JMockit",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.JMockit" ],
+    "patterns": [
+      {
+        "pattern": "jmockit",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Jnario",
+    "id": "AI048800",
+    "description": "Testing Framework: Jnario",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Jnario" ],
+    "patterns": [
+      {
+        "pattern": "Jnario",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Jtest",
+    "id": "AI048900",
+    "description": "Testing Framework: Jtest",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Jtest" ],
+    "patterns": [
+      {
+        "pattern": "jtest",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Jukito",
+    "id": "AI049000",
+    "description": "Testing Framework: Jukito",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Jukito" ],
+    "patterns": [
+      {
+        "pattern": "jukito",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: JUnit",
+    "id": "AI049100",
+    "description": "Testing Framework: JUnit",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.JUnit" ],
+    "patterns": [
+      {
+        "pattern": "junit",
+        "type": "string",
+        "scopes": [ "code", "comment" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: JUnitEE",
+    "id": "AI049200",
+    "description": "Testing Framework: JUnitEE",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.JUnitEE" ],
+    "patterns": [
+      {
+        "pattern": "junitee",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: JWalk",
+    "id": "AI049300",
+    "description": "Testing Framework: JWalk",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.JWalk" ],
+    "patterns": [
+      {
+        "pattern": "jwalk",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Mockito",
+    "id": "AI049400",
+    "description": "Testing Framework: Mockito",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Mockito" ],
+    "patterns": [
+      {
+        "pattern": "mockito",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Mockrunner",
+    "id": "AI049500",
+    "description": "Testing Framework: Mockrunner",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Mockrunner" ],
+    "patterns": [
+      {
+        "pattern": "mockrunner",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Needle",
+    "id": "AI049600",
+    "description": "Testing Framework: Needle",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Needle" ],
+    "patterns": [
+      {
+        "pattern": "needle",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: NUTester",
+    "id": "AI049700",
+    "description": "Testing Framework: NUTester",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.NUTester" ],
+    "patterns": [
+      {
+        "pattern": "NUTester",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: OpenPojo",
+    "id": "AI049800",
+    "description": "Testing Framework: OpenPojo",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.OpenPojo" ],
+    "patterns": [
+      {
+        "pattern": "openpojo",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: PowerMock",
+    "id": "AI049900",
+    "description": "Testing Framework: PowerMock",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.PowerMock" ],
+    "patterns": [
+      {
+        "pattern": "powermock",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Randoop",
+    "id": "AI050000",
+    "description": "Testing Framework: Randoop",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Randoop" ],
+    "patterns": [
+      {
+        "pattern": "randoop",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Spock",
+    "id": "AI050100",
+    "description": "Testing Framework: Spock",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Spock" ],
+    "patterns": [
+      {
+        "pattern": "spock",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "low"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: SpryTest",
+    "id": "AI050200",
+    "description": "Testing Framework: SpryTest",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.SpryTest" ],
+    "patterns": [
+      {
+        "pattern": "sprytest",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework:SureAssert ",
+    "id": "AI050300",
+    "description": "Testing Framework: SureAssert",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.SureAssert" ],
+    "patterns": [
+      {
+        "pattern": "sureassert",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Tacinga",
+    "id": "AI050400",
+    "description": "Testing Framework: Tacinga",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Tacinga" ],
+    "patterns": [
+      {
+        "pattern": "tacinga",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: TestNG",
+    "id": "AI050500",
+    "description": "Testing Framework: TestNG",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.TestNG" ],
+    "patterns": [
+      {
+        "pattern": "testng",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: Unitils",
+    "id": "AI050600",
+    "description": "Testing Framework: Unitils",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.Unitils" ],
+    "patterns": [
+      {
+        "pattern": "unitils",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Testing Framework: XMLUnit",
+    "id": "AI050700",
+    "description": "Testing Framework: XMLUnit",
+    "applies_to":[ "java" ],
+    "tags":[ "Framework.Testing.XMLUnit" ],
+    "patterns": [
+      {
+        "pattern": "xmunit",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

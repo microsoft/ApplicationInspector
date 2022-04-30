@@ -1,0 +1,19 @@
+[
+  {
+    "name": "Development Framework: Google API's",
+    "id": "AI018100",
+    "description": "Development Framework: Google API's",
+    "applies_to": [ "csharp" ],
+    "tags": [ "Framework.Development.Google.API" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "using Google.Apis",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

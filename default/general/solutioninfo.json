@@ -1,0 +1,378 @@
+[
+  {
+    "name": "Metadata: Target Processor",
+    "id": "AI030100",
+    "description": "Metadata: Target Processor",
+    "tags":[ "Metadata.Application.Target.Processor" ],
+    "applies_to": [ "VSsolution", "VSProject", "cpp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Win32|Any CPU|Win64|x64|x86|Arm|Arm64",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Name",
+    "id": "AI030200",
+    "description": "Metadata: Application Name",
+    "tags":[ "Metadata.Application.Name" ],
+    "applies_to": [ "VSProject" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<Product(Name)?>.*<\/Product(Name)?>|<PackageId>.*</PackageId>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Author",
+    "id": "AI030210",
+    "description": "Metadata: Application Author",
+    "tags":[ "Metadata.Application.Author" ],
+    "applies_to": [ "VSProject" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<Authors>.*<\/Authors>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Version",
+    "id": "AI030220",
+    "description": "Metadata: Application Version",
+    "tags":[ "Metadata.Application.Version" ],
+    "applies_to": [ "VSProject" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<Version>.*<\/Version>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+    {
+    "name": "Metadata: Application Description",
+    "id": "AI030230",
+    "description": "Metadata: Application Description",
+    "tags":[ "Metadata.Application.Description" ],
+    "applies_to": [ "VSProject" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<Description>.*<\/Description>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Build Output Type",
+    "id": "AI030300",
+    "description": "Metadata: Build Output Type",
+    "tags":[ "Metadata.Application.Output.Type" ],
+    "applies_to": [ "VSProject" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<OutputType>.*<\/OutputType>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "<ConfigurationType>.*<\/ConfigurationType>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Type (Windows Forms)",
+    "id": "AI030400",
+    "description": "Metadata: Application Type (Windows Forms)",
+    "tags":[ "Application.Type.Client.Winforms" ],
+    "applies_to": [ "csharp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "winforms",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Type (Service)",
+    "id": "AI030500",
+    "description": "Metadata: Application Type (Service)",
+    "tags":[ "Application.Type.Client.Service.Windows" ],
+    "applies_to": [ "csharp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ServiceStatus|ServiceController|InstallService",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Type (Service)",
+    "id": "AI030600",
+    "description": "Metadata: Application Type (Service)",
+    "tags":[ "Application.Type.Client.Service.Windows" ],
+    "applies_to": [ "c", "cpp", "shellscript" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(/etc/rc\\.d/service|/etc/systemd/system)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Type (Service)",
+    "id": "AI030700",
+    "description": "Metadata: Application Type (Service)",
+    "tags":[ "Application.Type.Client.Service.Windows" ],
+    "applies_to": [ "cpp" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "RegisterServiceCtrlHandler|serviceCtrlHandler|StartServiceCtrlDispatcher|SERVICE_STATUS|SERVICE_RUNNING|SERVICE_WIN32|SERVICE_CONTROL",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Name",
+    "id": "AI030800",
+    "description": "Metadata: Application Name",
+    "tags":[ "Metadata.Application.Name" ],
+    "applies_to": [ "pom.xml", "build.gradle", "build.make.xml" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<artifactId>(.*)<\/artifactId>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Description",
+    "id": "AI030900",
+    "description": "Metadata: Application Description",
+    "tags":[ "Metadata.Application.Description" ],
+    "applies_to": [ "package.json" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\\"description\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Version",
+    "id": "AI031000",
+    "description": "Metadata: Application Version",
+    "tags":[ "Metadata.Application.Version" ],
+    "applies_to": [ "package.json" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\\"version\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Author",
+    "id": "AI031200",
+    "description": "Metadata: Application Author",
+    "tags":[ "Metadata.Application.Author" ],
+    "applies_to": [ "package.json" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\\"author\\\"\\s*:\\s*\\\"([^\\\"])+\\\"",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Author",
+    "id": "AI031300",
+    "description": "Metadata: Application Author",
+    "tags":[ "Metadata.Application.Author" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "author[=: ](.*)",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "modifiers": [ "i" ]
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Publisher",
+    "id": "AI031400",
+    "description": "Metadata: Application Publisher",
+    "applies_to": [ "VSProject" ],
+    "tags":[ "Metadata.Application.Publisher" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<PublisherName>.*<\/PublisherName>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high",
+        "_comment": "use as additional author value"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Target Framework",
+    "id": "AI031500",
+    "description": "Metadata: Target Framework",
+    "tags":[ "Application.Target.Framework" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "<TargetFramework(s)?>.*<\/TargetFramework(s)?>",
+        "type": "regex",
+        "scopes": [ "code" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (Kubernetes)",
+    "id": "AI031510",
+    "description": "Metadata: Application Container (Kubernetes)",
+    "tags":[ "Application.Container.Kubernetes" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Kubernetes",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (Docker)",
+    "id": "AI031520",
+    "description": "Metadata: Application Container (Docker)",
+    "tags":[ "Application.Container.Docker" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Docker|RancherOS",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (rktlet)",
+    "id": "AI031530",
+    "description": "Metadata: Application Container (rktlet)",
+    "tags":[ "Application.Container.rktlet" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "rktlet",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (CRI-O)",
+    "id": "AI031540",
+    "description": "Metadata: Application Container (CRI-O)",
+    "tags":[ "Application.Container.CRI-O" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "CRI-O",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (Microsoft Hyper-V)",
+    "id": "AI031550",
+    "description": "Metadata: Application Container (Microsoft Hyper-V)",
+    "tags":[ "Application.Container.Microsoft.Hyper-V" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "hyper-v",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Metadata: Application Container (Microsoft Server)",
+    "id": "AI031560",
+    "description": "Metadata: Application Container (Microsoft Server)",
+    "tags":[ "Application.Container.Microsoft.Core" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Nano Server|Server Core",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

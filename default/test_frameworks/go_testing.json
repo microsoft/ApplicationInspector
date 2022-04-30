@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Testing Framework: Gmock",
+    "id": "AI041700",
+    "description": "Testing Framework: Gmock",
+    "applies_to":[ "go" ],
+    "tags":[ "Framework.Testing.Gmock" ],
+    "patterns": [
+      {
+        "pattern": "Gmock",
+        "type": "string",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

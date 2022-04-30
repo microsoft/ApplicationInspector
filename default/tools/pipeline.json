@@ -1,0 +1,195 @@
+[
+  {
+    "name": "Pipeline Tool (AntiMalware)",
+    "id": "AI053300",
+    "description": "General AntiMalware",
+    "tags":[ "Pipeline.StaticAnalysis.AntiMalware" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "AntiMalware",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (Bandit)",
+    "id": "AI053400",
+    "description": "Finds vulnerabilities in Python code.",
+    "tags":[ "Pipeline.StaticAnalysis.Bandit" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "Bandit",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (BinSkim)",
+    "id": "AI053500",
+    "description": "Validates compiler and linker security settings.",
+    "tags":[ "Pipeline.CompilerSettings.BinSkim" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "BinSkim",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CodeSigning)",
+    "id": "AI053600",
+    "description": "General code signing.",
+    "tags":[ "Pipeline.Packaging.CodeSigning" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "CodeSign",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high",
+        "_comment": "uses regex to support 'codesigning' or other variations"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (CodeQL)",
+    "id": "AI053700",
+    "description": "Identifies patterns in code.",
+    "tags":[ "Pipeline.StaticAnalysis.CodeQL" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "CodeQL",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (ESLint)",
+    "id": "AI053800",
+    "description": "Identifies problematic coding patterns in JavaScript.",
+    "tags":[ "Pipeline.Linter.ESLint" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "ESLint",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (FxCop)",
+    "id": "AI053900",
+    "description": "Analyzer that checks conformance to Microsoft .NET Design Guidelines.",
+    "tags":[ "Pipeline.StaticAnalysis.FxCop" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "FxCop",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (ModernCop)",
+    "id": "AI054000",
+    "description": "Analyzer that checks for security vulnerabilities in .NET code.",
+    "tags":[ "Pipeline.StaticAnalysis.ModernCop" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "ModernCop",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (NuGetCommand)",
+    "id": "AI054100",
+    "description": "Identifies package manager commands for NuGet.",
+    "tags":[ "Pipeline.Packaging.NuGetCommand" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "NuGetCommand",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (RoslynAnalyzers)",
+    "id": "AI054200",
+    "description": "Identifies style, quality, design and other code characteristics.",
+    "tags":[ "Pipeline.StaticAnalysis.RoslynAnalyzers" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "RoslynAnalyzers",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (SpotBugs)",
+    "id": "AI054300",
+    "description": "Vulnerability detection for Java code.",
+    "tags":[ "Pipeline.StaticAnalysis.SpotBugs" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "SpotBugs",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Pipeline Tool (TSLint)",
+    "id": "AI054400",
+    "description": "Checks TypeScript for readability and functionality errors.",
+    "tags":[ "Pipeline.Linter.TSLint" ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "TSLint",
+        "type": "string",
+        "scopes": [ "code"],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]

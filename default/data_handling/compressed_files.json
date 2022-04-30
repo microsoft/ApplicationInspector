@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Data: Compressed File (Zip,Tgz)",
+    "id": "AI010600",
+    "description": "Data: Compressed File Handling",
+    "tags":[ "Data.Zipfile" ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.(zip|gz|gzip|gem|tar|tgz|tar\\.gz|xz|7z)",
+        "type": "regexword",
+        "scopes": [ "code" ],
+        "modifiers": [ "i" ],
+        "confidence": "high"
+      }
+    ]
+  }
+]
