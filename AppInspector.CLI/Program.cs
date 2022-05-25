@@ -248,7 +248,9 @@ namespace Microsoft.ApplicationInspector.CLI
                 TagsOnly = tagsOnly,
                 NoFileMetadata = cliOptions.NoFileMetadata,
                 AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles,
-                MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag
+                MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag,
+                DisableCrawlArchives = cliOptions.DisableArchiveCrawling,
+                EnumeratingTimeout = cliOptions.EnumeratingTimeout
             }, adjustedFactory);
 
             AnalyzeResult analyzeResult = command.GetResult();
@@ -264,7 +266,15 @@ namespace Microsoft.ApplicationInspector.CLI
 
                 _ = Task.Factory.StartNew(() =>
                 {
-                    writer.Write(analyzeResult, cliOptions);
+                    try
+                    {
+                        writer.Write(analyzeResult, cliOptions);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogError(e, "Exception hit while writing. {Type} : {Message}", e.GetType().Name,
+                            e.Message);
+                    }
                     done = true;
                 });
 

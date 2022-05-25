@@ -44,10 +44,16 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('F', "file-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing each file. 0 is infinity. Default: 60000.", Default = 60000)]
         public int FileTimeOut { get; set; } = 60000;
 
-        [Option('p', "processing-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing overall. 0 is infinity. Default: 0.", Default = 0)]
+        [Option('p', "processing-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing. When NoShowProgress is set this includes enumeration time. 0 is infinity. Default: 0.", Default = 0)]
         public int ProcessingTimeOut { get; set; }
+        
+        [Option("enumeration-timeout", Required = false, HelpText = "If NoCrawlArchives is not set, this will restrict the amount of time allowed to extract each archive to the specified number of milliseconds. 0 is infinity. Default: 0.", Default = 0)]
+        public int EnumeratingTimeout { get; set; }
+        
+        [Option("disable-archive-crawling", Required = false, HelpText = "Disable Archive Enumeration.")]
+        public bool DisableArchiveCrawling { get; set; }
 
-        [Option('S', "single-threaded", Required = false, HelpText = "Disables parallel processing.")]
+        [Option('S', "single-threaded", Required = false, HelpText = "Disables parallel processing. May be helpful for debugging with higher verbosity.")]
         public bool SingleThread { get; set; }
 
         [Option('g', "exclusion-globs", Required = false, HelpText = "Exclude source files that match glob patterns. Example: \"**/.git/**,*Tests*\".  Use \"none\" to disable.", Default = new string[] { "**/bin/**", "**/obj/**", "**/.vs/**", "**/.git/**" }, Separator = ',')]
