@@ -648,10 +648,11 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="cancellationToken">Cancellation token to stop analysis and return results found so far.</param>
         /// <returns></returns>
-        public async Task<AnalyzeResult> GetResultAsync(CancellationToken cancellationToken)
+        public async Task<AnalyzeResult> GetResultAsync(CancellationToken? cancellationToken = null)
         {
             _logger.LogTrace("AnalyzeCommand::GetResultAsync");
             _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Analyze");
+            cancellationToken ??= new CancellationToken();
             if (_metaDataHelper is null)
             {
                 _logger.LogError("MetadataHelper is null");
@@ -662,7 +663,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Common.Utils.GetVersionString()
             };
 
-            AnalyzeResult.ExitCode exitCode = await PopulateRecordsAsync(cancellationToken);
+            AnalyzeResult.ExitCode exitCode = await PopulateRecordsAsync(cancellationToken.Value);
 
             //wrapup result status
             if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
@@ -683,7 +684,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
             }
 
-            if (cancellationToken.IsCancellationRequested)
+            if (cancellationToken.Value.IsCancellationRequested)
             {
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.Canceled;
             }

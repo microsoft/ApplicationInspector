@@ -63,7 +63,7 @@ namespace Microsoft.ApplicationInspector.CLI
                         return;
                     }
 
-                    writer?.WriteResults(analyzeResult, cLIAnalyzeCmdOptions);
+                    writer.WriteResults(analyzeResult, cLIAnalyzeCmdOptions);
 
                     //post checks
                     if (options.OutputFilePath is not null && File.Exists(options.OutputFilePath) && new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
@@ -81,7 +81,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
 
             //general for all but analyze html format
-            writer?.WriteResults(result, options);
+            writer.WriteResults(result, options);
             Finalize(writer, commandCompletedMsg);
         }
 

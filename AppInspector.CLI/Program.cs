@@ -6,7 +6,7 @@ using Microsoft.ApplicationInspector.Logging;
 namespace Microsoft.ApplicationInspector.CLI
 {
     using CommandLine;
-    using Microsoft.ApplicationInspector.Commands;
+    using Commands;
     using ShellProgressBar;
     using System;
     using System.IO;
@@ -209,10 +209,9 @@ namespace Microsoft.ApplicationInspector.CLI
             return new LogOptions()
             {
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
-                DisableLogFileOutput = cliOptions.DisableLogFileOutput,
                 LogFileLevel = cliOptions.LogFileLevel,
                 LogFilePath = cliOptions.LogFilePath,
-                DisableConsoleOutput = cliOptions.NoShowProgressBar ? cliOptions.DisableConsoleOutput : false
+                DisableConsoleOutput = !cliOptions.NoShowProgressBar || cliOptions.DisableConsoleOutput
             }.GetLoggerFactory();
         }
 
@@ -263,7 +262,7 @@ namespace Microsoft.ApplicationInspector.CLI
             else
             {
                 var done = false;
-
+                var failed = false;
                 _ = Task.Factory.StartNew(() =>
                 {
                     try
@@ -272,8 +271,10 @@ namespace Microsoft.ApplicationInspector.CLI
                     }
                     catch (Exception e)
                     {
-                        logger.LogError(e, "Exception hit while writing. {Type} : {Message}", e.GetType().Name,
+                        logger.LogError("Exception hit while writing. {Type} : {Message}", e.GetType().Name,
                             e.Message);
+                        failed = true;
+                        analyzeResult.ResultCode = AnalyzeResult.ExitCode.CriticalError;
                     }
                     done = true;
                 });
@@ -293,8 +294,8 @@ namespace Microsoft.ApplicationInspector.CLI
                     {
                         Thread.Sleep(100);
                     }
-                    pbar.Message = "Results written.";
-
+                    pbar.Message = failed ? "Failed to write results." : "Results written.";
+                    
                     pbar.Finished();
                 }
                 Console.Write(Environment.NewLine);

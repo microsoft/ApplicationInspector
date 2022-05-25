@@ -77,9 +77,19 @@ namespace Microsoft.ApplicationInspector.CLI
             var htmlTemplate = Template.Parse(htmlTemplateText);
             var data = new Dictionary<string, object>();
             data["MetaData"] = _appMetaData ?? new MetaData("", "");
-
+            
             var hashData = new Hash();
-            hashData["json"] = JsonConvert.SerializeObject(data);//json serialization required for [js] access to objects
+            string? jsonData;
+            try
+            {
+                jsonData = JsonConvert.SerializeObject(data);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Failed to write HTML report. Failed to serialize JSON representation of results in memory. {Type}:{Message}", e.GetType().Name, e.Message);
+                throw;
+            }
+            hashData["json"] = jsonData;//json serialization required for [js] access to objects
             hashData["application_version"] = Utils.GetVersionString();
 
             //add dynamic sets of groups of taginfo read from preferences for Profile page
