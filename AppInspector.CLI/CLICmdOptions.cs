@@ -47,7 +47,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('p', "processing-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for processing. When NoShowProgress is set this includes enumeration time. 0 is infinity. Default: 0.", Default = 0)]
         public int ProcessingTimeOut { get; set; }
         
-        [Option("enumeration-timeout", Required = false, HelpText = "If NoCrawlArchives is not set, this will restrict the amount of time allowed to extract each archive to the specified number of milliseconds. 0 is infinity. Default: 0.", Default = 0)]
+        [Option("enumeration-timeout", Required = false, HelpText = "Maximum amount of time in milliseconds to allow for enumerating. 0 is infinity. Default: 0.", Default = 0)]
         public int EnumeratingTimeout { get; set; }
         
         [Option("disable-archive-crawling", Required = false, HelpText = "Disable Archive Enumeration.")]
