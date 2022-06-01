@@ -223,10 +223,17 @@ namespace Microsoft.ApplicationInspector.CLI
             int numContextLines = cliOptions.ContextLines == -1 ? cliOptions.ContextLines : isSarif ? 0 : cliOptions.ContextLines;
             // tagsOnly isn't compatible with sarif output, we choose to prioritize the choice of sarif.
             bool tagsOnly = !isSarif && cliOptions.TagsOnly;
-            var logger = loggerFactory.CreateLogger("Program");
+            var logger = cliOptions.GetLoggerFactory().CreateLogger("Program");
             if (!cliOptions.NoShowProgressBar)
             {
-                logger.LogInformation("Progress bar is enabled so console output will be supressed. To receive log messages with the progress bar check the log file.");
+                if (string.IsNullOrEmpty(cliOptions.LogFilePath))
+                {
+                    logger.LogInformation("Progress bar is enabled so console output will be supressed. No LogFilePath has been configured so you will not receive log messages");
+                }
+                else
+                {
+                    logger.LogInformation("Progress bar is enabled so console output will be supressed. For log messages check the log at {LogPath}", cliOptions.LogFilePath);
+                }
             }
             ILoggerFactory adjustedFactory = GetAdjustedFactory(cliOptions);
             AnalyzeCommand command = new(new AnalyzeOptions()
@@ -294,8 +301,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     {
                         Thread.Sleep(100);
                     }
-                    pbar.Message = failed ? "Failed to write results." : "Results written.";
-                    
+                    pbar.Message = failed ? $"Failed to write results. Check the log file at {cliOptions.LogFilePath} for details." : $"Results written to {cliOptions.OutputFilePath}.";
                     pbar.Finished();
                 }
                 Console.Write(Environment.NewLine);

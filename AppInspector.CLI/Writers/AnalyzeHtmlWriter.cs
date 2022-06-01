@@ -86,7 +86,7 @@ namespace Microsoft.ApplicationInspector.CLI
             }
             catch (Exception e)
             {
-                _logger.LogError("Failed to write HTML report. Failed to serialize JSON representation of results in memory. {Type}:{Message}", e.GetType().Name, e.Message);
+                _logger.LogError("Failed to write HTML report. Failed to serialize JSON representation of results in memory. {Type} : {Message}", e.GetType().Name, e.Message);
                 throw;
             }
             hashData["json"] = jsonData;//json serialization required for [js] access to objects

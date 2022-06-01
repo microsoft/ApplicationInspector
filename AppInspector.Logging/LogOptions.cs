@@ -30,15 +30,15 @@ namespace Microsoft.ApplicationInspector.Logging
                 .MinimumLevel.Is(ConsoleVerbosityLevel < LogFileLevel ? ConsoleVerbosityLevel : LogFileLevel);
             if (!string.IsNullOrEmpty(LogFilePath))
             {
-                configuration.WriteTo.File(LogFilePath, LogFileLevel);
+                configuration = configuration.WriteTo.File(LogFilePath, LogFileLevel);
             }
             if (!DisableConsoleOutput)
             {
-                configuration.WriteTo.Console(ConsoleVerbosityLevel);
+                configuration = configuration.WriteTo.Console(ConsoleVerbosityLevel);
             }
-            var serilogger = configuration
+            var serilogLogger = configuration
                 .CreateLogger();
-            return new LoggerFactory().AddSerilog(serilogger);
+            return new LoggerFactory().AddSerilog(serilogLogger);
         }
     }
 }
