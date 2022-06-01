@@ -49,6 +49,15 @@ namespace Microsoft.ApplicationInspector.Commands
         public int MaxNumMatchesPerTag { get; set; } = 0;
         public string? CustomCommentsPath { get; set; }
         public string? CustomLanguagesPath { get; set; }
+        /// <summary>
+        /// If set, will not crawl archives to scan the contents of the contained files.
+        /// </summary>
+        public bool DisableCrawlArchives { get; set; }
+        
+        /// <summary>
+        /// If <see cref="DisableCrawlArchives"/> is not set, will restrict the amount of time allowed to extract each archive.
+        /// </summary>
+        public int EnumeratingTimeout { get; set; }
     }
 
     /// <summary>
@@ -206,14 +215,14 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else if (File.Exists(_options.CustomRulesPath)) //verify custom rules before use
                 {
-                    RulesVerifierOptions rulesVerifierOptions = new RulesVerifierOptions()
+                    RulesVerifierOptions rulesVerifierOptions = new()
                     {
                         FailFast = false,
                         LanguageSpecs = _languages,
                         LoggerFactory = _loggerFactory,
                     };
                     RulesVerifier verifier = new(rulesVerifierOptions);
-                    var verification = verifier.Verify(_options.CustomRulesPath);
+                    RulesVerifierResult verification = verifier.Verify(_options.CustomRulesPath);
                     if (!verification.Verified)
                     {
                         throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED, _options.CustomRulesPath));
@@ -234,7 +243,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //instantiate a RuleProcessor with the added rules and exception for dependency
-            var rpo = new RuleProcessorOptions()
+            RuleProcessorOptions rpo = new()
             {
                 LoggerFactory = _loggerFactory,
                 AllowAllTagsInBuildFiles = _options.AllowAllTagsInBuildFiles,
@@ -253,7 +262,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="cancellationToken"></param>
         /// <param name="populatedEntries"></param>
         /// <returns></returns>
-        public AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, IEnumerable<FileEntry> populatedEntries)
+        private AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, IEnumerable<FileEntry> populatedEntries)
         {
             _logger.LogTrace("AnalyzeCommand::PopulateRecords");
             if (_metaDataHelper is null)
@@ -261,14 +270,10 @@ namespace Microsoft.ApplicationInspector.Commands
                 _logger.LogError("MetadataHelper is null");
                 throw new NullReferenceException("_metaDataHelper");
             }
-            if (_rulesProcessor is null || populatedEntries is null)
-            {
-                return AnalyzeResult.ExitCode.CriticalError;
-            }
 
             if (_options.SingleThread)
             {
-                foreach (var entry in populatedEntries)
+                foreach (FileEntry entry in populatedEntries)
                 {
                     if (cancellationToken.IsCancellationRequested) { return AnalyzeResult.ExitCode.Canceled; }
                     ProcessAndAddToMetadata(entry);
@@ -278,17 +283,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 try
                 {
-                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken, MaxDegreeOfParallelism = Environment.ProcessorCount * 3 / 2 }, entry =>
-                    {
-                        try
-                        {
-                            ProcessAndAddToMetadata(entry);
-                        }
-                        catch (Exception)
-                        {
-                            throw;
-                        }
-                    });
+                    Parallel.ForEach(populatedEntries, new ParallelOptions() { CancellationToken = cancellationToken }, ProcessAndAddToMetadata);
                 }
                 catch (OperationCanceledException)
                 {
@@ -300,9 +295,9 @@ namespace Microsoft.ApplicationInspector.Commands
 
             void ProcessAndAddToMetadata(FileEntry file)
             {
-                var fileRecord = new FileRecord() { FileName = file.FullPath, ModifyTime = file.ModifyTime, CreateTime = file.CreateTime, AccessTime = file.AccessTime };
+                FileRecord fileRecord = new() { FileName = file.FullPath, ModifyTime = file.ModifyTime, CreateTime = file.CreateTime, AccessTime = file.AccessTime };
 
-                var sw = new Stopwatch();
+                Stopwatch sw = new();
                 sw.Start();
 
                 if (_fileExclusionList.Any(x => x.IsMatch(file.FullPath)))
@@ -359,16 +354,13 @@ namespace Microsoft.ApplicationInspector.Commands
 
                             if (_options.FileTimeOut > 0)
                             {
-                                using var cts = new CancellationTokenSource();
-                                var t = Task.Run(() =>
-                                {
-                                    ProcessLambda();
-                                }, cts.Token);
+                                using CancellationTokenSource cts = new();
+                                Task t = Task.Run(ProcessLambda, cts.Token);
                                 try
                                 {
                                     if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.FileTimeOut)))
                                     {
-                                        _logger.LogError("{path} timed out.", file.FullPath);
+                                        _logger.LogError("{Path} timed out", file.FullPath);
                                         fileRecord.Status = ScanState.TimedOut;
                                         cts.Cancel();
                                     }
@@ -379,7 +371,7 @@ namespace Microsoft.ApplicationInspector.Commands
                                 }
                                 catch (Exception e)
                                 {
-                                    _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace}), fileRecord.FileName", file.FullPath, e.GetType(), e.Message, e.StackTrace);
+                                    _logger.LogDebug("Failed to analyze file {Path}. {Type}:{Message}. ({StackTrace}), fileRecord.FileName", file.FullPath, e.GetType(), e.Message, e.StackTrace);
                                     fileRecord.Status = ScanState.Error;
                                 }
                             }
@@ -394,7 +386,7 @@ namespace Microsoft.ApplicationInspector.Commands
                                 fileRecord.Status = ScanState.Affected;
                                 fileRecord.NumFindings = results.Count;
                             }
-                            foreach (var matchRecord in results)
+                            foreach (MatchRecord matchRecord in results)
                             {
                                 if (_options.TagsOnly)
                                 {
@@ -432,7 +424,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns>Result code.</returns>
-        public async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken? cancellationToken = null)
+        private async Task<AnalyzeResult.ExitCode> PopulateRecordsAsync(CancellationToken cancellationToken)
         {
             _logger.LogTrace("AnalyzeCommand::PopulateRecordsAsync");
             if (_metaDataHelper is null)
@@ -440,23 +432,20 @@ namespace Microsoft.ApplicationInspector.Commands
                 _logger.LogError("MetadataHelper is null");
                 throw new NullReferenceException("_metaDataHelper");
             }
-            if (_rulesProcessor is null)
+            
+            await foreach (FileEntry entry in GetFileEntriesAsync())
             {
-                return AnalyzeResult.ExitCode.CriticalError;
-            }
-            await foreach (var entry in GetFileEntriesAsync())
-            {
-                if (cancellationToken?.IsCancellationRequested is true) { return AnalyzeResult.ExitCode.Canceled; }
+                if (cancellationToken.IsCancellationRequested) { return AnalyzeResult.ExitCode.Canceled; }
                 await ProcessAndAddToMetadata(entry, cancellationToken);
             }
 
             return AnalyzeResult.ExitCode.Success;
 
-            async Task ProcessAndAddToMetadata(FileEntry file, CancellationToken? cancellationToken = null)
+            async Task ProcessAndAddToMetadata(FileEntry file, CancellationToken cancellationToken)
             {
-                var fileRecord = new FileRecord() { FileName = file.FullPath, ModifyTime = file.ModifyTime, CreateTime = file.CreateTime, AccessTime = file.AccessTime };
+                FileRecord fileRecord = new() { FileName = file.FullPath, ModifyTime = file.ModifyTime, CreateTime = file.CreateTime, AccessTime = file.AccessTime };
 
-                var sw = new Stopwatch();
+                Stopwatch sw = new();
                 sw.Start();
 
                 if (_fileExclusionList.Any(x => x.IsMatch(file.FullPath)))
@@ -503,7 +492,7 @@ namespace Microsoft.ApplicationInspector.Commands
                                 fileRecord.Status = ScanState.Affected;
                                 fileRecord.NumFindings = results.Count;
                             }
-                            foreach (var matchRecord in results)
+                            foreach (MatchRecord matchRecord in results)
                             {
                                 if (_options.TagsOnly)
                                 {
@@ -558,15 +547,34 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     catch(Exception ex)
                     {
-                        _logger.LogError("Failed to open source file '{filename}' for reading. {type}:{message}.", srcFile, ex.GetType().Name, ex.Message);
+                        _logger.LogError("Failed to open source file '{Filename}' for reading. {Type}:{Message}", srcFile, ex.GetType().Name, ex.Message);
                         _metaDataHelper?.Metadata.Files.Add(new FileRecord() { FileName = srcFile, Status = ScanState.Error });
                     }
                     if (contents != null)
                     {
-                        // This call to extract will implicitly create a new FileEntry and copy the contents stream into a new backing stream used by the FileEntry
-                        foreach (var entry in extractor.Extract(srcFile, contents, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1 }))
+                        if (_options.DisableCrawlArchives)
                         {
-                            yield return entry;
+                            yield return new FileEntry(srcFile, contents);
+                        }
+                        else
+                        {
+                            // Use MemoryStreamCutoff = 1 to force using FileStream with DeleteOnClose for backing, and avoid memory exhaustion.
+                            ExtractorOptions opts = new()
+                            {
+                                Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1
+                            };
+                            if (_options.EnumeratingTimeout > 0)
+                            {
+                                opts.EnableTiming = true;
+                                opts.Timeout = new(0, 0, 0, 0, _options.EnumeratingTimeout);
+                            }
+                            // This works if the contents contain any kind of file.
+                            // If the file is an archive this gets all the entries it contains.
+                            // If the file is not an archive, the stream is wrapped in a FileEntry container and yielded.
+                            foreach (FileEntry entry in extractor.Extract(srcFile, contents, opts))
+                            {
+                                yield return entry;
+                            }
                         }
                     }
 
@@ -593,7 +601,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    await foreach (var entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1 }))
+                    await foreach (FileEntry entry in extractor.ExtractAsync(srcFile, new ExtractorOptions() { Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1 }))
                     {
                         yield return entry;
                     }
@@ -644,6 +652,7 @@ namespace Microsoft.ApplicationInspector.Commands
         {
             _logger.LogTrace("AnalyzeCommand::GetResultAsync");
             _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Analyze");
+            cancellationToken ??= new CancellationToken();
             if (_metaDataHelper is null)
             {
                 _logger.LogError("MetadataHelper is null");
@@ -654,7 +663,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Common.Utils.GetVersionString()
             };
 
-            var exitCode = await PopulateRecordsAsync(cancellationToken);
+            AnalyzeResult.ExitCode exitCode = await PopulateRecordsAsync(cancellationToken.Value);
 
             //wrapup result status
             if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
@@ -675,7 +684,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
             }
 
-            if (cancellationToken?.IsCancellationRequested is true)
+            if (cancellationToken.Value.IsCancellationRequested)
             {
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.Canceled;
             }
@@ -704,8 +713,13 @@ namespace Microsoft.ApplicationInspector.Commands
             };
 
             var timedOut = false;
-
-            if (!_options.NoShowProgress)
+            
+            // If progress display is disabled then we can pass the enumerable directly
+            if (_options.NoShowProgress)
+            {
+                DoProcessing();
+            }
+            else
             {
                 var doneEnumerating = false;
                 ConcurrentBag<FileEntry> fileQueue = new();
@@ -714,19 +728,27 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     try
                     {
-                        foreach (var entry in GetFileEntries())
+                        foreach (FileEntry entry in GetFileEntries())
                         {
                             fileQueue.Add(entry);
                         }
                     }
                     catch (OverflowException e)
                     {
-                        _logger.LogError("Overflowed while extracting file entries. Check the input for quines or zip bombs. {message}", e.Message);
+                        _logger.LogError(
+                            "Overflowed while extracting file entries. Check the input for quines or zip bombs. {Message}",
+                            e.Message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError(
+                            "Unexpected error while enumerating files. {Type}:{Message}",
+                            e.GetType().Name, e.Message);
                     }
                     doneEnumerating = true;
                 });
 
-                var options = new ProgressBarOptions
+                ProgressBarOptions options = new()
                 {
                     ForegroundColor = ConsoleColor.Yellow,
                     ForegroundColorDone = ConsoleColor.DarkGreen,
@@ -735,7 +757,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     DisableBottomPercentage = true
                 };
 
-                using (var pbar = new IndeterminateProgressBar("Enumerating Files.", options))
+                using (IndeterminateProgressBar pbar = new("Enumerating Files.", options))
                 {
                     while (!doneEnumerating)
                     {
@@ -749,7 +771,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 Console.WriteLine();
                 var doneProcessing = false;
 
-                var options2 = new ProgressBarOptions
+                ProgressBarOptions options2 = new()
                 {
                     ForegroundColor = ConsoleColor.Yellow,
                     ForegroundColorDone = ConsoleColor.DarkGreen,
@@ -758,9 +780,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     DisableBottomPercentage = false,
                     ShowEstimatedDuration = true
                 };
-                using (var progressBar = new ProgressBar(fileQueue.Count, $"Analyzing Files.", options2))
+                using (ProgressBar progressBar = new(fileQueue.Count, $"Analyzing Files.", options2))
                 {
-                    var sw = new Stopwatch();
+                    Stopwatch sw = new();
                     sw.Start();
                     _ = Task.Factory.StartNew(() =>
                     {
@@ -774,7 +796,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         var current = _metaDataHelper.Files.Count;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));
-                        var timeExpected = new TimeSpan(0, 0, 0, 0, millisExpected);
+                        TimeSpan timeExpected = new(0, 0, 0, 0, millisExpected);
                         progressBar.Tick(_metaDataHelper.Files.Count, timeExpected, $"Analyzing Files. {_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
                     }
 
@@ -782,10 +804,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     progressBar.Tick(progressBar.MaxTicks);
                 }
                 Console.WriteLine();
-            }
-            else
-            {
-                DoProcessing(GetFileEntries());
             }
 
             //wrapup result status
@@ -820,11 +838,12 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return analyzeResult;
 
-            void DoProcessing(IEnumerable<FileEntry> fileEntries)
+            void DoProcessing(IEnumerable<FileEntry>? fileEntries = null)
             {
                 if (_options.ProcessingTimeOut > 0)
                 {
-                    using var cts = new CancellationTokenSource();
+                    fileEntries ??= GetFileEntries();
+                    using CancellationTokenSource cts = new();
                     var t = Task.Run(() => PopulateRecords(cts.Token, fileEntries), cts.Token);
                     if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.ProcessingTimeOut)))
                     {
@@ -833,7 +852,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         if (_metaDataHelper is not null)
                         {
                             // Populate skips for all the entries we didn't process
-                            foreach (var entry in fileEntries.Where(x => !_metaDataHelper.Files.Any(y => x.FullPath == y.FileName)))
+                            foreach (FileEntry entry in fileEntries.Where(x => !_metaDataHelper.Files.Any(y => x.FullPath == y.FileName)))
                             {
                                 _metaDataHelper.Files.Add(new FileRecord() { AccessTime = entry.AccessTime, CreateTime = entry.CreateTime, ModifyTime = entry.ModifyTime, FileName = entry.FullPath, Status = ScanState.TimeOutSkipped });
                             }
@@ -842,6 +861,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
+                    fileEntries ??= GetFileEntries();
                     PopulateRecords(new CancellationToken(), fileEntries);
                 }
             }

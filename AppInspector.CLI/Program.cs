@@ -6,7 +6,7 @@ using Microsoft.ApplicationInspector.Logging;
 namespace Microsoft.ApplicationInspector.CLI
 {
     using CommandLine;
-    using Microsoft.ApplicationInspector.Commands;
+    using Commands;
     using ShellProgressBar;
     using System;
     using System.IO;
@@ -209,10 +209,9 @@ namespace Microsoft.ApplicationInspector.CLI
             return new LogOptions()
             {
                 ConsoleVerbosityLevel = cliOptions.ConsoleVerbosityLevel,
-                DisableLogFileOutput = cliOptions.DisableLogFileOutput,
                 LogFileLevel = cliOptions.LogFileLevel,
                 LogFilePath = cliOptions.LogFilePath,
-                DisableConsoleOutput = cliOptions.NoShowProgressBar ? cliOptions.DisableConsoleOutput : false
+                DisableConsoleOutput = !cliOptions.NoShowProgressBar || cliOptions.DisableConsoleOutput
             }.GetLoggerFactory();
         }
 
@@ -224,10 +223,17 @@ namespace Microsoft.ApplicationInspector.CLI
             int numContextLines = cliOptions.ContextLines == -1 ? cliOptions.ContextLines : isSarif ? 0 : cliOptions.ContextLines;
             // tagsOnly isn't compatible with sarif output, we choose to prioritize the choice of sarif.
             bool tagsOnly = !isSarif && cliOptions.TagsOnly;
-            var logger = loggerFactory.CreateLogger("Program");
+            var logger = cliOptions.GetLoggerFactory().CreateLogger("Program");
             if (!cliOptions.NoShowProgressBar)
             {
-                logger.LogInformation("Progress bar is enabled so console output will be supressed. To receive log messages with the progress bar check the log file.");
+                if (string.IsNullOrEmpty(cliOptions.LogFilePath))
+                {
+                    logger.LogInformation("Progress bar is enabled so console output will be supressed. No LogFilePath has been configured so you will not receive log messages");
+                }
+                else
+                {
+                    logger.LogInformation("Progress bar is enabled so console output will be supressed. For log messages check the log at {LogPath}", cliOptions.LogFilePath);
+                }
             }
             ILoggerFactory adjustedFactory = GetAdjustedFactory(cliOptions);
             AnalyzeCommand command = new(new AnalyzeOptions()
@@ -248,7 +254,9 @@ namespace Microsoft.ApplicationInspector.CLI
                 TagsOnly = tagsOnly,
                 NoFileMetadata = cliOptions.NoFileMetadata,
                 AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles,
-                MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag
+                MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag,
+                DisableCrawlArchives = cliOptions.DisableArchiveCrawling,
+                EnumeratingTimeout = cliOptions.EnumeratingTimeout
             }, adjustedFactory);
 
             AnalyzeResult analyzeResult = command.GetResult();
@@ -261,10 +269,20 @@ namespace Microsoft.ApplicationInspector.CLI
             else
             {
                 var done = false;
-
+                var failed = false;
                 _ = Task.Factory.StartNew(() =>
                 {
-                    writer.Write(analyzeResult, cliOptions);
+                    try
+                    {
+                        writer.Write(analyzeResult, cliOptions);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogError("Exception hit while writing. {Type} : {Message}", e.GetType().Name,
+                            e.Message);
+                        failed = true;
+                        analyzeResult.ResultCode = AnalyzeResult.ExitCode.CriticalError;
+                    }
                     done = true;
                 });
 
@@ -283,8 +301,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     {
                         Thread.Sleep(100);
                     }
-                    pbar.Message = "Results written.";
-
+                    pbar.Message = failed ? $"Failed to write results. Check the log file at {cliOptions.LogFilePath} for details." : $"Results written to {cliOptions.OutputFilePath}.";
                     pbar.Finished();
                 }
                 Console.Write(Environment.NewLine);
