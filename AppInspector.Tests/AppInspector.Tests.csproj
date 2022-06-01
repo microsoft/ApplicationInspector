@@ -11,6 +11,9 @@
     <Compile Remove="output\**" />
     <EmbeddedResource Remove="output\**" />
     <None Remove="output\**" />
+    <None Update="TestData\FourWindowsOneLinux.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

@@ -449,6 +449,27 @@ windows
             Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
         }
 
+        [DataTestMethod]
+        [DataRow(true, 0, 0)]
+        [DataRow(false, 2, 5)]
+        public void ExpectedResultCounts(bool disableArchive, int expectedUniqueCount, int expectedCount)
+        {
+            AnalyzeOptions options = new()
+            {
+                // This file is in the repo under test data and should be placed in the working directory by the build
+                SourcePath = new string[1] { Path.Combine("TestData","FourWindowsOneLinux.zip") },
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                DisableCrawlArchives = disableArchive
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(disableArchive ? AnalyzeResult.ExitCode.NoMatches : AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(expectedCount, result.Metadata.TotalMatchesCount);
+            Assert.AreEqual(expectedUniqueCount, result.Metadata.UniqueMatchesCount);
+        }
+        
         [TestMethod]
         public void ExpectedResultCounts()
         {
