@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppInspector.Tests.CLI", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppInspector.Logging", "AppInspector.Logging\AppInspector.Logging.csproj", "{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationInspector.Viewer", "ApplicationInspector.Viewer\ApplicationInspector.Viewer.csproj", "{D670640D-9EDE-4464-95B5-CFDDCC1F0A74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D670640D-9EDE-4464-95B5-CFDDCC1F0A74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D670640D-9EDE-4464-95B5-CFDDCC1F0A74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D670640D-9EDE-4464-95B5-CFDDCC1F0A74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D670640D-9EDE-4464-95B5-CFDDCC1F0A74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
