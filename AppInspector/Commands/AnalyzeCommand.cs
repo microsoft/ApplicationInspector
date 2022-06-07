@@ -262,9 +262,10 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="cancellationToken"></param>
         /// <param name="populatedEntries"></param>
         /// <returns></returns>
-        private AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, IEnumerable<FileEntry> populatedEntries)
+        private AnalyzeResult.ExitCode PopulateRecords(CancellationToken cancellationToken, IEnumerable<FileEntry>? populatedEntries)
         {
             _logger.LogTrace("AnalyzeCommand::PopulateRecords");
+            populatedEntries ??= EnumerateFileEntries();
             if (_metaDataHelper is null)
             {
                 _logger.LogError("MetadataHelper is null");
@@ -526,9 +527,9 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Gets the FileEntries synchronously.
         /// </summary>
         /// <returns>An Enumerable of FileEntries.</returns>
-        private IEnumerable<FileEntry> GetFileEntries()
+        private IEnumerable<FileEntry> EnumerateFileEntries()
         {
-            _logger.LogTrace("AnalyzeCommand::GetFileEntries");
+            _logger.LogTrace("AnalyzeCommand::EnumerateFileEntries");
 
             Extractor extractor = new();
             // For every file, if the file isn't excluded return it, and if it is track the exclusion in the metadata
@@ -563,14 +564,9 @@ namespace Microsoft.ApplicationInspector.Commands
                             {
                                 Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1
                             };
-                            if (_options.EnumeratingTimeout > 0)
-                            {
-                                opts.EnableTiming = true;
-                                opts.Timeout = new(0, 0, 0, 0, _options.EnumeratingTimeout);
-                            }
                             // This works if the contents contain any kind of file.
                             // If the file is an archive this gets all the entries it contains.
-                            // If the file is not an archive, the stream is wrapped in a FileEntry container and yielded.
+                            // If the file is not an archive, the stream is wrapped in a FileEntry container and yielded
                             foreach (FileEntry entry in extractor.Extract(srcFile, contents, opts))
                             {
                                 yield return entry;
@@ -717,18 +713,53 @@ namespace Microsoft.ApplicationInspector.Commands
             // If progress display is disabled then we can pass the enumerable directly
             if (_options.NoShowProgress)
             {
-                DoProcessing();
+                IEnumerable<FileEntry> enumeratedEntries = Array.Empty<FileEntry>();
+                if (_options.EnumeratingTimeout > 0)
+                {
+                    bool kickedOffEnumerating = false;
+                    using CancellationTokenSource cts = new();
+                    var t = Task.Run(() => 
+                    {
+                        try
+                        {
+                            enumeratedEntries = EnumerateFileEntries();
+                        }
+                        catch (OverflowException e)
+                        {
+                            _logger.LogError(
+                                "Overflowed while extracting file entries. Check the input for quines or zip bombs. {Message}",
+                                e.Message);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogError(
+                                "Unexpected error while enumerating files. {Type}:{Message}",
+                                e.GetType().Name, e.Message);
+                        }
+                    }, cts.Token);
+                    if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.EnumeratingTimeout)))
+                    {
+                        cts.Cancel();
+                    }
+                }
+                else
+                {
+                    enumeratedEntries = EnumerateFileEntries();
+                }
+                DoProcessing(enumeratedEntries);
             }
             else
             {
-                var doneEnumerating = false;
+                bool doneEnumerating = false;
+                bool enumeratingTimedOut = false;
                 ConcurrentBag<FileEntry> fileQueue = new();
 
-                _ = Task.Factory.StartNew(() =>
+                using CancellationTokenSource cts = new();
+                var t = Task.Run(() => 
                 {
                     try
                     {
-                        foreach (FileEntry entry in GetFileEntries())
+                        foreach (FileEntry entry in EnumerateFileEntries())
                         {
                             fileQueue.Add(entry);
                         }
@@ -745,8 +776,21 @@ namespace Microsoft.ApplicationInspector.Commands
                             "Unexpected error while enumerating files. {Type}:{Message}",
                             e.GetType().Name, e.Message);
                     }
-                    doneEnumerating = true;
-                });
+                    finally
+                    {
+                        doneEnumerating = true;
+                    }
+                }, cts.Token);
+                if (_options.EnumeratingTimeout > 0)
+                {
+                    if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.EnumeratingTimeout)))
+                    {
+                        enumeratingTimedOut = true;
+                        doneEnumerating = true;
+                        cts.Cancel();
+                    }
+                }
+                
 
                 ProgressBarOptions options = new()
                 {
@@ -764,8 +808,10 @@ namespace Microsoft.ApplicationInspector.Commands
                         Thread.Sleep(_sleepDelay);
                         pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
                     }
-                    pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
 
+                    pbar.Message = enumeratingTimedOut
+                        ? $"Enumerating Files Timed Out. {fileQueue.Count} Discovered."
+                        : $"Enumerating Files Completed. {fileQueue.Count} Discovered.";
                     pbar.Finished();
                 }
                 Console.WriteLine();
@@ -786,8 +832,19 @@ namespace Microsoft.ApplicationInspector.Commands
                     sw.Start();
                     _ = Task.Factory.StartNew(() =>
                     {
-                        DoProcessing(fileQueue);
-                        doneProcessing = true;
+                        try
+                        {
+                            DoProcessing(fileQueue);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogError("Unexpected exception while processing. {Type}:{Message}",
+                                e.GetType().Name, e.Message);
+                        }
+                        finally
+                        {
+                            doneProcessing = true;
+                        }
                     });
 
                     while (!doneProcessing)
@@ -838,30 +895,25 @@ namespace Microsoft.ApplicationInspector.Commands
 
             return analyzeResult;
 
-            void DoProcessing(IEnumerable<FileEntry>? fileEntries = null)
+            void DoProcessing(IEnumerable<FileEntry> fileEntries)
             {
                 if (_options.ProcessingTimeOut > 0)
                 {
-                    fileEntries ??= GetFileEntries();
                     using CancellationTokenSource cts = new();
                     var t = Task.Run(() => PopulateRecords(cts.Token, fileEntries), cts.Token);
                     if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.ProcessingTimeOut)))
                     {
                         timedOut = true;
                         cts.Cancel();
-                        if (_metaDataHelper is not null)
+                        // Populate skips for all the entries we didn't process
+                        foreach (FileEntry entry in fileEntries.Where(x => !_metaDataHelper.Files.Any(y => x.FullPath == y.FileName)))
                         {
-                            // Populate skips for all the entries we didn't process
-                            foreach (FileEntry entry in fileEntries.Where(x => !_metaDataHelper.Files.Any(y => x.FullPath == y.FileName)))
-                            {
-                                _metaDataHelper.Files.Add(new FileRecord() { AccessTime = entry.AccessTime, CreateTime = entry.CreateTime, ModifyTime = entry.ModifyTime, FileName = entry.FullPath, Status = ScanState.TimeOutSkipped });
-                            }
+                            _metaDataHelper.Files.Add(new FileRecord() { AccessTime = entry.AccessTime, CreateTime = entry.CreateTime, ModifyTime = entry.ModifyTime, FileName = entry.FullPath, Status = ScanState.TimeOutSkipped });
                         }
                     }
                 }
                 else
                 {
-                    fileEntries ??= GetFileEntries();
                     PopulateRecords(new CancellationToken(), fileEntries);
                 }
             }
