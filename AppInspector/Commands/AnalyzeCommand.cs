@@ -863,16 +863,6 @@ namespace Microsoft.ApplicationInspector.Commands
                     
                     while (!doneProcessing)
                     {
-                        if (_options.ProcessingTimeOut > 0)
-                        {
-                            if (sw.Elapsed.TotalMilliseconds >= _options.ProcessingTimeOut)
-                            {
-                                timedOut = true;
-                                cts2.Cancel();
-                                progressBar.ObservedError = true;
-                                break;
-                            }
-                        }
                         Thread.Sleep(_sleepDelay);
                         var current = _metaDataHelper.Files.Count;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
@@ -880,6 +870,9 @@ namespace Microsoft.ApplicationInspector.Commands
                         TimeSpan timeExpected = new(0, 0, 0, 0, millisExpected);
                         progressBar.Tick(_metaDataHelper.Files.Count, timeExpected, $"Analyzing Files. {_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
                     }
+
+                    // If processing timed out it will have set the stsatus to timeout skipped.
+                    timedOut = _metaDataHelper.Files.Any(x => x.Status == ScanState.TimeOutSkipped);
 
                     progressBar.Message = timedOut ?
                         $"Overall processing timeout hit. {_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected." :

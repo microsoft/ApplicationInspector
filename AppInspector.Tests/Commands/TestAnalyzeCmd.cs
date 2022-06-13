@@ -38,7 +38,7 @@ namespace AppInspector.Tests.Commands
             testFilePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),"TestFile.js");
             testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
             heavyRulePath =  Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "HeavyRule.json");
-            File.WriteAllText(heavyRulePath, $@"[ {string.Join(',',Enumerable.Repeat(heavyRule, 50))}");
+            File.WriteAllText(heavyRulePath, heavyRule);
             File.WriteAllText(testFilePath, fourWindowsOneLinux);
             File.WriteAllText(testRulesPath, findWindows);
             for (int i = 0; i < numTimeOutFiles; i++)
@@ -70,24 +70,26 @@ buy@tacos.com
         /// <summary>
         /// This rule contains an intentionally catastrophic backtracking regex in order to trigger the timeout when running tests.
         /// </summary>
-        const string heavyRule = @"
+        const string heavyRule = @"[
 {
-    ""name"": ""Bad csv checker"",
-    ""id"": ""AI_TEST_TIMEOUT"",
-    ""description"": ""This is a rule with an intentionally catastraphic backtrack regex to trigger the timeout."",
+    ""name"": ""Runaway CSV Regex"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule is an ineffcient regex for csvs to trigger the timeout"",
     ""tags"": [
       ""Test.Tags.Windows""
     ],
     ""severity"": ""Important"",
     ""patterns"": [
       {
-        ""confidence"": ""Medium"",
+                ""confidence"": ""Medium"",
         ""modifiers"": [
           ""i""
         ],
         ""pattern"": ""\\w+([\\.-]?\\w+)*@\\w+([\\.-]?w+)*(\\.\\w{2,3})+$"",
         ""type"": ""Regex"",
-      }";
+      }
+    ]
+}]";
         
         // These simple test rules rules look for the string "windows" and "linux"
         const string findWindows = @"[
@@ -394,7 +396,7 @@ windows
             AnalyzeOptions options = new()
             {
                 SourcePath = timeOutTestsFiles,
-                CustomRulesPath = testRulesPath,
+                CustomRulesPath = heavyRulePath,
                 IgnoreDefaultRules = true,
                 ProcessingTimeOut = 1,
                 SingleThread = singleThread,
