@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
     <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.1" />
+    
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />

@@ -215,6 +215,39 @@ namespace Microsoft.ApplicationInspector.CLI
             }.GetLoggerFactory();
         }
 
+        private static (bool initialSuccess, bool backupSuccess, string? backupLocation) TryWriteResults(ResultsWriter writer, AnalyzeResult analyzeResult, CLIAnalyzeCmdOptions cliOptions, ILogger logger)
+        {
+            try
+            {
+                writer.Write(analyzeResult, cliOptions);
+                return (true, false, null);
+            }
+            catch (Exception e)
+            {
+                logger.LogError("Exception hit while writing. {Type} : {Message}", e.GetType().Name,
+                    e.Message);
+                analyzeResult.ResultCode = AnalyzeResult.ExitCode.CriticalError;
+                // If HTML 
+                if (cliOptions.OutputFileFormat.Equals("html",StringComparison.InvariantCultureIgnoreCase))
+                {
+                    string alternatepath = "backupOutput.json";
+                    var optionsCopy = cliOptions with {OutputFileFormat = "json", OutputFilePath = alternatepath};
+                    try
+                    {
+                        writer.Write(analyzeResult, optionsCopy);
+                        logger.LogInformation("Failed to write HTML report. Exported JSON instead at {AlternatePath}", alternatepath);
+                        return (false, true, alternatepath);
+                    }
+                    catch (Exception e2)
+                    {
+                        logger.LogError("Exception hit while writing backup of result object. {Type} : {Message}", e2.GetType().Name,
+                            e2.Message);
+                    }
+                }
+            }
+            return (false, false, null);
+        }
+
         private static int RunAnalyzeCommand(CLIAnalyzeCmdOptions cliOptions)
         {
             // If the user manually specified -1 this means they also don't even want the snippet in sarif, so we respect that option
@@ -228,11 +261,11 @@ namespace Microsoft.ApplicationInspector.CLI
             {
                 if (string.IsNullOrEmpty(cliOptions.LogFilePath))
                 {
-                    logger.LogInformation("Progress bar is enabled so console output will be supressed. No LogFilePath has been configured so you will not receive log messages");
+                    logger.LogInformation("Progress bar is enabled so console output will be suppressed. No LogFilePath has been configured so you will not receive log messages");
                 }
                 else
                 {
-                    logger.LogInformation("Progress bar is enabled so console output will be supressed. For log messages check the log at {LogPath}", cliOptions.LogFilePath);
+                    logger.LogInformation("Progress bar is enabled so console output will be suppressed. For log messages check the log at {LogPath}", cliOptions.LogFilePath);
                 }
             }
             ILoggerFactory adjustedFactory = GetAdjustedFactory(cliOptions);
@@ -264,44 +297,38 @@ namespace Microsoft.ApplicationInspector.CLI
             ResultsWriter writer = new(loggerFactory);
             if (cliOptions.NoShowProgressBar)
             {
-                writer.Write(analyzeResult, cliOptions);
+                TryWriteResults(writer, analyzeResult, cliOptions, logger);
             }
             else
             {
-                var done = false;
-                var failed = false;
-                _ = Task.Factory.StartNew(() =>
-                {
-                    try
-                    {
-                        writer.Write(analyzeResult, cliOptions);
-                    }
-                    catch (Exception e)
-                    {
-                        logger.LogError("Exception hit while writing. {Type} : {Message}", e.GetType().Name,
-                            e.Message);
-                        failed = true;
-                        analyzeResult.ResultCode = AnalyzeResult.ExitCode.CriticalError;
-                    }
-                    done = true;
-                });
-
-                var options = new ProgressBarOptions
+                ProgressBarOptions outputWriterBarOptions = new()
                 {
                     ForegroundColor = ConsoleColor.Yellow,
                     ForegroundColorDone = ConsoleColor.DarkGreen,
                     BackgroundColor = ConsoleColor.DarkGray,
+                    ForegroundColorError = ConsoleColor.Red,
                     BackgroundCharacter = '\u2593',
                     DisableBottomPercentage = true
                 };
 
-                using (var pbar = new IndeterminateProgressBar("Writing Result Files.", options))
+                using (IndeterminateProgressBar pbar = new("Writing Result Files.", outputWriterBarOptions))
                 {
+                    var done = false;
+                    (bool initialSuccess, bool backupSuccess, string? alternatePath) = (false, false, null);
+                    _ = Task.Factory.StartNew(() =>
+                    {
+                        (initialSuccess, backupSuccess, alternatePath) = TryWriteResults(writer, analyzeResult, cliOptions, adjustedFactory.CreateLogger("RunAnalyzeCommand"));
+                        done = true;
+                    });
+                    
                     while (!done)
                     {
                         Thread.Sleep(100);
                     }
-                    pbar.Message = failed ? $"Failed to write results. Check the log file at {cliOptions.LogFilePath} for details." : $"Results written to {cliOptions.OutputFilePath}.";
+                    
+                    pbar.ObservedError = !initialSuccess;
+                    pbar.Message = !initialSuccess ? 
+                        (backupSuccess ? $"Failed to write results. Wrote backup results to {alternatePath}." : "Failed to write Results and failed to write Backup Results.") : $"Results written to {cliOptions.OutputFilePath}.";
                     pbar.Finished();
                 }
                 Console.Write(Environment.NewLine);
