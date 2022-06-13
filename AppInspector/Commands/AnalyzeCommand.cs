@@ -800,7 +800,6 @@ namespace Microsoft.ApplicationInspector.Commands
                         cts.Cancel();
                     }
                 }
-                
 
                 ProgressBarOptions options = new()
                 {
@@ -869,6 +868,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             if (sw.Elapsed.TotalMilliseconds >= _options.ProcessingTimeOut)
                             {
                                 timedOut = true;
+                                cts2.Cancel();
                                 progressBar.ObservedError = true;
                                 break;
                             }

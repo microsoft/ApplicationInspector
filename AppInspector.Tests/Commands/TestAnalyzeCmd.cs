@@ -38,7 +38,7 @@ namespace AppInspector.Tests.Commands
             testFilePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),"TestFile.js");
             testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
             heavyRulePath =  Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "HeavyRule.json");
-            File.WriteAllText(heavyRulePath, heavyRule);
+            File.WriteAllText(heavyRulePath, $@"[ {string.Join(',',Enumerable.Repeat(heavyRule, 50))}");
             File.WriteAllText(testFilePath, fourWindowsOneLinux);
             File.WriteAllText(testRulesPath, findWindows);
             for (int i = 0; i < numTimeOutFiles; i++)
@@ -70,7 +70,7 @@ buy@tacos.com
         /// <summary>
         /// This rule contains an intentionally catastrophic backtracking regex in order to trigger the timeout when running tests.
         /// </summary>
-        const string heavyRule = @"[
+        const string heavyRule = @"
 {
     ""name"": ""Bad csv checker"",
     ""id"": ""AI_TEST_TIMEOUT"",
@@ -87,8 +87,7 @@ buy@tacos.com
         ],
         ""pattern"": ""\\w+([\\.-]?\\w+)*@\\w+([\\.-]?w+)*(\\.\\w{2,3})+$"",
         ""type"": ""Regex"",
-      }
-]";
+      }";
         
         // These simple test rules rules look for the string "windows" and "linux"
         const string findWindows = @"[
