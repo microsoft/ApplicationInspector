@@ -291,6 +291,7 @@ namespace Microsoft.ApplicationInspector.CLI
                     ForegroundColor = ConsoleColor.Yellow,
                     ForegroundColorDone = ConsoleColor.DarkGreen,
                     BackgroundColor = ConsoleColor.DarkGray,
+                    ForegroundColorError = ConsoleColor.Red,
                     BackgroundCharacter = '\u2593',
                     DisableBottomPercentage = true
                 };
@@ -301,6 +302,8 @@ namespace Microsoft.ApplicationInspector.CLI
                     {
                         Thread.Sleep(100);
                     }
+
+                    pbar.ObservedError = failed;
                     pbar.Message = failed ? $"Failed to write results. Check the log file at {cliOptions.LogFilePath} for details." : $"Results written to {cliOptions.OutputFilePath}.";
                     pbar.Finished();
                 }

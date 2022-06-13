@@ -7,10 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CommandLineParser" Version="2.8.0" />
+      <PackageReference Include="CommandLineParser" Version="2.9.1" />
       <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+      <PackageReference Update="Nerdbank.GitVersioning">
+        <Version>3.5.107</Version>
+      </PackageReference>
     </ItemGroup>
 
 </Project>

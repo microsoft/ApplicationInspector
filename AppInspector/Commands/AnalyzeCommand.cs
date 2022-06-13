@@ -1,6 +1,8 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using System.Runtime.InteropServices.ComTypes;
+
 namespace Microsoft.ApplicationInspector.Commands
 {
     using GlobExpressions;
@@ -36,9 +38,18 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Treat <see cref="LanguageInfo.LangFileType.Build"/> files as if they were <see cref="LanguageInfo.LangFileType.Code"/> when determining if tags should apply.
         /// </summary>
         public bool AllowAllTagsInBuildFiles { get; set; } = false;
+        /// <summary>
+        /// If enabled, will not show the progress bar interface.
+        /// </summary>
         public bool NoShowProgress { get; set; } = true;
         public bool TagsOnly { get; set; } = false;
+        /// <summary>
+        /// Amount of time in ms to allow to process each file.  Not supported in async operations.
+        /// </summary>
         public int FileTimeOut { get; set; } = 0;
+        /// <summary>
+        /// Overall amount of time in ms to allow for processing.  Not supported in async operations.
+        /// </summary>
         public int ProcessingTimeOut { get; set; } = 0;
         public int ContextLines { get; set; } = 3;
         public bool ScanUnknownTypes { get; set; }
@@ -55,7 +66,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool DisableCrawlArchives { get; set; }
         
         /// <summary>
-        /// If <see cref="DisableCrawlArchives"/> is not set, will restrict the amount of time allowed to extract each archive.
+        /// If <see cref="DisableCrawlArchives"/> is not set, will restrict the amount of time allowed to extract each archive. Not supported in async operations.
         /// </summary>
         public int EnumeratingTimeout { get; set; }
     }
@@ -173,7 +184,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
                 else
                 {
-                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, string.Join(',', _options.SourcePath)));
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, entry));
                 }
             }
             if (_srcfileList.Count == 0)
@@ -716,13 +727,12 @@ namespace Microsoft.ApplicationInspector.Commands
                 IEnumerable<FileEntry> enumeratedEntries = Array.Empty<FileEntry>();
                 if (_options.EnumeratingTimeout > 0)
                 {
-                    bool kickedOffEnumerating = false;
                     using CancellationTokenSource cts = new();
                     var t = Task.Run(() => 
                     {
                         try
                         {
-                            enumeratedEntries = EnumerateFileEntries();
+                            enumeratedEntries = EnumerateFileEntries().ToList();
                         }
                         catch (OverflowException e)
                         {
@@ -797,6 +807,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     ForegroundColor = ConsoleColor.Yellow,
                     ForegroundColorDone = ConsoleColor.DarkGreen,
                     BackgroundColor = ConsoleColor.DarkGray,
+                    ForegroundColorError = ConsoleColor.Red,
                     BackgroundCharacter = '\u2593',
                     DisableBottomPercentage = true
                 };
@@ -812,6 +823,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     pbar.Message = enumeratingTimedOut
                         ? $"Enumerating Files Timed Out. {fileQueue.Count} Discovered."
                         : $"Enumerating Files Completed. {fileQueue.Count} Discovered.";
+                    
+                    pbar.ObservedError = enumeratingTimedOut;
                     pbar.Finished();
                 }
                 Console.WriteLine();
@@ -822,6 +835,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     ForegroundColor = ConsoleColor.Yellow,
                     ForegroundColorDone = ConsoleColor.DarkGreen,
                     BackgroundColor = ConsoleColor.DarkGray,
+                    ForegroundColorError = ConsoleColor.Red,
                     BackgroundCharacter = '\u2593',
                     DisableBottomPercentage = false,
                     ShowEstimatedDuration = true
@@ -830,6 +844,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     Stopwatch sw = new();
                     sw.Start();
+                    CancellationTokenSource cts2 = new();
                     _ = Task.Factory.StartNew(() =>
                     {
                         try
@@ -845,10 +860,19 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             doneProcessing = true;
                         }
-                    });
-
+                    },cts2.Token);
+                    
                     while (!doneProcessing)
                     {
+                        if (_options.ProcessingTimeOut > 0)
+                        {
+                            if (sw.Elapsed.TotalMilliseconds >= _options.ProcessingTimeOut)
+                            {
+                                timedOut = true;
+                                progressBar.ObservedError = true;
+                                break;
+                            }
+                        }
                         Thread.Sleep(_sleepDelay);
                         var current = _metaDataHelper.Files.Count;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
@@ -857,7 +881,9 @@ namespace Microsoft.ApplicationInspector.Commands
                         progressBar.Tick(_metaDataHelper.Files.Count, timeExpected, $"Analyzing Files. {_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
                     }
 
-                    progressBar.Message = $"{_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
+                    progressBar.Message = timedOut ?
+                        $"Overall processing timeout hit. {_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected." :
+                    $"{_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.";
                     progressBar.Tick(progressBar.MaxTicks);
                 }
                 Console.WriteLine();
@@ -906,7 +932,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         timedOut = true;
                         cts.Cancel();
                         // Populate skips for all the entries we didn't process
-                        foreach (FileEntry entry in fileEntries.Where(x => !_metaDataHelper.Files.Any(y => x.FullPath == y.FileName)))
+                        foreach (FileEntry entry in fileEntries.Where(x => _metaDataHelper.Files.All(y => x.FullPath != y.FileName)))
                         {
                             _metaDataHelper.Files.Add(new FileRecord() { AccessTime = entry.AccessTime, CreateTime = entry.CreateTime, ModifyTime = entry.ModifyTime, FileName = entry.FullPath, Status = ScanState.TimeOutSkipped });
                         }

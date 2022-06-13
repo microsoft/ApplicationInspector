@@ -21,35 +21,77 @@ namespace AppInspector.Tests.Commands
     [ExcludeFromCodeCoverage]
     public class TestAnalyzeCmd
     {
-        /*
-TODO, these parameters are not currently tested:
-FileTimeout
-ProcessingTimeout
-        */
-        private string testFilePath = string.Empty;
-        private string testRulesPath = string.Empty;
+        private static string testFilePath = string.Empty;
+        private static string testRulesPath = string.Empty;
 
+        // Test files for timeout tests
+        private static List<string> timeOutTestsFiles = new();
+        private const int numTimeOutFiles = 25;
+        private const int numTimesContent = 25;
+        
         private ILoggerFactory factory = new NullLoggerFactory();
+
+        [ClassInitialize]
+        public static void ClassInit(TestContext context)
+        {
+            Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
+            testFilePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),"TestFile.js");
+            testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
+            heavyRulePath =  Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "HeavyRule.json");
+            File.WriteAllText(heavyRulePath, heavyRule);
+            File.WriteAllText(testFilePath, fourWindowsOneLinux);
+            File.WriteAllText(testRulesPath, findWindows);
+            for (int i = 0; i < numTimeOutFiles; i++)
+            {
+                string newPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),$"TestFile-{i}.js");
+                File.WriteAllText(newPath, string.Join('\n',Enumerable.Repeat(hardToFindContent, numTimesContent)));
+                timeOutTestsFiles.Add(newPath);
+            }
+        }
+
+        private static string heavyRulePath = string.Empty;
 
         [TestInitialize]
         public void InitOutput()
         {
             factory = new LogOptions().GetLoggerFactory();
-            Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
-            testFilePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),"TestFile.js");
-            testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
-            File.WriteAllText(testFilePath, fourWindowsOneLinux);
-            File.WriteAllText(testRulesPath, findWindows);
         }
-
-        [TestCleanup]
-        public void CleanUp()
+        
+        [ClassCleanup]
+        public static void CleanUp()
         {
             Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
         }
 
+        private const string hardToFindContent = @"
+asefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlak@company.com1
+buy@tacos.com
+";
+        /// <summary>
+        /// This rule contains an intentionally catastrophic backtracking regex in order to trigger the timeout when running tests.
+        /// </summary>
+        const string heavyRule = @"[
+{
+    ""name"": ""Bad csv checker"",
+    ""id"": ""AI_TEST_TIMEOUT"",
+    ""description"": ""This is a rule with an intentionally catastraphic backtrack regex to trigger the timeout."",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+        ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""\\w+([\\.-]?\\w+)*@\\w+([\\.-]?w+)*(\\.\\w{2,3})+$"",
+        ""type"": ""Regex"",
+      }
+]";
+        
         // These simple test rules rules look for the string "windows" and "linux"
-        string findWindows = @"[
+        const string findWindows = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
     ""id"": ""AI_TEST_WINDOWS"",
@@ -89,7 +131,7 @@ ProcessingTimeout
     ]
 }
 ]";
-        string findWindowsWithOverride = @"[
+        const string findWindowsWithOverride = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
     ""id"": ""AI_TEST_WINDOWS"",
@@ -130,7 +172,7 @@ ProcessingTimeout
     ]
 }
 ]";
-        string findWindowsWithOverrideRuleWithoutOverride = @"[
+        const string findWindowsWithOverrideRuleWithoutOverride = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
     ""id"": ""AI_TEST_WINDOWS"",
@@ -170,7 +212,7 @@ ProcessingTimeout
     ]
 }
 ]";
-        string findWindowsWithFileRegex = @"[
+        const string findWindowsWithFileRegex = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
     ""id"": ""AI_TEST_WINDOWS"",
@@ -213,7 +255,7 @@ ProcessingTimeout
 }
 ]";
         // This string contains windows four times and linux once.
-        string fourWindowsOneLinux =
+        const string fourWindowsOneLinux =
 @"windows
 windows
 linux
@@ -222,7 +264,7 @@ windows
 ";
 
         // This string contains windows four times and linux once.
-        string threeWindowsOneWindows2000 =
+        const string threeWindowsOneWindows2000 =
 @"windows
 windows
 windows 2000
@@ -304,6 +346,92 @@ windows
             // This has one additional result for the same file because the match is not being overridden.
             Assert.AreEqual(5, result.Metadata.TotalMatchesCount);
             Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
+        }
+
+        private void DeleteTestFiles(IEnumerable<string> pathsToDelete)
+        {
+            foreach (var path in pathsToDelete)
+            {
+                File.Delete(path);
+            }
+        }
+        
+        /// <summary>
+        /// Checks that the enumeration timeout works
+        /// </summary>
+        [DataRow(true, true)]
+        [DataRow(true, false)]
+        [DataRow(false, true)]
+        [DataRow(false, false)]
+        [DataTestMethod]
+        public void EnumeratingTimeoutTimesOut(bool singleThread, bool noShowProgress)
+        {
+            AnalyzeOptions options = new()
+            {
+                SourcePath = timeOutTestsFiles,
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                EnumeratingTimeout = 1,
+                SingleThread = singleThread,
+                NoShowProgress = noShowProgress
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = command.GetResult();
+
+            Assert.AreNotEqual(numTimeOutFiles, result.Metadata.TotalFiles);
+        }
+        
+        /// <summary>
+        /// Checks that the overall processing timeout works
+        /// </summary>
+        [DataRow(true, true)]
+        [DataRow(true, false)]
+        [DataRow(false, true)]
+        [DataRow(false, false)]
+        [DataTestMethod]
+        public void ProcessingTimeoutTimesOut(bool singleThread, bool noShowProgress)
+        {
+            AnalyzeOptions options = new()
+            {
+                SourcePath = timeOutTestsFiles,
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                ProcessingTimeOut = 1,
+                SingleThread = singleThread,
+                NoShowProgress = noShowProgress
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = command.GetResult();
+            
+            Assert.AreNotEqual(result.Metadata.FilesTimeOutSkipped,0);
+        }
+        
+        /// <summary>
+        /// Checks that the individual file timeout times out
+        /// </summary>
+        [DataRow(true, true)]
+        [DataRow(true, false)]
+        [DataRow(false, true)]
+        [DataRow(false, false)]
+        [DataTestMethod]
+        public void FileTimeoutTimesOut(bool singleThread, bool noShowProgress)
+        {
+            AnalyzeOptions options = new()
+            {
+                SourcePath = timeOutTestsFiles,
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                FileTimeOut = 1,
+                SingleThread = singleThread,
+                NoShowProgress = noShowProgress
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = command.GetResult();
+
+            Assert.AreNotEqual(0, result.Metadata.FilesTimedOut);
         }
 
         /// <summary>

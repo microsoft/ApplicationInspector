@@ -100,51 +100,88 @@ appinspector analyze -s path/to/files -o data.json -f json -g **/tests/**,**/.gi
 #### Additional Usage Information
 ```
 > appinspector analyze --help
-ApplicationInspector.CLI 1.4.0+6bdef0356b
+ApplicationInspector.CLI 1.5.7+1e422537ad
 c Microsoft Corporation. All rights reserved.
 
-  -s, --source-path             Required. Source file or directory to inspect, comma separated
+  -s, --source-path                      Required. Source file or directory to inspect, comma separated
 
-  -r, --custom-rules-path       Custom rules file or directory path
+  -f, --output-file-format               (Default: html) Output format [html|json|text]
 
-  -i, --ignore-default-rules    (Default: false) Exclude default rules bundled with application
+  -e, --text-format                      (Default:
+                                         Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m)
+                                         Match text format specifiers
 
-  -c, --confidence-filters      (Default: high,medium) Output only matches with specified confidence <value>,<value> [high|medium|low]
+  -N, --no-show-progress                 Disable progress information.
 
-  -g, --exclusion-globs         (Default: **/bin/** **/obj/** **/.vs/** **/.git/**) Exclude source files that match glob patterns. Example: "**/.git/**,*Tests*".  Use "none" to disable.
+  -C, --context-lines                    Number of lines of context on each side to include in excerpt (up to a maximum
+                                         of 100 * NumLines characters on each side). 0 to skip exerpt. -1 to not extract
+                                         samples or excerpts (implied by -t). When outputting sarif use -1 for no
+                                         snippets, all other values ignored.
 
-  -f, --output-file-format      (Default: html) Output format [html|json|text]
+  -t, --tags-only                        Only get tags (no detailed match data). Ignored if output format is sarif.
 
-  -e, --text-format             (Default: Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m) Match text format specifiers
+  -n, --no-file-metadata                 Don't collect metadata about each individual file.
 
-  --file-timeout                (Default: 60000) If set, maximum amount of time in milliseconds to allow for processing each file.
+  -A, --allow-all-tags-in-build-files    Allow all tags (not just Metadata tags) in files of type Build.
 
-  --processing-timeout          (Default: 0) If set, maximum amount of time in milliseconds to allow for processing overall.
+  -M, --max-num-matches-per-tag          If non-zero, and TagsOnly is not set, will ignore rules based on if all of
+                                         their tags have been found the set value number of times.
 
-  --single-threaded             Disables parallel processing.
+  --base-path                            If set, when outputting sarif, will have paths made relative to the provided
+                                         path.
 
-  --no-show-progress            Disable progress information.
+  --repository-uri                       If set, when outputting sarif, include this information.
 
-  --context-lines               Number of lines of context on each side to include in excerpt (up to a maximum of 100 * NumLines characters on each side). 0 to skip exerpt. -1 to not extract
-                                samples or excerpts (implied by -t).
+  --commit-hash                          If set, when outputting sarif, include this information.
 
-  --scan-unknown-filetypes      Scan files of unknown types.
+  -i, --ignore-default-rules             (Default: false) Exclude default rules bundled with application
 
-  -t, --tags-only               Only get tags (no detailed match data).
+  -F, --file-timeout                     (Default: 60000) Maximum amount of time in milliseconds to allow for processing
+                                         each file. 0 is infinity. Default: 60000.
 
-  -n, --no-file-metadata        Don't collect metadata about each individual file.
+  -p, --processing-timeout               (Default: 0) Maximum amount of time in milliseconds to allow for processing.
+                                         When NoShowProgress is set this includes enumeration time. 0 is infinity.
+                                         Default: 0.
 
-  -o, --output-file-path        Output file path
+  --enumeration-timeout                  (Default: 0) Maximum amount of time in milliseconds to allow for enumerating. 0
+                                         is infinity. Default: 0.
 
-  -x, --console-verbosity       (Default: medium) Console verbosity [high|medium|low|none]
+  --disable-archive-crawling             Disable Archive Enumeration.
 
-  -l, --log-file-path           Log file path
+  -S, --single-threaded                  Disables parallel processing. May be helpful for debugging with higher
+                                         verbosity.
 
-  -v, --log-file-level          (Default: Error) Log file level [Debug|Info|Warn|Error|Trace|Fatal|Off]
+  -g, --exclusion-globs                  (Default: **/bin/** **/obj/** **/.vs/** **/.git/**) Exclude source files that
+                                         match glob patterns. Example: "**/.git/**,*Tests*".  Use "none" to disable.
 
-  --help                        Display this help screen.
+  -u, --scan-unknown-filetypes           Scan files of unknown types.
 
-  --version                     Display version information.
+  -c, --confidence-filters               Output only matches with specified confidence <value>,<value>. Default:
+                                         Medium,High. [High|Medium|Low]
+
+  --severity-filters                     Output only matches with specified severity <value>,<value>. Default: All are
+                                         enabled. [Critical|Important|Moderate|BestPractice|ManualReview]
+
+  -r, --custom-rules-path                Custom rules file or directory path
+
+  --custom-languages-path                Replace the default languages set with a custom languages.json.
+
+  --custom-comments-path                 Replace the default comment specification set with a custom comments.json.
+
+  -o, --output-file-path                 Output file path
+
+  -x, --console-verbosity                (Default: Information) Console verbosity
+                                         [Verbose|Debug|Information|Warning|Error|Fatal]
+
+  --disable-console                      (Default: false) Disable console output of logging messages.
+
+  -v, --log-file-level                   (Default: Error) Log file level [Verbose|Debug|Information|Warning|Error|Fatal]
+
+  -l, --log-file-path                    Log file path. If not set, will not log to file.
+
+  --help                                 Display this help screen.
+
+  --version                              Display version information.
 ```
 For additional help on use of the console interface see [CLI Usage](https://github.com/microsoft/ApplicationInspector/wiki/1.-CLI-Usage).  
 
