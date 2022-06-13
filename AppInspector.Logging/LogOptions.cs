@@ -10,7 +10,7 @@ namespace Microsoft.ApplicationInspector.Logging
     /// <summary>
     /// base for common options for the logging in commands
     /// </summary>
-    public class LogOptions
+    public record LogOptions
     {
         [Option('x', "console-verbosity", Required = false, HelpText = "Console verbosity [Verbose|Debug|Information|Warning|Error|Fatal]", Default = Serilog.Events.LogEventLevel.Information)]
         public Serilog.Events.LogEventLevel ConsoleVerbosityLevel { get; set; } = Serilog.Events.LogEventLevel.Information;

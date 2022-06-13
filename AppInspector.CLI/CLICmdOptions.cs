@@ -15,7 +15,7 @@ namespace Microsoft.ApplicationInspector.CLI
     /// CLI command option classes add output arguments to common properties for each command verb
     /// </summary>
     ///
-    public class CLICommandOptions : LogOptions
+    public record CLICommandOptions : LogOptions
     {
         [Option('o', "output-file-path", Required = false, HelpText = "Output file path")]
         public string? OutputFilePath { get; set; }
@@ -24,7 +24,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public string OutputFileFormat { get; set; } = "text";
     }
 
-    public class CLICustomRulesCommandOptions: CLICommandOptions
+    public record CLICustomRulesCommandOptions: CLICommandOptions
     {
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
@@ -36,7 +36,7 @@ namespace Microsoft.ApplicationInspector.CLI
         public string? CustomCommentsPath { get; set; }
     }
 
-    public class CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions
+    public record CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions
     {
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
@@ -73,7 +73,7 @@ namespace Microsoft.ApplicationInspector.CLI
     /// CLI command distinct arguments
     /// </summary>
     [Verb("analyze", HelpText = "Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics")]
-    public class CLIAnalyzeCmdOptions : CLIAnalysisSharedCommandOptions
+    public record CLIAnalyzeCmdOptions : CLIAnalysisSharedCommandOptions
     {
         [Option('s', "source-path", Required = true, HelpText = "Source file or directory to inspect, comma separated", Separator = ',')]
         public IEnumerable<string> SourcePath { get; set; } = System.Array.Empty<string>();
@@ -113,7 +113,7 @@ namespace Microsoft.ApplicationInspector.CLI
     }
 
     [Verb("tagdiff", HelpText = "Compares unique tag values between two source paths")]
-    public class CLITagDiffCmdOptions : CLIAnalysisSharedCommandOptions
+    public record CLITagDiffCmdOptions : CLIAnalysisSharedCommandOptions
     {
         [Option("src1", Required = true, HelpText = "Source 1 to compare (commaa separated)")]
         public IEnumerable<string> SourcePath1 { get; set; } = System.Array.Empty<string>();
@@ -126,7 +126,7 @@ namespace Microsoft.ApplicationInspector.CLI
     }
 
     [Verb("exporttags", HelpText = "Export the list of tags associated with the specified rules. Does not scan source code.")]
-    public class CLIExportTagsCmdOptions : CLICommandOptions
+    public record CLIExportTagsCmdOptions : CLICommandOptions
     {
         [Option('r', "custom-rules-path", Required = false, HelpText = "Custom rules file or directory path")]
         public string? CustomRulesPath { get; set; }
@@ -136,7 +136,7 @@ namespace Microsoft.ApplicationInspector.CLI
     }
 
     [Verb("verifyrules", HelpText = "Verify custom rules syntax is valid")]
-    public class CLIVerifyRulesCmdOptions : CLICustomRulesCommandOptions
+    public record CLIVerifyRulesCmdOptions : CLICustomRulesCommandOptions
     {
         [Option('d', "verify-default-rules", Required = false, Default = false, HelpText = "Verify the rules embedded in the binary.")]
         public bool VerifyDefaultRules { get; set; }
@@ -146,7 +146,7 @@ namespace Microsoft.ApplicationInspector.CLI
     }
 
     [Verb("packrules", HelpText = "Combine multiple rule files into one file for ease in distribution")]
-    public class CLIPackRulesCmdOptions : CLICustomRulesCommandOptions
+    public record CLIPackRulesCmdOptions : CLICustomRulesCommandOptions
     {
         [Option('e', "pack-embedded-rules", Required = false, HelpText = "Pack the rules that are embedded in the application inspector binary.")]
         public bool PackEmbeddedRules { get; set; }
