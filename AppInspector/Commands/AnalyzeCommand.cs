@@ -816,7 +816,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     while (!doneEnumerating)
                     {
                         Thread.Sleep(_sleepDelay);
-                        pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered.";
+                        pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered so far.";
                     }
 
                     pbar.Message = enumeratingTimedOut
