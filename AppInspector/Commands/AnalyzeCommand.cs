@@ -326,29 +326,29 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
                     else
                     {
-                        _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
+                        List<MatchRecord> results = new();
 
-                        LanguageInfo languageInfo = new();
-
-                        if (_languages.FromFileName(file.FullPath, ref languageInfo))
+                        void ProcessLambda()
                         {
-                            _metaDataHelper.AddLanguage(languageInfo.Name);
-                        }
-                        else
-                        {
-                            _metaDataHelper.AddLanguage("Unknown");
-                            languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
-                            if (!_options.ScanUnknownTypes)
+                            _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
+                        
+                            LanguageInfo languageInfo = new();
+    
+                            if (_languages.FromFileName(file.FullPath, ref languageInfo))
                             {
-                                fileRecord.Status = ScanState.Skipped;
+                                _metaDataHelper.AddLanguage(languageInfo.Name);
                             }
-                        }
-
-                        if (fileRecord.Status != ScanState.Skipped)
-                        {
-                            List<MatchRecord> results = new();
-
-                            void ProcessLambda()
+                            else
+                            {
+                                _metaDataHelper.AddLanguage("Unknown");
+                                languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
+                                if (!_options.ScanUnknownTypes)
+                                {
+                                    fileRecord.Status = ScanState.Skipped;
+                                }
+                            }
+    
+                            if (fileRecord.Status != ScanState.Skipped)
                             {
                                 if (_options.TagsOnly)
                                 {
@@ -363,58 +363,58 @@ namespace Microsoft.ApplicationInspector.Commands
                                     results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, _options.ContextLines);
                                 }
                             }
+                        }
 
-                            if (_options.FileTimeOut > 0)
+                        if (_options.FileTimeOut > 0)
+                        {
+                            using CancellationTokenSource cts = new();
+                            Task t = Task.Run(ProcessLambda, cts.Token);
+                            try
                             {
-                                using CancellationTokenSource cts = new();
-                                Task t = Task.Run(ProcessLambda, cts.Token);
-                                try
+                                if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.FileTimeOut)))
                                 {
-                                    if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.FileTimeOut)))
-                                    {
-                                        _logger.LogError("{Path} timed out", file.FullPath);
-                                        fileRecord.Status = ScanState.TimedOut;
-                                        cts.Cancel();
-                                    }
-                                    else
-                                    {
-                                        fileRecord.Status = ScanState.Analyzed;
-                                    }
+                                    _logger.LogError("{Path} timed out", file.FullPath);
+                                    fileRecord.Status = ScanState.TimedOut;
+                                    cts.Cancel();
                                 }
-                                catch (Exception e)
+                                else
                                 {
-                                    _logger.LogDebug("Failed to analyze file {Path}. {Type}:{Message}. ({StackTrace}), fileRecord.FileName", file.FullPath, e.GetType(), e.Message, e.StackTrace);
-                                    fileRecord.Status = ScanState.Error;
+                                    fileRecord.Status = ScanState.Analyzed;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                _logger.LogDebug("Failed to analyze file {Path}. {Type}:{Message}. ({StackTrace}), fileRecord.FileName", file.FullPath, e.GetType(), e.Message, e.StackTrace);
+                                fileRecord.Status = ScanState.Error;
+                            }
+                        }
+                        else
+                        {
+                            ProcessLambda();
+                            fileRecord.Status = ScanState.Analyzed;
+                        }
+
+                        if (results.Any())
+                        {
+                            fileRecord.Status = ScanState.Affected;
+                            fileRecord.NumFindings = results.Count;
+                        }
+                        foreach (MatchRecord matchRecord in results)
+                        {
+                            if (_options.TagsOnly)
+                            {
+                                _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                            }
+                            else if (_options.MaxNumMatchesPerTag > 0)
+                            {
+                                if (matchRecord.Tags?.Any(x => _metaDataHelper.UniqueTags.TryGetValue(x, out int value) is bool foundValue && (!foundValue || foundValue && value < _options.MaxNumMatchesPerTag)) ?? false)
+                                {
+                                    _metaDataHelper.AddMatchRecord(matchRecord);
                                 }
                             }
                             else
                             {
-                                ProcessLambda();
-                                fileRecord.Status = ScanState.Analyzed;
-                            }
-
-                            if (results.Any())
-                            {
-                                fileRecord.Status = ScanState.Affected;
-                                fileRecord.NumFindings = results.Count;
-                            }
-                            foreach (MatchRecord matchRecord in results)
-                            {
-                                if (_options.TagsOnly)
-                                {
-                                    _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
-                                }
-                                else if (_options.MaxNumMatchesPerTag > 0)
-                                {
-                                    if (matchRecord.Tags?.Any(x => _metaDataHelper.UniqueTags.TryGetValue(x, out int value) is bool foundValue && (!foundValue || foundValue && value < _options.MaxNumMatchesPerTag)) ?? false)
-                                    {
-                                        _metaDataHelper.AddMatchRecord(matchRecord);
-                                    }
-                                }
-                                else
-                                {
-                                    _metaDataHelper.AddMatchRecord(matchRecord);
-                                }
+                                _metaDataHelper.AddMatchRecord(matchRecord);
                             }
                         }
                     }
@@ -843,7 +843,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     Stopwatch sw = new();
                     sw.Start();
-                    CancellationTokenSource cts2 = new();
                     _ = Task.Factory.StartNew(() =>
                     {
                         try
@@ -859,7 +858,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         {
                             doneProcessing = true;
                         }
-                    },cts2.Token);
+                    });
                     
                     while (!doneProcessing)
                     {
@@ -871,7 +870,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         progressBar.Tick(_metaDataHelper.Files.Count, timeExpected, $"Analyzing Files. {_metaDataHelper.Matches.Count} Matches. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Skipped)} Files Skipped. {_metaDataHelper.Files.Count(x => x.Status == ScanState.TimedOut)} Timed Out. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Affected)} Affected. {_metaDataHelper.Files.Count(x => x.Status == ScanState.Analyzed)} Not Affected.");
                     }
 
-                    // If processing timed out it will have set the stsatus to timeout skipped.
+                    // If processing timed out it will have set the status to timeout skipped.
                     timedOut = _metaDataHelper.Files.Any(x => x.Status == ScanState.TimeOutSkipped);
 
                     progressBar.Message = timedOut ?
@@ -913,28 +912,33 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             return analyzeResult;
-
-            void DoProcessing(IEnumerable<FileEntry> fileEntries)
+        }
+        
+        /// <summary>
+        /// Do processing of the given file entries - return if the timeout was hit
+        /// </summary>
+        /// <param name="fileEntries"></param>
+        /// <param name="cts"></param>
+        /// <returns>True when the timeout was hit</returns>
+        private void DoProcessing(IEnumerable<FileEntry> fileEntries, CancellationTokenSource? cts = null)
+        {
+            cts ??= new CancellationTokenSource();
+            if (_options.ProcessingTimeOut > 0)
             {
-                if (_options.ProcessingTimeOut > 0)
+                var t = Task.Run(() => PopulateRecords(cts.Token, fileEntries));
+                if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.ProcessingTimeOut)))
                 {
-                    using CancellationTokenSource cts = new();
-                    var t = Task.Run(() => PopulateRecords(cts.Token, fileEntries), cts.Token);
-                    if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.ProcessingTimeOut)))
+                    cts.Cancel();
+                    // Populate skips for all the entries we didn't process
+                    foreach (FileEntry entry in fileEntries.Where(x => _metaDataHelper.Files.All(y => x.FullPath != y.FileName)))
                     {
-                        timedOut = true;
-                        cts.Cancel();
-                        // Populate skips for all the entries we didn't process
-                        foreach (FileEntry entry in fileEntries.Where(x => _metaDataHelper.Files.All(y => x.FullPath != y.FileName)))
-                        {
-                            _metaDataHelper.Files.Add(new FileRecord() { AccessTime = entry.AccessTime, CreateTime = entry.CreateTime, ModifyTime = entry.ModifyTime, FileName = entry.FullPath, Status = ScanState.TimeOutSkipped });
-                        }
+                        _metaDataHelper.Files.Add(new FileRecord() { AccessTime = entry.AccessTime, CreateTime = entry.CreateTime, ModifyTime = entry.ModifyTime, FileName = entry.FullPath, Status = ScanState.TimeOutSkipped });
                     }
                 }
-                else
-                {
-                    PopulateRecords(new CancellationToken(), fileEntries);
-                }
+            }
+            else
+            {
+                PopulateRecords(cts.Token, fileEntries);
             }
         }
     }

@@ -26,7 +26,7 @@ namespace AppInspector.Tests.Commands
 
         // Test files for timeout tests
         private static List<string> timeOutTestsFiles = new();
-        private const int numTimeOutFiles = 25;
+        private const int numTimeOutFiles = 5;
         private const int numTimesContent = 25;
         
         private ILoggerFactory factory = new NullLoggerFactory();
@@ -422,7 +422,7 @@ windows
             AnalyzeOptions options = new()
             {
                 SourcePath = timeOutTestsFiles,
-                CustomRulesPath = testRulesPath,
+                CustomRulesPath = heavyRulePath,
                 IgnoreDefaultRules = true,
                 FileTimeOut = 1,
                 SingleThread = singleThread,
