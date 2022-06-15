@@ -9,11 +9,12 @@ trigger:
     - main
   paths:
     include:
+    - AppInspector/*
     - AppInspector.CLI/*
     - AppInspector.Commands/*
     - AppInspector.Common/*
     - AppInspector.Logging/*
-    - AppInspector.RulesEngine/*
+    - RulesEngine/*
 pr:
   branches:
     include:
@@ -21,11 +22,12 @@ pr:
   paths:
     include:
     - Pipelines
+    - AppInspector/*
     - AppInspector.CLI/*
     - AppInspector.Commands/*
     - AppInspector.Common/*
     - AppInspector.Logging/*
-    - AppInspector.RulesEngine/*
+    - RulesEngine/*
     - AppInspector.Tests/*
 
 stages:

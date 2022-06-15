@@ -25,8 +25,8 @@ namespace AppInspector.Tests.Commands
         private static string testRulesPath = string.Empty;
 
         // Test files for timeout tests
-        private static List<string> timeOutTestsFiles = new();
-        private const int numTimeOutFiles = 5;
+        private static List<string> enumeratingTimeOutTestsFiles = new();
+        private const int numTimeOutFiles = 25;
         private const int numTimesContent = 25;
         
         private ILoggerFactory factory = new NullLoggerFactory();
@@ -45,7 +45,7 @@ namespace AppInspector.Tests.Commands
             {
                 string newPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),$"TestFile-{i}.js");
                 File.WriteAllText(newPath, string.Join('\n',Enumerable.Repeat(hardToFindContent, numTimesContent)));
-                timeOutTestsFiles.Add(newPath);
+                enumeratingTimeOutTestsFiles.Add(newPath);
             }
         }
 
@@ -369,7 +369,7 @@ windows
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = timeOutTestsFiles,
+                SourcePath = new []{enumeratingTimeOutTestsFiles[0]},
                 CustomRulesPath = testRulesPath,
                 IgnoreDefaultRules = true,
                 EnumeratingTimeout = 1,
@@ -395,7 +395,7 @@ windows
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = timeOutTestsFiles,
+                SourcePath = new []{enumeratingTimeOutTestsFiles[0]},
                 CustomRulesPath = heavyRulePath,
                 IgnoreDefaultRules = true,
                 ProcessingTimeOut = 1,
@@ -406,7 +406,7 @@ windows
             AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
             
-            Assert.AreNotEqual(result.Metadata.FilesTimeOutSkipped,0);
+            Assert.AreEqual(result.Metadata.FilesTimeOutSkipped,1);
         }
         
         /// <summary>
@@ -421,7 +421,7 @@ windows
         {
             AnalyzeOptions options = new()
             {
-                SourcePath = timeOutTestsFiles,
+                SourcePath = new []{enumeratingTimeOutTestsFiles[0]},
                 CustomRulesPath = heavyRulePath,
                 IgnoreDefaultRules = true,
                 FileTimeOut = 1,
@@ -432,7 +432,7 @@ windows
             AnalyzeCommand command = new(options, factory);
             AnalyzeResult result = command.GetResult();
 
-            Assert.AreNotEqual(0, result.Metadata.FilesTimedOut);
+            Assert.AreEqual(1, result.Metadata.FilesTimedOut);
         }
 
         /// <summary>
