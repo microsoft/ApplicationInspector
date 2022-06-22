@@ -170,7 +170,12 @@ class TemplateInsertion {
         };
 
         for (let match of $this.md) {
-            let excerpt = (match.excerpt || '') || match.sample;
+            // Decode the excerpt's encoding
+            let excerpt = ((match.excerpt || '') || match.sample)
+                            .replace(/&amp;/g, '&')
+                            .replace(/&gt;/g, '>')
+                            .replace(/&lt;/g, '<');
+
             if (match.ruleId === ruleId || match.ruleName === ruleId) {
                 let $li = $('<li>');
                 let $a = $('<a>');
