@@ -1,19 +1,19 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
 
     public class SearchCondition
     {
-        [JsonPropertyName("negate_finding")]
+        [JsonProperty(PropertyName ="negate_finding")]
         public bool NegateFinding { get; set; }
 
-        [JsonPropertyName("pattern")]
+        [JsonProperty(PropertyName ="pattern")]
         public SearchPattern? Pattern { get; set; }
 
-        [JsonPropertyName("search_in")]
+        [JsonProperty(PropertyName ="search_in")]
         public string? SearchIn { get; set; }
     }
 }

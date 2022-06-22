@@ -134,12 +134,12 @@ class TemplateInsertion {
             }
         });
 
-        $('#s_pi_application_name').html(this.mt.applicationName);
-        $('#s_pi_version').html(this.mt.sourceVersion);
-        $('#s_pi_description').html(this.mt.description || 'No description available.');
-        $('#s_pi_source_path').html(this.mt.sourcePath);
-        $('#s_pi_author').html(this.mt.authors || 'No author found.');
-        $('#s_pi_date_scanned').html(this.mt.dateScanned);
+        $('#s_pi_application_name').text(this.mt.applicationName);
+        $('#s_pi_version').text(this.mt.sourceVersion);
+        $('#s_pi_description').text(this.mt.description || 'No description available.');
+        $('#s_pi_source_path').text(this.mt.sourcePath);
+        $('#s_pi_author').text(this.mt.authors || 'No author found.');
+        $('#s_pi_date_scanned').text(this.mt.dateScanned);
     }
 
     combineConfidence(a, b) {

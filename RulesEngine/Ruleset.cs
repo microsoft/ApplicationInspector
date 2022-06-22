@@ -1,7 +1,8 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-using System.Text.Json;
+
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -350,8 +351,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         internal IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)
         {
-            List<Rule>? ruleList = JsonSerializer.Deserialize<List<Rule>>(jsonstring,
-                    new JsonSerializerOptions() {AllowTrailingCommas = true});
+            List<Rule>? ruleList = JsonConvert.DeserializeObject<List<Rule>>(jsonstring);
              
             if (ruleList is not null)
             {
