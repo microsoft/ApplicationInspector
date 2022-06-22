@@ -149,6 +149,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 _severity |= severity;
             }
+
             ConfigSourcetoScan();
             ConfigRules();
         }
@@ -189,7 +190,7 @@ namespace Microsoft.ApplicationInspector.Commands
             }
             if (_srcfileList.Count == 0)
             {
-                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, string.Join(',', _options.SourcePath)));
+                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_NO_FILES_IN_SOURCE, string.Join(',', _options.SourcePath)));
             }
         }
 

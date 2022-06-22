@@ -38,6 +38,7 @@ namespace Microsoft.ApplicationInspector.Common
             CMD_CRITICAL_FILE_ERR,
             CMD_INVALID_ARG_VALUE,
             CMD_INVALID_FILE_OR_DIR,
+            CMD_NO_FILES_IN_SOURCE,
             CMD_REPORT_DONE,
             CMD_REQUIRED_ARG_MISSING,
             CMD_RUNNING,

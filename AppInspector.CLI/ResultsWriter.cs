@@ -56,13 +56,6 @@ namespace Microsoft.ApplicationInspector.CLI
                 {
                     int MAX_HTML_REPORT_FILE_SIZE = 1024 * 1000 * 3;  //warn about potential slow rendering
 
-                    //prechecks
-                    if (analyzeResult.ResultCode != AnalyzeResult.ExitCode.Success)
-                    {
-                        Finalize(writer, commandCompletedMsg);
-                        return;
-                    }
-
                     writer.WriteResults(analyzeResult, cLIAnalyzeCmdOptions);
 
                     //post checks
