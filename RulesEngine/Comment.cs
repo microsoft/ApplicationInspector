@@ -1,7 +1,7 @@
 ﻿// Copyright(C) Microsoft.All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -10,16 +10,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     internal class Comment
     {
-        [JsonPropertyName("language")]
+        [JsonProperty(PropertyName ="language")]
         public string[]? Languages { get; set; }
 
-        [JsonPropertyName("inline")]
+        [JsonProperty(PropertyName ="inline")]
         public string? Inline { get; set; }
 
-        [JsonPropertyName("prefix")]
+        [JsonProperty(PropertyName ="prefix")]
         public string? Prefix { get; set; }
 
-        [JsonPropertyName("suffix")]
+        [JsonProperty(PropertyName ="suffix")]
         public string? Suffix { get; set; }
     }
 }

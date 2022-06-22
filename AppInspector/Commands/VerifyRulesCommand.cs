@@ -1,8 +1,9 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using System.Text.Json.Serialization;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -11,7 +12,7 @@ namespace Microsoft.ApplicationInspector.Commands
     using Microsoft.CST.OAT;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
-    using System.Text.Json;
+    
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -36,7 +37,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
     public class VerifyRulesResult : Result
     {
-        [Newtonsoft.Json.JsonConverter(typeof(JsonStringEnumConverter))]
+        [Newtonsoft.Json.JsonConverter(typeof(StringEnumConverter))]
         public enum ExitCode
         {
             Verified = 0,
@@ -44,10 +45,10 @@ namespace Microsoft.ApplicationInspector.Commands
             CriticalError = Utils.ExitCode.CriticalError
         }
 
-        [JsonPropertyName("resultCode")]
+        [JsonProperty(PropertyName ="resultCode")]
         public ExitCode ResultCode { get; set; }
 
-        [JsonPropertyName("ruleStatusList")]
+        [JsonProperty(PropertyName ="ruleStatusList")]
         public List<RuleStatus> RuleStatusList { get; set; }
 
         public VerifyRulesResult()

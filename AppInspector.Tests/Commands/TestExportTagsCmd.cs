@@ -18,7 +18,7 @@ namespace AppInspector.Tests.Commands
         private LogOptions logOptions = new();
         private ILoggerFactory factory = new NullLoggerFactory();
 
-        [TestInitialize]
+        [ClassInitialize]
         public void InitOutput()
         {
             factory = logOptions.GetLoggerFactory();
@@ -27,7 +27,7 @@ namespace AppInspector.Tests.Commands
             File.WriteAllText(testRulesPath, findWindows);
         }
 
-        [TestCleanup]
+        [ClassCleanup]
         public void CleanUp()
         {
             Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);

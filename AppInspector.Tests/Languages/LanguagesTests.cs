@@ -1,10 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text.Json;
+
 using Microsoft.ApplicationInspector.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using Serilog.Events;
 
 namespace AppInspector.Tests.Languages
@@ -72,8 +73,8 @@ namespace AppInspector.Tests.Languages
         [TestMethod]
         public void EmptyLanguagesOnInvalidCommentsAndLanguages()
         {
-            Assert.ThrowsException<JsonException>(() => Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, invalidTestCommentsPath, null));
-            Assert.ThrowsException<JsonException>(() => Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, null, invalidTestLanguagesPath));
+            Assert.ThrowsException<JsonSerializationException>(() => Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, invalidTestCommentsPath, null));
+            Assert.ThrowsException<JsonSerializationException>(() => Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, null, invalidTestLanguagesPath));
         }
 
         [TestMethod]

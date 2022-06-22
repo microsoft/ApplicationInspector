@@ -19,7 +19,7 @@ namespace AppInspector.Tests.Commands
         private string _validRulesPath = string.Empty;
         private LogOptions _logOptions = new();
         private ILoggerFactory _factory = new NullLoggerFactory();
-        [TestInitialize]
+        [ClassCleanup]
         public void InitOutput()
         {
             _factory = _logOptions.GetLoggerFactory();
@@ -28,7 +28,7 @@ namespace AppInspector.Tests.Commands
             File.WriteAllText(_validRulesPath, _validRules);
         }
 
-        [TestCleanup]
+        [ClassCleanup]
         public void CleanUp()
         {
             Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);

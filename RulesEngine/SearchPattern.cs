@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -15,14 +16,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private Dictionary<RegexOptions, Regex> _compiled = new();
         private string? _pattern;
 
-        [JsonPropertyName("confidence")]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonProperty(PropertyName ="confidence")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public Confidence Confidence { get; set; }
 
-        [JsonPropertyName("modifiers")]
+        [JsonProperty(PropertyName ="modifiers")]
         public string[]? Modifiers { get; set; }
 
-        [JsonPropertyName("pattern")]
+        [JsonProperty(PropertyName ="pattern")]
         public string? Pattern
         {
             get
@@ -36,11 +37,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
-        [JsonPropertyName("type")]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonProperty(PropertyName ="type")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public PatternType? PatternType { get; set; }
 
-        [JsonPropertyName("scopes")]
+        [JsonProperty(PropertyName ="scopes")]
         public PatternScope[]? Scopes { get; set; }
     }
 }

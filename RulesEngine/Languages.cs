@@ -1,5 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
+using Newtonsoft.Json;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     using Microsoft.Extensions.Logging;
@@ -10,7 +12,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Text.Json;
+    
 
     /// <summary>
     /// Helper class for language based commenting
@@ -28,6 +30,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             _logger = loggerFactory?.CreateLogger<Languages>() ?? new NullLogger<Languages>();
             Assembly assembly = typeof(Languages).Assembly;
             Stream? commentResource = commentsStream ?? assembly.GetManifestResourceStream(CommentResourcePath);
+
             if (commentResource is null)
             {
                 _logger.LogError("Failed to load embedded comments configuration from {CommentResourcePath}", CommentResourcePath);
@@ -35,7 +38,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             else
             {
-                _comments = JsonSerializer.Deserialize<List<Comment>>(commentResource) ?? new List<Comment>();
+                using StreamReader commentStreamReader = new(commentResource);
+                using JsonReader commentJsonReader = new JsonTextReader(commentStreamReader);
+                JsonSerializer jsonSerializer = new();
+                _comments = jsonSerializer.Deserialize<List<Comment>>(commentJsonReader) ?? new List<Comment>();
             }
             
             Stream? languagesResource = languagesStream ?? assembly.GetManifestResourceStream(LanguagesResourcePath);
@@ -46,7 +52,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
             else
             {
-                _languageInfos = JsonSerializer.Deserialize<List<LanguageInfo>>(languagesResource) ?? new List<LanguageInfo>();
+                using StreamReader languagesStreamReader = new(languagesResource);
+                using JsonReader languagesJsonReader = new JsonTextReader(languagesStreamReader);
+                JsonSerializer jsonSerializer = new();
+                _languageInfos = jsonSerializer.Deserialize<List<LanguageInfo>>(languagesJsonReader) ?? new List<LanguageInfo>();
             }
         }
 

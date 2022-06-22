@@ -43,7 +43,7 @@ namespace AppInspector.Tests.Commands
             File.WriteAllText(testRulesPath, findWindows);
         }
 
-        [TestCleanup]
+        [ClassCleanup]
         public void CleanUp()
         {
             Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
