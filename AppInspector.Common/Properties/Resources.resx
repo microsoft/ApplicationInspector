@@ -192,6 +192,9 @@
   <data name="CMD_INVALID_FILE_OR_DIR" xml:space="preserve">
     <value>Invalid file or directory {0}</value>
   </data>
+  <data name="CMD_NO_FILES_IN_SOURCE" xml:space="preserve">
+    <value>Specified source location does not contain any files. {0}</value>
+  </data>
   <data name="CMD_INVALID_LOG_PATH" xml:space="preserve">
     <value>The requested log file {0} could not be read.</value>
   </data>

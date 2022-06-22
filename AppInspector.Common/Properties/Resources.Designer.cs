@@ -304,6 +304,15 @@ namespace Microsoft.ApplicationInspector.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Specified source location does not contain any files. {0}.
+        /// </summary>
+        internal static string CMD_NO_FILES_IN_SOURCE {
+            get {
+                return ResourceManager.GetString("CMD_NO_FILES_IN_SOURCE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No output specified.  Raise the console versosity or provide an output file argument..
         /// </summary>
         internal static string CMD_NO_OUTPUT {
