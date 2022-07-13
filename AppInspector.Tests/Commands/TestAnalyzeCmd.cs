@@ -23,6 +23,8 @@ namespace AppInspector.Tests.Commands
     {
         private static string testFilePath = string.Empty;
         private static string testRulesPath = string.Empty;
+        private static string appliesToTestRulePath = string.Empty;
+        private static string doesNotApplyToTestRulePath = string.Empty;
 
         // Test files for timeout tests
         private static List<string> enumeratingTimeOutTestsFiles = new();
@@ -38,9 +40,15 @@ namespace AppInspector.Tests.Commands
             testFilePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),"TestFile.js");
             testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
             heavyRulePath =  Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "HeavyRule.json");
+            appliesToTestRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "AppliesToTestRules.json");
+            doesNotApplyToTestRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "DoesNotApplyToTestRules.json");
+
             File.WriteAllText(heavyRulePath, heavyRule);
             File.WriteAllText(testFilePath, fourWindowsOneLinux);
             File.WriteAllText(testRulesPath, findWindows);
+            File.WriteAllText(appliesToTestRulePath, findWindowsWithAppliesTo);
+            File.WriteAllText(doesNotApplyToTestRulePath, findWindowsWithDoesNotApplyTo);
+
             for (int i = 0; i < numTimeOutFiles; i++)
             {
                 string newPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),$"TestFile-{i}.js");
@@ -90,6 +98,51 @@ buy@tacos.com
       }
     ]
 }]";
+
+        private const string findWindowsWithAppliesTo = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""applies_to"": [ ""javascript"" ],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+                ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ]
+}]";
+        
+        private const string findWindowsWithDoesNotApplyTo = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""does_not_apply_to"": [ ""javascript"" ],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+                ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ]
+}]";
+        
         
         // These simple test rules rules look for the string "windows" and "linux"
         const string findWindows = @"[
@@ -895,5 +948,42 @@ windows
             Assert.AreEqual(0, resultWithoutMetadata.Metadata.TotalFiles);
         }
 
+        /// <summary>
+        /// Test that the applies_to parameter allows the specified types
+        /// </summary>
+        [TestMethod]
+        public void TestAppliesTo()
+        {
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { testFilePath },
+                CustomRulesPath = appliesToTestRulePath,
+                IgnoreDefaultRules = true
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(4, result.Metadata.TotalMatchesCount);
+        }
+        
+        /// <summary>
+        /// Test that the does_not_apply_to parameter excludes the specified types
+        /// </summary>
+        [TestMethod]
+        public void TestDoesNotApplyTo()
+        {
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { testFilePath },
+                CustomRulesPath = doesNotApplyToTestRulePath,
+                IgnoreDefaultRules = true
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, result.ResultCode);
+            Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+        }
     }
 }

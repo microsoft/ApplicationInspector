@@ -35,19 +35,22 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         [JsonIgnore]
         public bool Disabled { get; set; }
 
-        [JsonProperty(PropertyName ="name")]
+        [JsonProperty(PropertyName = "name")] 
         public string Name { get; set; } = "";
 
-        [JsonProperty(PropertyName ="id")]
+        [JsonProperty(PropertyName = "id")] 
         public string Id { get; set; } = "";
 
-        [JsonProperty(PropertyName ="description")]
+        [JsonProperty(PropertyName = "description")]
         public string? Description { get; set; } = "";
 
-        [JsonProperty(PropertyName ="applies_to")]
+        [JsonProperty(PropertyName = "does_not_apply_to")]
+        public List<string>? DoesNotApplyTo { get; set; }
+
+        [JsonProperty(PropertyName = "applies_to")]
         public string[]? AppliesTo { get; set; }
 
-        [JsonProperty(PropertyName ="applies_to_file_regex")]
+        [JsonProperty(PropertyName = "applies_to_file_regex")]
         public string[]? FileRegexes
         {
             get => _fileRegexes;
@@ -70,6 +73,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     _compiled = FileRegexes?.Select(x => new Regex(x, RegexOptions.Compiled)) ?? Array.Empty<Regex>();
                     _updateCompiledFileRegex = false;
                 }
+
                 return _compiled;
             }
         }
@@ -77,20 +81,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private IEnumerable<Regex> _compiled = Array.Empty<Regex>();
         private bool _updateCompiledFileRegex = false;
 
-        [JsonProperty(PropertyName ="tags")]
+        [JsonProperty(PropertyName = "tags")] 
         public string[]? Tags { get; set; }
 
-        [JsonProperty(PropertyName ="severity")]
+        [JsonProperty(PropertyName = "severity")]
         [JsonConverter(typeof(StringEnumConverter))]
         public Severity Severity { get; set; } = Severity.Moderate;
 
-        [JsonProperty(PropertyName ="overrides")]
+        [JsonProperty(PropertyName = "overrides")]
         public string[]? Overrides { get; set; }
 
-        [JsonProperty(PropertyName ="patterns")]
+        [JsonProperty(PropertyName = "patterns")]
         public SearchPattern[] Patterns { get; set; } = Array.Empty<SearchPattern>();
 
-        [JsonProperty(PropertyName ="conditions")]
+        [JsonProperty(PropertyName = "conditions")]
         public SearchCondition[]? Conditions { get; set; }
     }
 }
