@@ -308,6 +308,48 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         expression.Append(clauseNumber);
                         clauseNumber++;
                     }
+                    else if (condition.SearchIn.Equals("same-file", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        clauses.Add(new WithinClause()
+                        {
+                            Data = new List<string>() { condition.Pattern.Pattern },
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                            Invert = condition.NegateFinding,
+                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                            SameFile = true
+                        });
+                        expression.Append(" AND ");
+                        expression.Append(clauseNumber);
+                        clauseNumber++;
+                    }
+                    else if (condition.SearchIn.Equals("only-before", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        clauses.Add(new WithinClause()
+                        {
+                            Data = new List<string>() { condition.Pattern.Pattern },
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                            Invert = condition.NegateFinding,
+                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                            OnlyBefore = true
+                        });
+                        expression.Append(" AND ");
+                        expression.Append(clauseNumber);
+                        clauseNumber++;
+                    }
+                    else if (condition.SearchIn.Equals("only-after", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        clauses.Add(new WithinClause()
+                        {
+                            Data = new List<string>() { condition.Pattern.Pattern },
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                            Invert = condition.NegateFinding,
+                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
+                            OnlyAfter = true
+                        });
+                        expression.Append(" AND ");
+                        expression.Append(clauseNumber);
+                        clauseNumber++;
+                    }
                     else
                     {
                         _logger.LogWarning("Search condition {Condition} is not one of the accepted values and this condition will be ignored",condition.SearchIn);

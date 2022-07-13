@@ -93,6 +93,56 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     toRemove.Add((clauseNum, capture));
                                 }
                             }
+                            else if (wc.SameFile)
+                            {
+                                var start = tc.LineStarts[0];
+                                var end = tc.LineEnds[^1];
+                                var res = ProcessLambda(tc.FullContent[start..end], capture);
+                                if (res.Result)
+                                {
+                                    if (res.Capture is TypedClauseCapture<List<Boundary>> boundaryList)
+                                    {
+                                        passed.AddRange(boundaryList.Result);
+                                    }
+                                }
+                                else
+                                {
+                                    toRemove.Add((clauseNum, capture));
+                                }
+                            }
+                            else if (wc.OnlyBefore)
+                            {
+                                var start = tc.LineStarts[0];
+                                var end = capture.Index;
+                                var res = ProcessLambda(tc.FullContent[start..end], capture);
+                                if (res.Result)
+                                {
+                                    if (res.Capture is TypedClauseCapture<List<Boundary>> boundaryList)
+                                    {
+                                        passed.AddRange(boundaryList.Result);
+                                    }
+                                }
+                                else
+                                {
+                                    toRemove.Add((clauseNum, capture));
+                                }                            }
+                            else if (wc.OnlyAfter)
+                            {
+                                var start = capture.Index + capture.Length;
+                                var end = tc.LineEnds[^1];
+                                var res = ProcessLambda(tc.FullContent[start..end], capture);
+                                if (res.Result)
+                                {
+                                    if (res.Capture is TypedClauseCapture<List<Boundary>> boundaryList)
+                                    {
+                                        passed.AddRange(boundaryList.Result);
+                                    }
+                                }
+                                else
+                                {
+                                    toRemove.Add((clauseNum, capture));
+                                }                            
+                            }
                         }
                         tcc.Result.RemoveAll(x => toRemove.Contains(x));
                     }
@@ -137,9 +187,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
         {
             if (clause is WithinClause wc)
             {
-                if (new bool[] {wc.FindingOnly, wc.SameLineOnly, wc.FindingRegion}.Count(x => x) != 1)
+                if (new bool[] {wc.FindingOnly, wc.SameLineOnly, wc.FindingRegion, wc.OnlyAfter, wc.OnlyBefore, wc.SameFile}.Count(x => x) != 1)
                 {
-                    yield return new Violation($"Exactly one of: FindingOnly, SameLineOnly or FindingRegion must be set", rule, clause);
+                    yield return new Violation($"Exactly one of: FindingOnly, SameLineOnly, OnlyAfter, OnlyBefore, SameFile or FindingRegion must be set", rule, clause);
                 }
 
                 if (wc.FindingRegion)
