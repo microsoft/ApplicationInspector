@@ -224,7 +224,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             return GetRulesByLanguage(languageInfo.Name)
                 .Union(GetRulesByFileName(fileEntry.FullPath))
-                .Union(GetUniversalRules())
+                .Union(GetUniversalRules().Where(x => !x.AppInspectorRule.DoesNotApplyTo?.Contains(languageInfo.Name) ?? true))
                 .Where(x => !x.AppInspectorRule.Tags?.Any(y => tagsToIgnore?.Contains(y) ?? false) ?? true)
                 .Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
         }
@@ -241,11 +241,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace}), fileRecord.FileName", fileEntry.FullPath, e.GetType(), e.Message, e.StackTrace);
             }
-            if (contents is not null)
-            {
-                return AnalyzeFile(contents, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
-            }
-            return new List<MatchRecord>();
+            return AnalyzeFile(contents, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
         }
 
         public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo, CancellationToken? cancellationToken = null, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
@@ -363,19 +359,19 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="languages"> Languages to filter rules for </param>
         /// <returns> List of rules </returns>
-        private IEnumerable<ConvertedOatRule> GetRulesByLanguage(string input)
+        private IEnumerable<ConvertedOatRule> GetRulesByLanguage(string language)
         {
             if (EnableCache)
             {
-                if (_languageRulesCache.ContainsKey(input))
-                    return _languageRulesCache[input];
+                if (_languageRulesCache.ContainsKey(language))
+                    return _languageRulesCache[language];
             }
 
-            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(input);
+            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(language);
 
             if (EnableCache)
             {
-                _languageRulesCache.TryAdd(input, filteredRules);
+                _languageRulesCache.TryAdd(language, filteredRules);
             }
 
             return filteredRules;

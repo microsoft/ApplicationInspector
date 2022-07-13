@@ -13,6 +13,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 
         public int After { get; set; }
         public int Before { get; set; }
+        public bool OnlyBefore { get; set; }
+        public bool OnlyAfter { get; set; }
+        public bool SameFile { get; set; }
         public bool FindingOnly { get; set; }
         public bool SameLineOnly { get; set; }
         public PatternScope[] Scopes { get; set; } = new PatternScope[1] { PatternScope.All };

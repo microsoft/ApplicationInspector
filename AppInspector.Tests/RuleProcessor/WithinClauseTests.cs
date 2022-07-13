@@ -23,6 +23,13 @@ namespace AppInspector.Tests.RuleProcessor
         [DataRow("WithinClauseWithoutInvertWithFindingRange")]
         [DataRow("WithinClauseWithInvertWithSameLine")]
         [DataRow("WithinClauseWithoutInvertWithSameLine")]
+        [DataRow("WithinClauseWithInvertWithBeforeOnly")]
+        [DataRow("WithinClauseWithoutInvertWithBeforeOnly")]
+        [DataRow("WithinClauseWithInvertWithAfterOnly")]
+        [DataRow("WithinClauseWithoutInvertWithAfterOnly")]
+        [DataRow("WithinClauseWithInvertWithSameFile")]
+        [DataRow("WithinClauseWithoutInvertWithSameFile")]
+
         [DataTestMethod]
         public void WithinClauseInvertTest(string testDataKey)
         {
@@ -219,6 +226,30 @@ namespace AppInspector.Tests.RuleProcessor
             {
                 "WithinClauseWithoutInvertWithSameLine",
                 (sameLineData, "same-line", false, 1, new[] { 14 })
+            },
+            {
+                "WithinClauseWithInvertWithBeforeOnly",
+                (beforeOnlyData, "only-before", true, 0, new int[] { })
+            },
+            {
+                "WithinClauseWithoutInvertWithBeforeOnly",
+                (beforeOnlyData, "only-before", false, 1, new[] { 3 })
+            },
+            {
+                "WithinClauseWithInvertWithAfterOnly",
+                (afterOnlyData, "only-after", true, 0, new int[] { })
+            },
+            {
+                "WithinClauseWithoutInvertWithAfterOnly",
+                (afterOnlyData, "only-after", false, 1, new[] { 2 })
+            },
+            {
+                "WithinClauseWithInvertWithSameFile",
+                (sameFileData, "same-file", true, 0, new int[] { })
+            },
+            {
+                "WithinClauseWithoutInvertWithSameFile",
+                (sameFileData, "same-file", false, 1, new[] { 2 })
             }
         };
 
@@ -370,6 +401,36 @@ int main(int argc, char **argv)
 }";
 
         const string sameLineData = @"#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+
+#define BUFSIZER1 512
+#define BUFSIZER2 ((BUFSIZER1 / 2) - 8)
+
+int main(int argc, char **argv)
+{
+    char *buf1R1;
+    char *buf2R1;
+    buf1R1 = (char *)malloc(BUFSIZER1);
+    buf2R1 = (char *)malloc(BUFSIZER1);free(buf2R1);
+    
+    strncpy(buf2R1, argv[1], BUFSIZER1 - 1);
+    free(buf1R1);
+}";
+        const string beforeOnlyData = @"#include <stdio.h>
+    free(buf2R1);
+    buf2R1 = (char *)malloc(BUFSIZER1);
+";
+        const string afterOnlyData = @"#include <stdio.h>
+    buf2R1 = (char *)malloc(BUFSIZER1);
+    free(buf2R1);";
+        
+        const string sameFileData = @"#include <stdio.h>
+    buf1R1 = (char *)malloc(BUFSIZER1);
+    free(buf1R1);";
+        
+        const string findingOnlyData = @"#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
