@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Benchmarks\Be
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppInspector.Common", "AppInspector.Common\AppInspector.Common.csproj", "{B15415B6-6EC8-4AA1-B8AF-DF0ABE5F16DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppInspector.Tests.CLI", "AppInspector.Tests.CLI\AppInspector.Tests.CLI.csproj", "{01D67C5A-6778-4F86-9D61-66EAFCE94763}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppInspector.Logging", "AppInspector.Logging\AppInspector.Logging.csproj", "{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}"
 EndProject
 Global
@@ -55,10 +53,6 @@ Global
 		{B15415B6-6EC8-4AA1-B8AF-DF0ABE5F16DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B15415B6-6EC8-4AA1-B8AF-DF0ABE5F16DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B15415B6-6EC8-4AA1-B8AF-DF0ABE5F16DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01D67C5A-6778-4F86-9D61-66EAFCE94763}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01D67C5A-6778-4F86-9D61-66EAFCE94763}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01D67C5A-6778-4F86-9D61-66EAFCE94763}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01D67C5A-6778-4F86-9D61-66EAFCE94763}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3601CE3-0A97-4608-9A82-3F0E8D79AC5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
