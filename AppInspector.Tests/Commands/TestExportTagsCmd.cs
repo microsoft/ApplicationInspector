@@ -18,7 +18,7 @@ namespace AppInspector.Tests.Commands
         private LogOptions logOptions = new();
         private ILoggerFactory factory = new NullLoggerFactory();
 
-        [ClassInitialize]
+        [TestInitialize]
         public void InitOutput()
         {
             factory = logOptions.GetLoggerFactory();
@@ -28,7 +28,7 @@ namespace AppInspector.Tests.Commands
         }
 
         [ClassCleanup]
-        public void CleanUp()
+        public static void CleanUp()
         {
             Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
         }

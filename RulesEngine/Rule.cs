@@ -96,5 +96,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         [JsonProperty(PropertyName = "conditions")]
         public SearchCondition[]? Conditions { get; set; }
+
+        [JsonProperty(PropertyName = "must-match")]
+        public string[]? MustMatch { get; set; }
+        
+        [JsonProperty(PropertyName = "must-not-match")]
+        public string[]? MustNotMatch { get; set; }
     }
 }

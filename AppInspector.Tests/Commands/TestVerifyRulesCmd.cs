@@ -19,7 +19,8 @@ namespace AppInspector.Tests.Commands
         private string _validRulesPath = string.Empty;
         private LogOptions _logOptions = new();
         private ILoggerFactory _factory = new NullLoggerFactory();
-        [ClassCleanup]
+        
+        [TestInitialize]
         public void InitOutput()
         {
             _factory = _logOptions.GetLoggerFactory();
@@ -29,7 +30,7 @@ namespace AppInspector.Tests.Commands
         }
 
         [ClassCleanup]
-        public void CleanUp()
+        public static void CleanUp()
         {
             Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
         }
@@ -179,6 +180,105 @@ namespace AppInspector.Tests.Commands
     ]
 }
 ]";
+        
+        // MustMatch if specified must be matched
+        readonly string _mustMatchRule = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""applies_to"": [ ""csharp""],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+        ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ],
+    ""must-match"" : [ ""windows 2000""]
+}
+]";
+        // MustMatch if specified must not fail to match
+        readonly string _mustMatchRuleFail = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""applies_to"": [ ""csharp""],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+        ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ],
+    ""must-match"" : [ ""wimdoos""]
+}
+]";
+        
+        // MustNotMatch if specified must not be matched
+        readonly string _mustNotMatchRule = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""applies_to"": [ ""csharp""],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+        ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ],
+    ""must-not-match"" : [ ""linux""]
+}
+]";
+        
+        // MustNotMatch if specified must not fail to not be matched
+        readonly string _mustNotMatchRuleFail = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""applies_to"": [ ""csharp""],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+        ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ],
+    ""must-not-match"" : [ ""windows""]
+}
+]";
 
         // FileRegexes if specified must be valid
         readonly string _invalidFileRegexes = @"[
@@ -293,6 +393,70 @@ namespace AppInspector.Tests.Commands
         {
             string path = Path.GetTempFileName();
             File.WriteAllText(path, _knownLanguages);
+            VerifyRulesOptions options = new()
+            {
+                CustomRulesPath = path,
+            };
+
+            VerifyRulesCommand command = new(options, _factory);
+            VerifyRulesResult result = command.GetResult();
+            File.Delete(path);
+            Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        }
+        
+        [TestMethod]
+        public void MustMatch()
+        {
+            string path = Path.GetTempFileName();
+            File.WriteAllText(path, _mustMatchRule);
+            VerifyRulesOptions options = new()
+            {
+                CustomRulesPath = path,
+            };
+
+            VerifyRulesCommand command = new(options, _factory);
+            VerifyRulesResult result = command.GetResult();
+            File.Delete(path);
+            Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+        }
+        
+        [TestMethod]
+        public void MustMatchDetectIncorrect()
+        {
+            string path = Path.GetTempFileName();
+            File.WriteAllText(path, _mustMatchRuleFail);
+            VerifyRulesOptions options = new()
+            {
+                CustomRulesPath = path,
+            };
+
+            VerifyRulesCommand command = new(options, _factory);
+            VerifyRulesResult result = command.GetResult();
+            File.Delete(path);
+            Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        }
+        
+        [TestMethod]
+        public void MustNotMatch()
+        {
+            string path = Path.GetTempFileName();
+            File.WriteAllText(path, _mustNotMatchRule);
+            VerifyRulesOptions options = new()
+            {
+                CustomRulesPath = path,
+            };
+
+            VerifyRulesCommand command = new(options, _factory);
+            VerifyRulesResult result = command.GetResult();
+            File.Delete(path);
+            Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+        }
+        
+        [TestMethod]
+        public void MustNotMatchDetectIncorrect()
+        {
+            string path = Path.GetTempFileName();
+            File.WriteAllText(path, _mustNotMatchRuleFail);
             VerifyRulesOptions options = new()
             {
                 CustomRulesPath = path,

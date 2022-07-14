@@ -1,7 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using System.Runtime.InteropServices.ComTypes;
+using System.Globalization;
 
 namespace Microsoft.ApplicationInspector.Commands
 {
@@ -30,19 +30,19 @@ namespace Microsoft.ApplicationInspector.Commands
         public IEnumerable<string> SourcePath { get; set; } = Array.Empty<string>();
         public string? CustomRulesPath { get; set; }
         public bool IgnoreDefaultRules { get; set; }
-        public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
-        public IEnumerable<Severity> SeverityFilters { get; set; } = new Severity[] { Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice | Severity.ManualReview };
+        public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new[] { Confidence.High, Confidence.Medium };
+        public IEnumerable<Severity> SeverityFilters { get; set; } = new[] { Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice | Severity.ManualReview };
         public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
-        public bool SingleThread { get; set; } = false;
+        public bool SingleThread { get; set; }
         /// <summary>
         /// Treat <see cref="LanguageInfo.LangFileType.Build"/> files as if they were <see cref="LanguageInfo.LangFileType.Code"/> when determining if tags should apply.
         /// </summary>
-        public bool AllowAllTagsInBuildFiles { get; set; } = false;
+        public bool AllowAllTagsInBuildFiles { get; set; }
         /// <summary>
         /// If enabled, will not show the progress bar interface.
         /// </summary>
         public bool NoShowProgress { get; set; } = true;
-        public bool TagsOnly { get; set; } = false;
+        public bool TagsOnly { get; set; }
         /// <summary>
         /// Amount of time in ms to allow to process each file.  Not supported in async operations.
         /// </summary>
@@ -101,7 +101,7 @@ namespace Microsoft.ApplicationInspector.Commands
     }
 
     /// <summary>
-    /// Analyze operation for setup and processing of results from Rulesengine
+    /// Analyze operation for setup and processing of results from Rules Engine
     /// </summary>
     public class AnalyzeCommand
     {
@@ -111,8 +111,9 @@ namespace Microsoft.ApplicationInspector.Commands
         private MetaDataHelper _metaDataHelper; //wrapper containing MetaData object to be assigned to result
         private Languages _languages = new();
         private RuleProcessor _rulesProcessor;
-        private const int _sleepDelay = 100;
         private DateTime DateScanned { get; }
+        
+        private const int ProgressBarUpdateDelay = 100;
 
         private readonly List<Glob> _fileExclusionList = new();
         private readonly Confidence _confidence = Confidence.Unspecified;
@@ -130,13 +131,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _logger = _loggerFactory?.CreateLogger<AnalyzeCommand>() ?? NullLogger<AnalyzeCommand>.Instance;
             _options = opt;
 
-            if (opt.FilePathExclusions.Any(x => !x.Equals("none"))){
-                _fileExclusionList = opt.FilePathExclusions.Select(x => new Glob(x)).ToList();
-            }
-            else
-            {
-                _fileExclusionList = new List<Glob>();
-            }
+            _fileExclusionList = opt.FilePathExclusions.Any(x => !x.Equals("none")) ? opt.FilePathExclusions.Select(x => new Glob(x)).ToList() : new List<Glob>();
 
             //create metadata helper to wrap and help populate metadata from scan
             _metaDataHelper = new MetaDataHelper(string.Join(',', _options.SourcePath));
@@ -170,14 +165,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 if (Directory.Exists(entry))
                 {
-                    try
-                    {
-                        _srcfileList.AddRange(Directory.EnumerateFiles(entry, "*.*", SearchOption.AllDirectories));
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
+                    _srcfileList.AddRange(Directory.EnumerateFiles(entry, "*.*", SearchOption.AllDirectories));
                 }
                 else if (File.Exists(entry))
                 {
@@ -216,10 +204,7 @@ namespace Microsoft.ApplicationInspector.Commands
 
             if (!string.IsNullOrEmpty(_options.CustomRulesPath))
             {
-                if (rulesSet == null)
-                {
-                    rulesSet = new RuleSet(_loggerFactory);
-                }
+                rulesSet ??= new RuleSet(_loggerFactory);
 
                 if (Directory.Exists(_options.CustomRulesPath))
                 {
@@ -329,6 +314,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         List<MatchRecord> results = new();
 
+                        // Reusable parsing logic that is used in an anonymous task or called directly depending on timeout preference.
                         void ProcessLambda()
                         {
                             _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
@@ -342,7 +328,7 @@ namespace Microsoft.ApplicationInspector.Commands
                             else
                             {
                                 _metaDataHelper.AddLanguage("Unknown");
-                                languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
+                                languageInfo = new LanguageInfo() { Extensions = new[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
                                 if (!_options.ScanUnknownTypes)
                                 {
                                     fileRecord.Status = ScanState.Skipped;
@@ -486,7 +472,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         else
                         {
                             _metaDataHelper.AddLanguage("Unknown");
-                            languageInfo = new LanguageInfo() { Extensions = new string[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
+                            languageInfo = new LanguageInfo() { Extensions = new[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
                             if (!_options.ScanUnknownTypes)
                             {
                                 fileRecord.Status = ScanState.Skipped;
@@ -587,7 +573,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
 
                     // Be sure to close the stream after we are done processing it.
-                    contents?.Close();
+                    contents?.Dispose();
                 }
             }
         }
@@ -601,7 +587,7 @@ namespace Microsoft.ApplicationInspector.Commands
             _logger.LogTrace("AnalyzeCommand::GetFileEntriesAsync");
 
             Extractor extractor = new();
-            foreach (var srcFile in _srcfileList ?? new List<string>())
+            foreach (string srcFile in _srcfileList)
             {
                 if (_fileExclusionList.Any(x => x.IsMatch(srcFile)))
                 {
@@ -671,7 +657,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Common.Utils.GetVersionString()
             };
 
-            AnalyzeResult.ExitCode exitCode = await PopulateRecordsAsync(cancellationToken.Value);
+            _ = await PopulateRecordsAsync(cancellationToken.Value);
 
             //wrapup result status
             if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
@@ -684,9 +670,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
             }
-            else if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
+            else if (_metaDataHelper is {Metadata: { }})
             {
-                _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
+                _metaDataHelper.Metadata.DateScanned = DateScanned.ToString(CultureInfo.InvariantCulture);
                 _metaDataHelper.PrepareReport();
                 analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
@@ -816,7 +802,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     while (!doneEnumerating)
                     {
-                        Thread.Sleep(_sleepDelay);
+                        Thread.Sleep(ProgressBarUpdateDelay);
                         pbar.Message = $"Enumerating Files. {fileQueue.Count} Discovered so far.";
                     }
 
@@ -863,7 +849,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     
                     while (!doneProcessing)
                     {
-                        Thread.Sleep(_sleepDelay);
+                        Thread.Sleep(ProgressBarUpdateDelay);
                         var current = _metaDataHelper.Files.Count;
                         var timePerRecord = sw.Elapsed.TotalMilliseconds / current;
                         var millisExpected = (int)(timePerRecord * (fileQueue.Count - current));
@@ -898,12 +884,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
             }
 
-            if (_metaDataHelper != null && _metaDataHelper.Metadata != null)
-            {
-                _metaDataHelper.Metadata.DateScanned = DateScanned.ToString();
-                _metaDataHelper.PrepareReport();
-                analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
-            }
+            _metaDataHelper.Metadata.DateScanned = DateScanned.ToString(CultureInfo.InvariantCulture);
+            _metaDataHelper.PrepareReport();
+            analyzeResult.Metadata = _metaDataHelper.Metadata; //replace instance with metadatahelper processed one
 
             if (timedOut)
             {
@@ -926,7 +909,7 @@ namespace Microsoft.ApplicationInspector.Commands
             cts ??= new CancellationTokenSource();
             if (_options.ProcessingTimeOut > 0)
             {
-                var t = Task.Run(() => PopulateRecords(cts.Token, fileEntries));
+                var t = Task.Run(() => PopulateRecords(cts.Token, fileEntries), cts.Token);
                 if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.ProcessingTimeOut)))
                 {
                     cts.Cancel();
