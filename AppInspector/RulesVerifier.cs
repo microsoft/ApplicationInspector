@@ -236,10 +236,15 @@ namespace Microsoft.ApplicationInspector.Commands
 
             var singleList = new [] {convertedOatRule};
             
+            // We need to provide a language for the TextContainer, which will later be referenced by the Rule when executed.
+            // We can grab any Language that the rule applies to, if there are none, it means it applies to all languages, except any in DoesNotApplyTo.
+            // Then we fall back to grab any language from the languages configuration that isn't DoesNotApplyTo for this rule.
+            var language = convertedOatRule.AppInspectorRule.AppliesTo?.FirstOrDefault() ?? 
+                           _options.LanguageSpecs.GetNames().FirstOrDefault(x => !convertedOatRule.AppInspectorRule.DoesNotApplyTo?.Contains(x, StringComparer.InvariantCultureIgnoreCase) ?? true) ?? "csharp";
+
             // validate all must match samples are matched
             foreach (var mustMatchElement in rule.MustMatch ?? Array.Empty<string>())
             {
-                var language = convertedOatRule.AppInspectorRule.AppliesTo?.FirstOrDefault() as string ?? "csharp";
                 var tc = new TextContainer(mustMatchElement, language, _options.LanguageSpecs);
                 if (!_analyzer.Analyze(singleList, tc).Any())
                 {
@@ -250,13 +255,12 @@ namespace Microsoft.ApplicationInspector.Commands
             
             // validate no must not match conditions are matched
             foreach (var mustNotMatchElement in rule.MustNotMatch ?? Array.Empty<string>())
-            {
-                var language = convertedOatRule.AppInspectorRule.AppliesTo?.FirstOrDefault() as string ?? "csharp";
+            {            
                 var tc = new TextContainer(mustNotMatchElement, language, _options.LanguageSpecs);
                 if (_analyzer.Analyze(singleList, tc).Any())
                 {
-                    _logger?.LogError("Rule {ID} matches the 'MustNotMatch' test {MustNotMatch}. ", rule.Id, mustNotMatchElement);
-                    errors.Add($"Rule {rule.Id} does not match the 'MustMatch' test {mustNotMatchElement}. ");
+                    _logger?.LogError("Rule {ID} matches the 'MustNotMatch' test '{MustNotMatch}'. ", rule.Id, mustNotMatchElement);
+                    errors.Add($"Rule {rule.Id} matches the 'MustNotMatch' test '{mustNotMatchElement}'.");
                 }
             }
             
