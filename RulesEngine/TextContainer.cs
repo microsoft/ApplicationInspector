@@ -17,7 +17,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="content"> Text to work with </param>
         /// <param name="language"> The language of the test </param>
-        /// <param name="lineNumber"> The line number to specify. Leave empty for full file as target. </param>
+        /// <param name="languages">An instance of the <see cref="Languages"/> class containing the information for language mapping to use.</param>
         public TextContainer(string content, string language, Languages languages)
         {
             Language = language;

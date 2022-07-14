@@ -44,7 +44,7 @@ namespace AppInspector.Tests.Commands
         }
 
         [ClassCleanup]
-        public void CleanUp()
+        public static void CleanUp()
         {
             Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
         }

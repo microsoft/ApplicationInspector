@@ -329,6 +329,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     {
                         List<MatchRecord> results = new();
 
+                        // Reusable parsing logic that is used in an anonymous task or called directly depending on timeout preference.
                         void ProcessLambda()
                         {
                             _ = _metaDataHelper.FileExtensions.TryAdd(Path.GetExtension(file.FullPath).Replace('.', ' ').TrimStart(), 0);
@@ -587,7 +588,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     }
 
                     // Be sure to close the stream after we are done processing it.
-                    contents?.Close();
+                    contents?.Dispose();
                 }
             }
         }
@@ -926,7 +927,7 @@ namespace Microsoft.ApplicationInspector.Commands
             cts ??= new CancellationTokenSource();
             if (_options.ProcessingTimeOut > 0)
             {
-                var t = Task.Run(() => PopulateRecords(cts.Token, fileEntries));
+                var t = Task.Run(() => PopulateRecords(cts.Token, fileEntries), cts.Token);
                 if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.ProcessingTimeOut)))
                 {
                     cts.Cancel();

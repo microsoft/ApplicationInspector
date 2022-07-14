@@ -194,12 +194,13 @@ namespace Microsoft.ApplicationInspector.Commands
                 }
             }
 
+            // validate conditions
             foreach(var condition in rule.Conditions ?? Array.Empty<SearchCondition>())
             {
                 if (condition.SearchIn is null)
                 {
                     _logger?.LogError("SearchIn is null in {ruleId}",rule.Id);
-                    errors.Add(string.Format("SearchIn is null in {0}", rule.Id));
+                    errors.Add($"SearchIn is null in {rule.Id}");
                 }
                 else if (condition.SearchIn.StartsWith("finding-region"))
                 {
@@ -214,28 +215,55 @@ namespace Microsoft.ApplicationInspector.Commands
                                 if (int1 > 0 && int2 < 0)
                                 {
                                     _logger?.LogError("The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {0}", rule.Id);
-                                    errors.Add(string.Format("The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {0}", rule.Id));
+                                    errors.Add(
+                                        $"The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {rule.Id}");
                                 }
                             }
                         }
                         else
                         {
-                            _logger?.LogError("Improperly specified finding region. {0}", rule.Id);
-                            errors.Add(string.Format("Improperly specified finding region. {0}", rule.Id));
+                            _logger?.LogError("Improperly specified finding region. {id}", rule.Id);
+                            errors.Add($"Improperly specified finding region. {rule.Id}");
                         }
                     }
                     else
                     {
-                        _logger?.LogError("Improperly specified finding region. {0}", rule.Id);
-                        errors.Add(string.Format("Improperly specified finding region. {0}", rule.Id));
+                        _logger?.LogError("Improperly specified finding region. {id}", rule.Id);
+                        errors.Add($"Improperly specified finding region. {rule.Id}");
                     }
                 }
             }
 
+            var singleList = new [] {convertedOatRule};
+            
+            // validate all must match samples are matched
+            foreach (var mustMatchElement in rule.MustMatch ?? Array.Empty<string>())
+            {
+                var language = convertedOatRule.AppInspectorRule.AppliesTo?.FirstOrDefault() as string ?? "csharp";
+                var tc = new TextContainer(mustMatchElement, language, _options.LanguageSpecs);
+                if (!_analyzer.Analyze(singleList, tc).Any())
+                {
+                    _logger?.LogError("Rule {ID} does not match the 'MustMatch' test {MustMatch}. ", rule.Id, mustMatchElement);
+                    errors.Add($"Rule {rule.Id} does not match the 'MustMatch' test {mustMatchElement}. ");
+                }
+            }
+            
+            // validate no must not match conditions are matched
+            foreach (var mustNotMatchElement in rule.MustNotMatch ?? Array.Empty<string>())
+            {
+                var language = convertedOatRule.AppInspectorRule.AppliesTo?.FirstOrDefault() as string ?? "csharp";
+                var tc = new TextContainer(mustNotMatchElement, language, _options.LanguageSpecs);
+                if (_analyzer.Analyze(singleList, tc).Any())
+                {
+                    _logger?.LogError("Rule {ID} matches the 'MustNotMatch' test {MustNotMatch}. ", rule.Id, mustNotMatchElement);
+                    errors.Add($"Rule {rule.Id} does not match the 'MustMatch' test {mustNotMatchElement}. ");
+                }
+            }
+            
             if (rule.Tags?.Length == 0)
             {
                 _logger?.LogError("Rule must specify tags. {0}", rule.Id);
-                errors.Add(string.Format("Rule must specify tags. {0}", rule.Id));
+                errors.Add($"Rule must specify tags. {rule.Id}");
             }
             return new RuleStatus()
             {
