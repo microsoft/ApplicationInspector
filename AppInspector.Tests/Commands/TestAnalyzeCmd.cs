@@ -769,12 +769,14 @@ windows
         public void SingleVsMultiThread()
         {
             List<string> testFiles = new();
-            int iterations = 1000;
+
+            int iterations = 100;
             for (int i = 0; i < iterations; i++)
             {
-                string innerFileName = Path.GetTempFileName();
-                File.WriteAllText(innerFileName, fourWindowsOneLinux);
-                testFiles.Add(innerFileName);
+                string testFileName = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
+                    $"SingleVsMultiThread-TestFile-{i}.js");
+                File.WriteAllText(testFileName, fourWindowsOneLinux);
+                testFiles.Add(testFileName);
             }
 
             AnalyzeOptions optionsSingle = new()
@@ -782,8 +784,7 @@ windows
                 SourcePath = testFiles,
                 CustomRulesPath = testRulesPath,
                 IgnoreDefaultRules = true,
-                SingleThread = true,
-                ScanUnknownTypes = true // Temp files are named .tmp so we need to scan unknown types.
+                SingleThread = true
             };
 
             AnalyzeOptions optionsMulti = new()
@@ -791,8 +792,7 @@ windows
                 SourcePath = testFiles,
                 CustomRulesPath = testRulesPath,
                 IgnoreDefaultRules = true,
-                SingleThread = false,
-                ScanUnknownTypes = true
+                SingleThread = false
             };
 
             AnalyzeCommand commandSingle = new(optionsSingle, factory);
@@ -800,12 +800,7 @@ windows
 
             AnalyzeCommand commandMulti = new(optionsMulti, factory);
             AnalyzeResult resultMulti = commandMulti.GetResult();
-
-            foreach(var testFile in testFiles)
-            {
-                File.Delete(testFile);
-            }
-
+            
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, resultSingle.ResultCode);
             Assert.AreEqual(AnalyzeResult.ExitCode.Success, resultMulti.ResultCode);
             Assert.AreEqual(5 * iterations, resultSingle.Metadata.TotalMatchesCount);
