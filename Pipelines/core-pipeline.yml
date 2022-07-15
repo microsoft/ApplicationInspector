@@ -70,6 +70,12 @@ stages:
       projectName: 'ApplicationInspector_Commands'
   - template: templates/nuget-build-job.yml
     parameters:
+      jobName: 'pack_engine'
+      dotnetVersion: '6.0.x'
+      projectPath: 'AppInspector/AppInspector.RulesEngine.csproj'
+      projectName: 'ApplicationInspector_RulesEngine'
+  - template: templates/nuget-build-job.yml
+    parameters:
       jobName: 'pack_cli'
       dotnetVersion: '6.0.x'
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
