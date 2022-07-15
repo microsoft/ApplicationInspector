@@ -13,7 +13,7 @@ trigger:
     - AppInspector.CLI/*
     - AppInspector.Common/*
     - AppInspector.Logging/*
-    - RulesEngine/*
+    - AppInspector.RulesEngine/*
 pr:
   branches:
     include:
@@ -25,10 +25,9 @@ pr:
     - AppInspector.CLI/*
     - AppInspector.Common/*
     - AppInspector.Logging/*
+    - AppInspector.RulesEngine/*
     - AppInspector.Tests/*
     - AppInspector.Tests.CLI/*
-    - RulesEngine/*
-
 
 stages:
 - stage: Test
@@ -80,6 +79,12 @@ stages:
       dotnetVersion: '6.0.x'
       projectPath: 'AppInspector/AppInspector.Common.csproj'
       projectName: 'ApplicationInspector_Common'
+  - template: templates/nuget-build-job.yml
+    parameters:
+      jobName: 'pack_logging'
+      dotnetVersion: '6.0.x'
+      projectPath: 'AppInspector/AppInspector.Logging.csproj'
+      projectName: 'ApplicationInspector_Logging'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_cli'
