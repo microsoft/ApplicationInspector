@@ -35,5 +35,11 @@
       <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     </ItemGroup>
+    
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="..\icon-128.png" Pack="true" PackagePath="" />
+  </ItemGroup>
 
 </Project>
