@@ -13,7 +13,7 @@ trigger:
     - AppInspector.CLI/*
     - AppInspector.Common/*
     - AppInspector.Logging/*
-    - RulesEngine/*
+    - AppInspector.RulesEngine/*
 pr:
   branches:
     include:
@@ -25,10 +25,9 @@ pr:
     - AppInspector.CLI/*
     - AppInspector.Common/*
     - AppInspector.Logging/*
+    - AppInspector.RulesEngine/*
     - AppInspector.Tests/*
     - AppInspector.Tests.CLI/*
-    - RulesEngine/*
-
 
 stages:
 - stage: Test
@@ -68,6 +67,24 @@ stages:
       dotnetVersion: '6.0.x'
       projectPath: 'AppInspector/AppInspector.Commands.csproj'
       projectName: 'ApplicationInspector_Commands'
+  - template: templates/nuget-build-job.yml
+    parameters:
+      jobName: 'pack_engine'
+      dotnetVersion: '6.0.x'
+      projectPath: 'RulesEngine/AppInspector.RulesEngine.csproj'
+      projectName: 'ApplicationInspector_RulesEngine'
+  - template: templates/nuget-build-job.yml
+    parameters:
+      jobName: 'pack_common'
+      dotnetVersion: '6.0.x'
+      projectPath: 'AppInspector.Common/AppInspector.Common.csproj'
+      projectName: 'ApplicationInspector_Common'
+  - template: templates/nuget-build-job.yml
+    parameters:
+      jobName: 'pack_logging'
+      dotnetVersion: '6.0.x'
+      projectPath: 'AppInspector.Logging/AppInspector.Logging.csproj'
+      projectName: 'ApplicationInspector_Logging'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_cli'
@@ -232,7 +249,7 @@ stages:
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_netcoreapp_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, ApplicationInspector.Common.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
