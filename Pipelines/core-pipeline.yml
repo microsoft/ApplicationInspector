@@ -65,7 +65,7 @@ stages:
     parameters:
       jobName: 'pack_lib'
       dotnetVersion: '6.0.x'
-      projectPath: 'AppInspector.Commands/AppInspector.Commands.csproj'
+      projectPath: 'AppInspector/AppInspector.Commands.csproj'
       projectName: 'ApplicationInspector_Commands'
   - template: templates/nuget-build-job.yml
     parameters:
