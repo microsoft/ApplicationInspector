@@ -24,7 +24,6 @@
     <PackageIcon>icon-128.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
     <Nullable>enable</Nullable>
     <LangVersion>10.0</LangVersion>
     <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
