@@ -30,7 +30,7 @@ parameters:
 
 jobs:
 - job: ${{ parameters.jobName }}
-  displayName: NuGet Package
+  displayName: NuGet Package ${{ parameters.projectPath }}
   pool:
     vmImage: 'windows-latest'
   steps:
