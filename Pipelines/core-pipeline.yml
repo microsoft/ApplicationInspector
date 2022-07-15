@@ -65,25 +65,25 @@ stages:
     parameters:
       jobName: 'pack_lib'
       dotnetVersion: '6.0.x'
-      projectPath: 'AppInspector/AppInspector.Commands.csproj'
+      projectPath: 'AppInspector.Commands/AppInspector.Commands.csproj'
       projectName: 'ApplicationInspector_Commands'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_engine'
       dotnetVersion: '6.0.x'
-      projectPath: 'AppInspector/AppInspector.RulesEngine.csproj'
+      projectPath: 'AppInspector.RulesEngine/AppInspector.RulesEngine.csproj'
       projectName: 'ApplicationInspector_RulesEngine'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_common'
       dotnetVersion: '6.0.x'
-      projectPath: 'AppInspector/AppInspector.Common.csproj'
+      projectPath: 'AppInspector.Common/AppInspector.Common.csproj'
       projectName: 'ApplicationInspector_Common'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_logging'
       dotnetVersion: '6.0.x'
-      projectPath: 'AppInspector/AppInspector.Logging.csproj'
+      projectPath: 'AppInspector.Logging/AppInspector.Logging.csproj'
       projectName: 'ApplicationInspector_Logging'
   - template: templates/nuget-build-job.yml
     parameters:
