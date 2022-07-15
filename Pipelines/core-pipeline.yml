@@ -76,6 +76,12 @@ stages:
       projectName: 'ApplicationInspector_RulesEngine'
   - template: templates/nuget-build-job.yml
     parameters:
+      jobName: 'pack_common'
+      dotnetVersion: '6.0.x'
+      projectPath: 'AppInspector/AppInspector.Common.csproj'
+      projectName: 'ApplicationInspector_Common'
+  - template: templates/nuget-build-job.yml
+    parameters:
       jobName: 'pack_cli'
       dotnetVersion: '6.0.x'
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
@@ -238,7 +244,7 @@ stages:
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_netcoreapp_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, ApplicationInspector.Common.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
