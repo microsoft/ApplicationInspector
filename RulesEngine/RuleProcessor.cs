@@ -45,7 +45,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly RuleProcessorOptions _opts;
         private readonly ILogger<RuleProcessor> _logger;
         private readonly Analyzer analyzer;
-        private readonly RuleSet _ruleset;
+        private readonly AbstractRuleSet _ruleset;
         private readonly Languages _languages;
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new();
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _languageRulesCache = new();
@@ -64,7 +64,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         /// Creates instance of RuleProcessor
         /// </summary>
-        public RuleProcessor(RuleSet rules, RuleProcessorOptions opts)
+        public RuleProcessor(AbstractRuleSet rules, RuleProcessorOptions opts)
         {
             _opts = opts;
             _logger = opts.LoggerFactory?.CreateLogger<RuleProcessor>() ?? NullLogger<RuleProcessor>.Instance;
