@@ -225,7 +225,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED, _options.CustomRulesPath));
                     }
 
-                    rulesSet.AddRange(verification.CompiledRuleSet);
+                    rulesSet.AddRange(verification.CompiledRuleSet.GetAppInspectorRules());
                 }
                 else
                 {
