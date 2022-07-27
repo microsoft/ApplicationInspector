@@ -1,21 +1,19 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+using Microsoft.CST.OAT;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Microsoft.ApplicationInspector.Commands
+namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    using Microsoft.ApplicationInspector.RulesEngine;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-    using Microsoft.ApplicationInspector.Common;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
-    using Microsoft.CST.OAT;
-
     public class RulesVerifierResult
     {
         public RulesVerifierResult(List<RuleStatus> ruleStatuses, RuleSet compiledRuleSets)
