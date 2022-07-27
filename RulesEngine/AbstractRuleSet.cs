@@ -15,12 +15,12 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     /// <summary>
-    ///     Storage for rules
+    ///     Base class for a set of <see cref="Rule"/> objects to be operated on by the <see cref="RuleProcessor"/>. This is the abstract class used to allow for the default <see cref="RuleSet"/> and <see cref="TypedRuleSet{T}"/> for use with rules that have extra properties.
     /// </summary>
     public abstract class AbstractRuleSet
     {
         protected ILogger _logger;
-        protected readonly List<ConvertedOatRule> _oatRules = new();//used for analyze cmd primarily
+        protected readonly List<ConvertedOatRule> _oatRules = new();
         protected IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
         private readonly Regex _searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
         public void AddPath(string path, string? tag = null)
@@ -145,6 +145,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return _oatRules.Where(x => (x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Length == 0) && (x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0));
         }
 
+        /// <summary>
+        ///     Convert an AppInspector rule into an OAT rule.
+        /// </summary>
+        /// <param name="rule">The <see cref="Rule"/> to convert.</param>
+        /// <returns>A <see cref="ConvertedOatRule"/> if the AI rule was valid otherwise null.</returns>
         public ConvertedOatRule? AppInspectorRuleToOatRule(Rule rule)
         {
             var clauses = new List<Clause>();
