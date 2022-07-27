@@ -30,6 +30,5 @@
   <ItemGroup>
     <ProjectReference Include="..\AppInspector.Logging\AppInspector.Logging.csproj" />
     <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
-    <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj" />
   </ItemGroup>
  </Project>

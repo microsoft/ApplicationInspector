@@ -127,7 +127,7 @@ namespace Microsoft.ApplicationInspector.Commands
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/> use for log messages.</param>
         public AnalyzeCommand(AnalyzeOptions opt, ILoggerFactory? loggerFactory = null)
         {
-            _loggerFactory = loggerFactory;
+            _loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
             _logger = _loggerFactory?.CreateLogger<AnalyzeCommand>() ?? NullLogger<AnalyzeCommand>.Instance;
             _options = opt;
 

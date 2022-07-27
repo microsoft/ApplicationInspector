@@ -71,7 +71,7 @@ stages:
     parameters:
       jobName: 'pack_engine'
       dotnetVersion: '6.0.x'
-      projectPath: 'RulesEngine/AppInspector.RulesEngine.csproj'
+      projectPath: 'AppInspector.RulesEngine/AppInspector.RulesEngine.csproj'
       projectName: 'ApplicationInspector_RulesEngine'
   - template: templates/nuget-build-job.yml
     parameters:
@@ -183,7 +183,7 @@ stages:
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/macos/ApplicationInspector_macos_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, ApplicationInspector.Common.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
@@ -216,7 +216,7 @@ stages:
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/win/ApplicationInspector_win_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
+        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, ApplicationInspector.Common.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
