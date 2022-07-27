@@ -19,13 +19,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     using System.Text.RegularExpressions;
 
     /// <summary>
-    ///     Storage for rules
+    ///     Default class to use to store Application Inspector <see cref="Rule"/> objects.
     /// </summary>
     public class RuleSet : TypedRuleSet<Rule>
     {
+
         /// <summary>
-        ///     Creates instance of Ruleset
+        ///     Create a ruleset using the given (optional) logger.
         /// </summary>
+        /// <param name="loggerFactory"></param>
         public RuleSet(ILoggerFactory? loggerFactory = null) : base(loggerFactory)
         {
         }

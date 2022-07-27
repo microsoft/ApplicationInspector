@@ -84,10 +84,7 @@
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
       <IncludeAssets>ApplicationInspector.Common.dll</IncludeAssets>
     </ProjectReference>
-    <ProjectReference Include="..\RulesEngine\AppInspector.RulesEngine.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <IncludeAssets>ApplicationInspector.RulesEngine.dll</IncludeAssets>
-    </ProjectReference>
+    <ProjectReference Include="..\AppInspector.RulesEngine\AppInspector.RulesEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -14,6 +14,10 @@ using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
+/// <summary>
+/// The TypedRuleSet allows you to extend the Application Inspector Rule format with your own custom fields and have them be deserialized. They won't be used in processing, but may be used for additional follow up actions.
+/// </summary>
+/// <typeparam name="T">The Type of the Rule this set holds. It must inherit from <see cref="Rule"/></typeparam>
 public class TypedRuleSet<T> : AbstractRuleSet,IEnumerable<T>  where T : Rule
 {
     /// <summary>
@@ -36,6 +40,13 @@ public class TypedRuleSet<T> : AbstractRuleSet,IEnumerable<T>  where T : Rule
     /// <returns> Enumerator </returns>
     public IEnumerator GetEnumerator() => GetAppInspectorRules().GetEnumerator();
 
+    /// <summary>
+    /// Deserialize a string into rules and enumerate them.
+    /// </summary>
+    /// <param name="jsonstring"></param>
+    /// <param name="sourcename"></param>
+    /// <param name="tag"></param>
+    /// <returns></returns>
     internal override IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)
     {
         List<T>? ruleList = JsonConvert.DeserializeObject<List<T>>(jsonstring);

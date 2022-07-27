@@ -49,7 +49,7 @@ jobs:
       run: |
          dotnet restore
          dotnet build AppInspector.RulesEngine.csproj -c Release
-      working-directory: ./RulesEngine
+      working-directory: ./AppInspector.RulesEngine
 
     - name: Build Tests
       run: |
