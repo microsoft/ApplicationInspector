@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Logging;
+using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
 
@@ -26,6 +28,21 @@ namespace AppInspector.Tests.DefaultRules
             VerifyRulesResult result = command.GetResult();
 
             Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+            Assert.AreNotEqual(0, result.RuleStatusList.Count);
+        }
+
+        [TestMethod]
+        public void VerifyNonZeroDefaultRules()
+        {
+            RuleSet set = RuleSetUtils.GetDefaultRuleSet();
+            Assert.IsTrue(set.Any());
+
+            RulesVerifier verifier = new(new RulesVerifierOptions());
+            RulesVerifierResult result = verifier.Verify(set);
+            
+            Assert.IsTrue(result.Verified);
+            Assert.AreNotEqual(0, result.RuleStatuses.Count);
+            Assert.AreNotEqual(0, result.CompiledRuleSet.GetAppInspectorRules().Count());
         }
     }
 }

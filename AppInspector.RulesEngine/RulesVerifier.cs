@@ -1,50 +1,19 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+using Microsoft.CST.OAT;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Microsoft.ApplicationInspector.Commands
+namespace Microsoft.ApplicationInspector.RulesEngine
 {
-    using Microsoft.ApplicationInspector.RulesEngine;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-    using Microsoft.ApplicationInspector.Common;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
-    using Microsoft.CST.OAT;
-
-    public class RulesVerifierResult
-    {
-        public RulesVerifierResult(List<RuleStatus> ruleStatuses, RuleSet compiledRuleSets)
-        {
-            RuleStatuses = ruleStatuses;
-            CompiledRuleSet = compiledRuleSets;
-        }
-        public List<RuleStatus> RuleStatuses { get; }
-        public RuleSet CompiledRuleSet { get; }
-        public  bool Verified => RuleStatuses.All(x => x.Verified);
-    }
-
-    public class RulesVerifierOptions
-    {
-        /// <summary>
-        /// If desired you may provide the analyzer to use. An analyzer with AI defaults will be created to use for validation.
-        /// </summary>
-        public Analyzer? Analyzer { get; set; }
-        /// <summary>
-        /// To receive log messages, provide a LoggerFactory with your preferred configuration.
-        /// </summary>
-        public ILoggerFactory? LoggerFactory { get; set; }
-        /// <summary>
-        /// If true, the verifier will stop on the first issue and will not continue reporting issues.
-        /// </summary>
-        public bool FailFast { get; set; }
-        public Languages LanguageSpecs { get; set; } = new Languages();
-    }
-
     /// <summary>
     /// Common helper used by VerifyRulesCommand and PackRulesCommand classes to reduce duplication
     /// </summary>
@@ -90,12 +59,12 @@ namespace Microsoft.ApplicationInspector.Commands
             return Verify(CompiledRuleset);
         }
 
-        public RulesVerifierResult Verify(RuleSet ruleset)
+        public RulesVerifierResult Verify(AbstractRuleSet ruleset)
         {
             return new RulesVerifierResult(CheckIntegrity(ruleset), ruleset);
         }
 
-        public List<RuleStatus> CheckIntegrity(RuleSet ruleSet)
+        public List<RuleStatus> CheckIntegrity(AbstractRuleSet ruleSet)
         {
             List<RuleStatus> ruleStatuses = new();
             foreach (ConvertedOatRule rule in ruleSet.GetOatRules() ?? Array.Empty<ConvertedOatRule>())
@@ -109,21 +78,18 @@ namespace Microsoft.ApplicationInspector.Commands
                     break;
                 }
             }
-            var duplicatedRules = ruleSet.GroupBy(x => x.Id).Where(y => y.Count() > 1);
-            if (duplicatedRules.Any())
+            var duplicatedRules = ruleSet.GetAppInspectorRules().GroupBy(x => x.Id).Where(y => y.Count() > 1);
+            foreach (var rule in duplicatedRules)
             {
-                foreach (var rule in duplicatedRules)
+                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL), rule.Key);
+                var relevantStati = ruleStatuses.Where(x => x.RulesId == rule.Key);
+                foreach(var status in relevantStati)
                 {
-                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL), rule.Key);
-                    var relevantStati = ruleStatuses.Where(x => x.RulesId == rule.Key);
-                    foreach(var status in relevantStati)
-                    {
-                        status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Key));
-                    }
-                    if (_failFast)
-                    {
-                        break;
-                    }
+                    status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Key));
+                }
+                if (_failFast)
+                {
+                    break;
                 }
             }
 

@@ -9,13 +9,11 @@ namespace Microsoft.ApplicationInspector.Commands
 {
     using Microsoft.ApplicationInspector.Common;
     using Microsoft.ApplicationInspector.RulesEngine;
-    using Microsoft.CST.OAT;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
     
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
 
     public class VerifyRulesOptions
     {
@@ -24,15 +22,6 @@ namespace Microsoft.ApplicationInspector.Commands
         public bool Failfast { get; set; }
         public string? CustomCommentsPath { get; set; }
         public string? CustomLanguagesPath { get; set; }
-    }
-
-    public class RuleStatus
-    {
-        public string? RulesId { get; set; }
-        public string? RulesName { get; set; }
-        public bool Verified => !Errors.Any() && !OatIssues.Any();
-        public IEnumerable<string> Errors { get; set; } = Enumerable.Empty<string>();
-        public IEnumerable<Violation> OatIssues { get; set; } = Enumerable.Empty<Violation>();
     }
 
     public class VerifyRulesResult : Result
