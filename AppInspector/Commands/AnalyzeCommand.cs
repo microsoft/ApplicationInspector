@@ -244,10 +244,12 @@ namespace Microsoft.ApplicationInspector.Commands
                         RulesVerifierResult verification = verifier.Verify(_options.CustomRulesPath);
                         if (!verification.Verified)
                         {
-                            _logger.LogError(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED, filename));
                             anyFails = true;
                         }
-                        rulesSet.AddRange(verification.CompiledRuleSet.GetAppInspectorRules());
+                        else
+                        {
+                            rulesSet.AddFile(filename);
+                        }
                     }
                     else
                     {
