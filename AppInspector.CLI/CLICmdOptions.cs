@@ -38,6 +38,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
     public record CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions
     {
+        [Option("disable-custom-rule-validation", Required = false, HelpText = "By default when providing custom rules they are validated. When set, validation will be skipped.")]
+        public bool DisableCustomRuleValidation { get; set; } = false;
+        
         [Option('i', "ignore-default-rules", Required = false, HelpText = "Exclude default rules bundled with application", Default = false)]
         public bool IgnoreDefaultRules { get; set; }
 
@@ -62,11 +65,13 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('u', "scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
         public bool ScanUnknownTypes { get; set; }
 
-        [Option('c', "confidence-filters", Required = false, Separator = ',',  HelpText = "Output only matches with specified confidence <value>,<value>. Default: Medium,High. [High|Medium|Low]")]
+        [Option('c', "confidence-filters", Required = false, Separator = ',', HelpText = "Output only matches with specified confidence <value>,<value>. Default: Medium,High. [High|Medium|Low]", Default = new Confidence[]{Confidence.High, Confidence.Medium})]
         public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
 
-        [Option("severity-filters", Required = false, Separator = ',', HelpText = "Output only matches with specified severity <value>,<value>. Default: All are enabled. [Critical|Important|Moderate|BestPractice|ManualReview]")]
-        public IEnumerable<Severity> SeverityFilters { get; set; } = (IEnumerable<Severity>)Enum.GetValues(typeof(Severity));
+        [Option("severity-filters", Required = false, Separator = ',',
+            HelpText =
+                "Output only matches with specified severity <value>,<value>. Default: All are enabled. [Critical|Important|Moderate|BestPractice|ManualReview]", Default = new Severity[] { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview })]
+        public IEnumerable<Severity> SeverityFilters { get; set; } = new Severity[] { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview };
     }
 
     /// <summary>

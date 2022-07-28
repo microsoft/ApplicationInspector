@@ -69,6 +69,8 @@ namespace Microsoft.ApplicationInspector.Commands
         /// If <see cref="DisableCrawlArchives"/> is not set, will restrict the amount of time allowed to extract each archive. Not supported in async operations.
         /// </summary>
         public int EnumeratingTimeout { get; set; }
+
+        public bool DisableCustomRuleVerification { get; set; }
     }
 
     /// <summary>
@@ -205,31 +207,54 @@ namespace Microsoft.ApplicationInspector.Commands
             if (!string.IsNullOrEmpty(_options.CustomRulesPath))
             {
                 rulesSet ??= new RuleSet(_loggerFactory);
-
+                RulesVerifierOptions rulesVerifierOptions = new()
+                {
+                    FailFast = false,
+                    LanguageSpecs = _languages,
+                    LoggerFactory = _loggerFactory,
+                };
+                RulesVerifier verifier = new(rulesVerifierOptions);
+                bool anyFails = false;
                 if (Directory.Exists(_options.CustomRulesPath))
                 {
-                    rulesSet.AddDirectory(_options.CustomRulesPath);
+                    foreach (string filename in Directory.EnumerateFileSystemEntries(_options.CustomRulesPath, "*.json",
+                                 SearchOption.AllDirectories))
+                    {
+                        VerifyFile(filename);
+                    }
                 }
                 else if (File.Exists(_options.CustomRulesPath)) //verify custom rules before use
                 {
-                    RulesVerifierOptions rulesVerifierOptions = new()
-                    {
-                        FailFast = false,
-                        LanguageSpecs = _languages,
-                        LoggerFactory = _loggerFactory,
-                    };
-                    RulesVerifier verifier = new(rulesVerifierOptions);
-                    RulesVerifierResult verification = verifier.Verify(_options.CustomRulesPath);
-                    if (!verification.Verified)
-                    {
-                        throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED, _options.CustomRulesPath));
-                    }
-
-                    rulesSet.AddRange(verification.CompiledRuleSet.GetAppInspectorRules());
+                    VerifyFile(_options.CustomRulesPath);
                 }
                 else
                 {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, _options.CustomRulesPath));
+                }
+
+                if (anyFails)
+                {
+                    throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED, _options.CustomRulesPath));
+                }
+
+                void VerifyFile(string filename)
+                {
+                    if (!_options.DisableCustomRuleVerification)
+                    {
+                        RulesVerifierResult verification = verifier.Verify(_options.CustomRulesPath);
+                        if (!verification.Verified)
+                        {
+                            anyFails = true;
+                        }
+                        else
+                        {
+                            rulesSet.AddFile(filename);
+                        }
+                    }
+                    else
+                    {
+                        rulesSet.AddFile(filename);
+                    }
                 }
             }
 

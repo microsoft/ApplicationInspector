@@ -28,6 +28,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public IEnumerable<Severity> SeverityFilters { get; set; } = new Severity[] { Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice | Severity.ManualReview };
         public string? CustomCommentsPath { get; set; }
         public string? CustomLanguagesPath { get; set; }
+        public bool DisableCustomRuleValidation { get; set; }
     }
 
     /// <summary>
@@ -151,6 +152,7 @@ namespace Microsoft.ApplicationInspector.Commands
                     NoShowProgress = true,
                     ScanUnknownTypes = _options.ScanUnknownTypes,
                     SingleThread = _options.SingleThread,
+                    DisableCustomRuleVerification = _options.DisableCustomRuleValidation
                 }, _factory);
                 AnalyzeCommand cmd2 = new(new AnalyzeOptions()
                 {

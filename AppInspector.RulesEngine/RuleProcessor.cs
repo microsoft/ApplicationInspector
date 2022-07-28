@@ -125,12 +125,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return rawResult;
         }
 
-        public List<MatchRecord> AnalyzeFile(string contents, FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
+        /// <summary>
+        /// Analyzes a file and returns a list of <see cref="MatchRecord"/>
+        /// </summary>
+        /// <param name="textContainer">TextContainer which holds the text to analyze</param>
+        /// <param name="fileEntry">FileEntry which has the name of the file being analyzed.</param>
+        /// <param name="languageInfo">The LanguageInfo for the file</param>
+        /// <param name="tagsToIgnore">Ignore rules that match tags that are only in the tags to ignore list</param>
+        /// <param name="numLinesContext">Number of lines of text to extract for the sample. Set to 0 to disable context gathering. Set to -1 to also disable sampling the match.</param>
+        /// <returns>A List of the matches against the Rules the processor is configured with.</returns>
+        public List<MatchRecord> AnalyzeFile(TextContainer textContainer, FileEntry fileEntry,
+            LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
             var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
             List<MatchRecord> resultsList = new();
 
-            TextContainer textContainer = new(contents, languageInfo.Name, _languages);
             var caps = analyzer.GetCaptures(rules, textContainer);
             foreach (var ruleCapture in caps)
             {
@@ -220,6 +229,28 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return resultsList;
         }
 
+        /// <summary>
+        /// Analyzes a file and returns a list of <see cref="MatchRecord"/>
+        /// </summary>
+        /// <param name="contents">A string containing the text to analyze</param>
+        /// <param name="fileEntry">FileEntry which has the name of the file being analyzed</param>
+        /// <param name="languageInfo">The LanguageInfo for the file</param>
+        /// <param name="tagsToIgnore">Ignore rules that match tags that are only in the tags to ignore list</param>
+        /// <param name="numLinesContext">Number of lines of text to extract for the sample. Set to 0 to disable context gathering. Set to -1 to also disable sampling the match.</param>
+        /// <returns>A List of the matches against the Rules the processor is configured with.</returns>
+        public List<MatchRecord> AnalyzeFile(string contents, FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
+        {
+            TextContainer textContainer = new(contents, languageInfo.Name, _languages);
+            return AnalyzeFile(textContainer, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
+        }
+
+        /// <summary>
+        /// Get the Rules which apply to the FileName of the FileEntry provided.
+        /// </summary>
+        /// <param name="languageInfo"></param>
+        /// <param name="fileEntry"></param>
+        /// <param name="tagsToIgnore"></param>
+        /// <returns></returns>
         public IEnumerable<ConvertedOatRule> GetRulesForFile(LanguageInfo languageInfo, FileEntry fileEntry, IEnumerable<string>? tagsToIgnore)
         {
             return GetRulesByLanguage(languageInfo.Name)
@@ -229,6 +260,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 .Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
         }
 
+        /// <summary>
+        /// Analyzes a file and returns a list of <see cref="MatchRecord"/>
+        /// </summary>
+        /// <param name="fileEntry">FileEntry which holds the name of the file being analyzed as well as a Stream containing the contents to analyze</param>
+        /// <param name="languageInfo">The LanguageInfo for the file</param>
+        /// <param name="tagsToIgnore">Ignore rules that match tags that are only in the tags to ignore list</param>
+        /// <param name="numLinesContext">Number of lines of text to extract for the sample. Set to 0 to disable context gathering. Set to -1 to also disable sampling the match.</param>
+        /// <returns>A List of the matches against the Rules the processor is configured with.</returns>
         public List<MatchRecord> AnalyzeFile(FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
             using var sr = new StreamReader(fileEntry.Content);

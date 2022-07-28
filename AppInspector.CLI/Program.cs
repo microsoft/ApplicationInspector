@@ -7,14 +7,14 @@ namespace Microsoft.ApplicationInspector.CLI
 {
     using CommandLine;
     using Commands;
+    using Microsoft.ApplicationInspector.Common;
+    using Microsoft.Extensions.Logging;
     using ShellProgressBar;
     using System;
     using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.ApplicationInspector.Common;
-    using Microsoft.Extensions.Logging;
     using ILogger = Extensions.Logging.ILogger;
 
     public static class Program
@@ -33,7 +33,7 @@ namespace Microsoft.ApplicationInspector.CLI
             Exception? exception = null;
             try
             {
-                var argsResult = Parser.Default.ParseArguments<CLIAnalyzeCmdOptions,
+                var argsResult = new Parser(settings => settings.CaseInsensitiveEnumValues = true).ParseArguments<CLIAnalyzeCmdOptions,
                     CLITagDiffCmdOptions,
                     CLIExportTagsCmdOptions,
                     CLIVerifyRulesCmdOptions,
@@ -277,6 +277,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 CustomLanguagesPath = cliOptions.CustomLanguagesPath,
                 IgnoreDefaultRules = cliOptions.IgnoreDefaultRules,
                 ConfidenceFilters = cliOptions.ConfidenceFilters,
+                SeverityFilters = cliOptions.SeverityFilters,
                 FilePathExclusions = cliOptions.FilePathExclusions,
                 SingleThread = cliOptions.SingleThread,
                 NoShowProgress = cliOptions.NoShowProgressBar,
@@ -289,7 +290,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 AllowAllTagsInBuildFiles = cliOptions.AllowAllTagsInBuildFiles,
                 MaxNumMatchesPerTag = cliOptions.MaxNumMatchesPerTag,
                 DisableCrawlArchives = cliOptions.DisableArchiveCrawling,
-                EnumeratingTimeout = cliOptions.EnumeratingTimeout
+                EnumeratingTimeout = cliOptions.EnumeratingTimeout,
+                DisableCustomRuleVerification = cliOptions.DisableCustomRuleValidation,
             }, adjustedFactory);
 
             AnalyzeResult analyzeResult = command.GetResult();
@@ -355,6 +357,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 ProcessingTimeOut = cliOptions.ProcessingTimeOut,
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
                 SingleThread = cliOptions.SingleThread,
+                DisableCustomRuleValidation = cliOptions.DisableCustomRuleValidation,
             }, loggerFactory);
 
             TagDiffResult tagDiffResult = command.GetResult();
