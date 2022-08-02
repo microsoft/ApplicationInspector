@@ -105,7 +105,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="rule"> </param>
         public void AddRule(Rule rule)
         {
-            if (AppInspectorRuleToOatRule(rule) is ConvertedOatRule oatRule)
+            if (AppInspectorRuleToOatRule(rule) is { } oatRule)
             {
                 _logger.LogTrace("Attempting to add rule: {RuleId}:{RuleName}", rule.Id, rule.Name);
                 _oatRules.Add(oatRule);
@@ -125,7 +125,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns>If the rules were added successfully</returns>
         public void AddString(string jsonString, string sourceName, string? tag = null)
         {
-            AddRange(StringToRules(jsonString ?? string.Empty, sourceName ?? string.Empty, tag));
+            if (StringToRules(jsonString ?? string.Empty, sourceName ?? string.Empty, tag) is { } deserializedList)
+            {
+                AddRange(deserializedList);
+            }
         }
 
         /// <summary>
