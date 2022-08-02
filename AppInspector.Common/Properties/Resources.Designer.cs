@@ -594,7 +594,7 @@ namespace Microsoft.ApplicationInspector.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rule {0} failed from unrecognized language specified.
+        ///   Looks up a localized string similar to Rule {0} failed from unrecognized language {1} specified.
         /// </summary>
         internal static string VERIFY_RULES_LANGUAGE_FAIL {
             get {

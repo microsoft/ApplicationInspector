@@ -113,8 +113,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         if (!languages.Any(x => x.Equals(lang, StringComparison.CurrentCultureIgnoreCase)))
                         {
-                            _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL), rule.Id ?? "");
-                            errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL, rule.Id ?? ""));
+                            _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL), rule.Id ?? "", lang);
+                            errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL, rule.Id ?? "", lang));
                         }
                     }
                 }

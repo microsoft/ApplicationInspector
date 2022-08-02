@@ -293,7 +293,7 @@
     <value>Rule {0} failed from dupicate rule id specified</value>
   </data>
   <data name="VERIFY_RULES_LANGUAGE_FAIL" xml:space="preserve">
-    <value>Rule {0} failed from unrecognized language specified</value>
+    <value>Rule {0} failed from unrecognized language {1} specified</value>
   </data>
   <data name="VERIFY_RULES_NO_CLI_DEFAULT" xml:space="preserve">
     <value>Verify default rules request from outside CLI call not supported.  Use custom rules option.</value>
