@@ -147,15 +147,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 _severity |= severity;
             }
 
-            ConfigSourcetoScan();
-            ConfigRules();
-        }
-
-        /// <summary>
-        /// Simple validation on source path provided for scanning and preparation
-        /// </summary>
-        private void ConfigSourcetoScan()
-        {
             _logger.LogTrace("AnalyzeCommand::ConfigSourcetoScan");
 
             if (!_options.SourcePath.Any())
@@ -182,14 +173,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_NO_FILES_IN_SOURCE, string.Join(',', _options.SourcePath)));
             }
-        }
 
-        /// <summary>
-        /// Add default and/or custom rules paths
-        /// Iterate paths and add to ruleset
-        /// </summary>
-        private void ConfigRules()
-        {
             _logger.LogTrace("AnalyzeCommand::ConfigRules");
 
             if (!string.IsNullOrEmpty(_options.CustomCommentsPath) || !string.IsNullOrEmpty(_options.CustomLanguagesPath))
@@ -209,7 +193,6 @@ namespace Microsoft.ApplicationInspector.Commands
                 rulesSet ??= new RuleSet(_loggerFactory);
                 RulesVerifierOptions rulesVerifierOptions = new()
                 {
-                    FailFast = false,
                     LanguageSpecs = _languages,
                     LoggerFactory = _loggerFactory,
                 };

@@ -21,7 +21,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     {
         private readonly ILogger _logger;
         private readonly RulesVerifierOptions _options;
-        private bool _failFast => _options.FailFast;
         private ILoggerFactory? _loggerFactory => _options.LoggerFactory;
         private readonly Analyzer _analyzer;
         public RulesVerifier(RulesVerifierOptions options)
@@ -67,29 +66,24 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public List<RuleStatus> CheckIntegrity(AbstractRuleSet ruleSet)
         {
             List<RuleStatus> ruleStatuses = new();
-            foreach (ConvertedOatRule rule in ruleSet.GetOatRules() ?? Array.Empty<ConvertedOatRule>())
+            foreach (ConvertedOatRule rule in ruleSet.GetOatRules())
             {
                 RuleStatus ruleVerified = CheckIntegrity(rule);
 
                 ruleStatuses.Add(ruleVerified);
-
-                if (_failFast && !ruleVerified.Verified)
-                {
-                    break;
-                }
             }
-            var duplicatedRules = ruleSet.GetAppInspectorRules().GroupBy(x => x.Id).Where(y => y.Count() > 1);
-            foreach (var rule in duplicatedRules)
+
+            if (_options.RequireUniqueIds)
             {
-                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL), rule.Key);
-                var relevantStati = ruleStatuses.Where(x => x.RulesId == rule.Key);
-                foreach(var status in relevantStati)
+                var duplicatedRules = ruleSet.GetAppInspectorRules().GroupBy(x => x.Id).Where(y => y.Count() > 1);
+                foreach (var rule in duplicatedRules)
                 {
-                    status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Key));
-                }
-                if (_failFast)
-                {
-                    break;
+                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL), rule.Key);
+                    var relevantStati = ruleStatuses.Where(x => x.RulesId == rule.Key);
+                    foreach(var status in relevantStati)
+                    {
+                        status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Key));
+                    }
                 }
             }
 

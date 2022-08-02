@@ -34,6 +34,9 @@ namespace Microsoft.ApplicationInspector.CLI
 
         [Option("custom-comments-path", Required = false, HelpText = "Replace the default comment specification set with a custom comments.json.")]
         public string? CustomCommentsPath { get; set; }
+        
+        [Option("disable-require-unique-ids", Required = false, HelpText = "Allow rules with duplicate IDs.")]
+        public bool DisableRequireUniqueIds { get; set; }
     }
 
     public record CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions
@@ -145,9 +148,6 @@ namespace Microsoft.ApplicationInspector.CLI
     {
         [Option('d', "verify-default-rules", Required = false, Default = false, HelpText = "Verify the rules embedded in the binary.")]
         public bool VerifyDefaultRules { get; set; }
-
-        [Option('a', "fail-fast", Required = false, HelpText = "Fail fast", Default = false)]
-        public bool Failfast { get; set; }
     }
 
     [Verb("packrules", HelpText = "Combine multiple rule files into one file for ease in distribution")]

@@ -14,8 +14,12 @@ public class RulesVerifierOptions
     /// </summary>
     public ILoggerFactory? LoggerFactory { get; set; }
     /// <summary>
-    /// If true, the verifier will stop on the first issue and will not continue reporting issues.
+    /// The language specifications to use
     /// </summary>
-    public bool FailFast { get; set; }
     public Languages LanguageSpecs { get; set; } = new Languages();
+
+    /// <summary>
+    /// If set, requires that rules have unique IDs. Default: true.
+    /// </summary>
+    public bool RequireUniqueIds { get; set; } = true;
 }

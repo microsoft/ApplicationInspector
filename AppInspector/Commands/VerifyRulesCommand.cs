@@ -19,9 +19,9 @@ namespace Microsoft.ApplicationInspector.Commands
     {
         public bool VerifyDefaultRules { get; set; }
         public string? CustomRulesPath { get; set; }
-        public bool Failfast { get; set; }
         public string? CustomCommentsPath { get; set; }
         public string? CustomLanguagesPath { get; set; }
+        public bool RequireUniqueIds { get; set; }
     }
 
     public class VerifyRulesResult : Result
@@ -94,13 +94,12 @@ namespace Microsoft.ApplicationInspector.Commands
                 RulesVerifierOptions options = new()
                 {
                     Analyzer = analyzer,
-                    FailFast = false,
+                    RequireUniqueIds = _options.RequireUniqueIds,
                     LoggerFactory = _loggerFactory,
                     LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
                 };
                 RulesVerifier verifier = new(options);
                 verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
-                var stati = new List<RuleStatus>();
 
                 RuleSet? ruleSet = new(_loggerFactory);
                 if (_options.VerifyDefaultRules)

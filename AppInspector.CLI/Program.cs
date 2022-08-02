@@ -392,7 +392,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 CustomRulesPath = cliOptions.CustomRulesPath,
                 CustomCommentsPath = cliOptions.CustomCommentsPath,
                 CustomLanguagesPath = cliOptions.CustomLanguagesPath,
-                Failfast = cliOptions.Failfast,
+                RequireUniqueIds = cliOptions.DisableRequireUniqueIds
             }, loggerFactory);
 
             VerifyRulesResult exportTagsResult = command.GetResult();

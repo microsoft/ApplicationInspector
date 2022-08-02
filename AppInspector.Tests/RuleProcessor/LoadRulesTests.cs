@@ -47,7 +47,7 @@ public class LoadRulesTests
         File.WriteAllText(multiLineRuleLoc, multiLineRule);
         string rule2Loc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests", "rule2_file.json");
         File.WriteAllText(rule2Loc, rule2);
-        rules.AddPath(Path.GetDirectoryName(multiLineRuleLoc), "multiline-tests");
+        rules.AddPath(Path.GetDirectoryName(multiLineRuleLoc) ?? throw new ArgumentNullException(nameof(multiLineRuleLoc)), "multiline-tests");
         Assert.AreEqual(2, rules.Count());
     }
     

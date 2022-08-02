@@ -349,7 +349,6 @@ namespace AppInspector.Tests.Commands
             set.AddString(_validJsonInvalidRuleNoId, "NoIdTest");
             RulesVerifierOptions options = new()
             {
-                FailFast = false,
                 LoggerFactory = _factory
             };
             RulesVerifier rulesVerifier = new RulesVerifier(options);
@@ -368,8 +367,25 @@ namespace AppInspector.Tests.Commands
 
             VerifyRulesCommand command = new(options, _factory);
             VerifyRulesResult result = command.GetResult();
-            File.Delete(path);
             Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+            File.Delete(path);
+        }
+        
+        [TestMethod]
+        public void DuplicateIdCheckDisabled()
+        {
+            string path = Path.GetTempFileName();
+            File.WriteAllText(path, _sameId);
+            VerifyRulesOptions options = new()
+            {
+                CustomRulesPath = path,
+                RequireUniqueIds = false
+            };
+
+            VerifyRulesCommand command = new(options, _factory);
+            VerifyRulesResult result = command.GetResult();
+            Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+            File.Delete(path);
         }
 
         [TestMethod]

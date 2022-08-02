@@ -19,7 +19,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     /// </summary>
     public abstract class AbstractRuleSet
     {
-        protected ILogger _logger;
+        protected ILogger _logger = NullLogger.Instance;
         protected readonly List<ConvertedOatRule> _oatRules = new();
         protected IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
         private readonly Regex _searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);

@@ -206,12 +206,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             List<MatchRecord> removes = new();
 
-            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides?.Length > 0))
+            foreach (MatchRecord m in resultsList.Where(x => x.Rule?.Overrides?.Length > 0))
             {
-                foreach (string ovrd in m.Rule?.Overrides ?? Array.Empty<string>())
+                foreach (string idsToOverride in m.Rule?.Overrides ?? Array.Empty<string>())
                 {
                     // Find all overriden rules and mark them for removal from issues list
-                    foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                    foreach (MatchRecord om in resultsList.FindAll(x => x.Rule?.Id == idsToOverride))
                     {
                         // If the overridden match is a subset of the overriding match
                         if (om.Boundary?.Index >= m.Boundary?.Index &&

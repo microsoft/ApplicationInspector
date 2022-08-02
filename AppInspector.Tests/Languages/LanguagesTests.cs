@@ -93,7 +93,7 @@ namespace AppInspector.Tests.Languages
         public void ReturnFalseWithInvalidFilename(string? filename, bool expected)
         {
             var languages = Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, testCommentsPath, testLanguagesPath);
-            Assert.AreEqual(expected,languages.FromFileNameOut(filename, out _));
+            Assert.AreEqual(expected,languages.FromFileNameOut(filename!, out _));
         }
     }
 }
