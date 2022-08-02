@@ -39,11 +39,11 @@ namespace Microsoft.ApplicationInspector.CLI
                     CLIVerifyRulesCmdOptions,
                     CLIPackRulesCmdOptions>(args)
                   .MapResult(
-                    (CLIAnalyzeCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
-                    (CLITagDiffCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
-                    (CLIExportTagsCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
-                    (CLIVerifyRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
-                    (CLIPackRulesCmdOptions cliOptions) => VerifyOutputArgsRun(cliOptions),
+                    (CLIAnalyzeCmdOptions cliAnalyzeCmdOptions) => VerifyOutputArgsRun(cliAnalyzeCmdOptions),
+                    (CLITagDiffCmdOptions cliTagDiffCmdOptions) => VerifyOutputArgsRun(cliTagDiffCmdOptions),
+                    (CLIExportTagsCmdOptions cliExportTagsCmdOptions) => VerifyOutputArgsRun(cliExportTagsCmdOptions),
+                    (CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions) => VerifyOutputArgsRun(cliVerifyRulesCmdOptions),
+                    (CLIPackRulesCmdOptions cliPackRulesCmdOptions) => VerifyOutputArgsRun(cliPackRulesCmdOptions),
                     errs => (int)Common.Utils.ExitCode.CriticalError
                   );
 
@@ -292,6 +292,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 DisableCrawlArchives = cliOptions.DisableArchiveCrawling,
                 EnumeratingTimeout = cliOptions.EnumeratingTimeout,
                 DisableCustomRuleVerification = cliOptions.DisableCustomRuleValidation,
+                DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds
             }, adjustedFactory);
 
             AnalyzeResult analyzeResult = command.GetResult();
@@ -358,6 +359,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
                 SingleThread = cliOptions.SingleThread,
                 DisableCustomRuleValidation = cliOptions.DisableCustomRuleValidation,
+                DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds
             }, loggerFactory);
 
             TagDiffResult tagDiffResult = command.GetResult();
@@ -392,7 +394,7 @@ namespace Microsoft.ApplicationInspector.CLI
                 CustomRulesPath = cliOptions.CustomRulesPath,
                 CustomCommentsPath = cliOptions.CustomCommentsPath,
                 CustomLanguagesPath = cliOptions.CustomLanguagesPath,
-                Failfast = cliOptions.Failfast,
+                DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds
             }, loggerFactory);
 
             VerifyRulesResult exportTagsResult = command.GetResult();

@@ -87,7 +87,6 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 RulesVerifierOptions options = new()
                 {
-                    FailFast = false,
                     LoggerFactory = _loggerFactory,
                     LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
                 };

@@ -29,6 +29,7 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? CustomCommentsPath { get; set; }
         public string? CustomLanguagesPath { get; set; }
         public bool DisableCustomRuleValidation { get; set; }
+        public bool DisableRequireUniqueIds { get; set; }
     }
 
     /// <summary>
@@ -135,7 +136,7 @@ namespace Microsoft.ApplicationInspector.Commands
             {
                 if (_options is null)
                 {
-                    throw new ArgumentNullException("_options");
+                    throw new ArgumentNullException(nameof(_options));
                 }
                 AnalyzeCommand cmd1 = new(new AnalyzeOptions()
                 {
@@ -152,7 +153,10 @@ namespace Microsoft.ApplicationInspector.Commands
                     NoShowProgress = true,
                     ScanUnknownTypes = _options.ScanUnknownTypes,
                     SingleThread = _options.SingleThread,
-                    DisableCustomRuleVerification = _options.DisableCustomRuleValidation
+                    CustomCommentsPath = _options.CustomCommentsPath,
+                    CustomLanguagesPath = _options.CustomLanguagesPath,
+                    DisableCustomRuleVerification = _options.DisableCustomRuleValidation,
+                    DisableRequireUniqueIds = _options.DisableRequireUniqueIds
                 }, _factory);
                 AnalyzeCommand cmd2 = new(new AnalyzeOptions()
                 {
@@ -169,6 +173,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     NoShowProgress = true,
                     ScanUnknownTypes = _options.ScanUnknownTypes,
                     SingleThread = _options.SingleThread,
+                    CustomCommentsPath = _options.CustomCommentsPath,
+                    CustomLanguagesPath = _options.CustomLanguagesPath,
+                    DisableCustomRuleVerification = true // Rules are already validated by the first command
                 }, _factory);
 
                 AnalyzeResult analyze1 = cmd1.GetResult();
