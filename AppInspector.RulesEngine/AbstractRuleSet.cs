@@ -23,113 +23,25 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         protected readonly List<ConvertedOatRule> _oatRules = new();
         protected IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
         private readonly Regex _searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
-        public void AddPath(string path, string? tag = null)
-        {
-            if (Directory.Exists(path))
-            {
-                AddDirectory(path, tag);
-            }
-            else if (File.Exists(path))
-            {
-                AddFile(path, tag);
-            }
-            else
-            {
-                throw new ArgumentException("The path must exist.", nameof(path));
-            }
-        }
 
         /// <summary>
-        ///     Parse a directory with rule files and loads the rules
+        ///     Filters rules within Ruleset by language
         /// </summary>
-        /// <param name="path"> Path to rules folder </param>
-        /// <param name="tag"> Tag for the rules </param>
-        public void AddDirectory(string path, string? tag = null)
-        {
-            if (!Directory.Exists(path))
-                throw new DirectoryNotFoundException();
-
-            foreach (string filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
-            {
-                AddFile(filename, tag);
-            }
-        }
-
-        /// <summary>
-        ///     Load rules from a file
-        /// </summary>
-        /// <param name="filename"> Filename with rules </param>
-        /// <param name="tag"> Tag for the rules </param>
-        public void AddFile(string? filename, string? tag = null)
-        {
-            if (string.IsNullOrEmpty(filename))
-                throw new ArgumentException(null, nameof(filename));
-
-            if (!File.Exists(filename))
-                throw new FileNotFoundException();
-
-            using StreamReader file = File.OpenText(filename);
-            AddString(file.ReadToEnd(), filename, tag);
-        }
-
-        /// <summary>
-        ///     Adds the elements of the collection to the Ruleset
-        /// </summary>
-        /// <param name="collection"> Collection of rules </param>
-        public void AddRange(IEnumerable<Rule>? collection)
-        {
-            foreach (Rule rule in collection ?? Array.Empty<Rule>())
-            {
-                AddRule(rule);
-            }
-        }
-
-        /// <summary>
-        ///     Add rule into Ruleset
-        /// </summary>
-        /// <param name="rule"> </param>
-        public void AddRule(Rule rule)
-        {
-            if (AppInspectorRuleToOatRule(rule) is ConvertedOatRule oatRule)
-            {
-                _logger.LogTrace("Attempting to add rule: {RuleId}:{RuleName}", rule.Id, rule.Name);
-                _oatRules.Add(oatRule);
-            }
-            else
-            {
-                _logger.LogError("Rule '{RuleId}:{RuleName}' could not be converted into an OAT rule. There may be message in the logs indicating why. You can  run rule verification to identify the issue", rule.Id, rule.Name);
-            }
-        }
-
-        /// <summary>
-        ///     Load rules from JSON string
-        /// </summary>
-        /// <param name="jsonstring"> JSON string </param>
-        /// <param name="sourcename"> Name of the source (file, stream, etc..) </param>
-        /// <param name="tag"> Tag for the rules </param>
-        public void AddString(string jsonstring, string sourcename, string? tag = null)
-        {
-            AddRange(StringToRules(jsonstring ?? string.Empty, sourcename ?? string.Empty, tag));
-        }
-
-        /// <summary>
-        ///     Filters rules within Ruleset by languages
-        /// </summary>
-        /// <param name="languages"> Languages </param>
+        /// <param name="language"></param>
         /// <returns> Filtered rules </returns>
         public IEnumerable<ConvertedOatRule> ByLanguage(string language)
         {
             if (!string.IsNullOrEmpty(language))
             {
-                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Contains(language));
+                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is { } appliesList && appliesList.Contains(language));
             }
             return Array.Empty<ConvertedOatRule>();
         }
 
         /// <summary>
-        ///     Filters rules within Ruleset by applies to regexes
+        ///     Filters rules within Ruleset filename
         /// </summary>
-        /// <param name="languages"> Languages </param>
+        /// <param name="input"></param>
         /// <returns> Filtered rules </returns>
         public IEnumerable<ConvertedOatRule> ByFilename(string input)
         {
@@ -140,6 +52,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return Array.Empty<ConvertedOatRule>();
         }
 
+        /// <summary>
+        /// Get the set of rules that apply to all files
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<ConvertedOatRule> GetUniversalRules()
         {
             return _oatRules.Where(x => (x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Length == 0) && (x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0));
@@ -354,10 +270,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             };
         }
 
+        /// <summary>
+        /// Get the OAT Rules used in this RuleSet.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<ConvertedOatRule> GetOatRules() => _oatRules;
 
+        /// <summary>
+        /// Get the AppInspector Rules contained in this RuleSet.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Rule> GetAppInspectorRules() => _rules;
-
-        internal abstract IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null);
     }
 }
