@@ -358,6 +358,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public IEnumerable<Rule> GetAppInspectorRules() => _rules;
 
-        internal abstract IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null);
+        internal abstract IEnumerable<Rule> StringToRules(string jsonString, string sourceName, string? tag = null);
     }
 }

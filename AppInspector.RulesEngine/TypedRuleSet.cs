@@ -43,20 +43,27 @@ public class TypedRuleSet<T> : AbstractRuleSet,IEnumerable<T>  where T : Rule
     /// <summary>
     /// Deserialize a string into rules and enumerate them.
     /// </summary>
-    /// <param name="jsonstring"></param>
-    /// <param name="sourcename"></param>
-    /// <param name="tag"></param>
+    /// <param name="jsonString"></param>
+    /// <param name="sourceName"></param>
+    /// <param name="tag">Add an additional tag to the rules when added.</param>
     /// <returns></returns>
-    internal override IEnumerable<Rule> StringToRules(string jsonstring, string sourcename, string? tag = null)
+    internal override IEnumerable<Rule> StringToRules(string jsonString, string sourceName, string? tag = null)
     {
-        List<T>? ruleList = JsonConvert.DeserializeObject<List<T>>(jsonstring);
-         
+        List<T>? ruleList = null;
+        try
+        {
+            ruleList = JsonConvert.DeserializeObject<List<T>>(jsonString);
+        }
+        catch (JsonSerializationException jsonSerializationException)
+        {
+            _logger.LogError(jsonSerializationException, "Failed to deserialize {0} at L{1}C{2}", sourceName, jsonSerializationException.LineNumber, jsonSerializationException.LinePosition);
+        }
         if (ruleList is not null)
         {
             foreach (T r in ruleList)
             {
-                r.Source = sourcename;
-                r.RuntimeTag = tag ?? "";
+                r.Source = sourceName;
+                r.RuntimeTag = tag;
                 yield return r;
             }
         }
