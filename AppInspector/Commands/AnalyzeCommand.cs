@@ -70,7 +70,14 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         public int EnumeratingTimeout { get; set; }
 
+        /// <summary>
+        /// By default, custom rules are verified before running.
+        /// </summary>
         public bool DisableCustomRuleVerification { get; set; }
+        /// <summary>
+        /// By default, rules must have unique IDs.
+        /// </summary>
+        public bool DisableRequireUniqueIds { get; set; }
     }
 
     /// <summary>
@@ -195,6 +202,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     LanguageSpecs = _languages,
                     LoggerFactory = _loggerFactory,
+                    DisableRequireUniqueIds = _options.DisableRequireUniqueIds
                 };
                 RulesVerifier verifier = new(rulesVerifierOptions);
                 bool anyFails = false;
@@ -206,7 +214,7 @@ namespace Microsoft.ApplicationInspector.Commands
                         VerifyFile(filename);
                     }
                 }
-                else if (File.Exists(_options.CustomRulesPath)) //verify custom rules before use
+                else if (File.Exists(_options.CustomRulesPath))
                 {
                     VerifyFile(_options.CustomRulesPath);
                 }

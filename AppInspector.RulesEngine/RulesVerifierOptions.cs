@@ -19,7 +19,7 @@ public class RulesVerifierOptions
     public Languages LanguageSpecs { get; set; } = new Languages();
 
     /// <summary>
-    /// If set, requires that rules have unique IDs. Default: true.
+    /// By default rules must have unique IDs, this disables that validation check
     /// </summary>
-    public bool RequireUniqueIds { get; set; } = true;
+    public bool DisableRequireUniqueIds { get; set; }
 }

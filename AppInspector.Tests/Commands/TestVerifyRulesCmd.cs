@@ -379,7 +379,7 @@ namespace AppInspector.Tests.Commands
             VerifyRulesOptions options = new()
             {
                 CustomRulesPath = path,
-                RequireUniqueIds = false
+                DisableRequireUniqueIds = true
             };
 
             VerifyRulesCommand command = new(options, _factory);

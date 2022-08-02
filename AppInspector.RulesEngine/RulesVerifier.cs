@@ -73,7 +73,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 ruleStatuses.Add(ruleVerified);
             }
 
-            if (_options.RequireUniqueIds)
+            if (!_options.DisableRequireUniqueIds)
             {
                 var duplicatedRules = ruleSet.GetAppInspectorRules().GroupBy(x => x.Id).Where(y => y.Count() > 1);
                 foreach (var rule in duplicatedRules)
