@@ -23,6 +23,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         protected readonly List<ConvertedOatRule> _oatRules = new();
         protected IEnumerable<Rule> _rules { get => _oatRules.Select(x => x.AppInspectorRule); }
         private readonly Regex _searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
+        
+        /// <summary>
+        ///     Load rules from a file or directory
+        /// </summary>
+        /// <param name="path"> File or directory path containing rules</param>
+        /// <param name="tag"> Tag for the rules </param>
+        /// <exception cref="ArgumentException">Thrown if the filename is null or empty</exception>
+        /// <exception cref="FileNotFoundException">Thrown if the specified file cannot be found on the file system</exception>
+        /// <exception cref="Newtonsoft.Json.JsonSerializationException">Thrown if the specified file cannot be deserialized as a <see cref="List{T}"/></exception>
         public void AddPath(string path, string? tag = null)
         {
             if (Directory.Exists(path))
@@ -40,10 +49,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        ///     Parse a directory with rule files and loads the rules
+        ///     Parse a directory with rule files and attempts to load all .json files in the directory as rules
         /// </summary>
         /// <param name="path"> Path to rules folder </param>
         /// <param name="tag"> Tag for the rules </param>
+        /// <exception cref="ArgumentException">Thrown if the filename is null or empty</exception>
+        /// <exception cref="FileNotFoundException">Thrown if the specified file cannot be found on the file system</exception>
+        /// <exception cref="Newtonsoft.Json.JsonSerializationException">Thrown if the specified file cannot be deserialized as a <see cref="List{T}"/></exception>
         public void AddDirectory(string path, string? tag = null)
         {
             if (!Directory.Exists(path))
@@ -60,6 +72,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         /// <param name="filename"> Filename with rules </param>
         /// <param name="tag"> Tag for the rules </param>
+        /// <exception cref="ArgumentException">Thrown if the filename is null or empty</exception>
+        /// <exception cref="FileNotFoundException">Thrown if the specified file cannot be found on the file system</exception>
+        /// <exception cref="Newtonsoft.Json.JsonSerializationException">Thrown if the specified file cannot be deserialized as a <see cref="List{T}"/></exception>
         public void AddFile(string? filename, string? tag = null)
         {
             if (string.IsNullOrEmpty(filename))
@@ -104,32 +119,33 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <summary>
         ///     Load rules from JSON string
         /// </summary>
-        /// <param name="jsonstring"> JSON string </param>
-        /// <param name="sourcename"> Name of the source (file, stream, etc..) </param>
-        /// <param name="tag"> Tag for the rules </param>
-        public void AddString(string jsonstring, string sourcename, string? tag = null)
+        /// <param name="jsonString"> JSON string </param>
+        /// <param name="sourceName"> Name of the source (file, stream, etc..) </param>
+        /// <param name="tag">Additional runtime tag for the rules </param>
+        /// <returns>If the rules were added successfully</returns>
+        public void AddString(string jsonString, string sourceName, string? tag = null)
         {
-            AddRange(StringToRules(jsonstring ?? string.Empty, sourcename ?? string.Empty, tag));
+            AddRange(StringToRules(jsonString ?? string.Empty, sourceName ?? string.Empty, tag));
         }
 
         /// <summary>
-        ///     Filters rules within Ruleset by languages
+        ///     Filters rules within Ruleset by language
         /// </summary>
-        /// <param name="languages"> Languages </param>
+        /// <param name="language"></param>
         /// <returns> Filtered rules </returns>
         public IEnumerable<ConvertedOatRule> ByLanguage(string language)
         {
             if (!string.IsNullOrEmpty(language))
             {
-                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is string[] appliesList && appliesList.Contains(language));
+                return _oatRules.Where(x => x.AppInspectorRule.AppliesTo is { } appliesList && appliesList.Contains(language));
             }
             return Array.Empty<ConvertedOatRule>();
         }
 
         /// <summary>
-        ///     Filters rules within Ruleset by applies to regexes
+        ///     Filters rules within Ruleset filename
         /// </summary>
-        /// <param name="languages"> Languages </param>
+        /// <param name="input"></param>
         /// <returns> Filtered rules </returns>
         public IEnumerable<ConvertedOatRule> ByFilename(string input)
         {
@@ -140,6 +156,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             return Array.Empty<ConvertedOatRule>();
         }
 
+        /// <summary>
+        /// Get the set of rules that apply to all files
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<ConvertedOatRule> GetUniversalRules()
         {
             return _oatRules.Where(x => (x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Length == 0) && (x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0));
@@ -354,10 +374,26 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             };
         }
 
+        /// <summary>
+        /// Get the OAT Rules used in this RuleSet.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<ConvertedOatRule> GetOatRules() => _oatRules;
 
+        /// <summary>
+        /// Get the AppInspector Rules contained in this RuleSet.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Rule> GetAppInspectorRules() => _rules;
 
+        /// <summary>
+        /// Deserialize a JSON formatted string.
+        /// </summary>
+        /// <param name="jsonString"></param>
+        /// <param name="sourceName"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        /// <exception cref="Newtonsoft.Json.JsonSerializationException">Thrown if the specified string cannot be deserialized as a <see cref="List{T}"/></exception>
         internal abstract IEnumerable<Rule> StringToRules(string jsonString, string sourceName, string? tag = null);
     }
 }

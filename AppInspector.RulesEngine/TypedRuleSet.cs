@@ -56,7 +56,8 @@ public class TypedRuleSet<T> : AbstractRuleSet,IEnumerable<T>  where T : Rule
         }
         catch (JsonSerializationException jsonSerializationException)
         {
-            _logger.LogError(jsonSerializationException, "Failed to deserialize {0} at L{1}C{2}", sourceName, jsonSerializationException.LineNumber, jsonSerializationException.LinePosition);
+            _logger.LogError("Failed to deserialize '{0}' at Line {1} Column {2}", sourceName, jsonSerializationException.LineNumber, jsonSerializationException.LinePosition);
+            throw;
         }
         if (ruleList is not null)
         {
