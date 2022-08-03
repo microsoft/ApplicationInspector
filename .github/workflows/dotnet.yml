@@ -17,3 +17,7 @@ jobs:
       uses: microsoft/ApplicationInspector-Action@v1
       with:
         pre-release: true
+    - uses: actions/upload-artifact@v2
+      with:
+        name: AppInspectorResults
+        path: AppInspectorResults.json
