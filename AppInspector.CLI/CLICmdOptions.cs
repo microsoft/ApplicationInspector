@@ -37,6 +37,12 @@ namespace Microsoft.ApplicationInspector.CLI
         
         [Option("disable-require-unique-ids", Required = false, HelpText = "Allow rules with duplicate IDs.")]
         public bool DisableRequireUniqueIds { get; set; }
+        /// <summary>
+        /// Return a success error code when no matches were found but operation was apparently successful. Useful for CI scenarios
+        /// </summary>
+        [Option("success-error-code-with-no-matches", Required = false, HelpText = "When processing is apparently successful but there are no matches return a success error code - useful for CI.")]
+        public bool SuccessErrorCodeOnNoMatches { get; set; }
+
     }
 
     public record CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions

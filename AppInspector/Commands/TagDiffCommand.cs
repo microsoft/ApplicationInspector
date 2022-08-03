@@ -30,6 +30,11 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? CustomLanguagesPath { get; set; }
         public bool DisableCustomRuleValidation { get; set; }
         public bool DisableRequireUniqueIds { get; set; }
+        /// <summary>
+        /// Return a success error code when no matches were found but operation was apparently successful. Useful for CI scenarios
+        /// </summary>
+        public bool SuccessErrorCodeOnNoMatches { get; set; }
+
     }
 
     /// <summary>
@@ -156,7 +161,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     CustomCommentsPath = _options.CustomCommentsPath,
                     CustomLanguagesPath = _options.CustomLanguagesPath,
                     DisableCustomRuleVerification = _options.DisableCustomRuleValidation,
-                    DisableRequireUniqueIds = _options.DisableRequireUniqueIds
+                    DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
+                    SuccessErrorCodeOnNoMatches = _options.SuccessErrorCodeOnNoMatches
                 }, _factory);
                 AnalyzeCommand cmd2 = new(new AnalyzeOptions()
                 {
@@ -175,7 +181,8 @@ namespace Microsoft.ApplicationInspector.Commands
                     SingleThread = _options.SingleThread,
                     CustomCommentsPath = _options.CustomCommentsPath,
                     CustomLanguagesPath = _options.CustomLanguagesPath,
-                    DisableCustomRuleVerification = true // Rules are already validated by the first command
+                    DisableCustomRuleVerification = true, // Rules are already validated by the first command
+                    SuccessErrorCodeOnNoMatches = _options.SuccessErrorCodeOnNoMatches
                 }, _factory);
 
                 AnalyzeResult analyze1 = cmd1.GetResult();

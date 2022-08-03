@@ -78,6 +78,11 @@ namespace Microsoft.ApplicationInspector.Commands
         /// By default, rules must have unique IDs.
         /// </summary>
         public bool DisableRequireUniqueIds { get; set; }
+
+        /// <summary>
+        /// Return a success error code when no matches were found but operation was apparently successful. Useful for CI scenarios
+        /// </summary>
+        public bool SuccessErrorCodeOnNoMatches { get; set; }
     }
 
     /// <summary>
@@ -668,6 +673,7 @@ namespace Microsoft.ApplicationInspector.Commands
                 _logger.LogError("MetadataHelper is null");
                 throw new NullReferenceException("_metaDataHelper");
             }
+
             AnalyzeResult analyzeResult = new()
             {
                 AppVersion = Common.Utils.GetVersionString()
@@ -675,18 +681,21 @@ namespace Microsoft.ApplicationInspector.Commands
 
             _ = await PopulateRecordsAsync(cancellationToken.Value);
 
-            //wrapup result status
-            if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
+            if (!_options.SuccessErrorCodeOnNoMatches)
             {
-                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
+                {
+                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
+                    analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                }
+                else if (!_metaDataHelper.HasFindings)
+                {
+                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
+                    analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                }
             }
-            else if (!_metaDataHelper.HasFindings)
-            {
-                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
-            }
-            else if (_metaDataHelper is {Metadata: { }})
+
+            if (_metaDataHelper is {Metadata: { }})
             {
                 _metaDataHelper.Metadata.DateScanned = DateScanned.ToString(CultureInfo.InvariantCulture);
                 _metaDataHelper.PrepareReport();
@@ -885,19 +894,18 @@ namespace Microsoft.ApplicationInspector.Commands
             }
 
             //wrapup result status
-            if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
+            if (!_options.SuccessErrorCodeOnNoMatches)
             {
-                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
-            }
-            else if (!_metaDataHelper.HasFindings)
-            {
-                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
-            }
-            else
-            {
-                analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
+                if (!_options.NoFileMetadata && _metaDataHelper.Files.All(x => x.Status == ScanState.Skipped))
+                {
+                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOSUPPORTED_FILETYPES));
+                    analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                }
+                else if (!_metaDataHelper.HasFindings)
+                {
+                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.ANALYZE_NOPATTERNS));
+                    analyzeResult.ResultCode = AnalyzeResult.ExitCode.NoMatches;
+                }
             }
 
             _metaDataHelper.Metadata.DateScanned = DateScanned.ToString(CultureInfo.InvariantCulture);
