@@ -613,6 +613,42 @@ windows
             Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, result.ResultCode);
             Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
         }
+        
+        [TestMethod]
+        public void TestNoMatchesOkay()
+        {
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { testFilePath },
+                FilePathExclusions = new[] { "**/TestFile.js" },
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                SuccessErrorCodeOnNoMatches = true
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = command.GetResult();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+        }
+        
+        [TestMethod]
+        public async Task TestNoMatchesOkayAsync()
+        {
+            AnalyzeOptions options = new()
+            {
+                SourcePath = new string[1] { testFilePath },
+                FilePathExclusions = new[] { "**/TestFile.js" },
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                SuccessErrorCodeOnNoMatches = true
+            };
+
+            AnalyzeCommand command = new(options, factory);
+            AnalyzeResult result = await command.GetResultAsync();
+            Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+        }
 
         [TestMethod]
         public async Task ExpectedResultCountsAsync()

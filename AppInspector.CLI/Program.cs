@@ -292,7 +292,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 DisableCrawlArchives = cliOptions.DisableArchiveCrawling,
                 EnumeratingTimeout = cliOptions.EnumeratingTimeout,
                 DisableCustomRuleVerification = cliOptions.DisableCustomRuleValidation,
-                DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds
+                DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
+                SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches
             }, adjustedFactory);
 
             AnalyzeResult analyzeResult = command.GetResult();
@@ -359,7 +360,8 @@ namespace Microsoft.ApplicationInspector.CLI
                 ScanUnknownTypes = cliOptions.ScanUnknownTypes,
                 SingleThread = cliOptions.SingleThread,
                 DisableCustomRuleValidation = cliOptions.DisableCustomRuleValidation,
-                DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds
+                DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
+                SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches
             }, loggerFactory);
 
             TagDiffResult tagDiffResult = command.GetResult();
