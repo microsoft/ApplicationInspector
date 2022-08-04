@@ -157,24 +157,7 @@ namespace AppInspector.Tests.RuleProcessor
                 Assert.Fail();
             }
         }
-        
-        [TestMethod]
-        public void JsonSubstringRule()
-        {
-            RuleSet rules = new(null);
-            rules.AddString(jsonStringRule, "JsonTestRules");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){AllowAllTagsInBuildFiles = true});
-            if (_languages.FromFileNameOut("test.json", out LanguageInfo info))
-            {
-                List<MatchRecord> matches = processor.AnalyzeFile(jsonData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.json", new MemoryStream()), info);
-                Assert.AreEqual(1, matches.Count);
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
-        
+
         [TestMethod]
         public void XmlRule()
         {
@@ -192,24 +175,6 @@ namespace AppInspector.Tests.RuleProcessor
             }
         }
 
-        [TestMethod]
-        public void XmlSubstringRule()
-        {
-            RuleSet rules = new(null);
-            rules.AddString(xmlStringRule, "XmlTestRules");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){AllowAllTagsInBuildFiles = true});
-            if (_languages.FromFileNameOut("test.xml", out LanguageInfo info))
-            {
-                List<MatchRecord> matches = processor.AnalyzeFile(xmlData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.xml", new MemoryStream()), info);
-                Assert.AreEqual(1, matches.Count);
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
-
-        
         private const string jsonRule = @"[
         {
             ""id"": ""SA000005"",
@@ -218,7 +183,7 @@ namespace AppInspector.Tests.RuleProcessor
                 ""Testing.Rules.JSON""
             ],
             ""severity"": ""Critical"",
-            ""description"": ""This rule finds books from the JSON titled with Franklin."",
+            ""description"": ""This rule finds books from the JSON titled with Sheep."",
             ""patterns"": [
                 {
                     ""pattern"": ""Sheep"",
@@ -247,54 +212,6 @@ namespace AppInspector.Tests.RuleProcessor
             {
                 ""pattern"": ""Franklin"",
                 ""type"": ""regex"",
-                ""confidence"": ""High"",
-                ""scopes"": [
-                    ""code""
-                ],
-                ""xpath"" : ""/bookstore/book/title""
-            }
-        ],
-        ""_comment"": """"
-    }
-]";
-        
-        private const string jsonStringRule = @"[
-        {
-            ""id"": ""SA000005"",
-            ""name"": ""Testing.Rules.JSON"",
-            ""tags"": [
-                ""Testing.Rules.JSON""
-            ],
-            ""severity"": ""Critical"",
-            ""description"": ""This rule finds books from the JSON titled with Franklin."",
-            ""patterns"": [
-                {
-                    ""pattern"": ""Sheep"",
-                    ""type"": ""string"",
-                    ""confidence"": ""High"",
-                    ""scopes"": [
-                        ""code""
-                    ],
-                    ""jsonpath"" : ""$.books[*].title""
-                }
-            ],
-            ""_comment"": """"
-        }
-    ]";
-        
-        private const string xmlStringRule = @"[
-    {
-        ""id"": ""SA000005"",
-        ""name"": ""Testing.Rules.XML"",
-        ""tags"": [
-            ""Testing.Rules.XML""
-        ],
-        ""severity"": ""Critical"",
-        ""description"": ""This rule finds books from the XML titled with Franklin."",
-        ""patterns"": [
-            {
-                ""pattern"": ""Franklin"",
-                ""type"": ""string"",
                 ""confidence"": ""High"",
                 ""scopes"": [
                     ""code""
