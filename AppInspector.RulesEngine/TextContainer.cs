@@ -59,7 +59,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
         
         private bool _triedToConstructJsonDocument;
-        private JsonDocument _jsonDocument;
+        private JsonDocument? _jsonDocument;
         internal IEnumerable<(string, Boundary)> GetStringFromJsonPath(string Path)
         {
             if (!_triedToConstructJsonDocument)
@@ -83,20 +83,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 IList<JsonElement> values = selector.Select(_jsonDocument.RootElement);
 
                 var field = typeof(JsonElement).GetField("_idx", BindingFlags.NonPublic | BindingFlags.Instance);
-
+                
                 foreach (JsonElement ele in values)
                 {
                     // Private access hack
                     // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
-                    var idx = (int)field.GetValue(ele);
+                    var idx = (int)field!.GetValue(ele);
                     var eleString = ele.ToString();
-                    var location = new Boundary()
+                    if (eleString is { } denulledString)
                     {
-                        // Adjust the index to the start of the actual element
-                        Index = FullContent[idx..].IndexOf(eleString) + idx,
-                        Length = eleString.Length
-                    };
-                    yield return (eleString, location);
+                        var location = new Boundary()
+                        {
+                            // Adjust the index to the start of the actual element
+                            Index = FullContent[idx..].IndexOf(denulledString, StringComparison.Ordinal) + idx,
+                            Length = eleString.Length
+                        };
+                        yield return (eleString, location);
+                    }
                 }
             }
         }
