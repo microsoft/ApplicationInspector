@@ -89,7 +89,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                 {
                     foreach (var regexString in RegexList)
                     {
-                        if (TryMakeRegex(regexString, regexOpts, out Regex regex))
+                        if (StringToRegex(regexString, regexOpts) is { } regex)
                         {
                             if (src.XPath is not null)
                             {
@@ -130,22 +130,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
             }
             return new OperationResult(false, null);
         }
-
-        private bool TryMakeRegex(string regexString, RegexOptions regexOpts, out Regex regex)
-        {
-            try
-            {
-                regex = new Regex(regexString, regexOpts);
-                return true;
-            }
-            catch (Exception)
-            {
-                _logger.LogError($"Could not construct regex '{regexString}'");
-                regex = new Regex("");
-                return false;
-            }
-        }
-
+        
         private IEnumerable<(int, Boundary)> GetMatches(Regex regex, string content, TextContainer tc, Clause clause, PatternScope[] scopes)
         {
             foreach (var match in regex.Matches(content))
