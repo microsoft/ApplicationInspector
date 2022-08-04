@@ -30,6 +30,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JsonCons.JsonPath" Version="1.1.0" />
+    <PackageReference Include="JsonPath.Net" Version="0.2.1" />
     <PackageReference Include="Microsoft.CST.OAT" Version="1.2.19" />
     <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.11" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />

@@ -257,6 +257,6 @@
   {
     "name": "XML",
     "extensions": [ ".xml" ],
-    "type": "code"
+    "type": "build"
   }
 ]

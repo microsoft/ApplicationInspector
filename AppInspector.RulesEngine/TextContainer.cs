@@ -2,6 +2,10 @@
 
 using System.Collections;
 using System.IO;
+using System.Reflection;
+using System.Text.Json;
+using Json.Path;
+using JsonCons.JsonPath;
 using Microsoft.ApplicationInspector.Common;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
@@ -71,10 +75,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             else if (DocType == StructuredDocType.NotYetChecked)
             {
                 XPathDocument? xmlDoc;
-                XmlDocument doc = new XmlDocument();
                 try
                 {
-                    doc.LoadXml(FullContent);
                     xmlDoc = new XPathDocument(new StringReader(FullContent));
                     DocType = StructuredDocType.Xml;
                 }
@@ -101,6 +103,32 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             };
                             yield return (nodeIter.Current.Value, location);
                         }
+                    }
+                }
+                else
+                {
+                    using JsonDocument jsonDocument = JsonDocument.Parse(FullContent);
+                    DocType = StructuredDocType.Json;
+                    
+                    var selector = JsonSelector.Parse(Path);
+                    
+                    IList<JsonElement> values = selector.Select(jsonDocument.RootElement);
+
+                    var field = typeof(JsonElement).GetField("_idx", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                    foreach (JsonElement ele in values)
+                    {
+                        // Private access hack
+                        // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
+                        var idx = (int)field.GetValue(ele);
+                        var eleString = ele.ToString();
+                        var location = new Boundary()
+                        {
+                            // Adjust the index to the start of the actual element
+                            Index = FullContent[idx..].IndexOf(eleString) + idx,
+                            Length = eleString.Length
+                        };
+                        yield return (eleString, location);
                     }
                 }
             }

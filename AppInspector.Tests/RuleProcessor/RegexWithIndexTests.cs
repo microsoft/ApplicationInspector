@@ -142,14 +142,31 @@ namespace AppInspector.Tests.RuleProcessor
         }
         
         [TestMethod]
+        public void JsonRule()
+        {
+            RuleSet rules = new(null);
+            rules.AddString(jsonRule, "JsonTestRules");
+            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){AllowAllTagsInBuildFiles = true});
+            if (_languages.FromFileNameOut("test.json", out LanguageInfo info))
+            {
+                List<MatchRecord> matches = processor.AnalyzeFile(jsonData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.json", new MemoryStream()), info);
+                Assert.AreEqual(1, matches.Count);
+            }
+            else
+            {
+                Assert.Fail();
+            }
+        }
+        
+        [TestMethod]
         public void XmlRule()
         {
             RuleSet rules = new(null);
             rules.AddString(xmlRule, "XmlTestRules");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
+            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){AllowAllTagsInBuildFiles = true});
             if (_languages.FromFileNameOut("test.xml", out LanguageInfo info))
             {
-                List<MatchRecord> matches = processor.AnalyzeFile(xmlData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
+                List<MatchRecord> matches = processor.AnalyzeFile(xmlData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.xml", new MemoryStream()), info);
                 Assert.AreEqual(1, matches.Count);
             }
             else
@@ -158,6 +175,30 @@ namespace AppInspector.Tests.RuleProcessor
             }
         }
 
+        private const string jsonRule = @"[
+        {
+            ""id"": ""SA000005"",
+            ""name"": ""Testing.Rules.JSON"",
+            ""tags"": [
+                ""Testing.Rules.JSON""
+            ],
+            ""severity"": ""Critical"",
+            ""description"": ""This rule finds books from the JSON titled with Franklin."",
+            ""patterns"": [
+                {
+                    ""pattern"": ""Sheep"",
+                    ""type"": ""regex"",
+                    ""confidence"": ""High"",
+                    ""scopes"": [
+                        ""code""
+                    ],
+                    ""StructuredPath"" : ""$.books[*].title""
+                }
+            ],
+            ""_comment"": """"
+        }
+    ]";
+        
         private const string xmlRule = @"[
     {
         ""id"": ""SA000005"",
@@ -182,6 +223,38 @@ namespace AppInspector.Tests.RuleProcessor
     }
 ]";
 
+        private const string jsonData = 
+@"{
+    ""books"":
+    [
+        {
+            ""category"": ""fiction"",
+            ""title"" : ""A Wild Sheep Chase"",
+            ""author"" : ""Haruki Murakami"",
+            ""price"" : 22.72
+        },
+        {
+            ""category"": ""fiction"",
+            ""title"" : ""The Night Watch"",
+            ""author"" : ""Sergei Lukyanenko"",
+            ""price"" : 23.58
+        },
+        {
+            ""category"": ""fiction"",
+            ""title"" : ""The Comedians"",
+            ""author"" : ""Graham Greene"",
+            ""price"" : 21.99
+        },
+        {
+            ""category"": ""memoir"",
+            ""title"" : ""The Night Watch"",
+            ""author"" : ""David Atlee Phillips"",
+            ""price"" : 260.90
+        }
+    ]
+}
+";
+        
         private const string xmlData = 
 @"<?xml version=""1.0"" encoding=""utf-8"" ?>   
   <bookstore>  
