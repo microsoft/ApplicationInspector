@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.XPath;
+using JsonCons.JsonPath;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Microsoft.CST.OAT;
@@ -150,6 +152,32 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "", searchPattern.Pattern ?? "", e.Message);
                         errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
+                    }
+                }
+
+                if (searchPattern.JsonPath is not null)
+                {
+                    try
+                    {
+                        _ = JsonSelector.Parse(searchPattern.JsonPath);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger?.LogError("The provided JsonPath '{JsonPath}' value was not valid in Rule {Id} : {message}", searchPattern.JsonPath, rule.Id, e.Message);
+                        errors.Add(string.Format("The provided JsonPath '{0}' value was not valid in Rule {1} : {2}", searchPattern.JsonPath, rule.Id, e.Message));
+                    }
+                }
+                
+                if (searchPattern.XPath is not null)
+                {
+                    try 
+                    {
+                        XPathExpression.Compile(searchPattern.XPath);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger?.LogError("The provided XPath '{XPath}' value was not valid in Rule {Id} : {message}", searchPattern.XPath, rule.Id, e.Message);
+                        errors.Add(string.Format("The provided XPath '{0}' value was not valid in Rule {1} : {2}", searchPattern.JsonPath, rule.Id, e.Message));
                     }
                 }
             }
