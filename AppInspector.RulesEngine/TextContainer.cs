@@ -60,9 +60,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             suffix = languages.GetCommentSuffix(Language);
             inline = languages.GetCommentInline(Language);
         }
-
-        public StructuredDocType DocType { get; private set; }
-
+        
         private bool _triedToConstructJsonDocument;
         private JsonDocument _jsonDocument;
         internal IEnumerable<(string, Boundary)> GetStringFromJsonPath(string Path)
@@ -135,12 +133,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 var navigator = _xmlDoc.CreateNavigator();
                 var nodeIter = navigator.Select(Path);
+                int minIndex = 0;
                 while (nodeIter.MoveNext())
                 {
                     if (nodeIter.Current is not null)
                     {
-                        var outerLoc = FullContent.IndexOf(nodeIter.Current.OuterXml);
-                        var offset = FullContent[outerLoc..].IndexOf(nodeIter.Current.InnerXml) + outerLoc;
+                        var outerLoc = FullContent[minIndex..].IndexOf(nodeIter.Current.OuterXml);
+                        var offset = FullContent[outerLoc..].IndexOf(nodeIter.Current.InnerXml) + outerLoc + minIndex;
+                        // Move the minimum index up in case there are multiple instances of identical OuterXML
+                        // This ensures we won't re-find the same one
+                        minIndex = offset;
                         var location = new Boundary()
                         {
                             Index = offset,
