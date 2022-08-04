@@ -1,12 +1,20 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
+using System.IO;
+using System.Reflection;
+using System.Text.Json;
+using JsonCons.JsonPath;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-
+    using System.Xml;
+    using System.Xml.XPath;
     /// <summary>
     ///     Class to handle text as a searchable container
     /// </summary>
@@ -18,8 +26,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="content"> Text to work with </param>
         /// <param name="language"> The language of the test </param>
         /// <param name="languages">An instance of the <see cref="Languages"/> class containing the information for language mapping to use.</param>
-        public TextContainer(string content, string language, Languages languages)
+        public TextContainer(string content, string language, Languages languages, ILogger? logger = null)
         {
+            _logger = logger ?? NullLogger<TextContainer>.Instance;
             Language = language;
             FullContent = content;
             LineEnds = new List<int>() { 0 };
@@ -48,9 +57,105 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             suffix = languages.GetCommentSuffix(Language);
             inline = languages.GetCommentInline(Language);
         }
+        
+        private bool _triedToConstructJsonDocument;
+        private JsonDocument? _jsonDocument;
+        internal IEnumerable<(string, Boundary)> GetStringFromJsonPath(string Path)
+        {
+            if (!_triedToConstructJsonDocument)
+            {
+                try
+                {
+                    _triedToConstructJsonDocument = true;
+                    _jsonDocument = JsonDocument.Parse(FullContent);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Failed to parse as a JSON document: {0}", e.Message);
+                    _jsonDocument = null;
+                }
+            }
 
+            if (_jsonDocument is not null)
+            {
+                var selector = JsonSelector.Parse(Path);
+                
+                IList<JsonElement> values = selector.Select(_jsonDocument.RootElement);
+
+                var field = typeof(JsonElement).GetField("_idx", BindingFlags.NonPublic | BindingFlags.Instance);
+                
+                foreach (JsonElement ele in values)
+                {
+                    // Private access hack
+                    // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
+                    var idx = (int)field!.GetValue(ele);
+                    var eleString = ele.ToString();
+                    if (eleString is { } denulledString)
+                    {
+                        var location = new Boundary()
+                        {
+                            // Adjust the index to the start of the actual element
+                            Index = FullContent[idx..].IndexOf(denulledString, StringComparison.Ordinal) + idx,
+                            Length = eleString.Length
+                        };
+                        yield return (eleString, location);
+                    }
+                }
+            }
+        }
+
+        private bool _triedToConstructXPathDocument;
+        private XPathDocument? _xmlDoc;
+        
         /// <summary>
-        /// The full string of the TextContainer representes.
+        /// If this file is a JSON, XML or YML file, returns the string contents of the specified path.
+        /// If the path does not exist, or the file is not JSON, XML or YML returns null.
+        /// </summary>
+        /// <param name="Path"></param>
+        /// <returns></returns>
+        internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path)
+        {
+            if (!_triedToConstructXPathDocument)
+            {
+                try
+                {
+                    _triedToConstructXPathDocument = true;
+                    _xmlDoc = new XPathDocument(new StringReader(FullContent));
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Failed to parse as an XML document: {0}", e.Message);
+                    _xmlDoc = null;
+                }
+            }
+
+            if (_xmlDoc is not null)
+            {
+                var navigator = _xmlDoc.CreateNavigator();
+                var nodeIter = navigator.Select(Path);
+                int minIndex = 0;
+                while (nodeIter.MoveNext())
+                {
+                    if (nodeIter.Current is not null)
+                    {
+                        var outerLoc = FullContent[minIndex..].IndexOf(nodeIter.Current.OuterXml);
+                        var offset = FullContent[outerLoc..].IndexOf(nodeIter.Current.InnerXml) + outerLoc + minIndex;
+                        // Move the minimum index up in case there are multiple instances of identical OuterXML
+                        // This ensures we won't re-find the same one
+                        minIndex = offset;
+                        var location = new Boundary()
+                        {
+                            Index = offset,
+                            Length = nodeIter.Current.InnerXml.Length
+                        };
+                        yield return (nodeIter.Current.Value, location);
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// The full string of the TextContainer represents.
         /// </summary>
         public string FullContent { get; }
         /// <summary>
@@ -245,5 +350,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly string inline;
         private readonly string prefix;
         private readonly string suffix;
+        private readonly ILogger _logger;
     }
 }
