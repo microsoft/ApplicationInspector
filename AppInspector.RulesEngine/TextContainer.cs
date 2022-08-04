@@ -1,12 +1,9 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
-using Json.Path;
 using JsonCons.JsonPath;
-using Microsoft.ApplicationInspector.Common;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
