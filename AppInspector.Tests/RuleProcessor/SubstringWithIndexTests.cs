@@ -15,11 +15,13 @@ namespace AppInspector.Tests.RuleProcessor
     {
         private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
 
-        [TestMethod]
-        public void JsonSubstringRule()
+        [DataRow(jsonStringRule)]
+        [DataRow(jsonAndXmlStringRule)]
+        [DataTestMethod]
+        public void JsonSubstringRule(string rule)
         {
             RuleSet rules = new(null);
-            rules.AddString(jsonStringRule, "JsonTestRules");
+            rules.AddString(rule, "JsonTestRules");
             Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){AllowAllTagsInBuildFiles = true});
             if (_languages.FromFileNameOut("test.json", out LanguageInfo info))
             {
@@ -32,11 +34,13 @@ namespace AppInspector.Tests.RuleProcessor
             }
         }
         
-        [TestMethod]
-        public void XmlSubstringRule()
+        [DataRow(xmlStringRule)]
+        [DataRow(jsonAndXmlStringRule)]
+        [DataTestMethod]
+        public void XmlSubstringRule(string rule)
         {
             RuleSet rules = new(null);
-            rules.AddString(xmlStringRule, "XmlTestRules");
+            rules.AddString(rule, "XmlTestRules");
             Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){AllowAllTagsInBuildFiles = true});
             if (_languages.FromFileNameOut("test.xml", out LanguageInfo info))
             {
@@ -48,6 +52,32 @@ namespace AppInspector.Tests.RuleProcessor
                 Assert.Fail();
             }
         }
+        
+        private const string jsonAndXmlStringRule = @"[
+        {
+            ""id"": ""SA000005"",
+            ""name"": ""Testing.Rules.JSONandXML"",
+            ""tags"": [
+                ""Testing.Rules.JSON.JSONandXML""
+            ],
+            ""severity"": ""Critical"",
+            ""description"": ""This rule finds books from the JSON or XML titled with Franklin."",
+            ""patterns"": [
+                {
+                    ""pattern"": ""Franklin"",
+                    ""type"": ""string"",
+                    ""confidence"": ""High"",
+                    ""scopes"": [
+                        ""code""
+                    ],
+                    ""jsonpath"" : ""$.books[*].title"",
+                    ""xpath"" : ""/bookstore/book/title""
+                }
+            ],
+            ""_comment"": """"
+        }
+    ]";
+        
         private const string jsonStringRule = @"[
         {
             ""id"": ""SA000005"",
@@ -56,10 +86,10 @@ namespace AppInspector.Tests.RuleProcessor
                 ""Testing.Rules.JSON""
             ],
             ""severity"": ""Critical"",
-            ""description"": ""This rule finds books from the JSON titled with Sheep."",
+            ""description"": ""This rule finds books from the JSON titled with Franklin."",
             ""patterns"": [
                 {
-                    ""pattern"": ""Sheep"",
+                    ""pattern"": ""Franklin"",
                     ""type"": ""string"",
                     ""confidence"": ""High"",
                     ""scopes"": [
@@ -123,6 +153,12 @@ namespace AppInspector.Tests.RuleProcessor
             ""title"" : ""The Night Watch"",
             ""author"" : ""David Atlee Phillips"",
             ""price"" : 260.90
+        },
+        {
+            ""category"": ""memoir"",
+            ""title"" : ""The Autobiography of Benjamin Franklin"",
+            ""author"" : ""Benjamin Franklin"",
+            ""price"" : 123.45
         }
     ]
 }
