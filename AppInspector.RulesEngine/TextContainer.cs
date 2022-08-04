@@ -60,75 +60,90 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public StructuredDocType DocType { get; private set; }
 
+        private bool triedToConstructJsonDocument;
+        private JsonDocument jsonDocument;
+        internal IEnumerable<(string, Boundary)> GetStringFromJsonPath(string Path)
+        {
+            if (!triedToConstructJsonDocument)
+            {
+                try
+                {
+                    triedToConstructJsonDocument = true;
+                    jsonDocument = JsonDocument.Parse(FullContent);
+                }
+                catch (Exception e)
+                {
+                    //TODO: Logging in this class
+                    jsonDocument = null;
+                }
+            }
+
+            if (jsonDocument is not null)
+            {
+                var selector = JsonSelector.Parse(Path);
+                
+                IList<JsonElement> values = selector.Select(jsonDocument.RootElement);
+
+                var field = typeof(JsonElement).GetField("_idx", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                foreach (JsonElement ele in values)
+                {
+                    // Private access hack
+                    // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
+                    var idx = (int)field.GetValue(ele);
+                    var eleString = ele.ToString();
+                    var location = new Boundary()
+                    {
+                        // Adjust the index to the start of the actual element
+                        Index = FullContent[idx..].IndexOf(eleString) + idx,
+                        Length = eleString.Length
+                    };
+                    yield return (eleString, location);
+                }
+            }
+        }
+
+        private bool triedToConstructXPathDocument;
+        private XPathDocument? xmlDoc;
+        
         /// <summary>
         /// If this file is a JSON, XML or YML file, returns the string contents of the specified path.
         /// If the path does not exist, or the file is not JSON, XML or YML returns null.
         /// </summary>
         /// <param name="Path"></param>
         /// <returns></returns>
-        public IEnumerable<(string, Boundary)> GetStringFromPath(string Path)
+        internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path)
         {
-            if (DocType == StructuredDocType.NotValid)
+            if (!triedToConstructXPathDocument)
             {
-                yield break;
-            }
-            else if (DocType == StructuredDocType.NotYetChecked)
-            {
-                XPathDocument? xmlDoc;
                 try
                 {
+                    triedToConstructXPathDocument = true;
                     xmlDoc = new XPathDocument(new StringReader(FullContent));
-                    DocType = StructuredDocType.Xml;
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    // TODO: Logging in this class
                     xmlDoc = null;
                 }
+            }
 
-                if (xmlDoc is not null)
+            if (xmlDoc is not null)
+            {
+                var navigator = xmlDoc.CreateNavigator();
+                var nodeIter = navigator.Select(Path);
+                while (nodeIter.MoveNext())
                 {
-                    var navigator = xmlDoc.CreateNavigator();
-                    var nodeIter = navigator.Select(Path);
-                    while (nodeIter.MoveNext())
+                    if (nodeIter.Current is not null)
                     {
-                        if (nodeIter.Current is not null)
-                        {
-                            var outerLoc = FullContent.IndexOf(nodeIter.Current.OuterXml);
-                            var offset = FullContent[outerLoc..].IndexOf(nodeIter.Current.InnerXml) + outerLoc;
-                            var location = new Boundary()
-                            {
-                                Index = offset,
-                                Length = nodeIter.Current.InnerXml.Length
-                            };
-                            yield return (nodeIter.Current.Value, location);
-                        }
-                    }
-                }
-                else
-                {
-                    using JsonDocument jsonDocument = JsonDocument.Parse(FullContent);
-                    DocType = StructuredDocType.Json;
-                    
-                    var selector = JsonSelector.Parse(Path);
-                    
-                    IList<JsonElement> values = selector.Select(jsonDocument.RootElement);
-
-                    var field = typeof(JsonElement).GetField("_idx", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                    foreach (JsonElement ele in values)
-                    {
-                        // Private access hack
-                        // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
-                        var idx = (int)field.GetValue(ele);
-                        var eleString = ele.ToString();
+                        var outerLoc = FullContent.IndexOf(nodeIter.Current.OuterXml);
+                        var offset = FullContent[outerLoc..].IndexOf(nodeIter.Current.InnerXml) + outerLoc;
                         var location = new Boundary()
                         {
-                            // Adjust the index to the start of the actual element
-                            Index = FullContent[idx..].IndexOf(eleString) + idx,
-                            Length = eleString.Length
+                            Index = offset,
+                            Length = nodeIter.Current.InnerXml.Length
                         };
-                        yield return (eleString, location);
+                        yield return (nodeIter.Current.Value, location);
                     }
                 }
             }

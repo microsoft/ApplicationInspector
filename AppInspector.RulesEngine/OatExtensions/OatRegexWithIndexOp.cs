@@ -87,13 +87,26 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 
                 if (Analyzer != null)
                 {
-                    foreach (var regex in RegexList.Select(x => new Regex(x, regexOpts)))
+                    foreach (var regexString in RegexList)
                     {
-                        if (regex != null)
+                        if (TryMakeRegex(regexString, regexOpts, out Regex regex))
                         {
-                            if (src.StructuredPath is not null)
+                            if (src.XPath is not null)
                             {
-                                var targets = tc.GetStringFromPath(src.StructuredPath);
+                                var targets = tc.GetStringFromXPath(src.XPath);
+                                foreach (var target in targets)
+                                {
+                                    var matches = GetMatches(regex, target.Item1, tc, clause, src.Scopes);
+                                    foreach (var match in matches)
+                                    {
+                                        match.Item2.Index += target.Item2.Index;
+                                        outmatches.Add(match);
+                                    }
+                                }
+                            }
+                            else if (src.JsonPath is not null)
+                            {
+                                var targets = tc.GetStringFromJsonPath(src.JsonPath);
                                 foreach (var target in targets)
                                 {
                                     var matches = GetMatches(regex, target.Item1, tc, clause, src.Scopes);
@@ -108,8 +121,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                             {
                                 outmatches.AddRange(GetMatches(regex, tc.FullContent, tc, clause, src.Scopes));
                             }
-                            
-                        }
+                        }   
                     }
 
                     var result = src.Invert ? outmatches.Count == 0 : outmatches.Count > 0;
@@ -117,6 +129,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                 }
             }
             return new OperationResult(false, null);
+        }
+
+        private bool TryMakeRegex(string regexString, RegexOptions regexOpts, out Regex regex)
+        {
+            try
+            {
+                regex = new Regex(regexString, regexOpts);
+                return true;
+            }
+            catch (Exception)
+            {
+                _logger.LogError($"Could not construct regex '{regexString}'");
+                regex = new Regex("");
+                return false;
+            }
         }
 
         private IEnumerable<(int, Boundary)> GetMatches(Regex regex, string content, TextContainer tc, Clause clause, PatternScope[] scopes)

@@ -45,10 +45,24 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public PatternScope[]? Scopes { get; set; }
         
         /// <summary>
-        /// If set, attempt to parse the file as XML or JSON, and if that is possible,
-        /// run the pattern against the object at the <see cref="StructuredPath"/> used as a JPATH/XPATH
+        /// If set, attempt to parse the file as XML  and if that is possible,
+        /// before running the pattern, select down to the XPath provided
         /// </summary>
-        [JsonProperty(PropertyName ="structuredpath")]
-        public string? StructuredPath { get; set; }
+        [JsonProperty(PropertyName ="xpath")]
+        public string? XPath { get; set; }
+        
+        /// <summary>
+        /// If set, attempt to parse the file as JSON and if that is possible,
+        /// before running the pattern, select down to the JsonPath provided
+        /// </summary>
+        [JsonProperty(PropertyName ="jsonpath")]
+        public string? JsonPath { get; set; }
+        
+        /// <summary>
+        /// If set, attempt to parse the file as JSON and if that is possible,
+        /// before running the pattern, select down to the JsonPath provided
+        /// </summary>
+        [JsonProperty(PropertyName ="ypath")]
+        public string? YmlPath { get; set; }
     }
 }

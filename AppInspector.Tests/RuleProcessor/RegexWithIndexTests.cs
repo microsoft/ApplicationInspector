@@ -192,7 +192,7 @@ namespace AppInspector.Tests.RuleProcessor
                     ""scopes"": [
                         ""code""
                     ],
-                    ""StructuredPath"" : ""$.books[*].title""
+                    ""jsonpath"" : ""$.books[*].title""
                 }
             ],
             ""_comment"": """"
@@ -216,7 +216,7 @@ namespace AppInspector.Tests.RuleProcessor
                 ""scopes"": [
                     ""code""
                 ],
-                ""StructuredPath"" : ""/bookstore/book/title""
+                ""xpath"" : ""/bookstore/book/title""
             }
         ],
         ""_comment"": """"

@@ -95,7 +95,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else if (pattern.PatternType == PatternType.Regex)
                     {
-                        clauses.Add(new OatRegexWithIndexClause(scopes, null, pattern.StructuredPath)
+                        clauses.Add(new OatRegexWithIndexClause(scopes, null, pattern.XPath, pattern.JsonPath, pattern.YmlPath)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { pattern.Pattern },
@@ -112,7 +112,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else if (pattern.PatternType == PatternType.RegexWord)
                     {
-                        clauses.Add(new OatRegexWithIndexClause(scopes, null, pattern.StructuredPath)
+                        clauses.Add(new OatRegexWithIndexClause(scopes, null, pattern.XPath, pattern.JsonPath, pattern.YmlPath)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { $"\\b({pattern.Pattern})\\b" },
