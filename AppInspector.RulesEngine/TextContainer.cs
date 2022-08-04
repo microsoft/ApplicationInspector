@@ -1,12 +1,17 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
+using System.Collections;
+using System.IO;
+using Microsoft.ApplicationInspector.Common;
+
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-
+    using System.Xml;
+    using System.Xml.XPath;
     /// <summary>
     ///     Class to handle text as a searchable container
     /// </summary>
@@ -49,8 +54,60 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             inline = languages.GetCommentInline(Language);
         }
 
+        public StructuredDocType DocType { get; private set; }
+
         /// <summary>
-        /// The full string of the TextContainer representes.
+        /// If this file is a JSON, XML or YML file, returns the string contents of the specified path.
+        /// If the path does not exist, or the file is not JSON, XML or YML returns null.
+        /// </summary>
+        /// <param name="Path"></param>
+        /// <returns></returns>
+        public IEnumerable<(string, Boundary)> GetStringFromPath(string Path)
+        {
+            if (DocType == StructuredDocType.NotValid)
+            {
+                yield break;
+            }
+            else if (DocType == StructuredDocType.NotYetChecked)
+            {
+                XPathDocument? xmlDoc;
+                XmlDocument doc = new XmlDocument();
+                try
+                {
+                    doc.LoadXml(FullContent);
+                    xmlDoc = new XPathDocument(new StringReader(FullContent));
+                    DocType = StructuredDocType.Xml;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    xmlDoc = null;
+                }
+
+                if (xmlDoc is not null)
+                {
+                    var navigator = xmlDoc.CreateNavigator();
+                    var nodeIter = navigator.Select(Path);
+                    while (nodeIter.MoveNext())
+                    {
+                        if (nodeIter.Current is not null)
+                        {
+                            var outerLoc = FullContent.IndexOf(nodeIter.Current.OuterXml);
+                            var offset = FullContent[outerLoc..].IndexOf(nodeIter.Current.InnerXml) + outerLoc;
+                            var location = new Boundary()
+                            {
+                                Index = offset,
+                                Length = nodeIter.Current.InnerXml.Length
+                            };
+                            yield return (nodeIter.Current.Value, location);
+                        }
+                    }
+                }
+            }
+        }
+        
+        /// <summary>
+        /// The full string of the TextContainer represents.
         /// </summary>
         public string FullContent { get; }
         /// <summary>

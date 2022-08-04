@@ -253,5 +253,10 @@
     "name": "Package.appxmanifest",
     "extensions": [ ".appxmanifest" ],
     "type": "code"
+  },
+  {
+    "name": "XML",
+    "extensions": [ ".xml" ],
+    "type": "code"
   }
 ]

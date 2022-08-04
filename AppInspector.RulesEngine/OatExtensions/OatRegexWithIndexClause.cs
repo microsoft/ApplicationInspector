@@ -6,11 +6,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 {
     public class OatRegexWithIndexClause : Clause
     {
-        public OatRegexWithIndexClause(PatternScope[] scopes, string? field = null) : base(Operation.Custom, field)
+        public OatRegexWithIndexClause(PatternScope[] scopes, string? field = null, string? structuredPath = null) : base(Operation.Custom, field)
         {
             Scopes = scopes;
             CustomOperation = "RegexWithIndex";
+            StructuredPath = structuredPath;
         }
+
+        public string? StructuredPath { get; }
 
         public PatternScope[] Scopes { get; }
     }

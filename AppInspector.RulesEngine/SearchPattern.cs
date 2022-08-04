@@ -43,5 +43,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         [JsonProperty(PropertyName ="scopes")]
         public PatternScope[]? Scopes { get; set; }
+        
+        /// <summary>
+        /// If set, attempt to parse the file as XML or JSON, and if that is possible,
+        /// run the pattern against the object at the <see cref="StructuredPath"/> used as a JPATH/XPATH
+        /// </summary>
+        [JsonProperty(PropertyName ="structuredpath")]
+        public string? StructuredPath { get; set; }
     }
 }
