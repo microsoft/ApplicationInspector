@@ -57,12 +57,5 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// </summary>
         [JsonProperty(PropertyName ="jsonpath")]
         public string? JsonPath { get; set; }
-        
-        /// <summary>
-        /// If set, attempt to parse the file as JSON and if that is possible,
-        /// before running the pattern, select down to the JsonPath provided
-        /// </summary>
-        [JsonProperty(PropertyName ="ypath")]
-        public string? YmlPath { get; set; }
     }
 }

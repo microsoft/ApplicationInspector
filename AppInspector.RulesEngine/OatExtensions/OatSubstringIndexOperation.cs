@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Microsoft.CST.OAT;
 using Microsoft.CST.OAT.Operations;
 using Microsoft.CST.OAT.Utils;
@@ -29,7 +30,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
             OperationDelegate = SubstringIndexOperationDelegate;
             ValidationDelegate = SubstringIndexValidationDelegate;
         }
-
+        
         public static IEnumerable<Violation> SubstringIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
         {
             if (clause.Data?.Count is null or 0)
@@ -51,45 +52,47 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
         /// <param name="state2"></param>
         /// <param name="captures"></param>
         /// <returns></returns>
-        public static OperationResult SubstringIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
+        private OperationResult SubstringIndexOperationDelegate(Clause clause, object? state1, object? state2, IEnumerable<ClauseCapture>? captures)
         {
             var comparisonType = clause.Arguments.Contains("i") ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture;
             if (state1 is TextContainer tc && clause is OatSubstringIndexClause src)
             {
-                if (clause.Data is List<string> stringList && stringList.Count > 0)
+                if (clause.Data is { Count: > 0 } stringList)
                 {
                     var outmatches = new List<(int, Boundary)>();//tuple results i.e. pattern index and where
 
                     for (int i = 0; i < stringList.Count; i++)
                     {
-                        var idx = tc.FullContent.IndexOf(stringList[i], comparisonType);
-                        while (idx != -1)
+                        if (src.XPath is not null)
                         {
-                            bool skip = false;
-                            if (src.UseWordBoundaries)
+                            var targets = tc.GetStringFromXPath(src.XPath);
+                            foreach (var target in targets)
                             {
-                                if (idx > 0 && char.IsLetterOrDigit(tc.FullContent[idx - 1]))
+                                var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
+                                foreach (var match in matches)
                                 {
-                                    skip = true;
-                                }
-                                if (idx + stringList[i].Length < tc.FullContent.Length && char.IsLetterOrDigit(tc.FullContent[idx + stringList[i].Length]))
-                                {
-                                    skip = true;
+                                    match.Index += target.Item2.Index;
+                                    outmatches.Add((i,match));
                                 }
                             }
-                            if (!skip)
+                        }
+                        else if (src.JsonPath is not null)
+                        {
+                            var targets = tc.GetStringFromJsonPath(src.JsonPath);
+                            foreach (var target in targets)
                             {
-                                Boundary newBoundary = new()
+                                var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
+                                foreach (var match in matches)
                                 {
-                                    Length = stringList[i].Length,
-                                    Index = idx
-                                };
-                                if (tc.ScopeMatch(src.Scopes, newBoundary))
-                                {
-                                    outmatches.Add((i, newBoundary));
+                                    match.Index += target.Item2.Index;
+                                    outmatches.Add((i,match));
                                 }
                             }
-                            idx = tc.FullContent.IndexOf(stringList[i], idx + stringList[i].Length, comparisonType);
+                        }
+                        else
+                        {
+                            var matches = GetMatches(tc.FullContent, stringList[i], comparisonType, tc, src);
+                            outmatches.AddRange(matches.Select(x => (i, x)));
                         }
                     }
 
@@ -98,6 +101,39 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                 }
             }
             return new OperationResult(false, null);
+        }
+
+        private static IEnumerable<Boundary> GetMatches(string target, string query, StringComparison comparisonType, TextContainer tc, OatSubstringIndexClause src)
+        {
+            var idx = target.IndexOf(query, comparisonType);
+            while (idx != -1)
+            {
+                bool skip = false;
+                if (src.UseWordBoundaries)
+                {
+                    if (idx > 0 && char.IsLetterOrDigit(target[idx - 1]))
+                    {
+                        skip = true;
+                    }
+                    if (idx + query.Length < target.Length && char.IsLetterOrDigit(target[idx + query.Length]))
+                    {
+                        skip = true;
+                    }
+                }
+                if (!skip)
+                {
+                    Boundary newBoundary = new()
+                    {
+                        Length = query.Length,
+                        Index = idx
+                    };
+                    if (tc.ScopeMatch(src.Scopes, newBoundary))
+                    {
+                        yield return newBoundary;
+                    }
+                }
+                idx = target.IndexOf(query, idx + query.Length, comparisonType);
+            }
         }
     }
 }

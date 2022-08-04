@@ -79,7 +79,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     var modifiers = pattern.Modifiers?.ToList() ?? new List<string>();
                     if (pattern.PatternType is PatternType.String or PatternType.Substring)
                     {
-                        clauses.Add(new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String)
+                        clauses.Add(new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String, xPath: pattern.XPath, jsonPath:pattern.JsonPath)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { pattern.Pattern },
@@ -95,7 +95,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else if (pattern.PatternType == PatternType.Regex)
                     {
-                        clauses.Add(new OatRegexWithIndexClause(scopes, null, pattern.XPath, pattern.JsonPath, pattern.YmlPath)
+                        clauses.Add(new OatRegexWithIndexClause(scopes, null, pattern.XPath, pattern.JsonPath)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { pattern.Pattern },
@@ -112,7 +112,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                     else if (pattern.PatternType == PatternType.RegexWord)
                     {
-                        clauses.Add(new OatRegexWithIndexClause(scopes, null, pattern.XPath, pattern.JsonPath, pattern.YmlPath)
+                        clauses.Add(new OatRegexWithIndexClause(scopes, null, pattern.XPath, pattern.JsonPath)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
                             Data = new List<string>() { $"\\b({pattern.Pattern})\\b" },

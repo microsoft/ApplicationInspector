@@ -63,29 +63,29 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         public StructuredDocType DocType { get; private set; }
 
-        private bool triedToConstructJsonDocument;
-        private JsonDocument jsonDocument;
+        private bool _triedToConstructJsonDocument;
+        private JsonDocument _jsonDocument;
         internal IEnumerable<(string, Boundary)> GetStringFromJsonPath(string Path)
         {
-            if (!triedToConstructJsonDocument)
+            if (!_triedToConstructJsonDocument)
             {
                 try
                 {
-                    triedToConstructJsonDocument = true;
-                    jsonDocument = JsonDocument.Parse(FullContent);
+                    _triedToConstructJsonDocument = true;
+                    _jsonDocument = JsonDocument.Parse(FullContent);
                 }
                 catch (Exception e)
                 {
                     _logger.LogError("Failed to parse as a JSON document: {0}", e.Message);
-                    jsonDocument = null;
+                    _jsonDocument = null;
                 }
             }
 
-            if (jsonDocument is not null)
+            if (_jsonDocument is not null)
             {
                 var selector = JsonSelector.Parse(Path);
                 
-                IList<JsonElement> values = selector.Select(jsonDocument.RootElement);
+                IList<JsonElement> values = selector.Select(_jsonDocument.RootElement);
 
                 var field = typeof(JsonElement).GetField("_idx", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -106,8 +106,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             }
         }
 
-        private bool triedToConstructXPathDocument;
-        private XPathDocument? xmlDoc;
+        private bool _triedToConstructXPathDocument;
+        private XPathDocument? _xmlDoc;
         
         /// <summary>
         /// If this file is a JSON, XML or YML file, returns the string contents of the specified path.
@@ -117,23 +117,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns></returns>
         internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path)
         {
-            if (!triedToConstructXPathDocument)
+            if (!_triedToConstructXPathDocument)
             {
                 try
                 {
-                    triedToConstructXPathDocument = true;
-                    xmlDoc = new XPathDocument(new StringReader(FullContent));
+                    _triedToConstructXPathDocument = true;
+                    _xmlDoc = new XPathDocument(new StringReader(FullContent));
                 }
                 catch (Exception e)
                 {
                     _logger.LogError("Failed to parse as an XML document: {0}", e.Message);
-                    xmlDoc = null;
+                    _xmlDoc = null;
                 }
             }
 
-            if (xmlDoc is not null)
+            if (_xmlDoc is not null)
             {
-                var navigator = xmlDoc.CreateNavigator();
+                var navigator = _xmlDoc.CreateNavigator();
                 var nodeIter = navigator.Select(Path);
                 while (nodeIter.MoveNext())
                 {
