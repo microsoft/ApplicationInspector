@@ -240,7 +240,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns>A List of the matches against the Rules the processor is configured with.</returns>
         public List<MatchRecord> AnalyzeFile(string contents, FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
-            TextContainer textContainer = new(contents, languageInfo.Name, _languages);
+            TextContainer textContainer = new(contents, languageInfo.Name, _languages, _opts.LoggerFactory?.CreateLogger<TextContainer>() ?? NullLogger<TextContainer>.Instance);
             return AnalyzeFile(textContainer, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
         }
 
@@ -291,7 +291,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             using var sr = new StreamReader(fileEntry.Content);
 
-            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name, _languages);
+            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name, _languages, _opts.LoggerFactory?.CreateLogger<TextContainer>() ?? NullLogger<TextContainer>.Instance);
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
                 if (cancellationToken?.IsCancellationRequested is true)

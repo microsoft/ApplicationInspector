@@ -7,6 +7,8 @@ using System.Text.Json;
 using Json.Path;
 using JsonCons.JsonPath;
 using Microsoft.ApplicationInspector.Common;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Microsoft.ApplicationInspector.RulesEngine
 {
@@ -27,8 +29,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="content"> Text to work with </param>
         /// <param name="language"> The language of the test </param>
         /// <param name="languages">An instance of the <see cref="Languages"/> class containing the information for language mapping to use.</param>
-        public TextContainer(string content, string language, Languages languages)
+        public TextContainer(string content, string language, Languages languages, ILogger? logger = null)
         {
+            _logger = logger ?? NullLogger<TextContainer>.Instance;
             Language = language;
             FullContent = content;
             LineEnds = new List<int>() { 0 };
@@ -73,7 +76,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
                 catch (Exception e)
                 {
-                    //TODO: Logging in this class
+                    _logger.LogError("Failed to parse as a JSON document: {0}", e.Message);
                     jsonDocument = null;
                 }
             }
@@ -123,7 +126,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 }
                 catch (Exception e)
                 {
-                    // TODO: Logging in this class
+                    _logger.LogError("Failed to parse as an XML document: {0}", e.Message);
                     xmlDoc = null;
                 }
             }
@@ -345,5 +348,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private readonly string inline;
         private readonly string prefix;
         private readonly string suffix;
+        private readonly ILogger _logger;
     }
 }
