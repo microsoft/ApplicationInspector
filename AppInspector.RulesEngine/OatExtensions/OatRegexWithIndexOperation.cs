@@ -104,7 +104,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     }
                                 }
                             }
-                            else if (src.JsonPath is not null)
+                            if (src.JsonPath is not null)
                             {
                                 var targets = tc.GetStringFromJsonPath(src.JsonPath);
                                 foreach (var target in targets)
@@ -117,7 +117,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     }
                                 }
                             }
-                            else
+                            if (src.JsonPath is null && src.XPath is null)
                             {
                                 outmatches.AddRange(GetMatches(regex, tc.FullContent, tc, clause, src.Scopes));
                             }
