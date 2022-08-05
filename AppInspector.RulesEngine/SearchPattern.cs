@@ -49,13 +49,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// before running the pattern, select down to the XPath provided
         /// </summary>
         [JsonProperty(PropertyName ="xpath")]
-        public string? XPath { get; set; }
-        
+        public string[]? XPath { get; set; }
+
         /// <summary>
         /// If set, attempt to parse the file as JSON and if that is possible,
         /// before running the pattern, select down to the JsonPath provided
         /// </summary>
-        [JsonProperty(PropertyName ="jsonpath")]
-        public string? JsonPath { get; set; }
+        [JsonProperty(PropertyName = "jsonpath")]
+        public string[]? JsonPath { get; set; }
     }
 }

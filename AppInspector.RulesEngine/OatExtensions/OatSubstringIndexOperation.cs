@@ -65,27 +65,33 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                     {
                         if (src.XPath is not null)
                         {
-                            var targets = tc.GetStringFromXPath(src.XPath);
-                            foreach (var target in targets)
+                            foreach (var xmlPath in src.XPath)
                             {
-                                var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
-                                foreach (var match in matches)
+                                var targets = tc.GetStringFromXPath(xmlPath);
+                                foreach (var target in targets)
                                 {
-                                    match.Index += target.Item2.Index;
-                                    outmatches.Add((i,match));
+                                    var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
+                                    foreach (var match in matches)
+                                    {
+                                        match.Index += target.Item2.Index;
+                                        outmatches.Add((i,match));
+                                    }
                                 }
                             }
                         }
                         if (src.JsonPath is not null)
                         {
-                            var targets = tc.GetStringFromJsonPath(src.JsonPath);
-                            foreach (var target in targets)
+                            foreach (var jsonPath in src.JsonPath)
                             {
-                                var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
-                                foreach (var match in matches)
+                                var targets = tc.GetStringFromJsonPath(jsonPath);
+                                foreach (var target in targets)
                                 {
-                                    match.Index += target.Item2.Index;
-                                    outmatches.Add((i,match));
+                                    var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
+                                    foreach (var match in matches)
+                                    {
+                                        match.Index += target.Item2.Index;
+                                        outmatches.Add((i,match));
+                                    }
                                 }
                             }
                         }

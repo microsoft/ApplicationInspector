@@ -196,8 +196,8 @@ namespace AppInspector.Tests.RuleProcessor
                     ""scopes"": [
                         ""code""
                     ],
-                    ""jsonpath"" : ""$.books[*].title"",
-                    ""xpath"" : ""/bookstore/book/title""
+                    ""jsonpath"" : [""$.books[*].title""],
+                    ""xpath"" : [""/bookstore/book/title""]
                 }
             ],
             ""_comment"": """"
@@ -221,7 +221,7 @@ namespace AppInspector.Tests.RuleProcessor
                     ""scopes"": [
                         ""code""
                     ],
-                    ""jsonpath"" : ""$.books[*].title""
+                    ""jsonpath"" : [""$.books[*].title""]
                 }
             ],
             ""_comment"": """"
@@ -245,7 +245,7 @@ namespace AppInspector.Tests.RuleProcessor
                 ""scopes"": [
                     ""code""
                 ],
-                ""xpath"" : ""/bookstore/book/title""
+                ""xpath"" : [""/bookstore/book/title""]
             }
         ],
         ""_comment"": """"

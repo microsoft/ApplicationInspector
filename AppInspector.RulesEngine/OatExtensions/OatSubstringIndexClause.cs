@@ -6,7 +6,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 {
     public class OatSubstringIndexClause : Clause
     {
-        public OatSubstringIndexClause(PatternScope[] scopes, string? field = null, bool useWordBoundaries = false, string? xPath = null, string? jsonPath = null) : base(Operation.Custom, field)
+        public OatSubstringIndexClause(PatternScope[] scopes, string? field = null, bool useWordBoundaries = false, string[]? xPath = null, string[]? jsonPath = null) : base(Operation.Custom, field)
         {
             Scopes = scopes;
             CustomOperation = "SubstringIndex";
@@ -15,9 +15,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
             JsonPath = jsonPath;
         }
 
-        public string? JsonPath { get; }
+        public string[]? JsonPath { get; }
 
-        public string? XPath { get; }
+        public string[]? XPath { get; }
 
         public PatternScope[] Scopes { get; }
 
