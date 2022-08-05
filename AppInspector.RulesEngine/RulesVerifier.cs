@@ -155,29 +155,35 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     }
                 }
 
-                if (searchPattern.JsonPath is not null)
+                if (searchPattern.JsonPaths is not null)
                 {
-                    try
+                    foreach (var jsonPath in searchPattern.JsonPaths)
                     {
-                        _ = JsonSelector.Parse(searchPattern.JsonPath);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger?.LogError("The provided JsonPath '{JsonPath}' value was not valid in Rule {Id} : {message}", searchPattern.JsonPath, rule.Id, e.Message);
-                        errors.Add(string.Format("The provided JsonPath '{0}' value was not valid in Rule {1} : {2}", searchPattern.JsonPath, rule.Id, e.Message));
+                        try
+                        {
+                            _ = JsonSelector.Parse(jsonPath);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger?.LogError("The provided JsonPath '{JsonPath}' value was not valid in Rule {Id} : {message}", searchPattern.JsonPaths, rule.Id, e.Message);
+                            errors.Add(string.Format("The provided JsonPath '{0}' value was not valid in Rule {1} : {2}", searchPattern.JsonPaths, rule.Id, e.Message));
+                        }
                     }
                 }
                 
-                if (searchPattern.XPath is not null)
+                if (searchPattern.XPaths is not null)
                 {
-                    try 
+                    foreach (var xpath in searchPattern.XPaths)
                     {
-                        XPathExpression.Compile(searchPattern.XPath);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger?.LogError("The provided XPath '{XPath}' value was not valid in Rule {Id} : {message}", searchPattern.XPath, rule.Id, e.Message);
-                        errors.Add(string.Format("The provided XPath '{0}' value was not valid in Rule {1} : {2}", searchPattern.JsonPath, rule.Id, e.Message));
+                        try 
+                        {
+                            XPathExpression.Compile(xpath);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger?.LogError("The provided XPath '{XPath}' value was not valid in Rule {Id} : {message}", searchPattern.XPaths, rule.Id, e.Message);
+                            errors.Add(string.Format("The provided XPath '{0}' value was not valid in Rule {1} : {2}", searchPattern.JsonPaths, rule.Id, e.Message));
+                        }
                     }
                 }
             }

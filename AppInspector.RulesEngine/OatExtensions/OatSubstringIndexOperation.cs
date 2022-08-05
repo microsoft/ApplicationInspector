@@ -63,33 +63,39 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 
                     for (int i = 0; i < stringList.Count; i++)
                     {
-                        if (src.XPath is not null)
+                        if (src.XPaths is not null)
                         {
-                            var targets = tc.GetStringFromXPath(src.XPath);
-                            foreach (var target in targets)
+                            foreach (var xmlPath in src.XPaths)
                             {
-                                var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
-                                foreach (var match in matches)
+                                var targets = tc.GetStringFromXPath(xmlPath);
+                                foreach (var target in targets)
                                 {
-                                    match.Index += target.Item2.Index;
-                                    outmatches.Add((i,match));
+                                    var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
+                                    foreach (var match in matches)
+                                    {
+                                        match.Index += target.Item2.Index;
+                                        outmatches.Add((i,match));
+                                    }
                                 }
                             }
                         }
-                        if (src.JsonPath is not null)
+                        if (src.JsonPaths is not null)
                         {
-                            var targets = tc.GetStringFromJsonPath(src.JsonPath);
-                            foreach (var target in targets)
+                            foreach (var jsonPath in src.JsonPaths)
                             {
-                                var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
-                                foreach (var match in matches)
+                                var targets = tc.GetStringFromJsonPath(jsonPath);
+                                foreach (var target in targets)
                                 {
-                                    match.Index += target.Item2.Index;
-                                    outmatches.Add((i,match));
+                                    var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
+                                    foreach (var match in matches)
+                                    {
+                                        match.Index += target.Item2.Index;
+                                        outmatches.Add((i,match));
+                                    }
                                 }
                             }
                         }
-                        if (src.JsonPath is null && src.XPath is null)
+                        if (src.JsonPaths is null && src.XPaths is null)
                         {
                             var matches = GetMatches(tc.FullContent, stringList[i], comparisonType, tc, src);
                             outmatches.AddRange(matches.Select(x => (i, x)));

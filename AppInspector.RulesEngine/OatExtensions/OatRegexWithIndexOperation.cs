@@ -91,33 +91,39 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                     {
                         if (StringToRegex(regexString, regexOpts) is { } regex)
                         {
-                            if (src.XPath is not null)
+                            if (src.XPaths is not null)
                             {
-                                var targets = tc.GetStringFromXPath(src.XPath);
-                                foreach (var target in targets)
+                                foreach (var xmlPath in src.XPaths)
                                 {
-                                    var matches = GetMatches(regex, target.Item1, tc, clause, src.Scopes);
-                                    foreach (var match in matches)
+                                    var targets = tc.GetStringFromXPath(xmlPath);
+                                    foreach (var target in targets)
                                     {
-                                        match.Item2.Index += target.Item2.Index;
-                                        outmatches.Add(match);
+                                        var matches = GetMatches(regex, target.Item1, tc, clause, src.Scopes);
+                                        foreach (var match in matches)
+                                        {
+                                            match.Item2.Index += target.Item2.Index;
+                                            outmatches.Add(match);
+                                        }
                                     }
                                 }
                             }
-                            if (src.JsonPath is not null)
+                            if (src.JsonPaths is not null)
                             {
-                                var targets = tc.GetStringFromJsonPath(src.JsonPath);
-                                foreach (var target in targets)
+                                foreach (var jsonPath in src.JsonPaths)
                                 {
-                                    var matches = GetMatches(regex, target.Item1, tc, clause, src.Scopes);
-                                    foreach (var match in matches)
+                                    var targets = tc.GetStringFromJsonPath(jsonPath);
+                                    foreach (var target in targets)
                                     {
-                                        match.Item2.Index += target.Item2.Index;
-                                        outmatches.Add(match);
+                                        var matches = GetMatches(regex, target.Item1, tc, clause, src.Scopes);
+                                        foreach (var match in matches)
+                                        {
+                                            match.Item2.Index += target.Item2.Index;
+                                            outmatches.Add(match);
+                                        }
                                     }
                                 }
                             }
-                            if (src.JsonPath is null && src.XPath is null)
+                            if (src.JsonPaths is null && src.XPaths is null)
                             {
                                 outmatches.AddRange(GetMatches(regex, tc.FullContent, tc, clause, src.Scopes));
                             }

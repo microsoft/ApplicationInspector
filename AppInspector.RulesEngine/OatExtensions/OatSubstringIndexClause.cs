@@ -6,18 +6,18 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 {
     public class OatSubstringIndexClause : Clause
     {
-        public OatSubstringIndexClause(PatternScope[] scopes, string? field = null, bool useWordBoundaries = false, string? xPath = null, string? jsonPath = null) : base(Operation.Custom, field)
+        public OatSubstringIndexClause(PatternScope[] scopes, string? field = null, bool useWordBoundaries = false, string[]? xPaths = null, string[]? jsonPaths = null) : base(Operation.Custom, field)
         {
             Scopes = scopes;
             CustomOperation = "SubstringIndex";
             UseWordBoundaries = useWordBoundaries;
-            XPath = xPath;
-            JsonPath = jsonPath;
+            XPaths = xPaths;
+            JsonPaths = jsonPaths;
         }
 
-        public string? JsonPath { get; }
+        public string[]? JsonPaths { get; }
 
-        public string? XPath { get; }
+        public string[]? XPaths { get; }
 
         public PatternScope[] Scopes { get; }
 
