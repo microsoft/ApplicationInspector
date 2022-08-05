@@ -174,7 +174,7 @@ namespace AppInspector.Tests.RuleProcessor
             RuleSet rules = new(_loggerFactory);
             var newRule = findingRangeZeroRule.Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
             rules.AddString(newRule, "TestRules");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
+            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){Parallel = false});
             if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
             {
                 List<MatchRecord> matches = processor.AnalyzeFile(insideFindingData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
@@ -197,7 +197,7 @@ namespace AppInspector.Tests.RuleProcessor
         {
             RuleSet rules = new(_loggerFactory);
             rules.AddString(multiLineRule, "multiline-tests");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
+            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){Parallel = false});
             if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
             {
                 List<MatchRecord> matches = processor.AnalyzeFile(multiLineData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);

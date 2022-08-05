@@ -125,7 +125,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                             }
                             if (src.JsonPaths is null && src.XPaths is null)
                             {
-                                outmatches.AddRange(GetMatches(regex, tc.FullContent, tc, clause, src.Scopes));
+                                // If state 2 is a boundary, restrict the text provided to check to match the boundary
+                                if (state2 is Boundary boundary)
+                                {
+                                    outmatches.AddRange(GetMatches(regex, tc.GetBoundaryText(boundary), tc, clause, src.Scopes));
+                                }
+                                else
+                                {
+                                    outmatches.AddRange(GetMatches(regex, tc.FullContent, tc, clause, src.Scopes));
+                                }
                             }
                         }   
                     }

@@ -97,8 +97,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                         }
                         if (src.JsonPaths is null && src.XPaths is null)
                         {
-                            var matches = GetMatches(tc.FullContent, stringList[i], comparisonType, tc, src);
-                            outmatches.AddRange(matches.Select(x => (i, x)));
+                            // If state 2 is a boundary, restrict the text provided to check to match the boundary
+                            if (state2 is Boundary boundary)
+                            {
+                                var matches = GetMatches(tc.GetBoundaryText(boundary), stringList[i], comparisonType, tc, src);
+                                outmatches.AddRange(matches.Select(x => (i, x)));                            }
+                            else
+                            {
+                                var matches = GetMatches(tc.FullContent, stringList[i], comparisonType, tc, src);
+                                outmatches.AddRange(matches.Select(x => (i, x)));                            }
+
                         }
                     }
 

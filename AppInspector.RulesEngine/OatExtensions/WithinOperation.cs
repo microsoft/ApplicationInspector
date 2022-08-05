@@ -27,83 +27,106 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
         {
             if (c is WithinClause wc && state1 is TextContainer tc)
             {
-                List<(int, Boundary)> toRemove = new();
-                if (captures is IEnumerable<TypedClauseCapture<List<(int, Boundary)>>> castCaptures)
+                List<(int, Boundary)> passed =
+                    new List<(int, Boundary)>();
+                List<(int, Boundary)> failed =
+                    new List<(int, Boundary)>();
+
+                foreach (var capture in captures)
                 {
-                    foreach (var tcc in castCaptures)
+                    if (capture is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
-                        foreach ((int clauseNum, Boundary capture) in tcc.Result)
+                        foreach ((int clauseNum, Boundary boundary) in tcc.Result)
                         {
-                            if (wc.FindingOnly)
+                            var boundaryToCheck = GetBoundaryToCheck();
+                            if (boundaryToCheck is not null)
                             {
-                                if (!ProcessLambda(tc.GetBoundaryText(capture)))
+                                var operationResult = ProcessLambda(boundaryToCheck);
+                                if (operationResult.Result)
                                 {
-                                    toRemove.Add((clauseNum, capture));
+                                    passed.Add((clauseNum, boundary));
                                 }
+                                else
+                                {
+                                    failed.Add((clauseNum, boundary));
+                                }   
                             }
-                            else if (wc.SameLineOnly)
+
+                            Boundary? GetBoundaryToCheck()
                             {
-                                var start = tc.LineStarts[tc.GetLocation(capture.Index).Line];
-                                var end = tc.LineEnds[tc.GetLocation(start + capture.Length).Line];
-                                if(!ProcessLambda(tc.FullContent[start..end]))
+                                if (wc.FindingOnly)
                                 {
-                                    toRemove.Add((clauseNum, capture));
+                                    return boundary;
                                 }
-                            }
-                            else if (wc.FindingRegion)
-                            {
-                                var startLine = tc.GetLocation(capture.Index).Line;
-                                // Before is already a negative number
-                                var start = tc.LineStarts[Math.Max(1, startLine + wc.Before)];
-                                var end = tc.LineEnds[Math.Min(tc.LineEnds.Count - 1, startLine + wc.After)];
-                                if (!ProcessLambda(tc.FullContent[start..(end + 1)]))
+                                if (wc.SameLineOnly)
                                 {
-                                    toRemove.Add((clauseNum, capture));
+                                    var startInner = tc.LineStarts[tc.GetLocation(boundary.Index).Line];
+                                    var endInner = tc.LineEnds[tc.GetLocation(startInner + boundary.Length).Line];
+                                    return new Boundary()
+                                    {
+                                        Index = startInner,
+                                        Length = endInner - startInner
+                                    };
                                 }
-                            }
-                            else if (wc.SameFile)
-                            {
-                                var start = tc.LineStarts[0];
-                                var end = tc.LineEnds[^1];
-                                if (!ProcessLambda(tc.FullContent[start..end]))
+
+                                if (wc.FindingRegion)
                                 {
-                                    toRemove.Add((clauseNum, capture));
+                                    var startLine = tc.GetLocation(boundary.Index).Line;
+                                    // Before is already a negative number
+                                    var startInner = tc.LineStarts[Math.Max(1, startLine + wc.Before)];
+                                    var endInner = tc.LineEnds[Math.Min(tc.LineEnds.Count - 1, startLine + wc.After)];
+                                    return new Boundary()
+                                    {
+                                        Index = startInner,
+                                        Length = endInner - startInner
+                                    };
                                 }
-                            }
-                            else if (wc.OnlyBefore)
-                            {
-                                var start = tc.LineStarts[0];
-                                var end = capture.Index;
-                                if(!ProcessLambda(tc.FullContent[start..end]))
+
+                                if (wc.SameFile)
                                 {
-                                    toRemove.Add((clauseNum, capture));
+                                    var startInner = tc.LineStarts[0];
+                                    var endInner = tc.LineEnds[^1];
+                                    return new Boundary()
+                                    {
+                                        Index = startInner,
+                                        Length = endInner - startInner
+                                    };
                                 }
-                            }
-                            else if (wc.OnlyAfter)
-                            {
-                                var start = capture.Index + capture.Length;
-                                var end = tc.LineEnds[^1];
-                                if (!ProcessLambda(tc.FullContent[start..end]))
+
+                                if (wc.OnlyBefore)
                                 {
-                                    toRemove.Add((clauseNum, capture));
+                                    var startInner = tc.LineStarts[0];
+                                    var endInner = boundary.Index;
+                                    return new Boundary()
+                                    {
+                                        Index = startInner,
+                                        Length = endInner - startInner
+                                    };
                                 }
+
+                                if (wc.OnlyAfter)
+                                {
+                                    var startInner = boundary.Index + boundary.Length;
+                                    var endInner = tc.LineEnds[^1];
+                                    return new Boundary()
+                                    {
+                                        Index = startInner,
+                                        Length = endInner - startInner
+                                    };
+                                }
+
+                                return null;
                             }
                         }
                     }
-                    
-                    var passed = castCaptures.SelectMany(x => x.Result)
-                        .Except(toRemove)
-                        .Select(x => x.Item2).ToList();
 
-                    return new OperationResult(passed.Any() ^ wc.Invert, passed.Any() ? new TypedClauseCapture<List<Boundary>>(wc, passed) : null);
+                    var passedOrFailed = wc.Invert ? failed : passed;
+                    return new OperationResult(passedOrFailed.Any(), passedOrFailed.Any() ? new TypedClauseCapture<List<Boundary>>(wc, passedOrFailed.Select(x => x.Item2).ToList()) : null);
                 }
-  
 
-                bool ProcessLambda(string target)
+                OperationResult ProcessLambda(Boundary target)
                 {
-                    return _analyzer.AnalyzeClause(wc.SubClause,
-                        new TextContainer(target, tc.Language, tc.Languages,
-                            _loggerFactory.CreateLogger<TextContainer>()));
+                    return _analyzer.GetClauseCapture(wc.SubClause, tc, target, captures);
                 }
             }
             return new OperationResult(false, null);
