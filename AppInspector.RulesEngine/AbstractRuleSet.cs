@@ -73,62 +73,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var expression = new StringBuilder("(");
             foreach (var pattern in rule.Patterns)
             {
-                if (pattern.Pattern != null)
+                clauses.Add(GenerateClause(pattern, clauseNumber));
+                if (clauseNumber > 0)
                 {
-                    var scopes = pattern.Scopes ?? new PatternScope[] { PatternScope.All };
-                    var modifiers = pattern.Modifiers?.ToList() ?? new List<string>();
-                    if (pattern.PatternType is PatternType.String or PatternType.Substring)
-                    {
-                        clauses.Add(new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String, xPaths: pattern.XPaths, jsonPaths:pattern.JsonPaths)
-                        {
-                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
-                            Data = new List<string>() { pattern.Pattern },
-                            Capture = true,
-                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
-                        });
-                        if (clauseNumber > 0)
-                        {
-                            expression.Append(" OR ");
-                        }
-                        expression.Append(clauseNumber);
-                        clauseNumber++;
-                    }
-                    else if (pattern.PatternType == PatternType.Regex)
-                    {
-                        clauses.Add(new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths)
-                        {
-                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
-                            Data = new List<string>() { pattern.Pattern },
-                            Capture = true,
-                            Arguments = modifiers,
-                            CustomOperation = "RegexWithIndex"
-                        });
-                        if (clauseNumber > 0)
-                        {
-                            expression.Append(" OR ");
-                        }
-                        expression.Append(clauseNumber);
-                        clauseNumber++;
-                    }
-                    else if (pattern.PatternType == PatternType.RegexWord)
-                    {
-                        clauses.Add(new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths)
-                        {
-                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
-                            Data = new List<string>() { $"\\b({pattern.Pattern})\\b" },
-                            Capture = true,
-                            Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
-                            CustomOperation = "RegexWithIndex"
-                        });
-
-                        if (clauseNumber > 0)
-                        {
-                            expression.Append(" OR ");
-                        }
-                        expression.Append(clauseNumber);
-                        clauseNumber++;
-                    }
+                    expression.Append(" OR ");
                 }
+                expression.Append(clauseNumber);
+                clauseNumber++;
             }
 
             if (clauses.Count > 0)
@@ -142,125 +93,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             foreach (var condition in rule.Conditions ?? Array.Empty<SearchCondition>())
             {
-                if (condition.Pattern?.Pattern != null)
+                Clause? clause = GenerateCondition(condition, clauseNumber);
+                if (clause is { })
                 {
-                    List<string> conditionModifiers = condition.Pattern.Modifiers?.ToList() ?? new();
-                    if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
+                    clauses.Add(clause);
+                    expression.Append(" AND ");
+                    if (condition.NegateFinding)
                     {
-                        clauses.Add(new WithinClause()
-                        {
-                            Data = new List<string>() { condition.Pattern.Pattern },
-                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                            Invert = condition.NegateFinding,
-                            Arguments = conditionModifiers,
-                            FindingOnly = true,
-                            CustomOperation = "Within",
-                            Scopes = condition.Pattern.Scopes ?? new PatternScope[] { PatternScope.All }
-                        });
-                        expression.Append(" AND ");
-                        expression.Append(clauseNumber);
-                        clauseNumber++;
+                        expression.Append(" NOT ");
                     }
-                    else if (condition.SearchIn.StartsWith("finding-region", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        var argList = new List<int>();
-                        Match m = _searchInRegex.Match(condition.SearchIn);
-                        if (m.Success)
-                        {
-                            for (int i = 1; i < m.Groups.Count; i++)
-                            {
-                                if (int.TryParse(m.Groups[i].Value, out int value))
-                                {
-                                    argList.Add(value);
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        if (argList.Count == 2)
-                        {
-                            clauses.Add(new WithinClause()
-                            {
-                                Data = new List<string>() { condition.Pattern.Pattern },
-                                Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                                Invert = condition.NegateFinding,
-                                Arguments = conditionModifiers,
-                                FindingRegion = true,
-                                CustomOperation = "Within",
-                                Before = argList[0],
-                                After = argList[1],
-                                Scopes = condition.Pattern.Scopes ?? new PatternScope[] { PatternScope.All }
-                            });
-                            expression.Append(" AND ");
-                            expression.Append(clauseNumber);
-                            clauseNumber++;
-                        }
-                    }
-                    else if (condition.SearchIn.Equals("same-line", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        clauses.Add(new WithinClause()
-                        {
-                            Data = new List<string>() { condition.Pattern.Pattern },
-                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                            Invert = condition.NegateFinding,
-                            Arguments = conditionModifiers,
-                            SameLineOnly = true,
-                            CustomOperation = "Within",
-                            Scopes = condition.Pattern.Scopes ?? new PatternScope[] { PatternScope.All }
-                        });
-                        expression.Append(" AND ");
-                        expression.Append(clauseNumber);
-                        clauseNumber++;
-                    }
-                    else if (condition.SearchIn.Equals("same-file", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        clauses.Add(new WithinClause()
-                        {
-                            Data = new List<string>() { condition.Pattern.Pattern },
-                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                            Invert = condition.NegateFinding,
-                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
-                            SameFile = true
-                        });
-                        expression.Append(" AND ");
-                        expression.Append(clauseNumber);
-                        clauseNumber++;
-                    }
-                    else if (condition.SearchIn.Equals("only-before", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        clauses.Add(new WithinClause()
-                        {
-                            Data = new List<string>() { condition.Pattern.Pattern },
-                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                            Invert = condition.NegateFinding,
-                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
-                            OnlyBefore = true
-                        });
-                        expression.Append(" AND ");
-                        expression.Append(clauseNumber);
-                        clauseNumber++;
-                    }
-                    else if (condition.SearchIn.Equals("only-after", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        clauses.Add(new WithinClause()
-                        {
-                            Data = new List<string>() { condition.Pattern.Pattern },
-                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                            Invert = condition.NegateFinding,
-                            Arguments = condition.Pattern.Modifiers?.ToList() ?? new List<string>(),
-                            OnlyAfter = true
-                        });
-                        expression.Append(" AND ");
-                        expression.Append(clauseNumber);
-                        clauseNumber++;
-                    }
-                    else
-                    {
-                        _logger.LogWarning("Search condition {Condition} is not one of the accepted values and this condition will be ignored", condition.SearchIn);
-                        return null;
-                    }
+                    expression.Append(clauseNumber);
+                    clauseNumber++; 
                 }
             }
             return new ConvertedOatRule(rule.Id, rule)
@@ -268,6 +111,140 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 Clauses = clauses,
                 Expression = expression.ToString()
             };
+        }
+
+        private Clause? GenerateCondition(SearchCondition condition, int clauseNumber)
+        {
+            if (condition.Pattern?.Pattern != null)
+            {
+                if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
+                {
+                    return new WithinClause()
+                    {
+                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                        FindingOnly = true,
+                        CustomOperation = "Within",
+                        SubClause = GenerateClause(condition.Pattern)
+                    };
+                }
+                else if (condition.SearchIn.StartsWith("finding-region", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var argList = new List<int>();
+                    Match m = _searchInRegex.Match(condition.SearchIn);
+                    if (m.Success)
+                    {
+                        for (int i = 1; i < m.Groups.Count; i++)
+                        {
+                            if (int.TryParse(m.Groups[i].Value, out int value))
+                            {
+                                argList.Add(value);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    if (argList.Count == 2)
+                    {
+                        return new WithinClause()
+                        {
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                            FindingRegion = true,
+                            CustomOperation = "Within",
+                            Before = argList[0],
+                            After = argList[1],
+                            SubClause = GenerateClause(condition.Pattern)
+                        };
+                    }
+                }
+                else if (condition.SearchIn.Equals("same-line", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return new WithinClause()
+                    {
+                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                        SameLineOnly = true,
+                        CustomOperation = "Within",
+                        SubClause = GenerateClause(condition.Pattern)
+                    };
+                }
+                else if (condition.SearchIn.Equals("same-file", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return new WithinClause()
+                    {
+                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                        SameFile = true,
+                        SubClause = GenerateClause(condition.Pattern)
+                    };
+                }
+                else if (condition.SearchIn.Equals("only-before", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return new WithinClause()
+                    {
+                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                        OnlyBefore = true,
+                        SubClause = GenerateClause(condition.Pattern)
+                    };
+                }
+                else if (condition.SearchIn.Equals("only-after", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return new WithinClause()
+                    {
+                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                        OnlyAfter = true,
+                        SubClause = GenerateClause(condition.Pattern)
+                    };
+                }
+                else
+                {
+                    _logger.LogWarning("Search condition {Condition} is not one of the accepted values and this condition will be ignored", condition.SearchIn);
+                }
+            }
+            return null;
+        }
+
+        private Clause? GenerateClause(SearchPattern pattern, int clauseNumber = -1)
+        {
+            if (pattern.Pattern != null)
+            {
+                var scopes = pattern.Scopes ?? new PatternScope[] { PatternScope.All };
+                var modifiers = pattern.Modifiers?.ToList() ?? new List<string>();
+                if (pattern.PatternType is PatternType.String or PatternType.Substring)
+                {
+                    return new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String, xPaths: pattern.XPaths, jsonPaths:pattern.JsonPaths)
+                    {
+                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
+                        Data = new List<string>() { pattern.Pattern },
+                        Capture = true,
+                        Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
+                    };
+                }
+                else if (pattern.PatternType == PatternType.Regex)
+                {
+                    return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths)
+                    {
+                        Label = clauseNumber.ToString(CultureInfo
+                            .InvariantCulture), //important to pattern index identification
+                        Data = new List<string>() { pattern.Pattern },
+                        Capture = true,
+                        Arguments = modifiers,
+                        CustomOperation = "RegexWithIndex"
+                    };
+                }
+                else if (pattern.PatternType == PatternType.RegexWord)
+                {
+                    return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths)
+                    {
+                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),//important to pattern index identification
+                        Data = new List<string>() { $"\\b({pattern.Pattern})\\b" },
+                        Capture = true,
+                        Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
+                        CustomOperation = "RegexWithIndex"
+                    };
+                }
+            }
+
+            return null;
         }
 
         /// <summary>

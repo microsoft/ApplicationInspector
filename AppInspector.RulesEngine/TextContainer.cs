@@ -56,8 +56,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             prefix = languages.GetCommentPrefix(Language);
             suffix = languages.GetCommentSuffix(Language);
             inline = languages.GetCommentInline(Language);
+            Languages = languages;
         }
-        
+
+        public Languages Languages { get; set; }
+
         private bool _triedToConstructJsonDocument;
         private JsonDocument? _jsonDocument;
         internal IEnumerable<(string, Boundary)> GetStringFromJsonPath(string Path)
