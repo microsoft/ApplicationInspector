@@ -63,9 +63,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 
                     for (int i = 0; i < stringList.Count; i++)
                     {
-                        if (src.XPath is not null)
+                        if (src.XPaths is not null)
                         {
-                            foreach (var xmlPath in src.XPath)
+                            foreach (var xmlPath in src.XPaths)
                             {
                                 var targets = tc.GetStringFromXPath(xmlPath);
                                 foreach (var target in targets)
@@ -79,9 +79,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                 }
                             }
                         }
-                        if (src.JsonPath is not null)
+                        if (src.JsonPaths is not null)
                         {
-                            foreach (var jsonPath in src.JsonPath)
+                            foreach (var jsonPath in src.JsonPaths)
                             {
                                 var targets = tc.GetStringFromJsonPath(jsonPath);
                                 foreach (var target in targets)
@@ -95,7 +95,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                 }
                             }
                         }
-                        if (src.JsonPath is null && src.XPath is null)
+                        if (src.JsonPaths is null && src.XPaths is null)
                         {
                             var matches = GetMatches(tc.FullContent, stringList[i], comparisonType, tc, src);
                             outmatches.AddRange(matches.Select(x => (i, x)));
