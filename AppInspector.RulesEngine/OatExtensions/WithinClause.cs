@@ -18,7 +18,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
         public bool SameFile { get; set; }
         public bool FindingOnly { get; set; }
         public bool SameLineOnly { get; set; }
-        public PatternScope[] Scopes { get; set; } = new PatternScope[1] { PatternScope.All };
         public bool FindingRegion { get; set; }
+        public Clause SubClause { get; set; }
     }
 }

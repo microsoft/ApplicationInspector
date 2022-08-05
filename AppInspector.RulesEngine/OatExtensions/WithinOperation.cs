@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
         {
             _loggerFactory = loggerFactory ?? new NullLoggerFactory();
             _regexEngine = new RegexOperation(analyzer);
+            _analyzer = analyzer;
             CustomOperation = "Within";
             OperationDelegate = WithinOperationDelegate;
             ValidationDelegate = WithinValidationDelegate;
@@ -25,34 +27,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
         {
             if (c is WithinClause wc && state1 is TextContainer tc)
             {
-                var regexOpts = RegexOptions.Compiled;
-                if (wc.Arguments.Contains("i"))
+                List<(int, Boundary)> toRemove = new();
+                if (captures is IEnumerable<TypedClauseCapture<List<(int, Boundary)>>> castCaptures)
                 {
-                    regexOpts |= RegexOptions.IgnoreCase;
-                }
-                if (wc.Arguments.Contains("m"))
-                {
-                    regexOpts |= RegexOptions.Multiline;
-                }
-                var passed = new List<Boundary>();
-                foreach (var captureHolder in captures ?? Array.Empty<ClauseCapture>())
-                {
-                    if (captureHolder is TypedClauseCapture<List<(int, Boundary)>> tcc)
+                    foreach (var tcc in castCaptures)
                     {
-                        List<(int, Boundary)> toRemove = new();
                         foreach ((int clauseNum, Boundary capture) in tcc.Result)
                         {
                             if (wc.FindingOnly)
                             {
-                                var res = ProcessLambda(tc.GetBoundaryText(capture), capture);
-                                if (res.Result)
-                                {
-                                    if (res.Capture is TypedClauseCapture<List<Boundary>> boundaryList)
-                                    {
-                                        passed.AddRange(boundaryList.Result);
-                                    }
-                                }
-                                else
+                                if (!ProcessLambda(tc.GetBoundaryText(capture)))
                                 {
                                     toRemove.Add((clauseNum, capture));
                                 }
@@ -61,15 +45,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                             {
                                 var start = tc.LineStarts[tc.GetLocation(capture.Index).Line];
                                 var end = tc.LineEnds[tc.GetLocation(start + capture.Length).Line];
-                                var res = ProcessLambda(tc.FullContent[start..end], capture);
-                                if (res.Result)
-                                {
-                                    if (res.Capture is TypedClauseCapture<List<Boundary>> boundaryList)
-                                    {
-                                        passed.AddRange(boundaryList.Result);
-                                    }
-                                }
-                                else
+                                if(!ProcessLambda(tc.FullContent[start..end]))
                                 {
                                     toRemove.Add((clauseNum, capture));
                                 }
@@ -80,15 +56,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                 // Before is already a negative number
                                 var start = tc.LineStarts[Math.Max(1, startLine + wc.Before)];
                                 var end = tc.LineEnds[Math.Min(tc.LineEnds.Count - 1, startLine + wc.After)];
-                                var res = ProcessLambda(tc.FullContent[start..(end+1)], capture);
-                                if (res.Result)
-                                {
-                                    if (res.Capture is TypedClauseCapture<List<Boundary>> boundaryList)
-                                    {
-                                        passed.AddRange(boundaryList.Result);
-                                    }
-                                }
-                                else
+                                if (!ProcessLambda(tc.FullContent[start..(end + 1)]))
                                 {
                                     toRemove.Add((clauseNum, capture));
                                 }
@@ -97,15 +65,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                             {
                                 var start = tc.LineStarts[0];
                                 var end = tc.LineEnds[^1];
-                                var res = ProcessLambda(tc.FullContent[start..end], capture);
-                                if (res.Result)
-                                {
-                                    if (res.Capture is TypedClauseCapture<List<Boundary>> boundaryList)
-                                    {
-                                        passed.AddRange(boundaryList.Result);
-                                    }
-                                }
-                                else
+                                if (!ProcessLambda(tc.FullContent[start..end]))
                                 {
                                     toRemove.Add((clauseNum, capture));
                                 }
@@ -114,70 +74,36 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                             {
                                 var start = tc.LineStarts[0];
                                 var end = capture.Index;
-                                var res = ProcessLambda(tc.FullContent[start..end], capture);
-                                if (res.Result)
-                                {
-                                    if (res.Capture is TypedClauseCapture<List<Boundary>> boundaryList)
-                                    {
-                                        passed.AddRange(boundaryList.Result);
-                                    }
-                                }
-                                else
+                                if(!ProcessLambda(tc.FullContent[start..end]))
                                 {
                                     toRemove.Add((clauseNum, capture));
-                                }                            }
+                                }
+                            }
                             else if (wc.OnlyAfter)
                             {
                                 var start = capture.Index + capture.Length;
                                 var end = tc.LineEnds[^1];
-                                var res = ProcessLambda(tc.FullContent[start..end], capture);
-                                if (res.Result)
-                                {
-                                    if (res.Capture is TypedClauseCapture<List<Boundary>> boundaryList)
-                                    {
-                                        passed.AddRange(boundaryList.Result);
-                                    }
-                                }
-                                else
+                                if (!ProcessLambda(tc.FullContent[start..end]))
                                 {
                                     toRemove.Add((clauseNum, capture));
-                                }                            
-                            }
-                        }
-                        tcc.Result.RemoveAll(x => toRemove.Contains(x));
-                    }
-                }
-                // In the case that we have inverted the lambda, the captures are null and thus the passed list will be empty. We thus need to invert this again to get true correctly in that case.
-                return new OperationResult(passed.Any() ^ wc.Invert, passed.Any() ? new TypedClauseCapture<List<Boundary>>(wc, passed) : null);
-
-                OperationResult ProcessLambda(string target, Boundary targetBoundary)
-                {
-                    var boundaries = new List<Boundary>();
-                    foreach (var pattern in wc.Data.Select(x => _regexEngine.StringToRegex(x, regexOpts)))
-                    {
-                        if (pattern is Regex r)
-                        {
-                            var matches = r.Matches(target);
-                            foreach (var match in matches)
-                            {
-                                if (match is Match m)
-                                {
-                                    Boundary translatedBoundary = new()
-                                    {
-                                        Length = m.Length,
-                                        Index = targetBoundary.Index + m.Index
-                                    };
-                                    // Should return only scoped matches
-                                    if (tc.ScopeMatch(wc.Scopes, translatedBoundary))
-                                    {
-                                        boundaries.Add(translatedBoundary);
-                                    }
                                 }
                             }
                         }
                     }
-                    // Invert the result of the operation if requested
-                    return new OperationResult(boundaries.Any() ^ wc.Invert, boundaries.Any() ? new TypedClauseCapture<List<Boundary>>(wc, boundaries) : null);
+                    
+                    var passed = castCaptures.SelectMany(x => x.Result)
+                        .Except(toRemove)
+                        .Select(x => x.Item2).ToList();
+
+                    return new OperationResult(passed.Any() ^ wc.Invert, passed.Any() ? new TypedClauseCapture<List<Boundary>>(wc, passed) : null);
+                }
+  
+
+                bool ProcessLambda(string target)
+                {
+                    return _analyzer.AnalyzeClause(wc.SubClause,
+                        new TextContainer(target, tc.Language, tc.Languages,
+                            _loggerFactory.CreateLogger<TextContainer>()));
                 }
             }
             return new OperationResult(false, null);
@@ -236,5 +162,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 
         private readonly RegexOperation _regexEngine;
         private readonly ILoggerFactory _loggerFactory;
+        private readonly Analyzer _analyzer;
     }
 }
