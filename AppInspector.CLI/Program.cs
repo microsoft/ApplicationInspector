@@ -31,7 +31,6 @@ namespace Microsoft.ApplicationInspector.CLI
             int finalResult = (int)Common.Utils.ExitCode.CriticalError;
 
             Common.Utils.CLIExecutionContext = true;//set manually at start from CLI
-            Exception? exception = null;
             try
             {
                 var argsResult = new Parser(settings =>
@@ -42,32 +41,25 @@ namespace Microsoft.ApplicationInspector.CLI
                     CLIExportTagsCmdOptions,
                     CLIVerifyRulesCmdOptions,
                     CLIPackRulesCmdOptions>(args);
-                if (argsResult.Errors.Any())
+                return argsResult.MapResult(
+                (CLIAnalyzeCmdOptions cliAnalyzeCmdOptions) => VerifyOutputArgsRun(cliAnalyzeCmdOptions),
+                (CLITagDiffCmdOptions cliTagDiffCmdOptions) => VerifyOutputArgsRun(cliTagDiffCmdOptions),
+                (CLIExportTagsCmdOptions cliExportTagsCmdOptions) => VerifyOutputArgsRun(cliExportTagsCmdOptions),
+                (CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions) => VerifyOutputArgsRun(cliVerifyRulesCmdOptions),
+                (CLIPackRulesCmdOptions cliPackRulesCmdOptions) => VerifyOutputArgsRun(cliPackRulesCmdOptions),
+                errs =>
                 {
                     Console.WriteLine(HelpText.AutoBuild(argsResult));
-                    finalResult = (int)Common.Utils.ExitCode.CriticalError;
-                }
-                else
-                {
-                    finalResult = argsResult.MapResult(
-                    (CLIAnalyzeCmdOptions cliAnalyzeCmdOptions) => VerifyOutputArgsRun(cliAnalyzeCmdOptions),
-                    (CLITagDiffCmdOptions cliTagDiffCmdOptions) => VerifyOutputArgsRun(cliTagDiffCmdOptions),
-                    (CLIExportTagsCmdOptions cliExportTagsCmdOptions) => VerifyOutputArgsRun(cliExportTagsCmdOptions),
-                    (CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions) => VerifyOutputArgsRun(cliVerifyRulesCmdOptions),
-                    (CLIPackRulesCmdOptions cliPackRulesCmdOptions) => VerifyOutputArgsRun(cliPackRulesCmdOptions),
-                    errs => (int)Common.Utils.ExitCode.CriticalError);
-                }
+                    return (int)Common.Utils.ExitCode.CriticalError;
+                });
             }
             catch (Exception e)
             {
-                exception = e;
+                var logger = loggerFactory.CreateLogger("Program");
+                logger.LogError("Uncaught exception: {type}:{message}. {stackTrace}", e.GetType().Name, e.Message, e.StackTrace);
+                loggerFactory.Dispose();
             }
-            var logger = loggerFactory.CreateLogger("Program");
-            if (exception is not null)
-            {
-                logger.LogError("Uncaught exception: {type}:{message}. {stackTrace}", exception.GetType().Name, exception.Message, exception.StackTrace);
-            }
-            loggerFactory.Dispose();
+            
             return finalResult;
         }
 
