@@ -121,7 +121,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                     }
 
                     var passedOrFailed = wc.Invert ? failed : passed;
-                    return new OperationResult(passedOrFailed.Any(), passedOrFailed.Any() ? new TypedClauseCapture<List<Boundary>>(wc, passedOrFailed.Select(x => x.Item2).ToList()) : null);
+                    return new OperationResult(passedOrFailed.Any(), passedOrFailed.Any() ? new TypedClauseCapture<List<(int, Boundary)>>(wc, passedOrFailed.ToList()) : null);
                 }
 
                 OperationResult ProcessLambda(Boundary target)

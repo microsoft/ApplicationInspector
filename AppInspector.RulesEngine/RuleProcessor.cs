@@ -143,7 +143,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var caps = analyzer.GetCaptures(rules, textContainer);
             foreach (var ruleCapture in caps)
             {
-                foreach (var cap in ruleCapture.Captures)
+                // If we had a WithinClause we only want the captures that passed the within filter.
+                var filteredCaptures = ruleCapture.Captures.Any(x => x.Clause is WithinClause)
+                    ? ruleCapture.Captures.Where(x => x.Clause is WithinClause) : ruleCapture.Captures;
+                foreach (var cap in filteredCaptures)
                 {
                     resultsList.AddRange(ProcessBoundary(cap));
                 }
@@ -294,11 +297,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name, _languages, _opts.LoggerFactory?.CreateLogger<TextContainer>() ?? NullLogger<TextContainer>.Instance);
             foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
             {
+                // If we had a WithinClause we only want the captures that passed the within filter.
+                var filteredCaptures = ruleCapture.Captures.Any(x => x.Clause is WithinClause)
+                    ? ruleCapture.Captures.Where(x => x.Clause is WithinClause) : ruleCapture.Captures;
                 if (cancellationToken?.IsCancellationRequested is true)
                 {
                     return resultsList;
                 }
-                foreach (var cap in ruleCapture.Captures)
+                foreach (var cap in filteredCaptures)
                 {
                     resultsList.AddRange(ProcessBoundary(cap));
                 }

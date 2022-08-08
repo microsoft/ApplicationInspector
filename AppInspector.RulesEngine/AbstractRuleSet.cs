@@ -98,10 +98,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     clauses.Add(clause);
                     expression.Append(" AND ");
-                    if (condition.NegateFinding)
-                    {
-                        expression.Append(" NOT ");
-                    }
                     expression.Append(clauseNumber);
                     clauseNumber++; 
                 }
