@@ -1,6 +1,7 @@
 ﻿//Copyright(c) Microsoft Corporation.All rights reserved.
 // Licensed under the MIT License.
 
+using CommandLine.Text;
 using Microsoft.ApplicationInspector.Logging;
 
 namespace Microsoft.ApplicationInspector.CLI
@@ -30,49 +31,47 @@ namespace Microsoft.ApplicationInspector.CLI
             int finalResult = (int)Common.Utils.ExitCode.CriticalError;
 
             Common.Utils.CLIExecutionContext = true;//set manually at start from CLI
-            Exception? exception = null;
             try
             {
-                var argsResult = new Parser(settings => settings.CaseInsensitiveEnumValues = true).ParseArguments<CLIAnalyzeCmdOptions,
+                var argsResult = new Parser(settings =>
+                {
+                    settings.CaseInsensitiveEnumValues = true;
+                }).ParseArguments<CLIAnalyzeCmdOptions,
                     CLITagDiffCmdOptions,
                     CLIExportTagsCmdOptions,
                     CLIVerifyRulesCmdOptions,
-                    CLIPackRulesCmdOptions>(args)
-                  .MapResult(
-                    (CLIAnalyzeCmdOptions cliAnalyzeCmdOptions) => VerifyOutputArgsRun(cliAnalyzeCmdOptions),
-                    (CLITagDiffCmdOptions cliTagDiffCmdOptions) => VerifyOutputArgsRun(cliTagDiffCmdOptions),
-                    (CLIExportTagsCmdOptions cliExportTagsCmdOptions) => VerifyOutputArgsRun(cliExportTagsCmdOptions),
-                    (CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions) => VerifyOutputArgsRun(cliVerifyRulesCmdOptions),
-                    (CLIPackRulesCmdOptions cliPackRulesCmdOptions) => VerifyOutputArgsRun(cliPackRulesCmdOptions),
-                    errs => (int)Common.Utils.ExitCode.CriticalError
-                  );
-
-                finalResult = argsResult;
+                    CLIPackRulesCmdOptions>(args);
+                return argsResult.MapResult(
+                    (CLIAnalyzeCmdOptions cliAnalyzeCmdOptions) => VerifyOutputArgsAndRunAnalyze(cliAnalyzeCmdOptions),
+                    (CLITagDiffCmdOptions cliTagDiffCmdOptions) => VerifyOutputArgsAndRunTagDiff(cliTagDiffCmdOptions),
+                    (CLIExportTagsCmdOptions cliExportTagsCmdOptions) => VerifyOutputArgsAndRunExportTags(cliExportTagsCmdOptions),
+                    (CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions) => VerifyOutputArgsAndRunVerifyRules(cliVerifyRulesCmdOptions),
+                    (CLIPackRulesCmdOptions cliPackRulesCmdOptions) => VerifyOutputArgsAndRunPackRules(cliPackRulesCmdOptions),
+                    errs =>
+                    {
+                        Console.WriteLine(HelpText.AutoBuild(argsResult));
+                        return (int)Common.Utils.ExitCode.CriticalError;
+                    });
             }
             catch (Exception e)
             {
-                exception = e;
+                var logger = loggerFactory.CreateLogger("Program");
+                logger.LogError("Uncaught exception: {type}:{message}. {stackTrace}", e.GetType().Name, e.Message, e.StackTrace);
+                loggerFactory.Dispose();
             }
-            var logger = loggerFactory.CreateLogger("Program");
-            if (exception is not null)
-            {
-                logger.LogError("Uncaught exception: {type}:{message}. {stackTrace}", exception.GetType().Name, exception.Message, exception.StackTrace);
-            }
-            loggerFactory.Dispose();
+            
             return finalResult;
         }
 
-
-        //idea is to check output args which are not applicable to NuGet callers before the command operation is run for max efficiency
-
-        private static int VerifyOutputArgsRun(CLITagDiffCmdOptions options)
+        private static int VerifyOutputArgsAndRunTagDiff(CLITagDiffCmdOptions options)
         {
             loggerFactory = options.GetLoggerFactory();
 
             CommonOutputChecks(options);
             return RunTagDiffCommand(options);
         }
-        private static int VerifyOutputArgsRun(CLIExportTagsCmdOptions options)
+        
+        private static int VerifyOutputArgsAndRunExportTags(CLIExportTagsCmdOptions options)
         {
             loggerFactory = options.GetLoggerFactory();
 
@@ -80,7 +79,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return RunExportTagsCommand(options);
         }
 
-        private static int VerifyOutputArgsRun(CLIVerifyRulesCmdOptions options)
+        private static int VerifyOutputArgsAndRunVerifyRules(CLIVerifyRulesCmdOptions options)
         {
             loggerFactory = options.GetLoggerFactory();
 
@@ -88,7 +87,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return RunVerifyRulesCommand(options);
         }
 
-        private static int VerifyOutputArgsRun(CLIPackRulesCmdOptions options)
+        private static int VerifyOutputArgsAndRunPackRules(CLIPackRulesCmdOptions options)
         {
             loggerFactory = options.GetLoggerFactory();
             ILogger logger = loggerFactory.CreateLogger("Program");
@@ -106,7 +105,7 @@ namespace Microsoft.ApplicationInspector.CLI
             return RunPackRulesCommand(options);
         }
 
-        private static int VerifyOutputArgsRun(CLIAnalyzeCmdOptions options)
+        private static int VerifyOutputArgsAndRunAnalyze(CLIAnalyzeCmdOptions options)
         {
             loggerFactory = options.GetLoggerFactory();
 
