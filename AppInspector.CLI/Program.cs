@@ -1,6 +1,7 @@
 ﻿//Copyright(c) Microsoft Corporation.All rights reserved.
 // Licensed under the MIT License.
 
+using CommandLine.Text;
 using Microsoft.ApplicationInspector.Logging;
 
 namespace Microsoft.ApplicationInspector.CLI
@@ -33,21 +34,29 @@ namespace Microsoft.ApplicationInspector.CLI
             Exception? exception = null;
             try
             {
-                var argsResult = new Parser(settings => settings.CaseInsensitiveEnumValues = true).ParseArguments<CLIAnalyzeCmdOptions,
+                var argsResult = new Parser(settings =>
+                {
+                    settings.CaseInsensitiveEnumValues = true;
+                }).ParseArguments<CLIAnalyzeCmdOptions,
                     CLITagDiffCmdOptions,
                     CLIExportTagsCmdOptions,
                     CLIVerifyRulesCmdOptions,
-                    CLIPackRulesCmdOptions>(args)
-                  .MapResult(
+                    CLIPackRulesCmdOptions>(args);
+                if (argsResult.Errors.Any())
+                {
+                    Console.WriteLine(HelpText.AutoBuild(argsResult));
+                    finalResult = (int)Common.Utils.ExitCode.CriticalError;
+                }
+                else
+                {
+                    finalResult = argsResult.MapResult(
                     (CLIAnalyzeCmdOptions cliAnalyzeCmdOptions) => VerifyOutputArgsRun(cliAnalyzeCmdOptions),
                     (CLITagDiffCmdOptions cliTagDiffCmdOptions) => VerifyOutputArgsRun(cliTagDiffCmdOptions),
                     (CLIExportTagsCmdOptions cliExportTagsCmdOptions) => VerifyOutputArgsRun(cliExportTagsCmdOptions),
                     (CLIVerifyRulesCmdOptions cliVerifyRulesCmdOptions) => VerifyOutputArgsRun(cliVerifyRulesCmdOptions),
                     (CLIPackRulesCmdOptions cliPackRulesCmdOptions) => VerifyOutputArgsRun(cliPackRulesCmdOptions),
-                    errs => (int)Common.Utils.ExitCode.CriticalError
-                  );
-
-                finalResult = argsResult;
+                    errs => (int)Common.Utils.ExitCode.CriticalError);
+                }
             }
             catch (Exception e)
             {

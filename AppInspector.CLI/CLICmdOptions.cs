@@ -74,7 +74,7 @@ namespace Microsoft.ApplicationInspector.CLI
         [Option('u', "scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
         public bool ScanUnknownTypes { get; set; }
 
-        [Option('c', "confidence-filters", Required = false, Separator = ',', HelpText = "Output only matches with specified confidence <value>,<value>. Default: Medium,High. [High|Medium|Low]", Default = new Confidence[]{Confidence.High, Confidence.Medium})]
+        [Option('c', "confidence-filters", Required = false, Separator = ',', HelpText = "Output only matches with specified confidence <value>,<value>. Default: Medium,High. [High|Medium|Low]", Default = new Confidence[]{ Confidence.High, Confidence.Medium })]
         public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new Confidence[] { Confidence.High, Confidence.Medium };
 
         [Option("severity-filters", Required = false, Separator = ',',
