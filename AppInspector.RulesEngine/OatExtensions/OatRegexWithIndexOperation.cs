@@ -114,12 +114,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     var targets = tc.GetStringFromJsonPath(jsonPath);
                                     foreach (var target in targets)
                                     {
-                                        var matches = GetMatches(regex, tc, clause, src.Scopes, target.Item2);
-                                        foreach (var match in matches)
-                                        {
-                                            match.Item2.Index += target.Item2.Index;
-                                            outmatches.Add(match);
-                                        }
+                                        outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, target.Item2));
                                     }
                                 }
                             }
