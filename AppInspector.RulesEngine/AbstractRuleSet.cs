@@ -111,7 +111,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         private Clause? GenerateCondition(SearchCondition condition, int clauseNumber)
         {
-            if (condition.Pattern?.Pattern != null)
+            if (condition.Pattern is {} conditionPattern)
             {
                 if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
                 {
@@ -120,7 +120,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         FindingOnly = true,
                         CustomOperation = "Within",
-                        SubClause = GenerateClause(condition.Pattern)
+                        SubClause = GenerateClause(conditionPattern),
+                        Invert = condition.NegateFinding
                     };
                 }
                 else if (condition.SearchIn.StartsWith("finding-region", StringComparison.InvariantCultureIgnoreCase))
@@ -150,7 +151,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             CustomOperation = "Within",
                             Before = argList[0],
                             After = argList[1],
-                            SubClause = GenerateClause(condition.Pattern)
+                            SubClause = GenerateClause(condition.Pattern),
+                            Invert = condition.NegateFinding
                         };
                     }
                 }
@@ -161,7 +163,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         SameLineOnly = true,
                         CustomOperation = "Within",
-                        SubClause = GenerateClause(condition.Pattern)
+                        SubClause = GenerateClause(condition.Pattern),
+                        Invert = condition.NegateFinding
                     };
                 }
                 else if (condition.SearchIn.Equals("same-file", StringComparison.InvariantCultureIgnoreCase))
@@ -170,7 +173,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         SameFile = true,
-                        SubClause = GenerateClause(condition.Pattern)
+                        SubClause = GenerateClause(condition.Pattern),
+                        Invert = condition.NegateFinding
                     };
                 }
                 else if (condition.SearchIn.Equals("only-before", StringComparison.InvariantCultureIgnoreCase))
@@ -179,7 +183,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         OnlyBefore = true,
-                        SubClause = GenerateClause(condition.Pattern)
+                        SubClause = GenerateClause(condition.Pattern),
+                        Invert = condition.NegateFinding
                     };
                 }
                 else if (condition.SearchIn.Equals("only-after", StringComparison.InvariantCultureIgnoreCase))
@@ -188,7 +193,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         OnlyAfter = true,
-                        SubClause = GenerateClause(condition.Pattern)
+                        SubClause = GenerateClause(condition.Pattern),
+                        Invert = condition.NegateFinding
                     };
                 }
                 else
