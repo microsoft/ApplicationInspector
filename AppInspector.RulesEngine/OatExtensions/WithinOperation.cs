@@ -65,7 +65,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     return new Boundary()
                                     {
                                         Index = startInner,
-                                        Length = endInner - startInner
+                                        Length = (endInner - startInner) + 1
                                     };
                                 }
 
@@ -75,11 +75,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     // Before is already a negative number
                                     var startInner = tc.LineStarts[Math.Max(1, startLine + wc.Before)];
                                     var endInner = tc.LineEnds[Math.Min(tc.LineEnds.Count - 1, startLine + wc.After)];
-                                    return new Boundary()
+                                    var bound = new Boundary()
                                     {
                                         Index = startInner,
-                                        Length = endInner - startInner
+                                        Length = (endInner - startInner) + 1
                                     };
+                                    var theText = tc.GetBoundaryText(bound);
+                                    return bound;
                                 }
 
                                 if (wc.SameFile)
@@ -89,7 +91,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     return new Boundary()
                                     {
                                         Index = startInner,
-                                        Length = endInner - startInner
+                                        Length = (endInner - startInner) + 1
                                     };
                                 }
 
@@ -100,7 +102,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     return new Boundary()
                                     {
                                         Index = startInner,
-                                        Length = endInner - startInner
+                                        Length = (endInner - startInner) + 1
                                     };
                                 }
 
@@ -111,7 +113,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     return new Boundary()
                                     {
                                         Index = startInner,
-                                        Length = endInner - startInner
+                                        Length = (endInner - startInner) + 1
                                     };
                                 }
 

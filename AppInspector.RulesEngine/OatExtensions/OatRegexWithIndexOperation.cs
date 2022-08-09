@@ -120,7 +120,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                             }
                             if (src.JsonPaths is null && src.XPaths is null)
                             {
-                                // If state 2 is a boundary, restrict the text provided to check to match the boundary
                                 if (subBoundary is not null)
                                 {
                                     outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, subBoundary));
