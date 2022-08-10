@@ -73,6 +73,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
             if (state1 is TextContainer tc && clause is OatRegexWithIndexClause src && clause.Data is List<string> RegexList && RegexList.Count > 0)
             {
                 RegexOptions regexOpts = new();
+                Boundary? subBoundary = state2 is Boundary s2 ? s2 : null;
 
                 if (src.Arguments.Contains("i"))
                 {
@@ -98,10 +99,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     var targets = tc.GetStringFromXPath(xmlPath);
                                     foreach (var target in targets)
                                     {
-                                        var matches = GetMatches(regex, target.Item1, tc, clause, src.Scopes);
+                                        var matches = GetMatches(regex, tc, clause, src.Scopes, target.Item2);
                                         foreach (var match in matches)
                                         {
-                                            match.Item2.Index += target.Item2.Index;
                                             outmatches.Add(match);
                                         }
                                     }
@@ -114,18 +114,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     var targets = tc.GetStringFromJsonPath(jsonPath);
                                     foreach (var target in targets)
                                     {
-                                        var matches = GetMatches(regex, target.Item1, tc, clause, src.Scopes);
-                                        foreach (var match in matches)
-                                        {
-                                            match.Item2.Index += target.Item2.Index;
-                                            outmatches.Add(match);
-                                        }
+                                        outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, target.Item2));
                                     }
                                 }
                             }
                             if (src.JsonPaths is null && src.XPaths is null)
                             {
-                                outmatches.AddRange(GetMatches(regex, tc.FullContent, tc, clause, src.Scopes));
+                                if (subBoundary is not null)
+                                {
+                                    outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, subBoundary));
+                                }
+                                else
+                                {
+                                    outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, null));
+                                }
                             }
                         }   
                     }
@@ -137,16 +139,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
             return new OperationResult(false, null);
         }
         
-        private IEnumerable<(int, Boundary)> GetMatches(Regex regex, string content, TextContainer tc, Clause clause, PatternScope[] scopes)
+        private IEnumerable<(int, Boundary)> GetMatches(Regex regex, TextContainer tc, Clause clause, PatternScope[] scopes, Boundary? boundary)
         {
-            foreach (var match in regex.Matches(content))
+            foreach (var match in regex.Matches(boundary is null ? tc.FullContent : tc.GetBoundaryText(boundary)))
             {
                 if (match is Match m)
                 {
                     Boundary translatedBoundary = new()
                     {
                         Length = m.Length,
-                        Index = m.Index
+                        Index = m.Index + (boundary?.Index ?? 0)
                     };
 
                     //regex patterns will be indexed off data while string patterns result in N clauses
