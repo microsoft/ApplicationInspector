@@ -32,7 +32,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                 List<(int, Boundary)> failed =
                     new List<(int, Boundary)>();
 
-                foreach (var capture in captures)
+                foreach (var capture in captures ?? Array.Empty<ClauseCapture>())
                 {
                     if (capture is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
@@ -80,7 +80,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                         Index = startInner,
                                         Length = (endInner - startInner) + 1
                                     };
-                                    var theText = tc.GetBoundaryText(bound);
                                     return bound;
                                 }
 
