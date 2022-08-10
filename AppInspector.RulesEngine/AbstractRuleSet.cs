@@ -113,94 +113,103 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             if (condition.Pattern is {} conditionPattern)
             {
-                if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
+                var subClause = GenerateClause(conditionPattern);
+                if (subClause is null)
                 {
-                    return new WithinClause()
-                    {
-                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                        FindingOnly = true,
-                        CustomOperation = "Within",
-                        SubClause = GenerateClause(conditionPattern),
-                        Invert = condition.NegateFinding
-                    };
+                    _logger.LogWarning("SubClause for condition could not be generated");
                 }
-                else if (condition.SearchIn.StartsWith("finding-region", StringComparison.InvariantCultureIgnoreCase))
+                else
                 {
-                    var argList = new List<int>();
-                    Match m = _searchInRegex.Match(condition.SearchIn);
-                    if (m.Success)
-                    {
-                        for (int i = 1; i < m.Groups.Count; i++)
-                        {
-                            if (int.TryParse(m.Groups[i].Value, out int value))
-                            {
-                                argList.Add(value);
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    if (argList.Count == 2)
+                    if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
                     {
                         return new WithinClause()
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                            FindingRegion = true,
+                            FindingOnly = true,
                             CustomOperation = "Within",
-                            Before = argList[0],
-                            After = argList[1],
-                            SubClause = GenerateClause(condition.Pattern),
+                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
-                }
-                else if (condition.SearchIn.Equals("same-line", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return new WithinClause()
+                    else if (condition.SearchIn.StartsWith("finding-region", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                        SameLineOnly = true,
-                        CustomOperation = "Within",
-                        SubClause = GenerateClause(condition.Pattern),
-                        Invert = condition.NegateFinding
-                    };
-                }
-                else if (condition.SearchIn.Equals("same-file", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return new WithinClause()
+                        var argList = new List<int>();
+                        Match m = _searchInRegex.Match(condition.SearchIn);
+                        if (m.Success)
+                        {
+                            for (int i = 1; i < m.Groups.Count; i++)
+                            {
+                                if (int.TryParse(m.Groups[i].Value, out int value))
+                                {
+                                    argList.Add(value);
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                        if (argList.Count == 2)
+                        {
+                            return new WithinClause()
+                            {
+                                Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                                FindingRegion = true,
+                                CustomOperation = "Within",
+                                Before = argList[0],
+                                After = argList[1],
+                                SubClause = subClause,
+                                Invert = condition.NegateFinding
+                            };
+                        }
+                    }
+                    else if (condition.SearchIn.Equals("same-line", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                        SameFile = true,
-                        SubClause = GenerateClause(condition.Pattern),
-                        Invert = condition.NegateFinding
-                    };
-                }
-                else if (condition.SearchIn.Equals("only-before", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return new WithinClause()
+                        return new WithinClause()
+                        {
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                            SameLineOnly = true,
+                            CustomOperation = "Within",
+                            SubClause = subClause,
+                            Invert = condition.NegateFinding
+                        };
+                    }
+                    else if (condition.SearchIn.Equals("same-file", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                        OnlyBefore = true,
-                        SubClause = GenerateClause(condition.Pattern),
-                        Invert = condition.NegateFinding
-                    };
-                }
-                else if (condition.SearchIn.Equals("only-after", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return new WithinClause()
+                        return new WithinClause()
+                        {
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                            SameFile = true,
+                            SubClause = subClause,
+                            Invert = condition.NegateFinding
+                        };
+                    }
+                    else if (condition.SearchIn.Equals("only-before", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                        OnlyAfter = true,
-                        SubClause = GenerateClause(condition.Pattern),
-                        Invert = condition.NegateFinding
-                    };
+                        return new WithinClause()
+                        {
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                            OnlyBefore = true,
+                            SubClause = subClause,
+                            Invert = condition.NegateFinding
+                        };
+                    }
+                    else if (condition.SearchIn.Equals("only-after", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return new WithinClause()
+                        {
+                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                            OnlyAfter = true,
+                            SubClause = subClause,
+                            Invert = condition.NegateFinding
+                        };
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Search condition {Condition} is not one of the accepted values and this condition will be ignored", condition.SearchIn);
+                    }
                 }
-                else
-                {
-                    _logger.LogWarning("Search condition {Condition} is not one of the accepted values and this condition will be ignored", condition.SearchIn);
-                }
+                
             }
             return null;
         }

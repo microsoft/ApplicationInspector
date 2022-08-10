@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using System.Linq;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -40,6 +41,8 @@ namespace Microsoft.ApplicationInspector.Commands
         [JsonProperty(PropertyName ="ruleStatusList")]
         public List<RuleStatus> RuleStatusList { get; set; }
 
+        [JsonIgnore] public IEnumerable<RuleStatus> Unverified => RuleStatusList.Where(x => !x.Verified);
+        
         public VerifyRulesResult()
         {
             RuleStatusList = new List<RuleStatus>();

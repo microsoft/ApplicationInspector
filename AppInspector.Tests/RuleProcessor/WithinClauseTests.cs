@@ -121,50 +121,6 @@ namespace AppInspector.Tests.RuleProcessor
             }
             Assert.AreEqual(expectedNumIssues, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
         }
-        
-        [TestMethod]
-        public void ValidateRuleHasData()
-        {
-            RuleSet rules = new(_loggerFactory);
-            rules.AddString(validationRule, "TestRules");
-            IEnumerable<WithinClause> withinClauses = rules
-                .GetOatRules()
-                .SelectMany(x => x.Clauses)
-                .OfType<WithinClause>();
-            foreach (WithinClause clause in withinClauses)
-            {
-                clause.Data = new List<string>();
-            }
-            RulesVerifier verifier = new(new RulesVerifierOptions() {LoggerFactory = _loggerFactory});
-            var oatIssues = verifier.CheckIntegrity(rules).SelectMany(x => x.OatIssues);
-            foreach (var violation in oatIssues)
-            {
-                _logger.LogDebug(violation.Description);
-            }
-            Assert.AreEqual(1, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
-        }
-        
-        [TestMethod]
-        public void ValidateRegexAreValid()
-        {
-            RuleSet rules = new(_loggerFactory);
-            rules.AddString(validationRule, "TestRules");
-            IEnumerable<WithinClause> withinClauses = rules
-                .GetOatRules()
-                .SelectMany(x => x.Clauses)
-                .OfType<WithinClause>();
-            foreach (WithinClause clause in withinClauses)
-            {
-                clause.Data = new List<string>(){"^($"};
-            }
-            RulesVerifier verifier = new(new RulesVerifierOptions() {LoggerFactory = _loggerFactory});
-            var oatIssues = verifier.CheckIntegrity(rules).SelectMany(x => x.OatIssues);
-            foreach (var violation in oatIssues)
-            {
-                _logger.LogDebug(violation.Description);
-            }
-            Assert.AreEqual(1, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
-        }
 
         [DataRow(true, 1, new[] { 2 })]
         [DataRow(false, 1, new[] { 3 })]

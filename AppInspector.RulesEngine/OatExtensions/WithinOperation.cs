@@ -166,18 +166,31 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                             rule, clause);
                     }
                 }
-                if (!wc.Data?.Any() ?? true)
+                if (wc.Data?.Any() ?? false)
                 {
-                    yield return new Violation($"Must provide some regexes as data.", rule, clause);
-                    yield break;
+                    yield return new Violation($"Don't provide data directly. Instead use SubClause..", rule, clause);
                 }
+                
                 foreach (var datum in wc.Data ?? new List<string>())
                 {
-                    if (_regexEngine.StringToRegex(datum, RegexOptions.None) is null)
+                    yield return new Violation($"Data in WithinClause is ignored. Use SubClause. Data {datum} found in Rule {rule.Name} Clause {clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)} is not a valid regex.", rule, clause);
+                }
+
+                var subOp = _analyzer
+                    .GetOperation(wc.SubClause.Key.Operation, wc.SubClause.Key.CustomOperation);
+
+                if (subOp is null)
+                {
+                    yield return new Violation($"SubClause in Rule {rule.Name} Clause {clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)} is of type '{wc.SubClause.Key.Operation},{wc.SubClause.Key.CustomOperation}' is not present in the analyzer.", rule, clause);
+                }
+                else
+                {
+                    foreach (var violation in subOp.ValidationDelegate.Invoke(rule, wc.SubClause))
                     {
-                        yield return new Violation($"Regex {datum} in Rule {rule.Name} Clause {clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)} is not a valid regex.", rule, clause);
+                        yield return violation;
                     }
                 }
+                
             }
             else
             {

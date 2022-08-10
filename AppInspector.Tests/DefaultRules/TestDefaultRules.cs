@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Logging;
@@ -26,7 +27,19 @@ namespace AppInspector.Tests.DefaultRules
             var loggerFactory = new LogOptions() {ConsoleVerbosityLevel = LogEventLevel.Verbose}.GetLoggerFactory();
             VerifyRulesCommand command = new(options, loggerFactory);
             VerifyRulesResult result = command.GetResult();
+            foreach (var unverified in result.Unverified)
+            {
+                Console.WriteLine("Failed to validate {0}",unverified.RulesId);
+                foreach (var error in unverified.Errors)
+                {
+                    Console.WriteLine(error);
+                }
 
+                foreach (var oatError in unverified.OatIssues)
+                {
+                    Console.WriteLine(oatError.Description);
+                }
+            }
             Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
             Assert.AreNotEqual(0, result.RuleStatusList.Count);
         }
