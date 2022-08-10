@@ -30,7 +30,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public Confidence ConfidenceFilter { get; set; } = Confidence.Unspecified | Confidence.Low | Confidence.Medium | Confidence.High;
         public Severity SeverityFilter { get; set; } = Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice;
         public ILoggerFactory? LoggerFactory { get; set; }
-        public bool AllowAllTagsInBuildFiles { get; set; } = false;
+        public bool AllowAllTagsInBuildFiles { get; set; }
         public bool EnableCache { get; set; } = true;
         public Languages Languages { get; set; } = new();
     }
@@ -44,7 +44,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         private readonly RuleProcessorOptions _opts;
         private readonly ILogger<RuleProcessor> _logger;
-        private readonly Analyzer analyzer;
+        private readonly Analyzer _analyzer;
         private readonly AbstractRuleSet _ruleset;
         private readonly Languages _languages;
         private readonly ConcurrentDictionary<string, IEnumerable<ConvertedOatRule>> _fileRulesCache = new();
@@ -68,11 +68,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         {
             _opts = opts;
             _logger = opts.LoggerFactory?.CreateLogger<RuleProcessor>() ?? NullLogger<RuleProcessor>.Instance;
-            _languages = opts.Languages ?? new();
+            _languages = opts.Languages;
             _ruleset = rules;
             EnableCache = true;
 
-            analyzer = new ApplicationInspectorAnalyzer(_opts.LoggerFactory);
+            _analyzer = new ApplicationInspectorAnalyzer(_opts.LoggerFactory);
         }
 
         private static string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
@@ -87,11 +87,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             if (-1 != startIndex && -1 != endIndex)
             {
                 rawResult = text.FullContent[startIndex..endIndex].Trim();
-                Regex regex = new(pattern ?? string.Empty);
+                Regex regex = new(pattern);
                 MatchCollection matches = regex.Matches(rawResult);
 
                 //remove surrounding import or trailing comments
-                if (matches?.Any() == true)
+                if (matches.Any())
                 {
                     foreach (Match? match in matches)
                     {
@@ -104,7 +104,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             }
                             else if (parseValues.Length > 1)
                             {
-                                rawResult = parseValues[1].Trim(); //should be value; time will tell if fullproof
+                                rawResult = parseValues[1].Trim();
                             }
                         }
                         else if (match?.Groups.Count > 1)//handles cases like include <stdio.h>
@@ -140,7 +140,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
             List<MatchRecord> resultsList = new();
 
-            var caps = analyzer.GetCaptures(rules, textContainer);
+            var caps = _analyzer.GetCaptures(rules, textContainer);
             foreach (var ruleCapture in caps)
             {
                 // If we had a WithinClause we only want the captures that passed the within filter.
@@ -159,7 +159,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         if (ruleCapture.Rule is ConvertedOatRule oatRule)
                         {
-                            if (tcc?.Result is List<(int, Boundary)> captureResults)
+                            if (tcc.Result is { } captureResults)
                             {
                                 foreach (var match in captureResults)
                                 {
@@ -170,26 +170,25 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                     {
                                         continue;
                                     }
-
                                     if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
                                     {
                                         continue;
                                     }
 
-                                    Location StartLocation = textContainer.GetLocation(boundary.Index);
-                                    Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
+                                    Location startLocation = textContainer.GetLocation(boundary.Index);
+                                    Location endLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
                                     MatchRecord newMatch = new(oatRule.AppInspectorRule)
                                     {
                                         FileName = fileEntry.FullPath,
                                         FullTextContainer = textContainer,
                                         LanguageInfo = languageInfo,
                                         Boundary = boundary,
-                                        StartLocationLine = StartLocation.Line,
-                                        StartLocationColumn = StartLocation.Column,
-                                        EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
-                                        EndLocationColumn = EndLocation.Column,
+                                        StartLocationLine = startLocation.Line,
+                                        StartLocationColumn = startLocation.Column,
+                                        EndLocationLine = endLocation.Line != 0 ? endLocation.Line : startLocation.Line + 1, //match is on last line
+                                        EndLocationColumn = endLocation.Column,
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = numLinesContext > 0 ? ExtractExcerpt(textContainer, StartLocation.Line, numLinesContext) : string.Empty,
+                                        Excerpt = numLinesContext > 0 ? ExtractExcerpt(textContainer, startLocation.Line, numLinesContext) : string.Empty,
                                         Sample = numLinesContext > -1 ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length) : string.Empty
                                     };
 
@@ -217,8 +216,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     foreach (MatchRecord om in resultsList.FindAll(x => x.Rule?.Id == idsToOverride))
                     {
                         // If the overridden match is a subset of the overriding match
-                        if (om.Boundary?.Index >= m.Boundary?.Index &&
-                            om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
+                        if (om.Boundary.Index >= m.Boundary.Index &&
+                            om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
                         {
                             removes.Add(om);
                         }
@@ -243,7 +242,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <returns>A List of the matches against the Rules the processor is configured with.</returns>
         public List<MatchRecord> AnalyzeFile(string contents, FileEntry fileEntry, LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
         {
-            TextContainer textContainer = new(contents, languageInfo.Name, _languages, _opts.LoggerFactory?.CreateLogger<TextContainer>() ?? NullLogger<TextContainer>.Instance);
+            TextContainer textContainer = new(contents, languageInfo.Name, _languages, _opts.LoggerFactory ?? NullLoggerFactory.Instance);
             return AnalyzeFile(textContainer, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
         }
 
@@ -294,8 +293,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             using var sr = new StreamReader(fileEntry.Content);
 
-            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name, _languages, _opts.LoggerFactory?.CreateLogger<TextContainer>() ?? NullLogger<TextContainer>.Instance);
-            foreach (var ruleCapture in analyzer.GetCaptures(rules, textContainer))
+            TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name, _languages, _opts.LoggerFactory ?? NullLoggerFactory.Instance);
+            foreach (var ruleCapture in _analyzer.GetCaptures(rules, textContainer))
             {
                 // If we had a WithinClause we only want the captures that passed the within filter.
                 var filteredCaptures = ruleCapture.Captures.Any(x => x.Clause is WithinClause)
@@ -317,7 +316,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     {
                         if (ruleCapture.Rule is ConvertedOatRule oatRule)
                         {
-                            if (tcc?.Result is List<(int, Boundary)> captureResults)
+                            if (tcc.Result is { } captureResults)
                             {
                                 foreach (var match in captureResults)
                                 {
@@ -341,18 +340,18 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                                         continue;
                                     }
 
-                                    Location StartLocation = textContainer.GetLocation(boundary.Index);
-                                    Location EndLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
+                                    Location startLocation = textContainer.GetLocation(boundary.Index);
+                                    Location endLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
                                     MatchRecord newMatch = new(oatRule.AppInspectorRule)
                                     {
                                         FileName = fileEntry.FullPath,
                                         FullTextContainer = textContainer,
                                         LanguageInfo = languageInfo,
                                         Boundary = boundary,
-                                        StartLocationLine = StartLocation.Line,
-                                        EndLocationLine = EndLocation.Line != 0 ? EndLocation.Line : StartLocation.Line + 1, //match is on last line
+                                        StartLocationLine = startLocation.Line,
+                                        EndLocationLine = endLocation.Line != 0 ? endLocation.Line : startLocation.Line + 1, //match is on last line
                                         MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = numLinesContext > 0 ? ExtractExcerpt(textContainer, StartLocation.Line, numLinesContext) : string.Empty,
+                                        Excerpt = numLinesContext > 0 ? ExtractExcerpt(textContainer, startLocation.Line, numLinesContext) : string.Empty,
                                         Sample = numLinesContext > -1 ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length) : string.Empty
                                     };
 
@@ -372,7 +371,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
             List<MatchRecord> removes = new();
 
-            foreach (MatchRecord m in resultsList.Where(x => x.Rule.Overrides?.Length > 0))
+            foreach (MatchRecord m in resultsList.Where(x => x.Rule?.Overrides?.Length > 0))
             {
                 if (cancellationToken?.IsCancellationRequested is true)
                 {
@@ -381,10 +380,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 foreach (string ovrd in m.Rule?.Overrides ?? Array.Empty<string>())
                 {
                     // Find all overriden rules and mark them for removal from issues list
-                    foreach (MatchRecord om in resultsList.FindAll(x => x.Rule.Id == ovrd))
+                    foreach (MatchRecord om in resultsList.FindAll(x => x.Rule?.Id == ovrd))
                     {
-                        if (om.Boundary?.Index >= m.Boundary?.Index &&
-                            om.Boundary?.Index <= m.Boundary?.Index + m.Boundary?.Length)
+                        if (om.Boundary.Index >= m.Boundary.Index &&
+                            om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
                         {
                             removes.Add(om);
                         }
@@ -400,9 +399,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         
         /// <summary>
-        ///     Filters the rules for those matching the content type. Resolves all the overrides
+        ///     Filters the rules for those matching the specified language.
         /// </summary>
-        /// <param name="languages"> Languages to filter rules for </param>
+        /// <param name="language"> Language to filter rules for </param>
         /// <returns> List of rules </returns>
         private IEnumerable<ConvertedOatRule> GetRulesByLanguage(string language)
         {
@@ -412,7 +411,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     return _languageRulesCache[language];
             }
 
-            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(language);
+            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(language).ToArray();
 
             if (EnableCache)
             {
@@ -423,9 +422,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        ///     Filters the rules for those matching the content type. Resolves all the overrides
+        /// Get all rules that apply to all files.
         /// </summary>
-        /// <param name="languages"> Languages to filter rules for </param>
         /// <returns> List of rules </returns>
         private IEnumerable<ConvertedOatRule> GetUniversalRules()
         {
@@ -445,23 +443,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         }
 
         /// <summary>
-        ///     Filters the rules for those matching the content type. Resolves all the overrides
+        ///     Filters the rules for those matching the filename.
         /// </summary>
-        /// <param name="languages"> Languages to filter rules for </param>
+        /// <param name="fileName"> Filename to filter for</param>
         /// <returns> List of rules </returns>
-        private IEnumerable<ConvertedOatRule> GetRulesByFileName(string input)
+        private IEnumerable<ConvertedOatRule> GetRulesByFileName(string fileName)
         {
             if (EnableCache)
             {
-                if (_fileRulesCache.ContainsKey(input))
-                    return _fileRulesCache[input];
+                if (_fileRulesCache.ContainsKey(fileName))
+                    return _fileRulesCache[fileName];
             }
 
-            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByFilename(input);
+            IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByFilename(fileName).ToArray();
 
             if (EnableCache)
             {
-                _fileRulesCache.TryAdd(input, filteredRules);
+                _fileRulesCache.TryAdd(fileName, filteredRules);
             }
 
             return filteredRules;

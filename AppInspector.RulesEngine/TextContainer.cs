@@ -13,7 +13,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Xml;
     using System.Xml.XPath;
     /// <summary>
     ///     Class to handle text as a searchable container
@@ -26,9 +25,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         /// <param name="content"> Text to work with </param>
         /// <param name="language"> The language of the test </param>
         /// <param name="languages">An instance of the <see cref="Languages"/> class containing the information for language mapping to use.</param>
-        public TextContainer(string content, string language, Languages languages, ILogger? logger = null)
+        public TextContainer(string content, string language, Languages languages, ILoggerFactory? loggerFactory = null)
         {
-            _logger = logger ?? NullLogger<TextContainer>.Instance;
+            _logger = loggerFactory?.CreateLogger<TextContainer>() ?? NullLogger<TextContainer>.Instance;
             Language = language;
             FullContent = content;
             LineEnds = new List<int>() { 0 };
@@ -86,23 +85,31 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 IList<JsonElement> values = selector.Select(_jsonDocument.RootElement);
 
                 var field = typeof(JsonElement).GetField("_idx", BindingFlags.NonPublic | BindingFlags.Instance);
-                
-                foreach (JsonElement ele in values)
+                if (field is null)
                 {
-                    // Private access hack
-                    // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
-                    var idx = (int)field!.GetValue(ele);
-                    var eleString = ele.ToString();
-                    if (eleString is { } denulledString)
+                    _logger.LogWarning("Failed to access _idx field of JsonElement.");
+                }
+                else
+                {
+                    foreach (JsonElement ele in values)
                     {
-                        var location = new Boundary()
+                        // Private access hack
+                        // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
+                        if (field.GetValue(ele) is int idx)
                         {
-                            // Adjust the index to the start of the actual element
-                            Index = FullContent[idx..].IndexOf(denulledString, StringComparison.Ordinal) + idx,
-                            Length = eleString.Length
-                        };
-                        yield return (eleString, location);
-                    }
+                            var eleString = ele.ToString();
+                            if (eleString is { } denulledString)
+                            {
+                                var location = new Boundary()
+                                {
+                                    // Adjust the index to the start of the actual element
+                                    Index = FullContent[idx..].IndexOf(denulledString, StringComparison.Ordinal) + idx,
+                                    Length = eleString.Length
+                                };
+                                yield return (eleString, location);
+                            }
+                        }
+                    }   
                 }
             }
         }
