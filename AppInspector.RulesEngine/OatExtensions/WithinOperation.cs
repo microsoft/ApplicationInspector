@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.CST.OAT;
 using Microsoft.CST.OAT.Operations;
 using Microsoft.Extensions.Logging;
@@ -15,8 +13,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
     {
         public WithinOperation(Analyzer analyzer, ILoggerFactory? loggerFactory = null) : base(Operation.Custom, analyzer)
         {
-            _loggerFactory = loggerFactory ?? new NullLoggerFactory();
-            _regexEngine = new RegexOperation(analyzer);
+            _loggerFactory = loggerFactory ?? NullLoggerFactory.Instance;
             _analyzer = analyzer;
             CustomOperation = "Within";
             OperationDelegate = WithinOperationDelegate;
@@ -32,7 +29,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                 List<(int, Boundary)> failed =
                     new List<(int, Boundary)>();
 
-                foreach (var capture in captures)
+                foreach (var capture in captures ?? Array.Empty<ClauseCapture>())
                 {
                     if (capture is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
@@ -80,7 +77,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                         Index = startInner,
                                         Length = (endInner - startInner) + 1
                                     };
-                                    var theText = tc.GetBoundaryText(bound);
                                     return bound;
                                 }
 
@@ -131,7 +127,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                     return _analyzer.GetClauseCapture(wc.SubClause, tc, target, captures);
                 }
             }
-            return new OperationResult(false, null);
+            return new OperationResult(false);
         }
         
         public IEnumerable<Violation> WithinValidationDelegate(CST.OAT.Rule rule, Clause clause)
@@ -166,16 +162,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                             rule, clause);
                     }
                 }
-                if (wc.Data?.Any() ?? false)
+                if (wc.Data.Any())
                 {
-                    yield return new Violation($"Don't provide data directly. Instead use SubClause..", rule, clause);
+                    yield return new Violation($"Don't provide data directly. Instead use SubClause.", rule, clause);
                 }
                 
-                foreach (var datum in wc.Data ?? new List<string>())
-                {
-                    yield return new Violation($"Data in WithinClause is ignored. Use SubClause. Data {datum} found in Rule {rule.Name} Clause {clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)} is not a valid regex.", rule, clause);
-                }
-
                 var subOp = _analyzer
                     .GetOperation(wc.SubClause.Key.Operation, wc.SubClause.Key.CustomOperation);
 
@@ -189,16 +180,38 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                     {
                         yield return violation;
                     }
+
+                    if (wc.SubClause is OatRegexWithIndexClause oatRegexWithIndexClause)
+                    {
+                        if ((oatRegexWithIndexClause.JsonPaths?.Any() ?? false) ||
+                            (oatRegexWithIndexClause.XPaths?.Any() ?? false))
+                        {
+                            if (wc.FindingOnly || wc.SameLineOnly || wc.FindingRegion || wc.OnlyAfter || wc.OnlyBefore)
+                            {
+                                yield return new Violation($"When providing JSONPaths or XPaths must use same-file region.", rule, clause);
+                            }
+                        }
+                    }
+                    if (wc.SubClause is OatSubstringIndexClause oatSubstringIndexClause)
+                    {
+                        if ((oatSubstringIndexClause.JsonPaths?.Any() ?? false) ||
+                            (oatSubstringIndexClause.XPaths?.Any() ?? false))
+                        {
+                            if (wc.FindingOnly || wc.SameLineOnly || wc.FindingRegion || wc.OnlyAfter || wc.OnlyBefore)
+                            {
+                                yield return new Violation($"When providing JSONPaths or XPaths must use same-file region.", rule, clause);
+                            }
+                        }
+                    }
                 }
                 
             }
             else
             {
-                yield return new Violation($"Rule {rule.Name ?? "Null Rule Name"} clause {clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)} is not a WithinClause", rule, clause);
+                yield return new Violation($"Rule {rule.Name} clause {clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)} is not a WithinClause", rule, clause);
             }
         }
 
-        private readonly RegexOperation _regexEngine;
         private readonly ILoggerFactory _loggerFactory;
         private readonly Analyzer _analyzer;
     }

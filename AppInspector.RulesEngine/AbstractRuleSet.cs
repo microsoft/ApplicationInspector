@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -73,13 +72,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var expression = new StringBuilder("(");
             foreach (var pattern in rule.Patterns)
             {
-                clauses.Add(GenerateClause(pattern, clauseNumber));
-                if (clauseNumber > 0)
+                if (GenerateClause(pattern, clauseNumber) is { } clause)
                 {
-                    expression.Append(" OR ");
+                    clauses.Add(clause);
+                    if (clauseNumber > 0)
+                    {
+                        expression.Append(" OR ");
+                    }
+                    expression.Append(clauseNumber);
+                    clauseNumber++;
                 }
-                expression.Append(clauseNumber);
-                clauseNumber++;
+                else
+                {
+                    _logger.LogWarning("Clause could not be generated from pattern {pattern}", pattern.Pattern);
+                }
             }
 
             if (clauses.Count > 0)
@@ -122,12 +128,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
                     {
-                        return new WithinClause()
+                        return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             FindingOnly = true,
-                            CustomOperation = "Within",
-                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
@@ -151,56 +155,49 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
                         if (argList.Count == 2)
                         {
-                            return new WithinClause()
+                            return new WithinClause(subClause)
                             {
                                 Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                                 FindingRegion = true,
-                                CustomOperation = "Within",
                                 Before = argList[0],
                                 After = argList[1],
-                                SubClause = subClause,
                                 Invert = condition.NegateFinding
                             };
                         }
                     }
                     else if (condition.SearchIn.Equals("same-line", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return new WithinClause()
+                        return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             SameLineOnly = true,
-                            CustomOperation = "Within",
-                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
                     else if (condition.SearchIn.Equals("same-file", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return new WithinClause()
+                        return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             SameFile = true,
-                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
                     else if (condition.SearchIn.Equals("only-before", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return new WithinClause()
+                        return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             OnlyBefore = true,
-                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
                     else if (condition.SearchIn.Equals("only-after", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return new WithinClause()
+                        return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             OnlyAfter = true,
-                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
@@ -238,8 +235,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             .InvariantCulture), //important to pattern index identification
                         Data = new List<string>() { pattern.Pattern },
                         Capture = true,
-                        Arguments = modifiers,
-                        CustomOperation = "RegexWithIndex"
+                        Arguments = modifiers
                     };
                 }
                 else if (pattern.PatternType == PatternType.RegexWord)
@@ -250,7 +246,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         Data = new List<string>() { $"\\b({pattern.Pattern})\\b" },
                         Capture = true,
                         Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
-                        CustomOperation = "RegexWithIndex"
                     };
                 }
             }

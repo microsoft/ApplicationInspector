@@ -8,7 +8,6 @@ namespace Microsoft.ApplicationInspector.CLI
     using CommandLine;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.RulesEngine;
-    using System;
     using System.Collections.Generic;
 
     /// <summary>
