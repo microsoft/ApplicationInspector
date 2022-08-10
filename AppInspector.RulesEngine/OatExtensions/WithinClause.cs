@@ -6,8 +6,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
 {
     public class WithinClause : Clause
     {
-        public WithinClause(string? field = null) : base(Operation.Custom, field)
+        public WithinClause(Clause subClause, string? field = null) : base(Operation.Custom, field)
         {
+            SubClause = subClause;
             CustomOperation = "Within";
         }
 
@@ -19,6 +20,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
         public bool FindingOnly { get; set; }
         public bool SameLineOnly { get; set; }
         public bool FindingRegion { get; set; }
-        public Clause SubClause { get; set; }
+        public Clause SubClause { get; }
     }
 }

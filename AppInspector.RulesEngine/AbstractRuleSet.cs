@@ -129,12 +129,10 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
                     {
-                        return new WithinClause()
+                        return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             FindingOnly = true,
-                            CustomOperation = "Within",
-                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
@@ -158,56 +156,49 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         }
                         if (argList.Count == 2)
                         {
-                            return new WithinClause()
+                            return new WithinClause(subClause)
                             {
                                 Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                                 FindingRegion = true,
-                                CustomOperation = "Within",
                                 Before = argList[0],
                                 After = argList[1],
-                                SubClause = subClause,
                                 Invert = condition.NegateFinding
                             };
                         }
                     }
                     else if (condition.SearchIn.Equals("same-line", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return new WithinClause()
+                        return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             SameLineOnly = true,
-                            CustomOperation = "Within",
-                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
                     else if (condition.SearchIn.Equals("same-file", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return new WithinClause()
+                        return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             SameFile = true,
-                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
                     else if (condition.SearchIn.Equals("only-before", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return new WithinClause()
+                        return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             OnlyBefore = true,
-                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
                     else if (condition.SearchIn.Equals("only-after", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return new WithinClause()
+                        return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                             OnlyAfter = true,
-                            SubClause = subClause,
                             Invert = condition.NegateFinding
                         };
                     }
