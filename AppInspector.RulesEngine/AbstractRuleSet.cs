@@ -73,13 +73,20 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var expression = new StringBuilder("(");
             foreach (var pattern in rule.Patterns)
             {
-                clauses.Add(GenerateClause(pattern, clauseNumber));
-                if (clauseNumber > 0)
+                if (GenerateClause(pattern, clauseNumber) is { } clause)
                 {
-                    expression.Append(" OR ");
+                    clauses.Add(clause);
+                    if (clauseNumber > 0)
+                    {
+                        expression.Append(" OR ");
+                    }
+                    expression.Append(clauseNumber);
+                    clauseNumber++;
                 }
-                expression.Append(clauseNumber);
-                clauseNumber++;
+                else
+                {
+                    _logger.LogWarning("Clause could not be generated from pattern {pattern}", pattern.Pattern);
+                }
             }
 
             if (clauses.Count > 0)
@@ -238,8 +245,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                             .InvariantCulture), //important to pattern index identification
                         Data = new List<string>() { pattern.Pattern },
                         Capture = true,
-                        Arguments = modifiers,
-                        CustomOperation = "RegexWithIndex"
+                        Arguments = modifiers
                     };
                 }
                 else if (pattern.PatternType == PatternType.RegexWord)
@@ -250,7 +256,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                         Data = new List<string>() { $"\\b({pattern.Pattern})\\b" },
                         Capture = true,
                         Arguments = pattern.Modifiers?.ToList() ?? new List<string>(),
-                        CustomOperation = "RegexWithIndex"
                     };
                 }
             }
