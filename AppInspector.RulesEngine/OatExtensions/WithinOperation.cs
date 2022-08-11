@@ -58,7 +58,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                 if (wc.SameLineOnly)
                                 {
                                     var startInner = tc.LineStarts[tc.GetLocation(boundary.Index).Line];
-                                    var endInner = tc.LineEnds[tc.GetLocation(startInner + boundary.Length).Line];
+                                    var endInner = tc.LineEnds[tc.GetLocation(startInner + (boundary.Length - 1)).Line];
                                     return new Boundary()
                                     {
                                         Index = startInner,
@@ -72,12 +72,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions
                                     // Before is already a negative number
                                     var startInner = tc.LineStarts[Math.Max(1, startLine + wc.Before)];
                                     var endInner = tc.LineEnds[Math.Min(tc.LineEnds.Count - 1, startLine + wc.After)];
-                                    var bound = new Boundary()
+                                    return new Boundary()
                                     {
                                         Index = startInner,
                                         Length = (endInner - startInner) + 1
                                     };
-                                    return bound;
                                 }
 
                                 if (wc.SameFile)
