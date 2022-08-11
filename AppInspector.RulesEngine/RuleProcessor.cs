@@ -143,8 +143,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             var caps = _analyzer.GetCaptures(rules, textContainer);
             foreach (var ruleCapture in caps)
             {
-                // If we had a WithinClause we only want the captures that passed the within filter.
-
                 List<(int, Boundary)> netCaptures = FilterCaptures(ruleCapture.Captures);
                 var oatRule = ruleCapture.Rule as ConvertedOatRule;
                 foreach (var match in netCaptures)
@@ -186,13 +184,18 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     resultsList.Add(newMatch);
                 }
                 
+                // If a WithinClause capture is present, use only within captures, otherwise just flattens the list of results from the non-within clause.
                 List<(int, Boundary)> FilterCaptures(List<ClauseCapture> captures)
                 {
+                    // If we had a WithinClause we only want the captures that passed the within filter.
                     if (captures.Any(x => x.Clause is WithinClause))
                     {
                         var onlyWithinCaptures = captures.Where(x => x.Clause is WithinClause).Cast<TypedClauseCapture<List<(int, Boundary)>>>().ToList();
                         var allCaptured = onlyWithinCaptures.SelectMany(x => x.Result);
                         ConcurrentDictionary<(int, Boundary), int> numberOfInstances = new();
+                        // If there are multiple within clauses ensure that we only return matches which passed all clauses
+                        // WithinClauses are always ANDed, but each contains all the captures that passed *that* clause.
+                        // We need the captures that passed every clause.
                         foreach (var aCapture in allCaptured)
                         {
                             numberOfInstances.AddOrUpdate(aCapture, 1, (tuple, i) => i + 1);
