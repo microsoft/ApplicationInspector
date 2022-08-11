@@ -180,28 +180,6 @@ namespace AppInspector.Tests.Commands
     ]
 }
 ]";
-        readonly string _mustMatchRule2 = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-        ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""http://"",
-        ""type"": ""String"",
-      }
-    ],
-    ""must-match"" : [ ""http://contoso.com""]
-}
-]";
         
         // MustMatch if specified must be matched
         readonly string _mustMatchRule = @"[
@@ -472,22 +450,6 @@ namespace AppInspector.Tests.Commands
             VerifyRulesResult result = command.GetResult();
             File.Delete(path);
             Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
-        }
-        
-        [TestMethod]
-        public void MustMatchDetectIncorrect()
-        {
-            string path = Path.GetTempFileName();
-            File.WriteAllText(path, _mustMatchRuleFail);
-            VerifyRulesOptions options = new()
-            {
-                CustomRulesPath = path,
-            };
-
-            VerifyRulesCommand command = new(options, _factory);
-            VerifyRulesResult result = command.GetResult();
-            File.Delete(path);
-            Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
         }
         
         [TestMethod]
