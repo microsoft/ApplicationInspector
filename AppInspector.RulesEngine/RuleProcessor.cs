@@ -144,65 +144,74 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             foreach (var ruleCapture in caps)
             {
                 // If we had a WithinClause we only want the captures that passed the within filter.
-                var filteredCaptures = ruleCapture.Captures.Any(x => x.Clause is WithinClause)
-                    ? ruleCapture.Captures.Where(x => x.Clause is WithinClause) : ruleCapture.Captures;
-                foreach (var cap in filteredCaptures)
-                {
-                    resultsList.AddRange(ProcessBoundary(cap));
-                }
 
-                List<MatchRecord> ProcessBoundary(ClauseCapture cap)
+                List<(int, Boundary)> netCaptures = FilterCaptures(ruleCapture.Captures);
+                var oatRule = ruleCapture.Rule as ConvertedOatRule;
+                foreach (var match in netCaptures)
                 {
-                    List<MatchRecord> newMatches = new();//matches for this rule clause only
-
-                    if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
+                    var patternIndex = match.Item1;
+                    var boundary = match.Item2;
+                    //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
+                    if (!_opts.AllowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
                     {
-                        if (ruleCapture.Rule is ConvertedOatRule oatRule)
+                        continue;
+                    }
+                    if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+                    {
+                        continue;
+                    }
+
+                    Location startLocation = textContainer.GetLocation(boundary.Index);
+                    Location endLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
+                    MatchRecord newMatch = new(oatRule.AppInspectorRule)
+                    {
+                        FileName = fileEntry.FullPath,
+                        FullTextContainer = textContainer,
+                        LanguageInfo = languageInfo,
+                        Boundary = boundary,
+                        StartLocationLine = startLocation.Line,
+                        StartLocationColumn = startLocation.Column,
+                        EndLocationLine = endLocation.Line != 0 ? endLocation.Line : startLocation.Line + 1, //match is on last line
+                        EndLocationColumn = endLocation.Column,
+                        MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
+                        Excerpt = numLinesContext > 0 ? ExtractExcerpt(textContainer, startLocation.Line, numLinesContext) : string.Empty,
+                        Sample = numLinesContext > -1 ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length) : string.Empty
+                    };
+
+                    if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
+                    {
+                        newMatch.Sample = ExtractDependency(newMatch.FullTextContainer, newMatch.Boundary.Index, newMatch.Pattern, newMatch.LanguageInfo.Name);
+                    }
+
+                    resultsList.Add(newMatch);
+                }
+                
+                List<(int, Boundary)> FilterCaptures(List<ClauseCapture> captures)
+                {
+                    if (captures.Any(x => x.Clause is WithinClause))
+                    {
+                        var onlyWithinCaptures = captures.Where(x => x.Clause is WithinClause).Cast<TypedClauseCapture<List<(int, Boundary)>>>().ToList();
+                        var allCaptured = onlyWithinCaptures.SelectMany(x => x.Result);
+                        ConcurrentDictionary<(int, Boundary), int> numberOfInstances = new();
+                        foreach (var aCapture in allCaptured)
                         {
-                            if (tcc.Result is { } captureResults)
+                            numberOfInstances.AddOrUpdate(aCapture, 1, (tuple, i) => i + 1);
+                        }
+                        return numberOfInstances.Where(x => x.Value == onlyWithinCaptures.Count).Select(x => x.Key).ToList();
+                    }
+                    else
+                    {
+                        var outList = new List<(int, Boundary)>();
+                        foreach (var cap in captures)
+                        {
+                            if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
                             {
-                                foreach (var match in captureResults)
-                                {
-                                    var patternIndex = match.Item1;
-                                    var boundary = match.Item2;
-                                    //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                                    if (!_opts.AllowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build && (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
-                                    {
-                                        continue;
-                                    }
-                                    if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
-                                    {
-                                        continue;
-                                    }
-
-                                    Location startLocation = textContainer.GetLocation(boundary.Index);
-                                    Location endLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
-                                    MatchRecord newMatch = new(oatRule.AppInspectorRule)
-                                    {
-                                        FileName = fileEntry.FullPath,
-                                        FullTextContainer = textContainer,
-                                        LanguageInfo = languageInfo,
-                                        Boundary = boundary,
-                                        StartLocationLine = startLocation.Line,
-                                        StartLocationColumn = startLocation.Column,
-                                        EndLocationLine = endLocation.Line != 0 ? endLocation.Line : startLocation.Line + 1, //match is on last line
-                                        EndLocationColumn = endLocation.Column,
-                                        MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                        Excerpt = numLinesContext > 0 ? ExtractExcerpt(textContainer, startLocation.Line, numLinesContext) : string.Empty,
-                                        Sample = numLinesContext > -1 ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length) : string.Empty
-                                    };
-
-                                    if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
-                                    {
-                                        newMatch.Sample = ExtractDependency(newMatch.FullTextContainer, newMatch.Boundary.Index, newMatch.Pattern, newMatch.LanguageInfo.Name);
-                                    }
-
-                                    newMatches.Add(newMatch);
-                                }
+                                outList.AddRange(tcc.Result);
                             }
                         }
+
+                        return outList;
                     }
-                    return newMatches;
                 }
             }
 

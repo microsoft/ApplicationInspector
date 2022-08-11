@@ -121,6 +121,106 @@ namespace AppInspector.Tests.RuleProcessor
             Assert.AreEqual(expectedNumIssues, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
         }
 
+        [TestMethod]
+        public void WithinClauseWithMultipleConditions()
+        {
+            RuleSet rules = new(_loggerFactory);
+            var newRule = @"[{
+        ""name"": ""Insecure URL"",
+        ""id"": ""DS137138"",
+        ""description"": ""An HTTP-based URL without TLS was detected."",
+        ""recommendation"": ""Update to an HTTPS-based URL if possible."",
+        ""tags"": [
+            ""ThreatModel.Integration.HTTP""
+        ],
+        ""severity"": ""moderate"",
+        ""rule_info"": ""DS137138.md"",
+        ""patterns"": [
+            {
+                ""pattern"": ""http://"",
+                ""type"": ""substring"",
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""conditions"" : [
+            {
+                ""pattern"" : 
+                {
+                    ""pattern"": ""xmlns="",
+                    ""type"": ""substring"",
+                    ""scopes"": [
+                        ""code""
+                    ]
+                },
+                ""negate_finding"": true,
+                ""search_in"": ""finding-region(-1, 0)""
+            },
+            {
+                ""pattern"" :
+                {
+                    ""pattern"": ""<!DOCTYPE"",
+                    ""type"": ""string"",
+                    ""scopes"": [
+                        ""code""
+                    ]
+                },
+                ""negate_finding"": true,
+                ""search_in"": ""finding-region(-1, 0)""
+            },
+            {
+                ""pattern"" :
+                {
+                    ""pattern"": ""http://localhost"",
+                    ""type"": ""regex"",
+                    ""scopes"": [
+                        ""code""
+                    ]
+                },
+                ""negate_finding"": true,
+                ""search_in"": ""same-line""
+            },
+            {
+                ""pattern"" :
+                {
+                    ""pattern"": ""http://127.0.0.1"",
+                    ""type"": ""substring"",
+                    ""scopes"": [
+                        ""code""
+                    ]
+                },
+                ""negate_finding"": true,
+                ""search_in"": ""same-line""
+            }
+        ],
+        ""must-match"": [
+            ""http://contoso.com""
+        ],
+        ""must-not-match"": [
+            ""http://localhost"",
+            ""http://127.0.0.1"",
+            ""<html xmlns=\""http://www.w3.org/1999/xhtml\"">"",
+            ""<!DOCTYPE html PUBLIC \""-//W3C//DTD XHTML 1.0 Transitional//EN\""\n\""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"">""
+        ]
+    }]";
+            var testData = @"
+http://
+http://localhost 
+xmlns=
+http://
+http://
+";
+            rules.AddString(newRule, "TestRules");
+            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){Parallel = false});
+            if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
+            {
+                List<MatchRecord> matches = processor.AnalyzeFile(testData,
+                    new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
+                Assert.AreEqual(2, matches.Count);
+            }
+        }
+
         [DataRow(true, 1, new[] { 2 })]
         [DataRow(false, 1, new[] { 3 })]
         [DataTestMethod]
