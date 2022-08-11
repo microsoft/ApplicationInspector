@@ -421,22 +421,6 @@ namespace AppInspector.Tests.Commands
         }
         
         [TestMethod]
-        public void MustMatch2()
-        {
-            string path = Path.GetTempFileName();
-            File.WriteAllText(path, _mustMatchRule2);
-            VerifyRulesOptions options = new()
-            {
-                CustomRulesPath = path,
-            };
-
-            VerifyRulesCommand command = new(options, _factory);
-            VerifyRulesResult result = command.GetResult();
-            File.Delete(path);
-            Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
-        }
-        
-        [TestMethod]
         public void MustMatch()
         {
             string path = Path.GetTempFileName();
@@ -450,6 +434,22 @@ namespace AppInspector.Tests.Commands
             VerifyRulesResult result = command.GetResult();
             File.Delete(path);
             Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+        }
+        
+        [TestMethod]
+        public void MustMatchDetectIncorrect()
+        {
+            string path = Path.GetTempFileName();
+            File.WriteAllText(path, _mustMatchRuleFail);
+            VerifyRulesOptions options = new()
+            {
+                CustomRulesPath = path,
+            };
+
+            VerifyRulesCommand command = new(options, _factory);
+            VerifyRulesResult result = command.GetResult();
+            File.Delete(path);
+            Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
         }
         
         [TestMethod]
