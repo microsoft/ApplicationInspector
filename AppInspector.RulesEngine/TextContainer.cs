@@ -148,8 +148,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 {
                     if (nodeIter.Current is not null)
                     {
-                        var outerLoc = FullContent[minIndex..].IndexOf(nodeIter.Current.OuterXml);
-                        var offset = FullContent[outerLoc..].IndexOf(nodeIter.Current.InnerXml) + outerLoc + minIndex;
+                        // First we find the name
+                        var nameIndex = FullContent[minIndex..].IndexOf(nodeIter.Current.Name);
+                        // Then we grab the index of the end of this tag.
+                        // We can't use OuterXML because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
+                        var endTagIndex = FullContent[nameIndex..].IndexOf('>');
+                        var totalOffset = nameIndex + endTagIndex + minIndex;
+                        var offset = FullContent[totalOffset..].IndexOf(nodeIter.Current.InnerXml) + totalOffset;
                         // Move the minimum index up in case there are multiple instances of identical OuterXML
                         // This ensures we won't re-find the same one
                         minIndex = offset;
