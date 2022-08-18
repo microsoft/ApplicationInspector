@@ -104,32 +104,33 @@ namespace Microsoft.ApplicationInspector.CLI
             }
             //write predefined characteristics
             TextWriter.WriteLine(string.Format(MakeHeading("Project Info")));
-            TextWriter.WriteLine(string.Format("Name: {0}", metaData.ApplicationName + " " + metaData.SourceVersion));
-            TextWriter.WriteLine(string.Format("Description: {0}", metaData.Description));
-            TextWriter.WriteLine(string.Format("Source path: {0}", metaData.SourcePath));
-            TextWriter.WriteLine(string.Format("Authors: {0}", metaData.Authors));
-            TextWriter.WriteLine(string.Format("Last Updated: {0}", metaData.LastUpdated));
-            TextWriter.WriteLine(string.Format("Languages: {0}", StringList(metaData.Languages?.Select(x => x.Key) ?? Array.Empty<string>())));
+            TextWriter.WriteLine($"Name: {metaData.ApplicationName + " " + metaData.SourceVersion}");
+            TextWriter.WriteLine($"Description: {metaData.Description}");
+            TextWriter.WriteLine($"Source path: {metaData.SourcePath}");
+            TextWriter.WriteLine($"Authors: {metaData.Authors}");
+            TextWriter.WriteLine($"Last Updated: {metaData.LastUpdated}");
+            TextWriter.WriteLine(
+                $"Languages: {(metaData.Languages is not null ? StringList(metaData.Languages) : string.Empty)}");
             TextWriter.WriteLine(string.Format(MakeHeading("Scan Settings")));
-            TextWriter.WriteLine(string.Format("Date scanned: {0}", metaData.DateScanned));
+            TextWriter.WriteLine($"Date scanned: {metaData.DateScanned}");
             TextWriter.WriteLine(string.Format(MakeHeading("Source Info")));
-            TextWriter.WriteLine(string.Format("Application type: {0}", StringList(metaData.AppTypes ?? new List<string>())));
-            TextWriter.WriteLine(string.Format("Package types: {0}", StringList(metaData.PackageTypes ?? new List<string>())));
-            TextWriter.WriteLine(string.Format("File extensions: {0}", StringList(metaData.FileExtensions ?? new List<string>())));
+            TextWriter.WriteLine($"Application type: {StringList(metaData.AppTypes ?? new List<string>())}");
+            TextWriter.WriteLine($"Package types: {StringList(metaData.PackageTypes ?? new List<string>())}");
+            TextWriter.WriteLine($"File extensions: {StringList(metaData.FileExtensions ?? new List<string>())}");
             TextWriter.WriteLine(string.Format(MakeHeading("Detetected Targets")));
-            TextWriter.WriteLine(string.Format("Output types: {0}", StringList(metaData.Outputs ?? new List<string>())));
-            TextWriter.WriteLine(string.Format("OS Targets: {0}", StringList(metaData.OSTargets ?? new List<string>())));
-            TextWriter.WriteLine(string.Format("CPU Targets: {0}", StringList(metaData.CPUTargets ?? new List<string>())));
-            TextWriter.WriteLine(string.Format("Cloud targets: {0}", StringList(metaData.CloudTargets ?? new List<string>())));
+            TextWriter.WriteLine($"Output types: {StringList(metaData.Outputs ?? new List<string>())}");
+            TextWriter.WriteLine($"OS Targets: {StringList(metaData.OSTargets ?? new List<string>())}");
+            TextWriter.WriteLine($"CPU Targets: {StringList(metaData.CPUTargets ?? new List<string>())}");
+            TextWriter.WriteLine($"Cloud targets: {StringList(metaData.CloudTargets ?? new List<string>())}");
             TextWriter.WriteLine(string.Format(MakeHeading("Stats")));
-            TextWriter.WriteLine(string.Format("Files analyzed: {0}", metaData.FilesAnalyzed));
-            TextWriter.WriteLine(string.Format("Files skipped: {0}", metaData.FilesSkipped));
-            TextWriter.WriteLine(string.Format("Total files: {0}", metaData.TotalFiles));
-            TextWriter.WriteLine(string.Format("Total matches: {0} in {1} file(s)", metaData.TotalMatchesCount, metaData.FilesAffected));
-            TextWriter.WriteLine(string.Format("Unique matches: {0}", metaData.UniqueMatchesCount));
+            TextWriter.WriteLine($"Files analyzed: {metaData.FilesAnalyzed}");
+            TextWriter.WriteLine($"Files skipped: {metaData.FilesSkipped}");
+            TextWriter.WriteLine($"Total files: {metaData.TotalFiles}");
+            TextWriter.WriteLine($"Total matches: {metaData.TotalMatchesCount} in {metaData.FilesAffected} file(s)");
+            TextWriter.WriteLine($"Unique matches: {metaData.UniqueMatchesCount}");
 
             TextWriter.WriteLine(MakeHeading("UniqueTags"));
-            foreach (string tag in metaData.UniqueTags ?? new List<string>())
+            foreach (string tag in metaData.UniqueTags)
             {
                 TextWriter.WriteLine(tag);
             }
@@ -137,7 +138,7 @@ namespace Microsoft.ApplicationInspector.CLI
             TextWriter.WriteLine(MakeHeading("Select Counters"));
             foreach (MetricTagCounter tagCounter in metaData.TagCounters ?? new List<MetricTagCounter>())
             {
-                TextWriter.WriteLine(string.Format("Tagname: {0}, Count: {1}", tagCounter.Tag, tagCounter.Count));
+                TextWriter.WriteLine($"Tagname: {tagCounter.Tag}, Count: {tagCounter.Count}");
             }
         }
 
