@@ -3,13 +3,13 @@
 
 namespace Microsoft.ApplicationInspector.CLI
 {
+    using System.Linq;
     using Microsoft.ApplicationInspector.Commands;
     using Microsoft.ApplicationInspector.RulesEngine;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
     using System;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.IO;
     using System.Text;
 
@@ -55,17 +55,17 @@ namespace Microsoft.ApplicationInspector.CLI
         }
 
         
-        private string StringList(List<string> data)
+        private string StringList(IEnumerable<string> data)
         {
             return string.Join(' ', data);
         }
 
-        private string StringList(ImmutableSortedDictionary<string, int> data)
+        private string StringList(IDictionary<string, int> data)
         {
             return string.Join(' ', data.Keys);
         }
 
-        private string StringList(ImmutableSortedDictionary<string, string> data)
+        private string StringList(IDictionary<string, string> data)
         {
             StringBuilder build = new();
 
@@ -109,7 +109,7 @@ namespace Microsoft.ApplicationInspector.CLI
             TextWriter.WriteLine(string.Format("Source path: {0}", metaData.SourcePath));
             TextWriter.WriteLine(string.Format("Authors: {0}", metaData.Authors));
             TextWriter.WriteLine(string.Format("Last Updated: {0}", metaData.LastUpdated));
-            TextWriter.WriteLine(string.Format("Languages: {0}", StringList(metaData.Languages?.ToImmutableSortedDictionary() ?? new Dictionary<string, int>().ToImmutableSortedDictionary())));
+            TextWriter.WriteLine(string.Format("Languages: {0}", StringList(metaData.Languages?.Select(x => x.Key) ?? Array.Empty<string>())));
             TextWriter.WriteLine(string.Format(MakeHeading("Scan Settings")));
             TextWriter.WriteLine(string.Format("Date scanned: {0}", metaData.DateScanned));
             TextWriter.WriteLine(string.Format(MakeHeading("Source Info")));

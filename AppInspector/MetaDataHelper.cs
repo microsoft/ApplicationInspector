@@ -187,7 +187,7 @@ namespace Microsoft.ApplicationInspector.Commands
             Metadata.Outputs.Sort();
             Metadata.Targets.Sort();
 
-            Metadata.Languages = Languages.ToImmutableSortedDictionary();
+            Metadata.Languages = Languages;
 
             foreach (MetricTagCounter metricTagCounter in TagCounters.Values)
             {
