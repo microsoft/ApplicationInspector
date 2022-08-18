@@ -54,12 +54,11 @@
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="DotLiquid" Version="2.2.656" />
     <PackageReference Include="Glob" Version="1.1.9" />
-    <PackageReference Include="Microsoft.CST.OAT" Version="1.2.24" />
+    <PackageReference Include="Microsoft.CST.OAT" Version="1.2.25" />
     <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.11" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="ShellProgressBar" Version="5.2.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
     <PackageReference Include="System.Reflection.Metadata" Version="6.0.1" />
     
   </ItemGroup>
