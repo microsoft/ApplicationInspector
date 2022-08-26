@@ -7,7 +7,6 @@ namespace Microsoft.ApplicationInspector.Commands
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
 
@@ -187,7 +186,7 @@ namespace Microsoft.ApplicationInspector.Commands
             Metadata.Outputs.Sort();
             Metadata.Targets.Sort();
 
-            Metadata.Languages = Languages.ToImmutableSortedDictionary();
+            Metadata.Languages = new SortedDictionary<string,int>(Languages);
 
             foreach (MetricTagCounter metricTagCounter in TagCounters.Values)
             {
