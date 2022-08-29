@@ -100,6 +100,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     Analyzer = analyzer,
                     DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
+                    RequireMustMatch = _options.RequireMustMatch,
+                    RequireMustNotMatch = _options.RequireMustNotMatch,
                     LoggerFactory = _loggerFactory,
                     LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
                 };

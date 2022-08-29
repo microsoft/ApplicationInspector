@@ -41,6 +41,12 @@ namespace Microsoft.ApplicationInspector.CLI
         /// </summary>
         [Option("success-error-code-with-no-matches", Required = false, HelpText = "When processing is apparently successful but there are no matches return a success error code - useful for CI.")]
         public bool SuccessErrorCodeOnNoMatches { get; set; }
+        
+        [Option("require-must-match", Required = false, HelpText = "When validating, require rules to have MustMatch self-tests.")]
+        public bool RequireMustMatch { get; set; }
+        
+        [Option("require-must-not-match", Required = false, HelpText = "When validating, require rules to have MustNotMatch self-tests.")]
+        public bool RequireMustNotMatch { get; set; }
 
     }
 
