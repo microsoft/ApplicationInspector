@@ -23,6 +23,8 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? CustomCommentsPath { get; set; }
         public string? CustomLanguagesPath { get; set; }
         public bool DisableRequireUniqueIds { get; set; }
+        public bool RequireMustMatch { get; set; }
+        public bool RequireMustNotMatch { get; set; }
     }
 
     public class VerifyRulesResult : Result
