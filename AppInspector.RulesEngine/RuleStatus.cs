@@ -11,4 +11,6 @@ public class RuleStatus
     public bool Verified => !Errors.Any() && !OatIssues.Any();
     public IEnumerable<string> Errors { get; set; } = Enumerable.Empty<string>();
     public IEnumerable<Violation> OatIssues { get; set; } = Enumerable.Empty<Violation>();
+    public bool HasPositiveSelfTests { get; set; }
+    public bool HasNegativeSelfTests { get; set; }
 }
