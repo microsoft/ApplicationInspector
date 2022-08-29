@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Logging;
 using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
 
@@ -24,22 +25,46 @@ namespace AppInspector.Tests.DefaultRules
             {
                 VerifyDefaultRules = true,
             };
-            var loggerFactory = new LogOptions() {ConsoleVerbosityLevel = LogEventLevel.Verbose}.GetLoggerFactory();
+            var loggerFactory = new LogOptions() {ConsoleVerbosityLevel = LogEventLevel.Debug}.GetLoggerFactory();
+            var logger = loggerFactory.CreateLogger("Tests");
             VerifyRulesCommand command = new(options, loggerFactory);
             VerifyRulesResult result = command.GetResult();
+            
+            if (result.Unverified.Any())
+            {
+                logger.Log(LogLevel.Error, "{0} of {1} rules failed verification. Errors are as follows:", result.Unverified.Count(), result.RuleStatusList.Count);
+            }
+            else
+            {
+                logger.Log(LogLevel.Information, "All {0} rules passed validation.", result.RuleStatusList.Count);
+            }
+
             foreach (var unverified in result.Unverified)
             {
-                Console.WriteLine("Failed to validate {0}",unverified.RulesId);
+                logger.Log(LogLevel.Error, "Failed to validate {0}",unverified.RulesId);
                 foreach (var error in unverified.Errors)
                 {
-                    Console.WriteLine(error);
+                    logger.Log(LogLevel.Error, error);
                 }
 
                 foreach (var oatError in unverified.OatIssues)
                 {
-                    Console.WriteLine(oatError.Description);
+                    logger.Log(LogLevel.Error, oatError.Description);
                 }
             }
+            
+            logger.Log(LogLevel.Information, "{0} of {1} rules have positive self tests.",result.RuleStatusList.Count(x => x.HasPositiveSelfTests),result.RuleStatusList.Count);
+            logger.Log(LogLevel.Information, "{0} of {1} rules have negative self tests.",result.RuleStatusList.Count(x => x.HasNegativeSelfTests),result.RuleStatusList.Count);
+
+            foreach (var rule in result.RuleStatusList.Where(x => !x.HasPositiveSelfTests))
+            {
+                logger.Log(LogLevel.Warning, "Rule {0} does not have any positive test cases", rule.RulesId);
+            }
+            foreach (var rule in result.RuleStatusList.Where(x => !x.HasNegativeSelfTests))
+            {
+                logger.Log(LogLevel.Warning, "Rule {0} does not have any negative test cases", rule.RulesId);
+            }
+
             Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
             Assert.AreNotEqual(0, result.RuleStatusList.Count);
         }

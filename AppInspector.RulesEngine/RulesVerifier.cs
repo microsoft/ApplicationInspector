@@ -235,7 +235,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             // Then we fall back to grab any language from the languages configuration that isn't DoesNotApplyTo for this rule.
             var language = convertedOatRule.AppInspectorRule.AppliesTo?.FirstOrDefault() ?? 
                            _options.LanguageSpecs.GetNames().FirstOrDefault(x => !convertedOatRule.AppInspectorRule.DoesNotApplyTo?.Contains(x, StringComparer.InvariantCultureIgnoreCase) ?? true) ?? "csharp";
-
+            
             // validate all must match samples are matched
             foreach (var mustMatchElement in rule.MustMatch ?? Array.Empty<string>())
             {
@@ -246,7 +246,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     errors.Add($"Rule {rule.Id} does not match the 'MustMatch' test {mustMatchElement}. ");
                 }
             }
-            
+
             // validate no must not match conditions are matched
             foreach (var mustNotMatchElement in rule.MustNotMatch ?? Array.Empty<string>())
             {            
@@ -257,18 +257,21 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                     errors.Add($"Rule {rule.Id} matches the 'MustNotMatch' test '{mustNotMatchElement}'.");
                 }
             }
-            
+
             if (rule.Tags?.Length == 0)
             {
                 _logger?.LogError("Rule must specify tags. {0}", rule.Id);
                 errors.Add($"Rule must specify tags. {rule.Id}");
             }
+
             return new RuleStatus()
             {
                 RulesId = rule.Id,
                 RulesName = rule.Name,
                 Errors = errors,
-                OatIssues = _analyzer.EnumerateRuleIssues(convertedOatRule)
+                OatIssues = _analyzer.EnumerateRuleIssues(convertedOatRule),
+                HasPositiveSelfTests = rule.MustMatch?.Length > 0,
+                HasNegativeSelfTests = rule.MustNotMatch?.Length > 0
             };
         }
     }
