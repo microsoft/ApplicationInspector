@@ -12,9 +12,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine;
 /// </summary>
 public class SearchPattern
 {
-    private readonly Dictionary<RegexOptions, Regex> _compiled = new();
-    private string? _pattern;
-
     [JsonProperty(PropertyName = "confidence")]
     [JsonConverter(typeof(StringEnumConverter))]
     public Confidence Confidence { get; set; }
@@ -23,15 +20,7 @@ public class SearchPattern
     public string[]? Modifiers { get; set; }
 
     [JsonProperty(PropertyName = "pattern")]
-    public string? Pattern
-    {
-        get => _pattern;
-        set
-        {
-            _compiled.Clear();
-            _pattern = value;
-        }
-    }
+    public string? Pattern { get; set; }
 
     [JsonProperty(PropertyName = "type")]
     [JsonConverter(typeof(StringEnumConverter))]
