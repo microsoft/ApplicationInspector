@@ -104,7 +104,7 @@ public class TestVerifyRulesCmd
           ""i""
         ],
         ""pattern"": ""windows"",
-        ""type"": ""String"",
+        ""type"": ""String""
       }
     ],
     ""must-match"" : [ ""windows 2000""]
