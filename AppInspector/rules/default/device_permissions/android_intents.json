@@ -7,13 +7,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.InternetClient.Android" ],
+    "tags": [
+      "Device.Permissions.InternetClient.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_VIEW",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -22,8 +26,12 @@
         "pattern": {
           "pattern": "Uri\\.parse\\(\"https?:\\/\\/www\\.\\);",
           "type": "regex",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -38,13 +46,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.ViewMap.Android" ],
+    "tags": [
+      "Device.Permissions.ViewMap.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_VIEW",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -53,8 +65,12 @@
         "pattern": {
           "pattern": "Uri\\.parse\\(\"geo:",
           "type": "regex",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -63,8 +79,12 @@
         "pattern": {
           "pattern": "Uri\\.parse(\"http:\/\/maps\\.google\\.com\/maps\");",
           "type": "regex",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -79,13 +99,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.PhoneCalls.Android" ],
+    "tags": [
+      "Device.Permissions.PhoneCalls.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_DIAL|Intent\\.ACTION_CALL",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -98,13 +122,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.SMS.Android" ],
+    "tags": [
+      "Device.Permissions.SMS.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_(VIEW|SEND)",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -113,8 +141,12 @@
         "pattern": {
           "pattern": "sms|mms|smsto",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -129,13 +161,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.Email.Android" ],
+    "tags": [
+      "Device.Permissions.Email.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_SENDTO|Intent\\.ACTION_SEND",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -144,8 +180,12 @@
         "pattern": {
           "pattern": "Intent\\.EXTRA_EMAIL|Intent\\.EXTRA_SUBJECT",
           "type": "regex",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -154,8 +194,12 @@
         "pattern": {
           "pattern": "mailto:",
           "type": "regex",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -170,13 +214,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.PlayMedia.Android" ],
+    "tags": [
+      "Device.Permissions.PlayMedia.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_VIEW",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -185,8 +233,12 @@
         "pattern": {
           "pattern": "Media\\.INTERNAL_CONTENT_URI|mp3|mp4",
           "type": "regex",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -201,13 +253,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.WebSearch.Android" ],
+    "tags": [
+      "Device.Permissions.WebSearch.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_WEB_SEARCH",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -220,13 +276,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.SetAlarm.Android" ],
+    "tags": [
+      "Device.Permissions.SetAlarm.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "ACTION_SET_ALARM",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -239,13 +299,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.SetTimer.Android" ],
+    "tags": [
+      "Device.Permissions.SetTimer.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "ACTION_SET_TIMER",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -258,13 +322,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.CalendarEvents.Android" ],
+    "tags": [
+      "Device.Permissions.CalendarEvents.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_INSERT",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -273,8 +341,12 @@
         "pattern": {
           "pattern": "Events\\.TITLE",
           "type": "regex",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -289,13 +361,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.Camera.Android" ],
+    "tags": [
+      "Device.Permissions.Camera.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "ACTION_IMAGE_CAPTURE|ACTION_VIDEO_CAPTURE",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -308,13 +384,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.SelectContact.Android" ],
+    "tags": [
+      "Device.Permissions.SelectContact.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_PICK",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -323,7 +403,9 @@
         "pattern": {
           "pattern": "Contacts\\.CONTENT_TYPE|ContactsContract\\.CommonDataKinds",
           "type": "regex",
-          "scopes": [ "code" ]
+          "scopes": [
+            "code"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -338,13 +420,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.Contacts.Android" ],
+    "tags": [
+      "Device.Permissions.Contacts.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.READ_CONTACTS",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -357,13 +443,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.GetContent.Android" ],
+    "tags": [
+      "Device.Permissions.GetContent.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_GET_CONTENT",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -376,13 +466,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.OpenDocument.Android" ],
+    "tags": [
+      "Device.Permissions.OpenDocument.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_OPEN_DOCUMENT",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -395,13 +489,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.CreateDocument.Android" ],
+    "tags": [
+      "Device.Permissions.CreateDocument.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_CREATE_DOCUMENT",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -414,13 +512,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.SystemSettings.Android" ],
+    "tags": [
+      "Device.Permissions.SystemSettings.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_*_SETTINGS",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -433,13 +535,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.AddorEditContent.Android" ],
+    "tags": [
+      "Device.Permissions.AddorEditContent.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_EDIT|Intent\\.ACTION_INSERT_OR_EDIT",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -452,13 +558,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.InstallPackage.Android" ],
+    "tags": [
+      "Device.Permissions.InstallPackage.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_INSTALL_PACKAGE|Intent\\.ACTION_PACKAGE_ADDED",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -471,13 +581,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.ProfileRemoved.Android" ],
+    "tags": [
+      "Device.Permissions.ProfileRemoved.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_MANAGED_PROFILE_REMOVED|Intent\\.ACTION_UID_REMOVED",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -490,13 +604,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.ProfileUnlocked.Android" ],
+    "tags": [
+      "Device.Permissions.ProfileUnlocked.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_MANAGED_PROFILE_UNLOCKED",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -509,13 +627,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.PackageChanged.Android" ],
+    "tags": [
+      "Device.Permissions.PackageChanged.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_MY_PACKAGE_REPLACED|Intent\\.ACTION_PACKAGE_CHANGED",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -528,13 +650,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.Shutdown.Android" ],
+    "tags": [
+      "Device.Permissions.Shutdown.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_REBOOT|Intent\\.ACTION_SHUTDOWN",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -547,13 +673,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.Search.Android" ],
+    "tags": [
+      "Device.Permissions.Search.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_SEARCH",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -566,13 +696,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.VoiceCommand.Android" ],
+    "tags": [
+      "Device.Permissions.VoiceCommand.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.ACTION_VOICE_COMMAND",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -585,13 +719,17 @@
       "java",
       "kotlin"
     ],
-    "tags":[ "Device.Permissions.AllowUnsafeUri.Android" ],
+    "tags": [
+      "Device.Permissions.AllowUnsafeUri.Android"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Intent\\.URI_ALLOW_UNSAFE",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]

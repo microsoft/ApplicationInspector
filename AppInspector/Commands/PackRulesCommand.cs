@@ -1,117 +1,112 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-namespace Microsoft.ApplicationInspector.Commands
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.ApplicationInspector.Common;
+using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Newtonsoft.Json;
+
+namespace Microsoft.ApplicationInspector.Commands;
+
+public class PackRulesOptions
 {
-    using Microsoft.ApplicationInspector.RulesEngine;
-    using Newtonsoft.Json;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Microsoft.ApplicationInspector.Common;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
+    public string? CustomRulesPath { get; set; }
+    public bool PackEmbeddedRules { get; set; }
+    public string? CustomCommentsPath { get; set; }
+    public string? CustomLanguagesPath { get; set; }
+    public bool DisableRequireUniqueIds { get; set; }
+    public bool RequireMustMatch { get; set; }
+    public bool RequireMustNotMatch { get; set; }
+}
 
-    public class PackRulesOptions
+public class PackRulesResult : Result
+{
+    public enum ExitCode
     {
-        public string? CustomRulesPath { get; set; }
-        public bool NotIndented { get; set; }
-        public bool PackEmbeddedRules { get; set; }
-        public string? CustomCommentsPath { get; set; }
-        public string? CustomLanguagesPath { get; set; }
+        Success = 0,
+        Error = 1,
+        CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
     }
 
-    public class PackRulesResult : Result
-    {
-        public enum ExitCode
-        {
-            Success = 0,
-            Error = 1,
-            CriticalError = Common.Utils.ExitCode.CriticalError //ensure common value for final exit log mention
-        }
-
-        [JsonProperty(Order = 2)]
-        public ExitCode ResultCode { get; set; }
-
-        /// <summary>
-        /// List of Rules to pack as specified in pack command
-        /// </summary>
-        [JsonProperty(Order = 3)]
-        public List<Rule>? Rules { get; set; }
-    }
+    [JsonProperty(Order = 2)] public ExitCode ResultCode { get; set; }
 
     /// <summary>
-    /// Used to combine validated rules into one json for ease in distribution of this
-    /// application
+    ///     List of Rules to pack as specified in pack command
     /// </summary>
-    public class PackRulesCommand
+    [JsonProperty(Order = 3)]
+    public List<Rule>? Rules { get; set; }
+}
+
+/// <summary>
+///     Used to combine validated rules into one json
+/// </summary>
+public class PackRulesCommand
+{
+    private readonly ILogger<PackRulesCommand> _logger;
+    private readonly ILoggerFactory? _loggerFactory;
+    private readonly PackRulesOptions _options;
+
+    public PackRulesCommand(PackRulesOptions opt, ILoggerFactory? loggerFactory = null)
     {
-        private readonly PackRulesOptions _options;
-        private readonly ILogger<PackRulesCommand> _logger;
-        private readonly ILoggerFactory? _loggerFactory;
+        _options = opt;
+        _logger = loggerFactory?.CreateLogger<PackRulesCommand>() ?? NullLogger<PackRulesCommand>.Instance;
+        _loggerFactory = loggerFactory;
+        ConfigRules();
+    }
 
-        public PackRulesCommand(PackRulesOptions opt, ILoggerFactory? loggerFactory = null)
+
+    private void ConfigRules()
+    {
+        _logger.LogTrace("PackRulesCommand::ConfigRules");
+
+        if (string.IsNullOrEmpty(_options.CustomRulesPath) && !_options.PackEmbeddedRules)
+            throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
+    }
+
+
+    /// <summary>
+    ///     Intentional as no identified value in calling from DLL at this time
+    /// </summary>
+    /// <returns></returns>
+    public PackRulesResult GetResult()
+    {
+        _logger.LogTrace("PackRulesCommand::ConfigRules");
+        _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Pack Rules");
+
+        PackRulesResult packRulesResult = new()
         {
-            _options = opt;
-            _logger = loggerFactory?.CreateLogger<PackRulesCommand>() ?? NullLogger<PackRulesCommand>.Instance;
-            _loggerFactory = loggerFactory;
-            ConfigRules();
-        }
+            AppVersion = Utils.GetVersionString()
+        };
 
-        
-        private void ConfigRules()
+        try
         {
-            _logger.LogTrace("PackRulesCommand::ConfigRules");
-
-            if (string.IsNullOrEmpty(_options.CustomRulesPath) && !_options.PackEmbeddedRules)
+            RulesVerifierOptions options = new()
             {
-                throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
-            }
-        }
-
-        
-        /// <summary>
-        /// Intentional as no identified value in calling from DLL at this time
-        /// </summary>
-        /// <returns></returns>
-        public PackRulesResult GetResult()
-        {
-            _logger.LogTrace("PackRulesCommand::ConfigRules");
-            _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.CMD_RUNNING), "Pack Rules");
-
-            PackRulesResult packRulesResult = new()
-            {
-                AppVersion = Common.Utils.GetVersionString()
+                LoggerFactory = _loggerFactory,
+                LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath,
+                    _options.CustomLanguagesPath),
+                DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
+                RequireMustMatch = _options.RequireMustMatch,
+                RequireMustNotMatch = _options.RequireMustNotMatch
             };
-
-            try
-            {
-                RulesVerifierOptions options = new()
-                {
-                    LoggerFactory = _loggerFactory,
-                    LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
-                };
-                RulesVerifier verifier = new(options);
-                RuleSet? ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();
-                if (!string.IsNullOrEmpty(_options.CustomRulesPath))
-                {
-                    ruleSet.AddDirectory(_options.CustomRulesPath);
-                }
-                RulesVerifierResult result = verifier.Verify(ruleSet);
-                if (!result.Verified)
-                {
-                    throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
-                }
-                packRulesResult.Rules = result.CompiledRuleSet.GetAppInspectorRules().ToList();
-                packRulesResult.ResultCode = PackRulesResult.ExitCode.Success;
-            }
-            catch (OpException e)
-            {
-                _logger.LogError(e.Message);
-                //caught for CLI callers with final exit msg about checking log or throws for DLL callers
-                throw;
-            }
-
-            return packRulesResult;
+            RulesVerifier verifier = new(options);
+            var ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();
+            if (!string.IsNullOrEmpty(_options.CustomRulesPath)) ruleSet.AddPath(_options.CustomRulesPath);
+            var result = verifier.Verify(ruleSet);
+            if (!result.Verified) throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
+            packRulesResult.Rules = result.CompiledRuleSet.GetAppInspectorRules().ToList();
+            packRulesResult.ResultCode = PackRulesResult.ExitCode.Success;
         }
+        catch (OpException e)
+        {
+            _logger.LogError(e.Message);
+            //caught for CLI callers with final exit msg about checking log or throws for DLL callers
+            throw;
+        }
+
+        return packRulesResult;
     }
 }

@@ -3,17 +3,16 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Microsoft.ApplicationInspector.RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine;
+
+/// <summary>
+///     Pattern Type for search pattern
+/// </summary>
+[JsonConverter(typeof(StringEnumConverter))]
+public enum PatternType
 {
-    /// <summary>
-    /// Pattern Type for search pattern
-    /// </summary>
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum PatternType
-    {
-        Regex,
-        RegexWord,
-        String,
-        Substring
-    }
+    Regex,
+    RegexWord,
+    String,
+    Substring
 }

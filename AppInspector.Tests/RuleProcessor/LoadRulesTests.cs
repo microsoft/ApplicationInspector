@@ -13,52 +13,6 @@ namespace AppInspector.Tests.RuleProcessor;
 [TestClass]
 public class LoadRulesTests
 {
-    [TestInitialize]
-    public void TestInit()
-    {
-        _logger = _loggerFactory.CreateLogger<LoadRulesTests>();
-        Directory.CreateDirectory(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests"));
-    }
-    
-    [TestCleanup]
-    public void TestCleanup()
-    {
-        Directory.Delete(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests"), true);
-    }
-    
-    private readonly ILoggerFactory _loggerFactory = new LogOptions(){ ConsoleVerbosityLevel = LogEventLevel.Verbose }.GetLoggerFactory();
-    private ILogger _logger = new NullLogger<WithinClauseTests>();
-
-    [TestMethod]
-    public void AddFileByPath()
-    {
-        RuleSet rules = new(_loggerFactory);
-        string multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests", "multi_line_rule_file.json");
-        File.WriteAllText(multiLineRuleLoc, multiLineRule);
-        rules.AddPath(multiLineRuleLoc, "multiline-tests");
-        Assert.AreEqual(1, rules.Count());
-    }
-    
-    [TestMethod]
-    public void AddDirectoryByPath()
-    {
-        RuleSet rules = new(_loggerFactory);
-        string multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests", "multi_line_rule_file.json");
-        File.WriteAllText(multiLineRuleLoc, multiLineRule);
-        string rule2Loc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests", "rule2_file.json");
-        File.WriteAllText(rule2Loc, rule2);
-        rules.AddPath(Path.GetDirectoryName(multiLineRuleLoc) ?? throw new ArgumentNullException(nameof(multiLineRuleLoc)), "multiline-tests");
-        Assert.AreEqual(2, rules.Count());
-    }
-    
-    [TestMethod]
-    public void AddInvalidPath()
-    {
-        RuleSet rules = new(_loggerFactory);
-        string multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "ThisIsDefinitelyNotADirectoryThatExists");
-        Assert.ThrowsException<ArgumentException>(() => rules.AddPath(multiLineRuleLoc, "multiline-tests"));
-    }
-    
     private const string multiLineRule = @"[
     {
         ""id"": ""SA000005"",
@@ -84,7 +38,7 @@ public class LoadRulesTests
         ""_comment"": """"
     }
 ]";
-    
+
     // Same rule as above but different id so both can be added
     private const string rule2 = @"[
     {
@@ -111,4 +65,58 @@ public class LoadRulesTests
         ""_comment"": """"
     }
 ]";
+
+    private readonly ILoggerFactory _loggerFactory =
+        new LogOptions { ConsoleVerbosityLevel = LogEventLevel.Verbose }.GetLoggerFactory();
+
+    private ILogger _logger = new NullLogger<WithinClauseTests>();
+
+    [TestInitialize]
+    public void TestInit()
+    {
+        _logger = _loggerFactory.CreateLogger<LoadRulesTests>();
+        Directory.CreateDirectory(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests"));
+    }
+
+    [TestCleanup]
+    public void TestCleanup()
+    {
+        Directory.Delete(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests"), true);
+    }
+
+    [TestMethod]
+    public void AddFileByPath()
+    {
+        RuleSet rules = new(_loggerFactory);
+        var multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests",
+            "multi_line_rule_file.json");
+        File.WriteAllText(multiLineRuleLoc, multiLineRule);
+        rules.AddPath(multiLineRuleLoc, "multiline-tests");
+        Assert.AreEqual(1, rules.Count());
+    }
+
+    [TestMethod]
+    public void AddDirectoryByPath()
+    {
+        RuleSet rules = new(_loggerFactory);
+        var multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests",
+            "multi_line_rule_file.json");
+        File.WriteAllText(multiLineRuleLoc, multiLineRule);
+        var rule2Loc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests",
+            "rule2_file.json");
+        File.WriteAllText(rule2Loc, rule2);
+        rules.AddPath(
+            Path.GetDirectoryName(multiLineRuleLoc) ?? throw new ArgumentNullException(nameof(multiLineRuleLoc)),
+            "multiline-tests");
+        Assert.AreEqual(2, rules.Count());
+    }
+
+    [TestMethod]
+    public void AddInvalidPath()
+    {
+        RuleSet rules = new(_loggerFactory);
+        var multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
+            "ThisIsDefinitelyNotADirectoryThatExists");
+        Assert.ThrowsException<ArgumentException>(() => rules.AddPath(multiLineRuleLoc, "multiline-tests"));
+    }
 }

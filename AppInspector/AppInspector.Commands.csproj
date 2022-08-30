@@ -1,94 +1,94 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <PackageId>Microsoft.CST.ApplicationInspector.Commands</PackageId>
-    <PackageVersion>0.0.0-placeholder</PackageVersion>
-    <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
-    <PackageTags>Security Static Analyzer</PackageTags>
-    <Description>Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining what the software is or what it does.</Description>
-    <copyright>© Microsoft Corporation. All rights reserved.</copyright> 
-    <HighEntropyVA>true</HighEntropyVA>
-    <Product>Application Inspector</Product>
-    <Authors>Microsoft</Authors>
-    <Version>0.0.0-placeholder</Version>
-    <AssemblyName>ApplicationInspector.Commands</AssemblyName>
-    <RootNamespace>Microsoft.ApplicationInspector.Commands</RootNamespace>
-    <Company>Microsoft</Company>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyVersion>0.0.0</AssemblyVersion>
-    <FileVersion>0.0.0</FileVersion>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <PackageIcon>icon-128.png</PackageIcon>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Nullable>enable</Nullable>
-    <LangVersion>10.0</LangVersion>
-    <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <PackageId>Microsoft.CST.ApplicationInspector.Commands</PackageId>
+        <PackageVersion>0.0.0-placeholder</PackageVersion>
+        <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
+        <PackageTags>Security Static Analyzer</PackageTags>
+        <Description>Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining what the software is or what it does.</Description>
+        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <HighEntropyVA>true</HighEntropyVA>
+        <Product>Application Inspector</Product>
+        <Authors>Microsoft</Authors>
+        <Version>0.0.0-placeholder</Version>
+        <AssemblyName>ApplicationInspector.Commands</AssemblyName>
+        <RootNamespace>Microsoft.ApplicationInspector.Commands</RootNamespace>
+        <Company>Microsoft</Company>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyVersion>0.0.0</AssemblyVersion>
+        <FileVersion>0.0.0</FileVersion>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageIcon>icon-128.png</PackageIcon>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Nullable>enable</Nullable>
+        <LangVersion>10.0</LangVersion>
+        <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+    </PropertyGroup>
 
-  <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+    <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+        <ItemGroup>
+            <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
+        </ItemGroup>
+    </Target>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DefineConstants>TRACE</DefineConstants>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <Prefer32Bit>false</Prefer32Bit>
+        <NoWarn>1701;1702;2225</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DefineConstants/>
+    </PropertyGroup>
+
     <ItemGroup>
-      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
+        <EmbeddedResource Include="rules\default\**\*.json"/>
     </ItemGroup>
-  </Target>
-  
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE</DefineConstants>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-    <NoWarn>1701;1702;2225</NoWarn>
-  </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants />
-  </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="CommandLineParser" Version="2.9.1"/>
+        <PackageReference Include="DotLiquid" Version="2.2.656"/>
+        <PackageReference Include="Glob" Version="1.1.9"/>
+        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.25"/>
+        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.11"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="ShellProgressBar" Version="5.2.0"/>
+        <PackageReference Include="System.Reflection.Metadata" Version="6.0.1"/>
 
-  <ItemGroup>
-    <EmbeddedResource Include="rules\default\**\*.json" />
-  </ItemGroup>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="DotLiquid" Version="2.2.656" />
-    <PackageReference Include="Glob" Version="1.1.9" />
-    <PackageReference Include="Microsoft.CST.OAT" Version="1.2.25" />
-    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.11" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="ShellProgressBar" Version="5.2.0" />
-    <PackageReference Include="System.Reflection.Metadata" Version="6.0.1" />
-    
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Update="Properties\Resources.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Update="Properties\Resources.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\AppInspector.Common\AppInspector.Common.csproj">
+            <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+            <IncludeAssets>ApplicationInspector.Common.dll</IncludeAssets>
+        </ProjectReference>
+        <ProjectReference Include="..\AppInspector.RulesEngine\AppInspector.RulesEngine.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AppInspector.Common\AppInspector.Common.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <IncludeAssets>ApplicationInspector.Common.dll</IncludeAssets>
-    </ProjectReference>
-    <ProjectReference Include="..\AppInspector.RulesEngine\AppInspector.RulesEngine.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
-    <None Include="..\icon-128.png" Pack="true" PackagePath="" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Include="..\.editorconfig" Link=".editorconfig"/>
+        <None Include="..\LICENSE.txt" Pack="true" PackagePath=""/>
+        <None Include="..\icon-128.png" Pack="true" PackagePath=""/>
+    </ItemGroup>
 </Project>

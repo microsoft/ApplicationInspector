@@ -3,7 +3,9 @@
     "name": "Web App Local Storage Write",
     "id": "AI057000",
     "description": "Web App Local Storage Write",
-    "tags":[ "WebApp.Storage.Local.Write" ],
+    "tags": [
+      "WebApp.Storage.Local.Write"
+    ],
     "applies_to": [
       "javascript",
       "python",
@@ -21,7 +23,9 @@
       {
         "pattern": "localstorage.setItem",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -30,7 +34,9 @@
     "name": "Web App Session Storage Write",
     "id": "AI057100",
     "description": "Web App Session Storage Write",
-    "tags":[ "WebApp.Storage.Session.Write" ],
+    "tags": [
+      "WebApp.Storage.Session.Write"
+    ],
     "applies_to": [
       "javascript",
       "python",
@@ -48,7 +54,9 @@
       {
         "pattern": "sessionstorage.setItem",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -57,7 +65,9 @@
     "name": "Web App Storage Cookie Write",
     "id": "AI057200",
     "description": "Web App Storage Cookie Write",
-    "tags":[ "WebApp.Storage.Cookie.Write" ],
+    "tags": [
+      "WebApp.Storage.Cookie.Write"
+    ],
     "applies_to": [
       "javascript",
       "python",
@@ -75,8 +85,12 @@
       {
         "pattern": ".cookie =",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -85,7 +99,9 @@
     "name": "Web App Storage Indexed DB Use",
     "id": "AI057300",
     "description": "Web App Storage Indexed DB",
-    "tags":[ "WebApp.Storage.IndexedDB" ],
+    "tags": [
+      "WebApp.Storage.IndexedDB"
+    ],
     "applies_to": [
       "javascript",
       "python",
@@ -103,7 +119,9 @@
       {
         "pattern": "indexedDB|mozIndexedDB|webkitIndexedDB|msIndexedDB",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -112,7 +130,9 @@
     "name": "Web App Storage FileReader",
     "id": "AI057400",
     "description": "Web App Storage FileReader",
-    "tags":[ "WebApp.Storage.FileReader" ],
+    "tags": [
+      "WebApp.Storage.FileReader"
+    ],
     "applies_to": [
       "javascript",
       "python",
@@ -130,7 +150,9 @@
       {
         "pattern": "new FileReader",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -139,7 +161,9 @@
     "name": "Web App Storage ReadFileAsURL",
     "id": "AI057500",
     "description": "Web App Storage ReadFileAsURL",
-    "tags":[ "WebApp.Storage.ReadFileAsURL" ],
+    "tags": [
+      "WebApp.Storage.ReadFileAsURL"
+    ],
     "applies_to": [
       "javascript",
       "python",
@@ -157,7 +181,9 @@
       {
         "pattern": "readAsDataURL",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -166,7 +192,9 @@
         "pattern": {
           "pattern": "FileReader",
           "type": "regexword",
-          "scopes": [ "code" ]
+          "scopes": [
+            "code"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -177,7 +205,9 @@
     "name": "Web App Storage FileUpload",
     "id": "AI057600",
     "description": "Web App Storage FileUpload",
-    "tags":[ "WebApp.Storage.FileUpload" ],
+    "tags": [
+      "WebApp.Storage.FileUpload"
+    ],
     "applies_to": [
       "javascript",
       "python",
@@ -195,7 +225,9 @@
       {
         "pattern": "fetch",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -204,8 +236,12 @@
         "pattern": {
           "pattern": "PUT",
           "type": "string",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false

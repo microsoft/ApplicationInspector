@@ -3,35 +3,57 @@
     "name": "Authentication: Microsoft (Identity)",
     "id": "AI038900",
     "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
-    "tags":[ "Authentication.Microsoft.Online" ],
+    "tags": [
+      "Authentication.Microsoft.Online"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "login\\.microsoftonline(-p)*\\.com|SAS.*Token|login\\.live.com|Shared *Access *Signature",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "System\\.IdentityModel|AzureADB2C|SingleAccountPublicClientApplication|MultipleAccountPublicClientApplication",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "microsoft\\.aad|microsoft\\.adal|microsoft\\.msal|AADClient|Microsoft\\.IdentityModel|passport\\.net|ServicePrincipalCredentials",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "AuthenticationResult|MsalServiceException",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -40,13 +62,18 @@
     "name": "Authentication: Microsoft (Identity)",
     "id": "AI038910",
     "description": "Authentication using Microsoft Identity Platform (ADAL/MSAL) or similar",
-    "tags":[ "Authentication.Microsoft.Online" ],
+    "tags": [
+      "Authentication.Microsoft.Online"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "AcquireTokenForClient|ConfidentialClientApplicationBuilder",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
         "confidence": "high"
       }
     ],
@@ -55,7 +82,9 @@
         "pattern": {
           "pattern": "\\.WithClientClaims\\(.*cert.*\\)|\\.WithCertificate\\(",
           "type": "regex",
-          "scopes": [ "code" ],
+          "scopes": [
+            "code"
+          ],
           "_comment": "negate cases for certificate rule identifying client TLS auth"
         },
         "search_in": "finding-region(-10,10)",
@@ -67,21 +96,31 @@
     "name": "Authentication: Google",
     "id": "AI039000",
     "description": "Authentication: Google",
-    "tags":[ "Authentication.Google" ],
+    "tags": [
+      "Authentication.Google"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "using Google\\.Apis\\.Auth|GoogleCredential|AppIdentityCredential|oauth2/google|apis\\.google\\.com/js/api\\.js",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "OIDAuthorizationRequest|accounts\\.google\\.com/o/oauth2|googleapis\\.com/oauth2|GTMAppAuth",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -90,35 +129,53 @@
     "name": "Authentication: Oauth",
     "id": "AI039100",
     "description": "Authentication: Oauth",
-    "tags":[ "Authentication.Oauth" ],
+    "tags": [
+      "Authentication.Oauth"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "oauth",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "auth.?token|access.?token|client.?credentials|client.?id|client.?secret|api.?key",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "low"
       },
       {
         "pattern": "Authorization: Bearer",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "bearer",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "low"
       }
     ]
@@ -127,14 +184,21 @@
     "name": "Authentication: OpenIDConnect",
     "id": "AI039200",
     "description": "Authentication: OpenIDConnect based Oauth",
-    "tags":[ "Authentication.OpenIDConnect" ],
+    "tags": [
+      "Authentication.OpenIDConnect"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "OpenID",
         "type": "string",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -143,32 +207,47 @@
     "name": "Authentication: Microsoft (Active Directory)",
     "id": "AI039300",
     "description": "Authentication: Microsoft (Active Directory)",
-    "tags":[ "Authentication.Microsoft.Windows.ActiveDirectory" ],
+    "tags": [
+      "Authentication.Microsoft.Windows.ActiveDirectory"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "active.?directory|ADFS",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "ADsOpenObject|ADObject|ADComputer|ADGroup|ADUser|ADContainer|ADDomain",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "Microsoft\\.IdentityModel\\.ActiveDirectory",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "System\\.DirectoryServices|IDirectoryObject|IDirectorySearch",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
         "confidence": "medium"
       }
     ]
@@ -177,14 +256,21 @@
     "name": "Authentication: LDAP",
     "id": "AI039400",
     "description": "Authentication: LDAP",
-    "tags":[ "Authentication.LDAP" ],
+    "tags": [
+      "Authentication.LDAP"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "LDAP|ldaps",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -193,26 +279,36 @@
     "name": "Authentication: Microsoft Windows (NTML)",
     "id": "AI039500",
     "description": "AAuthentication: Microsoft Windows (NTML)",
-    "tags":[ "Authentication.Microsoft.Windows.NTLM" ],
+    "tags": [
+      "Authentication.Microsoft.Windows.NTLM"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "WWW-Authenticate: NTLM|windowsAuthentication|CredentialCache\\.DefaultCredentials|HTTPNtlmAuthHandler",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "LogonUserA|LogonUserEx|LogonUserW",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "NTLM",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "medium"
       }
     ]
@@ -228,14 +324,20 @@
       "java",
       "csharp"
     ],
-    "tags":[ "Authentication.Microsoft.Windows.Kerberos" ],
+    "tags": [
+      "Authentication.Microsoft.Windows.Kerberos"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "WindowsIdentity|WindowsPrincipal|Kerberos",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high",
         "_comment": "possible use for NTLM but default is Kerberos"
       }
@@ -245,14 +347,21 @@
     "name": "Authentication: JWT",
     "id": "AI039600",
     "description": "Authentication: JWT",
-    "tags":[ "Authentication.JWT" ],
+    "tags": [
+      "Authentication.JWT"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "jwt|RFC 7519|System\\.IdentityModel\\.Tokens\\.Jwt|JwtSecurityToken|JsonWebToken",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -261,14 +370,20 @@
     "name": "Authentication: HTML Form Based",
     "id": "AI039700",
     "description": "Authentication: HTML Form Based",
-    "tags":[ "Authentication.HTMLForm" ],
+    "tags": [
+      "Authentication.HTMLForm"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": " type=['\\\"]password['\\\"] ",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -277,15 +392,23 @@
     "name": "Authentication: SAML",
     "id": "AI039800",
     "description": "Authentication: SAML",
-    "applies_to":[ "csharp" ],
-    "tags":[ "Authentication.SAML" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Authentication.SAML"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "AuthenticationHeaderValue\\(\"SAML\"",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -294,21 +417,31 @@
     "name": "Authentication: SAML",
     "id": "AI039810",
     "description": "Authentication: SAML",
-    "tags":[ "Authentication.SAML" ],
+    "tags": [
+      "Authentication.SAML"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "SAML|saml2",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "federation|sso",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "medium"
       }
     ]
@@ -317,14 +450,20 @@
     "name": "Authentication: Basic-Auth",
     "id": "AI039900",
     "description": "Authentication: Basic-Auth",
-    "tags":[ "Authentication.General" ],
+    "tags": [
+      "Authentication.General"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "\"Authorization: Basic|WWW-Authenticate|AuthenticationHeaderValue\\(\"Basic\"",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -333,14 +472,20 @@
     "name": "Authentication: General",
     "id": "AI040000",
     "description": "Authentication: General",
-    "tags":[ "Authentication.General" ],
+    "tags": [
+      "Authentication.General"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "principal|identity|auth|authenticated|authentication|signin|sign-?in|signout|sign-?out|networkcredential",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -349,14 +494,20 @@
     "name": "Authentication: General",
     "id": "AI040001",
     "description": "Authentication: General",
-    "tags":[ "Authentication.General" ],
+    "tags": [
+      "Authentication.General"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "log(in|on)|log(off|out)",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "low"
       }
     ]
@@ -365,21 +516,31 @@
     "name": "Authentication: General",
     "id": "AI040100",
     "description": "Authentication: General",
-    "tags":[ "Authentication.General" ],
+    "tags": [
+      "Authentication.General"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "(username|userid|password|passphrase|multi-factor|credential|acct)s?",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "connection.?string|conn.?string|DefaultNetworkCredentials",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "medium"
       }
     ]

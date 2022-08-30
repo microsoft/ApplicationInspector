@@ -1,51 +1,44 @@
-﻿namespace Microsoft.ApplicationInspector.CLI.Writers
+﻿using System;
+using System.IO;
+using Microsoft.ApplicationInspector.Commands;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Newtonsoft.Json;
+
+namespace Microsoft.ApplicationInspector.CLI.Writers;
+
+internal class JsonWriter : CommandResultsWriter
 {
-    using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
-    using Newtonsoft.Json;
-    using System;
-    using System.IO;
+    private readonly ILogger<JsonWriter> _logger;
 
-    internal class JsonWriter : CommandResultsWriter
+    internal JsonWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
     {
-        private readonly ILogger<JsonWriter> _logger;
+        _logger = loggerFactory?.CreateLogger<JsonWriter>() ?? NullLogger<JsonWriter>.Instance;
+    }
 
-        internal JsonWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
+    {
+        JsonSerializer jsonSerializer = new();
+        jsonSerializer.Formatting = Formatting.Indented;
+        jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+        jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
+
+        if (TextWriter is null) throw new ArgumentNullException(nameof(TextWriter));
+
+        switch (result)
         {
-            _logger = loggerFactory?.CreateLogger<JsonWriter>() ?? NullLogger<JsonWriter>.Instance;
+            case TagDiffResult:
+            case ExportTagsResult:
+            case VerifyRulesResult:
+                jsonSerializer.Serialize(TextWriter, result);
+                break;
+            case PackRulesResult prr:
+                jsonSerializer.Serialize(TextWriter, prr.Rules);
+                break;
+            default:
+                throw new Exception("Unexpected object type for json writer");
         }
 
-        public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
-        {
-            JsonSerializer jsonSerializer = new();
-            jsonSerializer.Formatting = Formatting.Indented;
-            jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
-            jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
-            
-            if (TextWriter is null)
-            {
-                throw new ArgumentNullException(nameof(TextWriter));
-            }
-
-            switch (result) 
-            {
-                case TagDiffResult:
-                case ExportTagsResult:
-                case VerifyRulesResult:
-                    jsonSerializer.Serialize(TextWriter, result);
-                    break;
-                case PackRulesResult prr:
-                    jsonSerializer.Serialize(TextWriter, prr.Rules);
-                    break;
-                default:
-                    throw new System.Exception("Unexpected object type for json writer");
-            }
-
-            if (autoClose)
-            {
-                FlushAndClose();
-            }
-        }
+        if (autoClose) FlushAndClose();
     }
 }

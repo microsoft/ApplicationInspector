@@ -5,15 +5,21 @@
     "description": "Cryptography: Encoding (Base-64)",
     "applies_to": [
     ],
-    "tags":[ "Cryptography.Encoding.Base64" ],
+    "tags": [
+      "Cryptography.Encoding.Base64"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "base64",
         "type": "substring",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high",
-        "modifiers": [ "i" ]
+        "modifiers": [
+          "i"
+        ]
       }
     ]
   }

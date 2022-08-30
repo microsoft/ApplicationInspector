@@ -4,26 +4,28 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Microsoft.ApplicationInspector.RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine;
+
+/// <summary>
+///     Content Type class
+/// </summary>
+public class LanguageInfo
 {
-    /// <summary>
-    /// Content Type class
-    /// </summary>
-    public class LanguageInfo
+    public enum LangFileType
     {
-        public enum LangFileType { Code, Build };
-
-        [JsonProperty(PropertyName ="name")]
-        public string Name { get; set; } = "";
-
-        [JsonProperty(PropertyName ="extensions")]
-        public string[]? Extensions { get; set; }
-
-        [JsonProperty(PropertyName ="file-names")]
-        public string[]? FileNames { get; set; }
-        
-        [JsonProperty(PropertyName ="type")]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public LangFileType Type { get; set; } = LangFileType.Code;
+        Code,
+        Build
     }
+
+    [JsonProperty(PropertyName = "name")] public string Name { get; set; } = "";
+
+    [JsonProperty(PropertyName = "extensions")]
+    public string[]? Extensions { get; set; }
+
+    [JsonProperty(PropertyName = "file-names")]
+    public string[]? FileNames { get; set; }
+
+    [JsonProperty(PropertyName = "type")]
+    [JsonConverter(typeof(StringEnumConverter))]
+    public LangFileType Type { get; set; } = LangFileType.Code;
 }
