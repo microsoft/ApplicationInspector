@@ -14,10 +14,12 @@ namespace Microsoft.ApplicationInspector.Commands
     public class PackRulesOptions
     {
         public string? CustomRulesPath { get; set; }
-        public bool NotIndented { get; set; }
         public bool PackEmbeddedRules { get; set; }
         public string? CustomCommentsPath { get; set; }
         public string? CustomLanguagesPath { get; set; }
+        public bool DisableRequireUniqueIds { get; set; }
+        public bool RequireMustMatch { get; set; }
+        public bool RequireMustNotMatch { get; set; }
     }
 
     public class PackRulesResult : Result
@@ -40,8 +42,7 @@ namespace Microsoft.ApplicationInspector.Commands
     }
 
     /// <summary>
-    /// Used to combine validated rules into one json for ease in distribution of this
-    /// application
+    /// Used to combine validated rules into one json
     /// </summary>
     public class PackRulesCommand
     {
@@ -88,13 +89,16 @@ namespace Microsoft.ApplicationInspector.Commands
                 RulesVerifierOptions options = new()
                 {
                     LoggerFactory = _loggerFactory,
-                    LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
+                    LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath),
+                    DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
+                    RequireMustMatch = _options.RequireMustMatch,
+                    RequireMustNotMatch = _options.RequireMustNotMatch,
                 };
                 RulesVerifier verifier = new(options);
                 RuleSet? ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();
                 if (!string.IsNullOrEmpty(_options.CustomRulesPath))
                 {
-                    ruleSet.AddDirectory(_options.CustomRulesPath);
+                    ruleSet.AddPath(_options.CustomRulesPath);
                 }
                 RulesVerifierResult result = verifier.Verify(ruleSet);
                 if (!result.Verified)

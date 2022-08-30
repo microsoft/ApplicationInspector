@@ -419,7 +419,10 @@ namespace Microsoft.ApplicationInspector.CLI
                 CustomRulesPath = cliOptions.CustomRulesPath,
                 CustomCommentsPath = cliOptions.CustomCommentsPath,
                 CustomLanguagesPath = cliOptions.CustomLanguagesPath,
-                PackEmbeddedRules = cliOptions.PackEmbeddedRules
+                PackEmbeddedRules = cliOptions.PackEmbeddedRules,
+                DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
+                RequireMustMatch = cliOptions.RequireMustMatch,
+                RequireMustNotMatch = cliOptions.RequireMustNotMatch
             }, loggerFactory);
 
             PackRulesResult exportTagsResult = command.GetResult();
