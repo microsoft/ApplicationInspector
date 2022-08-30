@@ -1,6 +1,8 @@
 # Introduction
 
-![CodeQL](https://github.com/microsoft/ApplicationInspector/workflows/CodeQL/badge.svg) ![Nuget](https://img.shields.io/nuget/v/Microsoft.CST.ApplicationInspector.Cli?link=https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.CLI/&link=https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.CLI/) ![Nuget](https://img.shields.io/nuget/dt/Microsoft.CST.ApplicationInspector.Cli?link=https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.CLI/&link=https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.CLI/)
+![CodeQL](https://github.com/microsoft/ApplicationInspector/workflows/CodeQL/badge.svg) 
+[![Nuget](https://img.shields.io/nuget/v/Microsoft.CST.ApplicationInspector.Cli)](https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.CLI/) 
+[![Nuget](https://img.shields.io/nuget/dt/Microsoft.CST.ApplicationInspector.Cli)](https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.CLI/)
 
 Microsoft Application Inspector is a software source code characterization tool that helps **identify coding features of
 first or third party software components** based on well-known library/API calls and is helpful in security and
@@ -138,6 +140,12 @@ This will produce an output.html of the analysis in the current directory using 
 appinspector analyze -s path/to/files
 ```
 
+#### Output Sarif
+
+```
+appinspector analyse -s path/to/files -f sarif -o output.sarif
+```
+
 #### Excluding Files using Globs
 
 This will create a json output named data.json of the analysis in the current directory, excluding all files in `test`
@@ -147,94 +155,7 @@ and `.git` folders using the provided glob patterns.
 appinspector analyze -s path/to/files -o data.json -f json -g **/tests/**,**/.git/**
 ```
 
-#### Additional Usage Information
-
-```
-> appinspector analyze --help
-ApplicationInspector.CLI 1.5.7+1e422537ad
-c Microsoft Corporation. All rights reserved.
-
-  -s, --source-path                      Required. Source file or directory to inspect, comma separated
-
-  -f, --output-file-format               (Default: html) Output format [html|json|text]
-
-  -e, --text-format                      (Default:
-                                         Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Sourcetype:%t,Line:%L,Sample:%m)
-                                         Match text format specifiers
-
-  -N, --no-show-progress                 Disable progress information.
-
-  -C, --context-lines                    Number of lines of context on each side to include in excerpt (up to a maximum
-                                         of 100 * NumLines characters on each side). 0 to skip exerpt. -1 to not extract
-                                         samples or excerpts (implied by -t). When outputting sarif use -1 for no
-                                         snippets, all other values ignored.
-
-  -t, --tags-only                        Only get tags (no detailed match data). Ignored if output format is sarif.
-
-  -n, --no-file-metadata                 Don't collect metadata about each individual file.
-
-  -A, --allow-all-tags-in-build-files    Allow all tags (not just Metadata tags) in files of type Build.
-
-  -M, --max-num-matches-per-tag          If non-zero, and TagsOnly is not set, will ignore rules based on if all of
-                                         their tags have been found the set value number of times.
-
-  --base-path                            If set, when outputting sarif, will have paths made relative to the provided
-                                         path.
-
-  --repository-uri                       If set, when outputting sarif, include this information.
-
-  --commit-hash                          If set, when outputting sarif, include this information.
-
-  -i, --ignore-default-rules             (Default: false) Exclude default rules bundled with application
-
-  -F, --file-timeout                     (Default: 60000) Maximum amount of time in milliseconds to allow for processing
-                                         each file. 0 is infinity. Default: 60000.
-
-  -p, --processing-timeout               (Default: 0) Maximum amount of time in milliseconds to allow for processing.
-                                         When NoShowProgress is set this includes enumeration time. 0 is infinity.
-                                         Default: 0.
-
-  --enumeration-timeout                  (Default: 0) Maximum amount of time in milliseconds to allow for enumerating. 0
-                                         is infinity. Default: 0.
-
-  --disable-archive-crawling             Disable Archive Enumeration.
-
-  -S, --single-threaded                  Disables parallel processing. May be helpful for debugging with higher
-                                         verbosity.
-
-  -g, --exclusion-globs                  (Default: **/bin/** **/obj/** **/.vs/** **/.git/**) Exclude source files that
-                                         match glob patterns. Example: "**/.git/**,*Tests*".  Use "none" to disable.
-
-  -u, --scan-unknown-filetypes           Scan files of unknown types.
-
-  -c, --confidence-filters               Output only matches with specified confidence <value>,<value>. Default:
-                                         Medium,High. [High|Medium|Low]
-
-  --severity-filters                     Output only matches with specified severity <value>,<value>. Default: All are
-                                         enabled. [Critical|Important|Moderate|BestPractice|ManualReview]
-
-  -r, --custom-rules-path                Custom rules file or directory path
-
-  --custom-languages-path                Replace the default languages set with a custom languages.json.
-
-  --custom-comments-path                 Replace the default comment specification set with a custom comments.json.
-
-  -o, --output-file-path                 Output file path
-
-  -x, --console-verbosity                (Default: Information) Console verbosity
-                                         [Verbose|Debug|Information|Warning|Error|Fatal]
-
-  --disable-console                      (Default: false) Disable console output of logging messages.
-
-  -v, --log-file-level                   (Default: Error) Log file level [Verbose|Debug|Information|Warning|Error|Fatal]
-
-  -l, --log-file-path                    Log file path. If not set, will not log to file.
-
-  --help                                 Display this help screen.
-
-  --version                              Display version information.
-```
-
+### Additional Usage Information
 For additional help on use of the console interface
 see [CLI Usage](https://github.com/microsoft/ApplicationInspector/wiki/1.-CLI-Usage).
 
