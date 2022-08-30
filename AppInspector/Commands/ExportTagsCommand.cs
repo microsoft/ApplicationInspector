@@ -112,7 +112,18 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Common.Utils.GetVersionString()
             };
 
-            exportTagsResult.TagsList = _rules.SelectMany(x => x.Tags ?? Array.Empty<string>()).Distinct().OrderBy(x => x).ToList();
+            HashSet<string> tags = new();
+            foreach (var rule in _rules.GetAppInspectorRules())
+            {
+                foreach (var tag in rule.Tags ?? Array.Empty<string>())
+                {
+                    tags.Add(tag);
+                }
+            }
+
+            exportTagsResult.TagsList = tags.ToList();
+            exportTagsResult.TagsList.Sort();
+
             exportTagsResult.ResultCode = ExportTagsResult.ExitCode.Success;
 
             return exportTagsResult;
