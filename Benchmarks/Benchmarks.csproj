@@ -8,13 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BenchmarkDotNet" Version="0.13.1"/>
-        <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.1"/>
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
+        <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.2" />
 
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj"/>
-        <ProjectReference Include="..\AppInspector.Tests\AppInspector.Tests.csproj"/>
+        <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
+        <ProjectReference Include="..\AppInspector.Tests\AppInspector.Tests.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Compile Update="AnalyzeBenchmark.cs">
