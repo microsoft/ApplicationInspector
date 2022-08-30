@@ -18,7 +18,7 @@ public class TestDefaultRules
 {
     // This test ensures that the rules that are bundled with Application Inspector are valid.
     [TestMethod]
-    public void VerifyDefaultRules()
+    public void VerifyDefaultRulesAreValid()
     {
         VerifyRulesOptions options = new()
         {
