@@ -404,12 +404,12 @@ namespace Microsoft.ApplicationInspector.CLI
                 RequireMustNotMatch = cliOptions.RequireMustNotMatch
             }, loggerFactory);
 
-            VerifyRulesResult exportTagsResult = command.GetResult();
+            VerifyRulesResult verifyRulesResult = command.GetResult();
 
             ResultsWriter writer = new(loggerFactory);
-            writer.Write(exportTagsResult, cliOptions);
+            writer.Write(verifyRulesResult, cliOptions);
 
-            return (int)exportTagsResult.ResultCode;
+            return (int)verifyRulesResult.ResultCode;
         }
 
         private static int RunPackRulesCommand(CLIPackRulesCmdOptions cliOptions)
@@ -425,12 +425,12 @@ namespace Microsoft.ApplicationInspector.CLI
                 RequireMustNotMatch = cliOptions.RequireMustNotMatch
             }, loggerFactory);
 
-            PackRulesResult exportTagsResult = command.GetResult();
+            PackRulesResult packRulesResult = command.GetResult();
 
             ResultsWriter writer = new(loggerFactory);
-            writer.Write(exportTagsResult, cliOptions);
+            writer.Write(packRulesResult, cliOptions);
 
-            return (int)exportTagsResult.ResultCode;
+            return (int)packRulesResult.ResultCode;
         }
 
     }
