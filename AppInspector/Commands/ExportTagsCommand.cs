@@ -112,40 +112,19 @@ namespace Microsoft.ApplicationInspector.Commands
                 AppVersion = Common.Utils.GetVersionString()
             };
 
-            SortedDictionary<string, string> uniqueTags = new();
-
-            try
+            HashSet<string> tags = new();
+            foreach (var rule in _rules.GetAppInspectorRules())
             {
-                foreach (Rule? r in _rules)
+                foreach (var tag in rule.Tags ?? Array.Empty<string>())
                 {
-                    //builds a list of unique tags
-                    foreach (string t in r?.Tags ?? Array.Empty<string>())
-                    {
-                        if (uniqueTags.ContainsKey(t))
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            uniqueTags.Add(t, t);
-                        }
-                    }
+                    tags.Add(tag);
                 }
-
-                //generate results list
-                foreach (string s in uniqueTags.Values)
-                {
-                    exportTagsResult.TagsList.Add(s);
-                }
-
-                exportTagsResult.ResultCode = ExportTagsResult.ExitCode.Success;
             }
-            catch (OpException e)
-            {
-                _logger.LogError(e.Message);
-                //caught for CLI callers with final exit msg about checking log or throws for DLL callers
-                throw;
-            }
+
+            exportTagsResult.TagsList = tags.ToList();
+            exportTagsResult.TagsList.Sort();
+
+            exportTagsResult.ResultCode = ExportTagsResult.ExitCode.Success;
 
             return exportTagsResult;
         }

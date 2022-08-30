@@ -292,7 +292,9 @@ namespace Microsoft.ApplicationInspector.CLI
                 EnumeratingTimeout = cliOptions.EnumeratingTimeout,
                 DisableCustomRuleVerification = cliOptions.DisableCustomRuleValidation,
                 DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
-                SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches
+                SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches,
+                RequireMustMatch = cliOptions.RequireMustMatch,
+                RequireMustNotMatch = cliOptions.RequireMustNotMatch
             }, adjustedFactory);
 
             AnalyzeResult analyzeResult = command.GetResult();
@@ -360,7 +362,9 @@ namespace Microsoft.ApplicationInspector.CLI
                 SingleThread = cliOptions.SingleThread,
                 DisableCustomRuleValidation = cliOptions.DisableCustomRuleValidation,
                 DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
-                SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches
+                SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches,
+                RequireMustMatch = cliOptions.RequireMustMatch,
+                RequireMustNotMatch = cliOptions.RequireMustNotMatch
             }, loggerFactory);
 
             TagDiffResult tagDiffResult = command.GetResult();
@@ -395,7 +399,9 @@ namespace Microsoft.ApplicationInspector.CLI
                 CustomRulesPath = cliOptions.CustomRulesPath,
                 CustomCommentsPath = cliOptions.CustomCommentsPath,
                 CustomLanguagesPath = cliOptions.CustomLanguagesPath,
-                DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds
+                DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
+                RequireMustMatch = cliOptions.RequireMustMatch,
+                RequireMustNotMatch = cliOptions.RequireMustNotMatch
             }, loggerFactory);
 
             VerifyRulesResult exportTagsResult = command.GetResult();

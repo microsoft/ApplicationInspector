@@ -23,6 +23,8 @@ namespace Microsoft.ApplicationInspector.Commands
         public string? CustomCommentsPath { get; set; }
         public string? CustomLanguagesPath { get; set; }
         public bool DisableRequireUniqueIds { get; set; }
+        public bool RequireMustMatch { get; set; }
+        public bool RequireMustNotMatch { get; set; }
     }
 
     public class VerifyRulesResult : Result
@@ -98,6 +100,8 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     Analyzer = analyzer,
                     DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
+                    RequireMustMatch = _options.RequireMustMatch,
+                    RequireMustNotMatch = _options.RequireMustNotMatch,
                     LoggerFactory = _loggerFactory,
                     LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath)
                 };

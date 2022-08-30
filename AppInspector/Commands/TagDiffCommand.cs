@@ -35,6 +35,8 @@ namespace Microsoft.ApplicationInspector.Commands
         /// </summary>
         public bool SuccessErrorCodeOnNoMatches { get; set; }
 
+        public bool RequireMustMatch { get; set; }
+        public bool RequireMustNotMatch { get; set; }
     }
 
     /// <summary>
@@ -162,7 +164,9 @@ namespace Microsoft.ApplicationInspector.Commands
                     CustomLanguagesPath = _options.CustomLanguagesPath,
                     DisableCustomRuleVerification = _options.DisableCustomRuleValidation,
                     DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
-                    SuccessErrorCodeOnNoMatches = _options.SuccessErrorCodeOnNoMatches
+                    SuccessErrorCodeOnNoMatches = _options.SuccessErrorCodeOnNoMatches,
+                    RequireMustMatch = _options.RequireMustMatch,
+                    RequireMustNotMatch = _options.RequireMustNotMatch
                 }, _factory);
                 AnalyzeCommand cmd2 = new(new AnalyzeOptions()
                 {

@@ -83,6 +83,9 @@ namespace Microsoft.ApplicationInspector.Commands
         /// Return a success error code when no matches were found but operation was apparently successful. Useful for CI scenarios
         /// </summary>
         public bool SuccessErrorCodeOnNoMatches { get; set; }
+
+        public bool RequireMustMatch { get; set; }
+        public bool RequireMustNotMatch { get; set; }
     }
 
     /// <summary>
@@ -207,7 +210,9 @@ namespace Microsoft.ApplicationInspector.Commands
                 {
                     LanguageSpecs = _languages,
                     LoggerFactory = _loggerFactory,
-                    DisableRequireUniqueIds = _options.DisableRequireUniqueIds
+                    DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
+                    RequireMustMatch = _options.RequireMustMatch,
+                    RequireMustNotMatch = _options.RequireMustNotMatch
                 };
                 RulesVerifier verifier = new(rulesVerifierOptions);
                 bool anyFails = false;

@@ -264,6 +264,23 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 errors.Add($"Rule must specify tags. {rule.Id}");
             }
 
+            if (_options.RequireMustMatch)
+            {
+                if (rule.MustMatch?.Any() is not true)
+                {
+                    _logger?.LogError("Rule must specify MustMatch when `RequireMustMatch` is set. {0}", rule.Id);
+                    errors.Add($"Rule must specify MustMatch when `RequireMustMatch` is set. {rule.Id}");
+                }
+            }
+            if (_options.RequireMustNotMatch)
+            {
+                if (rule.MustNotMatch?.Any() is not true)
+                {
+                    _logger?.LogError("Rule must specify MustNotMatch when `RequireMustNotMatch` is set. {0}", rule.Id);
+                    errors.Add($"Rule must specify MustNotMatch when `RequireMustNotMatch` is set. {rule.Id}");
+                }
+            }
+
             return new RuleStatus()
             {
                 RulesId = rule.Id,

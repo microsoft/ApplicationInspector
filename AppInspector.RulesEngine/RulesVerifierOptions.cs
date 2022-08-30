@@ -22,4 +22,14 @@ public class RulesVerifierOptions
     /// By default rules must have unique IDs, this disables that validation check
     /// </summary>
     public bool DisableRequireUniqueIds { get; set; }
+    
+    /// <summary>
+    /// By default, the <see cref="RuleStatus.HasPositiveSelfTests"/> property informs if <see cref="Rule.MustMatch"/> is populated. Enabling this will cause an error to be raised during rule validation if it is not populated.
+    /// </summary>
+    public bool RequireMustMatch { get; set; }
+    
+    /// <summary>
+    /// By default, the <see cref="RuleStatus.HasNegativeSelfTests"/> property informs if <see cref="Rule.MustNotMatch"/> is populated. Enabling this will cause an error to be raised during rule validation if it is not populated.
+    /// </summary>
+    public bool RequireMustNotMatch { get; set; }
 }
