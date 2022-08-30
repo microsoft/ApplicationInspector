@@ -7,13 +7,17 @@
       "c",
       "cpp"
     ],
-    "tags":[ "OS.FileOperation.Read" ],
+    "tags": [
+      "OS.FileOperation.Read"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "ifstream|fread|fgets|fgetc",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -22,26 +26,36 @@
     "name": "File Operation (Read)",
     "id": "AI035700",
     "description": "File Operation (Read)",
-    "applies_to":[ "csharp" ],
-    "tags":[ "OS.FileOperation.Read" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.FileOperation.Read"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "File.Read",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "new FileStream",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "File.OpenText",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -50,26 +64,36 @@
     "name": "File Operation (Read)",
     "id": "AI035800",
     "description": "File Operation (Read)",
-    "applies_to":[ "python" ],
-    "tags":[ "OS.FileOperation.Read" ],
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "OS.FileOperation.Read"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "open\\(.*,.*r.*\\);",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": ".readlines(",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": ".read(",
         "type": "string",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -77,25 +101,35 @@
     "name": "File Operation (Read)",
     "id": "AI035900",
     "description": "File Operation (Read)",
-    "applies_to":[ "javascript" ],
-    "tags":[ "OS.FileOperation.Read" ],
+    "applies_to": [
+      "javascript"
+    ],
+    "tags": [
+      "OS.FileOperation.Read"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "fs.read",
         "type": "string",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       },
       {
         "pattern": "fs.ReadStream",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "fs.open",
         "type": "string",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -103,20 +137,28 @@
     "name": "File Operation (Read)",
     "id": "AI035910",
     "description": "File Operation",
-    "applies_to":[ "java" ],
-    "tags":[ "OS.FileOperation.Read" ],
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "OS.FileOperation.Read"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "new BufferedReader(new FileReader",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "FileReader|new Scanner\\(Files\\.readAllLines|Files\\.readAllBytes|FileInputStream",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -125,20 +167,28 @@
     "name": "File Operation (Read)",
     "id": "AI035911",
     "description": "File Operation",
-    "applies_to":[ "rust" ],
-    "tags":[ "OS.FileOperation.Read" ],
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.FileOperation.Read"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "BufRead|File::open|read_to_string|read_to_end|\\.read",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "FileReader|new Scanner\\(Files\\.readAllLines|Files\\.readAllBytes|FileInputStream",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -147,20 +197,29 @@
     "name": "File Operation (Delete)",
     "id": "AI036000",
     "description": "File Operation (Delete)",
-    "applies_to": [ "c", "cpp" ],
-    "tags":[ "OS.FileOperation.Delete" ],
+    "applies_to": [
+      "c",
+      "cpp"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "\\b(std::)?remove\\(.+\\)",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "remove",
         "type": "string",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ],
     "conditions": [
@@ -168,7 +227,9 @@
         "pattern": {
           "pattern": "include <(fstream|stdio|iostream)",
           "type": "regex",
-          "scopes": [ "code" ]
+          "scopes": [
+            "code"
+          ]
         },
         "search_in": "finding-region(-200,1)",
         "negate_finding": false
@@ -179,14 +240,20 @@
     "name": "File Operation (Delete)",
     "id": "AI036010",
     "description": "File Operation (Delete)",
-    "applies_to":[ "rust" ],
-    "tags":[ "OS.FileOperation.Delete" ],
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "remove_file",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -195,20 +262,28 @@
     "name": "File Operation (Delete)",
     "id": "AI036100",
     "description": "File Operation (Delete)",
-    "applies_to":[ "python" ],
-    "tags":[ "OS.FileOperation.Delete" ],
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "os.remove(",
         "type": "substring",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "os.ulink(",
         "type": "substring",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -217,14 +292,20 @@
     "name": "File Operation (Delete)",
     "id": "AI036200",
     "description": "File Operation (Delete)",
-    "applies_to":[ "csharp" ],
-    "tags":[ "OS.FileOperation.Delete" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "File.Delete",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -233,16 +314,24 @@
     "name": "File Operation (Delete)",
     "id": "AI036300",
     "description": "File Operation (Delete)",
-    "applies_to":[ "java" ],
-    "tags":[ "OS.FileOperation.Delete" ],
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "file.delete(",
         "type": "substring",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high",
-        "modifiers": [ "i" ]
+        "modifiers": [
+          "i"
+        ]
       }
     ]
   },
@@ -250,20 +339,28 @@
     "name": "File Operation (Delete)",
     "id": "AI036400",
     "description": "File Operation (Delete)",
-    "applies_to":[ "javascript" ],
-    "tags":[ "OS.FileOperation.Delete" ],
+    "applies_to": [
+      "javascript"
+    ],
+    "tags": [
+      "OS.FileOperation.Delete"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": ".unlink(Sync)?\\(",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "fs.remove(",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -272,20 +369,28 @@
     "name": "File Operation (Write)",
     "id": "AI036500",
     "description": "File Operation (Write)",
-    "applies_to":[ "csharp" ],
-    "tags":[ "OS.FileOperation.Write" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "File\\.WriteAllText|File\\.AppendText",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "StreamWriter",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -294,14 +399,20 @@
     "name": "File Operation (Write)",
     "id": "AI036501",
     "description": "File Operation (Write)",
-    "applies_to":[ "csharp" ],
-    "tags":[ "OS.FileOperation.Write" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "StreamWriter",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -310,13 +421,15 @@
         "pattern": {
           "pattern": "FileStream",
           "type": "string",
-          "scopes": [ "code" ]
+          "scopes": [
+            "code"
+          ]
         },
         "search_in": "finding-region(-10,0)",
         "negate_finding": false
       }
     ]
-  },  
+  },
   {
     "name": "File Operation (Write)",
     "id": "AI036600",
@@ -325,34 +438,46 @@
       "c",
       "cpp"
     ],
-    "tags":[ "OS.FileOperation.Write" ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "fstream|fwrite|fprintf|sprintf|fput",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "fopen\\(.*,.*w.*\\);",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high",
         "_comment": "write"
       },
       {
         "pattern": "fopen\\(.*,.*a.*\\);",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high",
         "_comment": "append"
       },
       {
         "pattern": "writefile|copyfile|filesystem::copy|std::ios_base::app",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -361,27 +486,37 @@
     "name": "File Operation (Write)",
     "id": "AI036610",
     "description": "File Operation (Write)",
-    "applies_to":[ "python" ],
-    "tags":[ "OS.FileOperation.Write" ],
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": ".write(",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "open\\(.*,.*w.*\\);",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high",
         "_comment": "write"
       },
       {
         "pattern": "open\\(.*,.*a.*\\);",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high",
         "_comment": "append"
       }
@@ -391,26 +526,36 @@
     "name": "File Operation (Write)",
     "id": "AI036620",
     "description": "File Operation (Write)",
-    "applies_to":[ "javascript" ],
-    "tags":[ "OS.FileOperation.Write" ],
+    "applies_to": [
+      "javascript"
+    ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "fs.write",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "WriteStream|appendFile|copyFile|createWriteStream|ftruncate",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "FileWriter|BufferedWriter|FileUtils\\.copyFile|Files\\.copy",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -419,14 +564,20 @@
     "name": "File Operation (Write)",
     "id": "AI036621",
     "description": "File Operation (Write)",
-    "applies_to":[ "rust" ],
-    "tags":[ "OS.FileOperation.Write" ],
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "File::create|use std::io::Write|BufWriter::new",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -435,20 +586,28 @@
     "name": "File Operation (Write)",
     "id": "AI036622",
     "description": "File Operation (Write)",
-    "applies_to":[ "rust" ],
-    "tags":[ "OS.FileOperation.Write" ],
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "OS.FileOperation.Write"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "\\.write_all|\\.write_fmt",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "write",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "low"
       }
     ],
@@ -457,8 +616,12 @@
         "pattern": {
           "pattern": "use std::io::Write|use std::io::File|use std:fs:File",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-240,240)",
         "negate_finding": false

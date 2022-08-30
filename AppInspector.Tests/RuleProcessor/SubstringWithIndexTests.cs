@@ -5,55 +5,16 @@ using System.Linq;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Microsoft.CST.OAT;
+using Microsoft.CST.RecursiveExtractor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AppInspector.Tests.RuleProcessor
-{
-    [TestClass]
-    [ExcludeFromCodeCoverage]
-    public class SubstringWithIndexTests
-    {
-        private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
+namespace AppInspector.Tests.RuleProcessor;
 
-        [DataRow(jsonStringRule)]
-        [DataRow(jsonAndXmlStringRule)]
-        [DataTestMethod]
-        public void JsonSubstringRule(string rule)
-        {
-            RuleSet rules = new(null);
-            rules.AddString(rule, "JsonTestRules");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){AllowAllTagsInBuildFiles = true});
-            if (_languages.FromFileNameOut("test.json", out LanguageInfo info))
-            {
-                List<MatchRecord> matches = processor.AnalyzeFile(jsonData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.json", new MemoryStream()), info);
-                Assert.AreEqual(1, matches.Count);
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
-        
-        [DataRow(xmlStringRule)]
-        [DataRow(jsonAndXmlStringRule)]
-        [DataTestMethod]
-        public void XmlSubstringRule(string rule)
-        {
-            RuleSet rules = new(null);
-            rules.AddString(rule, "XmlTestRules");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions(){AllowAllTagsInBuildFiles = true});
-            if (_languages.FromFileNameOut("test.xml", out LanguageInfo info))
-            {
-                List<MatchRecord> matches = processor.AnalyzeFile(xmlData, new Microsoft.CST.RecursiveExtractor.FileEntry("test.xml", new MemoryStream()), info);
-                Assert.AreEqual(1, matches.Count);
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
-        
-        private const string jsonAndXmlStringRule = @"[
+[TestClass]
+[ExcludeFromCodeCoverage]
+public class SubstringWithIndexTests
+{
+    private const string jsonAndXmlStringRule = @"[
         {
             ""id"": ""SA000005"",
             ""name"": ""Testing.Rules.JSONandXML"",
@@ -77,8 +38,8 @@ namespace AppInspector.Tests.RuleProcessor
             ""_comment"": """"
         }
     ]";
-        
-        private const string jsonStringRule = @"[
+
+    private const string jsonStringRule = @"[
         {
             ""id"": ""SA000005"",
             ""name"": ""Testing.Rules.JSON"",
@@ -101,8 +62,8 @@ namespace AppInspector.Tests.RuleProcessor
             ""_comment"": """"
         }
     ]";
-        
-        private const string xmlStringRule = @"[
+
+    private const string xmlStringRule = @"[
     {
         ""id"": ""SA000005"",
         ""name"": ""Testing.Rules.XML"",
@@ -126,8 +87,8 @@ namespace AppInspector.Tests.RuleProcessor
     }
 ]";
 
-        private const string jsonData = 
-@"{
+    private const string jsonData =
+        @"{
     ""books"":
     [
         {
@@ -163,9 +124,9 @@ namespace AppInspector.Tests.RuleProcessor
     ]
 }
 ";
-        
-        private const string xmlData = 
-@"<?xml version=""1.0"" encoding=""utf-8"" ?>   
+
+    private const string xmlData =
+        @"<?xml version=""1.0"" encoding=""utf-8"" ?>   
   <bookstore>  
       <book genre=""autobiography"" publicationdate=""1981-03-22"" ISBN=""1-861003-11-0"">  
           <title>The Autobiography of Benjamin Franklin</title>  
@@ -192,104 +153,8 @@ namespace AppInspector.Tests.RuleProcessor
       </book>  
   </bookstore>
 ";
-        
-        [TestMethod]
-        public void NoDictDataAllowed()
-        {
-            RuleSet rules = new(null);
-            rules.AddString(wordBoundaryEnabledCaseSensitive, "TestRules");
-            var theRule = rules.GetOatRules().First();
-            theRule.Clauses.First().DictData = new() { new KeyValuePair<string, string>("test", "test") };
 
-            Analyzer analyzer = new ApplicationInspectorAnalyzer();
-            var issues = analyzer.EnumerateRuleIssues(theRule);
-
-            Assert.AreEqual(1, issues.Count());
-        }
-
-        [TestMethod]
-        public void NoData()
-        {
-            RuleSet rules = new(null);
-            rules.AddString(wordBoundaryEnabledCaseSensitive, "TestRules");
-            var theRule = rules.GetOatRules().First();
-            theRule.Clauses.First().Data = new();
-
-            Analyzer analyzer = new ApplicationInspectorAnalyzer();
-            var issues = analyzer.EnumerateRuleIssues(theRule);
-
-            Assert.AreEqual(1, issues.Count());
-        }
-
-        [TestMethod]
-        public void WordBoundaryEnabledCaseSensitive()
-        {
-            RuleSet rules = new(null);
-            rules.AddString(wordBoundaryEnabledCaseSensitive, "TestRules");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
-            if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
-            {
-                List<MatchRecord> matches = processor.AnalyzeFile(data, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
-                Assert.AreEqual(1, matches.Count);
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
-
-        [TestMethod]
-        public void WordBoundaryDisabledCaseSensitive()
-        {
-            RuleSet rules = new(null);
-            rules.AddString(wordBoundaryDisabledCaseSensitive, "TestRules");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
-            if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
-            {
-                List<MatchRecord> matches = processor.AnalyzeFile(data, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
-                Assert.AreEqual(2, matches.Count);
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
-
-        [TestMethod]
-        public void WordBoundaryEnabledCaseInsensitive()
-        {
-            RuleSet rules = new(null);
-            rules.AddString(wordBoundaryEnabledCaseInsensitive, "TestRules");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
-            if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
-            {
-                List<MatchRecord> matches = processor.AnalyzeFile(data, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
-                Assert.AreEqual(2, matches.Count);
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
-
-        [TestMethod]
-        public void WordBoundaryDisabledCaseInsensitive()
-        {
-            RuleSet rules = new(null);
-            rules.AddString(wordBoundaryDisabledCaseInsensitive, "TestRules");
-            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
-            if (_languages.FromFileNameOut("test.c", out LanguageInfo info))
-            {
-                List<MatchRecord> matches = processor.AnalyzeFile(data, new Microsoft.CST.RecursiveExtractor.FileEntry("test.cs", new MemoryStream()), info);
-                Assert.AreEqual(4, matches.Count);
-            }
-            else
-            {
-                Assert.Fail();
-            }
-        }
-
-        private const string wordBoundaryDisabledCaseSensitive = @"[
+    private const string wordBoundaryDisabledCaseSensitive = @"[
     {
         ""id"": ""SA000005"",
         ""name"": ""Testing.Rules.WordBoundary"",
@@ -311,7 +176,8 @@ namespace AppInspector.Tests.RuleProcessor
         ""_comment"": """"
     }
 ]";
-        private const string wordBoundaryDisabledCaseInsensitive = @"[
+
+    private const string wordBoundaryDisabledCaseInsensitive = @"[
     {
         ""id"": ""SA000005"",
         ""name"": ""Testing.Rules.WordBoundary"",
@@ -336,7 +202,8 @@ namespace AppInspector.Tests.RuleProcessor
         ""_comment"": """"
     }
 ]";
-        private const string wordBoundaryEnabledCaseSensitive = @"[
+
+    private const string wordBoundaryEnabledCaseSensitive = @"[
     {
         ""id"": ""SA000005"",
         ""name"": ""Testing.Rules.WordBoundary"",
@@ -358,7 +225,8 @@ namespace AppInspector.Tests.RuleProcessor
         ""_comment"": """"
     }
 ]";
-        private const string wordBoundaryEnabledCaseInsensitive = @"[
+
+    private const string wordBoundaryEnabledCaseInsensitive = @"[
     {
         ""id"": ""SA000005"",
         ""name"": ""Testing.Rules.WordBoundary"",
@@ -384,10 +252,148 @@ namespace AppInspector.Tests.RuleProcessor
     }
 ]";
 
-        const string data = @"
+    private const string data = @"
 raceCARwithmorestuff
 racecarwithmorestuff
 raceCAR withmorestuff
 racecar withmorestuff";
+
+    private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
+
+    [DataRow(jsonStringRule)]
+    [DataRow(jsonAndXmlStringRule)]
+    [DataTestMethod]
+    public void JsonSubstringRule(string rule)
+    {
+        RuleSet rules = new();
+        rules.AddString(rule, "JsonTestRules");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        if (_languages.FromFileNameOut("test.json", out var info))
+        {
+            var matches = processor.AnalyzeFile(jsonData, new FileEntry("test.json", new MemoryStream()), info);
+            Assert.AreEqual(1, matches.Count);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    [DataRow(xmlStringRule)]
+    [DataRow(jsonAndXmlStringRule)]
+    [DataTestMethod]
+    public void XmlSubstringRule(string rule)
+    {
+        RuleSet rules = new();
+        rules.AddString(rule, "XmlTestRules");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        if (_languages.FromFileNameOut("test.xml", out var info))
+        {
+            var matches = processor.AnalyzeFile(xmlData, new FileEntry("test.xml", new MemoryStream()), info);
+            Assert.AreEqual(1, matches.Count);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    [TestMethod]
+    public void NoDictDataAllowed()
+    {
+        RuleSet rules = new();
+        rules.AddString(wordBoundaryEnabledCaseSensitive, "TestRules");
+        var theRule = rules.GetOatRules().First();
+        theRule.Clauses.First().DictData = new List<KeyValuePair<string, string>>
+            { new KeyValuePair<string, string>("test", "test") };
+
+        Analyzer analyzer = new ApplicationInspectorAnalyzer();
+        var issues = analyzer.EnumerateRuleIssues(theRule);
+
+        Assert.AreEqual(1, issues.Count());
+    }
+
+    [TestMethod]
+    public void NoData()
+    {
+        RuleSet rules = new();
+        rules.AddString(wordBoundaryEnabledCaseSensitive, "TestRules");
+        var theRule = rules.GetOatRules().First();
+        theRule.Clauses.First().Data = new List<string>();
+
+        Analyzer analyzer = new ApplicationInspectorAnalyzer();
+        var issues = analyzer.EnumerateRuleIssues(theRule);
+
+        Assert.AreEqual(1, issues.Count());
+    }
+
+    [TestMethod]
+    public void WordBoundaryEnabledCaseSensitive()
+    {
+        RuleSet rules = new();
+        rules.AddString(wordBoundaryEnabledCaseSensitive, "TestRules");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
+        if (_languages.FromFileNameOut("test.c", out var info))
+        {
+            var matches = processor.AnalyzeFile(data, new FileEntry("test.cs", new MemoryStream()), info);
+            Assert.AreEqual(1, matches.Count);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    [TestMethod]
+    public void WordBoundaryDisabledCaseSensitive()
+    {
+        RuleSet rules = new();
+        rules.AddString(wordBoundaryDisabledCaseSensitive, "TestRules");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
+        if (_languages.FromFileNameOut("test.c", out var info))
+        {
+            var matches = processor.AnalyzeFile(data, new FileEntry("test.cs", new MemoryStream()), info);
+            Assert.AreEqual(2, matches.Count);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    [TestMethod]
+    public void WordBoundaryEnabledCaseInsensitive()
+    {
+        RuleSet rules = new();
+        rules.AddString(wordBoundaryEnabledCaseInsensitive, "TestRules");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
+        if (_languages.FromFileNameOut("test.c", out var info))
+        {
+            var matches = processor.AnalyzeFile(data, new FileEntry("test.cs", new MemoryStream()), info);
+            Assert.AreEqual(2, matches.Count);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+
+    [TestMethod]
+    public void WordBoundaryDisabledCaseInsensitive()
+    {
+        RuleSet rules = new();
+        rules.AddString(wordBoundaryDisabledCaseInsensitive, "TestRules");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
+        if (_languages.FromFileNameOut("test.c", out var info))
+        {
+            var matches = processor.AnalyzeFile(data, new FileEntry("test.cs", new MemoryStream()), info);
+            Assert.AreEqual(4, matches.Count);
+        }
+        else
+        {
+            Assert.Fail();
+        }
     }
 }

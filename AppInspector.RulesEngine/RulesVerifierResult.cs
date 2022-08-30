@@ -10,7 +10,8 @@ public class RulesVerifierResult
         RuleStatuses = ruleStatuses;
         CompiledRuleSet = compiledRuleSets;
     }
+
     public List<RuleStatus> RuleStatuses { get; }
     public AbstractRuleSet CompiledRuleSet { get; }
-    public  bool Verified => RuleStatuses.All(x => x.Verified);
+    public bool Verified => RuleStatuses.All(x => x.Verified);
 }

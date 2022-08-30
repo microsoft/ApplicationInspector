@@ -3,14 +3,13 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Microsoft.ApplicationInspector.RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine;
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum PatternScope
 {
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum PatternScope
-    {
-        All,
-        Code,
-        Comment,
-        Html
-    }
+    All,
+    Code,
+    Comment,
+    Html
 }

@@ -1,160 +1,150 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-namespace Microsoft.ApplicationInspector.Commands
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using DotLiquid;
+using Microsoft.ApplicationInspector.RulesEngine;
+using Newtonsoft.Json;
+
+namespace Microsoft.ApplicationInspector.Commands;
+
+/// <summary>
+///     Root parent for tag group preferences file and used in Writers\AnalyzeHtmlWriter.cs
+/// </summary>
+public class TagCategory
 {
-    using DotLiquid;
-    using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
-    using System.Text.RegularExpressions;
-
-    /// <summary>
-    /// Root parent for tag group preferences file and used in Writers\AnalyzeHtmlWriter.cs
-    /// </summary>
-    public class TagCategory
+    public enum tagInfoType
     {
-        public enum tagInfoType { uniqueTags, allTags };
+        uniqueTags,
+        allTags
+    }
 
-        [JsonProperty(PropertyName = "type")]
-        public tagInfoType Type;
+    [JsonProperty(PropertyName = "type")] public tagInfoType Type;
 
-        [JsonProperty(PropertyName = "categoryName")]
-        public string? Name { get; set; }
+    public TagCategory()
+    {
+        Groups = new List<TagGroup>();
+    }
 
-        [JsonProperty(PropertyName = "groups")]
-        public List<TagGroup>? Groups { get; set; }
+    [JsonProperty(PropertyName = "categoryName")]
+    public string? Name { get; set; }
 
-        public TagCategory()
+    [JsonProperty(PropertyName = "groups")]
+    public List<TagGroup>? Groups { get; set; }
+}
+
+/// <summary>
+///     Used to read customizable preference for Profile page e.g. rules\profile\profile.json
+/// </summary>
+public class TagGroup : Drop
+{
+    public TagGroup()
+    {
+        Patterns = new List<TagSearchPattern>();
+    }
+
+    [JsonProperty(PropertyName = "title")] public string? Title { get; set; }
+
+    [JsonIgnore] public string? IconURL { get; set; }
+
+    [JsonProperty(PropertyName = "dataRef")]
+    public string? DataRef { get; set; }
+
+    [JsonProperty(PropertyName = "patterns")]
+    public List<TagSearchPattern>? Patterns { get; set; }
+}
+
+public class TagSearchPattern : Drop
+{
+    private Regex? _expression;
+    private string _searchPattern = "";
+
+    [JsonProperty(PropertyName = "searchPattern")]
+    public string SearchPattern
+    {
+        get => _searchPattern;
+        set
         {
-            Groups = new List<TagGroup>();
+            _searchPattern = value;
+            _expression = null;
         }
     }
 
-    /// <summary>
-    /// Used to read customizable preference for Profile page e.g. rules\profile\profile.json
-    /// </summary>
-    public class TagGroup : Drop
+    public Regex Expression
     {
-        [JsonProperty(PropertyName = "title")]
-        public string? Title { get; set; }
-
-        [JsonIgnore]
-        public string? IconURL { get; set; }
-
-        [JsonProperty(PropertyName = "dataRef")]
-        public string? DataRef { get; set; }
-
-        [JsonProperty(PropertyName = "patterns")]
-        public List<TagSearchPattern>? Patterns { get; set; }
-
-        public TagGroup()
+        get
         {
-            Patterns = new List<TagSearchPattern>();
+            if (_expression == null)
+                _expression = new Regex(SearchPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            return _expression;
         }
     }
 
-    public class TagSearchPattern : Drop
+    [JsonProperty(PropertyName = "displayName")]
+    public string? DisplayName { get; set; }
+
+    [JsonProperty(PropertyName = "detectedIcon")]
+    public string? DetectedIcon { get; set; } = "fas fa-cat"; //default
+
+    [JsonProperty(PropertyName = "notDetectedIcon")]
+    public string? NotDetectedIcon { get; set; }
+
+    [JsonProperty(PropertyName = "detected")]
+    public bool Detected { get; set; }
+
+    [JsonProperty(PropertyName = "details")]
+    public string Details
     {
-        private string _searchPattern = "";
-        private Regex? _expression;
-
-        [JsonProperty(PropertyName = "searchPattern")]
-        public string SearchPattern
+        get
         {
-            get
-            {
-                return _searchPattern;
-            }
-            set
-            {
-                _searchPattern = value;
-                _expression = null;
-            }
+            var result = Detected ? "View" : "N/A";
+            return result;
         }
-
-        public static bool ShouldSerializeExpression()
-        {
-            return false;
-        }
-
-        public Regex Expression
-        {
-            get
-            {
-                if (_expression == null)
-                {
-                    _expression = new Regex(SearchPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                }
-                return _expression;
-            }
-        }
-
-        [JsonProperty(PropertyName = "displayName")]
-        public string? DisplayName { get; set; }
-
-        [JsonProperty(PropertyName = "detectedIcon")]
-        public string? DetectedIcon { get; set; } = "fas fa-cat";//default
-
-        [JsonProperty(PropertyName = "notDetectedIcon")]
-        public string? NotDetectedIcon { get; set; }
-
-        [JsonProperty(PropertyName = "detected")]
-        public bool Detected { get; set; }
-
-        [JsonProperty(PropertyName = "details")]
-        public string Details
-        {
-            get
-            {
-                string result = Detected ? "View" : "N/A";
-                return result;
-            }
-        }
-
-        [JsonProperty(PropertyName = "confidence")]
-        public string Confidence { get; set; } = "Medium";
     }
 
-    /// <summary>
-    /// Primary use is development of lists of tags with specific group or pattern properties in reporting
-    /// </summary>
-    public class TagInfo : Drop
+    [JsonProperty(PropertyName = "confidence")]
+    public string Confidence { get; set; } = "Medium";
+
+    public static bool ShouldSerializeExpression()
     {
-        [JsonProperty(PropertyName = "tag")]
-        public string? Tag { get; set; }
+        return false;
+    }
+}
 
-        [JsonProperty(PropertyName = "displayName")]
-        public string? ShortTag { get; set; }
+/// <summary>
+///     Primary use is development of lists of tags with specific group or pattern properties in reporting
+/// </summary>
+public class TagInfo : Drop
+{
+    private string _confidence = "Medium";
 
-        [JsonIgnore]
-        public string? StatusIcon { get; set; }
+    [JsonProperty(PropertyName = "tag")] public string? Tag { get; set; }
 
-        private string _confidence = "Medium";
+    [JsonProperty(PropertyName = "displayName")]
+    public string? ShortTag { get; set; }
 
-        [JsonProperty(PropertyName = "confidence")]
-        public string Confidence
+    [JsonIgnore] public string? StatusIcon { get; set; }
+
+    [JsonProperty(PropertyName = "confidence")]
+    public string Confidence
+    {
+        get => _confidence;
+        set
         {
-            get => _confidence;
-            set
-            {                
-                if (Enum.TryParse(value, true, out RulesEngine.Confidence test))
-                {
-                    _confidence = value;
-                }
-            }
+            if (Enum.TryParse(value, true, out Confidence test)) _confidence = value;
         }
-
-        [JsonProperty(PropertyName = "severity")]
-        public string Severity { get; set; } = "Moderate";
-
-        [JsonProperty(PropertyName = "detected")]
-        public bool Detected { get; set; }
     }
 
-    public class TagException
-    {
-        [JsonProperty(PropertyName = "tag")]
-        public string? Tag { get; set; }
-    }
+    [JsonProperty(PropertyName = "severity")]
+    public string Severity { get; set; } = "Moderate";
+
+    [JsonProperty(PropertyName = "detected")]
+    public bool Detected { get; set; }
+}
+
+public class TagException
+{
+    [JsonProperty(PropertyName = "tag")] public string? Tag { get; set; }
 }

@@ -1,50 +1,40 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-namespace Microsoft.ApplicationInspector.CLI
+using System;
+using System.IO;
+using Microsoft.ApplicationInspector.Commands;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
+namespace Microsoft.ApplicationInspector.CLI;
+
+internal class ExportTagsTextWriter : CommandResultsWriter
 {
-    using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
-    using System;
-    using System.IO;
+    private readonly ILogger<ExportTagsTextWriter> _logger;
 
-    internal class ExportTagsTextWriter : CommandResultsWriter
+    internal ExportTagsTextWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
     {
-        private readonly ILogger<ExportTagsTextWriter> _logger;
+        _logger = loggerFactory?.CreateLogger<ExportTagsTextWriter>() ?? NullLogger<ExportTagsTextWriter>.Instance;
+    }
 
-        internal ExportTagsTextWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
+    {
+        if (TextWriter is null) throw new ArgumentNullException(nameof(TextWriter));
+
+        var exportTagsResult = (ExportTagsResult)result;
+
+        if (exportTagsResult.TagsList.Count > 0)
         {
-            _logger = loggerFactory?.CreateLogger<ExportTagsTextWriter>() ?? NullLogger<ExportTagsTextWriter>.Instance;
+            TextWriter.WriteLine("Results");
+
+            foreach (var tag in exportTagsResult.TagsList) TextWriter.WriteLine(tag);
+        }
+        else
+        {
+            TextWriter.WriteLine("No tags found");
         }
 
-        public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
-        {
-            if (TextWriter is null)
-            {
-                throw new ArgumentNullException(nameof(TextWriter));
-            }
-
-            ExportTagsResult exportTagsResult = (ExportTagsResult)result;
-
-            if (exportTagsResult.TagsList.Count > 0)
-            {
-                TextWriter.WriteLine("Results");
-
-                foreach (string tag in exportTagsResult.TagsList)
-                {
-                    TextWriter.WriteLine(tag);
-                }
-            }
-            else
-            {
-                TextWriter.WriteLine("No tags found");
-            }
-
-            if (autoClose)
-            {
-                FlushAndClose();
-            }
-        }
+        if (autoClose) FlushAndClose();
     }
 }

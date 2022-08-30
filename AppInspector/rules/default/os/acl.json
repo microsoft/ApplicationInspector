@@ -3,14 +3,20 @@
     "name": "OS Operation: ACL Write (FileSecurity)",
     "id": "AI033500",
     "description": "OS Operation: ACL",
-    "applies_to":[ "csharp" ],
-    "tags":[ "OS.ACL.Write.FileSecurity" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.ACL.Write.FileSecurity"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "FileSecurity|DirectorySecurity",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ],
@@ -19,8 +25,12 @@
         "pattern": {
           "pattern": "SetAccessControl|RemoveAccessRule",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
@@ -31,14 +41,20 @@
     "name": "OS Operation: ACL Write (General)",
     "id": "AI033600",
     "description": "OS Operation: ACL (Write)",
-    "applies_to":[ "java" ],
-    "tags":[ "OS.ACL.Write" ],
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "OS.ACL.Write"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "acl.(remove|add)",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -52,19 +68,25 @@
       "cpp",
       ""
     ],
-    "tags":[ "OS.ACL.Write.General" ],
+    "tags": [
+      "OS.ACL.Write.General"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "SetNamedSecurityInfo|SetEntriesInAcl|AddAccessAllowed|AceAddAccessAllowedObjectAce|AddAce|SetFileSecurity|DeleteAce",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "AuthzModifyClaims|AuthzModifySids|BuildExplicitAccessWithName|SetUserObjectSecurity|DestroyPrivateObjectSecurity|SetKernelObjectSecurity|SetSecurityDescriptorSacl|SetSecurityDescriptorOwner|SetSecurityDescriptorGroup|SetPrivateObjectSecurity|SetNamedSecurityInfo|SetServiceObjectSecurity",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -77,19 +99,25 @@
       "c",
       "cpp"
     ],
-    "tags":[ "OS.ACL.Write.Audit" ],
+    "tags": [
+      "OS.ACL.Write.Audit"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "AuditSetPerUserPolicy|AuditSetSecurity",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "DestroyPrivateObjectSecurity|SetKernelObjectSecurity|SetSecurityDescriptorSacl|SetSecurityDescriptorOwner|SetSecurityDescriptorGroup|SetPrivateObjectSecurity|SetNamedSecurityInfo|SetServiceObjectSecurity",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -98,15 +126,21 @@
     "name": "OS Operation: ACL (Impersonation)",
     "id": "AI033900",
     "description": "OS Operation: ACL (Impersonation)",
-    "tags":[ "OS.ACL.Impersonation" ],
+    "tags": [
+      "OS.ACL.Impersonation"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "impersonate",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "medium",
-        "modifiers": [ "i" ]
+        "modifiers": [
+          "i"
+        ]
       }
     ]
   },
@@ -118,13 +152,17 @@
       "c",
       "cpp"
     ],
-    "tags":[ "OS.ACL.TokenImpersonation" ],
+    "tags": [
+      "OS.ACL.TokenImpersonation"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "ImpersonateAnonymousToken|ImpersonateLoggedOnUser",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -133,14 +171,20 @@
     "name": "OS Operation: ACL (Impersonation)",
     "id": "AI034100",
     "description": "OS Operation: ACL (Impersonation)",
-    "applies_to":[ "csharp" ],
-    "tags":[ "OS.ACL.TokenImpersonation" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.ACL.TokenImpersonation"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "WindowsImpersonationContext|WindowsIdentity\\.Impersonate|WindowsIdentity\\.RunImpersonated|ImpersonateIdentity",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -149,14 +193,20 @@
     "name": "OS Operation: ACL (Impersonation)",
     "id": "AI034200",
     "description": "OS Operation: ACL (Impersonation)",
-    "applies_to":[ "csharp" ],
-    "tags":[ "OS.ACL.TokenImpersonation" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.ACL.TokenImpersonation"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "WindowsImpersonationContext|WindowsIdentity\\.Impersonate|WindowsIdentity\\.RunImpersonated",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -169,13 +219,17 @@
       "c",
       "cpp"
     ],
-    "tags":[ "OS.ACL.Write.AppContainer" ],
+    "tags": [
+      "OS.ACL.Write.AppContainer"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "AuthzSetAppContainerInformation",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -188,13 +242,17 @@
       "c",
       "cpp"
     ],
-    "tags":[ "OS.ACL.Write.SystemToken." ],
+    "tags": [
+      "OS.ACL.Write.SystemToken."
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "AdjustTokenPrivileges|SetTokenInformation",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -203,14 +261,20 @@
     "name": "OS Operation: ACL (Write)",
     "id": "AI034500",
     "description": "OS Operation: ACL (Write)",
-    "applies_to":[ "powershell" ],
-    "tags":[ "OS.ACL.Write" ],
+    "applies_to": [
+      "powershell"
+    ],
+    "tags": [
+      "OS.ACL.Write"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Set-Acl",
         "type": "string",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -219,13 +283,17 @@
     "name": "OS Operation: ACL (Write)",
     "id": "AI034600",
     "description": "OS Operation: ACL (Write)",
-    "tags":[ "OS.ACL.Write" ],
+    "tags": [
+      "OS.ACL.Write"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "chmod|chgrp|chown|setfacl",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]
@@ -234,16 +302,24 @@
     "name": "OS Operation: Enable Elevated Permissions",
     "id": "AI034700",
     "description": "OS Operation: Enable Elevated Permissions",
-    "applies_to":[ "package.json" ],
-    "tags":[ "OS.ACL.Write.Unsafe" ],
+    "applies_to": [
+      "package.json"
+    ],
+    "tags": [
+      "OS.ACL.Write.Unsafe"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "\"unsafe-perm\"\\s*:\\s*true",
         "type": "regex",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high",
-        "modifiers": [ "i" ]
+        "modifiers": [
+          "i"
+        ]
       }
     ]
   }

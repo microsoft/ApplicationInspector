@@ -7,13 +7,20 @@
       "c",
       "cpp"
     ],
-    "tags":[ "Framework.Testing.AceUnit" ],
+    "tags": [
+      "Framework.Testing.AceUnit"
+    ],
     "patterns": [
       {
         "pattern": "aceunit",
         "type": "string",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -26,13 +33,19 @@
       "c",
       "cpp"
     ],
-    "tags":[ "Framework.Testing.Eryn" ],
+    "tags": [
+      "Framework.Testing.Eryn"
+    ],
     "patterns": [
       {
         "pattern": "eryn",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -45,13 +58,19 @@
       "c",
       "cpp"
     ],
-    "tags":[ "Framework.Testing.Autounit" ],
+    "tags": [
+      "Framework.Testing.Autounit"
+    ],
     "patterns": [
       {
         "pattern": "autounit",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -64,13 +83,19 @@
       "c",
       "cpp"
     ],
-    "tags":[ "Framework.Testing.Andit" ],
+    "tags": [
+      "Framework.Testing.Andit"
+    ],
     "patterns": [
       {
         "pattern": "andit",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -83,13 +108,19 @@
       "c",
       "cpp"
     ],
-    "tags":[ "Framework.Testing.Boost" ],
+    "tags": [
+      "Framework.Testing.Boost"
+    ],
     "patterns": [
       {
         "pattern": "boost/test",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -102,13 +133,19 @@
       "c",
       "cpp"
     ],
-    "tags":[ "Framework.Testing.BugEye" ],
+    "tags": [
+      "Framework.Testing.BugEye"
+    ],
     "patterns": [
       {
         "pattern": "bugeye",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -121,18 +158,23 @@
       "c",
       "cpp"
     ],
-    "tags":[ "Framework.Testing.Catch2" ],
+    "tags": [
+      "Framework.Testing.Catch2"
+    ],
     "patterns": [
       {
         "pattern": "catch.hpp",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
   },
-
   {
     "name": "Testing Framework: Catsrunner",
     "id": "AI041400",
@@ -141,13 +183,19 @@
       "c",
       "cpp"
     ],
-    "tags":[ "Framework.Testing.Catsrunner" ],
+    "tags": [
+      "Framework.Testing.Catsrunner"
+    ],
     "patterns": [
       {
         "pattern": "catsrunner",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -160,14 +208,20 @@
       "c",
       "cpp"
     ],
-    "tags":[ "Framework.Testing.Cfix" ],
+    "tags": [
+      "Framework.Testing.Cfix"
+    ],
     "_comment": "https://github.com/jpassing/cfix",
     "patterns": [
       {
         "pattern": "cfix",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -180,13 +234,19 @@
       "c",
       "cpp"
     ],
-    "tags":[ "Framework.Testing.Cgreen" ],
+    "tags": [
+      "Framework.Testing.Cgreen"
+    ],
     "patterns": [
       {
         "pattern": "cgreen",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]

@@ -3,15 +3,23 @@
     "name": "Infrastructure As Code: Terraform (Hashicorp)",
     "id": "AI031566",
     "description": "Infrastructure As Code: Terraform (Hashicorp)",
-    "applies_to":[ "terraform" ],
-    "tags":[ "Infrastructure.Terraform.Hashicorp" ],
+    "applies_to": [
+      "terraform"
+    ],
+    "tags": [
+      "Infrastructure.Terraform.Hashicorp"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "terraform",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]

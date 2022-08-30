@@ -46,8 +46,7 @@
         // Decode the content (HTML encoded) for Ace to display
         // Disabled, needs better testing, since it's prone to XSS if content contains JS.
         // Maybe there is a better way of doing this.
-        if (false)
-        {
+        if (false) {
             const htmlEntityDecoder = (content) => {
                 const textArea = document.createElement('textarea');
                 textArea.innerHTML = content;
@@ -92,7 +91,9 @@ class TemplateInsertion {
             donut: {
                 title: "Analyzed Files",
                 label: {
-                    format: function(value) { return value; }
+                    format: function (value) {
+                        return value;
+                    }
                 }
             }
         });
@@ -112,7 +113,9 @@ class TemplateInsertion {
             donut: {
                 title: "Results",
                 label: {
-                    format: function(value) { return value; }
+                    format: function (value) {
+                        return value;
+                    }
                 }
             }
         });
@@ -129,7 +132,9 @@ class TemplateInsertion {
             donut: {
                 title: "Source Types",
                 label: {
-                    format: function(value) { return value; }
+                    format: function (value) {
+                        return value;
+                    }
                 }
             }
         });
@@ -149,8 +154,10 @@ class TemplateInsertion {
 
         const _a = a.toLowerCase();
         const _b = b.toLowerCase();
-        const map = { 'low': 1, 'medium': 2, 'high': 4 };
-        if (map[_a] > map[_b]) { return a; }
+        const map = {'low': 1, 'medium': 2, 'high': 4};
+        if (map[_a] > map[_b]) {
+            return a;
+        }
         return b;
     }
 
@@ -228,14 +235,14 @@ class TemplateInsertion {
             // We're goint to go through all results (this.md) and if it contains
             // a tag that matches what we're looking for, we'll keep that icon visible.
             search_loop:
-            for (let match of this.md) {
-                for (let tag of match.tags) {
-                    if (targetRegex.exec(tag)) {
-                        foundTag = true;        // We have at least one match for this icon
-                        break search_loop;
+                for (let match of this.md) {
+                    for (let tag of match.tags) {
+                        if (targetRegex.exec(tag)) {
+                            foundTag = true;        // We have at least one match for this icon
+                            break search_loop;
+                        }
                     }
                 }
-            }
             if (!foundTag) {
                 $(elt).addClass('disabled');
             }
@@ -261,8 +268,7 @@ class TemplateInsertion {
 
         //Toggles display blocks and image; NOTE jquery selectors won't work due to spaces in some group
         //names even using escape() or '[id=value] methods so html DOM methods used and work
-        $('.toggle_image').click(function ()
-        {
+        $('.toggle_image').click(function () {
             var btnToggleBlock = "data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAAA2CAYAAACY0PQ8AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAHYYAAB2GAV2iE4EAAACgSURBVGhD7dmxDcIwEEBRhyWYjumYjinCQ0qProIo/zV2aX35GnvbWRd3O9ZLKwJFoAgUgSJQBIpAESgCRaAIFIEiUASKQBEoAkWgCBSBIjB+ct+er2P33/bH/dh9N7oJZwnwMTlr40ARGEWYzNmvTc7aXySNA0WgCBSBIlAEikARKAJFoAgUgSJQBIpAESgCRaAIFIEiUASKQBEowlrrDWP+FV5LruwQAAAAAElFTkSuQmCC";
             var btnToggleNone = "data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAEEAAAA2CAYAAACY0PQ8AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAADBSURBVGhD7dqxCYBADEDRnEs4ndM5nVPoP7hCxCbNBfG/Ru3kYxCD7UT83DKOv2YEGAFGgBFQ+nZo+zHOIs5tHWfzlT0J9wDd83omxwFGgBFgBBgBRoARYAQYAUaAEWAEGAFGgBGQXqpUfvdnZJY0qSfhKwG6zL06DjACUhEql6FZmXst2za/zWxVZMcBRoARYAQYAUaAEWAEGAFGgBFgBBgBRoARYAQYAWURnlukytWdv/rDcYARYAQYAUaAESLiAh45KVR0Pg9xAAAAAElFTkSuQmCC";
 
@@ -302,10 +308,9 @@ class TemplateInsertion {
             $tbody.empty();
 
             // Now we iterate through all of the rules that relate to this icon
-            for (let [rule] of Object.entries(identifiedRules))
-            {
+            for (let [rule] of Object.entries(identifiedRules)) {
                 let $tr = $('<tr>');
-                $tr.on('click', 'td', { 'obj': this }, this.show_file_listing);
+                $tr.on('click', 'td', {'obj': this}, this.show_file_listing);
                 let $td0 = $('<td>');
                 let $td0a = $('<a>');
                 $td0a.attr('href', '#');

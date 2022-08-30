@@ -1,55 +1,42 @@
 ﻿// Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
-using Microsoft.ApplicationInspector.RulesEngine;
+using System.IO;
+using Microsoft.ApplicationInspector.Commands;
+using Microsoft.ApplicationInspector.Common;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Microsoft.ApplicationInspector.CLI
+namespace Microsoft.ApplicationInspector.CLI;
+
+internal class VerifyRulesTextWriter : CommandResultsWriter
 {
-    using Microsoft.ApplicationInspector.Commands;
-    using Microsoft.ApplicationInspector.Common;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
-    using System.IO;
+    private readonly ILogger<VerifyRulesTextWriter> _logger;
 
-    internal class VerifyRulesTextWriter : CommandResultsWriter
+    public VerifyRulesTextWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
     {
-        private readonly ILogger<VerifyRulesTextWriter> _logger;
+        _logger = loggerFactory?.CreateLogger<VerifyRulesTextWriter>() ?? NullLogger<VerifyRulesTextWriter>.Instance;
+    }
 
-        public VerifyRulesTextWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
+    {
+        var verifyRulesResult = (VerifyRulesResult)result;
+
+        if (string.IsNullOrEmpty(commandOptions.OutputFilePath)) TextWriter.WriteLine("Results");
+
+        if (verifyRulesResult.ResultCode != VerifyRulesResult.ExitCode.Verified)
+            TextWriter.WriteLine(MsgHelp.ID.TAGTEST_RESULTS_FAIL);
+        else
+            TextWriter.WriteLine(MsgHelp.ID.TAGTEST_RESULTS_SUCCESS);
+
+        if (verifyRulesResult.RuleStatusList.Count > 0)
         {
-            _logger = loggerFactory?.CreateLogger<VerifyRulesTextWriter>() ?? NullLogger<VerifyRulesTextWriter>.Instance;
+            TextWriter.WriteLine("Rule status");
+            foreach (var ruleStatus in verifyRulesResult.RuleStatusList)
+                TextWriter.WriteLine("Ruleid: {0}, Rulename: {1}, Status: {2}", ruleStatus.RulesId,
+                    ruleStatus.RulesName, ruleStatus.Verified);
         }
-        public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
-        {
-            VerifyRulesResult verifyRulesResult = (VerifyRulesResult)result;
 
-            if (string.IsNullOrEmpty(commandOptions.OutputFilePath))
-            {
-                TextWriter.WriteLine("Results");
-            }
-
-            if (verifyRulesResult.ResultCode != VerifyRulesResult.ExitCode.Verified)
-            {
-                TextWriter.WriteLine(MsgHelp.ID.TAGTEST_RESULTS_FAIL);
-            }
-            else
-            {
-                TextWriter.WriteLine(MsgHelp.ID.TAGTEST_RESULTS_SUCCESS);
-            }
-
-            if (verifyRulesResult.RuleStatusList.Count > 0)
-            {
-                TextWriter.WriteLine("Rule status");
-                foreach (RuleStatus ruleStatus in verifyRulesResult.RuleStatusList)
-                {
-                    TextWriter.WriteLine("Ruleid: {0}, Rulename: {1}, Status: {2}", ruleStatus.RulesId, ruleStatus.RulesName, ruleStatus.Verified);
-                }
-            }
-
-            if (autoClose)
-            {
-                FlushAndClose();
-            }
-        }
+        if (autoClose) FlushAndClose();
     }
 }

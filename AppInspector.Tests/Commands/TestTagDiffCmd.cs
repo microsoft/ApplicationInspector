@@ -8,49 +8,17 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AppInspector.Tests.Commands
+namespace AppInspector.Tests.Commands;
+
+/// <summary>
+///     Test class for TagDiff Command
+/// </summary>
+[TestClass]
+[ExcludeFromCodeCoverage]
+public class TestTagDiffCmd
 {
-    /// <summary>
-    /// Test class for TagDiff Command
-    /// </summary>
-    [TestClass]
-    [ExcludeFromCodeCoverage]
-    public class TestTagDiffCmd
-    {
-        private string testFileFourWindowsOneLinuxPath = string.Empty;
-        private string testFileFourWindowsOneLinuxCopyPath = string.Empty;
-        private string testFileFourWindowsNoLinuxPath = string.Empty;
-        private string testRulesPath = string.Empty;
-
-        private LogOptions logOptions = new();
-        private ILoggerFactory loggerFactory = new NullLoggerFactory();
-
-        [TestInitialize]
-        public void InitOutput()
-        {
-            loggerFactory = logOptions.GetLoggerFactory();
-            Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
-            testFileFourWindowsOneLinuxPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFile.js");
-            File.WriteAllText(testFileFourWindowsOneLinuxPath, fourWindowsOneLinux);
-
-            testFileFourWindowsOneLinuxCopyPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFileCopy.js");
-            File.WriteAllText(testFileFourWindowsOneLinuxCopyPath, fourWindowsOneLinux);
-
-            testFileFourWindowsNoLinuxPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFileNoLinux.js");
-            File.WriteAllText(testFileFourWindowsNoLinuxPath, fourWindowsNoLinux);
-
-            testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
-            File.WriteAllText(testRulesPath, findWindows);
-        }
-
-        [ClassCleanup]
-        public static void CleanUp()
-        {
-            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
-        }
-
-        // These simple test rules rules look for the string "windows" and "linux"
-        string findWindows = @"[
+    // These simple test rules rules look for the string "windows" and "linux"
+    private readonly string findWindows = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
     ""id"": ""AI_TEST_WINDOWS"",
@@ -90,89 +58,125 @@ namespace AppInspector.Tests.Commands
     ]
 }
 ]";
-        // This string contains windows four times and linux once.
-        string fourWindowsOneLinux =
-@"windows
+
+    private readonly string fourWindowsNoLinux =
+        @"windows
+windows
+windows
+windows
+";
+
+    // This string contains windows four times and linux once.
+    private readonly string fourWindowsOneLinux =
+        @"windows
 windows
 linux
 windows
 windows
 ";
-        string fourWindowsNoLinux =
-@"windows
-windows
-windows
-windows
-";
 
-        [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestPassed)]
-        [DataRow(TagTestType.Inequality, TagDiffResult.ExitCode.TestFailed)]
-        [TestMethod]
-        public void Equality(TagTestType tagTestType, TagDiffResult.ExitCode expectedExitCode)
+    private ILoggerFactory loggerFactory = new NullLoggerFactory();
+
+    private readonly LogOptions logOptions = new();
+    private string testFileFourWindowsNoLinuxPath = string.Empty;
+    private string testFileFourWindowsOneLinuxCopyPath = string.Empty;
+    private string testFileFourWindowsOneLinuxPath = string.Empty;
+    private string testRulesPath = string.Empty;
+
+    [TestInitialize]
+    public void InitOutput()
+    {
+        loggerFactory = logOptions.GetLoggerFactory();
+        Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
+        testFileFourWindowsOneLinuxPath =
+            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFile.js");
+        File.WriteAllText(testFileFourWindowsOneLinuxPath, fourWindowsOneLinux);
+
+        testFileFourWindowsOneLinuxCopyPath =
+            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFileCopy.js");
+        File.WriteAllText(testFileFourWindowsOneLinuxCopyPath, fourWindowsOneLinux);
+
+        testFileFourWindowsNoLinuxPath =
+            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFileNoLinux.js");
+        File.WriteAllText(testFileFourWindowsNoLinuxPath, fourWindowsNoLinux);
+
+        testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
+        File.WriteAllText(testRulesPath, findWindows);
+    }
+
+    [ClassCleanup]
+    public static void CleanUp()
+    {
+        Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
+    }
+
+    [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestPassed)]
+    [DataRow(TagTestType.Inequality, TagDiffResult.ExitCode.TestFailed)]
+    [TestMethod]
+    public void Equality(TagTestType tagTestType, TagDiffResult.ExitCode expectedExitCode)
+    {
+        TagDiffOptions options = new()
         {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new[] { testFileFourWindowsOneLinuxPath },
-                SourcePath2 = new[] { testFileFourWindowsOneLinuxCopyPath },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                IgnoreDefaultRules = true,
-                TestType = tagTestType,
-                CustomRulesPath = testRulesPath
-            };
+            SourcePath1 = new[] { testFileFourWindowsOneLinuxPath },
+            SourcePath2 = new[] { testFileFourWindowsOneLinuxCopyPath },
+            FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+            IgnoreDefaultRules = true,
+            TestType = tagTestType,
+            CustomRulesPath = testRulesPath
+        };
 
-            TagDiffCommand command = new(options, loggerFactory);
-            TagDiffResult result = command.GetResult();
+        TagDiffCommand command = new(options, loggerFactory);
+        var result = command.GetResult();
 
-            Assert.AreEqual(expectedExitCode, result.ResultCode);
-        }
+        Assert.AreEqual(expectedExitCode, result.ResultCode);
+    }
 
-        [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestFailed)]
-        [DataRow(TagTestType.Inequality, TagDiffResult.ExitCode.TestPassed)]
-        [TestMethod]
-        public void Inequality(TagTestType tagTestType, TagDiffResult.ExitCode expectedExitCode)
+    [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestFailed)]
+    [DataRow(TagTestType.Inequality, TagDiffResult.ExitCode.TestPassed)]
+    [TestMethod]
+    public void Inequality(TagTestType tagTestType, TagDiffResult.ExitCode expectedExitCode)
+    {
+        TagDiffOptions options = new()
         {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new[] { testFileFourWindowsOneLinuxPath },
-                SourcePath2 = new[] { testFileFourWindowsNoLinuxPath },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                IgnoreDefaultRules = true,
-                TestType = tagTestType,
-                CustomRulesPath = testRulesPath
-            };
+            SourcePath1 = new[] { testFileFourWindowsOneLinuxPath },
+            SourcePath2 = new[] { testFileFourWindowsNoLinuxPath },
+            FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+            IgnoreDefaultRules = true,
+            TestType = tagTestType,
+            CustomRulesPath = testRulesPath
+        };
 
-            TagDiffCommand command = new(options, loggerFactory);
-            TagDiffResult result = command.GetResult();
+        TagDiffCommand command = new(options, loggerFactory);
+        var result = command.GetResult();
 
-            Assert.AreEqual(expectedExitCode, result.ResultCode);
-        }
+        Assert.AreEqual(expectedExitCode, result.ResultCode);
+    }
 
-        [TestMethod]
-        public void InvalidSourcePath_Fail()
+    [TestMethod]
+    public void InvalidSourcePath_Fail()
+    {
+        TagDiffOptions options = new()
         {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new[] { $"{testFileFourWindowsOneLinuxPath}.not.a.path" },
-                SourcePath2 = new[] { testFileFourWindowsOneLinuxPath },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-            };
-            var cmd = new TagDiffCommand(options, loggerFactory);
-            Assert.ThrowsException<OpException>(() => cmd.GetResult());
-        }
+            SourcePath1 = new[] { $"{testFileFourWindowsOneLinuxPath}.not.a.path" },
+            SourcePath2 = new[] { testFileFourWindowsOneLinuxPath },
+            FilePathExclusions = Array.Empty<string>() //allow source under unittest path
+        };
+        var cmd = new TagDiffCommand(options, loggerFactory);
+        Assert.ThrowsException<OpException>(() => cmd.GetResult());
+    }
 
-        [TestMethod]
-        public void NoDefaultNoCustomRules_Fail()
+    [TestMethod]
+    public void NoDefaultNoCustomRules_Fail()
+    {
+        TagDiffOptions options = new()
         {
-            TagDiffOptions options = new()
-            {
-                SourcePath1 = new[] { testFileFourWindowsOneLinuxPath },
-                SourcePath2 = new[] { testFileFourWindowsOneLinuxCopyPath },
-                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
-                IgnoreDefaultRules = true
-            };
+            SourcePath1 = new[] { testFileFourWindowsOneLinuxPath },
+            SourcePath2 = new[] { testFileFourWindowsOneLinuxCopyPath },
+            FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+            IgnoreDefaultRules = true
+        };
 
-            TagDiffCommand command = new TagDiffCommand(options, loggerFactory);
-            Assert.ThrowsException<OpException>(() => command.GetResult());
-        }
+        var command = new TagDiffCommand(options, loggerFactory);
+        Assert.ThrowsException<OpException>(() => command.GetResult());
     }
 }

@@ -3,23 +3,22 @@
 
 using Newtonsoft.Json;
 
-namespace Microsoft.ApplicationInspector.RulesEngine
+namespace Microsoft.ApplicationInspector.RulesEngine;
+
+/// <summary>
+///     Comment class to hold information about comment for each language
+/// </summary>
+internal class Comment
 {
-    /// <summary>
-    /// Comment class to hold information about comment for each language
-    /// </summary>
-    internal class Comment
-    {
-        [JsonProperty(PropertyName ="language")]
-        public string[]? Languages { get; set; }
+    [JsonProperty(PropertyName = "language")]
+    public string[]? Languages { get; set; }
 
-        [JsonProperty(PropertyName ="inline")]
-        public string? Inline { get; set; }
+    [JsonProperty(PropertyName = "inline")]
+    public string? Inline { get; set; }
 
-        [JsonProperty(PropertyName ="prefix")]
-        public string? Prefix { get; set; }
+    [JsonProperty(PropertyName = "prefix")]
+    public string? Prefix { get; set; }
 
-        [JsonProperty(PropertyName ="suffix")]
-        public string? Suffix { get; set; }
-    }
+    [JsonProperty(PropertyName = "suffix")]
+    public string? Suffix { get; set; }
 }

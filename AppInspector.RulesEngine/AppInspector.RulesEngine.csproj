@@ -1,60 +1,60 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-  	<OutputType>Library</OutputType>
-    <PackageId>Microsoft.CST.ApplicationInspector.RulesEngine</PackageId>
-    <PackageVersion>0.0.0-placeholder</PackageVersion>
-    <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
-    <PackageTags>Security Static Analyzer</PackageTags>
-    <Description>Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining what the software is or what it does.</Description>
-    <copyright>© Microsoft Corporation. All rights reserved.</copyright> 
-    <HighEntropyVA>true</HighEntropyVA>
-    <Product>Application Inspector</Product>
-    <Authors>Microsoft</Authors>
-    <Version>0.0.0-placeholder</Version>
-    <AssemblyName>ApplicationInspector.RulesEngine</AssemblyName>
-    <RootNamespace>Microsoft.ApplicationInspector.RulesEngine</RootNamespace>
-    <Company>Microsoft</Company>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyVersion>0.0.0</AssemblyVersion>
-    <FileVersion>0.0.0</FileVersion>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <PackageIcon>icon-128.png</PackageIcon>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Nullable>enable</Nullable>
-    <LangVersion>10.0</LangVersion>
-    <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <PackageId>Microsoft.CST.ApplicationInspector.RulesEngine</PackageId>
+        <PackageVersion>0.0.0-placeholder</PackageVersion>
+        <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
+        <PackageTags>Security Static Analyzer</PackageTags>
+        <Description>Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining what the software is or what it does.</Description>
+        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <HighEntropyVA>true</HighEntropyVA>
+        <Product>Application Inspector</Product>
+        <Authors>Microsoft</Authors>
+        <Version>0.0.0-placeholder</Version>
+        <AssemblyName>ApplicationInspector.RulesEngine</AssemblyName>
+        <RootNamespace>Microsoft.ApplicationInspector.RulesEngine</RootNamespace>
+        <Company>Microsoft</Company>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyVersion>0.0.0</AssemblyVersion>
+        <FileVersion>0.0.0</FileVersion>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageIcon>icon-128.png</PackageIcon>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Nullable>enable</Nullable>
+        <LangVersion>10.0</LangVersion>
+        <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="JsonCons.JsonPath" Version="1.1.0" />
-    <PackageReference Include="Microsoft.CST.OAT" Version="1.2.25" />
-    <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.11" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="JsonCons.JsonPath" Version="1.1.0"/>
+        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.25"/>
+        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.11"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
 
-  <ItemGroup>
-    <Content Remove="Resources\comments.json" />
-    <Content Remove="Resources\languages.json" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\comments.json" />
-    <EmbeddedResource Include="Resources\languages.json" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\AppInspector.Common\AppInspector.Common.csproj" />
-  </ItemGroup>
-    
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
-    <None Include="..\icon-128.png" Pack="true" PackagePath="" />
-  </ItemGroup>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Remove="Resources\comments.json"/>
+        <Content Remove="Resources\languages.json"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\comments.json"/>
+        <EmbeddedResource Include="Resources\languages.json"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\AppInspector.Common\AppInspector.Common.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\.editorconfig" Link=".editorconfig"/>
+        <None Include="..\LICENSE.txt" Pack="true" PackagePath=""/>
+        <None Include="..\icon-128.png" Pack="true" PackagePath=""/>
+    </ItemGroup>
 </Project>

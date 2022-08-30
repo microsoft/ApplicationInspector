@@ -3,14 +3,18 @@
     "name": "Data: Parses XML",
     "id": "AI014100",
     "description": "Data: Parses XML",
-    "tags":[ "Data.Parsing.XML" ],
+    "tags": [
+      "Data.Parsing.XML"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "sax|xpath|xmldom|xelement|xmldocument",
         "type": "regexword",
         "confidence": "high",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -18,15 +22,21 @@
     "name": "Data: Parses XML",
     "id": "AI014200",
     "description": "Data: Parses XML",
-    "applies_to": [ "python" ],
-    "tags":[ "Data.Parsing.XML" ],
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "Data.Parsing.XML"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "lxml|etree|ElementTree|minidom|pulldom|xmlrpc",
         "type": "regexword",
         "confidence": "high",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -34,15 +44,22 @@
     "name": "Data: Parses XML",
     "id": "AI014300",
     "description": "Data: Parses XML",
-    "applies_to": [ "javascript", "typescript" ],
-    "tags":[ "Data.Parsing.XML" ],
+    "applies_to": [
+      "javascript",
+      "typescript"
+    ],
+    "tags": [
+      "Data.Parsing.XML"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "parseFromString\\(.*,\"text\/xml\"\\)|xhttp\\.responseXML",
         "type": "regexword",
         "confidence": "high",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -50,15 +67,21 @@
     "name": "Data: Parses XML",
     "id": "AI014400",
     "description": "Data: Parses XML",
-    "applies_to": [ "java" ],
-    "tags":[ "Data.Parsing.XML" ],
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "Data.Parsing.XML"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "jdom2|SAXBuilder",
         "type": "regexword",
         "confidence": "high",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -66,15 +89,21 @@
     "name": "Data: XSLT Transformations",
     "id": "AI014500",
     "description": "Data: XSLT Transformations",
-    "applies_to": [ "csharp" ],
-    "tags":[ "Data.Parsing.XSLT" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Data.Parsing.XSLT"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "XslTransform|System\\.Xml\\.Xsl|XslCompiledTransform|transformNode",
         "type": "regexword",
         "confidence": "high",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -82,15 +111,21 @@
     "name": "Data: XSLT Transformations",
     "id": "AI014600",
     "description": "Data: XSLT Transformations",
-    "applies_to": [ "java" ],
-    "tags":[ "Data.Parsing.XSLT" ],
+    "applies_to": [
+      "java"
+    ],
+    "tags": [
+      "Data.Parsing.XSLT"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "TransformerFactory|XSLDocument|javax\\.xml\\.transform",
         "type": "regexword",
         "confidence": "high",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -98,15 +133,22 @@
     "name": "Data: XSLT Transformations",
     "id": "AI014700",
     "description": "Data: XSLT Transformations",
-    "applies_to": [ "javascript", "typescript" ],
-    "tags":[ "Data.Parsing.XSLT" ],
+    "applies_to": [
+      "javascript",
+      "typescript"
+    ],
+    "tags": [
+      "Data.Parsing.XSLT"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "XSLTProcessor",
         "type": "regexword",
         "confidence": "high",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -114,14 +156,18 @@
     "name": "Data: XSLT Transformations",
     "id": "AI014800",
     "description": "Data: XSLT Transformations",
-    "tags":[ "Data.Parsing.XSLT" ],
+    "tags": [
+      "Data.Parsing.XSLT"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": ".xslt",
         "type": "string",
         "confidence": "high",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ],
     "conditions": [
@@ -129,8 +175,12 @@
         "pattern": {
           "pattern": "exclude",
           "type": "regex",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "same-line",
         "negate_finding": true
@@ -141,15 +191,21 @@
     "name": "Data: XSLT Transformations",
     "id": "AI014900",
     "description": "Data: XSLT Transformations",
-    "tags":[ "Data.Parsing.XSLT" ],
+    "tags": [
+      "Data.Parsing.XSLT"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "xslt|xsl:stylesheet",
         "type": "regexword",
-        "modifiers": [ "i" ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ],
     "conditions": [
@@ -157,8 +213,12 @@
         "pattern": {
           "pattern": "exclude",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ]
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
         },
         "search_in": "same-line",
         "negate_finding": true

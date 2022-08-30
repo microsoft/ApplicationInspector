@@ -3,15 +3,23 @@
     "name": "Development Framework: .NET Core",
     "id": "AI022300",
     "description": "Development Framework: .NET Core",
-    "applies_to": [ "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.NETCore" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Framework.Development.Microsoft.NETCore"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "netcore",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -20,14 +28,20 @@
     "name": "Development Framework: .NET Core SDK",
     "id": "AI022400",
     "description": "Development Framework: .NET Core SDK",
-    "applies_to": [ "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.NETCore.SDK" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Framework.Development.Microsoft.NETCore.SDK"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Microsoft.NET.Sdk",
         "type": "string",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -35,14 +49,20 @@
     "name": "Development Framework: Mono",
     "id": "AI022500",
     "description": "Development Framework: Mono",
-    "applies_to": [ "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.Mono" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Framework.Development.Microsoft.Mono"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "using (gtk|Glade)",
         "type": "regex",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -50,7 +70,9 @@
     "name": "Development Framework: Microsoft Azure",
     "id": "AI022600",
     "description": "Development Framework: Microsoft Azure",
-    "applies_to": [ "csharp" ],
+    "applies_to": [
+      "csharp"
+    ],
     "tags": [
       "Framework.Development.Microsoft.Azure",
       "Application.Type.Web.Application"
@@ -60,7 +82,9 @@
       {
         "pattern": "Microsoft.Azure.WebJobs.Host",
         "type": "string",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -68,7 +92,9 @@
     "name": "Development Framework: Microsoft WCF",
     "id": "AI022700",
     "description": "Development Framework: Microsoft WCF",
-    "applies_to": [ "csharp" ],
+    "applies_to": [
+      "csharp"
+    ],
     "tags": [
       "Framework.Development.Microsoft.WCF",
       "Application.Type.Web.Service"
@@ -78,15 +104,23 @@
       {
         "pattern": "ServiceContract|using System\\.ServiceModel|WSHttpBinding",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "Controller\\b|\\[HttpGet\\]|\\[HttpPut\\]",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -95,7 +129,11 @@
     "name": "Development Framework: Microsoft MFC",
     "id": "AI022800",
     "description": "Development Framework: Microsoft MFC",
-    "applies_to": [ "c", "cpp", "csharp" ],
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp"
+    ],
     "tags": [
       "Framework.Development.Microsoft.MFC",
       "Application.Type.Client.Windows"
@@ -105,7 +143,9 @@
       {
         "pattern": "CFrameWnd|CMDIFrameWnd|CView|CWnd|stdafx\\.h|winafx\\.h|afx\\.h",
         "type": "regexword",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -113,15 +153,24 @@
     "name": "Development Framework: Microsoft ADO",
     "id": "AI022900",
     "description": "Development Framework: Microsoft ADO",
-    "applies_to": [ "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.ADO", "Data.DBMS.SQL.ADO" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Framework.Development.Microsoft.ADO",
+      "Data.DBMS.SQL.ADO"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "System\\.Data\\.(SqlClient|OleDb|OracleClient|Odbc|EntityClient)",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -130,15 +179,23 @@
     "name": "Development Framework: Microsoft Linq",
     "id": "AI023000",
     "description": "Development Framework: Microsoft Linq",
-    "applies_to": [ "csharp" ],
-    "tags": [ "Framework.Development.Microsoft.Linq" ],
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Framework.Development.Microsoft.Linq"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "linq",
         "type": "string",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -147,7 +204,11 @@
     "name": "Development Framework: Windows SDK",
     "id": "AI023100",
     "description": "Development Framework: Windows SDK",
-    "applies_to": [ "c", "cpp", "csharp" ],
+    "applies_to": [
+      "c",
+      "cpp",
+      "csharp"
+    ],
     "tags": [
       "Framework.Development.Microsoft.WindowsSDK",
       "Application.Type.Client.Windows"
@@ -157,8 +218,12 @@
       {
         "pattern": "winsdk",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -167,14 +232,21 @@
     "name": "Development Framework: Microsoft Dynamics",
     "id": "AI023200",
     "description": "Development Framework: Microsoft Dynamics",
-    "tags":[ "Framework.Development.Microsoft.Server.Dynamics" ],
+    "tags": [
+      "Framework.Development.Microsoft.Server.Dynamics"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Microsoft Dynamics|dynamics.com|dynamic365",
         "type": "regexword",
-        "scopes": [ "code", "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -183,14 +255,20 @@
     "name": "Development Framework: Microsoft Exchange",
     "id": "AI023300",
     "description": "Development Framework: Microsoft Exchange",
-    "tags":[ "Framework.Development.Microsoft.Server.Exchange" ],
+    "tags": [
+      "Framework.Development.Microsoft.Server.Exchange"
+    ],
     "severity": "moderate",
     "patterns": [
       {
         "pattern": "Microsoft Exchange",
         "type": "string",
-        "scopes": [ "comment" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -208,7 +286,9 @@
       {
         "pattern": "IIS",
         "type": "string",
-        "scopes": [ "code" ]
+        "scopes": [
+          "code"
+        ]
       }
     ]
   },
@@ -225,8 +305,12 @@
       {
         "pattern": "ASP\\.NET|\\b\\.MVC\\b",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -249,7 +333,9 @@
       {
         "pattern": "CLSCTX_INPROC_SERVER|CLSCTX_INPROC_HANDLER|CLSCTX_LOCAL_SERVER|CoCreateInstance",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       }
     ]

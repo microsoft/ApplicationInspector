@@ -1,24 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-	<Nullable>enable</Nullable>
-	<LangVersion>10.0</LangVersion>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>10.0</LangVersion>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.1" />
-    
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
-    <ProjectReference Include="..\AppInspector.Tests\AppInspector.Tests.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="AnalyzeBenchmark.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.1"/>
+        <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.1"/>
+
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj"/>
+        <ProjectReference Include="..\AppInspector.Tests\AppInspector.Tests.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Update="AnalyzeBenchmark.cs">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Compile>
+    </ItemGroup>
 </Project>

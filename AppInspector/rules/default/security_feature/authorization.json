@@ -5,20 +5,28 @@
     "description": "Authorization: Microsoft Azure SAS",
     "applies_to": [
     ],
-    "tags":[ "Authorization.Microsoft.Azuze.SAS" ],
+    "tags": [
+      "Authorization.Microsoft.Azuze.SAS"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "sharedAccessPolicy|storageAccessKey|sharedAccessAccountPolicy|storageAccountOrConnectionString",
         "type": "regexword",
-        "scopes": [ "code" ],
+        "scopes": [
+          "code"
+        ],
         "confidence": "high"
       },
       {
         "pattern": "SAS *Token",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -29,14 +37,20 @@
     "description": "Authorization: Roles Based Access (RBAC)",
     "applies_to": [
     ],
-    "tags":[ "Authorization.RBAC" ],
+    "tags": [
+      "Authorization.RBAC"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "rbac|userroles?|roles?",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ]
@@ -47,14 +61,20 @@
     "description": "Authorization: Permissions",
     "applies_to": [
     ],
-    "tags":[ "Authorization.Permissions" ],
+    "tags": [
+      "Authorization.Permissions"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "permissions*",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ],
@@ -63,8 +83,12 @@
         "pattern": {
           "pattern": "License|copyright|readme.md",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ],
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ],
           "_comment": "eliminate notices"
         },
         "search_in": "finding-region(-10,10)",
@@ -78,14 +102,20 @@
     "description": "Authorization: Claims",
     "applies_to": [
     ],
-    "tags":[ "Authorization.Claims" ],
+    "tags": [
+      "Authorization.Claims"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "claims*",
         "type": "regex",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ],
@@ -94,8 +124,12 @@
         "pattern": {
           "pattern": "License|copyright|Permission to use|readme.md",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ],
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ],
           "_comment": "eliminate notices"
         },
         "search_in": "finding-region(-10,10)",
@@ -109,14 +143,20 @@
     "description": "Authorization: General",
     "applies_to": [
     ],
-    "tags":[ "Authorization.General" ],
+    "tags": [
+      "Authorization.General"
+    ],
     "severity": "critical",
     "patterns": [
       {
         "pattern": "authorize|authorized|authorization|isauthorized",
         "type": "regexword",
-        "scopes": [ "code" ],
-        "modifiers": [ "i" ],
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
         "confidence": "high"
       }
     ],
@@ -125,8 +165,12 @@
         "pattern": {
           "pattern": "SAS|SharedAccess",
           "type": "regexword",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ],
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ],
           "_comment": "since already covered by another rule if SAS related"
         },
         "search_in": "finding-region(-10,10)",
@@ -136,8 +180,12 @@
         "pattern": {
           "pattern": "UnauthorizedAccessException",
           "type": "regex",
-          "scopes": [ "code" ],
-          "modifiers": [ "i" ],
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ],
           "_comment": "This may not indicate that actual authorization is going on."
         },
         "search_in": "same-line",

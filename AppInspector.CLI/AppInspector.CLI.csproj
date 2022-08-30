@@ -1,78 +1,78 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>Microsoft.ApplicationInspector.CLI</RootNamespace>
-    <AssemblyName>ApplicationInspector.CLI</AssemblyName>
-    <copyright>© Microsoft Corporation. All rights reserved.</copyright> 
-    <Product>Application Inspector</Product>
-    <Company>Microsoft</Company>
-    <Authors>Microsoft</Authors>
-    <Version>0.0.0-placeholder</Version>
-    <Description>Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining what the software is or what it does. This is a dotnet tool package. For the library, see Microsoft.CST.ApplicationInspector.</Description>
-    <FileVersion>0.0.0.0</FileVersion>
-    <AssemblyVersion>0.0.0.0</AssemblyVersion>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackAsTool>true</PackAsTool>
-    <PackageId>Microsoft.CST.ApplicationInspector.CLI</PackageId>
-    <PackageVersion>0.0.0</PackageVersion>
-    <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
-    <PackageTags>Security Static Analyzer</PackageTags>
-    <ToolCommandName>appinspector</ToolCommandName>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <PackageIcon>icon-128.png</PackageIcon>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Nullable>enable</Nullable>
-    <LangVersion>10.0</LangVersion>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>Microsoft.ApplicationInspector.CLI</RootNamespace>
+        <AssemblyName>ApplicationInspector.CLI</AssemblyName>
+        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <Product>Application Inspector</Product>
+        <Company>Microsoft</Company>
+        <Authors>Microsoft</Authors>
+        <Version>0.0.0-placeholder</Version>
+        <Description>Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining what the software is or what it does. This is a dotnet tool package. For the library, see Microsoft.CST.ApplicationInspector.</Description>
+        <FileVersion>0.0.0.0</FileVersion>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <PackAsTool>true</PackAsTool>
+        <PackageId>Microsoft.CST.ApplicationInspector.CLI</PackageId>
+        <PackageVersion>0.0.0</PackageVersion>
+        <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
+        <PackageTags>Security Static Analyzer</PackageTags>
+        <ToolCommandName>appinspector</ToolCommandName>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageIcon>icon-128.png</PackageIcon>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Nullable>enable</Nullable>
+        <LangVersion>10.0</LangVersion>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Writers\AnalyzeHtmlWriter.cs.foo" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="Writers\AnalyzeHtmlWriter.cs.foo"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="html\partials\_file_listing.liquid" />
-    <EmbeddedResource Include="html\partials\_report_overview.liquid" />
-    <EmbeddedResource Include="html\partials\_report_profile.liquid" />
-    <EmbeddedResource Include="html\partials\_report_summary.liquid" />
-  </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="html\partials\_file_listing.liquid"/>
+        <EmbeddedResource Include="html\partials\_report_overview.liquid"/>
+        <EmbeddedResource Include="html\partials\_report_profile.liquid"/>
+        <EmbeddedResource Include="html\partials\_report_summary.liquid"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AppInspector.Logging\AppInspector.Logging.csproj" />
-    <ProjectReference Include="..\AppInspector.RulesEngine\AppInspector.RulesEngine.csproj" />
-    <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\AppInspector.Logging\AppInspector.Logging.csproj"/>
+        <ProjectReference Include="..\AppInspector.RulesEngine\AppInspector.RulesEngine.csproj"/>
+        <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Update="html\index.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="html\resources\css\appinspector.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-   <None Update="html\resources\js\appinspector.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-      <None Update="preferences\tagreportgroups.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
-    <None Include="..\icon-128.png" Pack="true" PackagePath="" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="DotLiquid" Version="2.2.656" />
-    <PackageReference Include="Sarif.Sdk" Version="3.1.0" />
-    <PackageReference Include="Serilog" Version="2.11.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="ShellProgressBar" Version="5.2.0" />
-    
-  </ItemGroup>  
+    <ItemGroup>
+        <None Update="html\index.html">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="html\resources\css\appinspector.css">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="html\resources\js\appinspector.js">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="preferences\tagreportgroups.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\LICENSE.txt" Pack="true" PackagePath=""/>
+        <None Include="..\icon-128.png" Pack="true" PackagePath=""/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="DotLiquid" Version="2.2.656"/>
+        <PackageReference Include="Sarif.Sdk" Version="3.1.0"/>
+        <PackageReference Include="Serilog" Version="2.11.0"/>
+        <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0"/>
+        <PackageReference Include="ShellProgressBar" Version="5.2.0"/>
+
+    </ItemGroup>
 </Project>
