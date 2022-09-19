@@ -154,6 +154,17 @@ products_array:
         - 10";
     
     [DataRow("products_array.*.dimensions[other_values>=5]", 2)]
+    [DataRow("products_array.*.dimensions[width=9]", 1)]
+    [DataRow("products_array.*.dimensions[weight=4]", 2)]
+    [DataRow("products_array.*.dimensions[weight==4]", 2)]
+    [DataRow("products_array.*.dimensions[weight == 4]", 2)]
+    [DataRow("products_array.*.dimensions[weight<5]", 2)]
+    [DataRow("products_array.*.dimensions[weight>4]", 1)]
+    [DataRow("products_array.*.dimensions[weight<=4]", 2)]
+    [DataRow("products_array.*.dimensions[weight>=4]", 3)]
+    [DataRow("products_array.*.availability.start[date^2020]", 3)]
+    [DataRow("products_array.*.availability.start[date$01]", 2)]
+    [DataRow("products_array.*.availability.start[date%-10-]", 1)]
     [DataRow("products_hash.*.dimensions[width=9]", 1)]
     [DataRow("products_hash.*.dimensions[weight=4]", 2)]
     [DataRow("products_hash.*.dimensions[weight==4]", 2)]
