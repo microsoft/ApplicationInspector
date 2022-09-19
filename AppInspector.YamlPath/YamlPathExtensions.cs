@@ -88,6 +88,7 @@ namespace AppInspector.YamlPath
             else
             {
                 // An expression
+                // https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
                 if (yamlPathComponent.StartsWith('[') && yamlPathComponent.EndsWith(']'))
                 {
                     (SearchOperatorEnum searchOperatorEnum, string elementName, string argument, bool invert) =
@@ -447,8 +448,7 @@ namespace AppInspector.YamlPath
         public static List<YamlNode> YamlPathQuery(this YamlNode yamlNode, string yamlPath)
         {
             // TODO: validate query
-
-
+            
             List<string> navigationElements = GenerateNavigationElements(yamlPath);
 
             List<YamlNode> currentNodes = new List<YamlNode>(){yamlNode};
@@ -497,8 +497,18 @@ namespace AppInspector.YamlPath
 
                     if (yamlPath[i] == separator)
                     {
-                        pathComponents.Add(yamlPath[startIndex..i]);
-                        startIndex = i + 1;
+                        bool isEscaped = false;
+                        int innerItr = i;
+                        while (--innerItr >= 0 && yamlPath[innerItr] == '\\')
+                        {
+                            isEscaped = !isEscaped;
+                        }
+
+                        if (!isEscaped)
+                        {
+                            pathComponents.Add(yamlPath[startIndex..i]);
+                            startIndex = i + 1;   
+                        }
                     }
                 }
                 else
@@ -514,6 +524,7 @@ namespace AppInspector.YamlPath
             
             pathComponents.Add(yamlPath[startIndex..]);
             pathComponents.RemoveAll(string.IsNullOrEmpty);
+            pathComponents = pathComponents.Select(x => x.Replace($"\\{separator}", $"{separator}")).ToList();
             return pathComponents;
         }
 

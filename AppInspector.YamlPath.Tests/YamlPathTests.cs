@@ -192,4 +192,51 @@ products_array:
         var matching = mapping.YamlPathQuery(yamlPath);
         Assert.AreEqual(expectedNumMatches, matching.Count);
     }
+
+    private const string setTestValue = @"--- !!set
+? Ring
+? Necklace
+? Bracelet";
+    
+    [DataRow("/Ring", 1)]
+
+    [DataTestMethod]
+    public void TestSetQuery(string yamlPath, int expectedNumMatches)
+    {
+        var yaml = new YamlStream();
+        yaml.Load(new StringReader(setTestValue));
+        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+        var matching = mapping.YamlPathQuery(yamlPath);
+        Assert.AreEqual(expectedNumMatches, matching.Count);
+    }
+    
+    private const string escapedKeysData = 
+        @"hash_name:
+  a/key: 0
+  b.key: 1
+  c\\key: 2
+  d\\/key: 3
+  e\\.key: 4
+  f\/key: 5";
+    [DataRow("/hash_name/a\\/key", 1, new int[]{0})]
+    [DataRow("hash_name.a/key", 1, new int[]{0})]
+    [DataRow("/hash_name/b.key", 1, new int[]{1})]
+    [DataRow("hash_name.b\\.key", 1, new int[]{1})]
+    [DataRow("hash_name.c\\\\key", 1, new int[]{2})]
+    [DataRow("/hash_name/d\\\\\\/key", 1, new int[]{3})]
+    [DataRow("hash_name.e\\\\\\.key", 1, new int[]{4})]
+    [DataRow("/hash_name/f\\\\\\/key", 1, new int[]{5})]
+    [DataTestMethod]
+    public void EscapedKeysTests(string yamlPath, int expectedNumMatches, int[] expectedFindings)
+    {
+        var yaml = new YamlStream();
+        yaml.Load(new StringReader(escapedKeysData));
+        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+        var matching = mapping.YamlPathQuery(yamlPath);
+        Assert.AreEqual(expectedNumMatches, matching.Count);
+        foreach (var expectedFinding in expectedFindings)
+        {
+            Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && int.TryParse(ysc.Value, out int ysv) && ysv == expectedFinding));
+        }
+    }
 }
