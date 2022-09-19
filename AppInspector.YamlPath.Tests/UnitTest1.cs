@@ -50,6 +50,7 @@ public class UnitTest1
     [DataRow("/hash_name/[a_key:b_key]", 2, new int[]{0, 1})]
     [DataRow("/hash_name/[a_key:d_key]", 4, new int[]{0, 1, 2, 3})]
     [DataRow("/hash_name/f_key", 0, new int[]{})]
+    [DataRow("/hash_name/[a_key:f_key]", 0, new int[]{})]
     [DataRow("/hash_name/[a_key:e_key]", 5, new int[]{0, 1, 2, 3, 4})]
     [DataTestMethod]
     public void TestMapSlicing(string yamlPath, int expectedNumMatches, int[] expectedFindings)
@@ -63,5 +64,110 @@ public class UnitTest1
         {
             Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && int.TryParse(ysc.Value, out int ysv) && ysv == expectedFinding));
         }
+    }
+    
+    private const string mapQueryTestData = 
+        @"products_hash:
+  doodad:
+    availability:
+      start:
+        date: 2020-10-10
+        time: 08:00
+      stop:
+        date: 2020-10-29
+        time: 17:00
+    dimensions:
+      width: 5
+      height: 5
+      depth: 5
+      weight: 10
+  doohickey:
+    availability:
+      start:
+        date: 2020-08-01
+        time: 10:00
+      stop:
+        date: 2020-09-25
+        time: 10:00
+    dimensions:
+      width: 1
+      height: 2
+      depth: 3
+      weight: 4
+  widget:
+    availability:
+      start:
+        date: 2020-01-01
+        time: 12:00
+      stop:
+        date: 2020-01-01
+        time: 16:00
+    dimensions:
+      width: 9
+      height: 10
+      depth: 1
+      weight: 4
+ 
+products_array:
+  - product: doodad
+    availability:
+      start:
+        date: 2020-10-10
+        time: 08:00
+      stop:
+        date: 2020-10-29
+        time: 17:00
+    dimensions:
+      width: 5
+      height: 5
+      depth: 5
+      weight: 10
+  - product: doohickey
+    availability:
+      start:
+        date: 2020-08-01
+        time: 10:00
+      stop:
+        date: 2020-09-25
+        time: 10:00
+    dimensions:
+      width: 1
+      height: 2
+      depth: 3
+      weight: 4
+  - product: widget
+    availability:
+      start:
+        date: 2020-01-01
+        time: 12:00
+      stop:
+        date: 2020-01-01
+        time: 16:00
+    dimensions:
+      width: 9
+      height: 10
+      depth: 1
+      weight: 4";
+    
+    [DataRow("products_hash.*.dimensions[width=9]", 1)]
+    [DataRow("products_hash.*.dimensions[weight=4]", 2)]
+    [DataRow("products_hash.*.dimensions[weight==4]", 2)]
+    [DataRow("products_hash.*.dimensions[weight == 4]", 2)]
+    [DataRow("products_hash.*.dimensions[weight<5]", 2)]
+    [DataRow("products_hash.*.dimensions[weight>4]", 1)]
+    [DataRow("products_hash.*.dimensions[weight<=4]", 2)]
+    [DataRow("products_hash.*.dimensions[weight>=4]", 3)]
+    [DataRow("products_hash.*.availability.start[date^2020]", 3)]
+    [DataRow("products_hash.*.availability.start[date$01]", 2)]
+    [DataRow("products_hash.*.availability.start[date%-09-]", 2)]
+    // [DataRow("products_hash.*.dimensions[weight=~4]", 2)]
+    [DataTestMethod]
+    public void TestMapQuery(string yamlPath, int expectedNumMatches)
+    {
+        var yaml = new YamlStream();
+        yaml.Load(new StringReader(mapQueryTestData));
+        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+        var matching = mapping.YamlPathQuery(yamlPath);
+        Assert.AreEqual(expectedNumMatches, matching.Count);
     }
 }

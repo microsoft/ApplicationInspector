@@ -6,8 +6,42 @@ using YamlDotNet.RepresentationModel;
 
 namespace AppInspector.YamlPath
 {
+    public enum SearchOperatorEnum
+    {
+        Invalid,
+        Equals,
+        LessThan,
+        GreaterThan,
+        LessThanOrEqual,
+        GreaterThanOrEqual,
+        StartsWith,
+        EndsWith,
+        Contains,
+        Regex,
+        Invert
+    }
+    
     public static class YamlPathExtensions
     {
+        private static SearchOperatorEnum StringToOperatorEnum(string searchOperatorString)
+        {
+            return searchOperatorString switch
+            {
+                "=" => SearchOperatorEnum.Equals,
+                "==" => SearchOperatorEnum.Equals,
+                "<" => SearchOperatorEnum.LessThan,
+                ">" => SearchOperatorEnum.GreaterThan,
+                "<=" => SearchOperatorEnum.LessThanOrEqual,
+                ">=" => SearchOperatorEnum.GreaterThanOrEqual,
+                "^" => SearchOperatorEnum.StartsWith,
+                "$" => SearchOperatorEnum.EndsWith,
+                "%" => SearchOperatorEnum.Contains,
+                "=~" => SearchOperatorEnum.Regex,
+                "!" => SearchOperatorEnum.Invert,
+                _ => SearchOperatorEnum.Invalid
+            };
+        }
+        
         /// <summary>
         /// Select elements out of the mapping node based on a single path component
         /// </summary>
@@ -18,6 +52,8 @@ namespace AppInspector.YamlPath
         {
             List<YamlNode> outNodes = new List<YamlNode>();
             var expr = yamlPathComponent.Trim(new[] { '[', ']' });
+            // Maps support slices
+            // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
             if (expr.Contains(':'))
             {
                 var components = expr.Split(':');
@@ -50,14 +86,155 @@ namespace AppInspector.YamlPath
             }
             else
             {
-                foreach (var child in yamlNode.Children.Where(x =>
-                             x.Key is YamlScalarNode ycn && ycn.Value == yamlPathComponent))
+                // An expression
+                if (yamlPathComponent.StartsWith('[') && yamlPathComponent.EndsWith(']'))
                 {
-                    outNodes.Add(child.Value);
-                }   
+                    (SearchOperatorEnum searchOperatorEnum, string elementName, string argument) =
+                        ParseOperatorPathComponents(yamlPathComponent);
+                    switch (searchOperatorEnum)
+                    {
+                        case SearchOperatorEnum.Equals:
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && ycn2.Value == argument))
+                            {
+                                outNodes.Add(child.Value);
+                            }
+                            break;
+                        case SearchOperatorEnum.LessThan:
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && int.TryParse(ycn2.Value, out int value) && value < int.Parse(argument)))
+                            {
+                                outNodes.Add(child.Value);
+                            }
+                            break;
+                        case SearchOperatorEnum.GreaterThan:
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && int.TryParse(ycn2.Value, out int value) && value  > int.Parse(argument)))
+                            {
+                                outNodes.Add(child.Value);
+                            }
+                            break;                        
+                        case SearchOperatorEnum.LessThanOrEqual:
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && int.TryParse(ycn2.Value, out int value) && value  <= int.Parse(argument)))
+                            {
+                                outNodes.Add(child.Value);
+                            }
+                            break;
+                        case SearchOperatorEnum.GreaterThanOrEqual:
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && int.TryParse(ycn2.Value, out int value) && value  >= int.Parse(argument)))
+                            {
+                                outNodes.Add(child.Value);
+                            }
+                            break;
+                        case SearchOperatorEnum.StartsWith:
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && ycn2.Value.StartsWith(argument)))
+                            {
+                                outNodes.Add(child.Value);
+                            }
+                            break;
+                        case SearchOperatorEnum.EndsWith:
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && ycn2.Value.EndsWith(argument)))
+                            {
+                                outNodes.Add(child.Value);
+                            }
+                            break;
+                        case SearchOperatorEnum.Contains:
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && ycn2.Value.Contains(argument)))
+                            {
+                                outNodes.Add(child.Value);
+                            }
+                            break;
+                        case SearchOperatorEnum.Regex: // TODO
+                        case SearchOperatorEnum.Invert: // TODO
+                        case SearchOperatorEnum.Invalid:
+                        default:
+                            outNodes.Clear();
+                            break;                    }
+                }
+                else
+                {
+                    // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Keys
+                    // TODO: Quoted dot named keys
+                    // TODO: Escaped name keys
+                    // Wild Cards https://github.com/wwkimball/yamlpath/wiki/Wildcard-Segments
+                    // TODO: ** recursive wildcard
+                    if (yamlPathComponent == "*")
+                    {
+                        outNodes.AddRange(yamlNode.Children.Values);
+                    }
+                    // Direct key lookup
+                    foreach (var child in yamlNode.Children.Where(x =>
+                                 x.Key is YamlScalarNode ycn && ycn.Value == yamlPathComponent))
+                    {
+                        outNodes.Add(child.Value);
+                    }
+                }
             }
             
             return outNodes;
+        }
+
+        private static (SearchOperatorEnum searchOperatorEnum, string elementName, string argument) ParseOperatorPathComponents(string yamlPathComponent)
+        {
+            yamlPathComponent = yamlPathComponent.Trim(new[] { '[', ']' });
+            var idx = -1;
+            idx = yamlPathComponent.IndexOf("==", StringComparison.Ordinal);
+            if (idx > -1)
+            {
+                return (SearchOperatorEnum.Equals, yamlPathComponent[..idx].Trim(), yamlPathComponent[(idx + 2)..].Trim());
+            }
+            idx = yamlPathComponent.IndexOf("=~", StringComparison.Ordinal);
+            if (idx > -1)
+            {
+                return (SearchOperatorEnum.Regex, yamlPathComponent[..idx].Trim(), yamlPathComponent[(idx + 2)..].Trim());
+            }
+            idx = yamlPathComponent.IndexOf("<=", StringComparison.Ordinal);
+            if (idx > -1)
+            {
+                return (SearchOperatorEnum.LessThanOrEqual, yamlPathComponent[..idx].Trim(), yamlPathComponent[(idx + 2)..].Trim());
+            }
+            idx = yamlPathComponent.IndexOf(">=", StringComparison.Ordinal);
+            if (idx > -1)
+            {
+                return (SearchOperatorEnum.GreaterThanOrEqual, yamlPathComponent[..idx].Trim(), yamlPathComponent[(idx + 2)..].Trim());
+            }
+            idx = yamlPathComponent.IndexOf("=", StringComparison.Ordinal);
+            if (idx > -1)
+            {
+                return (SearchOperatorEnum.Equals, yamlPathComponent[..idx].Trim(), yamlPathComponent[(idx + 1)..].Trim());
+            }
+            idx = yamlPathComponent.IndexOf("<", StringComparison.Ordinal);
+            if (idx > -1)
+            {
+                return (SearchOperatorEnum.LessThan, yamlPathComponent[..idx].Trim(), yamlPathComponent[(idx + 1)..].Trim());
+            }
+            idx = yamlPathComponent.IndexOf(">", StringComparison.Ordinal);
+            if (idx > -1)
+            {
+                return (SearchOperatorEnum.GreaterThan, yamlPathComponent[..idx].Trim(), yamlPathComponent[(idx + 1)..].Trim());
+            }
+            idx = yamlPathComponent.IndexOf("^", StringComparison.Ordinal);
+            if (idx > -1)
+            {
+                return (SearchOperatorEnum.StartsWith, yamlPathComponent[..idx].Trim(), yamlPathComponent[(idx + 1)..].Trim());
+            }
+            idx = yamlPathComponent.IndexOf("$", StringComparison.Ordinal);
+            if (idx > -1)
+            {
+                return (SearchOperatorEnum.EndsWith, yamlPathComponent[..idx].Trim(), yamlPathComponent[(idx + 1)..].Trim());
+            }
+            idx = yamlPathComponent.IndexOf("%", StringComparison.Ordinal);
+            if (idx > -1)
+            {
+                return (SearchOperatorEnum.Contains, yamlPathComponent[..idx].Trim(), yamlPathComponent[(idx + 1)..].Trim());
+            }
+            
+            return (SearchOperatorEnum.Invalid, string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -141,7 +318,7 @@ namespace AppInspector.YamlPath
                 // In such a case, '[' will be at an index greater than 0
                 .SelectMany(x => x.IndexOf('[') > 0 ? 
                     // We need to split apart around the slice operator. Since the split removes the start we need to remove the end
-                    x.Split('[').Select(y => y.TrimEnd(']')) : new []{x}).ToArray();
+                    x.Split('[').Select(y => y.EndsWith(']') ? $"[{y}" : y) : new []{x}).ToArray();
             
             List<YamlNode> currentNodes = new List<YamlNode>(){yamlNode};
         
