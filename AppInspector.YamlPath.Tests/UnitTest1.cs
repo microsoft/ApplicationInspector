@@ -14,7 +14,8 @@ public class UnitTest1
     - 1
     - 2
     - 3";
-    
+    [DataRow("some_array.[1:2]", 1, new int[]{1})]
+    [DataRow("/some_array[1:2]", 1, new int[]{1})]
     [DataRow("/some_array/1", 1, new int[]{1})]
     [DataRow("/some_array/[1:2]", 1, new int[]{1})]
     [DataRow("/some_array/[1:4]", 3, new int[]{1, 2, 3})]
@@ -27,6 +28,34 @@ public class UnitTest1
     {
         var yaml = new YamlStream();
         yaml.Load(new StringReader(testData));
+        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+        var matching = mapping.YamlPathQuery(yamlPath);
+        Assert.AreEqual(expectedNumMatches, matching.Count);
+        foreach (var expectedFinding in expectedFindings)
+        {
+            Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && int.TryParse(ysc.Value, out int ysv) && ysv == expectedFinding));
+        }
+    }
+    
+    private const string mapSliceTestData = 
+        @"hash_name:
+  a_key: 0
+  b_key: 1
+  c_key: 2
+  d_key: 3
+  e_key: 4";
+    [DataRow("hash_name.[a_key:b_key]", 2, new int[]{0, 1})]
+    [DataRow("/hash_name[a_key:b_key]", 2, new int[]{0, 1})]
+    [DataRow("/hash_name/d_key", 1, new int[]{3})]
+    [DataRow("/hash_name/[a_key:b_key]", 2, new int[]{0, 1})]
+    [DataRow("/hash_name/[a_key:d_key]", 4, new int[]{0, 1, 2, 3})]
+    [DataRow("/hash_name/f_key", 0, new int[]{})]
+    [DataRow("/hash_name/[a_key:e_key]", 5, new int[]{0, 1, 2, 3, 4})]
+    [DataTestMethod]
+    public void TestMapSlicing(string yamlPath, int expectedNumMatches, int[] expectedFindings)
+    {
+        var yaml = new YamlStream();
+        yaml.Load(new StringReader(mapSliceTestData));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
         var matching = mapping.YamlPathQuery(yamlPath);
         Assert.AreEqual(expectedNumMatches, matching.Count);
