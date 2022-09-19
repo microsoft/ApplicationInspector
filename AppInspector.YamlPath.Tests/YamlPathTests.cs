@@ -177,7 +177,7 @@ products_array:
     [DataRow("products_hash.*.availability.start[date$01]", 2)]
     [DataRow("products_hash.*.availability.start[date%-10-]", 1)]
     [DataRow("/products_hash/*/availability/start[date=~2020.*]", 3)]
-    // [DataRow("products_hash.*.dimensions[weight=~4]", 2)]
+    [DataRow("products_hash.*.availability.start[date=~2020.*]", 3)]
     [DataTestMethod]
     public void TestMapQuery(string yamlPath, int expectedNumMatches)
     {

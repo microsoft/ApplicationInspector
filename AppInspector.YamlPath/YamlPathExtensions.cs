@@ -442,17 +442,9 @@ namespace AppInspector.YamlPath
         {
             // TODO: validate query
 
-            // The separator can either be . or /, but if / it must start with /
-            char separator = yamlPath[0] == '/' ? '/' : '.';
-            // The first split is empty with '/', so we remove it
-            var navigationElements = ((separator == '/') ? 
-                    yamlPath.Split(separator)[1..] : yamlPath.Split(separator))
-                // A slice can be used directly after an element, rather than after a separator
-                // In such a case, '[' will be at an index greater than 0
-                .SelectMany(x => x.IndexOf('[') > 0 ? 
-                    // We need to split apart around the slice operator. Since the split removes the start we need to add it back
-                    x.Split('[').Select(y => y.EndsWith(']') ? $"[{y}" : y) : new []{x}).ToArray();
-            
+
+            List<string> navigationElements = GenerateNavigationElements(yamlPath);
+
             List<YamlNode> currentNodes = new List<YamlNode>(){yamlNode};
         
             // Iteratively walk using the navigation elements
@@ -476,6 +468,47 @@ namespace AppInspector.YamlPath
             }
 
             return currentNodes;
+        }
+
+        private static List<string> GenerateNavigationElements(string yamlPath)
+        {
+            List<string> pathComponents = new List<string>();
+            // The separator can either be . or /, but if / it must start with /
+            char separator = yamlPath[0] == '/' ? '/' : '.';
+            bool ignoreSeparator = false;
+            int startIndex = 0;
+            for (int i = 0; i < yamlPath.Length; i++)
+            {
+                if (!ignoreSeparator)
+                {
+                    // Ignore separators in brackets
+                    if (yamlPath[i] == '[')
+                    {
+                        ignoreSeparator = true;
+                        pathComponents.Add(yamlPath[startIndex..i]);
+                        startIndex = i;
+                    }
+
+                    if (yamlPath[i] == separator)
+                    {
+                        pathComponents.Add(yamlPath[startIndex..i]);
+                        startIndex = i + 1;
+                    }
+                }
+                else
+                {
+                    if (yamlPath[i] == ']')
+                    {
+                        ignoreSeparator = false;
+                        pathComponents.Add(yamlPath[startIndex..(i + 1)]);
+                        startIndex = i + 1;
+                    }
+                }
+            }
+            
+            pathComponents.Add(yamlPath[startIndex..]);
+            pathComponents.RemoveAll(string.IsNullOrEmpty);
+            return pathComponents;
         }
 
         private static IEnumerable<YamlNode> AdvanceNode(YamlNode node, string pathComponent)
