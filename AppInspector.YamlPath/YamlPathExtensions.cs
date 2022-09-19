@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using YamlDotNet.RepresentationModel;
 
 namespace AppInspector.YamlPath
@@ -95,109 +96,183 @@ namespace AppInspector.YamlPath
                     {
                         case SearchOperatorEnum.Equals:
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && ycn2.Value == argument))
+                                         x.Key is YamlScalarNode keyNode 
+                                         && keyNode.Value == elementName 
+                                         && x.Value is YamlScalarNode { Value: { } } valueNode 
+                                         && valueNode.Value == argument))
                             {
                                 outNodes.Add(child.Value);
                             }
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
-                                            ysn.Children.Where(y => y is YamlScalarNode childAsScalar && childAsScalar.Value == argument) : Array.Empty<YamlNode>()))
+                                             x.Key is YamlScalarNode keyNode 
+                                             && keyNode.Value == elementName)
+                                         .SelectMany(x => x.Value is YamlSequenceNode yamlSequenceNode ?
+                                             yamlSequenceNode.Children.Where(y => y is YamlScalarNode { Value: { } } childAsScalar 
+                                                 && childAsScalar.Value == argument) : Array.Empty<YamlNode>()))
                             {
                                 outNodes.Add(child);
                             }
                             break;
                         case SearchOperatorEnum.LessThan:
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && int.TryParse(ycn2.Value, out int value) && value < int.Parse(argument)))
+                                         x.Key is YamlScalarNode keyNode 
+                                         && keyNode.Value == elementName 
+                                         && x.Value is YamlScalarNode valueNode 
+                                         && int.TryParse(valueNode.Value, out int value) 
+                                         && value < int.Parse(argument)))
                             {
                                 outNodes.Add(child.Value);
                             }                            
                             foreach (var child in yamlNode.Children.Where(x =>
-                                                                      x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
-                                                                      ysn.Children.Where(y => y is YamlScalarNode childAsScalar && int.TryParse(childAsScalar.Value, out int value) && value < int.Parse(argument)) : Array.Empty<YamlNode>()))
+                                             x.Key is YamlScalarNode keyNode 
+                                             && keyNode.Value == elementName && x.Value is YamlSequenceNode)
+                                         .SelectMany(x => x.Value is YamlSequenceNode yamlSequenceNode ?
+                                             yamlSequenceNode.Children.Where(y => y is YamlScalarNode childAsScalar 
+                                                 && int.TryParse(childAsScalar.Value, out int value) 
+                                                 && value < int.Parse(argument)) : Array.Empty<YamlNode>()))
                             {
                                 outNodes.Add(child);
                             }
                             break;
                         case SearchOperatorEnum.GreaterThan:
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && int.TryParse(ycn2.Value, out int value) && value  > int.Parse(argument)))
+                                         x.Key is YamlScalarNode keyNode 
+                                         && keyNode.Value == elementName 
+                                         && x.Value is YamlScalarNode valueNode 
+                                         && int.TryParse(valueNode.Value, out int value) 
+                                         && value > int.Parse(argument)))
                             {
                                 outNodes.Add(child.Value);
-                            }
+                            }                            
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
-                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && int.TryParse(childAsScalar.Value, out int value) && value > int.Parse(argument)) : Array.Empty<YamlNode>()))
+                                             x.Key is YamlScalarNode keyNode 
+                                             && keyNode.Value == elementName && x.Value is YamlSequenceNode)
+                                         .SelectMany(x => x.Value is YamlSequenceNode yamlSequenceNode ?
+                                             yamlSequenceNode.Children.Where(y => y is YamlScalarNode childAsScalar 
+                                                 && int.TryParse(childAsScalar.Value, out int value) 
+                                                 && value > int.Parse(argument)) : Array.Empty<YamlNode>()))
                             {
                                 outNodes.Add(child);
                             }
                             break;                        
                         case SearchOperatorEnum.LessThanOrEqual:
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && int.TryParse(ycn2.Value, out int value) && value  <= int.Parse(argument)))
+                                         x.Key is YamlScalarNode keyNode 
+                                         && keyNode.Value == elementName 
+                                         && x.Value is YamlScalarNode valueNode 
+                                         && int.TryParse(valueNode.Value, out int value) 
+                                         && value <= int.Parse(argument)))
                             {
                                 outNodes.Add(child.Value);
-                            }
+                            }                            
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
-                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && int.TryParse(childAsScalar.Value, out int value) && value <= int.Parse(argument)) : Array.Empty<YamlNode>()))
+                                             x.Key is YamlScalarNode keyNode 
+                                             && keyNode.Value == elementName && x.Value is YamlSequenceNode)
+                                         .SelectMany(x => x.Value is YamlSequenceNode yamlSequenceNode ?
+                                             yamlSequenceNode.Children.Where(y => y is YamlScalarNode childAsScalar 
+                                                 && int.TryParse(childAsScalar.Value, out int value) 
+                                                 && value <= int.Parse(argument)) : Array.Empty<YamlNode>()))
                             {
                                 outNodes.Add(child);
                             }
                             break;
                         case SearchOperatorEnum.GreaterThanOrEqual:
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && int.TryParse(ycn2.Value, out int value) && value  >= int.Parse(argument)))
+                                         x.Key is YamlScalarNode keyNode 
+                                         && keyNode.Value == elementName 
+                                         && x.Value is YamlScalarNode valueNode 
+                                         && int.TryParse(valueNode.Value, out int value) 
+                                         && value >= int.Parse(argument)))
                             {
                                 outNodes.Add(child.Value);
-                            }
+                            }                            
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
-                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && int.TryParse(childAsScalar.Value, out int value) && value >= int.Parse(argument)) : Array.Empty<YamlNode>()))
+                                             x.Key is YamlScalarNode keyNode 
+                                             && keyNode.Value == elementName && x.Value is YamlSequenceNode)
+                                         .SelectMany(x => x.Value is YamlSequenceNode yamlSequenceNode ?
+                                             yamlSequenceNode.Children.Where(y => y is YamlScalarNode childAsScalar 
+                                                 && int.TryParse(childAsScalar.Value, out int value) 
+                                                 && value >= int.Parse(argument)) : Array.Empty<YamlNode>()))
                             {
                                 outNodes.Add(child);
                             }
                             break;
                         case SearchOperatorEnum.StartsWith:
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && ycn2.Value.StartsWith(argument)))
+                                         x.Key is YamlScalarNode keyNode 
+                                         && keyNode.Value == elementName 
+                                         && x.Value is YamlScalarNode { Value: { } } valueNode 
+                                         && valueNode.Value.StartsWith(argument)))
                             {
                                 outNodes.Add(child.Value);
                             }
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
-                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && (childAsScalar.Value?.StartsWith(argument) ?? false)) : Array.Empty<YamlNode>()))
+                                             x.Key is YamlScalarNode keyNode 
+                                             && keyNode.Value == elementName)
+                                         .SelectMany(x => x.Value is YamlSequenceNode yamlSequenceNode ?
+                                             yamlSequenceNode.Children.Where(y => y is YamlScalarNode { Value: { } } childAsScalar 
+                                                 && childAsScalar.Value.StartsWith(argument)) : Array.Empty<YamlNode>()))
                             {
                                 outNodes.Add(child);
                             }
                             break;
                         case SearchOperatorEnum.EndsWith:
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && ycn2.Value.EndsWith(argument)))
+                                         x.Key is YamlScalarNode keyNode 
+                                         && keyNode.Value == elementName 
+                                         && x.Value is YamlScalarNode { Value: { } } valueNode 
+                                         && valueNode.Value.EndsWith(argument)))
                             {
                                 outNodes.Add(child.Value);
                             }
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
-                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && (childAsScalar.Value?.EndsWith(argument) ?? false)) : Array.Empty<YamlNode>()))
+                                             x.Key is YamlScalarNode keyNode 
+                                             && keyNode.Value == elementName)
+                                         .SelectMany(x => x.Value is YamlSequenceNode yamlSequenceNode ?
+                                             yamlSequenceNode.Children.Where(y => y is YamlScalarNode { Value: { } } childAsScalar 
+                                                 && childAsScalar.Value.EndsWith(argument)) : Array.Empty<YamlNode>()))
                             {
                                 outNodes.Add(child);
                             }
                             break;
                         case SearchOperatorEnum.Contains:
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && ycn2.Value.Contains(argument)))
+                                         x.Key is YamlScalarNode keyNode 
+                                         && keyNode.Value == elementName 
+                                         && x.Value is YamlScalarNode { Value: { } } valueNode 
+                                         && valueNode.Value.Contains(argument)))
                             {
                                 outNodes.Add(child.Value);
                             }
                             foreach (var child in yamlNode.Children.Where(x =>
-                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
-                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && (childAsScalar.Value?.Contains(argument) ?? false)) : Array.Empty<YamlNode>()))
+                                             x.Key is YamlScalarNode keyNode 
+                                             && keyNode.Value == elementName)
+                                         .SelectMany(x => x.Value is YamlSequenceNode yamlSequenceNode ?
+                                             yamlSequenceNode.Children.Where(y => y is YamlScalarNode { Value: { } } childAsScalar 
+                                                 && childAsScalar.Value.Contains(argument)) : Array.Empty<YamlNode>()))
                             {
                                 outNodes.Add(child);
                             }
                             break;
-                        case SearchOperatorEnum.Regex: // TODO
+                        case SearchOperatorEnum.Regex:
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode keyNode 
+                                         && keyNode.Value == elementName 
+                                         && x.Value is YamlScalarNode { Value: { } } valueNode 
+                                         && Regex.IsMatch(valueNode.Value, argument)))
+                            {
+                                outNodes.Add(child.Value);
+                            }
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                             x.Key is YamlScalarNode keyNode 
+                                             && keyNode.Value == elementName)
+                                         .SelectMany(x => x.Value is YamlSequenceNode yamlSequenceNode ?
+                                             yamlSequenceNode.Children.Where(y => y is YamlScalarNode { Value: { } } childAsScalar 
+                                                 && Regex.IsMatch(childAsScalar.Value, argument)) : Array.Empty<YamlNode>()))
+                            {
+                                outNodes.Add(child);
+                            }
+                            break;
                         case SearchOperatorEnum.Invert: // TODO
                         case SearchOperatorEnum.Invalid:
                         default:
@@ -207,18 +282,17 @@ namespace AppInspector.YamlPath
                 }
                 else
                 {
-                    // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Keys
-                    // TODO: Quoted dot named keys
-                    // TODO: Escaped name keys
                     // Wild Cards https://github.com/wwkimball/yamlpath/wiki/Wildcard-Segments
                     // TODO: ** recursive wildcard
                     if (yamlPathComponent == "*")
                     {
                         outNodes.AddRange(yamlNode.Children.Values);
                     }
-                    // Direct key lookup
+                    // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Keys
+                    // TODO: Quoted dot named keys
+                    // TODO: Escaped name keys
                     foreach (var child in yamlNode.Children.Where(x =>
-                                 x.Key is YamlScalarNode ycn && ycn.Value == yamlPathComponent))
+                                 x.Key is YamlScalarNode yamlScalarNode && yamlScalarNode.Value == yamlPathComponent))
                     {
                         outNodes.Add(child.Value);
                     }
@@ -363,7 +437,7 @@ namespace AppInspector.YamlPath
         /// </summary>
         /// <param name="yamlNode">The YamlMappingNode to operate on</param>
         /// <param name="yamlPath">The YamlPath query to use</param>
-        /// <returns>An enumeration of the matching <see cref="YamlNode"/></returns>
+        /// <returns>An <see cref="List{YamlNode}"/> of the matching nodes</returns>
         public static List<YamlNode> YamlPathQuery(this YamlNode yamlNode, string yamlPath)
         {
             // TODO: validate query
