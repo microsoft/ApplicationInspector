@@ -99,12 +99,24 @@ namespace AppInspector.YamlPath
                             {
                                 outNodes.Add(child.Value);
                             }
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
+                                            ysn.Children.Where(y => y is YamlScalarNode childAsScalar && childAsScalar.Value == argument) : Array.Empty<YamlNode>()))
+                            {
+                                outNodes.Add(child);
+                            }
                             break;
                         case SearchOperatorEnum.LessThan:
                             foreach (var child in yamlNode.Children.Where(x =>
                                          x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && int.TryParse(ycn2.Value, out int value) && value < int.Parse(argument)))
                             {
                                 outNodes.Add(child.Value);
+                            }                            
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                                                      x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
+                                                                      ysn.Children.Where(y => y is YamlScalarNode childAsScalar && int.TryParse(childAsScalar.Value, out int value) && value < int.Parse(argument)) : Array.Empty<YamlNode>()))
+                            {
+                                outNodes.Add(child);
                             }
                             break;
                         case SearchOperatorEnum.GreaterThan:
@@ -113,12 +125,24 @@ namespace AppInspector.YamlPath
                             {
                                 outNodes.Add(child.Value);
                             }
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
+                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && int.TryParse(childAsScalar.Value, out int value) && value > int.Parse(argument)) : Array.Empty<YamlNode>()))
+                            {
+                                outNodes.Add(child);
+                            }
                             break;                        
                         case SearchOperatorEnum.LessThanOrEqual:
                             foreach (var child in yamlNode.Children.Where(x =>
                                          x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && int.TryParse(ycn2.Value, out int value) && value  <= int.Parse(argument)))
                             {
                                 outNodes.Add(child.Value);
+                            }
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
+                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && int.TryParse(childAsScalar.Value, out int value) && value <= int.Parse(argument)) : Array.Empty<YamlNode>()))
+                            {
+                                outNodes.Add(child);
                             }
                             break;
                         case SearchOperatorEnum.GreaterThanOrEqual:
@@ -127,12 +151,24 @@ namespace AppInspector.YamlPath
                             {
                                 outNodes.Add(child.Value);
                             }
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
+                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && int.TryParse(childAsScalar.Value, out int value) && value >= int.Parse(argument)) : Array.Empty<YamlNode>()))
+                            {
+                                outNodes.Add(child);
+                            }
                             break;
                         case SearchOperatorEnum.StartsWith:
                             foreach (var child in yamlNode.Children.Where(x =>
                                          x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlScalarNode ycn2 && ycn2.Value.StartsWith(argument)))
                             {
                                 outNodes.Add(child.Value);
+                            }
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
+                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && (childAsScalar.Value?.StartsWith(argument) ?? false)) : Array.Empty<YamlNode>()))
+                            {
+                                outNodes.Add(child);
                             }
                             break;
                         case SearchOperatorEnum.EndsWith:
@@ -141,6 +177,12 @@ namespace AppInspector.YamlPath
                             {
                                 outNodes.Add(child.Value);
                             }
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
+                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && (childAsScalar.Value?.EndsWith(argument) ?? false)) : Array.Empty<YamlNode>()))
+                            {
+                                outNodes.Add(child);
+                            }
                             break;
                         case SearchOperatorEnum.Contains:
                             foreach (var child in yamlNode.Children.Where(x =>
@@ -148,13 +190,20 @@ namespace AppInspector.YamlPath
                             {
                                 outNodes.Add(child.Value);
                             }
+                            foreach (var child in yamlNode.Children.Where(x =>
+                                         x.Key is YamlScalarNode ycn && ycn.Value == elementName && x.Value is YamlSequenceNode).SelectMany(x => x.Value is YamlSequenceNode ysn ?
+                                         ysn.Children.Where(y => y is YamlScalarNode childAsScalar && (childAsScalar.Value?.Contains(argument) ?? false)) : Array.Empty<YamlNode>()))
+                            {
+                                outNodes.Add(child);
+                            }
                             break;
                         case SearchOperatorEnum.Regex: // TODO
                         case SearchOperatorEnum.Invert: // TODO
                         case SearchOperatorEnum.Invalid:
                         default:
                             outNodes.Clear();
-                            break;                    }
+                            break;                    
+                    }
                 }
                 else
                 {
@@ -243,19 +292,25 @@ namespace AppInspector.YamlPath
         /// <param name="yamlNode"></param>
         /// <param name="yamlPathComponent"></param>
         /// <returns></returns>
-        private static IEnumerable<YamlNode> SequenceNodeQuery(this YamlSequenceNode yamlNode, string yamlPathComponent)
+        private static List<YamlNode> SequenceNodeQuery(this YamlSequenceNode yamlNode, string yamlPathComponent)
         {
-            // This can be one of three formats
-            // 1. A number '0'
-            // 2. A number in brackets '[0]'
-            // 3. A range in brackets '[0:2]'
-            // 4. A search Expression // TODO
-            // https://github.com/wwkimball/yamlpath/wiki/Segment:-Array-Elements
-            // https://github.com/wwkimball/yamlpath/wiki/Segment:-Array-Slices
-            // https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
+            List<YamlNode> outNodes = new List<YamlNode>();
+            // Wild Card
+            // TODO: recursive wildcard
+            if (yamlPathComponent == "*")
+            {
+                outNodes.AddRange(yamlNode.Children);
+            }
+            
             var expr = yamlPathComponent.Trim(new[] { '[', ']' });
             if (expr.Contains(':'))
             {
+                // This can be one of three formats
+                // 1. A number '0'
+                // 2. A number in brackets '[0]'
+                // 3. A range in brackets '[0:2]'
+                // https://github.com/wwkimball/yamlpath/wiki/Segment:-Array-Elements
+                // https://github.com/wwkimball/yamlpath/wiki/Segment:-Array-Slices
                 var components = expr.Split(':');
                 if (components.Length == 2 && int.TryParse(components[0], out int startRange) &&
                     int.TryParse(components[1], out int endRange))
@@ -270,20 +325,22 @@ namespace AppInspector.YamlPath
                     {
                         endRange = yamlNode.Children.Count + endRange;
                     }
-                    
+
                     // Start range is inclusive so it must not be as much as the count
                     if (startRange < 0 || startRange >= yamlNode.Children.Count)
                     {
-                        yield break;
+                        return outNodes;
                     }
+
                     // End is exclusive so it can be as large as the count
                     if (endRange < 0 || endRange > yamlNode.Children.Count)
                     {
-                        yield break;
+                        return outNodes;
                     }
-                    for(int i = startRange; i < endRange; i++)
+
+                    for (int i = startRange; i < endRange; i++)
                     {
-                        yield return yamlNode[i];
+                        outNodes.Add(yamlNode[i]);
                     }
                 }
             }
@@ -293,12 +350,14 @@ namespace AppInspector.YamlPath
                 {
                     if (yamlNode.Children.Count > result)
                     {
-                        yield return yamlNode[result];
+                        outNodes.Add(yamlNode.Children[result]);
                     }
                 }
             }
+            
+            return outNodes;
         }
-        
+
         /// <summary>
         /// Get all the <see cref="YamlNode"/> that match the provided yamlPath
         /// </summary>
@@ -317,7 +376,7 @@ namespace AppInspector.YamlPath
                 // A slice can be used directly after an element, rather than after a separator
                 // In such a case, '[' will be at an index greater than 0
                 .SelectMany(x => x.IndexOf('[') > 0 ? 
-                    // We need to split apart around the slice operator. Since the split removes the start we need to remove the end
+                    // We need to split apart around the slice operator. Since the split removes the start we need to add it back
                     x.Split('[').Select(y => y.EndsWith(']') ? $"[{y}" : y) : new []{x}).ToArray();
             
             List<YamlNode> currentNodes = new List<YamlNode>(){yamlNode};

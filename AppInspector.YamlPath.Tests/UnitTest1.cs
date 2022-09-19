@@ -8,7 +8,7 @@ namespace AppInspector.YamlPath.Tests;
 [TestClass]
 public class UnitTest1
 {
-    private const string testData = 
+    private const string arrayTestData = 
         @"some_array:
     - 0
     - 1
@@ -27,7 +27,7 @@ public class UnitTest1
     public void TestArraySlicing(string yamlPath, int expectedNumMatches, int[] expectedFindings)
     {
         var yaml = new YamlStream();
-        yaml.Load(new StringReader(testData));
+        yaml.Load(new StringReader(arrayTestData));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
         var matching = mapping.YamlPathQuery(yamlPath);
         Assert.AreEqual(expectedNumMatches, matching.Count);
@@ -147,8 +147,13 @@ products_array:
       width: 9
       height: 10
       depth: 1
-      weight: 4";
+      weight: 4
+      other_values: 
+        - 0
+        - 5
+        - 10";
     
+    [DataRow("products_array.*.dimensions[other_values>=5]", 2)]
     [DataRow("products_hash.*.dimensions[width=9]", 1)]
     [DataRow("products_hash.*.dimensions[weight=4]", 2)]
     [DataRow("products_hash.*.dimensions[weight==4]", 2)]
@@ -159,7 +164,7 @@ products_array:
     [DataRow("products_hash.*.dimensions[weight>=4]", 3)]
     [DataRow("products_hash.*.availability.start[date^2020]", 3)]
     [DataRow("products_hash.*.availability.start[date$01]", 2)]
-    [DataRow("products_hash.*.availability.start[date%-09-]", 2)]
+    [DataRow("products_hash.*.availability.start[date%-10-]", 1)]
     // [DataRow("products_hash.*.dimensions[weight=~4]", 2)]
     [DataTestMethod]
     public void TestMapQuery(string yamlPath, int expectedNumMatches)
