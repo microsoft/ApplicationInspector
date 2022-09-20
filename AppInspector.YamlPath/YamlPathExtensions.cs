@@ -36,33 +36,39 @@ public static class YamlPathExtensions
     /// <returns>An <see cref="List{YamlNode}" /> of the matching nodes</returns>
     public static List<YamlNode> Query(this YamlNode yamlNode, string yamlPath)
     {
-        // TODO: validate query
         var navigationElements = GenerateNavigationElements(yamlPath);
+        var problems = GetQueryProblems(navigationElements);
+        if (problems.Count > 0)
+        {
+            throw new FormatException(
+                $"Provided YamlPath {yamlPath} could not be validated. {problems.Count} problems. {string.Concat(problems)}");
+        }
 
+        // Holds the current state
         var currentNodes = new List<YamlNode> { yamlNode };
 
         // Iteratively walk using the navigation 
         for (var i = 0; i < navigationElements.Count; i++)
         {
-            // The list of nodes we can be in after parsing the next nav element
+            // The states we can transition to from the current state, given the current navigation element
             var nextNodes = new List<YamlNode>();
             foreach (var currentNode in currentNodes)
+            {
                 // https://github.com/wwkimball/yamlpath/wiki/Wildcard-Segments
                 // The ** operator has two behaviors. If it is the last token it captures all Scalar Leaves recursively
                 // If it is not the last token it matches any sequence of paths as long as subsequent tokens match
-            {
                 if (navigationElements[i] == "**")
-                    // If this is the last element then just get all the leaves
                 {
                     nextNodes.AddRange(i == navigationElements.Count - 1
+                        // If this is the last element then get all the leaves
                         ? GetLeaves(currentNode)
                         // If its not the last, we instead advance the position to every child through all levels recursively
-                        // Then we will filter by all the subsequent components
+                        // The later components will then be checked against each element we found
                         : RecursiveGetAllNodes(currentNode));
                 }
                 else
-                    // Advance the current node to all possible nodes with the navigation element
                 {
+                    // Advance the current node to all possible nodes matching the navigation element
                     nextNodes.AddRange(AdvanceNode(currentNode, navigationElements[i]));
                 }
             }
@@ -73,10 +79,58 @@ public static class YamlPathExtensions
                 return new List<YamlNode>();
             }
 
+            // Update the current nodes
             currentNodes = nextNodes;
         }
-
+        
         return currentNodes;
+    }
+
+    /// <summary>
+    /// Check the query for problems
+    /// </summary>
+    /// <param name="yamlPath"></param>
+    /// <returns></returns>
+    public static List<string> GetQueryProblems(string yamlPath)
+    {
+        return GetQueryProblems(GenerateNavigationElements(yamlPath));
+    }
+    
+    /// <summary>
+    /// Returns a list of string descriptions of problems with the provided yamlPath query, or an empty list if no problems detected.
+    /// </summary>
+    /// <param name="yamlPathPieces"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    /// TODO: Not comprehensive
+    private static List<string> GetQueryProblems(List<string> yamlPathPieces)
+    {
+        List<string> problems = new List<string>();
+        foreach (var piece in yamlPathPieces)
+        {
+            if (piece.StartsWith('['))
+            {
+                if (!piece.EndsWith(']'))
+                {
+                    problems.Add($"'{piece}': Path component didn't close bracket");
+                }
+
+                if (piece.Count(x => x == '!') > 1)
+                {
+                    problems.Add($"'{piece}': Multiple negations for one token is not valid.");
+                }
+                
+                var (searchOperatorEnum, elementName, argument, invert) =
+                    ParseOperator(piece);
+                
+                if (searchOperatorEnum == SearchOperatorEnum.Invalid)
+                {
+                    problems.Add($"'{piece}': Enum valid invalid.");
+                }
+            }
+        }
+
+        return problems;
     }
 
     /// <summary>
@@ -88,8 +142,7 @@ public static class YamlPathExtensions
     ///     A <see cref="List{YamlNode}" /> of the children of the provided <see cref="YamlMappingNode" /> which match the
     ///     query.
     /// </returns>
-    private static IEnumerable<YamlNode> MappingNodeQuery(this YamlMappingNode yamlMappingNode,
-        string yamlPathComponent)
+    private static IEnumerable<YamlNode> MappingNodeQuery(this YamlMappingNode yamlMappingNode, string yamlPathComponent)
     {
         var outNodes = new List<YamlNode>();
         // Remove braces
@@ -150,7 +203,8 @@ public static class YamlPathExtensions
             return yamlMappingNode.Children.Values;
         }
 
-        // TODO: Other operand meanings https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
+        // TODO:
+        // Other operand meanings https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
         // . has a special meaning
         // * has more meanings
 
@@ -163,7 +217,7 @@ public static class YamlPathExtensions
 
     private static IEnumerable<YamlNode> PerformOperation(YamlMappingNode yamlMappingNode, string yamlPathComponent)
     {
-        // Break break down the components
+        // Break break down the components:
         // The Operation to perform
         // The element name to perform it on
         // The argument for the operation
@@ -189,6 +243,7 @@ public static class YamlPathExtensions
                 yamlScalarNode =>
                     int.TryParse(yamlScalarNode.Value, out var value) && value >= int.Parse(argument)),
             SearchOperatorEnum.StartsWith => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
+                // See GetNodesWithPredicate
                 // Null checking is enforced before calling the predicate
                 yamlScalarNode => yamlScalarNode.Value!.StartsWith(argument)),
             SearchOperatorEnum.EndsWith => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
@@ -269,7 +324,7 @@ public static class YamlPathExtensions
     /// </summary>
     /// <param name="yamlPathComponent"></param>
     /// <returns></returns>
-    private static ( SearchOperatorEnum operation, string elementName, string argument, bool invert)
+    private static (SearchOperatorEnum operation, string elementName, string argument, bool invert)
         ParseOperator(string yamlPathComponent)
     {
         yamlPathComponent = yamlPathComponent.TrimStart('[').TrimEnd(']');
@@ -421,21 +476,36 @@ public static class YamlPathExtensions
         // The separator can either be . or /, but if it is / the string must start with /
         var separator = yamlPath[0] == '/' ? '/' : '.';
         // Ignore separators in brackets
-        var ignoreSeparator = false;
-
+        var bracketsMode = false;
+        var demarcationMode = false;
+        char demarcationCharacter = '\'';
         // The start of the currently tracked token
         var startIndex = 0;
         for (var i = 0; i < yamlPath.Length; i++)
         {
-            if (!ignoreSeparator)
+            if (!bracketsMode && !demarcationMode)
             {
                 // End of the token, add to components
                 // Enter bracket mode, ignore separators until the next ]
                 if (yamlPath[i] == '[')
                 {
-                    ignoreSeparator = true;
+                    bracketsMode = true;
                     pathComponents.Add(yamlPath[startIndex..i]);
                     startIndex = i;
+                }
+
+                if (yamlPath[i] == '\'')
+                {
+                    demarcationMode = true;
+                    demarcationCharacter = '\'';
+                    startIndex = i + 1;
+                }
+                
+                if (yamlPath[i] == '\"')
+                {
+                    demarcationMode = true;
+                    demarcationCharacter = '"';
+                    startIndex = i + 1;
                 }
 
                 if (yamlPath[i] == separator)
@@ -455,12 +525,22 @@ public static class YamlPathExtensions
                     }
                 }
             }
-            else
+            else if (bracketsMode)
             {
+                // TODO: Strip out non-demarcated whitespace from brackets per https://github.com/wwkimball/yamlpath/wiki/Search-Expressions#supported-search-operators
                 if (yamlPath[i] == ']')
                 {
-                    ignoreSeparator = false;
+                    bracketsMode = false;
                     pathComponents.Add(yamlPath[startIndex..(i + 1)]);
+                    startIndex = i + 1;
+                }
+            }
+            else if (demarcationMode)
+            {
+                if (yamlPath[i] == demarcationCharacter)
+                {
+                    demarcationMode = false;
+                    pathComponents.Add(yamlPath[startIndex..i]);
                     startIndex = i + 1;
                 }
             }
@@ -472,6 +552,12 @@ public static class YamlPathExtensions
         return pathComponents;
     }
 
+    /// <summary>
+    /// Get the set of nodes which can be transitioned from given the path component
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="pathComponent"></param>
+    /// <returns></returns>
     private static IEnumerable<YamlNode> AdvanceNode(YamlNode node, string pathComponent)
     {
         return node switch
