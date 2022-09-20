@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Microsoft.ApplicationInspector.ExtensionMethods;
 using YamlDotNet.RepresentationModel;
 
 namespace AppInspector.YamlPath.Tests;
@@ -29,7 +30,7 @@ public class YamlPathTests
         var yaml = new YamlStream();
         yaml.Load(new StringReader(arrayTestData));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
-        var matching = mapping.YamlPathQuery(yamlPath);
+        var matching = mapping.Query(yamlPath);
         Assert.AreEqual(expectedNumMatches, matching.Count);
         foreach (var expectedFinding in expectedFindings)
         {
@@ -58,7 +59,7 @@ public class YamlPathTests
         var yaml = new YamlStream();
         yaml.Load(new StringReader(mapSliceTestData));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
-        var matching = mapping.YamlPathQuery(yamlPath);
+        var matching = mapping.Query(yamlPath);
         Assert.AreEqual(expectedNumMatches, matching.Count);
         foreach (var expectedFinding in expectedFindings)
         {
@@ -192,7 +193,7 @@ products_array:
         var yaml = new YamlStream();
         yaml.Load(new StringReader(mapQueryTestData));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
-        var matching = mapping.YamlPathQuery(yamlPath);
+        var matching = mapping.Query(yamlPath);
         Assert.AreEqual(expectedNumMatches, matching.Count);
     }
 
@@ -209,7 +210,7 @@ products_array:
         var yaml = new YamlStream();
         yaml.Load(new StringReader(setTestValue));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
-        var matching = mapping.YamlPathQuery(yamlPath);
+        var matching = mapping.Query(yamlPath);
         Assert.AreEqual(expectedNumMatches, matching.Count);
     }
     
@@ -233,7 +234,7 @@ products_array:
         var yaml = new YamlStream();
         yaml.Load(new StringReader(escapedKeysData));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
-        var matching = mapping.YamlPathQuery(yamlPath);
+        var matching = mapping.Query(yamlPath);
         Assert.AreEqual(expectedNumMatches, matching.Count);
         foreach (var expectedFinding in expectedFindings)
         {

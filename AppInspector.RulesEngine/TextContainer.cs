@@ -1,7 +1,6 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -9,8 +8,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Xml.XPath;
-using AppInspector.YamlPath;
 using JsonCons.JsonPath;
+using Microsoft.ApplicationInspector.ExtensionMethods;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using YamlDotNet.RepresentationModel;
@@ -339,7 +338,7 @@ public class TextContainer
 
         if (_ymlDocument is not null)
         {
-            var matches = _ymlDocument.Documents[0].RootNode.YamlPathQuery(Path);
+            var matches = _ymlDocument.Documents[0].RootNode.Query(Path);
             foreach (var match in matches)
             {
                 yield return (match.ToString(),
