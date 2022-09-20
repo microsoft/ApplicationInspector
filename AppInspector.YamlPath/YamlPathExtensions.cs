@@ -462,17 +462,19 @@ namespace AppInspector.YamlPath
                 List<YamlNode> nextNodes = new List<YamlNode>();
                 foreach (var currentNode in currentNodes)
                 {
+                    // The ** operator has two behaviors. If it is the last token it captures all Scalar Leaves recursively
+                    // If it is not the last token it matches any sequence of paths as long as subsequent tokens match
                     if (navigationElements[i] == "**")
                     {
                         // If this is the last element then just get all the leaves
                         if (i == navigationElements.Count - 1)
                         {
-                            // Advance the current node to all possible next nodes with the navigation element
                             nextNodes.AddRange(GetLeaves(currentNode));
                         }
                         else
                         {
                             // Instead of just leaves, we advance the position to every child through all levels recursively
+                            // Then we will apply all the subsequent components, narrowing it down to anything that may actaully match
                             nextNodes.AddRange(RecursiveGetAllNodes(currentNode));
                         }
                     }
