@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -8,9 +9,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Xml.XPath;
+using AppInspector.YamlPath;
 using JsonCons.JsonPath;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using YamlDotNet.RepresentationModel;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
@@ -30,6 +33,8 @@ public class TextContainer
 
     private bool _triedToConstructXPathDocument;
     private XPathDocument? _xmlDoc;
+    private bool _triedToConstructYmlDocument;
+    private YamlStream _ymlDocument;
 
     /// <summary>
     ///     Creates new instance
@@ -315,5 +320,31 @@ public class TextContainer
 
         return (!isInComment && scopes.Contains(PatternScope.Code)) ||
                (isInComment && scopes.Contains(PatternScope.Comment));
+    }
+
+    internal IEnumerable<(string, Boundary)> GetStringFromYmlPath(string Path)
+    {
+        if (!_triedToConstructYmlDocument)
+            try
+            {
+                _triedToConstructYmlDocument = true;
+                _ymlDocument = new YamlStream();
+                _ymlDocument.Load(new StringReader(FullContent));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Failed to parse as a YML document: {0}", e.Message);
+                _ymlDocument = null;
+            }
+
+        if (_ymlDocument is not null)
+        {
+            var matches = _ymlDocument.Documents[0].RootNode.YamlPathQuery(Path);
+            foreach (var match in matches)
+            {
+                yield return (match.ToString(),
+                    new Boundary() { Index = match.Start.Index, Length = match.End.Index - match.Start.Index });
+            }
+        }
     }
 }

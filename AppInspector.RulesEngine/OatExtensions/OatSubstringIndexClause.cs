@@ -7,14 +7,17 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 public class OatSubstringIndexClause : Clause
 {
     public OatSubstringIndexClause(PatternScope[] scopes, string? field = null, bool useWordBoundaries = false,
-        string[]? xPaths = null, string[]? jsonPaths = null) : base(Operation.Custom, field)
+        string[]? xPaths = null, string[]? jsonPaths = null, string[]? yamlPaths = null) : base(Operation.Custom, field)
     {
         Scopes = scopes;
         CustomOperation = "SubstringIndex";
         UseWordBoundaries = useWordBoundaries;
         XPaths = xPaths;
         JsonPaths = jsonPaths;
+        YmlPaths = yamlPaths;
     }
+
+    public string[]? YmlPaths { get; set; }
 
     public string[]? JsonPaths { get; }
 

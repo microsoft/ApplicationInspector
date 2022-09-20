@@ -104,8 +104,18 @@ public class OatRegexWithIndexOperation : OatOperation
                                 foreach (var target in targets)
                                     outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, target.Item2));
                             }
+                        
+                        if (src.YmlPaths is not null)
+                            foreach (var ymlPath in src.YmlPaths)
+                            {
+                                var targets = tc.GetStringFromYmlPath(ymlPath);
+                                foreach (var target in targets)
+                                {
+                                    outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, target.Item2));
+                                }
+                            }
 
-                        if (src.JsonPaths is null && src.XPaths is null)
+                        if (src.JsonPaths is null && src.XPaths is null && src.YmlPaths is null)
                         {
                             if (subBoundary is not null)
                                 outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, subBoundary));
