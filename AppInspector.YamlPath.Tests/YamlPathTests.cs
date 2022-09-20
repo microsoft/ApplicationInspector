@@ -241,4 +241,39 @@ products_array:
             Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && int.TryParse(ysc.Value, out int ysv) && ysv == expectedFinding));
         }
     }
+
+    private const string anchorTests = @"---
+aliases:
+  - &reusable_value This value can be used multiple times
+
+anchored_hash: &anchor1
+  with: child
+  nodes: and values
+  including: *reusable_value
+
+non_anchored_hash:
+  <<: *anchor1
+  with: its
+  own: children";
+    [DataRow("aliases[&reusable_value]", 1)]
+    [DataRow("/aliases[&reusable_value]", 1)]
+    [DataRow("&anchor1", 1)]
+    [DataRow("/&anchor1", 1)]
+    [DataRow("&anchor1.&reusable_value", 1)]
+    [DataRow("/&anchor1/&reusable_value", 1)]
+    [DataRow("non_anchored_hash.&reusable_value", 1)]
+    [DataRow("/non_anchored_hash/&reusable_value", 1)]
+    [DataRow("non_anchored_hash.&anchor1", 1)]
+    [DataRow("/non_anchored_hash/&anchor1", 1)]
+    [DataRow("non_anchored_hash.&anchor1.&reusable_value", 1)]
+    [DataRow("/non_anchored_hash/&anchor1/&reusable_value", 1)]
+    [DataTestMethod]
+    public void AnchorTests(string yamlPath, int expectedNumMatches)
+    {
+        var yaml = new YamlStream();
+        yaml.Load(new StringReader(anchorTests));
+        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+        var matching = mapping.Query(yamlPath);
+        Assert.AreEqual(expectedNumMatches, matching.Count);
+    }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using YamlDotNet.Core.Tokens;
 using YamlDotNet.RepresentationModel;
 
 namespace Microsoft.ApplicationInspector.ExtensionMethods;
@@ -120,6 +121,11 @@ public static class YamlPathExtensions
                     problems.Add($"'{piece}': Multiple negations for one token is not valid.");
                 }
                 
+                if (piece[1..].StartsWith('&')) // Anchors are fine
+                {
+                    continue;
+                }
+                
                 var (searchOperatorEnum, elementName, argument, invert) =
                     ParseOperator(piece);
                 
@@ -187,6 +193,11 @@ public static class YamlPathExtensions
 
             // If we get here we did not find the end, so the selection is not valid
             return Enumerable.Empty<YamlNode>();
+        }
+
+        if (expr.StartsWith('&'))
+        {
+            return FollowAnchor(yamlMappingNode, expr);
         }
 
         // If it wasn't a slice it might be an expression
@@ -383,12 +394,6 @@ public static class YamlPathExtensions
     private static List<YamlNode> SequenceNodeQuery(this YamlSequenceNode yamlNode, string yamlPathComponent)
     {
         var outNodes = new List<YamlNode>();
-        // Wild Card
-        if (yamlPathComponent == "*")
-        {
-            outNodes.AddRange(yamlNode.Children);
-        }
-
         var expr = yamlPathComponent.Trim('[', ']');
         if (expr.Contains(':'))
         {
@@ -433,6 +438,15 @@ public static class YamlPathExtensions
         }
         else
         {
+            // Wild Card
+            if (expr == "*")
+            {
+                outNodes.AddRange(yamlNode.Children);
+            }
+            if (expr.StartsWith('&'))
+            {
+                outNodes.AddRange(FollowAnchor(yamlNode, expr));
+            }
             if (int.TryParse(expr, out var result))
             {
                 if (yamlNode.Children.Count > result)
@@ -560,13 +574,23 @@ public static class YamlPathExtensions
     /// <returns></returns>
     private static IEnumerable<YamlNode> AdvanceNode(YamlNode node, string pathComponent)
     {
+        if (pathComponent.StartsWith("&"))
+        {
+            return FollowAnchor(node, pathComponent);
+        }
         return node switch
         {
             YamlMappingNode yamlMappingNode => yamlMappingNode.MappingNodeQuery(pathComponent),
             YamlSequenceNode yamlSequenceNode => yamlSequenceNode.SequenceNodeQuery(pathComponent),
-            YamlScalarNode _ => Enumerable.Empty<YamlNode>(), // No path inside a scalar
+            YamlScalarNode yamlScalarNode => Enumerable.Empty<YamlNode>(), // No path inside a scalar
             _ => Enumerable.Empty<YamlNode>() // Nothing else is valid to continue
         };
+    }
+
+    private static IEnumerable<YamlNode> FollowAnchor(YamlNode yamlNode, string pathComponent)
+    {
+        return yamlNode.AllNodes.Where(x => !x.Anchor.IsEmpty && 
+                                                x.Anchor.Value == pathComponent.TrimStart('&')).Distinct();
     }
 
     /// <summary>
