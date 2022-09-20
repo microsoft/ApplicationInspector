@@ -351,12 +351,12 @@ public static class YamlPathExtensions
                 if (yamlPathComponent[idx - 1] == '!')
                 {
                     invert = !invert;
-                    return (pair.Value, yamlPathComponent[..(idx - 1)].Trim(),
-                        yamlPathComponent[(idx + pair.Key.Length)..].Trim(), invert);
+                    return (pair.Value, yamlPathComponent[..(idx - 1)].Trim().Trim('\'', '"'),
+                        yamlPathComponent[(idx + pair.Key.Length)..].Trim().Trim('\'', '"'), invert);
                 }
 
-                return (pair.Value, yamlPathComponent[..idx].Trim(),
-                    yamlPathComponent[(idx + pair.Key.Length)..].Trim(), invert);
+                return (pair.Value, yamlPathComponent[..idx].Trim().Trim('\'', '"'),
+                    yamlPathComponent[(idx + pair.Key.Length)..].Trim().Trim('\'', '"'), invert);
             }
         }
 
@@ -369,12 +369,12 @@ public static class YamlPathExtensions
                 if (yamlPathComponent[idx - 1] == '!')
                 {
                     invert = !invert;
-                    return (pair.Value, yamlPathComponent[..(idx - 1)].Trim(),
-                        yamlPathComponent[(idx + pair.Key.Length)..].Trim(), invert);
+                    return (pair.Value, yamlPathComponent[..(idx - 1)].Trim().Trim('\'', '"'),
+                        yamlPathComponent[(idx + pair.Key.Length)..].Trim().Trim('\'', '"'), invert);
                 }
 
-                return (pair.Value, yamlPathComponent[..idx].Trim(),
-                    yamlPathComponent[(idx + pair.Key.Length)..].Trim(), invert);
+                return (pair.Value, yamlPathComponent[..idx].Trim().Trim('\'', '"'),
+                    yamlPathComponent[(idx + pair.Key.Length)..].Trim().Trim('\'', '"'), invert);
             }
         }
         

@@ -149,14 +149,19 @@ products_array:
       height: 10
       depth: 1
       weight: 4
+      tag with space: 7
+      value_with_space: value with space
       other_values: 
         - 0
         - 5
         - 10";
+    [DataRow("products_array.**.dimensions['tag with space'==7]", 1)]
+    [DataRow("products_array.**.dimensions[value_with_space=='value with space']", 1)]
+    [DataRow("products_array.**.dimensions[other_values>=5]", 2)]
     [DataRow("products_array.**.[other_values>=5]", 2)]
     [DataRow("products_array.**.dimensions[other_values>=5]", 2)]
     [DataRow("products_hash.**", 24)]
-    [DataRow("products_array.**", 30)]
+    [DataRow("products_array.**", 32)]
     [DataRow("products_array.*.dimensions[other_values>=5]", 2)]
     [DataRow("products_array.*.dimensions[width=9]", 1)]
     [DataRow("products_array.*.dimensions[weight=4]", 2)]
