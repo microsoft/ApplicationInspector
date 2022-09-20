@@ -6,7 +6,7 @@ using YamlDotNet.RepresentationModel;
 namespace AppInspector.YamlPath.Tests;
 
 [TestClass]
-public class UnitTest1
+public class YamlPathTests
 {
     private const string arrayTestData = 
         @"some_array:
@@ -152,7 +152,10 @@ products_array:
         - 0
         - 5
         - 10";
-    
+    [DataRow("products_array.**.[other_values>=5]", 2)]
+    [DataRow("products_array.**.dimensions[other_values>=5]", 2)]
+    [DataRow("products_hash.**", 24)]
+    [DataRow("products_array.**", 30)]
     [DataRow("products_array.*.dimensions[other_values>=5]", 2)]
     [DataRow("products_array.*.dimensions[width=9]", 1)]
     [DataRow("products_array.*.dimensions[weight=4]", 2)]
@@ -216,8 +219,7 @@ products_array:
   b.key: 1
   c\\key: 2
   d\\/key: 3
-  e\\.key: 4
-  f\/key: 5";
+  e\\.key: 4";
     [DataRow("/hash_name/a\\/key", 1, new int[]{0})]
     [DataRow("hash_name.a/key", 1, new int[]{0})]
     [DataRow("/hash_name/b.key", 1, new int[]{1})]
@@ -225,7 +227,6 @@ products_array:
     [DataRow("hash_name.c\\\\key", 1, new int[]{2})]
     [DataRow("/hash_name/d\\\\\\/key", 1, new int[]{3})]
     [DataRow("hash_name.e\\\\\\.key", 1, new int[]{4})]
-    [DataRow("/hash_name/f\\\\\\/key", 1, new int[]{5})]
     [DataTestMethod]
     public void EscapedKeysTests(string yamlPath, int expectedNumMatches, int[] expectedFindings)
     {

@@ -284,14 +284,11 @@ namespace AppInspector.YamlPath
                 else
                 {
                     // Wild Cards https://github.com/wwkimball/yamlpath/wiki/Wildcard-Segments
-                    // TODO: ** recursive wildcard
                     if (yamlPathComponent == "*")
                     {
                         outNodes.AddRange(yamlNode.Children.Values);
                     }
                     // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Keys
-                    // TODO: Quoted dot named keys
-                    // TODO: Escaped name keys
                     foreach (var child in yamlNode.Children.Where(x =>
                                  x.Key is YamlScalarNode yamlScalarNode && yamlScalarNode.Value == yamlPathComponent))
                     {
@@ -302,6 +299,13 @@ namespace AppInspector.YamlPath
             
             return outNodes;
         }
+
+        private static IEnumerable<YamlNode> GetLeaves(YamlNode childValue) => childValue switch
+        {
+            YamlScalarNode scalarNode => new []{ scalarNode },
+            YamlSequenceNode sequenceNode => sequenceNode.Children.SelectMany(GetLeaves),
+            YamlMappingNode mappingNode => mappingNode.Children.SelectMany(x => GetLeaves(x.Value))
+        };
 
         private static Dictionary<string, SearchOperatorEnum> StringToOperatorMapping =
             new Dictionary<string, SearchOperatorEnum>()
@@ -377,12 +381,10 @@ namespace AppInspector.YamlPath
         {
             List<YamlNode> outNodes = new List<YamlNode>();
             // Wild Card
-            // TODO: recursive wildcard
             if (yamlPathComponent == "*")
             {
                 outNodes.AddRange(yamlNode.Children);
             }
-            
             var expr = yamlPathComponent.Trim(new[] { '[', ']' });
             if (expr.Contains(':'))
             {
@@ -453,15 +455,32 @@ namespace AppInspector.YamlPath
 
             List<YamlNode> currentNodes = new List<YamlNode>(){yamlNode};
         
-            // Iteratively walk using the navigation elements
-            foreach (var navigationElement in navigationElements)
+            // Iteratively walk using the navigation 
+            for (int i = 0; i < navigationElements.Count; i++)
             {
                 // The list of nodes we can be in after parsing the next nav element
                 List<YamlNode> nextNodes = new List<YamlNode>();
                 foreach (var currentNode in currentNodes)
                 {
-                    // Advance the current node to all possible next nodes with the navigation element
-                    nextNodes.AddRange(AdvanceNode(currentNode, navigationElement));
+                    if (navigationElements[i] == "**")
+                    {
+                        // If this is the last element then just get all the leaves
+                        if (i == navigationElements.Count - 1)
+                        {
+                            // Advance the current node to all possible next nodes with the navigation element
+                            nextNodes.AddRange(GetLeaves(currentNode));
+                        }
+                        else
+                        {
+                            // Instead of just leaves, we advance the position to every child through all levels recursively
+                            nextNodes.AddRange(RecursiveGetAllNodes(currentNode));
+                        }
+                    }
+                    else
+                    {
+                        // Advance the current node to all possible nodes with the navigation element
+                        nextNodes.AddRange(AdvanceNode(currentNode, navigationElements[i]));                        
+                    }
                 }
 
                 // Nothing matched the next sequence, so stop processing.
@@ -470,11 +489,19 @@ namespace AppInspector.YamlPath
                     return new List<YamlNode>();
                 }
                 
-                currentNodes = nextNodes;
+                currentNodes = nextNodes;   
             }
 
             return currentNodes;
         }
+
+        private static IEnumerable<YamlNode> RecursiveGetAllNodes(YamlNode currentNode) => currentNode switch
+        {
+            YamlMappingNode yamlMappingNode => yamlMappingNode.Children.Values.Union(yamlMappingNode.Children.SelectMany(x => RecursiveGetAllNodes(x.Value))),
+            YamlSequenceNode yamlSequenceNode => yamlSequenceNode.Children.Union(yamlSequenceNode.Children.SelectMany(RecursiveGetAllNodes)),
+            YamlScalarNode _ => Enumerable.Empty<YamlNode>(), // Scalar children were already added by the recursion in the sequence or mapping
+            _ => throw new ArgumentOutOfRangeException(nameof(currentNode))
+        };
 
         private static List<string> GenerateNavigationElements(string yamlPath)
         {
