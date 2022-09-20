@@ -17,7 +17,7 @@ public class OatSubstringIndexClause : Clause
         YmlPaths = yamlPaths;
     }
 
-    public string[]? YmlPaths { get; set; }
+    public string[]? YmlPaths { get; }
 
     public string[]? JsonPaths { get; }
 

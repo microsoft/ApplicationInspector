@@ -22,5 +22,5 @@ public class OatRegexWithIndexClause : Clause
     public string[]? XPaths { get; }
 
     public PatternScope[] Scopes { get; }
-    public string[]? YmlPaths { get; set; }
+    public string[]? YmlPaths { get; }
 }

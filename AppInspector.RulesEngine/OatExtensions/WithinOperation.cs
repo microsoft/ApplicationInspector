@@ -179,14 +179,14 @@ public class WithinOperation : OatOperation
                         (oatRegexWithIndexClause.XPaths?.Any() ?? false)||
                         (oatRegexWithIndexClause.YmlPaths?.Any() ?? false))
                         if (wc.FindingOnly || wc.SameLineOnly || wc.FindingRegion || wc.OnlyAfter || wc.OnlyBefore)
-                            yield return new Violation("When providing JSONPaths or XPaths must use same-file region.",
+                            yield return new Violation("When providing JSONPaths, YMLPaths or XPaths must use same-file region.",
                                 rule, clause);
                 if (wc.SubClause is OatSubstringIndexClause oatSubstringIndexClause)
                     if ((oatSubstringIndexClause.JsonPaths?.Any() ?? false) ||
                         (oatSubstringIndexClause.XPaths?.Any() ?? false) || 
                         (oatSubstringIndexClause.YmlPaths?.Any() ?? false))
                         if (wc.FindingOnly || wc.SameLineOnly || wc.FindingRegion || wc.OnlyAfter || wc.OnlyBefore)
-                            yield return new Violation("When providing JSONPaths or XPaths must use same-file region.",
+                            yield return new Violation("When providing JSONPaths, YMLPaths or XPaths must use same-file region.",
                                 rule, clause);
             }
         }

@@ -268,6 +268,7 @@ public class XmlAndJsonTests
       }
     ]
   }]";
+        // This rule should find one match
         RuleSet rules = new();
         var originalSource = "TestRules";
         rules.AddString(rule, originalSource);
@@ -279,6 +280,8 @@ public class XmlAndJsonTests
             Assert.AreEqual(1, matches.Count);
         }
         rules = new();
+        
+        // This rule intentionally does not find a match
         rules.AddString(ruleThatWontFind, originalSource);
         analyzer = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
             new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
@@ -288,6 +291,8 @@ public class XmlAndJsonTests
             Assert.AreEqual(0, matches.Count);
         }
         rules = new();
+        
+        // This is the same rule as the first but with the regex operation
         rules.AddString(ruleWithRegex, originalSource);
         analyzer = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
             new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
