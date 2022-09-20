@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using YamlDotNet.RepresentationModel;
 
@@ -24,25 +23,6 @@ namespace AppInspector.YamlPath
     
     public static class YamlPathExtensions
     {
-        private static SearchOperatorEnum StringToOperatorEnum(string searchOperatorString)
-        {
-            return searchOperatorString switch
-            {
-                "=" => SearchOperatorEnum.Equals,
-                "==" => SearchOperatorEnum.Equals,
-                "<" => SearchOperatorEnum.LessThan,
-                ">" => SearchOperatorEnum.GreaterThan,
-                "<=" => SearchOperatorEnum.LessThanOrEqual,
-                ">=" => SearchOperatorEnum.GreaterThanOrEqual,
-                "^" => SearchOperatorEnum.StartsWith,
-                "$" => SearchOperatorEnum.EndsWith,
-                "%" => SearchOperatorEnum.Contains,
-                "=~" => SearchOperatorEnum.Regex,
-                "!" => SearchOperatorEnum.Invert,
-                _ => SearchOperatorEnum.Invalid
-            };
-        }
-        
         /// <summary>
         /// Select elements out of the mapping node based on a single path component
         /// </summary>
@@ -60,13 +40,13 @@ namespace AppInspector.YamlPath
                 var components = expr.Split(':');
                 var started = false;
 
-                for (int i = 0; i < yamlNode.Children.Count; i++)
+                foreach (var childPair in yamlNode.Children)
                 {
                     if (started)
                     {
-                        outNodes.Add(yamlNode.Children[i].Value);
+                        outNodes.Add(childPair.Value);
                         // If we find the end, we return
-                        if (yamlNode.Children[i].Key is YamlScalarNode yamlScalarKey && (yamlScalarKey.Value?.Equals(components[1]) ?? false))
+                        if (childPair.Key is YamlScalarNode yamlScalarKey && (yamlScalarKey.Value?.Equals(components[1]) ?? false))
                         {
                             return outNodes;
                         }
@@ -74,10 +54,10 @@ namespace AppInspector.YamlPath
                     else
                     {
                         // Find the start key
-                        if (yamlNode.Children[i].Key is YamlScalarNode yamlScalarKey && (yamlScalarKey.Value?.Equals(components[0]) ?? false))
+                        if (childPair.Key is YamlScalarNode yamlScalarKey && (yamlScalarKey.Value?.Equals(components[0]) ?? false))
                         {
                             started = true;
-                            outNodes.Add(yamlNode.Children[i].Value);
+                            outNodes.Add(childPair.Value);
                         }
                     }
                 }
@@ -304,10 +284,11 @@ namespace AppInspector.YamlPath
         {
             YamlScalarNode scalarNode => new []{ scalarNode },
             YamlSequenceNode sequenceNode => sequenceNode.Children.SelectMany(GetLeaves),
-            YamlMappingNode mappingNode => mappingNode.Children.SelectMany(x => GetLeaves(x.Value))
+            YamlMappingNode mappingNode => mappingNode.Children.SelectMany(x => GetLeaves(x.Value)),
+            _ => throw new ArgumentOutOfRangeException(nameof(childValue))
         };
 
-        private static Dictionary<string, SearchOperatorEnum> StringToOperatorMapping =
+        private static readonly Dictionary<string, SearchOperatorEnum> StringToOperatorMapping =
             new Dictionary<string, SearchOperatorEnum>()
             {
                 {"==", SearchOperatorEnum.Equals},
@@ -332,11 +313,10 @@ namespace AppInspector.YamlPath
                 yamlPathComponent = yamlPathComponent[1..];
                 invert = !invert;
             }
-            // First Check 2 length strings
+            // First Check 2 length strings to greedily match
             foreach(var pair in StringToOperatorMapping.Where(x => x.Key.Length == 2))
             {
-                var idx = -1;
-                idx = yamlPathComponent.IndexOf(pair.Key, StringComparison.Ordinal);
+                var idx= yamlPathComponent.IndexOf(pair.Key, StringComparison.Ordinal);
                 if (idx > -1)
                 {
                     if (yamlPathComponent[idx - 1] == '!')
@@ -350,10 +330,10 @@ namespace AppInspector.YamlPath
                     }
                 }
             }
+            // No 2 length matches so we can check for 1 length matches
             foreach(var pair in StringToOperatorMapping.Where(x => x.Key.Length == 1))
             {
-                var idx = -1;
-                idx = yamlPathComponent.IndexOf(pair.Key, StringComparison.Ordinal);
+                var idx = yamlPathComponent.IndexOf(pair.Key, StringComparison.Ordinal);
                 if (idx > -1)
                 {
                     if (yamlPathComponent[idx - 1] == '!')
@@ -442,7 +422,7 @@ namespace AppInspector.YamlPath
         }
 
         /// <summary>
-        /// Get all the <see cref="YamlNode"/> that match the provided yamlPath
+        /// Get all the <see cref="YamlNode"/> that match the provided yamlPath query.
         /// </summary>
         /// <param name="yamlNode">The YamlMappingNode to operate on</param>
         /// <param name="yamlPath">The YamlPath query to use</param>
@@ -467,16 +447,11 @@ namespace AppInspector.YamlPath
                     if (navigationElements[i] == "**")
                     {
                         // If this is the last element then just get all the leaves
-                        if (i == navigationElements.Count - 1)
-                        {
-                            nextNodes.AddRange(GetLeaves(currentNode));
-                        }
-                        else
-                        {
-                            // Instead of just leaves, we advance the position to every child through all levels recursively
-                            // Then we will apply all the subsequent components, narrowing it down to anything that may actaully match
-                            nextNodes.AddRange(RecursiveGetAllNodes(currentNode));
-                        }
+                        nextNodes.AddRange(i == navigationElements.Count - 1
+                            ? GetLeaves(currentNode)
+                            // If its not the last, we instead advance the position to every child through all levels recursively
+                            // Then we will filter by all the subsequent components
+                            : RecursiveGetAllNodes(currentNode));
                     }
                     else
                     {
