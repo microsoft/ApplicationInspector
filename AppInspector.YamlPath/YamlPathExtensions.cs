@@ -125,7 +125,7 @@ public static class YamlPathExtensions
                 {
                     continue;
                 }
-                
+
                 var (searchOperatorEnum, elementName, argument, invert) =
                     ParseOperator(piece);
                 
@@ -153,47 +153,6 @@ public static class YamlPathExtensions
         var outNodes = new List<YamlNode>();
         // Remove braces
         var expr = yamlPathComponent.Trim('[', ']');
-        // Maps support slices based on the key name
-        // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
-        if (expr.Contains(':'))
-        {
-            var components = expr.Split(':');
-            if (components.Length != 2)
-            {
-                return Enumerable.Empty<YamlNode>();
-            }
-
-            // If we have found the start key yet
-            var foundStartKey = false;
-
-            // This is an ordered set
-            foreach (var childPair in yamlMappingNode.Children)
-            {
-                if (!foundStartKey)
-                {
-                    // Find the start key
-                    if (childPair.Key is YamlScalarNode yamlScalarKey &&
-                        (yamlScalarKey.Value?.Equals(components[0]) ?? false))
-                    {
-                        foundStartKey = true;
-                        outNodes.Add(childPair.Value);
-                    }
-                }
-                else
-                {
-                    outNodes.Add(childPair.Value);
-                    // If we find the end, we return
-                    if (childPair.Key is YamlScalarNode yamlScalarKey &&
-                        (yamlScalarKey.Value?.Equals(components[1]) ?? false))
-                    {
-                        return outNodes;
-                    }
-                }
-            }
-
-            // If we get here we did not find the end, so the selection is not valid
-            return Enumerable.Empty<YamlNode>();
-        }
 
         if (expr.StartsWith('&'))
         {
@@ -224,6 +183,40 @@ public static class YamlPathExtensions
         return yamlMappingNode.Children.Where(x =>
                 x.Key is YamlScalarNode yamlScalarNode && yamlScalarNode.Value == yamlPathComponent)
             .Select(x => x.Value);
+    }
+
+    private static IEnumerable<YamlNode> GetHashNodesByRange(YamlMappingNode yamlMappingNode, string start, string end)
+    {
+        // If we have found the start key yet
+        var foundStartKey = false;
+        List<YamlNode> outNodes = new List<YamlNode>();
+        // This is an ordered set
+        foreach (var childPair in yamlMappingNode.Children)
+        {
+            if (!foundStartKey)
+            {
+                // Find the start key
+                if (childPair.Key is YamlScalarNode yamlScalarKey &&
+                    (yamlScalarKey.Value?.Equals(start) ?? false))
+                {
+                    foundStartKey = true;
+                    outNodes.Add(childPair.Value);
+                }
+            }
+            else
+            {
+                outNodes.Add(childPair.Value);
+                // If we find the end, we return
+                if (childPair.Key is YamlScalarNode yamlScalarKey &&
+                    (yamlScalarKey.Value?.Equals(end) ?? false))
+                {
+                    return outNodes;
+                }
+            }
+        }
+
+        // If we get here we did not find the end, so the selection is not valid
+        return Enumerable.Empty<YamlNode>();
     }
 
     private static IEnumerable<YamlNode> PerformOperation(YamlMappingNode yamlMappingNode, string yamlPathComponent)
@@ -266,6 +259,9 @@ public static class YamlPathExtensions
             SearchOperatorEnum.Regex => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
                 // Null checking is enforced before calling the predicate
                 yamlScalarNode => Regex.IsMatch(yamlScalarNode.Value!, argument)),
+            // Maps support slices based on the key name
+            // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
+            SearchOperatorEnum.Range => GetHashNodesByRange(yamlMappingNode, elementName, argument),
             SearchOperatorEnum.Invalid => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum)),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum))
         };
@@ -380,6 +376,14 @@ public static class YamlPathExtensions
                 return (pair.Value, yamlPathComponent[..idx].Trim(),
                     yamlPathComponent[(idx + pair.Key.Length)..].Trim(), invert);
             }
+        }
+        
+        // No 2 length or 1 length matches so we check for ranges
+        var rangeIndex = yamlPathComponent.IndexOf(':');
+        if (rangeIndex > -1)
+        {
+            return (SearchOperatorEnum.Range, yamlPathComponent.Substring(0, rangeIndex),
+                yamlPathComponent.Substring(rangeIndex+1), false);
         }
 
         return (SearchOperatorEnum.Invalid, string.Empty, string.Empty, false);
@@ -607,6 +611,7 @@ public static class YamlPathExtensions
         StartsWith,
         EndsWith,
         Contains,
-        Regex
+        Regex,
+        Range
     }
 }

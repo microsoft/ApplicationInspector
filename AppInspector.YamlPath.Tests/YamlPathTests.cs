@@ -255,25 +255,55 @@ non_anchored_hash:
   <<: *anchor1
   with: its
   own: children";
-    [DataRow("aliases[&reusable_value]", 1)]
-    [DataRow("/aliases[&reusable_value]", 1)]
-    [DataRow("&anchor1", 1)]
-    [DataRow("/&anchor1", 1)]
-    [DataRow("&anchor1.&reusable_value", 1)]
-    [DataRow("/&anchor1/&reusable_value", 1)]
-    [DataRow("non_anchored_hash.&reusable_value", 1)]
-    [DataRow("/non_anchored_hash/&reusable_value", 1)]
-    [DataRow("non_anchored_hash.&anchor1", 1)]
-    [DataRow("/non_anchored_hash/&anchor1", 1)]
-    [DataRow("non_anchored_hash.&anchor1.&reusable_value", 1)]
-    [DataRow("/non_anchored_hash/&anchor1/&reusable_value", 1)]
+    [DataRow("aliases[&reusable_value]", 1, "This value can be used multiple times")]
+    [DataRow("/aliases[&reusable_value]", 1, "This value can be used multiple times")]
+    [DataRow("&anchor1.&reusable_value", 1, "This value can be used multiple times")]
+    [DataRow("/&anchor1/&reusable_value", 1, "This value can be used multiple times")]
+    [DataRow("non_anchored_hash.&reusable_value", 1, "This value can be used multiple times")]
+    [DataRow("/non_anchored_hash/&reusable_value", 1, "This value can be used multiple times")]
+    [DataRow("non_anchored_hash.&anchor1.&reusable_value", 1, "This value can be used multiple times")]
+    [DataRow("/non_anchored_hash/&anchor1/&reusable_value", 1, "This value can be used multiple times")]
     [DataTestMethod]
-    public void AnchorTests(string yamlPath, int expectedNumMatches)
+    public void AnchorLiteral(string yamlPath, int expectedNumMatches, string expectedFirstScalarNode)
     {
         var yaml = new YamlStream();
         yaml.Load(new StringReader(anchorTests));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
         var matching = mapping.Query(yamlPath);
         Assert.AreEqual(expectedNumMatches, matching.Count);
+        if (matching.First() is YamlScalarNode yamlScalarNode)
+        {
+            Assert.AreEqual(expectedFirstScalarNode, yamlScalarNode.Value);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+    
+    
+    [DataRow("&anchor1", 1, "with")]
+    [DataRow("/&anchor1", 1, "with")]
+    [DataRow("non_anchored_hash.&anchor1", 1, "with")]
+    [DataRow("/non_anchored_hash/&anchor1", 1, "with")]
+    [DataTestMethod]
+    public void AnchorReference(string yamlPath, int expectedNumMatches, string expectedFirstScalarNode)
+    {
+        var yaml = new YamlStream();
+        yaml.Load(new StringReader(anchorTests));
+        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+        var matching = mapping.Query(yamlPath);
+        Assert.AreEqual(expectedNumMatches, matching.Count);
+        if (matching.First() is YamlMappingNode yamlMappingNode)
+        {
+            if (yamlMappingNode.First().Key is YamlScalarNode yamlScalarNode)
+            {
+                Assert.AreEqual(expectedFirstScalarNode, yamlScalarNode.Value);
+            }
+        }
+        else
+        {
+            Assert.Fail();
+        }
     }
 }
