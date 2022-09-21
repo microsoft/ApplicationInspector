@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using YamlDotNet.Core;
 using YamlDotNet.Core.Tokens;
 using YamlDotNet.RepresentationModel;
 
@@ -35,7 +36,7 @@ public static class YamlPathExtensions
     /// <param name="yamlNode">The YamlMappingNode to operate on</param>
     /// <param name="yamlPath">The YamlPath query to use</param>
     /// <returns>An <see cref="List{YamlNode}" /> of the matching nodes</returns>
-    public static List<YamlNode> Query(this YamlNode yamlNode, string yamlPath)
+    public static IEnumerable<YamlNode> Query(this YamlNode yamlNode, string yamlPath)
     {
         var navigationElements = GenerateNavigationElements(yamlPath);
         var problems = GetQueryProblems(navigationElements);
@@ -46,13 +47,13 @@ public static class YamlPathExtensions
         }
 
         // Holds the current state
-        var currentNodes = new List<YamlNode> { yamlNode };
+        var currentNodes = new Dictionary<(Mark, Mark),YamlNode> { { (yamlNode.Start, yamlNode.End), yamlNode } };
 
         // Iteratively walk using the navigation 
         for (var i = 0; i < navigationElements.Count; i++)
         {
             // The states we can transition to from the current state, given the current navigation element
-            var nextNodes = new List<YamlNode>();
+            var nextNodes = new Dictionary<(Mark, Mark), YamlNode>();
             foreach (var currentNode in currentNodes)
             {
                 // https://github.com/wwkimball/yamlpath/wiki/Wildcard-Segments
@@ -60,17 +61,24 @@ public static class YamlPathExtensions
                 // If it is not the last token it matches any sequence of paths as long as subsequent tokens match
                 if (navigationElements[i] == "**")
                 {
-                    nextNodes.AddRange(i == navigationElements.Count - 1
+                    var nextPotential = i == navigationElements.Count - 1
                         // If this is the last element then get all the leaves
-                        ? GetLeaves(currentNode)
+                        ? GetLeaves(currentNode.Value)
                         // If its not the last, we instead advance the position to every child through all levels recursively
                         // The later components will then be checked against each element we found
-                        : RecursiveGetAllNodes(currentNode));
+                        : RecursiveGetAllNodes(currentNode.Value);
+                    foreach (var node in nextPotential)
+                    {
+                        nextNodes.TryAdd((node.Start, node.End), node);
+                    }
                 }
                 else
                 {
+                    foreach (var node in AdvanceNode(currentNode.Value, navigationElements[i]))
+                    {
+                        nextNodes.TryAdd((node.Start, node.End), node);
+                    }
                     // Advance the current node to all possible nodes matching the navigation element
-                    nextNodes.AddRange(AdvanceNode(currentNode, navigationElements[i]));
                 }
             }
 
@@ -83,8 +91,8 @@ public static class YamlPathExtensions
             // Update the current nodes
             currentNodes = nextNodes;
         }
-        
-        return currentNodes;
+
+        return currentNodes.Values;
     }
 
     /// <summary>
@@ -150,7 +158,6 @@ public static class YamlPathExtensions
     /// </returns>
     private static IEnumerable<YamlNode> MappingNodeQuery(this YamlMappingNode yamlMappingNode, string yamlPathComponent)
     {
-        var outNodes = new List<YamlNode>();
         // Remove braces
         var expr = yamlPathComponent.Trim('[', ']');
 
@@ -172,11 +179,6 @@ public static class YamlPathExtensions
         {
             return yamlMappingNode.Children.Values;
         }
-
-        // TODO:
-        // Other operand meanings https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
-        // . has a special meaning
-        // * has more meanings
 
         // If it was none of the above treat as a literal hash key name
         // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Keys
@@ -219,6 +221,93 @@ public static class YamlPathExtensions
         return Enumerable.Empty<YamlNode>();
     }
 
+    private static IEnumerable<YamlNode> GetSequenceNodesByRange(YamlSequenceNode yamlSequenceNode, string start, string end)
+    {
+        List<YamlNode> outNodes = new List<YamlNode>();
+        if (int.TryParse(start, out int startIdx) && int.TryParse(end, out int endIdx))
+        {
+            var startIdxPositive = startIdx < 0 ? yamlSequenceNode.Children.Count + startIdx : startIdx;
+            var endIdxPositive = endIdx < 0 ? yamlSequenceNode.Children.Count + endIdx : endIdx;
+
+            (startIdxPositive, endIdxPositive) = (Math.Min(startIdxPositive, endIdxPositive), Math.Max(startIdxPositive, endIdxPositive));
+            for (int i = startIdxPositive; i < endIdxPositive && i < yamlSequenceNode.Children.Count && i >= 0; i++)
+            {
+                yield return yamlSequenceNode.Children[i];
+            }
+        }
+    }
+
+    // else
+    // {
+    //     // Wild Card
+    //     if (expr == "*")
+    //     {
+    //         outNodes.AddRange(yamlNode.Children);
+    //     }
+    //     if (expr.StartsWith('&'))
+    //     {
+    //         outNodes.AddRange(FollowAnchor(yamlNode, expr));
+    //     }
+    //     if (int.TryParse(expr, out var result))
+    //     {
+    //         if (yamlNode.Children.Count > result)
+    //         {
+    //             outNodes.Add(yamlNode.Children[result]);
+    //         }
+    //     }
+    // }
+    private static IEnumerable<YamlNode> PerformOperation(YamlSequenceNode yamlSequenceNode, string yamlPathComponent)
+    {
+        // Break break down the components:
+        // The Operation to perform
+        // The element name to perform it on
+        // The argument for the operation
+        // If it should be inverted
+        var (searchOperatorEnum, elementName, argument, invert) =
+            ParseOperator(yamlPathComponent);
+
+        // Perform the operation and update the
+        return searchOperatorEnum switch
+        {
+            SearchOperatorEnum.Equals => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                yamlScalarNode => yamlScalarNode.Value == argument),
+            SearchOperatorEnum.LessThan => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                yamlScalarNode =>
+                    int.TryParse(yamlScalarNode.Value, out var value) && value < int.Parse(argument)),
+            SearchOperatorEnum.GreaterThan => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                yamlScalarNode =>
+                    int.TryParse(yamlScalarNode.Value, out var value) && value > int.Parse(argument)),
+            SearchOperatorEnum.LessThanOrEqual => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                yamlScalarNode =>
+                    int.TryParse(yamlScalarNode.Value, out var value) && value <= int.Parse(argument)),
+            SearchOperatorEnum.GreaterThanOrEqual => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                yamlScalarNode =>
+                    int.TryParse(yamlScalarNode.Value, out var value) && value >= int.Parse(argument)),
+            SearchOperatorEnum.StartsWith => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                // See GetNodesWithPredicate
+                // Null checking is enforced before calling the predicate
+                yamlScalarNode => yamlScalarNode.Value!.StartsWith(argument)),
+            SearchOperatorEnum.EndsWith => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                // Null checking is enforced before calling the predicate
+                yamlScalarNode => yamlScalarNode.Value!.EndsWith(argument)),
+            SearchOperatorEnum.Contains => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                // Null checking is enforced before calling the predicate
+                yamlScalarNode => yamlScalarNode.Value!.Contains(argument)),
+            SearchOperatorEnum.Regex => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                // Null checking is enforced before calling the predicate
+                yamlScalarNode => Regex.IsMatch(yamlScalarNode.Value!, argument)),
+            // Maps support slices based on the key name
+            // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
+            SearchOperatorEnum.Range => GetSequenceNodesByRange(yamlSequenceNode, elementName, argument),
+            SearchOperatorEnum.MaxChild => GetMinOrMaxOfChild(yamlSequenceNode, elementName, invert, false),
+            SearchOperatorEnum.MinChild => GetMinOrMaxOfChild(yamlSequenceNode, elementName, invert, true),
+            SearchOperatorEnum.HasChild => yamlSequenceNode.Children.Any(x => x is YamlScalarNode ysn && ysn.Value == elementName) ? new[]{yamlSequenceNode} : Enumerable.Empty<YamlNode>(),
+            SearchOperatorEnum.Invalid => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum)),
+            _ => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum))
+        };
+    }
+
+    
     private static IEnumerable<YamlNode> PerformOperation(YamlMappingNode yamlMappingNode, string yamlPathComponent)
     {
         // Break break down the components:
@@ -229,7 +318,7 @@ public static class YamlPathExtensions
         var (searchOperatorEnum, elementName, argument, invert) =
             ParseOperator(yamlPathComponent);
 
-        // Perform the operation and update the outnodes
+        // Perform the operation and update the
         return searchOperatorEnum switch
         {
             SearchOperatorEnum.Equals => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
@@ -262,9 +351,337 @@ public static class YamlPathExtensions
             // Maps support slices based on the key name
             // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
             SearchOperatorEnum.Range => GetHashNodesByRange(yamlMappingNode, elementName, argument),
+            SearchOperatorEnum.MaxChild => GetMaxOfChild(yamlMappingNode, elementName, invert),
+            SearchOperatorEnum.MinChild => GetMinOfChild(yamlMappingNode, elementName, invert),
+            SearchOperatorEnum.HasChild => yamlMappingNode.Children.Any(x => x.Key is YamlScalarNode ysn && ysn.Value == elementName) ? new[]{yamlMappingNode} : Enumerable.Empty<YamlNode>(),
             SearchOperatorEnum.Invalid => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum)),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum))
         };
+    }
+
+    private static IEnumerable<YamlNode> GetMinOfChild(YamlMappingNode yamlMappingNode, string elementName, bool invert)
+    {
+        List<(YamlMappingNode, YamlScalarNode)> potentialNodes = new List<(YamlMappingNode, YamlScalarNode)>();
+        foreach (var child in yamlMappingNode.Children)
+        {
+            if (child.Value is YamlMappingNode childMappingNode)
+            {
+                foreach (var targetChild in childMappingNode.Children)
+                {
+                    // The value for this key is a valid target to take the max of
+                    if (targetChild.Key is YamlScalarNode { Value: { } } scalarKeyNode && scalarKeyNode.Value == elementName)
+                    {
+                        if (targetChild.Value is YamlScalarNode { Value: { } } scalarValueNode)
+                        {
+                            potentialNodes.Add((childMappingNode, scalarValueNode));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (potentialNodes.Count > 0)
+        {
+            int maxIndex = 0;
+            ParsedNode? parsedNode = ParseNode(potentialNodes[0].Item2);
+            YamlMappingNode? mappingNode = potentialNodes[0].Item1;
+            for (var index = 1; index < potentialNodes.Count; index++)
+            {
+                var potentialNode = potentialNodes[index];
+                var parsed = ParseNode(potentialNode.Item2);
+                if (parsedNode.doubleValue is { } && parsed.doubleValue is { } &&
+                    parsed.doubleValue < parsedNode.doubleValue)
+                {
+                    parsedNode = parsed;
+                    mappingNode = potentialNode.Item1;
+                    maxIndex = index;
+                }
+                else if (parsedNode.stringValue is { } && parsed.stringValue is { } &&
+                         String.Compare(parsedNode.stringValue, parsed.stringValue,
+                             StringComparison.Ordinal) < 0)
+                {
+                    parsedNode = parsed;
+                    mappingNode = potentialNode.Item1;
+                    maxIndex = index;
+                }
+            }
+
+            if (invert)
+            {
+                potentialNodes.RemoveAt(maxIndex);
+                return potentialNodes.Select(x => x.Item1);
+            }
+            else
+            {
+                return new[] { potentialNodes[maxIndex].Item1 };
+            }
+        }
+
+        return Array.Empty<YamlNode>();
+    }
+
+    /// <summary>
+    /// Gets the Min or Max of the sequence
+    /// </summary>
+    /// <param name="yamlSequenceNode"></param>
+    /// <param name="elementName"></param>
+    /// <param name="invert"></param>
+    /// <param name="doMinimum">If false, get max, if true, get min</param>
+    /// <returns></returns>
+    private static IEnumerable<YamlNode> GetMinOrMaxOfChild(YamlSequenceNode yamlSequenceNode, string elementName, bool invert, bool doMinimum)
+    {
+        if (!string.IsNullOrEmpty(elementName))
+        {
+            List<(YamlMappingNode, YamlScalarNode)> potentialNodes = new List<(YamlMappingNode, YamlScalarNode)>();
+            foreach (var child in yamlSequenceNode.Children)
+            {
+                if (child is YamlMappingNode childMappingNode)
+                {
+                    foreach (var targetChild in childMappingNode.Children)
+                    {
+                        // The value for this key is a valid target to take the max of
+                        if (targetChild.Key is YamlScalarNode { Value: { } } scalarKeyNode &&
+                            scalarKeyNode.Value == elementName)
+                        {
+                            if (targetChild.Value is YamlScalarNode { Value: { } } scalarValueNode)
+                            {
+                                potentialNodes.Add((childMappingNode, scalarValueNode));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (potentialNodes.Count > 0)
+            {
+                int maxIndex = 0;
+                ParsedNode? parsedNode = ParseNode(potentialNodes[0].Item2);
+                for (var index = 1; index < potentialNodes.Count; index++)
+                {
+                    var potentialNode = potentialNodes[index];
+                    var parsed = ParseNode(potentialNode.Item2);
+                    if (parsedNode.doubleValue is { } && parsed.doubleValue is { })
+                    {
+                        if (doMinimum)
+                        {
+                            if (parsed.doubleValue < parsedNode.doubleValue)
+                            {
+                                parsedNode = parsed;
+                                maxIndex = index;
+                            }
+                        }
+                        else
+                        {
+                            
+                            if (parsed.doubleValue > parsedNode.doubleValue)
+                            {
+                                parsedNode = parsed;
+                                maxIndex = index;
+                            }
+                        }
+                    }
+                    else if (parsedNode.stringValue is { } && parsed.stringValue is { })
+                    {
+                        if (doMinimum)
+                        {
+                            if (String.Compare(parsedNode.stringValue, parsed.stringValue,
+                                    StringComparison.Ordinal) < 0)
+                            {
+                                parsedNode = parsed;
+                                maxIndex = index;
+                            }
+                        }
+                        else
+                        {
+                            
+                            if (String.Compare(parsedNode.stringValue, parsed.stringValue,
+                                    StringComparison.Ordinal) > 0)
+                            {
+                                parsedNode = parsed;
+                                maxIndex = index;
+                            }
+                        }
+                    }
+                }
+
+                if (invert)
+                {
+                    potentialNodes.RemoveAt(maxIndex);
+                    return potentialNodes.Select(x => x.Item1);
+                }
+                else
+                {
+                    return new[] { potentialNodes[maxIndex].Item1 };
+                }
+            }
+        }
+        else
+        {
+            List<YamlScalarNode> potentialNodes = new List<YamlScalarNode>();
+            foreach (var child in yamlSequenceNode.Children)
+            {
+                if (child is YamlScalarNode { Value: { } } scalarValueNode)
+                {
+                    potentialNodes.Add(scalarValueNode);
+                }
+            }
+
+            if (potentialNodes.Count > 0)
+            {
+                int maxIndex = 0;
+                ParsedNode? parsedNode = ParseNode(potentialNodes[0]);
+                for (var index = 1; index < potentialNodes.Count; index++)
+                {
+                    var potentialNode = potentialNodes[index];
+                    var parsed = ParseNode(potentialNode);
+                    if (parsedNode.doubleValue is { } && parsed.doubleValue is { })
+                    {
+                        if (doMinimum)
+                        {
+                            if (parsed.doubleValue < parsedNode.doubleValue)
+                            {
+                                parsedNode = parsed;
+                                maxIndex = index;
+                            }
+                        }
+                        else
+                        {
+                            
+                            if (parsed.doubleValue > parsedNode.doubleValue)
+                            {
+                                parsedNode = parsed;
+                                maxIndex = index;
+                            }
+                        }
+                    }
+                    else if (parsedNode.stringValue is { } && parsed.stringValue is { })
+                    {
+                        if (doMinimum)
+                        {
+                            if (String.Compare(parsedNode.stringValue, parsed.stringValue,
+                                    StringComparison.Ordinal) < 0)
+                            {
+                                parsedNode = parsed;
+                                maxIndex = index;
+                            }
+                        }
+                        else
+                        {
+                            
+                            if (String.Compare(parsedNode.stringValue, parsed.stringValue,
+                                    StringComparison.Ordinal) > 0)
+                            {
+                                parsedNode = parsed;
+                                maxIndex = index;
+                            }
+                        }
+                    }
+                }
+
+                if (invert)
+                {
+                    potentialNodes.RemoveAt(maxIndex);
+                    return potentialNodes;
+                }
+                else
+                {
+                    return new[] { potentialNodes[maxIndex] };
+                }
+            }
+        }
+        return Array.Empty<YamlNode>();
+    }
+
+    private static IEnumerable<YamlNode> GetMaxOfChild(YamlMappingNode yamlMappingNode, string elementName, bool invert)
+    {
+        List<(YamlMappingNode, YamlScalarNode)> potentialNodes = new List<(YamlMappingNode, YamlScalarNode)>();
+        foreach (var child in yamlMappingNode.Children)
+        {
+            if (child.Value is YamlMappingNode childMappingNode)
+            {
+                foreach (var targetChild in childMappingNode.Children)
+                {
+                    // The value for this key is a valid target to take the max of
+                    if (targetChild.Key is YamlScalarNode { Value: { } } scalarKeyNode && scalarKeyNode.Value == elementName)
+                    {
+                        if (targetChild.Value is YamlScalarNode { Value: { } } scalarValueNode)
+                        {
+                            potentialNodes.Add((childMappingNode, scalarValueNode));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (potentialNodes.Count > 0)
+        {
+            int maxIndex = 0;
+            ParsedNode? parsedNode = ParseNode(potentialNodes[0].Item2);
+            YamlMappingNode? mappingNode = potentialNodes[0].Item1;
+            for (var index = 1; index < potentialNodes.Count; index++)
+            {
+                var potentialNode = potentialNodes[index];
+                var parsed = ParseNode(potentialNode.Item2);
+                if (parsedNode.doubleValue is { } && parsed.doubleValue is { } &&
+                    parsed.doubleValue > parsedNode.doubleValue)
+                {
+                    parsedNode = parsed;
+                    mappingNode = potentialNode.Item1;
+                    maxIndex = index;
+                }
+                else if (parsedNode.stringValue is { } && parsed.stringValue is { } &&
+                         String.Compare(parsedNode.stringValue, parsed.stringValue,
+                             StringComparison.Ordinal) > 0)
+                {
+                    parsedNode = parsed;
+                    mappingNode = potentialNode.Item1;
+                    maxIndex = index;
+                }
+            }
+
+            if (invert)
+            {
+                potentialNodes.RemoveAt(maxIndex);
+                return potentialNodes.Select(x => x.Item1);
+            }
+            else
+            {
+                return new[] { potentialNodes[maxIndex].Item1 };
+            }
+        }
+
+        return Array.Empty<YamlNode>();
+    }
+
+    private class ParsedNode
+    {
+        public YamlNode parsedNode { get; }
+        public string? stringValue { get; }
+        public double? doubleValue { get; }
+
+        public ParsedNode(YamlNode node, double doubleValue)
+        {
+            parsedNode = node;
+            this.doubleValue = doubleValue;
+        }
+        
+        public ParsedNode(YamlNode node, string stringValue)
+        {
+            parsedNode = node;
+            this.stringValue = stringValue;
+        }
+    }
+    
+    static ParsedNode ParseNode(YamlScalarNode yamlScalarNode)
+    {
+        if (double.TryParse(yamlScalarNode.Value, out double doubleVal))
+        {
+            return new ParsedNode(yamlScalarNode, doubleVal);
+        }
+        return new ParsedNode(yamlScalarNode, yamlScalarNode.Value);
     }
 
     /// <summary>
@@ -278,6 +695,10 @@ public static class YamlPathExtensions
     private static IEnumerable<YamlNode> GetNodesWithPredicate(YamlMappingNode yamlMappingNode, string elementName,
         bool invert, Func<YamlScalarNode, bool> predicate)
     {
+        // TODO:
+        // Other operand meanings https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
+        // . has a special meaning
+        // * has more meanings
         foreach (var child in yamlMappingNode.Children)
         {
             // The key must match the element name
@@ -309,6 +730,40 @@ public static class YamlPathExtensions
         }
     }
 
+    private static IEnumerable<YamlNode> GetNodesWithPredicate(YamlSequenceNode yamlMappingNode, string elementName,
+        bool invert, Func<YamlScalarNode, bool> predicate)
+    {
+        // TODO:
+        // Other operand meanings https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
+        // . has a special meaning
+        // * has more meanings
+        foreach (var child in yamlMappingNode.Children)
+        {
+            // Scalar nodes we can just return if they match the predicate
+            if (child is YamlScalarNode { Value: { } } valueNode)
+            {
+                if (invert ? !predicate(valueNode) : predicate(valueNode))
+                {
+                    yield return valueNode;
+                }
+            }
+            // Sequences we return the values of the sequence that match the predicate
+            else if (child is YamlSequenceNode yamlSequenceNode)
+            {
+                foreach (var subChild in yamlSequenceNode.Children)
+                {
+                    if (subChild is YamlScalarNode { Value: { } } subChildValueNode)
+                    {
+                        if (invert ? !predicate(subChildValueNode) : predicate(subChildValueNode))
+                        {
+                            yield return subChild;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     /// <summary>
     ///     Gets all of the Scalar nodes which are children or grandchildren etc of the given node
     /// </summary>
@@ -377,15 +832,36 @@ public static class YamlPathExtensions
                     yamlPathComponent[(idx + pair.Key.Length)..].Trim().Trim('\'', '"'), invert);
             }
         }
-        
+
         // No 2 length or 1 length matches so we check for ranges
         var rangeIndex = yamlPathComponent.IndexOf(':');
         if (rangeIndex > -1)
         {
             return (SearchOperatorEnum.Range, yamlPathComponent.Substring(0, rangeIndex),
-                yamlPathComponent.Substring(rangeIndex+1), false);
+                yamlPathComponent.Substring(rangeIndex+1), invert);
+        }
+        
+        // No range so we check for keywords
+        rangeIndex = yamlPathComponent.IndexOf("has_child", StringComparison.Ordinal);
+        if (rangeIndex > -1)
+        {
+            // 10 length of has_child(
+            return (SearchOperatorEnum.HasChild, yamlPathComponent.Substring(rangeIndex + 10).Trim(')'), string.Empty, invert);
         }
 
+        rangeIndex = yamlPathComponent.IndexOf("max", StringComparison.Ordinal);
+        if (rangeIndex > -1)
+        {
+            // 4 length of max(
+            return (SearchOperatorEnum.MaxChild, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), string.Empty, invert);
+        }
+        
+        rangeIndex = yamlPathComponent.IndexOf("min", StringComparison.Ordinal);
+        if (rangeIndex > -1)
+        {
+            // 4 length of min(
+            return (SearchOperatorEnum.MinChild, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), string.Empty, invert);
+        }
         return (SearchOperatorEnum.Invalid, string.Empty, string.Empty, false);
     }
 
@@ -395,72 +871,35 @@ public static class YamlPathExtensions
     /// <param name="yamlNode"></param>
     /// <param name="yamlPathComponent"></param>
     /// <returns></returns>
-    private static List<YamlNode> SequenceNodeQuery(this YamlSequenceNode yamlNode, string yamlPathComponent)
+    private static IEnumerable<YamlNode> SequenceNodeQuery(this YamlSequenceNode yamlNode, string yamlPathComponent)
     {
-        var outNodes = new List<YamlNode>();
-        var expr = yamlPathComponent.Trim('[', ']');
-        if (expr.Contains(':'))
+        var expr = yamlPathComponent.Trim(new[] { '[', ']' });
+        if (expr.StartsWith('&'))
         {
-            // This can be one of three formats
-            // 1. A number '0'
-            // 2. A number in brackets '[0]'
-            // 3. A range in brackets '[0:2]'
-            // https://github.com/wwkimball/yamlpath/wiki/Segment:-Array-Elements
-            // https://github.com/wwkimball/yamlpath/wiki/Segment:-Array-Slices
-            var components = expr.Split(':');
-            if (components.Length == 2 && int.TryParse(components[0], out var startRange) &&
-                int.TryParse(components[1], out var endRange))
-            {
-                if (startRange < 0)
-                    // The start might be a negative offset from the end
-                {
-                    startRange = yamlNode.Children.Count + startRange;
-                }
-
-                if (endRange < 0)
-                {
-                    endRange = yamlNode.Children.Count + endRange;
-                }
-
-                // Start range is inclusive so it must not be as much as the count
-                if (startRange < 0 || startRange >= yamlNode.Children.Count)
-                {
-                    return outNodes;
-                }
-
-                // End is exclusive so it can be as large as the count
-                if (endRange < 0 || endRange > yamlNode.Children.Count)
-                {
-                    return outNodes;
-                }
-
-                for (var i = startRange; i < endRange; i++)
-                {
-                    outNodes.Add(yamlNode[i]);
-                }
-            }
+            return FollowAnchor(yamlNode, expr);
         }
-        else
+
+        // https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
+        if (yamlPathComponent.StartsWith('[') && yamlPathComponent.EndsWith(']'))
         {
-            // Wild Card
-            if (expr == "*")
+            return PerformOperation(yamlNode, yamlPathComponent);
+        }
+
+        // Wild Cards https://github.com/wwkimball/yamlpath/wiki/Wildcard-Segments
+        if (yamlPathComponent == "*")
+        {
+            return yamlNode.Children;
+        }
+
+        if (int.TryParse(yamlPathComponent, out int intVal))
+        {
+            if (intVal >= 0 && intVal < yamlNode.Children.Count)
             {
-                outNodes.AddRange(yamlNode.Children);
-            }
-            if (expr.StartsWith('&'))
-            {
-                outNodes.AddRange(FollowAnchor(yamlNode, expr));
-            }
-            if (int.TryParse(expr, out var result))
-            {
-                if (yamlNode.Children.Count > result)
-                {
-                    outNodes.Add(yamlNode.Children[result]);
-                }
+                return new[] { yamlNode.Children[intVal] };
             }
         }
 
-        return outNodes;
+        return Enumerable.Empty<YamlNode>();
     }
 
     /// <summary>
@@ -474,9 +913,9 @@ public static class YamlPathExtensions
         return currentNode switch
         {
             YamlMappingNode yamlMappingNode => yamlMappingNode.Children.Values.Union(
-                yamlMappingNode.Children.SelectMany(x => RecursiveGetAllNodes(x.Value))),
+                yamlMappingNode.Children.SelectMany(x => RecursiveGetAllNodes(x.Value))).Distinct(),
             YamlSequenceNode yamlSequenceNode => yamlSequenceNode.Children.Union(
-                yamlSequenceNode.Children.SelectMany(RecursiveGetAllNodes)),
+                yamlSequenceNode.Children.SelectMany(RecursiveGetAllNodes)).Distinct(),
             YamlScalarNode _ => Enumerable
                 .Empty<YamlNode>(), // Scalar children were already added by the recursion in the sequence or mapping
             _ => throw new ArgumentOutOfRangeException(nameof(currentNode))
@@ -612,6 +1051,9 @@ public static class YamlPathExtensions
         EndsWith,
         Contains,
         Regex,
-        Range
+        Range,
+        HasChild,
+        MinChild,
+        MaxChild
     }
 }

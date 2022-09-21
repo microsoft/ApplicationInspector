@@ -31,7 +31,7 @@ public class YamlPathTests
         yaml.Load(new StringReader(arrayTestData));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
         var matching = mapping.Query(yamlPath);
-        Assert.AreEqual(expectedNumMatches, matching.Count);
+        Assert.AreEqual(expectedNumMatches, matching.Count());
         foreach (var expectedFinding in expectedFindings)
         {
             Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && int.TryParse(ysc.Value, out int ysv) && ysv == expectedFinding));
@@ -60,7 +60,7 @@ public class YamlPathTests
         yaml.Load(new StringReader(mapSliceTestData));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
         var matching = mapping.Query(yamlPath);
-        Assert.AreEqual(expectedNumMatches, matching.Count);
+        Assert.AreEqual(expectedNumMatches, matching.Count());
         foreach (var expectedFinding in expectedFindings)
         {
             Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && int.TryParse(ysc.Value, out int ysv) && ysv == expectedFinding));
@@ -155,6 +155,7 @@ products_array:
         - 0
         - 5
         - 10";
+    [DataRow("products_array.**.[has_child(dimensions)]", 3)]
     [DataRow("products_array.**.dimensions['tag with space'==7]", 1)]
     [DataRow("products_array.**.dimensions[value_with_space=='value with space']", 1)]
     [DataRow("products_array.**.dimensions[other_values>=5]", 2)]
@@ -199,7 +200,7 @@ products_array:
         yaml.Load(new StringReader(mapQueryTestData));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
         var matching = mapping.Query(yamlPath);
-        Assert.AreEqual(expectedNumMatches, matching.Count);
+        Assert.AreEqual(expectedNumMatches, matching.Count());
     }
 
     private const string setTestValue = @"--- !!set
@@ -216,7 +217,7 @@ products_array:
         yaml.Load(new StringReader(setTestValue));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
         var matching = mapping.Query(yamlPath);
-        Assert.AreEqual(expectedNumMatches, matching.Count);
+        Assert.AreEqual(expectedNumMatches, matching.Count());
     }
     
     private const string escapedKeysData = 
@@ -240,7 +241,7 @@ products_array:
         yaml.Load(new StringReader(escapedKeysData));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
         var matching = mapping.Query(yamlPath);
-        Assert.AreEqual(expectedNumMatches, matching.Count);
+        Assert.AreEqual(expectedNumMatches, matching.Count());
         foreach (var expectedFinding in expectedFindings)
         {
             Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && int.TryParse(ysc.Value, out int ysv) && ysv == expectedFinding));
@@ -275,7 +276,7 @@ non_anchored_hash:
         yaml.Load(new StringReader(anchorTests));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
         var matching = mapping.Query(yamlPath);
-        Assert.AreEqual(expectedNumMatches, matching.Count);
+        Assert.AreEqual(expectedNumMatches, matching.Count());
         if (matching.First() is YamlScalarNode yamlScalarNode)
         {
             Assert.AreEqual(expectedFirstScalarNode, yamlScalarNode.Value);
@@ -298,7 +299,7 @@ non_anchored_hash:
         yaml.Load(new StringReader(anchorTests));
         var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
         var matching = mapping.Query(yamlPath);
-        Assert.AreEqual(expectedNumMatches, matching.Count);
+        Assert.AreEqual(expectedNumMatches, matching.Count());
         if (matching.First() is YamlMappingNode yamlMappingNode)
         {
             if (yamlMappingNode.First().Key is YamlScalarNode yamlScalarNode)
@@ -309,6 +310,56 @@ non_anchored_hash:
         else
         {
             Assert.Fail();
+        }
+    }
+
+    private const string minMaxData = @"---
+# Consistent Data Types
+prices_aoh:
+  - product: doohickey
+    price: 4.99
+  - product: fob
+    price: 4.99
+  - product: whatchamacallit
+    price: 9.95
+  - product: widget
+    price: 0.98
+  - product: unknown
+
+prices_hash:
+  doohickey:
+    price: 4.99
+  fob:
+    price: 4.99
+  whatchamacallit:
+    price: 9.95
+  widget:
+    price: 0.98
+  unknown:
+
+prices_array:
+  - 4.99
+  - 4.99
+  - 9.95
+  - 0.98
+  - null";
+    [DataRow("/prices_aoh[max(price)]/price", 1, new double[]{9.95})]
+    [DataRow("/prices_hash/[max(price)]/price", 1, new double[]{9.95})]
+    [DataRow("/prices_array/[max()]", 1, new double[]{9.95})]
+    [DataRow("/prices_aoh[min(price)]/price", 1, new double[]{0.98})]
+    [DataRow("/prices_hash[min(price)]/price", 1, new double[]{0.98})]
+    [DataRow("/prices_array/[min()]", 1, new double[]{0.98})]
+    [DataTestMethod]
+    public void MinMaxTests(string yamlPath, int expectedNumMatches, double[] expectedFindings)
+    {
+        var yaml = new YamlStream();
+        yaml.Load(new StringReader(minMaxData));
+        var mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
+        var matching = mapping.Query(yamlPath);
+        Assert.AreEqual(expectedNumMatches, matching.Count());
+        foreach (var expectedFinding in expectedFindings)
+        {
+            Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && double.TryParse(ysc.Value, out double ysv) && ysv == expectedFinding));
         }
     }
 }
