@@ -236,26 +236,7 @@ public static class YamlPathExtensions
             }
         }
     }
-
-    // else
-    // {
-    //     // Wild Card
-    //     if (expr == "*")
-    //     {
-    //         outNodes.AddRange(yamlNode.Children);
-    //     }
-    //     if (expr.StartsWith('&'))
-    //     {
-    //         outNodes.AddRange(FollowAnchor(yamlNode, expr));
-    //     }
-    //     if (int.TryParse(expr, out var result))
-    //     {
-    //         if (yamlNode.Children.Count > result)
-    //         {
-    //             outNodes.Add(yamlNode.Children[result]);
-    //         }
-    //     }
-    // }
+    
     private static IEnumerable<YamlNode> PerformOperation(YamlSequenceNode yamlSequenceNode, string yamlPathComponent)
     {
         // Break break down the components:
@@ -263,45 +244,44 @@ public static class YamlPathExtensions
         // The element name to perform it on
         // The argument for the operation
         // If it should be inverted
-        var (searchOperatorEnum, elementName, argument, invert) =
+        var (searchOperatorEnum, operand, term, invert) =
             ParseOperator(yamlPathComponent);
 
-        // Perform the operation and update the
         return searchOperatorEnum switch
         {
-            SearchOperatorEnum.Equals => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
-                yamlScalarNode => yamlScalarNode.Value == argument),
-            SearchOperatorEnum.LessThan => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+            SearchOperatorEnum.Equals => GetNodesWithPredicate(yamlSequenceNode, invert,
+                yamlScalarNode => yamlScalarNode.Value == term),
+            SearchOperatorEnum.LessThan => GetNodesWithPredicate(yamlSequenceNode, invert,
                 yamlScalarNode =>
-                    int.TryParse(yamlScalarNode.Value, out var value) && value < int.Parse(argument)),
-            SearchOperatorEnum.GreaterThan => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                    int.TryParse(yamlScalarNode.Value, out var value) && value < int.Parse(term)),
+            SearchOperatorEnum.GreaterThan => GetNodesWithPredicate(yamlSequenceNode, invert,
                 yamlScalarNode =>
-                    int.TryParse(yamlScalarNode.Value, out var value) && value > int.Parse(argument)),
-            SearchOperatorEnum.LessThanOrEqual => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                    int.TryParse(yamlScalarNode.Value, out var value) && value > int.Parse(term)),
+            SearchOperatorEnum.LessThanOrEqual => GetNodesWithPredicate(yamlSequenceNode, invert,
                 yamlScalarNode =>
-                    int.TryParse(yamlScalarNode.Value, out var value) && value <= int.Parse(argument)),
-            SearchOperatorEnum.GreaterThanOrEqual => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                    int.TryParse(yamlScalarNode.Value, out var value) && value <= int.Parse(term)),
+            SearchOperatorEnum.GreaterThanOrEqual => GetNodesWithPredicate(yamlSequenceNode, invert,
                 yamlScalarNode =>
-                    int.TryParse(yamlScalarNode.Value, out var value) && value >= int.Parse(argument)),
-            SearchOperatorEnum.StartsWith => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                    int.TryParse(yamlScalarNode.Value, out var value) && value >= int.Parse(term)),
+            SearchOperatorEnum.StartsWith => GetNodesWithPredicate(yamlSequenceNode, invert,
                 // See GetNodesWithPredicate
                 // Null checking is enforced before calling the predicate
-                yamlScalarNode => yamlScalarNode.Value!.StartsWith(argument)),
-            SearchOperatorEnum.EndsWith => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                yamlScalarNode => yamlScalarNode.Value!.StartsWith(term)),
+            SearchOperatorEnum.EndsWith => GetNodesWithPredicate(yamlSequenceNode, invert,
                 // Null checking is enforced before calling the predicate
-                yamlScalarNode => yamlScalarNode.Value!.EndsWith(argument)),
-            SearchOperatorEnum.Contains => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                yamlScalarNode => yamlScalarNode.Value!.EndsWith(term)),
+            SearchOperatorEnum.Contains => GetNodesWithPredicate(yamlSequenceNode, invert,
                 // Null checking is enforced before calling the predicate
-                yamlScalarNode => yamlScalarNode.Value!.Contains(argument)),
-            SearchOperatorEnum.Regex => GetNodesWithPredicate(yamlSequenceNode, elementName, invert,
+                yamlScalarNode => yamlScalarNode.Value!.Contains(term)),
+            SearchOperatorEnum.Regex => GetNodesWithPredicate(yamlSequenceNode, invert,
                 // Null checking is enforced before calling the predicate
-                yamlScalarNode => Regex.IsMatch(yamlScalarNode.Value!, argument)),
+                yamlScalarNode => Regex.IsMatch(yamlScalarNode.Value!, term)),
             // Maps support slices based on the key name
             // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
-            SearchOperatorEnum.Range => GetSequenceNodesByRange(yamlSequenceNode, elementName, argument),
-            SearchOperatorEnum.MaxChild => GetMinOrMaxOfChild(yamlSequenceNode, elementName, invert, false),
-            SearchOperatorEnum.MinChild => GetMinOrMaxOfChild(yamlSequenceNode, elementName, invert, true),
-            SearchOperatorEnum.HasChild => yamlSequenceNode.Children.Any(x => x is YamlScalarNode ysn && ysn.Value == elementName) ? new[]{yamlSequenceNode} : Enumerable.Empty<YamlNode>(),
+            SearchOperatorEnum.Range => GetSequenceNodesByRange(yamlSequenceNode, operand, term),
+            SearchOperatorEnum.MaxChild => GetMinOrMaxOfChild(yamlSequenceNode, term, invert, false),
+            SearchOperatorEnum.MinChild => GetMinOrMaxOfChild(yamlSequenceNode, term, invert, true),
+            SearchOperatorEnum.HasChild => yamlSequenceNode.Children.Any(x => x is YamlScalarNode ysn && ysn.Value == term) ? new[]{yamlSequenceNode} : Enumerable.Empty<YamlNode>(),
             SearchOperatorEnum.Invalid => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum)),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum))
         };
@@ -315,45 +295,54 @@ public static class YamlPathExtensions
         // The element name to perform it on
         // The argument for the operation
         // If it should be inverted
-        var (searchOperatorEnum, elementName, argument, invert) =
+        var (searchOperatorEnum, operand, term, invert) =
             ParseOperator(yamlPathComponent);
 
         // Perform the operation and update the
+        return ExecuteOperation(yamlMappingNode, searchOperatorEnum, operand, invert, term);
+    }
+
+    private static IEnumerable<YamlNode> ExecuteOperation(YamlMappingNode yamlMappingNode, SearchOperatorEnum searchOperatorEnum,
+        string operand, bool invert, string term)
+    {
         return searchOperatorEnum switch
         {
-            SearchOperatorEnum.Equals => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
-                yamlScalarNode => yamlScalarNode.Value == argument),
-            SearchOperatorEnum.LessThan => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
+            SearchOperatorEnum.Equals => GetNodesWithPredicate(yamlMappingNode, operand, invert,
+                yamlScalarNode => yamlScalarNode.Value == term),
+            SearchOperatorEnum.LessThan => GetNodesWithPredicate(yamlMappingNode, operand, invert,
                 yamlScalarNode =>
-                    int.TryParse(yamlScalarNode.Value, out var value) && value < int.Parse(argument)),
-            SearchOperatorEnum.GreaterThan => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
+                    int.TryParse(yamlScalarNode.Value, out var value) && value < int.Parse(term)),
+            SearchOperatorEnum.GreaterThan => GetNodesWithPredicate(yamlMappingNode, operand, invert,
                 yamlScalarNode =>
-                    int.TryParse(yamlScalarNode.Value, out var value) && value > int.Parse(argument)),
-            SearchOperatorEnum.LessThanOrEqual => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
+                    int.TryParse(yamlScalarNode.Value, out var value) && value > int.Parse(term)),
+            SearchOperatorEnum.LessThanOrEqual => GetNodesWithPredicate(yamlMappingNode, operand, invert,
                 yamlScalarNode =>
-                    int.TryParse(yamlScalarNode.Value, out var value) && value <= int.Parse(argument)),
-            SearchOperatorEnum.GreaterThanOrEqual => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
+                    int.TryParse(yamlScalarNode.Value, out var value) && value <= int.Parse(term)),
+            SearchOperatorEnum.GreaterThanOrEqual => GetNodesWithPredicate(yamlMappingNode, operand, invert,
                 yamlScalarNode =>
-                    int.TryParse(yamlScalarNode.Value, out var value) && value >= int.Parse(argument)),
-            SearchOperatorEnum.StartsWith => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
+                    int.TryParse(yamlScalarNode.Value, out var value) && value >= int.Parse(term)),
+            SearchOperatorEnum.StartsWith => GetNodesWithPredicate(yamlMappingNode, operand, invert,
                 // See GetNodesWithPredicate
                 // Null checking is enforced before calling the predicate
-                yamlScalarNode => yamlScalarNode.Value!.StartsWith(argument)),
-            SearchOperatorEnum.EndsWith => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
+                yamlScalarNode => yamlScalarNode.Value!.StartsWith(term)),
+            SearchOperatorEnum.EndsWith => GetNodesWithPredicate(yamlMappingNode, operand, invert,
                 // Null checking is enforced before calling the predicate
-                yamlScalarNode => yamlScalarNode.Value!.EndsWith(argument)),
-            SearchOperatorEnum.Contains => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
+                yamlScalarNode => yamlScalarNode.Value!.EndsWith(term)),
+            SearchOperatorEnum.Contains => GetNodesWithPredicate(yamlMappingNode, operand, invert,
                 // Null checking is enforced before calling the predicate
-                yamlScalarNode => yamlScalarNode.Value!.Contains(argument)),
-            SearchOperatorEnum.Regex => GetNodesWithPredicate(yamlMappingNode, elementName, invert,
+                yamlScalarNode => yamlScalarNode.Value!.Contains(term)),
+            SearchOperatorEnum.Regex => GetNodesWithPredicate(yamlMappingNode, operand, invert,
                 // Null checking is enforced before calling the predicate
-                yamlScalarNode => Regex.IsMatch(yamlScalarNode.Value!, argument)),
+                yamlScalarNode => Regex.IsMatch(yamlScalarNode.Value!, term)),
             // Maps support slices based on the key name
             // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
-            SearchOperatorEnum.Range => GetHashNodesByRange(yamlMappingNode, elementName, argument),
-            SearchOperatorEnum.MaxChild => GetMaxOfChild(yamlMappingNode, elementName, invert),
-            SearchOperatorEnum.MinChild => GetMinOfChild(yamlMappingNode, elementName, invert),
-            SearchOperatorEnum.HasChild => yamlMappingNode.Children.Any(x => x.Key is YamlScalarNode ysn && ysn.Value == elementName) ? new[]{yamlMappingNode} : Enumerable.Empty<YamlNode>(),
+            SearchOperatorEnum.Range => GetHashNodesByRange(yamlMappingNode, operand, term),
+            SearchOperatorEnum.MaxChild => GetMaxOfChild(yamlMappingNode, term, invert),
+            SearchOperatorEnum.MinChild => GetMinOfChild(yamlMappingNode, term, invert),
+            SearchOperatorEnum.HasChild => yamlMappingNode.Children.Any(x =>
+                x.Key is YamlScalarNode ysn && ysn.Value == term)
+                ? new[] { yamlMappingNode }
+                : Enumerable.Empty<YamlNode>(),
             SearchOperatorEnum.Invalid => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum)),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum))
         };
@@ -701,36 +690,50 @@ public static class YamlPathExtensions
         // * has more meanings
         foreach (var child in yamlMappingNode.Children)
         {
-            // The key must match the element name
-            if (child.Key is YamlScalarNode { Value: { } } keyNode && keyNode.Value == elementName)
+            if (elementName == ".")
             {
-                // Scalar nodes we can just return if they match the predicate
-                if (child.Value is YamlScalarNode { Value: { } } valueNode)
+                if (child.Key is YamlScalarNode { Value: { } } keyNode)
                 {
-                    if (invert ? !predicate(valueNode) : predicate(valueNode))
+                    if (invert ? !predicate(keyNode) : predicate(keyNode))
                     {
-                        yield return valueNode;
+                        yield return keyNode;
                     }
                 }
-                // Sequences we return the values of the sequence that match the predicate
-                else if (child.Value is YamlSequenceNode yamlSequenceNode)
+            }
+            else
+            {
+                // The key must match the element name
+                if (child.Key is YamlScalarNode { Value: { } } keyNode && keyNode.Value == elementName)
                 {
-                    foreach (var subChild in yamlSequenceNode.Children)
+                    // Scalar nodes we can just return if they match the predicate
+                    if (child.Value is YamlScalarNode { Value: { } } valueNode)
                     {
-                        if (subChild is YamlScalarNode { Value: { } } subChildValueNode)
+                        if (invert ? !predicate(valueNode) : predicate(valueNode))
                         {
-                            if (invert ? !predicate(subChildValueNode) : predicate(subChildValueNode))
+                            yield return valueNode;
+                        }
+                    }
+                    // Sequences we return the values of the sequence that match the predicate
+                    else if (child.Value is YamlSequenceNode yamlSequenceNode)
+                    {
+                        foreach (var subChild in yamlSequenceNode.Children)
+                        {
+                            if (subChild is YamlScalarNode { Value: { } } subChildValueNode)
                             {
-                                yield return subChild;
+                                if (invert ? !predicate(subChildValueNode) : predicate(subChildValueNode))
+                                {
+                                    yield return subChild;
+                                }
                             }
                         }
                     }
                 }
+                
             }
         }
     }
 
-    private static IEnumerable<YamlNode> GetNodesWithPredicate(YamlSequenceNode yamlMappingNode, string elementName,
+    private static IEnumerable<YamlNode> GetNodesWithPredicate(YamlSequenceNode yamlMappingNode,
         bool invert, Func<YamlScalarNode, bool> predicate)
     {
         // TODO:
@@ -786,7 +789,7 @@ public static class YamlPathExtensions
     /// </summary>
     /// <param name="yamlPathComponent"></param>
     /// <returns></returns>
-    private static (SearchOperatorEnum operation, string elementName, string argument, bool invert)
+    private static (SearchOperatorEnum operation, string operand, string term, bool invert)
         ParseOperator(string yamlPathComponent)
     {
         yamlPathComponent = yamlPathComponent.TrimStart('[').TrimEnd(']');
@@ -846,21 +849,21 @@ public static class YamlPathExtensions
         if (rangeIndex > -1)
         {
             // 10 length of has_child(
-            return (SearchOperatorEnum.HasChild, yamlPathComponent.Substring(rangeIndex + 10).Trim(')'), string.Empty, invert);
+            return (SearchOperatorEnum.HasChild, string.Empty, yamlPathComponent.Substring(rangeIndex + 10).Trim(')'), invert);
         }
 
         rangeIndex = yamlPathComponent.IndexOf("max", StringComparison.Ordinal);
         if (rangeIndex > -1)
         {
             // 4 length of max(
-            return (SearchOperatorEnum.MaxChild, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), string.Empty, invert);
+            return (SearchOperatorEnum.MaxChild, string.Empty, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), invert);
         }
         
         rangeIndex = yamlPathComponent.IndexOf("min", StringComparison.Ordinal);
         if (rangeIndex > -1)
         {
             // 4 length of min(
-            return (SearchOperatorEnum.MinChild, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), string.Empty, invert);
+            return (SearchOperatorEnum.MinChild, string.Empty, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), invert);
         }
         return (SearchOperatorEnum.Invalid, string.Empty, string.Empty, false);
     }
