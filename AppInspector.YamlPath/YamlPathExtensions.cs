@@ -482,7 +482,7 @@ public static class YamlPathExtensions
     {
         if (!string.IsNullOrEmpty(operand))
         {
-            List<(YamlMappingNode, YamlScalarNode)> potentialNodes = new List<(YamlMappingNode, YamlScalarNode)>();
+            List<(YamlNode, ParsedNode)> potentialNodes = new List<(YamlNode, ParsedNode)>();
             foreach (var child in yamlSequenceNode.Children)
             {
                 if (child is YamlMappingNode childMappingNode)
@@ -493,11 +493,13 @@ public static class YamlPathExtensions
                         if (targetChild.Key is YamlScalarNode { Value: { } } scalarKeyNode &&
                             scalarKeyNode.Value == operand)
                         {
-                            if (targetChild.Value is YamlScalarNode { Value: { } } scalarValueNode)
+                            if (targetChild.Value is not YamlScalarNode { Value: { } } scalarValueNode)
                             {
-                                potentialNodes.Add((childMappingNode, scalarValueNode));
-                                break;
+                                continue;
                             }
+
+                            potentialNodes.Add((childMappingNode, ParseNode(scalarValueNode)));
+                            break;
                         }
                     }
                 }
@@ -505,144 +507,101 @@ public static class YamlPathExtensions
 
             if (potentialNodes.Count > 0)
             {
-                int maxIndex = 0;
-                ParsedNode? parsedNode = ParseNode(potentialNodes[0].Item2);
-                for (var index = 1; index < potentialNodes.Count; index++)
-                {
-                    var potentialNode = potentialNodes[index];
-                    var parsed = ParseNode(potentialNode.Item2);
-                    if (parsedNode.doubleValue is { } && parsed.doubleValue is { })
-                    {
-                        if (doMinimum)
-                        {
-                            if (parsed.doubleValue < parsedNode.doubleValue)
-                            {
-                                parsedNode = parsed;
-                                maxIndex = index;
-                            }
-                        }
-                        else
-                        {
-                            
-                            if (parsed.doubleValue > parsedNode.doubleValue)
-                            {
-                                parsedNode = parsed;
-                                maxIndex = index;
-                            }
-                        }
-                    }
-                    else if (parsedNode.stringValue is { } && parsed.stringValue is { })
-                    {
-                        if (doMinimum)
-                        {
-                            if (String.Compare(parsedNode.stringValue, parsed.stringValue,
-                                    StringComparison.Ordinal) < 0)
-                            {
-                                parsedNode = parsed;
-                                maxIndex = index;
-                            }
-                        }
-                        else
-                        {
-                            
-                            if (String.Compare(parsedNode.stringValue, parsed.stringValue,
-                                    StringComparison.Ordinal) > 0)
-                            {
-                                parsedNode = parsed;
-                                maxIndex = index;
-                            }
-                        }
-                    }
-                }
+                var maxIndex = MaxIndex(doMinimum, potentialNodes.Select(x => x.Item2).ToList());
 
                 if (invert)
                 {
                     potentialNodes.RemoveAt(maxIndex);
                     return potentialNodes.Select(x => x.Item1);
                 }
-                else
-                {
-                    return new[] { potentialNodes[maxIndex].Item1 };
-                }
+                return new[] { potentialNodes[maxIndex].Item1 };
             }
         }
         else
         {
-            List<YamlScalarNode> potentialNodes = new List<YamlScalarNode>();
+            List<ParsedNode> potentialNodes = new List<ParsedNode>();
             foreach (var child in yamlSequenceNode.Children)
             {
                 if (child is YamlScalarNode { Value: { } } scalarValueNode)
                 {
-                    potentialNodes.Add(scalarValueNode);
+                    potentialNodes.Add(ParseNode(scalarValueNode));
                 }
             }
 
             if (potentialNodes.Count > 0)
             {
-                int maxIndex = 0;
-                ParsedNode? parsedNode = ParseNode(potentialNodes[0]);
-                for (var index = 1; index < potentialNodes.Count; index++)
-                {
-                    var potentialNode = potentialNodes[index];
-                    var parsed = ParseNode(potentialNode);
-                    if (parsedNode.doubleValue is { } && parsed.doubleValue is { })
-                    {
-                        if (doMinimum)
-                        {
-                            if (parsed.doubleValue < parsedNode.doubleValue)
-                            {
-                                parsedNode = parsed;
-                                maxIndex = index;
-                            }
-                        }
-                        else
-                        {
-                            
-                            if (parsed.doubleValue > parsedNode.doubleValue)
-                            {
-                                parsedNode = parsed;
-                                maxIndex = index;
-                            }
-                        }
-                    }
-                    else if (parsedNode.stringValue is { } && parsed.stringValue is { })
-                    {
-                        if (doMinimum)
-                        {
-                            if (String.Compare(parsedNode.stringValue, parsed.stringValue,
-                                    StringComparison.Ordinal) < 0)
-                            {
-                                parsedNode = parsed;
-                                maxIndex = index;
-                            }
-                        }
-                        else
-                        {
-                            
-                            if (String.Compare(parsedNode.stringValue, parsed.stringValue,
-                                    StringComparison.Ordinal) > 0)
-                            {
-                                parsedNode = parsed;
-                                maxIndex = index;
-                            }
-                        }
-                    }
-                }
+                int maxIndex = MaxIndex(doMinimum, potentialNodes);
 
                 if (invert)
                 {
                     potentialNodes.RemoveAt(maxIndex);
-                    return potentialNodes;
+                    return potentialNodes.Select(x => x.parsedNode);
                 }
-                else
-                {
-                    return new[] { potentialNodes[maxIndex] };
-                }
+                return new[] { potentialNodes[maxIndex].parsedNode };
             }
         }
         return Array.Empty<YamlNode>();
     }
-    
+
+    /// <summary>
+    /// Gets the index of the maximal valued parsed node. If the first node's decimal value is non-null will use decimal comparison
+    /// otherwise will use string comparison.
+    /// </summary>
+    /// <param name="doMinimum">If the index of the minimum is desired, otherwise returns index of maximum</param>
+    /// <param name="potentialNodes">The list of parsed nodes</param>
+    /// <returns>The index of the maximal value</returns>
+    private static int MaxIndex(bool doMinimum, List<ParsedNode> potentialNodes)
+    {
+        int maxIndex = 0;
+        if (potentialNodes[0].decimalValue is { })
+        {
+            for (var index = 1; index < potentialNodes.Count; index++)
+            {
+                if (potentialNodes[index].decimalValue is { })
+                {
+                    if (doMinimum)
+                    {
+                        if (potentialNodes[index].decimalValue < potentialNodes[maxIndex].decimalValue)
+                        {
+                            maxIndex = index;
+                        }
+                    }
+                    else
+                    {
+                        if (potentialNodes[index].decimalValue > potentialNodes[maxIndex].decimalValue)
+                        {
+                            maxIndex = index;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (var index = 1; index < potentialNodes.Count; index++)
+            {
+                if (doMinimum)
+                {
+                    if (String.Compare(potentialNodes[index].stringValue, potentialNodes[maxIndex].stringValue,
+                            StringComparison.Ordinal) < 0)
+                    {
+                        maxIndex = index;
+                    }
+                }
+                else
+                {
+                    if (String.Compare(potentialNodes[index].stringValue, potentialNodes[maxIndex].stringValue,
+                            StringComparison.Ordinal) > 0)
+                    {
+                        maxIndex = index;
+                    }
+                }
+            }
+        }
+
+        return maxIndex;
+    }
+
     /// <summary>
     /// Gets the min or max of the values of the keys of the provided <see cref="YamlMappingNode"/> with key name <see cref="operand"/>
     /// </summary>
@@ -653,7 +612,7 @@ public static class YamlPathExtensions
     /// <returns>The matching nodes</returns>
     private static IEnumerable<YamlNode> GetMinOrMaxOfChild(YamlMappingNode yamlMappingNode, string operand, bool invert, bool doMinimum)
     {
-        List<(YamlMappingNode, YamlScalarNode)> potentialNodes = new List<(YamlMappingNode, YamlScalarNode)>();
+        List<(YamlMappingNode, ParsedNode)> potentialNodes = new List<(YamlMappingNode, ParsedNode)>();
         foreach (var child in yamlMappingNode.Children)
         {
             if (child.Value is YamlMappingNode childMappingNode)
@@ -665,7 +624,7 @@ public static class YamlPathExtensions
                     {
                         if (targetChild.Value is YamlScalarNode { Value: { } } scalarValueNode)
                         {
-                            potentialNodes.Add((childMappingNode, scalarValueNode));
+                            potentialNodes.Add((childMappingNode, ParseNode(scalarValueNode)));
                             break;
                         }
                     }
@@ -675,65 +634,13 @@ public static class YamlPathExtensions
 
         if (potentialNodes.Count > 0)
         {
-            int maxIndex = 0;
-            ParsedNode? parsedNode = ParseNode(potentialNodes[0].Item2);
-            for (var index = 1; index < potentialNodes.Count; index++)
-            {
-                var potentialNode = potentialNodes[index];
-                var parsed = ParseNode(potentialNode.Item2);
-                if (parsedNode.doubleValue is { } && parsed.doubleValue is { })
-                {
-                    if (doMinimum)
-                    {
-                        if (parsed.doubleValue < parsedNode.doubleValue)
-                        {
-                            parsedNode = parsed;
-                            maxIndex = index;
-                        }
-                    }
-                    else
-                    {
-
-                        if (parsed.doubleValue > parsedNode.doubleValue)
-                        {
-                            parsedNode = parsed;
-                            maxIndex = index;
-                        }
-                    }
-                }
-                else if (parsedNode.stringValue is { } && parsed.stringValue is { })
-                {
-                    if (doMinimum)
-                    {
-                        if (String.Compare(parsedNode.stringValue, parsed.stringValue,
-                                StringComparison.Ordinal) < 0)
-                        {
-                            parsedNode = parsed;
-                            maxIndex = index;
-                        }
-                    }
-                    else
-                    {
-
-                        if (String.Compare(parsedNode.stringValue, parsed.stringValue,
-                                StringComparison.Ordinal) > 0)
-                        {
-                            parsedNode = parsed;
-                            maxIndex = index;
-                        }
-                    }
-                }
-            }
-
+            int maxIndex = MaxIndex(doMinimum, potentialNodes.Select(x => x.Item2).ToList());
             if (invert)
             {
                 potentialNodes.RemoveAt(maxIndex);
                 return potentialNodes.Select(x => x.Item1);
             }
-            else
-            {
-                return new[] { potentialNodes[maxIndex].Item1 };
-            }
+            return new[] { potentialNodes[maxIndex].Item1 };
         }
 
         return Array.Empty<YamlNode>();
@@ -745,19 +652,20 @@ public static class YamlPathExtensions
     internal class ParsedNode
     {
         internal YamlNode parsedNode { get; }
+        /// <summary>
+        /// If the parsedNode value could not be parsed as <see cref="Decimal"/> this will be populated with the result
+        /// </summary>
         internal string? stringValue { get; }
-        internal double? doubleValue { get; }
+        /// <summary>
+        /// IF the parsedNode value could be parsed as <see cref="Decimal"/> this will be populated with the result
+        /// </summary>
+        internal decimal? decimalValue { get; }
 
-        internal ParsedNode(YamlNode node, double doubleValue)
-        {
-            parsedNode = node;
-            this.doubleValue = doubleValue;
-        }
-        
-        internal ParsedNode(YamlNode node, string stringValue)
+        internal ParsedNode(YamlNode node, string stringValue, decimal? decimalValue = null)
         {
             parsedNode = node;
             this.stringValue = stringValue;
+            this.decimalValue = decimalValue;
         }
     }
     
@@ -768,9 +676,9 @@ public static class YamlPathExtensions
     /// <returns>A parsed node that contains either a double or a string</returns>
     static ParsedNode ParseNode(YamlScalarNode yamlScalarNode)
     {
-        if (double.TryParse(yamlScalarNode.Value, out double doubleVal))
+        if (decimal.TryParse(yamlScalarNode.Value, out decimal decimalValue))
         {
-            return new ParsedNode(yamlScalarNode, doubleVal);
+            return new ParsedNode(yamlScalarNode, yamlScalarNode.Value, decimalValue);
         }
         return new ParsedNode(yamlScalarNode, yamlScalarNode.Value);
     }

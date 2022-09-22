@@ -352,14 +352,20 @@ prices_array:
   - 9.95
   - 0.98
   - null";
-    [DataRow("/prices_aoh[max(price)]/price", 1, new double[]{9.95})]
-    [DataRow("/prices_hash/[max(price)]/price", 1, new double[]{9.95})]
-    [DataRow("/prices_array/[max()]", 1, new double[]{9.95})]
-    [DataRow("/prices_aoh[min(price)]/price", 1, new double[]{0.98})]
-    [DataRow("/prices_hash[min(price)]/price", 1, new double[]{0.98})]
-    [DataRow("/prices_array/[min()]", 1, new double[]{0.98})]
+    [DataRow("/prices_aoh[max(price)]/price", 1, new string[]{"9.95"})]
+    [DataRow("/prices_hash/[max(price)]/price", 1, new string[]{"9.95"})]
+    [DataRow("/prices_array/[max()]", 1, new string[]{"9.95"})]
+    [DataRow("/prices_aoh[min(price)]/price", 1, new string[]{"0.98"})]
+    [DataRow("/prices_hash[min(price)]/price", 1, new string[]{"0.98"})]
+    [DataRow("/prices_array/[min()]", 1, new string[]{"0.98"})]
+    [DataRow("/prices_aoh[!max(price)]/price", 3, new string[]{"0.98", "4.99", "4.99"})]
+    [DataRow("/prices_hash/[!max(price)]/price", 3, new string[]{"0.98", "4.99", "4.99"})]
+    [DataRow("/prices_array/[!max()]", 4, new string[]{"0.98", "4.99", "4.99"})]
+    [DataRow("/prices_aoh[!min(price)]/price", 3, new string[]{"9.95", "4.99", "4.99"})]
+    [DataRow("/prices_hash[!min(price)]/price", 3, new string[]{"9.95", "4.99", "4.99"})]
+    [DataRow("/prices_array/[!min()]", 4, new string[]{"9.95", "4.99", "4.99"})]
     [DataTestMethod]
-    public void MinMaxTests(string yamlPath, int expectedNumMatches, double[] expectedFindings)
+    public void MinMaxTests(string yamlPath, int expectedNumMatches, string[] expectedFindings)
     {
         var yaml = new YamlStream();
         yaml.Load(new StringReader(minMaxData));
@@ -368,7 +374,7 @@ prices_array:
         Assert.AreEqual(expectedNumMatches, matching.Count());
         foreach (var expectedFinding in expectedFindings)
         {
-            Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && double.TryParse(ysc.Value, out double ysv) && ysv == expectedFinding));
+            Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && decimal.TryParse(ysc.Value, out decimal ysv) && ysv == Decimal.Parse(expectedFinding)));
         }
     }
 }
