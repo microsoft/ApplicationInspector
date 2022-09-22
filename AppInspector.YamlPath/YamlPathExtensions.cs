@@ -420,8 +420,8 @@ public static class YamlPathExtensions
             // Maps support slices based on the key name
             // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
             SearchOperatorEnum.Range => GetHashNodesByRange(yamlMappingNode, operand, term),
-            SearchOperatorEnum.MaxChild => GetMaxOfChild(yamlMappingNode, operand, invert),
-            SearchOperatorEnum.MinChild => GetMinOfChild(yamlMappingNode, operand, invert),
+            SearchOperatorEnum.MaxChild => GetMinOrMaxOfChild(yamlMappingNode, operand, invert, false),
+            SearchOperatorEnum.MinChild => GetMinOrMaxOfChild(yamlMappingNode, operand, invert, true),
             SearchOperatorEnum.HasChild => yamlMappingNode.Children.Any(x =>
                 x.Key is YamlScalarNode ysn && ysn.Value == operand)
                 ? new[] { yamlMappingNode }
@@ -430,69 +430,7 @@ public static class YamlPathExtensions
             _ => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum))
         };
     }
-
-    private static IEnumerable<YamlNode> GetMinOfChild(YamlMappingNode yamlMappingNode, string elementName, bool invert)
-    {
-        List<(YamlMappingNode, YamlScalarNode)> potentialNodes = new List<(YamlMappingNode, YamlScalarNode)>();
-        foreach (var child in yamlMappingNode.Children)
-        {
-            if (child.Value is YamlMappingNode childMappingNode)
-            {
-                foreach (var targetChild in childMappingNode.Children)
-                {
-                    // The value for this key is a valid target to take the max of
-                    if (targetChild.Key is YamlScalarNode { Value: { } } scalarKeyNode && scalarKeyNode.Value == elementName)
-                    {
-                        if (targetChild.Value is YamlScalarNode { Value: { } } scalarValueNode)
-                        {
-                            potentialNodes.Add((childMappingNode, scalarValueNode));
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (potentialNodes.Count > 0)
-        {
-            int maxIndex = 0;
-            ParsedNode? parsedNode = ParseNode(potentialNodes[0].Item2);
-            YamlMappingNode? mappingNode = potentialNodes[0].Item1;
-            for (var index = 1; index < potentialNodes.Count; index++)
-            {
-                var potentialNode = potentialNodes[index];
-                var parsed = ParseNode(potentialNode.Item2);
-                if (parsedNode.doubleValue is { } && parsed.doubleValue is { } &&
-                    parsed.doubleValue < parsedNode.doubleValue)
-                {
-                    parsedNode = parsed;
-                    mappingNode = potentialNode.Item1;
-                    maxIndex = index;
-                }
-                else if (parsedNode.stringValue is { } && parsed.stringValue is { } &&
-                         String.Compare(parsedNode.stringValue, parsed.stringValue,
-                             StringComparison.Ordinal) < 0)
-                {
-                    parsedNode = parsed;
-                    mappingNode = potentialNode.Item1;
-                    maxIndex = index;
-                }
-            }
-
-            if (invert)
-            {
-                potentialNodes.RemoveAt(maxIndex);
-                return potentialNodes.Select(x => x.Item1);
-            }
-            else
-            {
-                return new[] { potentialNodes[maxIndex].Item1 };
-            }
-        }
-
-        return Array.Empty<YamlNode>();
-    }
-
+    
     /// <summary>
     /// Gets the Min or Max of the sequence
     /// </summary>
@@ -665,8 +603,16 @@ public static class YamlPathExtensions
         }
         return Array.Empty<YamlNode>();
     }
-
-    private static IEnumerable<YamlNode> GetMaxOfChild(YamlMappingNode yamlMappingNode, string elementName, bool invert)
+    
+    /// <summary>
+    /// Gets the min or max of the values of the keys of ths provided hash with the key name <see cref="elementName"/>
+    /// </summary>
+    /// <param name="yamlMappingNode"></param>
+    /// <param name="elementName"></param>
+    /// <param name="invert"></param>
+    /// <param name="doMinimum"></param>
+    /// <returns></returns>
+    private static IEnumerable<YamlNode> GetMinOrMaxOfChild(YamlMappingNode yamlMappingNode, string elementName, bool invert, bool doMinimum)
     {
         List<(YamlMappingNode, YamlScalarNode)> potentialNodes = new List<(YamlMappingNode, YamlScalarNode)>();
         foreach (var child in yamlMappingNode.Children)
@@ -692,25 +638,51 @@ public static class YamlPathExtensions
         {
             int maxIndex = 0;
             ParsedNode? parsedNode = ParseNode(potentialNodes[0].Item2);
-            YamlMappingNode? mappingNode = potentialNodes[0].Item1;
             for (var index = 1; index < potentialNodes.Count; index++)
             {
                 var potentialNode = potentialNodes[index];
                 var parsed = ParseNode(potentialNode.Item2);
-                if (parsedNode.doubleValue is { } && parsed.doubleValue is { } &&
-                    parsed.doubleValue > parsedNode.doubleValue)
+                if (parsedNode.doubleValue is { } && parsed.doubleValue is { })
                 {
-                    parsedNode = parsed;
-                    mappingNode = potentialNode.Item1;
-                    maxIndex = index;
+                    if (doMinimum)
+                    {
+                        if (parsed.doubleValue < parsedNode.doubleValue)
+                        {
+                            parsedNode = parsed;
+                            maxIndex = index;
+                        }
+                    }
+                    else
+                    {
+
+                        if (parsed.doubleValue > parsedNode.doubleValue)
+                        {
+                            parsedNode = parsed;
+                            maxIndex = index;
+                        }
+                    }
                 }
-                else if (parsedNode.stringValue is { } && parsed.stringValue is { } &&
-                         String.Compare(parsedNode.stringValue, parsed.stringValue,
-                             StringComparison.Ordinal) > 0)
+                else if (parsedNode.stringValue is { } && parsed.stringValue is { })
                 {
-                    parsedNode = parsed;
-                    mappingNode = potentialNode.Item1;
-                    maxIndex = index;
+                    if (doMinimum)
+                    {
+                        if (String.Compare(parsedNode.stringValue, parsed.stringValue,
+                                StringComparison.Ordinal) < 0)
+                        {
+                            parsedNode = parsed;
+                            maxIndex = index;
+                        }
+                    }
+                    else
+                    {
+
+                        if (String.Compare(parsedNode.stringValue, parsed.stringValue,
+                                StringComparison.Ordinal) > 0)
+                        {
+                            parsedNode = parsed;
+                            maxIndex = index;
+                        }
+                    }
                 }
             }
 
