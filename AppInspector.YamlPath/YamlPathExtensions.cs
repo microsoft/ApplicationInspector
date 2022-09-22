@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Tokens;
@@ -777,7 +778,7 @@ public static class YamlPathExtensions
                 {
                     if (invert ? !predicate(keyNode) : predicate(keyNode))
                     {
-                        yield return keyNode;
+                        yield return child.Value;
                     }
                 }
             }
@@ -1014,6 +1015,10 @@ public static class YamlPathExtensions
     /// <returns>A list of the broken down path pieces</returns>
     private static List<string> GenerateNavigationElements(string yamlPath)
     {
+        if (string.IsNullOrEmpty(yamlPath))
+        {
+            return new List<string>();
+        }
         var pathComponents = new List<string>();
         // The separator can either be . or /, but if it is / the string must start with /
         var separator = yamlPath[0] == '/' ? '/' : '.';
@@ -1091,6 +1096,29 @@ public static class YamlPathExtensions
         pathComponents.Add(yamlPath[startIndex..]);
         pathComponents.RemoveAll(string.IsNullOrEmpty);
         pathComponents = pathComponents.Select(x => x.Replace($"\\{separator}", $"{separator}")).ToList();
+        
+        // WildCards Search Shorthand https://github.com/wwkimball/yamlpath/wiki/Wildcard-Segments#search-shorthand 
+        for (int i =0; i < pathComponents.Count; i++)
+        {
+            // Search shorthand doesn't apply to expressions
+            if (!pathComponents[i].Contains('[') && pathComponents[i].Contains("*") && pathComponents[i] != "**" && pathComponents[i] != "*")
+            {
+                var newExpression = new StringBuilder();
+                newExpression.Append("[.=~");
+                if (pathComponents[i].StartsWith('*'))
+                {
+                    newExpression.Append("^");
+                }
+                newExpression.Append(pathComponents[i].Replace("*", ".*"));
+                if (pathComponents[i].EndsWith('*'))
+                {
+                    newExpression.Append("$");
+                }
+                newExpression.Append("]");
+                pathComponents[i] = newExpression.ToString();
+            }
+        }
+        
         return pathComponents;
     }
 
