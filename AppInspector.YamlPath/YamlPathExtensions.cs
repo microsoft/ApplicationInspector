@@ -742,19 +742,19 @@ public static class YamlPathExtensions
     /// <summary>
     /// Returned from <see cref="ParseNode"/> to check numbers when possible and strings when not
     /// </summary>
-    private class ParsedNode
+    internal class ParsedNode
     {
-        public YamlNode parsedNode { get; }
-        public string? stringValue { get; }
-        public double? doubleValue { get; }
+        internal YamlNode parsedNode { get; }
+        internal string? stringValue { get; }
+        internal double? doubleValue { get; }
 
-        public ParsedNode(YamlNode node, double doubleValue)
+        internal ParsedNode(YamlNode node, double doubleValue)
         {
             parsedNode = node;
             this.doubleValue = doubleValue;
         }
         
-        public ParsedNode(YamlNode node, string stringValue)
+        internal ParsedNode(YamlNode node, string stringValue)
         {
             parsedNode = node;
             this.stringValue = stringValue;
