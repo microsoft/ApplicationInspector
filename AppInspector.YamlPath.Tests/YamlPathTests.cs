@@ -165,6 +165,8 @@ products_array:
     [DataRow("products_array.**", 32)]
     [DataRow("products_array.[product=widget]", 1)]
     [DataRow("products_array.[availability.start.time=12:00]", 1)]
+    [DataRow("products_array.[availability.start.missing=12:00]", 0)]
+    [DataRow("products_array.[missing=present].start.[time=12:00]", 0)]
     [DataRow("products_array.*.dimensions[other_values>=5]", 2)]
     [DataRow("products_array.*.dimensions[width=9]", 1)]
     [DataRow("products_array.*.dimensions[weight=4]", 2)]
@@ -199,6 +201,7 @@ products_array:
     [DataRow("products_hash.*.availability.sta*.[date=~.*]", 3)]
     [DataRow("products_hash.*.availability.*rt.[date=~.*]", 3)]
     [DataRow("products_hash.*.availability.*a*.[date=~.*]", 3)]
+    [DataRow("products_hash.*.availability.[start.missing=~.*]", 0)]
     [DataTestMethod]
     public void TestMapQuery(string yamlPath, int expectedNumMatches)
     {

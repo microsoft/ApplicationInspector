@@ -818,9 +818,6 @@ public static class YamlPathExtensions
     private static IEnumerable<YamlNode> GetNodesWithPredicate(YamlSequenceNode yamlSequenceNode,
         bool invert, string operand, Func<YamlScalarNode, bool> predicate)
     {
-        // TODO:
-        // Other operand meanings https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
-        // * has more meanings
         foreach (var child in yamlSequenceNode.Children)
         {
             // Scalar nodes we can just return if they match the predicate
@@ -833,18 +830,15 @@ public static class YamlPathExtensions
             }
             else if (child is YamlMappingNode yamlMappingNode)
             {
-                var targetChild =
-                    yamlMappingNode.Children.Where(x => x.Key is YamlScalarNode ysn && ysn.Value == operand);
-                if (targetChild.Any())
+                foreach(var targetChild in yamlMappingNode.Children.Where(x => x.Key is YamlScalarNode ysn && ysn.Value == operand))
                 {
-                    var val = targetChild.First();
-                    if (val.Value is YamlScalarNode { Value: { } } yamlScalarNode)
+                    if (targetChild.Value is YamlScalarNode { Value: { } } yamlScalarNode)
                     {
                         if (invert ? !predicate(yamlScalarNode) : predicate(yamlScalarNode))
                         {
                             yield return yamlScalarNode;
                         }
-                    }
+                    }   
                 }
             }
         }
