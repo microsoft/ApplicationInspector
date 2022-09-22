@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
-using YamlDotNet.Core.Tokens;
 using YamlDotNet.RepresentationModel;
 
 namespace Microsoft.ApplicationInspector.ExtensionMethods;
 
+/// <summary>
+/// Extension methods to <see cref="YamlNode"/> to perform YamlPath queries.
+/// </summary>
 public static class YamlPathExtensions
 {
     private const char EscapeCharacter = '\\';
@@ -34,10 +35,12 @@ public static class YamlPathExtensions
 
     /// <summary>
     ///     Get all the <see cref="YamlNode" /> that match the provided yamlPath query.
+    ///     See https://github.com/wwkimball/yamlpath/wiki/Segments-of-a-YAML-Path for YamlPath documentation.
+    ///     Does not support Collectors or the 'name' and 'parent' Search Keywords.
     /// </summary>
     /// <param name="yamlNode">The YamlMappingNode to operate on</param>
     /// <param name="yamlPath">The YamlPath query to use</param>
-    /// <returns>An <see cref="List{YamlNode}" /> of the matching nodes</returns>
+    /// <returns>An <see cref="IEnumerable{YamlNode}" /> of the matching nodes</returns>
     public static IEnumerable<YamlNode> Query(this YamlNode yamlNode, string yamlPath)
     {
         var navigationElements = GenerateNavigationElements(yamlPath);
@@ -189,6 +192,13 @@ public static class YamlPathExtensions
             .Select(x => x.Value);
     }
 
+    /// <summary>
+    /// Gets the nodes of a hash by range. The range is specified as names of keys.
+    /// </summary>
+    /// <param name="yamlMappingNode"></param>
+    /// <param name="start">The name of the key to start with</param>
+    /// <param name="end">The name of the key to end with</param>
+    /// <returns></returns>
     private static IEnumerable<YamlNode> GetHashNodesByRange(YamlMappingNode yamlMappingNode, string start, string end)
     {
         // If we have found the start key yet
@@ -223,6 +233,13 @@ public static class YamlPathExtensions
         return Enumerable.Empty<YamlNode>();
     }
 
+    /// <summary>
+    /// Get the nodes of a sequence based on the range provided, start inclusive, end exclusive.
+    /// </summary>
+    /// <param name="yamlSequenceNode"></param>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <returns></returns>
     private static IEnumerable<YamlNode> GetSequenceNodesByRange(YamlSequenceNode yamlSequenceNode, string start, string end)
     {
         List<YamlNode> outNodes = new List<YamlNode>();
@@ -239,6 +256,12 @@ public static class YamlPathExtensions
         }
     }
     
+    /// <summary>
+    /// Parse the <paramref name="yamlPathComponent"/> and execute the appropriate operation.
+    /// </summary>
+    /// <param name="yamlSequenceNode"></param>
+    /// <param name="yamlPathComponent"></param>
+    /// <returns>The matching nodes</returns>
     private static IEnumerable<YamlNode> PerformOperation(YamlSequenceNode yamlSequenceNode, string yamlPathComponent)
     {
         // Break break down the components:
@@ -266,13 +289,13 @@ public static class YamlPathExtensions
                 switch (nodeToUse)
                 {
                     case YamlMappingNode mappingNode:
-                        foreach (var foundVal in ExecuteOperation(mappingNode, searchOperatorEnum, operand, invert, term))
+                        foreach (var foundVal in PerformOperation(mappingNode, searchOperatorEnum, operand, invert, term))
                         {
                             yield return foundVal;
                         }
                         break;
                     case YamlSequenceNode sequenceNode:
-                        foreach (var foundVal in ExecuteSequenceOperation(sequenceNode, searchOperatorEnum, operand, invert, term))
+                        foreach (var foundVal in PerformOperation(sequenceNode, searchOperatorEnum, operand, invert, term))
                         {
                             yield return foundVal;
                         }
@@ -282,17 +305,27 @@ public static class YamlPathExtensions
         }
         else
         {
-            foreach (var node in ExecuteSequenceOperation(yamlSequenceNode, searchOperatorEnum, operand, invert, term))
+            foreach (var node in PerformOperation(yamlSequenceNode, searchOperatorEnum, operand, invert, term))
             {
                 yield return node;
             }
         }
     }
 
-    private static IEnumerable<YamlNode> ExecuteSequenceOperation(YamlSequenceNode yamlSequenceNode,
+    /// <summary>
+    /// Execute the the appropriate operation on the provided <paramref name="yamlSequenceNode"/> based on the
+    /// <paramref name="searchOperatorEnum"/>.
+    /// </summary>
+    /// <param name="yamlSequenceNode">The <see cref="YamlSequenceNode"/> to operate on</param>
+    /// <param name="searchOperatorEnum">The <see cref="SearchOperatorEnum"/> specifying the operation type</param>
+    /// <param name="operand">The operand, usually '.'</param>
+    /// <param name="invert">If the operation results should be inverted</param>
+    /// <param name="term">The term for the operation</param>
+    /// <returns>The matching nodes</returns>
+    /// <exception cref="ArgumentOutOfRangeException">If the operation requested by the Enum is not supported</exception>
+    private static IEnumerable<YamlNode> PerformOperation(YamlSequenceNode yamlSequenceNode,
         SearchOperatorEnum searchOperatorEnum, string operand, bool invert, string term)
     {
-        //When searching Arrays of scalar values or Sets, this is always . to indicate a search against each element.
         return searchOperatorEnum switch
         {
             SearchOperatorEnum.Equals => GetNodesWithPredicate(yamlSequenceNode, invert, operand,
@@ -314,16 +347,11 @@ public static class YamlPathExtensions
                 // Null checking is enforced before calling the predicate
                 yamlScalarNode => yamlScalarNode.Value!.StartsWith(term)),
             SearchOperatorEnum.EndsWith => GetNodesWithPredicate(yamlSequenceNode, invert, operand,
-                // Null checking is enforced before calling the predicate
                 yamlScalarNode => yamlScalarNode.Value!.EndsWith(term)),
             SearchOperatorEnum.Contains => GetNodesWithPredicate(yamlSequenceNode, invert, operand,
-                // Null checking is enforced before calling the predicate
                 yamlScalarNode => yamlScalarNode.Value!.Contains(term)),
             SearchOperatorEnum.Regex => GetNodesWithPredicate(yamlSequenceNode, invert, operand,
-                // Null checking is enforced before calling the predicate
                 yamlScalarNode => Regex.IsMatch(yamlScalarNode.Value!, term)),
-            // Maps support slices based on the key name
-            // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
             SearchOperatorEnum.Range => GetSequenceNodesByRange(yamlSequenceNode, operand, term),
             SearchOperatorEnum.MaxChild => GetMinOrMaxOfChild(yamlSequenceNode, operand, invert, false),
             SearchOperatorEnum.MinChild => GetMinOrMaxOfChild(yamlSequenceNode, operand, invert, true),
@@ -335,7 +363,12 @@ public static class YamlPathExtensions
         };
     }
 
-
+    /// <summary>
+    /// Parse the <paramref name="yamlPathComponent"/> and execute the appropriate operation.
+    /// </summary>
+    /// <param name="yamlMappingNode"></param>
+    /// <param name="yamlPathComponent"></param>
+    /// <returns>The matching nodes</returns>
     private static IEnumerable<YamlNode> PerformOperation(YamlMappingNode yamlMappingNode, string yamlPathComponent)
     {
         // Break break down the components:
@@ -362,13 +395,13 @@ public static class YamlPathExtensions
                 switch (nodeToUse)
                 {
                     case YamlMappingNode mappingNode:
-                        foreach (var foundVal in ExecuteOperation(mappingNode, searchOperatorEnum, operand, invert, term))
+                        foreach (var foundVal in PerformOperation(mappingNode, searchOperatorEnum, operand, invert, term))
                         {
                             yield return foundVal;
                         }
                         break;
                     case YamlSequenceNode sequenceNode:
-                        foreach (var foundVal in ExecuteSequenceOperation(sequenceNode, searchOperatorEnum, operand, invert, term))
+                        foreach (var foundVal in PerformOperation(sequenceNode, searchOperatorEnum, operand, invert, term))
                         {
                             yield return foundVal;
                         }
@@ -378,14 +411,25 @@ public static class YamlPathExtensions
         }
         else
         {
-            foreach (var node in ExecuteOperation(yamlMappingNode, searchOperatorEnum, operand, invert, term))
+            foreach (var node in PerformOperation(yamlMappingNode, searchOperatorEnum, operand, invert, term))
             {
                 yield return node;
             }
         }
     }
 
-    private static IEnumerable<YamlNode> ExecuteOperation(YamlMappingNode yamlMappingNode, SearchOperatorEnum searchOperatorEnum,
+    /// <summary>
+    /// Execute the the appropriate operation on the provided <paramref name="yamlMappingNode"/> based on the
+    /// <paramref name="searchOperatorEnum"/>.
+    /// </summary>
+    /// <param name="yamlMappingNode">The <see cref="YamlMappingNode"/> to operate on</param>
+    /// <param name="searchOperatorEnum">The <see cref="SearchOperatorEnum"/> specifying the operation type</param>
+    /// <param name="operand">The operand to select keys</param>
+    /// <param name="invert">If the operation results should be inverted</param>
+    /// <param name="term">The term for the operation</param>
+    /// <returns>The matching nodes</returns>
+    /// <exception cref="ArgumentOutOfRangeException">If the operation requested by the Enum is not supported</exception>
+    private static IEnumerable<YamlNode> PerformOperation(YamlMappingNode yamlMappingNode, SearchOperatorEnum searchOperatorEnum,
         string operand, bool invert, string term)
     {
         return searchOperatorEnum switch
@@ -409,16 +453,11 @@ public static class YamlPathExtensions
                 // Null checking is enforced before calling the predicate
                 yamlScalarNode => yamlScalarNode.Value!.StartsWith(term)),
             SearchOperatorEnum.EndsWith => GetNodesWithPredicate(yamlMappingNode, operand, invert,
-                // Null checking is enforced before calling the predicate
                 yamlScalarNode => yamlScalarNode.Value!.EndsWith(term)),
             SearchOperatorEnum.Contains => GetNodesWithPredicate(yamlMappingNode, operand, invert,
-                // Null checking is enforced before calling the predicate
                 yamlScalarNode => yamlScalarNode.Value!.Contains(term)),
             SearchOperatorEnum.Regex => GetNodesWithPredicate(yamlMappingNode, operand, invert,
-                // Null checking is enforced before calling the predicate
                 yamlScalarNode => Regex.IsMatch(yamlScalarNode.Value!, term)),
-            // Maps support slices based on the key name
-            // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
             SearchOperatorEnum.Range => GetHashNodesByRange(yamlMappingNode, operand, term),
             SearchOperatorEnum.MaxChild => GetMinOrMaxOfChild(yamlMappingNode, operand, invert, false),
             SearchOperatorEnum.MinChild => GetMinOrMaxOfChild(yamlMappingNode, operand, invert, true),
@@ -432,16 +471,16 @@ public static class YamlPathExtensions
     }
     
     /// <summary>
-    /// Gets the Min or Max of the sequence
+    /// Gets the min or max of the values of the keys of the provided <see cref="YamlSequenceNode"/>
     /// </summary>
-    /// <param name="yamlSequenceNode"></param>
-    /// <param name="elementName"></param>
-    /// <param name="invert"></param>
-    /// <param name="doMinimum">If false, get max, if true, get min</param>
-    /// <returns></returns>
-    private static IEnumerable<YamlNode> GetMinOrMaxOfChild(YamlSequenceNode yamlSequenceNode, string elementName, bool invert, bool doMinimum)
+    /// <param name="yamlSequenceNode">The <see cref="YamlSequenceNode"/> to check</param>
+    /// <param name="operand">The operand, '.' to check values</param>
+    /// <param name="invert">If result should be inverted</param>
+    /// <param name="doMinimum">If true, return minimum, if false return maximum</param>
+    /// <returns>The matching nodes</returns>
+    private static IEnumerable<YamlNode> GetMinOrMaxOfChild(YamlSequenceNode yamlSequenceNode, string operand, bool invert, bool doMinimum)
     {
-        if (!string.IsNullOrEmpty(elementName))
+        if (!string.IsNullOrEmpty(operand))
         {
             List<(YamlMappingNode, YamlScalarNode)> potentialNodes = new List<(YamlMappingNode, YamlScalarNode)>();
             foreach (var child in yamlSequenceNode.Children)
@@ -452,7 +491,7 @@ public static class YamlPathExtensions
                     {
                         // The value for this key is a valid target to take the max of
                         if (targetChild.Key is YamlScalarNode { Value: { } } scalarKeyNode &&
-                            scalarKeyNode.Value == elementName)
+                            scalarKeyNode.Value == operand)
                         {
                             if (targetChild.Value is YamlScalarNode { Value: { } } scalarValueNode)
                             {
@@ -605,14 +644,14 @@ public static class YamlPathExtensions
     }
     
     /// <summary>
-    /// Gets the min or max of the values of the keys of ths provided hash with the key name <see cref="elementName"/>
+    /// Gets the min or max of the values of the keys of the provided <see cref="YamlMappingNode"/> with key name <see cref="operand"/>
     /// </summary>
-    /// <param name="yamlMappingNode"></param>
-    /// <param name="elementName"></param>
-    /// <param name="invert"></param>
-    /// <param name="doMinimum"></param>
-    /// <returns></returns>
-    private static IEnumerable<YamlNode> GetMinOrMaxOfChild(YamlMappingNode yamlMappingNode, string elementName, bool invert, bool doMinimum)
+    /// <param name="yamlMappingNode">The <see cref="YamlMappingNode"/> to check</param>
+    /// <param name="operand">The operand to specify key names</param>
+    /// <param name="invert">If result should be inverted</param>
+    /// <param name="doMinimum">If true, return minimum, if false return maximum</param>
+    /// <returns>The matching nodes</returns>
+    private static IEnumerable<YamlNode> GetMinOrMaxOfChild(YamlMappingNode yamlMappingNode, string operand, bool invert, bool doMinimum)
     {
         List<(YamlMappingNode, YamlScalarNode)> potentialNodes = new List<(YamlMappingNode, YamlScalarNode)>();
         foreach (var child in yamlMappingNode.Children)
@@ -622,7 +661,7 @@ public static class YamlPathExtensions
                 foreach (var targetChild in childMappingNode.Children)
                 {
                     // The value for this key is a valid target to take the max of
-                    if (targetChild.Key is YamlScalarNode { Value: { } } scalarKeyNode && scalarKeyNode.Value == elementName)
+                    if (targetChild.Key is YamlScalarNode { Value: { } } scalarKeyNode && scalarKeyNode.Value == operand)
                     {
                         if (targetChild.Value is YamlScalarNode { Value: { } } scalarValueNode)
                         {
@@ -700,6 +739,9 @@ public static class YamlPathExtensions
         return Array.Empty<YamlNode>();
     }
 
+    /// <summary>
+    /// Returned from <see cref="ParseNode"/> to check numbers when possible and strings when not
+    /// </summary>
     private class ParsedNode
     {
         public YamlNode parsedNode { get; }
@@ -719,6 +761,11 @@ public static class YamlPathExtensions
         }
     }
     
+    /// <summary>
+    /// Helper function to parse either a number or a string out of a scalar node
+    /// </summary>
+    /// <param name="yamlScalarNode">The scalar node to parse</param>
+    /// <returns>A parsed node that contains either a double or a string</returns>
     static ParsedNode ParseNode(YamlScalarNode yamlScalarNode)
     {
         if (double.TryParse(yamlScalarNode.Value, out double doubleVal))
@@ -732,19 +779,16 @@ public static class YamlPathExtensions
     ///     Get the selected nodes from the <see cref="YamlMappingNode" /> matching the element name and matching the predicate
     /// </summary>
     /// <param name="yamlMappingNode"></param>
-    /// <param name="elementName"></param>
+    /// <param name="operand">The operand to use, see <see cref="ParseOperator"/></param>
     /// <param name="invert">If the result of the predicate should be inverted</param>
     /// <param name="predicate">The predicate to test</param>
     /// <returns>Enumeration of YamlNodes that pass the predicate</returns>
-    private static IEnumerable<YamlNode> GetNodesWithPredicate(YamlMappingNode yamlMappingNode, string elementName,
+    private static IEnumerable<YamlNode> GetNodesWithPredicate(YamlMappingNode yamlMappingNode, string operand,
         bool invert, Func<YamlScalarNode, bool> predicate)
     {
-        // TODO:
-        // Other operand meanings https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
-        // * has more meanings
         foreach (var child in yamlMappingNode.Children)
         {
-            if (elementName == ".")
+            if (operand == ".")
             {
                 if (child.Key is YamlScalarNode { Value: { } } keyNode)
                 {
@@ -757,7 +801,7 @@ public static class YamlPathExtensions
             else
             {
                 // The key must match the element name
-                if (child.Key is YamlScalarNode { Value: { } } keyNode && keyNode.Value == elementName)
+                if (child.Key is YamlScalarNode { Value: { } } keyNode && keyNode.Value == operand)
                 {
                     // Scalar nodes we can just return if they match the predicate
                     if (child.Value is YamlScalarNode { Value: { } } valueNode)
@@ -782,11 +826,18 @@ public static class YamlPathExtensions
                         }
                     }
                 }
-                
             }
         }
     }
 
+    /// <summary>
+    ///     Get the nodes from the <see cref="YamlSequenceNode" /> matching the predicate
+    /// </summary>
+    /// <param name="yamlSequenceNode"></param>
+    /// <param name="operand">The operand to use, see <see cref="ParseOperator"/></param>
+    /// <param name="invert">If the result of the predicate should be inverted</param>
+    /// <param name="predicate">The predicate to test</param>
+    /// <returns>Enumeration of YamlNodes that pass the predicate</returns>
     private static IEnumerable<YamlNode> GetNodesWithPredicate(YamlSequenceNode yamlSequenceNode,
         bool invert, string operand, Func<YamlScalarNode, bool> predicate)
     {
