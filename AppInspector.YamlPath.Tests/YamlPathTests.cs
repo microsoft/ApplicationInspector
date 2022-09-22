@@ -163,6 +163,8 @@ products_array:
     [DataRow("products_array.**.dimensions[other_values>=5]", 2)]
     [DataRow("products_hash.**", 24)]
     [DataRow("products_array.**", 32)]
+    [DataRow("products_array.[product=widget]", 1)]
+    [DataRow("products_array.[availability.start.time=12:00]", 1)]
     [DataRow("products_array.*.dimensions[other_values>=5]", 2)]
     [DataRow("products_array.*.dimensions[width=9]", 1)]
     [DataRow("products_array.*.dimensions[weight=4]", 2)]
