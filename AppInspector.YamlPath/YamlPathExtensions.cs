@@ -36,7 +36,7 @@ public static class YamlPathExtensions
     /// <summary>
     ///     Get all the <see cref="YamlNode" /> that match the provided yamlPath query.
     ///     See https://github.com/wwkimball/yamlpath/wiki/Segments-of-a-YAML-Path for YamlPath documentation.
-    ///     Does not support Collectors or the 'name' and 'parent' Search Keywords.
+    ///     Does not support Collectors.
     /// </summary>
     /// <param name="yamlNode">The YamlMappingNode to operate on</param>
     /// <param name="yamlPath">The YamlPath query to use</param>
@@ -366,6 +366,12 @@ public static class YamlPathExtensions
         };
     }
 
+    /// <summary>
+    /// If this yaml node is a value in a mapping gets the node for the key which refers to it
+    /// </summary>
+    /// <param name="rootNode">The root node of the document</param>
+    /// <param name="yamlNode">The node to get the name of</param>
+    /// <returns>Either the name node of an empty enumeration</returns>
     private static IEnumerable<YamlNode> GetName(YamlNode rootNode, YamlNode yamlNode)
     {
         foreach (var node in rootNode.AllNodes)
@@ -385,6 +391,13 @@ public static class YamlPathExtensions
         return Enumerable.Empty<YamlNode>();
     }
 
+    /// <summary>
+    /// Gets the parent node of this yaml node
+    /// </summary>
+    /// <param name="rootNode">The root node of the document</param>
+    /// <param name="yamlNode">The node to get the parent of</param>
+    /// <param name="numberOfLevels">The number of parent levels to traverse</param>
+    /// <returns>Either the parent node or an empty enumeration if there isn't one</returns>
     private static IEnumerable<YamlNode> GetParent(YamlNode rootNode, YamlNode yamlNode, int numberOfLevels)
     { 
         var current = new []{yamlNode};
@@ -401,6 +414,13 @@ public static class YamlPathExtensions
         }
         return current;
     }
+    
+    /// <summary>
+    /// Gets the parent node of this yaml node
+    /// </summary>
+    /// <param name="rootNode">The root node of the document</param>
+    /// <param name="yamlNode">The node to get the parent of</param>
+    /// <returns>Either the parent node or an empty enumeration if there isn't one</returns>
     private static IEnumerable<YamlNode> GetParent(YamlNode rootNode, YamlNode yamlNode)
     {
         foreach (var node in rootNode.AllNodes)
@@ -568,7 +588,7 @@ public static class YamlPathExtensions
                                 continue;
                             }
 
-                            potentialNodes.Add((childMappingNode, ParseNode(scalarValueNode)));
+                            potentialNodes.Add((childMappingNode, new ParsedNode(scalarValueNode)));
                             break;
                         }
                     }
@@ -594,7 +614,7 @@ public static class YamlPathExtensions
             {
                 if (child is YamlScalarNode { Value: { } } scalarValueNode)
                 {
-                    potentialNodes.Add(ParseNode(scalarValueNode));
+                    potentialNodes.Add(new ParsedNode(scalarValueNode));
                 }
             }
 
@@ -694,7 +714,7 @@ public static class YamlPathExtensions
                     {
                         if (targetChild.Value is YamlScalarNode { Value: { } } scalarValueNode)
                         {
-                            potentialNodes.Add((childMappingNode, ParseNode(scalarValueNode)));
+                            potentialNodes.Add((childMappingNode, new ParsedNode(scalarValueNode)));
                             break;
                         }
                     }
@@ -721,9 +741,9 @@ public static class YamlPathExtensions
     /// </summary>
     internal class ParsedNode
     {
-        internal YamlNode parsedNode { get; }
+        internal YamlScalarNode parsedNode { get; }
         /// <summary>
-        /// If the parsedNode value could not be parsed as <see cref="Decimal"/> this will be populated with the result
+        /// Always contains the string value of the parsed node
         /// </summary>
         internal string? stringValue { get; }
         /// <summary>
@@ -731,26 +751,15 @@ public static class YamlPathExtensions
         /// </summary>
         internal decimal? decimalValue { get; }
 
-        internal ParsedNode(YamlNode node, string stringValue, decimal? decimalValue = null)
+        internal ParsedNode(YamlScalarNode node)
         {
             parsedNode = node;
-            this.stringValue = stringValue;
-            this.decimalValue = decimalValue;
+            if (decimal.TryParse(parsedNode.Value, out decimal parsedDecimalValue))
+            {
+                decimalValue = parsedDecimalValue;
+            }
+            stringValue = parsedNode.Value;
         }
-    }
-    
-    /// <summary>
-    /// Helper function to parse either a number or a string out of a scalar node
-    /// </summary>
-    /// <param name="yamlScalarNode">The scalar node to parse</param>
-    /// <returns>A parsed node that contains either a double or a string</returns>
-    static ParsedNode ParseNode(YamlScalarNode yamlScalarNode)
-    {
-        if (decimal.TryParse(yamlScalarNode.Value, out decimal decimalValue))
-        {
-            return new ParsedNode(yamlScalarNode, yamlScalarNode.Value, decimalValue);
-        }
-        return new ParsedNode(yamlScalarNode, yamlScalarNode.Value);
     }
 
     /// <summary>
