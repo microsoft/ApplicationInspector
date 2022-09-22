@@ -79,7 +79,7 @@ public static class YamlPathExtensions
                 }
                 else
                 {
-                    foreach (var node in AdvanceNode(currentNode.Value, navigationElements[i]))
+                    foreach (var node in AdvanceNode(currentNode.Value, navigationElements[i], yamlNode))
                     {
                         nextNodes.TryAdd((node.Start, node.End), node);
                     }
@@ -161,21 +161,21 @@ public static class YamlPathExtensions
     ///     A <see cref="List{YamlNode}" /> of the children of the provided <see cref="YamlMappingNode" /> which match the
     ///     query.
     /// </returns>
-    private static IEnumerable<YamlNode> MappingNodeQuery(this YamlMappingNode yamlMappingNode, string yamlPathComponent)
+    private static IEnumerable<YamlNode> MappingNodeQuery(this YamlMappingNode yamlMappingNode, string yamlPathComponent, YamlNode rootNode)
     {
         // Remove braces
         var expr = yamlPathComponent.Trim('[', ']');
 
         if (expr.StartsWith('&'))
         {
-            return FollowAnchor(yamlMappingNode, expr);
+            return FollowAnchor(rootNode, expr);
         }
 
         // If it wasn't a slice it might be an expression
         // https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
         if (yamlPathComponent.StartsWith('[') && yamlPathComponent.EndsWith(']'))
         {
-            return PerformOperation(yamlMappingNode, yamlPathComponent);
+            return PerformOperation(yamlMappingNode, yamlPathComponent, rootNode);
         }
 
         // If it wasn't a slice or an expression it might be a wildcard
@@ -262,7 +262,7 @@ public static class YamlPathExtensions
     /// <param name="yamlSequenceNode"></param>
     /// <param name="yamlPathComponent"></param>
     /// <returns>The matching nodes</returns>
-    private static IEnumerable<YamlNode> PerformOperation(YamlSequenceNode yamlSequenceNode, string yamlPathComponent)
+    private static IEnumerable<YamlNode> PerformOperation(YamlSequenceNode yamlSequenceNode, string yamlPathComponent, YamlNode rootNode)
     {
         // Break break down the components:
         // The Operation to perform
@@ -279,7 +279,7 @@ public static class YamlPathExtensions
             nodesToUse = yamlSequenceNode.Children;
             for(int i = 0; i < pieces.Count - 1; i++)
             {
-                nodesToUse = nodesToUse.SelectMany(x => AdvanceNode(x, pieces[i])).ToList();
+                nodesToUse = nodesToUse.SelectMany(x => AdvanceNode(x, pieces[i], rootNode)).ToList();
             }
 
             operand = pieces.Last();
@@ -289,13 +289,13 @@ public static class YamlPathExtensions
                 switch (nodeToUse)
                 {
                     case YamlMappingNode mappingNode:
-                        foreach (var foundVal in PerformOperation(mappingNode, searchOperatorEnum, operand, invert, term))
+                        foreach (var foundVal in PerformOperation(mappingNode, searchOperatorEnum, operand, invert, term, rootNode))
                         {
                             yield return foundVal;
                         }
                         break;
                     case YamlSequenceNode sequenceNode:
-                        foreach (var foundVal in PerformOperation(sequenceNode, searchOperatorEnum, operand, invert, term))
+                        foreach (var foundVal in PerformOperation(sequenceNode, searchOperatorEnum, operand, invert, term, rootNode))
                         {
                             yield return foundVal;
                         }
@@ -305,7 +305,7 @@ public static class YamlPathExtensions
         }
         else
         {
-            foreach (var node in PerformOperation(yamlSequenceNode, searchOperatorEnum, operand, invert, term))
+            foreach (var node in PerformOperation(yamlSequenceNode, searchOperatorEnum, operand, invert, term, rootNode))
             {
                 yield return node;
             }
@@ -324,7 +324,7 @@ public static class YamlPathExtensions
     /// <returns>The matching nodes</returns>
     /// <exception cref="ArgumentOutOfRangeException">If the operation requested by the Enum is not supported</exception>
     private static IEnumerable<YamlNode> PerformOperation(YamlSequenceNode yamlSequenceNode,
-        SearchOperatorEnum searchOperatorEnum, string operand, bool invert, string term)
+        SearchOperatorEnum searchOperatorEnum, string operand, bool invert, string term, YamlNode rootNode)
     {
         return searchOperatorEnum switch
         {
@@ -358,9 +358,76 @@ public static class YamlPathExtensions
             SearchOperatorEnum.HasChild => yamlSequenceNode.Children.Any(x => x is YamlScalarNode ysn && ysn.Value == operand)
                 ? new[] { yamlSequenceNode }
                 : Enumerable.Empty<YamlNode>(),
+            SearchOperatorEnum.Name => GetName(rootNode, yamlSequenceNode),
+            SearchOperatorEnum.Parent => int.TryParse(operand, out int numberOfLevels) ?
+                GetParent(rootNode, yamlSequenceNode, numberOfLevels) : GetParent(rootNode, yamlSequenceNode),
             SearchOperatorEnum.Invalid => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum)),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum))
         };
+    }
+
+    private static IEnumerable<YamlNode> GetName(YamlNode rootNode, YamlNode yamlNode)
+    {
+        foreach (var node in rootNode.AllNodes)
+        {
+            if (node is YamlMappingNode { } yamlMappingNode)
+            {
+                foreach (var child in yamlMappingNode.Children)
+                {
+                    if (child.Value.Start.Equals(yamlNode.Start) && child.Value.End.Equals(yamlNode.End) && child.Value.Equals(yamlNode))
+                    {
+                        return new[] { child.Key };
+                    }
+                }
+            }
+        }
+
+        return Enumerable.Empty<YamlNode>();
+    }
+
+    private static IEnumerable<YamlNode> GetParent(YamlNode rootNode, YamlNode yamlNode, int numberOfLevels)
+    { 
+        var current = new []{yamlNode};
+        for (int i = 0; i < numberOfLevels; i++)
+        {
+            if (current.Length == 1)
+            {
+                current = GetParent(rootNode, current[0]).ToArray();
+            }
+            else
+            {
+                return Enumerable.Empty<YamlNode>();
+            }
+        }
+        return current;
+    }
+    private static IEnumerable<YamlNode> GetParent(YamlNode rootNode, YamlNode yamlNode)
+    {
+        foreach (var node in rootNode.AllNodes)
+        {
+            if (node is YamlMappingNode { } yamlMappingNode)
+            {
+                foreach (var child in yamlMappingNode.Children)
+                {
+                    if (child.Value.Start.Equals(yamlNode.Start) && child.Value.End.Equals(yamlNode.End) && child.Value.Equals(yamlNode))
+                    {
+                        return new[] { yamlMappingNode };
+                    }
+                }
+            }
+            else if (node is YamlSequenceNode { } yamlSequenceNode)
+            {
+                foreach (var child in yamlSequenceNode.Children)
+                {
+                    if (child.Start.Equals(yamlNode.Start) && child.End.Equals(yamlNode.End) && child.Equals(yamlNode))
+                    {
+                        return new[] { yamlSequenceNode };
+                    }
+                }
+            }
+        }
+
+        return Enumerable.Empty<YamlNode>();
     }
 
     /// <summary>
@@ -369,7 +436,7 @@ public static class YamlPathExtensions
     /// <param name="yamlMappingNode"></param>
     /// <param name="yamlPathComponent"></param>
     /// <returns>The matching nodes</returns>
-    private static IEnumerable<YamlNode> PerformOperation(YamlMappingNode yamlMappingNode, string yamlPathComponent)
+    private static IEnumerable<YamlNode> PerformOperation(YamlMappingNode yamlMappingNode, string yamlPathComponent, YamlNode rootNode)
     {
         // Break break down the components:
         // The Operation to perform
@@ -385,7 +452,7 @@ public static class YamlPathExtensions
         {
             for(int i = 0; i < pieces.Count - 1; i++)
             {
-                nodesToUse = nodesToUse.SelectMany(x => AdvanceNode(x, pieces[i])).ToList();
+                nodesToUse = nodesToUse.SelectMany(x => AdvanceNode(x, pieces[i], rootNode)).ToList();
             }
 
             operand = pieces.Last();
@@ -395,13 +462,13 @@ public static class YamlPathExtensions
                 switch (nodeToUse)
                 {
                     case YamlMappingNode mappingNode:
-                        foreach (var foundVal in PerformOperation(mappingNode, searchOperatorEnum, operand, invert, term))
+                        foreach (var foundVal in PerformOperation(mappingNode, searchOperatorEnum, operand, invert, term, rootNode))
                         {
                             yield return foundVal;
                         }
                         break;
                     case YamlSequenceNode sequenceNode:
-                        foreach (var foundVal in PerformOperation(sequenceNode, searchOperatorEnum, operand, invert, term))
+                        foreach (var foundVal in PerformOperation(sequenceNode, searchOperatorEnum, operand, invert, term, rootNode))
                         {
                             yield return foundVal;
                         }
@@ -411,7 +478,7 @@ public static class YamlPathExtensions
         }
         else
         {
-            foreach (var node in PerformOperation(yamlMappingNode, searchOperatorEnum, operand, invert, term))
+            foreach (var node in PerformOperation(yamlMappingNode, searchOperatorEnum, operand, invert, term, rootNode))
             {
                 yield return node;
             }
@@ -430,7 +497,7 @@ public static class YamlPathExtensions
     /// <returns>The matching nodes</returns>
     /// <exception cref="ArgumentOutOfRangeException">If the operation requested by the Enum is not supported</exception>
     private static IEnumerable<YamlNode> PerformOperation(YamlMappingNode yamlMappingNode, SearchOperatorEnum searchOperatorEnum,
-        string operand, bool invert, string term)
+        string operand, bool invert, string term, YamlNode rootNode)
     {
         return searchOperatorEnum switch
         {
@@ -465,6 +532,9 @@ public static class YamlPathExtensions
                 x.Key is YamlScalarNode ysn && ysn.Value == operand)
                 ? new[] { yamlMappingNode }
                 : Enumerable.Empty<YamlNode>(),
+            SearchOperatorEnum.Name => GetName(rootNode, yamlMappingNode),
+            SearchOperatorEnum.Parent => int.TryParse(operand, out int numberOfLevels) ?
+                GetParent(rootNode, yamlMappingNode, numberOfLevels) : GetParent(rootNode, yamlMappingNode),
             SearchOperatorEnum.Invalid => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum)),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum))
         };
@@ -873,6 +943,20 @@ public static class YamlPathExtensions
             // 4 length of min(
             return (SearchOperatorEnum.MinChild, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), string.Empty, invert);
         }
+        
+        rangeIndex = yamlPathComponent.IndexOf("name", StringComparison.Ordinal);
+        if (rangeIndex > -1)
+        {
+            // 5 length of min(
+            return (SearchOperatorEnum.Name, yamlPathComponent.Substring(rangeIndex + 5).Trim(')'), string.Empty, invert);
+        }
+        
+        rangeIndex = yamlPathComponent.IndexOf("parent", StringComparison.Ordinal);
+        if (rangeIndex > -1)
+        {
+            // 7 length of min(
+            return (SearchOperatorEnum.Parent, yamlPathComponent.Substring(rangeIndex + 7).Trim(')'), string.Empty, invert);
+        }
         return (SearchOperatorEnum.Invalid, string.Empty, string.Empty, false);
     }
 
@@ -882,7 +966,7 @@ public static class YamlPathExtensions
     /// <param name="yamlNode"></param>
     /// <param name="yamlPathComponent"></param>
     /// <returns></returns>
-    private static IEnumerable<YamlNode> SequenceNodeQuery(this YamlSequenceNode yamlNode, string yamlPathComponent)
+    private static IEnumerable<YamlNode> SequenceNodeQuery(this YamlSequenceNode yamlNode, string yamlPathComponent, YamlNode rootNode)
     {
         var expr = yamlPathComponent.Trim(new[] { '[', ']' });
         if (expr.StartsWith('&'))
@@ -893,7 +977,7 @@ public static class YamlPathExtensions
         // https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
         if (yamlPathComponent.StartsWith('[') && yamlPathComponent.EndsWith(']'))
         {
-            return PerformOperation(yamlNode, yamlPathComponent);
+            return PerformOperation(yamlNode, yamlPathComponent, rootNode);
         }
 
         // Wild Cards https://github.com/wwkimball/yamlpath/wiki/Wildcard-Segments
@@ -1053,16 +1137,16 @@ public static class YamlPathExtensions
     /// <param name="node"></param>
     /// <param name="pathComponent"></param>
     /// <returns></returns>
-    private static IEnumerable<YamlNode> AdvanceNode(YamlNode node, string pathComponent)
+    private static IEnumerable<YamlNode> AdvanceNode(YamlNode node, string pathComponent, YamlNode rootNode)
     {
         if (pathComponent.StartsWith("&"))
         {
-            return FollowAnchor(node, pathComponent);
+            return FollowAnchor(rootNode, pathComponent);
         }
         return node switch
         {
-            YamlMappingNode yamlMappingNode => yamlMappingNode.MappingNodeQuery(pathComponent),
-            YamlSequenceNode yamlSequenceNode => yamlSequenceNode.SequenceNodeQuery(pathComponent),
+            YamlMappingNode yamlMappingNode => yamlMappingNode.MappingNodeQuery(pathComponent, rootNode),
+            YamlSequenceNode yamlSequenceNode => yamlSequenceNode.SequenceNodeQuery(pathComponent, rootNode),
             YamlScalarNode yamlScalarNode => Enumerable.Empty<YamlNode>(), // No path inside a scalar
             _ => Enumerable.Empty<YamlNode>() // Nothing else is valid to continue
         };
@@ -1092,6 +1176,8 @@ public static class YamlPathExtensions
         Range,
         HasChild,
         MinChild,
-        MaxChild
+        MaxChild,
+        Name,
+        Parent
     }
 }

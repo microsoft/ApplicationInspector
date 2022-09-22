@@ -202,6 +202,15 @@ products_array:
     [DataRow("products_hash.*.availability.*rt.[date=~.*]", 3)]
     [DataRow("products_hash.*.availability.*a*.[date=~.*]", 3)]
     [DataRow("products_hash.*.availability.[start.missing=~.*]", 0)]
+    [DataRow("products_hash.*.availability.[parent()]", 3)]
+    [DataRow("products_array.*.availability.[parent()]", 3)]
+    [DataRow("products_hash.*.availability.[parent(2)]", 1)]
+    [DataRow("products_array.*.availability.[parent(2)]", 1)]
+    [DataRow("products_hash.*.availability.[parent()].[parent()]", 1)]
+    [DataRow("products_array.*.availability.[parent()].[parent()]", 1)]
+    [DataRow("products_hash.*.availability.[name()]", 3)]
+    [DataRow("products_array.*.availability.[name()]", 3)]
+
     [DataTestMethod]
     public void TestMapQuery(string yamlPath, int expectedNumMatches)
     {
