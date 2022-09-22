@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Tokens;
@@ -139,7 +140,7 @@ public static class YamlPathExtensions
                 
                 if (searchOperatorEnum == SearchOperatorEnum.Invalid)
                 {
-                    problems.Add($"'{piece}': Enum valid invalid.");
+                    problems.Add($"'{piece}': Operation is not supported.");
                 }
             }
         }
@@ -247,6 +248,12 @@ public static class YamlPathExtensions
         var (searchOperatorEnum, operand, term, invert) =
             ParseOperator(yamlPathComponent);
 
+        return ExecuteSequenceOperation(yamlSequenceNode, searchOperatorEnum, operand, invert, term);
+    }
+
+    private static IEnumerable<YamlNode> ExecuteSequenceOperation(YamlSequenceNode yamlSequenceNode,
+        SearchOperatorEnum searchOperatorEnum, string operand, bool invert, string term)
+    {
         return searchOperatorEnum switch
         {
             SearchOperatorEnum.Equals => GetNodesWithPredicate(yamlSequenceNode, invert,
@@ -279,15 +286,17 @@ public static class YamlPathExtensions
             // Maps support slices based on the key name
             // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
             SearchOperatorEnum.Range => GetSequenceNodesByRange(yamlSequenceNode, operand, term),
-            SearchOperatorEnum.MaxChild => GetMinOrMaxOfChild(yamlSequenceNode, term, invert, false),
-            SearchOperatorEnum.MinChild => GetMinOrMaxOfChild(yamlSequenceNode, term, invert, true),
-            SearchOperatorEnum.HasChild => yamlSequenceNode.Children.Any(x => x is YamlScalarNode ysn && ysn.Value == term) ? new[]{yamlSequenceNode} : Enumerable.Empty<YamlNode>(),
+            SearchOperatorEnum.MaxChild => GetMinOrMaxOfChild(yamlSequenceNode, operand, invert, false),
+            SearchOperatorEnum.MinChild => GetMinOrMaxOfChild(yamlSequenceNode, operand, invert, true),
+            SearchOperatorEnum.HasChild => yamlSequenceNode.Children.Any(x => x is YamlScalarNode ysn && ysn.Value == operand)
+                ? new[] { yamlSequenceNode }
+                : Enumerable.Empty<YamlNode>(),
             SearchOperatorEnum.Invalid => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum)),
             _ => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum))
         };
     }
 
-    
+
     private static IEnumerable<YamlNode> PerformOperation(YamlMappingNode yamlMappingNode, string yamlPathComponent)
     {
         // Break break down the components:
@@ -297,9 +306,44 @@ public static class YamlPathExtensions
         // If it should be inverted
         var (searchOperatorEnum, operand, term, invert) =
             ParseOperator(yamlPathComponent);
+        // The operand could itself be a path
+        IEnumerable<YamlNode> nodesToUse = new List<YamlNode>(){yamlMappingNode};
+        var pieces = GenerateNavigationElements(operand);
+        if (pieces.Count > 1)
+        {
+            for(int i = 0; i < pieces.Count - 1; i++)
+            {
+                nodesToUse = nodesToUse.SelectMany(x => AdvanceNode(x, pieces[i])).ToList();
+            }
 
-        // Perform the operation and update the
-        return ExecuteOperation(yamlMappingNode, searchOperatorEnum, operand, invert, term);
+            operand = pieces.Last();
+
+            foreach (var nodeToUse in nodesToUse)
+            {
+                switch (nodeToUse)
+                {
+                    case YamlMappingNode mappingNode:
+                        foreach (var foundVal in ExecuteOperation(mappingNode, searchOperatorEnum, operand, invert, term))
+                        {
+                            yield return foundVal;
+                        }
+                        break;
+                    case YamlSequenceNode sequenceNode:
+                        foreach (var foundVal in ExecuteSequenceOperation(sequenceNode, searchOperatorEnum, operand, invert, term))
+                        {
+                            yield return foundVal;
+                        }
+                        break;
+                }
+            }
+        }
+        else
+        {
+            foreach (var node in ExecuteOperation(yamlMappingNode, searchOperatorEnum, operand, invert, term))
+            {
+                yield return node;
+            }
+        }
     }
 
     private static IEnumerable<YamlNode> ExecuteOperation(YamlMappingNode yamlMappingNode, SearchOperatorEnum searchOperatorEnum,
@@ -337,10 +381,10 @@ public static class YamlPathExtensions
             // Maps support slices based on the key name
             // https://github.com/wwkimball/yamlpath/wiki/Segment:-Hash-Slices
             SearchOperatorEnum.Range => GetHashNodesByRange(yamlMappingNode, operand, term),
-            SearchOperatorEnum.MaxChild => GetMaxOfChild(yamlMappingNode, term, invert),
-            SearchOperatorEnum.MinChild => GetMinOfChild(yamlMappingNode, term, invert),
+            SearchOperatorEnum.MaxChild => GetMaxOfChild(yamlMappingNode, operand, invert),
+            SearchOperatorEnum.MinChild => GetMinOfChild(yamlMappingNode, operand, invert),
             SearchOperatorEnum.HasChild => yamlMappingNode.Children.Any(x =>
-                x.Key is YamlScalarNode ysn && ysn.Value == term)
+                x.Key is YamlScalarNode ysn && ysn.Value == operand)
                 ? new[] { yamlMappingNode }
                 : Enumerable.Empty<YamlNode>(),
             SearchOperatorEnum.Invalid => throw new ArgumentOutOfRangeException(nameof(searchOperatorEnum)),
@@ -686,7 +730,6 @@ public static class YamlPathExtensions
     {
         // TODO:
         // Other operand meanings https://github.com/wwkimball/yamlpath/wiki/Search-Expressions
-        // . has a special meaning
         // * has more meanings
         foreach (var child in yamlMappingNode.Children)
         {
@@ -849,21 +892,21 @@ public static class YamlPathExtensions
         if (rangeIndex > -1)
         {
             // 10 length of has_child(
-            return (SearchOperatorEnum.HasChild, string.Empty, yamlPathComponent.Substring(rangeIndex + 10).Trim(')'), invert);
+            return (SearchOperatorEnum.HasChild, yamlPathComponent.Substring(rangeIndex + 10).Trim(')'), string.Empty, invert);
         }
 
         rangeIndex = yamlPathComponent.IndexOf("max", StringComparison.Ordinal);
         if (rangeIndex > -1)
         {
             // 4 length of max(
-            return (SearchOperatorEnum.MaxChild, string.Empty, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), invert);
+            return (SearchOperatorEnum.MaxChild, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), string.Empty, invert);
         }
         
         rangeIndex = yamlPathComponent.IndexOf("min", StringComparison.Ordinal);
         if (rangeIndex > -1)
         {
             // 4 length of min(
-            return (SearchOperatorEnum.MinChild, string.Empty, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), invert);
+            return (SearchOperatorEnum.MinChild, yamlPathComponent.Substring(rangeIndex + 4).Trim(')'), string.Empty, invert);
         }
         return (SearchOperatorEnum.Invalid, string.Empty, string.Empty, false);
     }
