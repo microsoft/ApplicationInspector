@@ -386,4 +386,15 @@ prices_array:
             Assert.IsTrue(matching.Any(x => x is YamlScalarNode ysc && decimal.TryParse(ysc.Value, out decimal ysv) && ysv == Decimal.Parse(expectedFinding)));
         }
     }
+    
+    
+    [DataRow("(thing) + (other thing)", 1)]
+    [DataRow("[notclosed=3", 1)]
+    [DataRow("[!field!==value]", 1)]
+    [DataRow("[field # value]", 1)]
+    [DataTestMethod]
+    public void QueryValidatorTests(string queryToValidate, int expectedNumProblems)
+    {
+        Assert.AreEqual(expectedNumProblems, YamlPathExtensions.GetQueryProblems(queryToValidate).Count);
+    }
 }
