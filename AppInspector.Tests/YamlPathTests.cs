@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Microsoft.ApplicationInspector.ExtensionMethods;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YamlDotNet.RepresentationModel;
 
 namespace AppInspector.YamlPath.Tests;
