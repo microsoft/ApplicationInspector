@@ -30,31 +30,33 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JsonCons.JsonPath" Version="1.1.0"/>
-        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.25"/>
-        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.11"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="JsonCons.JsonPath" Version="1.1.0" />
+        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.25" />
+        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.11" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="YamlDotNet" Version="12.0.1" />
 
     </ItemGroup>
 
     <ItemGroup>
-        <Content Remove="Resources\comments.json"/>
-        <Content Remove="Resources\languages.json"/>
+        <Content Remove="Resources\comments.json" />
+        <Content Remove="Resources\languages.json" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Resources\comments.json"/>
-        <EmbeddedResource Include="Resources\languages.json"/>
+        <EmbeddedResource Include="Resources\comments.json" />
+        <EmbeddedResource Include="Resources\languages.json" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AppInspector.Common\AppInspector.Common.csproj"/>
+        <ProjectReference Include="..\AppInspector.Common\AppInspector.Common.csproj" />
+        <ProjectReference Include="..\AppInspector.YamlPath\AppInspector.YamlPath.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\.editorconfig" Link=".editorconfig"/>
-        <None Include="..\LICENSE.txt" Pack="true" PackagePath=""/>
-        <None Include="..\icon-128.png" Pack="true" PackagePath=""/>
+        <None Include="..\.editorconfig" Link=".editorconfig" />
+        <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+        <None Include="..\icon-128.png" Pack="true" PackagePath="" />
     </ItemGroup>
 </Project>

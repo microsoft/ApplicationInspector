@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+        <PackageId>Microsoft.CST.ApplicationInspector.YamlPathExtensions</PackageId>
+        <PackageVersion>0.0.0-placeholder</PackageVersion>
+        <PackageProjectUrl>https://github.com/microsoft/ApplicationInspector</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/microsoft/ApplicationInspector</RepositoryUrl>
+        <PackageTags>Security Static Analyzer</PackageTags>
+        <Description>Microsoft Application Inspector is a software source code analysis tool that helps identify and surface well-known features and other interesting characteristics of source code to aid in determining what the software is or what it does.</Description>
+        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <HighEntropyVA>true</HighEntropyVA>
+        <Product>Application Inspector</Product>
+        <Authors>Microsoft</Authors>
+        <Version>0.0.0-placeholder</Version>
+        <AssemblyName>ApplicationInspector.YamlPathExtensions</AssemblyName>
+        <RootNamespace>Microsoft.ApplicationInspector.ExtensionMethods</RootNamespace>
+        <Company>Microsoft</Company>
+        <SignAssembly>true</SignAssembly>
+        <AssemblyVersion>0.0.0</AssemblyVersion>
+        <FileVersion>0.0.0</FileVersion>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageIcon>icon-128.png</PackageIcon>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <Nullable>enable</Nullable>
+        <LangVersion>10.0</LangVersion>
+        <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="YamlDotNet" Version="12.0.1"/>
+    </ItemGroup>
+
+</Project>

@@ -9,7 +9,7 @@ namespace AppInspector.Tests.RuleProcessor;
 public class XmlAndJsonTests
 {
     private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
-    
+
     private const string jsonAndXmlStringRule = @"[
         {
             ""id"": ""SA000005"",
@@ -149,7 +149,7 @@ public class XmlAndJsonTests
       </book>  
   </bookstore>
 ";
-    
+
     [DataRow(jsonStringRule)]
     [DataRow(jsonAndXmlStringRule)]
     [DataTestMethod]
@@ -189,7 +189,120 @@ public class XmlAndJsonTests
             Assert.Fail();
         }
     }
-    
+
+    [TestMethod]
+    public void TestYml()
+    {
+        var content =@"hash_name:
+  a_key: 0
+  b_key: 1
+  c_key: 2
+  d_key: 3
+  e_key: 4";
+        var ruleThatWontFind = @"[{
+    ""name"": ""YamlPathValidate"",
+    ""id"": ""YmlPath"",
+    ""description"": ""Yaml Path Validation"",
+    ""tags"": [
+      ""Code.Java.17""
+    ],
+    ""severity"": ""critical"",
+    ""patterns"": [
+      {
+        ""pattern"": ""3"",
+        ""ymlpaths"" : [""/hash_name/b_key""],
+        ""type"": ""string"",
+        ""scopes"": [
+          ""code""
+        ],
+        ""modifiers"": [
+          ""i""
+        ],
+        ""confidence"": ""high""
+      }
+    ]
+  }]";
+        var ruleWithRegex = @"[{
+    ""name"": ""YamlPathValidate"",
+    ""id"": ""YmlPath"",
+    ""description"": ""Yaml Path Validation"",
+    ""tags"": [
+      ""Code.Java.17""
+    ],
+    ""severity"": ""critical"",
+    ""patterns"": [
+      {
+        ""pattern"": ""0"",
+        ""ymlpaths"" : [""/hash_name/a_key""],
+        ""type"": ""regex"",
+        ""scopes"": [
+          ""code""
+        ],
+        ""modifiers"": [
+          ""i""
+        ],
+        ""confidence"": ""high""
+      }
+    ]
+  }]";
+        var rule = @"[{
+    ""name"": ""YamlPathValidate"",
+    ""id"": ""YmlPath"",
+    ""description"": ""Yaml Path Validation"",
+    ""tags"": [
+      ""Code.Java.17""
+    ],
+    ""severity"": ""critical"",
+    ""patterns"": [
+      {
+        ""pattern"": ""0"",
+        ""ymlpaths"" : [""/hash_name/a_key""],
+        ""type"": ""string"",
+        ""scopes"": [
+          ""code""
+        ],
+        ""modifiers"": [
+          ""i""
+        ],
+        ""confidence"": ""high""
+      }
+    ]
+  }]";
+        // This rule should find one match
+        RuleSet rules = new();
+        var originalSource = "TestRules";
+        rules.AddString(rule, originalSource);
+        var analyzer = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
+            new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
+        if (_languages.FromFileNameOut("test.yml", out var info))
+        {
+            var matches = analyzer.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
+            Assert.AreEqual(1, matches.Count);
+        }
+        rules = new();
+        
+        // This rule intentionally does not find a match
+        rules.AddString(ruleThatWontFind, originalSource);
+        analyzer = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
+            new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
+        if (_languages.FromFileNameOut("test.yml", out var info2))
+        {
+            var matches = analyzer.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info2);
+            Assert.AreEqual(0, matches.Count);
+        }
+        rules = new();
+        
+        // This is the same rule as the first but with the regex operation
+        rules.AddString(ruleWithRegex, originalSource);
+        analyzer = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
+            new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
+        if (_languages.FromFileNameOut("test.yml", out var info3))
+        {
+            var matches = analyzer.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info3);
+            Assert.AreEqual(1, matches.Count);
+        }
+    }
+
     [TestMethod]
     public void TestXmlWithAndWithoutNamespace()
     {

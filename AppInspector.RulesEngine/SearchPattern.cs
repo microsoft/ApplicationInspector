@@ -42,4 +42,11 @@ public class SearchPattern
     /// </summary>
     [JsonProperty(PropertyName = "jsonpaths")]
     public string[]? JsonPaths { get; set; }
+
+    /// <summary>
+    ///     If set, attempt to parse the file as YML and if that is possible,
+    ///     before running the pattern, select down to the JsonPath provided
+    /// </summary>
+    [JsonProperty(PropertyName = "ymlpaths")]
+    public string[]? YamlPaths { get; set; }
 }

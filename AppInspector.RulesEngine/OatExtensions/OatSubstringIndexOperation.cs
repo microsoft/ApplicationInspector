@@ -98,8 +98,21 @@ public class OatSubstringIndexOperation : OatOperation
                                 }
                             }
                         }
+                    if (src.YmlPaths is not null)
+                        foreach (var ymlPath in src.YmlPaths)
+                        {
+                            var targets = tc.GetStringFromYmlPath(ymlPath);
+                            foreach (var target in targets)
+                            {
+                                var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
+                                foreach (var match in matches)
+                                {
+                                    outmatches.Add((i, match));
+                                }
+                            }
+                        }
 
-                    if (src.JsonPaths is null && src.XPaths is null)
+                    if (src.JsonPaths is null && src.XPaths is null && src.YmlPaths is null)
                     {
                         // If state 2 is a boundary, restrict the text provided to check to match the boundary
                         if (state2 is Boundary boundary)

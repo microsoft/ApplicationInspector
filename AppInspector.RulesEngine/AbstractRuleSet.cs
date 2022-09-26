@@ -203,7 +203,7 @@ public abstract class AbstractRuleSet
             var modifiers = pattern.Modifiers?.ToList() ?? new List<string>();
             if (pattern.PatternType is PatternType.String or PatternType.Substring)
                 return new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String,
-                    xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths)
+                    xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths:pattern.YamlPaths)
                 {
                     Label = clauseNumber.ToString(CultureInfo
                         .InvariantCulture), //important to pattern index identification
@@ -212,7 +212,7 @@ public abstract class AbstractRuleSet
                     Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
                 };
             if (pattern.PatternType == PatternType.Regex)
-                return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths)
+                return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths)
                 {
                     Label = clauseNumber.ToString(CultureInfo
                         .InvariantCulture), //important to pattern index identification
