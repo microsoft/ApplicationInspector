@@ -306,9 +306,8 @@ public class TextContainer
     /// <summary>
     ///     Check whether the boundary in a text matches the scope of a search pattern (code, comment etc.)
     /// </summary>
-    /// <param name="pattern"> The scopes to check </param>
+    /// <param name="scopes"> The scopes to check </param>
     /// <param name="boundary"> Boundary in the text </param>
-    /// <param name="text"> Text </param>
     /// <returns> True if boundary is in a provided scope </returns>
     public bool ScopeMatch(IEnumerable<PatternScope> scopes, Boundary boundary)
     {
@@ -324,6 +323,7 @@ public class TextContainer
     internal IEnumerable<(string, Boundary)> GetStringFromYmlPath(string Path)
     {
         if (!_triedToConstructYmlDocument)
+        {
             try
             {
                 _triedToConstructYmlDocument = true;
@@ -335,15 +335,20 @@ public class TextContainer
                 _logger.LogError("Failed to parse as a YML document: {0}", e.Message);
                 _ymlDocument = null;
             }
+        }
 
-        if (_ymlDocument is not null)
+        if (_ymlDocument?.Documents.Count > 0)
         {
-            var matches = _ymlDocument.Documents[0].RootNode.Query(Path);
-            foreach (var match in matches)
+            foreach (var document in _ymlDocument.Documents)
             {
-                yield return (match.ToString(),
-                    new Boundary() { Index = match.Start.Index, Length = match.End.Index - match.Start.Index });
+                var matches = document.RootNode.Query(Path);
+                foreach (var match in matches)
+                {
+                    yield return (match.ToString(),
+                        new Boundary() { Index = match.Start.Index, Length = match.End.Index - match.Start.Index });
+                }
             }
+
         }
     }
 }

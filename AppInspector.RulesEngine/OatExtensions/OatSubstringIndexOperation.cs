@@ -107,6 +107,7 @@ public class OatSubstringIndexOperation : OatOperation
                                 var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);
                                 foreach (var match in matches)
                                 {
+                                    match.Index += target.Item2.Index;
                                     outmatches.Add((i, match));
                                 }
                             }
