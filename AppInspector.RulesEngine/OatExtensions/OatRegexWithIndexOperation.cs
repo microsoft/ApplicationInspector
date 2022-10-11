@@ -93,7 +93,7 @@ public class OatRegexWithIndexOperation : OatOperation
                                 foreach (var target in targets)
                                 {
                                     var matches = GetMatches(regex, tc, clause, src.Scopes, target.Item2);
-                                    foreach (var match in matches) outmatches.Add(match);
+                                    outmatches.AddRange(matches);
                                 }
                             }
 
