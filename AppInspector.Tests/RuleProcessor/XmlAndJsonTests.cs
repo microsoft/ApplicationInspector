@@ -305,6 +305,122 @@ public class XmlAndJsonTests
     }
 
     [TestMethod]
+    public void TestMultiDocYaml()
+    {
+        string content =
+            @"
+---
+test:
+  test1:
+    - something
+    - other
+  test2: true
+  test3:
+    test:
+      other:
+        - other1:
+          property1: 1
+          property2: 2
+      tested: ok
+---
+test:
+  test1:
+    - something
+    - other
+  test2: true
+  test3:
+    test:
+      other:
+        - other1:
+          property1: 1
+          property2: 2
+      tested: ok
+";
+        string rule =
+            @"[
+    {
+      ""name"": ""Yaml test"",
+        ""id"": ""00000001"",
+        ""applies_to_file_regex"": [
+        ""test.yml""
+            ],
+        ""tags"": [
+        ""MyTest""
+            ],
+        ""severity"": ""moderate"",
+        ""patterns"": [
+        {
+            ""pattern"": ""ok"",
+            ""ymlpaths"": [""/test/test3/test/tested""],
+            ""type"": ""string"",
+            ""scopes"": [
+            ""code""
+                ],
+            ""modifiers"": [
+            ""m""
+                ],
+            ""confidence"": ""high""
+        }
+        ]
+    }
+    ]";
+        string rule2 =
+            @"[
+    {
+      ""name"": ""Yaml test"",
+        ""id"": ""00000001"",
+        ""applies_to_file_regex"": [
+        ""test.yml""
+            ],
+        ""tags"": [
+        ""MyTest""
+            ],
+        ""severity"": ""moderate"",
+        ""patterns"": [
+        {
+            ""pattern"": ""ok"",
+            ""ymlpaths"": [""/test/test3/test/tested""],
+            ""type"": ""regex"",
+            ""scopes"": [
+            ""code""
+                ],
+            ""modifiers"": [
+            ""m""
+                ],
+            ""confidence"": ""high""
+        }
+        ]
+    }
+    ]";
+        RuleSet rules = new();
+        var originalSource = "TestRules";
+        rules.AddString(rule, originalSource);
+        RuleSet rules2 = new();
+        rules.AddString(rule2, originalSource);
+        var analyzer = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
+            new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
+        var analyzer2 = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
+            new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
+        if (_languages.FromFileNameOut("test.yml", out var info))
+        {
+            var matches = analyzer.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
+            Assert.AreEqual(2, matches.Count);
+            Assert.AreEqual("ok", matches[0].Sample);
+            Assert.AreEqual(185, matches[0].Boundary.Index);
+            Assert.AreEqual(2, matches[0].Boundary.Length);
+            Assert.AreEqual(372, matches[1].Boundary.Index);
+            Assert.AreEqual(2, matches[1].Boundary.Length);
+            var matches2 = analyzer2.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
+            Assert.AreEqual(2, matches2.Count);
+            Assert.AreEqual("ok", matches2[0].Sample);
+            Assert.AreEqual(185, matches[0].Boundary.Index);
+            Assert.AreEqual(2, matches[0].Boundary.Length);
+            Assert.AreEqual(372, matches[1].Boundary.Index);
+            Assert.AreEqual(2, matches[1].Boundary.Length);
+        }
+    }
+
+    [TestMethod]
     public void TestYamlWithIndexLocation()
     {
         string content =

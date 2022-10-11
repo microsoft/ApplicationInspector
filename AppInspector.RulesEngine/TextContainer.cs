@@ -339,12 +339,16 @@ public class TextContainer
 
         if (_ymlDocument?.Documents.Count > 0)
         {
-            var matches = _ymlDocument.Documents[0].RootNode.Query(Path);
-            foreach (var match in matches)
+            foreach (var document in _ymlDocument.Documents)
             {
-                yield return (match.ToString(),
-                    new Boundary() { Index = match.Start.Index, Length = match.End.Index - match.Start.Index });
+                var matches = document.RootNode.Query(Path);
+                foreach (var match in matches)
+                {
+                    yield return (match.ToString(),
+                        new Boundary() { Index = match.Start.Index, Length = match.End.Index - match.Start.Index });
+                }
             }
+
         }
     }
 }
