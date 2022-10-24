@@ -1,0 +1,51 @@
+﻿@using System.Text
+@inject BlazorSarifViewer.Wasm.AppState appState
+
+@if (CachedCode.Status == CacheStatus.Fetched)
+{
+    var lines = CachedCode.Content.Split('\n');
+    var minLine = Math.Max(0, ((DataLineStart ?? 1) - 1) - appState.LinesContext);
+    var maxLine = Math.Min(lines.Length, ((DataLineEnd ?? (DataLineStart ?? 1)) - 1) + appState.LinesContext);
+    var text = string.Join('\n', lines.Skip(minLine).Take(maxLine - minLine + 1));
+    <CodeComponent DataLineEnd="DataLineEnd" DataLineStart="DataLineStart" DataStart="minLine+1" Language="@Language">@text</CodeComponent>
+}
+else
+{
+    <p>@CachedCode.Content</p>
+}
+
+@code{
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
+    /// <summary>
+    /// One-Indexed line number for the start of the snippet
+    /// </summary>
+    [Parameter]
+    public int? DataLineStart { get; set; }
+
+    /// <summary>
+    /// One-Indexed line number for the end of the snippet
+    /// </summary>
+    [Parameter]
+    public int? DataLineEnd { get; set; }
+
+    [Parameter]
+    public string Language { get; set; }
+
+    private CachedCode _cachedCode;
+
+    [Parameter]
+    public CachedCode CachedCode 
+    { 
+        get 
+        { 
+            return _cachedCode; 
+        } 
+        set 
+        { 
+            _cachedCode = value; 
+            _cachedCode.Callbacks.Add(() => this.StateHasChanged());
+        } 
+    }
+}

@@ -1,0 +1,128 @@
+﻿@page "/"
+@using System.Threading
+@using System.Diagnostics
+@using Microsoft.CodeAnalysis.Sarif
+@using System.IO
+@inject BlazorSarifViewer.Wasm.AppState appState
+@inject NavigationManager NavigationManager
+
+<h1>Load some sarif... (Max @maxMegaByteFileSize MB. Larger files are slower.)</h1>
+<HxInputFileDropZone Multiple="true"
+                     OnChange="HandleFileSelected"
+                     Accept=".sarif"
+                     CssClass="my-4" />
+
+<p>@progress</p>
+<p>@sw.Elapsed</p>
+
+@code {
+    const string DefaultStatus = "The files will be processed immediately.";
+    const string LoadingStatus = "The files are being processed ";
+    const string PostProcess = " files have been processed.";
+    string status = DefaultStatus;
+    SarifLogProgress progress = new SarifLogProgress();
+    CancellationTokenSource cts = new CancellationTokenSource();
+    private Stopwatch sw = new Stopwatch();
+
+    private void ResetProgress()
+    {
+        progress.Update = () => StateHasChanged();
+        progress.Status = SarifLogProgressStatus.NotStarted;
+    }
+
+    private class SarifLogProgress
+    {
+        public long BytesTransfered { get; set; }
+        public long TotalBytes { get; set; }
+        public Action Update = () => { };
+        public int TotalNumFiles { get; set; }
+        public int CurFile { get; set; }
+        public string CurFileName { get; set; } = string.Empty;
+        public SarifLogProgressStatus Status { get; set;  }
+        public override string ToString() => Status switch
+        {
+            SarifLogProgressStatus.NotStarted => "The files will be processed immediately.",
+            SarifLogProgressStatus.StartedCopying => $"Copied {BytesTransfered}/{TotalBytes} bytes.",
+            SarifLogProgressStatus.FinishedCopying => $"Finished copying {BytesTransfered} bytes.",
+            SarifLogProgressStatus.ErrorCopying => "Encountered an error while copying.",
+            SarifLogProgressStatus.StartedLoading => "Started Loading file into SarifLog.",
+            SarifLogProgressStatus.FinishedLoading => "Finished Loading file into SarifLog.",
+            SarifLogProgressStatus.ErrorLoading => "Error loading file into SarifLog.",
+            SarifLogProgressStatus.TooLarge => $"{CurFileName} is too large and cannot be loaded.",
+            _ => "Invalid status."
+        };
+    }
+
+    private enum SarifLogProgressStatus
+    {
+        NotStarted,
+        StartedCopying,
+        FinishedCopying,
+        ErrorCopying,
+        StartedLoading,
+        FinishedLoading,
+        ErrorLoading,
+        TooLarge
+    }
+
+    const int maxMegaByteFileSize = 32;
+    const int _defaultBufferSize = 128 * 1024;
+    const int _maxUploadSize = maxMegaByteFileSize * 1024 * 1024;
+    const int _memoryStreamCutoff = maxMegaByteFileSize * 1024 * 1024;
+
+    private static async Task<Stream> FromIBrowserFileAsync(IBrowserFile file, SarifLogProgress progress, CancellationToken cancellationToken, int bufferSize = _defaultBufferSize)
+    {
+        var buffer = new byte[bufferSize];
+        using var stream = file.OpenReadStream(maxAllowedSize:_maxUploadSize);
+        Stream fs = stream.Length > _memoryStreamCutoff ?
+            new FileStream(Path.GetTempFileName(), FileMode.Create, FileAccess.ReadWrite, FileShare.Read, bufferSize, FileOptions.Asynchronous | FileOptions.RandomAccess | FileOptions.DeleteOnClose) :
+            new MemoryStream((int)stream.Length);
+        int count;
+        progress.TotalBytes = stream.Length;
+        progress.Status = SarifLogProgressStatus.StartedCopying;
+        while ((count = await stream.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken)) != 0)
+        {
+            progress.BytesTransfered += count;
+            progress.Update();
+            await fs.WriteAsync(buffer.AsMemory(0, count), cancellationToken);
+        }
+        progress.Status = SarifLogProgressStatus.FinishedCopying;
+        fs.Position = 0;
+        return fs;
+    }
+
+    async void HandleFileSelected(InputFileChangeEventArgs files)
+    {
+        sw.Restart();
+        foreach (var file in appState.Files)
+        {
+            file.Dispose();
+        }
+        appState.Files.Clear();
+        var list = files.GetMultipleFiles(999);
+        ResetProgress();
+        var fileNum = 1;
+        foreach(var file in list)
+        {
+            try
+            {
+                progress.CurFileName = file.Name;
+                progress.BytesTransfered = 0;
+                progress.Status = SarifLogProgressStatus.NotStarted;
+                var fs = await FromIBrowserFileAsync(file, progress, cts.Token);
+                progress.Status = SarifLogProgressStatus.StartedLoading;
+                appState.Files.Add(new SarifFile(fs, file.Name));
+                progress.Status = SarifLogProgressStatus.FinishedLoading;
+            }
+            catch(Exception)
+            {
+                progress.Status = SarifLogProgressStatus.TooLarge;
+            }
+        }
+        sw.Stop();
+        if (appState.Files.Any())
+        {
+            NavigationManager.NavigateTo("ListIssues");
+        }
+    }
+}

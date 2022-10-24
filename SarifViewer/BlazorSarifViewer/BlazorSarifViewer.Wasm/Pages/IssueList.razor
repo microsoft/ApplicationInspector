@@ -1,0 +1,275 @@
+﻿@page "/ListIssues"
+@layout FlushLayout
+@using BlazorSarifViewer.Wasm.Components
+@using Microsoft.CodeAnalysis.Sarif
+@inject BlazorSarifViewer.Wasm.AppState appState
+@inject IHxMessengerService Messenger
+@inject NavigationManager NavigationManager
+<div class="d-flex flex-column vh-100">
+	<div class="px-4 pt-2">
+		<div class="row">
+			<div class="col-6">
+				<HxSelect Label="Sarif file"
+						  Data="appState.Files"
+						  TItem="SarifFile"
+						  TValue="SarifFile"
+						  TextSelector="sf => sf.FileName"
+						  Value="currentLog"
+						  ValueExpression="() => currentLog"
+						  ValueChanged="HandleCurrentLogChanged"
+						  Nullable="false" />
+			</div>
+			<div class="col-6">
+				<HxSelect Data="currentLog.SarifLog.Runs"
+						  Label="Run"
+						  TItem="Run"
+						  TValue="Run"
+						  TextSelector="@(r => $"{r.Tool.Driver.Name} - {r.Results.Count}  result(s)")"
+						  Nullable="false"
+						  Value="settings.Run"
+						  ValueChanged="RunCallback"
+						  ValueExpression="() => settings.Run" />
+			</div>
+		</div>
+
+		<HxCard CssClass="my-4">
+			@*<HeaderTemplate>
+				<HxCardTitle>Issues filter</HxCardTitle>
+			</HeaderTemplate>*@
+			<BodyTemplate>
+				<div class="row">
+					<div class="col-3">
+						<label class="form-label">Rules</label>
+						@if (settings.Run?.Tool?.Driver?.Rules?.Any() ?? false)
+						{
+							<HxDropdown CssClass="border-1 d-block">
+								<HxDropdownToggleButton Color="ThemeColor.Dark" Outline="true">
+									@if (settings.Rules.Any())
+									{
+										<text>@settings.Rules.Count rules selected</text>
+									}
+									else
+									{
+										<text>-select rules-</text>
+									}
+								</HxDropdownToggleButton>
+								<HxDropdownContent CssClass="px-3">
+									<HxCheckboxList Data="settings.Run.Tool.Driver.Rules"
+													TItem="ReportingDescriptor"
+													TValue="ReportingDescriptor"
+													Value="settings.Rules"
+													ValueChanged="RulesCallback"
+													ValueExpression="() => settings.Rules"
+													TextSelector="@(r => (r.Id == r.Name) ? r.Id : r.Id + " - " + r.Name)" />
+								</HxDropdownContent>
+							</HxDropdown>
+						}
+						else
+						{
+							<div>-no rules-</div>
+						}
+					</div>
+					<div class="col-3">
+						<label class="form-label">Result Kind</label>
+						<HxDropdown CssClass="border-1 d-block">
+							<HxDropdownToggleButton Color="ThemeColor.Dark" Outline="true">
+								@if (settings.ResultKinds.Any())
+								{
+									<text>@String.Join(", ", settings.ResultKinds)</text>
+								}
+								else
+								{
+									<text>-select kinds-</text>
+								}
+							</HxDropdownToggleButton>
+							<HxDropdownContent CssClass="px-3">
+								<HxCheckboxList Data="Enum.GetValues<ResultKind>()"
+												TItem="ResultKind"
+												TValue="ResultKind"
+												Value="settings.ResultKinds"
+												ValueChanged="ResultKindsCallback"
+												ValueExpression="() => settings.ResultKinds" />
+							</HxDropdownContent>
+						</HxDropdown>
+					</div>
+					<div class="col-3">
+						<label class="form-label">Result Level</label>
+						<HxDropdown CssClass="border-1 d-block">
+							<HxDropdownToggleButton Color="ThemeColor.Dark" Outline="true">
+								@if (settings.ResultLevels.Any())
+								{
+									<text>@String.Join(", ", settings.ResultLevels)</text>
+								}
+								else
+								{
+									<text>-select levels-</text>
+								}
+							</HxDropdownToggleButton>
+							<HxDropdownContent CssClass="px-3">
+								<HxCheckboxList Data="Enum.GetValues<FailureLevel>()"
+												TItem="FailureLevel"
+												TValue="FailureLevel"
+												Value="settings.ResultLevels"
+												ValueChanged="ResultLevelsCallback"
+												ValueExpression="() => settings.ResultLevels" />
+							</HxDropdownContent>
+						</HxDropdown>
+					</div>
+					<div class="col-3">
+						<label class="form-label">Tags</label>
+						@if (settings.Run is not null)
+						{
+							@if (settings.Run.Tags.Any() is true)
+							{
+								<HxDropdown CssClass="border-1 d-block">
+									<HxDropdownToggleButton Color="ThemeColor.Dark" Outline="true">
+										@if (settings.Tags.Any())
+										{
+											<text>@String.Join(", ", settings.Tags)</text>
+										}
+										else
+										{
+											<text>-select tags-</text>
+										}
+									</HxDropdownToggleButton>
+									<HxDropdownContent CssClass="px-3">
+										<HxCheckboxList Data="settings.Run.Tags"
+														TItem="string"
+														TValue="string"
+														Value="settings.Tags"
+														ValueChanged="TagsCallback"
+														ValueExpression="() => settings.Tags" />
+									</HxDropdownContent>
+								</HxDropdown>
+							}
+							else
+							{
+								
+								if (tagToRuleIdsMap.Any())
+								{
+									<HxDropdown CssClass="border-1 d-block">
+									<HxDropdownToggleButton Color="ThemeColor.Dark" Outline="true">
+										@if (tagToRuleIdsMap.Any())
+										{
+											<text>@String.Join(", ", tagToRuleIdsMap.Keys)</text>
+										}
+										else
+										{
+											<text>-select tags-</text>
+										}
+									</HxDropdownToggleButton>
+									<HxDropdownContent CssClass="px-3">
+										<HxCheckboxList Data="tagToRuleIdsMap.Keys"
+														TItem="string"
+														TValue="string"
+														Value="settings.Tags"
+														ValueChanged="TagsCallback"
+														ValueExpression="() => settings.Tags" />
+									</HxDropdownContent>
+									</HxDropdown>
+								}
+								else
+								{
+									<div>-no tags-</div>
+								}
+							}
+						}
+						
+					</div>
+				</div>
+			</BodyTemplate>
+		</HxCard>
+	</div>
+	<div class="flex-grow-1 px-4" style="overflow-y: scroll;">
+		@if (settings.Run is not null)
+		{
+			<Virtualize TItem="Result" Items="ResultsToDisplay" Context="result" ItemSize="500">
+				<ResultComponent @key="result" Result="result" Run="settings.Run" />
+			</Virtualize>
+		}
+	</div>
+</div>
+
+@code{
+	BlazorSarifViewer.Wasm.Models.IssueListSettings settings = new();
+	SarifFile currentLog;
+	private ICollection<Result> ResultsToDisplay = new Result[0];
+
+	Dictionary<string, List<string>> tagToRuleIdsMap = new();
+
+	private void SetResults()
+	{
+		ResultsToDisplay = settings.Run.Results.Where(result => settings.ResultKinds.Count == 0 || settings.ResultKinds.Contains(result.Kind))
+			.Where(result => settings.ResultLevels.Count == 0 || settings.ResultLevels.Contains(result.Level))
+			.Where(result => settings.Tags.Count == 0 || settings.Tags.Any(settingsTag => result.Tags.Contains(settingsTag)) || settings.Tags.Any(settingsTag => tagToRuleIdsMap.TryGetValue(settingsTag, out var ruleIdList) && ruleIdList.Contains(result.RuleId)))
+			.Where(result => settings.Rules.Count == 0 || settings.Rules.Any(settingsRule => settingsRule.Id == result.RuleId)).ToArray();
+	}
+
+	private void TagsCallback(List<string> input)
+	{
+		settings.Tags = input; 
+		SetResults();
+	}
+
+	private void ResultLevelsCallback(List<FailureLevel> levels)
+	{
+		settings.ResultLevels = levels; 
+		SetResults();
+	}
+
+	private void ResultKindsCallback(List<ResultKind> kinds)
+	{
+		settings.ResultKinds = kinds;
+		SetResults();
+	}
+
+	private void RulesCallback(List<ReportingDescriptor> rules)
+	{
+		settings.Rules = rules;
+		SetResults();
+	}
+
+	private void RunCallback(Run run)
+	{
+		settings.Run = run;
+		SetResults();
+	}
+
+	protected override void OnInitialized()
+	{
+		if (!appState.Files.Any())
+		{
+			Messenger.AddInformation("Pick files", "Please pick some Sarif files first...");
+			NavigationManager.NavigateTo("");
+		}
+		else
+		{
+			HandleCurrentLogChanged(appState.Files[0]);
+		}
+	}
+
+	private void HandleCurrentLogChanged(SarifFile newLog)
+	{
+		currentLog = newLog;
+		settings = new()
+		{
+			Run = currentLog.SarifLog.Runs.FirstOrDefault()
+		};
+		tagToRuleIdsMap.Clear();
+		foreach(ReportingDescriptor rule in settings.Run?.Tool?.Driver?.Rules ?? Array.Empty<ReportingDescriptor>())
+		{
+			foreach(string tag in rule.Tags)
+			{
+				if (!tagToRuleIdsMap.ContainsKey(tag))
+				{
+					tagToRuleIdsMap[tag] = new() { rule.Id };	
+				}
+				else
+				{
+					tagToRuleIdsMap[tag].Add(rule.Id);
+				}
+			}
+		}
+		SetResults();
+	}
+}

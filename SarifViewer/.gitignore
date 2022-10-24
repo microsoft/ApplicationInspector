@@ -1,0 +1,9 @@
+
+BlazorSarifViewer/.vs/
+**/bin
+**/obj
+/.vs
+/WinSarifViewer/packages
+/WinSarifViewer/.vs/WinSarifViewer/v16/.suo
+/WinSarifViewer/publish
+/WinSarifViewer/WinSarifViewer_TemporaryKey.pfx

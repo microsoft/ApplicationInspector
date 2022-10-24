@@ -1,0 +1,26 @@
+<div>File: <i>@FileUri.ToString()</i>. @LinesString</div>
+
+@code{
+	[Parameter]
+	public int? LineStart { get; set; }
+
+	[Parameter]
+	public int? LineEnd { get; set; }
+
+	[Parameter]
+	public Uri? FileUri { get; set; }
+
+	private string LinesString { 
+		get
+		{
+			if (LineStart == LineEnd)
+			{
+				return $"Line: {LineStart}";
+			}
+			else
+			{
+				return $"Lines: {LineStart}-{LineEnd}";
+			}
+		}
+	} 
+}

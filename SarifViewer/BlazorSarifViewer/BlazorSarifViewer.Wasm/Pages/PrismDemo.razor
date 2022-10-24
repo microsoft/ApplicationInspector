@@ -1,0 +1,15 @@
+﻿@page "/prismdemo"
+
+<h1>CodeComponent DEMO:</h1>
+<BlazorSarifViewer.Wasm.Components.CodeComponent Language="csharp">
+	async void HandleFileSelected(InputFileChangeEventArgs files)
+	{
+		appState.Files.Clear();
+
+		foreach (var file in files.GetMultipleFiles(999))
+		{
+			appState.Files.Add(await SarifFile.FromAsyncStream(file));
+		}
+		NavigationManager.NavigateTo("ListIssues");
+	}
+</BlazorSarifViewer.Wasm.Components.CodeComponent>

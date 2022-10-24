@@ -1,0 +1,80 @@
+﻿@using Microsoft.CodeAnalysis.Sarif
+@using System.IO
+@inject BlazorSarifViewer.Wasm.AppState appState
+
+<HxCard CssClass="mb-3">
+	<HeaderTemplate>
+		@Result.Kind - @Result.Level
+	</HeaderTemplate>
+	<BodyTemplate>
+		<p><i>@Result.RuleId: @Result.Message?.Text</i></p>
+		<p>@Run.Tool?.Driver?.Rules?.Where(x => x.Id == Result.RuleId).FirstOrDefault()?.FullDescription?.Text</p>
+		@if (Result.Locations?.Any() ?? false)
+		{
+			(var language, var regionStartLine, var regionEndLine) = (Result.Locations[0].PhysicalLocation?.Region?.SourceLanguage, Result.Locations[0].PhysicalLocation?.Region?.StartLine, Result.Locations[0].PhysicalLocation?.Region?.EndLine);
+			if (string.IsNullOrEmpty(language))
+			{
+				if (Run.TryGetProperty("semmle.sourceLanguage", out string sourceLanguage))
+				{
+					language = sourceLanguage;
+				}
+				else
+				{
+					language = Result.Locations[0].PhysicalLocation?.ArtifactLocation?.Uri.ToString().Split('.')[^1];
+				}
+			}
+			if (regionEndLine < regionStartLine)
+			{
+				regionEndLine = regionStartLine;
+			}
+			<ResultMetaData FileUri="Result.Locations[0].PhysicalLocation.ArtifactLocation.Uri" LineStart="regionStartLine" LineEnd="regionEndLine"></ResultMetaData>
+
+			if (!string.IsNullOrEmpty(Result.Locations[0].PhysicalLocation?.ContextRegion?.Snippet?.Text))
+			{
+				<CodeComponent DataLineStart="regionStartLine" DataLineEnd="regionEndLine" DataStart="Result.Locations[0].PhysicalLocation?.ContextRegion?.StartLine" Language="@language">@Result.Locations[0].PhysicalLocation.ContextRegion.Snippet.Text</CodeComponent>
+			}
+			else if (!string.IsNullOrEmpty(Result.Locations[0].PhysicalLocation?.Region?.Snippet?.Text))
+			{
+				<CodeComponent DataLineStart="regionStartLine" DataLineEnd="regionEndLine" DataStart="regionStartLine" Language="@language">@Result.Locations[0].PhysicalLocation.Region.Snippet</CodeComponent>
+			}
+			else
+			{
+				@if (Run.Artifacts.FirstOrDefault(x => x.Location?.Uri?.Equals(Result.Locations[0].PhysicalLocation?.ArtifactLocation?.Uri) ?? false) is Artifact artifact && artifact.Contents is not null)
+				{
+					<CodeComponent DataLineStart="regionStartLine" DataLineEnd="regionEndLine" DataStart="regionStartLine" Language="@language">@artifact.Contents.Text</CodeComponent>
+				}
+				else if (Run.VersionControlProvenance?.Any(x => x.RepositoryUri is not null && (x.RevisionId is not null || x.RevisionTag is not null)) is true)
+				{
+					var versions = Run.VersionControlProvenance?.Where(x => x.RepositoryUri is not null && (x.RevisionId is not null || x.RevisionTag is not null));
+
+					if (versions.FirstOrDefault(x => x.RevisionId is not null) is VersionControlDetails versionControlDetailsByRevisionId)
+					{
+						if (GitHubUrlConverter.TryParseGitHubUrl(versionControlDetailsByRevisionId.RepositoryUri, out var owner, out var repo))
+						{
+							var text = CodeCache.Get(owner, repo, versionControlDetailsByRevisionId.RevisionId, Result.Locations[0].PhysicalLocation.ArtifactLocation.Uri.ToString());
+							<CachedCodeComponent DataLineStart="regionStartLine" DataLineEnd="regionEndLine" CachedCode="text" Language="@language"></CachedCodeComponent>
+						}
+					}
+				}
+			}
+		}
+	</BodyTemplate>
+</HxCard>
+
+@code {
+	[Parameter]
+	public Result Result { get; set; }
+
+	[Parameter]
+	public Run Run { get; set; }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+	}
+}

@@ -1,0 +1,53 @@
+﻿@using System.Text
+
+<pre data-start="@DataStart" data-line="@dataLine" class="wrapped">
+<code id="@elementId" class="@codeClass">
+@ChildContent
+</code>
+</pre>
+
+@code{
+	[Inject]
+	public IJSRuntime JSRuntime { get; set; }
+
+	[Parameter]
+	public int? DataLineStart { get; set; }
+
+	[Parameter]
+	public int? DataLineEnd { get; set; }
+
+	[Parameter]
+	public int? DataStart { get; set; }
+
+	[Parameter]
+	public string Language { get; set; }
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	private string dataLine => DataLineStart == DataLineEnd ? $"{DataLineStart}" : $"{DataLineStart}-{DataLineEnd}";
+
+	private string elementId = Guid.NewGuid().ToString();
+
+	private string codeClass
+	{
+		get
+		{
+			var classOut = new StringBuilder("match-braces rainbow-braces");
+			if (DataLineStart is not null && DataLineEnd is not null)
+			{
+				classOut.Append($" line-numbers");
+			}
+			if (!string.IsNullOrEmpty(Language))
+			{
+				classOut.Append($" language-{Language}");
+			}
+			return classOut.ToString();
+		}
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await JSRuntime.InvokeVoidAsync("highlightElement", elementId);
+	}
+}
