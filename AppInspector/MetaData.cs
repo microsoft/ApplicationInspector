@@ -60,7 +60,10 @@ public class MetaData
         get
         {
             if (Files.Any())
+            {
                 return Files.Select(x => x.ModifyTime).Max().ToString();
+            }
+
             return DateTime.MinValue.ToString();
         }
     }

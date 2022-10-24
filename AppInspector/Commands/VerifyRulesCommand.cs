@@ -74,7 +74,9 @@ public class VerifyRulesCommand
         _logger.LogTrace("VerifyRulesCommand::ConfigRules");
 
         if (!_options.VerifyDefaultRules && string.IsNullOrEmpty(_options.CustomRulesPath))
+        {
             throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
+        }
     }
 
 
@@ -107,14 +109,23 @@ public class VerifyRulesCommand
             verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
 
             RuleSet? ruleSet = new(_loggerFactory);
-            if (_options.VerifyDefaultRules) ruleSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
+            if (_options.VerifyDefaultRules)
+            {
+                ruleSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
+            }
+
             try
             {
                 if (_options.CustomRulesPath != null)
                 {
                     if (Directory.Exists(_options.CustomRulesPath))
+                    {
                         ruleSet.AddDirectory(_options.CustomRulesPath);
-                    else if (File.Exists(_options.CustomRulesPath)) ruleSet.AddFile(_options.CustomRulesPath);
+                    }
+                    else if (File.Exists(_options.CustomRulesPath))
+                    {
+                        ruleSet.AddFile(_options.CustomRulesPath);
+                    }
                 }
             }
             catch (JsonException e)

@@ -38,7 +38,10 @@ public static class TestHelpers
 
     private static string GetBaseAppPath()
     {
-        if (!string.IsNullOrEmpty(_basePath)) return _basePath;
+        if (!string.IsNullOrEmpty(_basePath))
+        {
+            return _basePath;
+        }
 
         _basePath = Path.GetFullPath(AppContext.BaseDirectory);
         return _basePath;
@@ -94,13 +97,18 @@ public static class TestHelpers
         int i;
         for (i = 0; i < contentLines.Length; i++)
             if (contentLines[i].Contains("[UniqueTags]"))
+            {
                 break;
+            }
 
         i++; //get past marker
         while (!contentLines[i].Contains("Select Counters"))
         {
             results.Add(contentLines[i++]);
-            if (i > contentLines.Length) break;
+            if (i > contentLines.Length)
+            {
+                break;
+            }
         }
 
         return results;

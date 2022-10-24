@@ -23,17 +23,25 @@ public class AnalyzeTextWriter : CommandResultsWriter
     {
         _logger = loggerFactory?.CreateLogger<AnalyzeJsonWriter>() ?? NullLogger<AnalyzeJsonWriter>.Instance;
         if (string.IsNullOrEmpty(formatString))
+        {
             _formatString =
                 "Tag:%T,Rule:%N,Ruleid:%R,Confidence:%X,File:%F,Language:%l,SourceType:%tLine:%L,%C,Sample:%m";
+        }
         else
+        {
             _formatString = formatString;
+        }
     }
 
     public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
     {
         var cLIAnalyzeCmdOptions = (CLIAnalyzeCmdOptions)commandOptions;
         var analyzeResult = (AnalyzeResult)result;
-        if (TextWriter is null) throw new ArgumentNullException(nameof(TextWriter));
+        if (TextWriter is null)
+        {
+            throw new ArgumentNullException(nameof(TextWriter));
+        }
+
         TextWriter.WriteLine("Results");
 
         WriteAppMeta(analyzeResult.Metadata);
@@ -42,7 +50,10 @@ public class AnalyzeTextWriter : CommandResultsWriter
 
         foreach (var match in analyzeResult.Metadata.Matches ?? new List<MatchRecord>()) WriteMatch(match);
 
-        if (autoClose) FlushAndClose();
+        if (autoClose)
+        {
+            FlushAndClose();
+        }
     }
 
 
@@ -86,7 +97,11 @@ public class AnalyzeTextWriter : CommandResultsWriter
 
     public void WriteAppMeta(MetaData metaData)
     {
-        if (TextWriter is null) throw new ArgumentNullException(nameof(TextWriter));
+        if (TextWriter is null)
+        {
+            throw new ArgumentNullException(nameof(TextWriter));
+        }
+
         //write predefined characteristics
         TextWriter.WriteLine(string.Format(MakeHeading("Project Info")));
         TextWriter.WriteLine($"Name: {metaData.ApplicationName + " " + metaData.SourceVersion}");
@@ -124,7 +139,11 @@ public class AnalyzeTextWriter : CommandResultsWriter
 
     public void WriteMatch(MatchRecord match)
     {
-        if (TextWriter is null) throw new ArgumentNullException(nameof(TextWriter));
+        if (TextWriter is null)
+        {
+            throw new ArgumentNullException(nameof(TextWriter));
+        }
+
         var output = _formatString.Replace("%F", match.FileName);
         output = output.Replace("%l", match.LanguageInfo.Name);
         output = output.Replace("%t", match.LanguageInfo.Type.ToString());
@@ -145,7 +164,11 @@ public class AnalyzeTextWriter : CommandResultsWriter
 
     private void WriteDependencies(MetaData metaData)
     {
-        if (TextWriter is null) throw new ArgumentNullException(nameof(TextWriter));
+        if (TextWriter is null)
+        {
+            throw new ArgumentNullException(nameof(TextWriter));
+        }
+
         TextWriter.WriteLine(MakeHeading("Dependencies"));
 
         foreach (var s in metaData.UniqueDependencies ?? new List<string>()) TextWriter.WriteLine(s);

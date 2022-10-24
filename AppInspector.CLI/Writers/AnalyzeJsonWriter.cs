@@ -31,9 +31,15 @@ public class AnalyzeJsonWriter : CommandResultsWriter
 
         JsonSerializer jsonSerializer = new();
         jsonSerializer.Formatting = Formatting.Indented;
-        if (TextWriter != null) jsonSerializer.Serialize(TextWriter, analyzeResult);
+        if (TextWriter != null)
+        {
+            jsonSerializer.Serialize(TextWriter, analyzeResult);
+        }
 
-        if (autoClose) FlushAndClose();
+        if (autoClose)
+        {
+            FlushAndClose();
+        }
     }
 
     /// <summary>

@@ -21,7 +21,11 @@ internal static class AnalyzeSarifWriterExtensions
 {
     internal static void AddRange(this TagsCollection tc, IEnumerable<string>? tagsToAdd)
     {
-        if (tagsToAdd is null) return;
+        if (tagsToAdd is null)
+        {
+            return;
+        }
+
         foreach (var tag in tagsToAdd) tc.Add(tag);
     }
 }
@@ -40,7 +44,11 @@ public class AnalyzeSarifWriter : CommandResultsWriter
 
     public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
     {
-        if (TextWriter is null) throw new NullReferenceException(nameof(TextWriter));
+        if (TextWriter is null)
+        {
+            throw new NullReferenceException(nameof(TextWriter));
+        }
+
         string? basePath = null;
         if (commandOptions is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)
         {
@@ -56,6 +64,7 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                 var run = new Run();
 
                 if (Uri.TryCreate(cLIAnalyzeCmdOptions.RepositoryUri, UriKind.RelativeOrAbsolute, out var uri))
+                {
                     run.VersionControlProvenance = new List<VersionControlDetails>
                     {
                         new()
@@ -64,6 +73,7 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                             RevisionId = cLIAnalyzeCmdOptions.CommitHash
                         }
                     };
+                }
 
                 var artifacts = new List<Artifact>();
                 run.Tool = new Tool
@@ -111,7 +121,11 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                         if (match.FileName is not null)
                         {
                             var fileName = match.FileName;
-                            if (basePath is not null) fileName = Path.GetRelativePath(basePath, fileName);
+                            if (basePath is not null)
+                            {
+                                fileName = Path.GetRelativePath(basePath, fileName);
+                            }
+
                             if (Uri.TryCreate(fileName, UriKind.RelativeOrAbsolute, out var outUri))
                             {
                                 var artifactIndex = artifacts.FindIndex(a => a.Location.Uri.Equals(outUri));
@@ -128,7 +142,10 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                                     artifactIndex = artifact.Location.Index;
                                     artifact.Tags.AddRange(match.Rule.Tags);
                                     if (match.LanguageInfo is { } languageInfo)
+                                    {
                                         artifact.SourceLanguage = languageInfo.Name;
+                                    }
+
                                     artifacts.Add(artifact);
                                 }
                                 else

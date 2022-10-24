@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,14 +27,18 @@ public class TextContainer
     private readonly string inline;
     private readonly string prefix;
     private readonly string suffix;
-    private JsonDocument? _jsonDocument;
 
     private bool _triedToConstructJsonDocument;
+    private JsonDocument? _jsonDocument;
+    private object _jsonLock = new();
 
     private bool _triedToConstructXPathDocument;
     private XPathDocument? _xmlDoc;
+    private object _xpathLock = new();
+
     private bool _triedToConstructYmlDocument;
     private YamlStream _ymlDocument;
+    private object _yamlLock = new();
 
     /// <summary>
     ///     Creates new instance
@@ -58,12 +63,18 @@ public class TextContainer
         {
             LineEnds.Add(pos);
 
-            if (pos + 1 < FullContent.Length) LineStarts.Add(pos + 1);
+            if (pos + 1 < FullContent.Length)
+            {
+                LineStarts.Add(pos + 1);
+            }
 
             pos = FullContent.IndexOf('\n', pos + 1);
         }
 
-        if (LineEnds.Count < LineStarts.Count) LineEnds.Add(FullContent.Length - 1);
+        if (LineEnds.Count < LineStarts.Count)
+        {
+            LineEnds.Add(FullContent.Length - 1);
+        }
 
         prefix = languages.GetCommentPrefix(Language);
         suffix = languages.GetCommentSuffix(Language);
@@ -101,45 +112,56 @@ public class TextContainer
 
     internal IEnumerable<(string, Boundary)> GetStringFromJsonPath(string Path)
     {
-        if (!_triedToConstructJsonDocument)
-            try
-            {
-                _triedToConstructJsonDocument = true;
-                _jsonDocument = JsonDocument.Parse(FullContent);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Failed to parse as a JSON document: {0}", e.Message);
-                _jsonDocument = null;
-            }
-
-        if (_jsonDocument is not null)
+        lock (_jsonLock)
         {
-            var selector = JsonSelector.Parse(Path);
+            if (!_triedToConstructJsonDocument)
+            {
+                try
+                {
+                    _triedToConstructJsonDocument = true;
+                    _jsonDocument = JsonDocument.Parse(FullContent);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Failed to parse as a JSON document: {0}", e.Message);
+                    _jsonDocument = null;
+                }
+            }
+        }
 
-            var values = selector.Select(_jsonDocument.RootElement);
+        if (_jsonDocument is null)
+        {
+            yield break;
+        }
 
-            var field = typeof(JsonElement).GetField("_idx", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (field is null)
-                _logger.LogWarning("Failed to access _idx field of JsonElement.");
-            else
-                foreach (var ele in values)
-                    // Private access hack
-                    // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
-                    if (field.GetValue(ele) is int idx)
+        var selector = JsonSelector.Parse(Path);
+
+        var values = selector.Select(_jsonDocument.RootElement);
+
+        var field = typeof(JsonElement).GetField("_idx", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (field is null)
+        {
+            _logger.LogWarning("Failed to access _idx field of JsonElement.");
+        }
+        else
+        {
+            foreach (var ele in values)
+                // Private access hack
+                // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
+                if (field.GetValue(ele) is int idx)
+                {
+                    var eleString = ele.ToString();
+                    if (eleString is { } denulledString)
                     {
-                        var eleString = ele.ToString();
-                        if (eleString is { } denulledString)
+                        var location = new Boundary
                         {
-                            var location = new Boundary
-                            {
-                                // Adjust the index to the start of the actual element
-                                Index = FullContent[idx..].IndexOf(denulledString, StringComparison.Ordinal) + idx,
-                                Length = eleString.Length
-                            };
-                            yield return (eleString, location);
-                        }
+                            // Adjust the index to the start of the actual element
+                            Index = FullContent[idx..].IndexOf(denulledString, StringComparison.Ordinal) + idx,
+                            Length = eleString.Length
+                        };
+                        yield return (eleString, location);
                     }
+                }
         }
     }
 
@@ -151,43 +173,54 @@ public class TextContainer
     /// <returns></returns>
     internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path)
     {
-        if (!_triedToConstructXPathDocument)
-            try
+        lock (_xpathLock)
+        {
+            if (!_triedToConstructXPathDocument)
             {
-                _triedToConstructXPathDocument = true;
-                _xmlDoc = new XPathDocument(new StringReader(FullContent));
+                try
+                {
+                    _triedToConstructXPathDocument = true;
+                    _xmlDoc = new XPathDocument(new StringReader(FullContent));
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Failed to parse as an XML document: {0}", e.Message);
+                    _xmlDoc = null;
+                }
             }
-            catch (Exception e)
+        }
+
+        if (_xmlDoc is null)
+        {
+            yield break;
+        }
+
+        var navigator = _xmlDoc.CreateNavigator();
+        var nodeIter = navigator.Select(Path);
+        var minIndex = 0;
+        while (nodeIter.MoveNext())
+        {
+            if (nodeIter.Current is null)
             {
-                _logger.LogError("Failed to parse as an XML document: {0}", e.Message);
-                _xmlDoc = null;
+                continue;
             }
 
-        if (_xmlDoc is not null)
-        {
-            var navigator = _xmlDoc.CreateNavigator();
-            var nodeIter = navigator.Select(Path);
-            var minIndex = 0;
-            while (nodeIter.MoveNext())
-                if (nodeIter.Current is not null)
-                {
-                    // First we find the name
-                    var nameIndex = FullContent[minIndex..].IndexOf(nodeIter.Current.Name);
-                    // Then we grab the index of the end of this tag.
-                    // We can't use OuterXML because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
-                    var endTagIndex = FullContent[nameIndex..].IndexOf('>');
-                    var totalOffset = nameIndex + endTagIndex + minIndex;
-                    var offset = FullContent[totalOffset..].IndexOf(nodeIter.Current.InnerXml) + totalOffset;
-                    // Move the minimum index up in case there are multiple instances of identical OuterXML
-                    // This ensures we won't re-find the same one
-                    minIndex = offset;
-                    var location = new Boundary
-                    {
-                        Index = offset,
-                        Length = nodeIter.Current.InnerXml.Length
-                    };
-                    yield return (nodeIter.Current.Value, location);
-                }
+            // First we find the name
+            var nameIndex = FullContent[minIndex..].IndexOf(nodeIter.Current.Name, StringComparison.Ordinal);
+            // Then we grab the index of the end of this tag.
+            // We can't use OuterXML because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
+            var endTagIndex = FullContent[nameIndex..].IndexOf('>');
+            var totalOffset = nameIndex + endTagIndex + minIndex;
+            var offset = FullContent[totalOffset..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + totalOffset;
+            // Move the minimum index up in case there are multiple instances of identical OuterXML
+            // This ensures we won't re-find the same one
+            minIndex = offset;
+            var location = new Boundary
+            {
+                Index = offset,
+                Length = nodeIter.Current.InnerXml.Length
+            };
+            yield return (nodeIter.Current.Value, location);
         }
     }
 
@@ -201,12 +234,18 @@ public class TextContainer
     {
         var prefixLoc = FullContent.LastIndexOf(prefix, index, StringComparison.Ordinal);
         if (prefixLoc != -1)
+        {
             if (!CommentedStates.ContainsKey(prefixLoc))
             {
                 var suffixLoc = FullContent.IndexOf(suffix, prefixLoc, StringComparison.Ordinal);
-                if (suffixLoc == -1) suffixLoc = FullContent.Length - 1;
+                if (suffixLoc == -1)
+                {
+                    suffixLoc = FullContent.Length - 1;
+                }
+
                 for (var i = prefixLoc; i <= suffixLoc; i++) CommentedStates[i] = true;
             }
+        }
     }
 
     /// <summary>
@@ -216,19 +255,40 @@ public class TextContainer
     public void PopulateCommentedState(int index)
     {
         var inIndex = index;
-        if (index >= FullContent.Length) index = FullContent.Length - 1;
-        if (index < 0) index = 0;
+        if (index >= FullContent.Length)
+        {
+            index = FullContent.Length - 1;
+        }
+
+        if (index < 0)
+        {
+            index = 0;
+        }
+
         // Populate true for the indexes of the most immediately preceding instance of the multiline comment type if found
         if (!string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(suffix))
+        {
             PopulateCommentedStatesInternal(index, prefix, suffix);
+        }
+
         // Populate true for indexes of the most immediately preceding instance of the single-line comment type if found
         if (!CommentedStates.ContainsKey(index) && !string.IsNullOrEmpty(inline))
+        {
             PopulateCommentedStatesInternal(index, inline, "\n");
+        }
+
         var i = index;
         // Everything preceding this, including this, which doesn't have a commented state is
         // therefore not commented so we backfill
-        while (!CommentedStates.ContainsKey(i) && i >= 0) CommentedStates[i--] = false;
-        if (inIndex != index) CommentedStates[inIndex] = CommentedStates[index];
+        while (!CommentedStates.ContainsKey(i) && i >= 0)
+        {
+            CommentedStates[i--] = false;
+        }
+
+        if (inIndex != index)
+        {
+            CommentedStates[inIndex] = CommentedStates[index];
+        }
     }
 
     /// <summary>
@@ -238,7 +298,11 @@ public class TextContainer
     /// <returns></returns>
     public string GetBoundaryText(Boundary boundary)
     {
-        if (boundary is null) return string.Empty;
+        if (boundary is null)
+        {
+            return string.Empty;
+        }
+
         var start = Math.Max(boundary.Index, 0);
         var end = start + boundary.Length;
         start = Math.Min(FullContent.Length, start);
@@ -273,7 +337,11 @@ public class TextContainer
     /// <returns> Text </returns>
     public string GetLineContent(int line)
     {
-        if (line >= LineEnds.Count) line = LineEnds.Count - 1;
+        if (line >= LineEnds.Count)
+        {
+            line = LineEnds.Count - 1;
+        }
+
         var index = LineEnds[line];
         var bound = GetLineBoundary(index);
         return FullContent.Substring(bound.Index, bound.Length);
@@ -288,18 +356,24 @@ public class TextContainer
     {
         for (var i = 1; i < LineEnds.Count; i++)
             if (LineEnds[i] >= index)
+            {
                 return new Location
                 {
                     Column = index - LineStarts[i],
                     Line = i
                 };
+            }
 
         return new Location();
     }
 
     public bool IsCommented(int index)
     {
-        if (!CommentedStates.ContainsKey(index)) PopulateCommentedState(index);
+        if (!CommentedStates.ContainsKey(index))
+        {
+            PopulateCommentedState(index);
+        }
+
         return CommentedStates[index];
     }
 
@@ -311,9 +385,16 @@ public class TextContainer
     /// <returns> True if boundary is in a provided scope </returns>
     public bool ScopeMatch(IEnumerable<PatternScope> scopes, Boundary boundary)
     {
-        if (scopes is null || !scopes.Any() || scopes.Contains(PatternScope.All)) return true;
-        if (scopes.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
+        if (scopes is null || !scopes.Any() || scopes.Contains(PatternScope.All))
+        {
             return true;
+        }
+
+        if (scopes.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
+        {
+            return true;
+        }
+
         var isInComment = IsCommented(boundary.Index);
 
         return (!isInComment && scopes.Contains(PatternScope.Code)) ||
@@ -322,33 +403,34 @@ public class TextContainer
 
     internal IEnumerable<(string, Boundary)> GetStringFromYmlPath(string Path)
     {
-        if (!_triedToConstructYmlDocument)
+        lock (_yamlLock)
         {
-            try
+            if (!_triedToConstructYmlDocument)
             {
-                _triedToConstructYmlDocument = true;
-                _ymlDocument = new YamlStream();
-                _ymlDocument.Load(new StringReader(FullContent));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Failed to parse as a YML document: {0}", e.Message);
-                _ymlDocument = null;
+                try
+                {
+                    _triedToConstructYmlDocument = true;
+                    _ymlDocument = new YamlStream();
+                    _ymlDocument.Load(new StringReader(FullContent));
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("Failed to parse as a YML document: {0}", e.Message);
+                    _ymlDocument = null;
+                }
             }
         }
 
-        if (_ymlDocument?.Documents.Count > 0)
+        if (!(_ymlDocument?.Documents.Count > 0))
         {
-            foreach (var document in _ymlDocument.Documents)
-            {
-                var matches = document.RootNode.Query(Path);
-                foreach (var match in matches)
-                {
-                    yield return (match.ToString(),
-                        new Boundary() { Index = match.Start.Index, Length = match.End.Index - match.Start.Index });
-                }
-            }
+            yield break;
+        }
 
+        var theDocuments = _ymlDocument.Documents.ToImmutableArray();
+        foreach (var match in theDocuments.Select(document => document.RootNode.Query(Path)).SelectMany(matches => matches))
+        {
+            yield return (match.ToString(),
+                new Boundary() { Index = match.Start.Index, Length = match.End.Index - match.Start.Index });
         }
     }
 }

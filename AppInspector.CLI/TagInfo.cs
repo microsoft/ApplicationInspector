@@ -77,7 +77,10 @@ public class TagSearchPattern : Drop
         get
         {
             if (_expression == null)
+            {
                 _expression = new Regex(SearchPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            }
+
             return _expression;
         }
     }
@@ -133,7 +136,10 @@ public class TagInfo : Drop
         get => _confidence;
         set
         {
-            if (Enum.TryParse(value, true, out Confidence test)) _confidence = value;
+            if (Enum.TryParse(value, true, out Confidence test))
+            {
+                _confidence = value;
+            }
         }
     }
 

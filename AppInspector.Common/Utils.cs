@@ -77,7 +77,10 @@ public static class Utils
 
     private static string GetBaseAppPath()
     {
-        if (!string.IsNullOrEmpty(_basePath)) return _basePath;
+        if (!string.IsNullOrEmpty(_basePath))
+        {
+            return _basePath;
+        }
 
         _basePath = Path.GetFullPath(AppContext.BaseDirectory);
         return _basePath;

@@ -23,7 +23,10 @@ internal class JsonWriter : CommandResultsWriter
         jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
         jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
 
-        if (TextWriter is null) throw new ArgumentNullException(nameof(TextWriter));
+        if (TextWriter is null)
+        {
+            throw new ArgumentNullException(nameof(TextWriter));
+        }
 
         switch (result)
         {
@@ -39,6 +42,9 @@ internal class JsonWriter : CommandResultsWriter
                 throw new Exception("Unexpected object type for json writer");
         }
 
-        if (autoClose) FlushAndClose();
+        if (autoClose)
+        {
+            FlushAndClose();
+        }
     }
 }

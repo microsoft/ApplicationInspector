@@ -175,28 +175,44 @@ public class AnalyzeCommand
         _logger.LogTrace("AnalyzeCommand::ConfigSourcetoScan");
 
         if (!_options.SourcePath.Any())
+        {
             throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_REQUIRED_ARG_MISSING, "SourcePath"));
+        }
 
         foreach (var entry in _options.SourcePath)
             if (Directory.Exists(entry))
+            {
                 _srcfileList.AddRange(Directory.EnumerateFiles(entry, "*.*", SearchOption.AllDirectories));
+            }
             else if (File.Exists(entry))
+            {
                 _srcfileList.Add(entry);
+            }
             else
+            {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, entry));
+            }
+
         if (_srcfileList.Count == 0)
+        {
             throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_NO_FILES_IN_SOURCE,
                 string.Join(',', _options.SourcePath)));
+        }
 
         _logger.LogTrace("AnalyzeCommand::ConfigRules");
 
         if (!string.IsNullOrEmpty(_options.CustomCommentsPath) || !string.IsNullOrEmpty(_options.CustomLanguagesPath))
+        {
             _languages = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath,
                 _options.CustomLanguagesPath);
+        }
 
         RuleSet? rulesSet = null;
 
-        if (!_options.IgnoreDefaultRules) rulesSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
+        if (!_options.IgnoreDefaultRules)
+        {
+            rulesSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
+        }
 
         if (!string.IsNullOrEmpty(_options.CustomRulesPath))
         {
@@ -212,17 +228,25 @@ public class AnalyzeCommand
             RulesVerifier verifier = new(rulesVerifierOptions);
             var anyFails = false;
             if (Directory.Exists(_options.CustomRulesPath))
+            {
                 foreach (var filename in Directory.EnumerateFileSystemEntries(_options.CustomRulesPath, "*.json",
                              SearchOption.AllDirectories))
                     VerifyFile(filename);
+            }
             else if (File.Exists(_options.CustomRulesPath))
+            {
                 VerifyFile(_options.CustomRulesPath);
+            }
             else
+            {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, _options.CustomRulesPath));
+            }
 
             if (anyFails)
+            {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULE_LOADFILE_FAILED,
                     _options.CustomRulesPath));
+            }
 
             void VerifyFile(string filename)
             {
@@ -230,9 +254,13 @@ public class AnalyzeCommand
                 {
                     var verification = verifier.Verify(_options.CustomRulesPath);
                     if (!verification.Verified)
+                    {
                         anyFails = true;
+                    }
                     else
+                    {
                         rulesSet.AddFile(filename);
+                    }
                 }
                 else
                 {
@@ -243,7 +271,9 @@ public class AnalyzeCommand
 
         //error check based on ruleset not path enumeration
         if (rulesSet == null || !rulesSet.Any())
+        {
             throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
+        }
 
         //instantiate a RuleProcessor with the added rules and exception for dependency
         RuleProcessorOptions rpo = new()
@@ -279,12 +309,19 @@ public class AnalyzeCommand
         }
 
         if (_options.SingleThread)
+        {
             foreach (var entry in populatedEntries)
             {
-                if (cancellationToken.IsCancellationRequested) return AnalyzeResult.ExitCode.Canceled;
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return AnalyzeResult.ExitCode.Canceled;
+                }
+
                 ProcessAndAddToMetadata(entry);
             }
+        }
         else
+        {
             try
             {
                 Parallel.ForEach(populatedEntries, new ParallelOptions { CancellationToken = cancellationToken },
@@ -294,6 +331,7 @@ public class AnalyzeCommand
             {
                 return AnalyzeResult.ExitCode.Canceled;
             }
+        }
 
         return AnalyzeResult.ExitCode.Success;
 
@@ -341,20 +379,29 @@ public class AnalyzeCommand
                             _metaDataHelper.AddLanguage("Unknown");
                             languageInfo = new LanguageInfo
                                 { Extensions = new[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
-                            if (!_options.ScanUnknownTypes) fileRecord.Status = ScanState.Skipped;
+                            if (!_options.ScanUnknownTypes)
+                            {
+                                fileRecord.Status = ScanState.Skipped;
+                            }
                         }
 
                         if (fileRecord.Status != ScanState.Skipped)
                         {
                             if (_options.TagsOnly)
+                            {
                                 results = _rulesProcessor.AnalyzeFile(file, languageInfo,
                                     _metaDataHelper.UniqueTags.Keys, -1);
+                            }
                             else if (_options.MaxNumMatchesPerTag > 0)
+                            {
                                 results = _rulesProcessor.AnalyzeFile(file, languageInfo,
                                     _metaDataHelper.UniqueTags.Where(x => x.Value >= _options.MaxNumMatchesPerTag)
                                         .Select(x => x.Key), _options.ContextLines);
+                            }
                             else
+                            {
                                 results = _rulesProcessor.AnalyzeFile(file, languageInfo, null, _options.ContextLines);
+                            }
                         }
                     }
 
@@ -405,7 +452,10 @@ public class AnalyzeCommand
                             if (matchRecord.Tags?.Any(x =>
                                     _metaDataHelper.UniqueTags.TryGetValue(x, out var value) is bool foundValue &&
                                     (!foundValue || (foundValue && value < _options.MaxNumMatchesPerTag))) ??
-                                false) _metaDataHelper.AddMatchRecord(matchRecord);
+                                false)
+                            {
+                                _metaDataHelper.AddMatchRecord(matchRecord);
+                            }
                         }
                         else
                         {
@@ -418,7 +468,10 @@ public class AnalyzeCommand
 
             fileRecord.ScanTime = sw.Elapsed;
 
-            if (!_options.NoFileMetadata) _metaDataHelper.Files.Add(fileRecord);
+            if (!_options.NoFileMetadata)
+            {
+                _metaDataHelper.Files.Add(fileRecord);
+            }
         }
     }
 
@@ -438,7 +491,11 @@ public class AnalyzeCommand
 
         await foreach (var entry in GetFileEntriesAsync())
         {
-            if (cancellationToken.IsCancellationRequested) return AnalyzeResult.ExitCode.Canceled;
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return AnalyzeResult.ExitCode.Canceled;
+            }
+
             await ProcessAndAddToMetadata(entry, cancellationToken);
         }
 
@@ -483,7 +540,10 @@ public class AnalyzeCommand
                         _metaDataHelper.AddLanguage("Unknown");
                         languageInfo = new LanguageInfo
                             { Extensions = new[] { Path.GetExtension(file.FullPath) }, Name = "Unknown" };
-                        if (!_options.ScanUnknownTypes) fileRecord.Status = ScanState.Skipped;
+                        if (!_options.ScanUnknownTypes)
+                        {
+                            fileRecord.Status = ScanState.Skipped;
+                        }
                     }
 
                     if (fileRecord.Status != ScanState.Skipped)
@@ -512,7 +572,10 @@ public class AnalyzeCommand
                                 if (matchRecord.Tags?.Any(x =>
                                         _metaDataHelper.UniqueTags.TryGetValue(x, out var value) is bool foundValue &&
                                         (!foundValue || (foundValue && value < _options.MaxNumMatchesPerTag))) ??
-                                    true) _metaDataHelper.AddMatchRecord(matchRecord);
+                                    true)
+                                {
+                                    _metaDataHelper.AddMatchRecord(matchRecord);
+                                }
                             }
                             else
                             {
@@ -596,8 +659,11 @@ public class AnalyzeCommand
         Extractor extractor = new();
         foreach (var srcFile in _srcfileList)
             if (_fileExclusionList.Any(x => x.IsMatch(srcFile)))
+            {
                 _metaDataHelper?.Metadata.Files.Add(new FileRecord { FileName = srcFile, Status = ScanState.Skipped });
+            }
             else
+            {
                 await foreach (var entry in extractor.ExtractAsync(srcFile,
                                    new ExtractorOptions
                                    {
@@ -605,6 +671,7 @@ public class AnalyzeCommand
                                        MemoryStreamCutoff = 1
                                    }))
                     yield return entry;
+            }
     }
 
 
@@ -687,7 +754,10 @@ public class AnalyzeCommand
             analyzeResult.ResultCode = AnalyzeResult.ExitCode.Success;
         }
 
-        if (cancellationToken.Value.IsCancellationRequested) analyzeResult.ResultCode = AnalyzeResult.ExitCode.Canceled;
+        if (cancellationToken.Value.IsCancellationRequested)
+        {
+            analyzeResult.ResultCode = AnalyzeResult.ExitCode.Canceled;
+        }
 
         return analyzeResult;
     }
@@ -741,7 +811,10 @@ public class AnalyzeCommand
                             e.GetType().Name, e.Message);
                     }
                 }, cts.Token);
-                if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.EnumeratingTimeout))) cts.Cancel();
+                if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.EnumeratingTimeout)))
+                {
+                    cts.Cancel();
+                }
             }
             else
             {
@@ -781,12 +854,14 @@ public class AnalyzeCommand
                 }
             }, cts.Token);
             if (_options.EnumeratingTimeout > 0)
+            {
                 if (!t.Wait(new TimeSpan(0, 0, 0, 0, _options.EnumeratingTimeout)))
                 {
                     enumeratingTimedOut = true;
                     doneEnumerating = true;
                     cts.Cancel();
                 }
+            }
 
             ProgressBarOptions options = new()
             {

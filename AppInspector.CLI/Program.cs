@@ -113,12 +113,17 @@ public static class Program
             options.OutputFilePath ??= "output.html";
             var extensionCheck = Path.GetExtension(options.OutputFilePath);
             if (extensionCheck is not ".html" and not ".htm")
+            {
                 loggerFactory.CreateLogger("Program")
                     .LogInformation(MsgHelp.GetString(MsgHelp.ID.ANALYZE_HTML_EXTENSION));
+            }
         }
 
         if (CommonOutputChecks(options))
+        {
             return RunAnalyzeCommand(options);
+        }
+
         return (int)Utils.ExitCode.CriticalError;
     }
 
@@ -258,12 +263,16 @@ public static class Program
         if (!cliOptions.NoShowProgressBar)
         {
             if (string.IsNullOrEmpty(cliOptions.LogFilePath))
+            {
                 logger.LogInformation(
                     "Progress bar is enabled so console output will be suppressed. No LogFilePath has been configured so you will not receive log messages");
+            }
             else
+            {
                 logger.LogInformation(
                     "Progress bar is enabled so console output will be suppressed. For log messages check the log at {LogPath}",
                     cliOptions.LogFilePath);
+            }
         }
 
         var adjustedFactory = GetAdjustedFactory(cliOptions);

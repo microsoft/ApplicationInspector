@@ -63,7 +63,9 @@ public class PackRulesCommand
         _logger.LogTrace("PackRulesCommand::ConfigRules");
 
         if (string.IsNullOrEmpty(_options.CustomRulesPath) && !_options.PackEmbeddedRules)
+        {
             throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
+        }
     }
 
 
@@ -94,9 +96,17 @@ public class PackRulesCommand
             };
             RulesVerifier verifier = new(options);
             var ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();
-            if (!string.IsNullOrEmpty(_options.CustomRulesPath)) ruleSet.AddPath(_options.CustomRulesPath);
+            if (!string.IsNullOrEmpty(_options.CustomRulesPath))
+            {
+                ruleSet.AddPath(_options.CustomRulesPath);
+            }
+
             var result = verifier.Verify(ruleSet);
-            if (!result.Verified) throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
+            if (!result.Verified)
+            {
+                throw new OpException(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_RESULTS_FAIL));
+            }
+
             packRulesResult.Rules = result.CompiledRuleSet.GetAppInspectorRules().ToList();
             packRulesResult.ResultCode = PackRulesResult.ExitCode.Success;
         }

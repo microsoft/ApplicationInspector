@@ -132,7 +132,9 @@ public class TagDiffCommand
         _logger.LogTrace("TagDiff::ConfigRules");
 
         if ((!_options?.SourcePath1.Any() ?? true) || (!_options?.SourcePath2.Any() ?? true))
+        {
             throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_INVALID_ARG_VALUE));
+        }
     }
 
 
@@ -149,7 +151,11 @@ public class TagDiffCommand
 
         try
         {
-            if (_options is null) throw new ArgumentNullException(nameof(_options));
+            if (_options is null)
+            {
+                throw new ArgumentNullException(nameof(_options));
+            }
+
             AnalyzeCommand cmd1 = new(new AnalyzeOptions
             {
                 SourcePath = _options.SourcePath1,
@@ -199,8 +205,10 @@ public class TagDiffCommand
 
             //process results for each analyze call before comparing results
             if (analyze1.ResultCode == AnalyzeResult.ExitCode.CriticalError)
+            {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_CRITICAL_FILE_ERR,
                     string.Join(',', _options.SourcePath1)));
+            }
 
             if (analyze2.ResultCode == AnalyzeResult.ExitCode.CriticalError)
             {
@@ -230,13 +238,17 @@ public class TagDiffCommand
 
 
             if (tagDiffResult.TagDiffList.Count > 0)
+            {
                 tagDiffResult.ResultCode = _options.TestType == TagTestType.Inequality
                     ? TagDiffResult.ExitCode.TestPassed
                     : TagDiffResult.ExitCode.TestFailed;
+            }
             else
+            {
                 tagDiffResult.ResultCode = _options.TestType == TagTestType.Inequality
                     ? TagDiffResult.ExitCode.TestFailed
                     : TagDiffResult.ExitCode.TestPassed;
+            }
 
             return tagDiffResult;
         }

@@ -30,10 +30,14 @@ public class TestDefaultRules
         var result = command.GetResult();
 
         if (result.Unverified.Any())
+        {
             logger.Log(LogLevel.Error, "{0} of {1} rules failed verification. Errors are as follows:",
                 result.Unverified.Count(), result.RuleStatusList.Count);
+        }
         else
+        {
             logger.Log(LogLevel.Information, "All {0} rules passed validation.", result.RuleStatusList.Count);
+        }
 
         foreach (var unverified in result.Unverified)
         {

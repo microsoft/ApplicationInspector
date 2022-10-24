@@ -63,7 +63,9 @@ public class ResultsWriter
                 //post checks
                 if (options.OutputFilePath is not null && File.Exists(options.OutputFilePath) &&
                     new FileInfo(options.OutputFilePath).Length > MAX_HTML_REPORT_FILE_SIZE)
+                {
                     _logger.LogInformation(MsgHelp.GetString(MsgHelp.ID.ANALYZE_REPORTSIZE_WARN));
+                }
 
                 Finalize(writer, "Analyze");
                 return;

@@ -51,7 +51,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\AppInspector.Common\AppInspector.Common.csproj" />
-        <ProjectReference Include="..\AppInspector.YamlPath\AppInspector.YamlPath.csproj" />
     </ItemGroup>
 
     <ItemGroup>
