@@ -22,12 +22,19 @@ internal class VerifyRulesTextWriter : CommandResultsWriter
     {
         var verifyRulesResult = (VerifyRulesResult)result;
 
-        if (string.IsNullOrEmpty(commandOptions.OutputFilePath)) TextWriter.WriteLine("Results");
+        if (string.IsNullOrEmpty(commandOptions.OutputFilePath))
+        {
+            TextWriter.WriteLine("Results");
+        }
 
         if (verifyRulesResult.ResultCode != VerifyRulesResult.ExitCode.Verified)
+        {
             TextWriter.WriteLine(MsgHelp.ID.TAGTEST_RESULTS_FAIL);
+        }
         else
+        {
             TextWriter.WriteLine(MsgHelp.ID.TAGTEST_RESULTS_SUCCESS);
+        }
 
         if (verifyRulesResult.RuleStatusList.Count > 0)
         {
@@ -37,6 +44,9 @@ internal class VerifyRulesTextWriter : CommandResultsWriter
                     ruleStatus.RulesName, ruleStatus.Verified);
         }
 
-        if (autoClose) FlushAndClose();
+        if (autoClose)
+        {
+            FlushAndClose();
+        }
     }
 }

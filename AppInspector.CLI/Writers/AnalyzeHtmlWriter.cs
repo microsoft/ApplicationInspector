@@ -137,11 +137,14 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         StringBuilder stringBuilder = new();
 
         if (Directory.Exists(inputPath))
+        {
             try
             {
                 var srcfileList = Directory.EnumerateFiles(inputPath, "*.*", SearchOption.AllDirectories);
                 if (!srcfileList.Any())
+                {
                     throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, inputPath));
+                }
 
                 foreach (var fileName in srcfileList)
                 {
@@ -153,6 +156,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, inputPath));
             }
+        }
 
         return stringBuilder.ToString();
     }
@@ -168,16 +172,24 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
     {
         //safeguard simple string meta-data
         if (_appMetaData?.ApplicationName != null)
+        {
             _appMetaData.ApplicationName = SafeString(_appMetaData?.ApplicationName);
+        }
 
         if (_appMetaData?.Description != null)
+        {
             _appMetaData.Description = SafeString(_appMetaData?.Description);
+        }
 
         if (_appMetaData?.Authors != null)
+        {
             _appMetaData.Authors = SafeString(_appMetaData?.Authors);
+        }
 
         if (_appMetaData?.SourceVersion != null)
+        {
             _appMetaData.SourceVersion = SafeString(_appMetaData?.SourceVersion);
+        }
 
         //safeguard lists data
         SafeList(_appMetaData?.AppTypes);
@@ -204,7 +216,10 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
     private string SafeString(string? value)
     {
-        if (!string.IsNullOrEmpty(value)) return WebUtility.HtmlEncode(value);
+        if (!string.IsNullOrEmpty(value))
+        {
+            return WebUtility.HtmlEncode(value);
+        }
 
         return "";
     }
@@ -216,11 +231,15 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
     {
         //read default/user preferences on what tags to report presence on and groupings
         if (File.Exists(Utils.GetPath(Utils.AppPath.tagGroupPref)))
+        {
             TagGroupPreferences =
                 JsonConvert.DeserializeObject<List<TagCategory>>(
                     File.ReadAllText(Utils.GetPath(Utils.AppPath.tagGroupPref)));
+        }
         else
+        {
             TagGroupPreferences = new List<TagCategory>();
+        }
 
         string[] unSupportedGroupsOrPatterns = { "metric", "dependency" };
 
@@ -236,18 +255,22 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
             var test = tagGroup.Title.ToLower().Contains(unSupportedGroupsOrPatterns[0]);
             if (unSupportedGroupsOrPatterns.Any(x => tagGroup.Title.ToLower().Contains(x)))
+            {
                 _logger.LogWarning(
                     "Unsupported tag group or pattern detected '{title}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags",
                     tagGroup.Title);
+            }
 
             foreach (var pattern in tagGroup.Patterns ?? new List<TagSearchPattern>())
             {
                 pattern.Detected = _appMetaData?.UniqueTags is not null &&
                                    _appMetaData.UniqueTags.Any(v => v == pattern.SearchPattern);
                 if (unSupportedGroupsOrPatterns.Any(x => pattern.SearchPattern.ToLower().Contains(x)))
+                {
                     _logger.LogWarning(
                         "Unsupported tag group or pattern detected '{pattern}'.  See online documentation at https://github.com/microsoft/ApplicationInspector/wiki/3.5-Tags",
                         pattern.SearchPattern);
+                }
 
                 //create dynamic "category" groups of tags with pattern relationship established from TagReportGroups.json
                 //that can be used to populate reports with various attributes for each tag detected
@@ -358,7 +381,9 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                                         Severity oldSeverity;
                                         Enum.TryParse(updateItem.Severity, out oldSeverity);
                                         if (match.Severity > oldSeverity)
+                                        {
                                             updateItem.Severity = match.Severity.ToString();
+                                        }
 
                                         break;
                                     }
@@ -453,7 +478,10 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
                                     Severity oldSeverity;
                                     Enum.TryParse(updateItem.Severity, out oldSeverity);
-                                    if (match.Severity > oldSeverity) updateItem.Severity = match.Severity.ToString();
+                                    if (match.Severity > oldSeverity)
+                                    {
+                                        updateItem.Severity = match.Severity.ToString();
+                                    }
 
                                     break;
                                 }
@@ -479,6 +507,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                 foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
                 foreach (var testTag in match.Tags ?? Array.Empty<string>())
                     if (tag == testTag)
+                    {
                         if (dupCheck.Add(testTag))
                         {
                             result.Add(new TagInfo
@@ -491,6 +520,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
                             break;
                         }
+                    }
             }
             else
             {
@@ -521,7 +551,9 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
             foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
             foreach (var testTag in match.Tags ?? Array.Empty<string>())
                 if (searchPattern.IsMatch(testTag))
+                {
                     if (match.Confidence == confidence && dupCheck.Add(tag))
+                    {
                         result.Add(new TagInfo
                         {
                             Tag = testTag,
@@ -529,6 +561,8 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                             Severity = match.Severity.ToString(),
                             ShortTag = testTag[(testTag.LastIndexOf('.') + 1)..]
                         });
+                    }
+                }
         }
 
         return result;
@@ -552,7 +586,9 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
             foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
             foreach (var testTag in match.Tags ?? Array.Empty<string>())
                 if (searchPattern.IsMatch(testTag))
+                {
                     if (match.Severity == severity && dupCheck.Add(tag))
+                    {
                         result.Add(new TagInfo
                         {
                             Tag = testTag,
@@ -560,6 +596,8 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                             Severity = severity.ToString(),
                             ShortTag = testTag[(testTag.LastIndexOf('.') + 1)..]
                         });
+                    }
+                }
         }
 
         return result;

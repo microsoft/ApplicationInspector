@@ -20,7 +20,11 @@ public class MetaDataHelper
 {
     public MetaDataHelper(string sourcePath)
     {
-        if (!sourcePath.Contains(',')) sourcePath = Path.GetFullPath(sourcePath); //normalize for .\ and similar
+        if (!sourcePath.Contains(','))
+        {
+            sourcePath = Path.GetFullPath(sourcePath); //normalize for .\ and similar
+        }
+
         Metadata = new MetaData(sourcePath, sourcePath);
     }
 
@@ -82,20 +86,30 @@ public class MetaDataHelper
                     return; //design to keep noise out of detailed match list
                 default:
                     if (tag.Split('.').Contains("Metric"))
+                    {
                         _ = TagCounters.TryAdd(tag, new MetricTagCounter
                         {
                             Tag = tag
                         });
+                    }
                     else if (tag.Contains(".Platform.OS"))
+                    {
                         OSTargets.TryAdd(tag[(tag.LastIndexOf('.', tag.Length - 1) + 1)..], 0);
+                    }
                     else if (tag.Contains("CloudServices.Hosting"))
+                    {
                         CloudTargets.TryAdd(tag[(tag.LastIndexOf('.', tag.Length - 1) + 1)..], 0);
+                    }
+
                     break;
             }
 
         //Special handling; attempt to detect app types...review for multiple pattern rule limitation
         var solutionType = DetectSolutionType(matchRecord);
-        if (!string.IsNullOrEmpty(solutionType)) AppTypes.TryAdd(solutionType, 0);
+        if (!string.IsNullOrEmpty(solutionType))
+        {
+            AppTypes.TryAdd(solutionType, 0);
+        }
 
         var CounterOnlyTagSet = false;
         var selected = matchRecord.Tags is not null
@@ -110,9 +124,13 @@ public class MetaDataHelper
         //omit adding if ther a counter metric tag
         if (!CounterOnlyTagSet)
             //update list of unique tags as we go
+        {
             foreach (var tag in matchRecord.Tags ?? Array.Empty<string>())
                 if (!UniqueTags.TryAdd(tag, 1))
+                {
                     UniqueTags[tag]++;
+                }
+        }
     }
 
     /// <summary>
@@ -127,7 +145,10 @@ public class MetaDataHelper
         var nonCounters = matchRecord.Tags?.Where(x => !TagCounters.Any(y => y.Key == x)) ?? Array.Empty<string>();
 
         //omit adding if it if all the tags were counters
-        if (nonCounters.Any()) Matches.Add(matchRecord);
+        if (nonCounters.Any())
+        {
+            Matches.Add(matchRecord);
+        }
     }
 
 
@@ -189,9 +210,14 @@ public class MetaDataHelper
             if (sourcePath != string.Empty)
             {
                 if (sourcePath[^1] == Path.DirectorySeparatorChar) //in case path ends with dir separator; remove
+                {
                     applicationName = sourcePath.Trim(Path.DirectorySeparatorChar);
+                }
+
                 if (applicationName.LastIndexOf(Path.DirectorySeparatorChar) is int idx && idx != -1)
+                {
                     applicationName = applicationName[idx..].Trim();
+                }
             }
         }
         else
@@ -211,6 +237,7 @@ public class MetaDataHelper
     {
         var result = "";
         if (match.Tags is not null && match.Tags.Any(s => s.Contains("Application.Type")))
+        {
             foreach (var tag in match.Tags ?? Array.Empty<string>())
             {
                 var index = tag.IndexOf("Application.Type");
@@ -220,7 +247,9 @@ public class MetaDataHelper
                     break;
                 }
             }
+        }
         else
+        {
             switch (match.FileName)
             {
                 case "web.config":
@@ -266,6 +295,7 @@ public class MetaDataHelper
 
                     break;
             }
+        }
 
         return result.ToLower();
     }
@@ -273,10 +303,19 @@ public class MetaDataHelper
     private string ExtractValue(string s)
     {
         if (s.ToLower().Contains("</", StringComparison.Ordinal))
+        {
             return ExtractXMLValue(s);
+        }
+
         if (s.ToLower().Contains('<'))
+        {
             return ExtractXMLValueMultiLine(s);
-        if (s.ToLower().Contains(':')) return ExtractJSONValue(s);
+        }
+
+        if (s.ToLower().Contains(':'))
+        {
+            return ExtractJSONValue(s);
+        }
 
         return s;
     }
@@ -284,7 +323,10 @@ public class MetaDataHelper
     private static string ExtractJSONValue(string s)
     {
         var parts = s.Split(':');
-        if (parts.Length == 2) return parts[1].Replace("\"", "").Trim();
+        if (parts.Length == 2)
+        {
+            return parts[1].Replace("\"", "").Trim();
+        }
 
         return s;
     }
@@ -295,7 +337,10 @@ public class MetaDataHelper
         if (firstTag > -1 && firstTag < s.Length - 1)
         {
             var endTag = s.IndexOf("</", firstTag);
-            if (endTag > -1) return s[(firstTag + 1)..endTag];
+            if (endTag > -1)
+            {
+                return s[(firstTag + 1)..endTag];
+            }
         }
 
         return s;
@@ -304,7 +349,11 @@ public class MetaDataHelper
     private string ExtractXMLValueMultiLine(string s)
     {
         var firstTag = s.IndexOf(">");
-        if (firstTag > -1 && firstTag < s.Length - 1) return s[(firstTag + 1)..];
+        if (firstTag > -1 && firstTag < s.Length - 1)
+        {
+            return s[(firstTag + 1)..];
+        }
+
         return s;
     }
 }

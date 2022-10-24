@@ -73,20 +73,32 @@ public class ExportTagsCommand
     {
         _logger.LogTrace("ExportTagsCommand::ConfigRules");
         _rules = new RuleSet(_loggerFactory);
-        if (!_options.IgnoreDefaultRules) _rules = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
+        if (!_options.IgnoreDefaultRules)
+        {
+            _rules = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
+        }
 
         if (!string.IsNullOrEmpty(_options?.CustomRulesPath))
         {
             if (Directory.Exists(_options.CustomRulesPath))
+            {
                 _rules.AddDirectory(_options.CustomRulesPath);
+            }
             else if (File.Exists(_options.CustomRulesPath))
+            {
                 _rules.AddFile(_options.CustomRulesPath);
+            }
             else
+            {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, _options.CustomRulesPath));
+            }
         }
 
         //error check based on ruleset not path enumeration
-        if (_rules == null || !_rules.Any()) throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
+        if (_rules == null || !_rules.Any())
+        {
+            throw new OpException(MsgHelp.GetString(MsgHelp.ID.CMD_NORULES_SPECIFIED));
+        }
     }
 
 

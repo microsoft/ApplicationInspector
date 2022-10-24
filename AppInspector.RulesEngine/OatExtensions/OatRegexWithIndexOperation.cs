@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CST.OAT;
 using Microsoft.CST.OAT.Operations;
@@ -40,21 +41,30 @@ public class OatRegexWithIndexOperation : OatOperation
     private static IEnumerable<Violation> RegexWithIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
     {
         if (clause.Data?.Count is null or 0)
+        {
             yield return new Violation(
                 string.Format(Strings.Get("Err_ClauseNoData"), rule.Name,
                     clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)), rule, clause);
+        }
         else if (clause.Data is List<string> regexList)
+        {
             foreach (var regex in regexList)
                 if (!Helpers.IsValidRegex(regex))
+                {
                     yield return new Violation(
                         string.Format(Strings.Get("Err_ClauseInvalidRegex"), rule.Name,
                             clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture), regex),
                         rule, clause);
+                }
+        }
+
         if (clause.DictData?.Count > 0)
+        {
             yield return new Violation(
                 string.Format(Strings.Get("Err_ClauseDictDataUnexpected"), rule.Name,
                     clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture),
                     clause.Operation.ToString()), rule, clause);
+        }
     }
 
     /// <summary>
@@ -76,8 +86,15 @@ public class OatRegexWithIndexOperation : OatOperation
             RegexOptions regexOpts = new();
             var subBoundary = state2 is Boundary s2 ? s2 : null;
 
-            if (src.Arguments.Contains("i")) regexOpts |= RegexOptions.IgnoreCase;
-            if (src.Arguments.Contains("m")) regexOpts |= RegexOptions.Multiline;
+            if (src.Arguments.Contains("i"))
+            {
+                regexOpts |= RegexOptions.IgnoreCase;
+            }
+
+            if (src.Arguments.Contains("m"))
+            {
+                regexOpts |= RegexOptions.Multiline;
+            }
 
             List<(int, Boundary)> outmatches = new(); //tuple results i.e. pattern index and where
 
@@ -87,6 +104,7 @@ public class OatRegexWithIndexOperation : OatOperation
                     if (StringToRegex(regexString, regexOpts) is { } regex)
                     {
                         if (src.XPaths is not null)
+                        {
                             foreach (var xmlPath in src.XPaths)
                             {
                                 var targets = tc.GetStringFromXPath(xmlPath);
@@ -96,31 +114,40 @@ public class OatRegexWithIndexOperation : OatOperation
                                     outmatches.AddRange(matches);
                                 }
                             }
+                        }
 
                         if (src.JsonPaths is not null)
+                        {
                             foreach (var jsonPath in src.JsonPaths)
                             {
                                 var targets = tc.GetStringFromJsonPath(jsonPath);
                                 foreach (var target in targets)
                                     outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, target.Item2));
                             }
-                        
+                        }
+
                         if (src.YmlPaths is not null)
+                        {
                             foreach (var ymlPath in src.YmlPaths)
                             {
-                                var targets = tc.GetStringFromYmlPath(ymlPath);
+                                var targets = tc.GetStringFromYmlPath(ymlPath).ToList();
                                 foreach (var target in targets)
                                 {
                                     outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, target.Item2));
                                 }
                             }
+                        }
 
                         if (src.JsonPaths is null && src.XPaths is null && src.YmlPaths is null)
                         {
                             if (subBoundary is not null)
+                            {
                                 outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, subBoundary));
+                            }
                             else
+                            {
                                 outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, null));
+                            }
                         }
                     }
 
@@ -151,7 +178,10 @@ public class OatRegexWithIndexOperation : OatOperation
                 var patternIndex = Convert.ToInt32(clause.Label);
 
                 // Should return only scoped matches
-                if (tc.ScopeMatch(scopes, translatedBoundary)) yield return (patternIndex, translatedBoundary);
+                if (tc.ScopeMatch(scopes, translatedBoundary))
+                {
+                    yield return (patternIndex, translatedBoundary);
+                }
             }
     }
 
@@ -165,6 +195,7 @@ public class OatRegexWithIndexOperation : OatOperation
     private Regex? StringToRegex(string built, RegexOptions regexOptions)
     {
         if (!RegexCache.ContainsKey((built, regexOptions)))
+        {
             try
             {
                 RegexCache.TryAdd((built, regexOptions), new Regex(built, regexOptions));
@@ -174,6 +205,7 @@ public class OatRegexWithIndexOperation : OatOperation
                 _logger.LogWarning("Provided regex {Regex} was not valid and could not be used", built);
                 RegexCache.TryAdd((built, regexOptions), null);
             }
+        }
 
         return RegexCache[(built, regexOptions)];
     }

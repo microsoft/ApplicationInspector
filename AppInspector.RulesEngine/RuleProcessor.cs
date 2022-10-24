@@ -63,7 +63,7 @@ public class RuleProcessor
         _ruleset = rules;
         EnableCache = true;
 
-        _analyzer = new ApplicationInspectorAnalyzer(_opts.LoggerFactory);
+        _analyzer = new ApplicationInspectorAnalyzer(_opts.LoggerFactory, new AnalyzerOptions(false, opts.Parallel));
     }
 
     /// <summary>
@@ -79,7 +79,10 @@ public class RuleProcessor
     private static string ExtractDependency(TextContainer? text, int startIndex, string? pattern, string? language)
     {
         if (text is null || string.IsNullOrEmpty(text.FullContent) || string.IsNullOrEmpty(language) ||
-            string.IsNullOrEmpty(pattern)) return string.Empty;
+            string.IsNullOrEmpty(pattern))
+        {
+            return string.Empty;
+        }
 
         var rawResult = string.Empty;
         var endIndex = text.FullContent.IndexOfAny(new[] { '\n', '\r' }, startIndex);
@@ -91,14 +94,20 @@ public class RuleProcessor
 
             //remove surrounding import or trailing comments
             if (matches.Any())
+            {
                 foreach (Match? match in matches)
                 {
                     if (match?.Groups.Count == 1) //handles cases like "using Newtonsoft.Json"
                     {
                         string[] parseValues = match.Groups[0].Value.Split(' ');
                         if (parseValues.Length == 1)
+                        {
                             rawResult = parseValues[0].Trim();
-                        else if (parseValues.Length > 1) rawResult = parseValues[1].Trim();
+                        }
+                        else if (parseValues.Length > 1)
+                        {
+                            rawResult = parseValues[1].Trim();
+                        }
                     }
                     else if (match?.Groups.Count > 1) //handles cases like include <stdio.h>
                     {
@@ -108,6 +117,7 @@ public class RuleProcessor
                     //else if > 2 too hard to match; do nothing
                     break; //only designed to expect one match per line i.e. not include value include value
                 }
+            }
 
             var finalResult = rawResult.Replace(";", "");
 
@@ -146,9 +156,15 @@ public class RuleProcessor
                 var boundary = match.Item2;
                 //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
                 if (!_opts.AllowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build &&
-                    (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false)) continue;
-                if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+                    (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+                {
                     continue;
+                }
+
+                if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+                {
+                    continue;
+                }
 
                 var startLocation = textContainer.GetLocation(boundary.Index);
                 var endLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
@@ -173,8 +189,10 @@ public class RuleProcessor
                 };
 
                 if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
+                {
                     newMatch.Sample = ExtractDependency(newMatch.FullTextContainer, newMatch.Boundary.Index,
                         newMatch.Pattern, newMatch.LanguageInfo.Name);
+                }
 
                 resultsList.Add(newMatch);
             }
@@ -201,7 +219,9 @@ public class RuleProcessor
                 var outList = new List<(int, Boundary)>();
                 foreach (var cap in captures)
                     if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
+                    {
                         outList.AddRange(tcc.Result);
+                    }
 
                 return outList;
             }
@@ -216,7 +236,9 @@ public class RuleProcessor
             // If the overridden match is a subset of the overriding match
             if (om.Boundary.Index >= m.Boundary.Index &&
                 om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
+            {
                 removes.Add(om);
+            }
 
         // Remove overriden rules
         resultsList.RemoveAll(x => removes.Contains(x));
@@ -311,7 +333,11 @@ public class RuleProcessor
             var filteredCaptures = ruleCapture.Captures.Any(x => x.Clause is WithinClause)
                 ? ruleCapture.Captures.Where(x => x.Clause is WithinClause)
                 : ruleCapture.Captures;
-            if (cancellationToken?.IsCancellationRequested is true) return resultsList;
+            if (cancellationToken?.IsCancellationRequested is true)
+            {
+                return resultsList;
+            }
+
             foreach (var cap in filteredCaptures) resultsList.AddRange(ProcessBoundary(cap));
 
             List<MatchRecord> ProcessBoundary(ClauseCapture cap)
@@ -319,8 +345,11 @@ public class RuleProcessor
                 List<MatchRecord> newMatches = new(); //matches for this rule clause only
 
                 if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
+                {
                     if (ruleCapture.Rule is ConvertedOatRule oatRule)
+                    {
                         if (tcc.Result is { } captureResults)
+                        {
                             foreach (var match in captureResults)
                             {
                                 var patternIndex = match.Item1;
@@ -330,7 +359,9 @@ public class RuleProcessor
                                 if (!_opts.AllowAllTagsInBuildFiles &&
                                     languageInfo.Type == LanguageInfo.LangFileType.Build &&
                                     (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+                                {
                                     continue;
+                                }
 
                                 if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
                                 {
@@ -340,7 +371,10 @@ public class RuleProcessor
                                 }
 
                                 if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex]
-                                        .Confidence)) continue;
+                                        .Confidence))
+                                {
+                                    continue;
+                                }
 
                                 var startLocation = textContainer.GetLocation(boundary.Index);
                                 var endLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
@@ -365,11 +399,16 @@ public class RuleProcessor
                                 };
 
                                 if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
+                                {
                                     newMatch.Sample = ExtractDependency(newMatch.FullTextContainer,
                                         newMatch.Boundary.Index, newMatch.Pattern, newMatch.LanguageInfo.Name);
+                                }
 
                                 newMatches.Add(newMatch);
                             }
+                        }
+                    }
+                }
 
                 return newMatches;
             }
@@ -379,13 +418,19 @@ public class RuleProcessor
 
         foreach (var m in resultsList.Where(x => x.Rule?.Overrides?.Length > 0))
         {
-            if (cancellationToken?.IsCancellationRequested is true) return resultsList;
+            if (cancellationToken?.IsCancellationRequested is true)
+            {
+                return resultsList;
+            }
+
             foreach (var ovrd in m.Rule?.Overrides ?? Array.Empty<string>())
                 // Find all overriden rules and mark them for removal from issues list
             foreach (var om in resultsList.FindAll(x => x.Rule?.Id == ovrd))
                 if (om.Boundary.Index >= m.Boundary.Index &&
                     om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
+                {
                     removes.Add(om);
+                }
         }
 
         // Remove overriden rules
@@ -403,12 +448,19 @@ public class RuleProcessor
     private IEnumerable<ConvertedOatRule> GetRulesByLanguage(string language)
     {
         if (EnableCache)
+        {
             if (_languageRulesCache.ContainsKey(language))
+            {
                 return _languageRulesCache[language];
+            }
+        }
 
         IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByLanguage(language).ToArray();
 
-        if (EnableCache) _languageRulesCache.TryAdd(language, filteredRules);
+        if (EnableCache)
+        {
+            _languageRulesCache.TryAdd(language, filteredRules);
+        }
 
         return filteredRules;
     }
@@ -422,9 +474,13 @@ public class RuleProcessor
         if (_universalRulesCache is null)
         {
             if (EnableCache)
+            {
                 _universalRulesCache = _ruleset.GetUniversalRules();
+            }
             else
+            {
                 return _ruleset.GetUniversalRules();
+            }
         }
 
         return _universalRulesCache;
@@ -438,12 +494,19 @@ public class RuleProcessor
     private IEnumerable<ConvertedOatRule> GetRulesByFileName(string fileName)
     {
         if (EnableCache)
+        {
             if (_fileRulesCache.ContainsKey(fileName))
+            {
                 return _fileRulesCache[fileName];
+            }
+        }
 
         IEnumerable<ConvertedOatRule> filteredRules = _ruleset.ByFilename(fileName).ToArray();
 
-        if (EnableCache) _fileRulesCache.TryAdd(fileName, filteredRules);
+        if (EnableCache)
+        {
+            _fileRulesCache.TryAdd(fileName, filteredRules);
+        }
 
         return filteredRules;
     }
@@ -454,11 +517,17 @@ public class RuleProcessor
     /// </summary>
     private string ExtractTextSample(string fileText, int index, int length)
     {
-        if (index < 0 || length < 0) return fileText;
+        if (index < 0 || length < 0)
+        {
+            return fileText;
+        }
 
         length = Math.Min(Math.Min(length, MAX_TEXT_SAMPLE_LENGTH), fileText.Length - index);
 
-        if (length == 0) return string.Empty;
+        if (length == 0)
+        {
+            return string.Empty;
+        }
 
         return fileText[index..(index + length)].Trim();
     }
@@ -471,10 +540,20 @@ public class RuleProcessor
     /// <returns></returns>
     private static string ExtractExcerpt(TextContainer text, int startLineNumber, int context = 3)
     {
-        if (context == 0) return string.Empty;
-        if (startLineNumber < 0) startLineNumber = 0;
+        if (context == 0)
+        {
+            return string.Empty;
+        }
 
-        if (startLineNumber >= text.LineEnds.Count) startLineNumber = text.LineEnds.Count - 1;
+        if (startLineNumber < 0)
+        {
+            startLineNumber = 0;
+        }
+
+        if (startLineNumber >= text.LineEnds.Count)
+        {
+            startLineNumber = text.LineEnds.Count - 1;
+        }
 
         var excerptStartLine = Math.Max(0, startLineNumber - context);
         var excerptEndLine = Math.Min(text.LineEnds.Count - 1, startLineNumber + context);
@@ -483,9 +562,15 @@ public class RuleProcessor
         var maxCharacterContext = context * 100;
         // Only gather 100*lines context characters to avoid gathering super long lines
         if (text.LineStarts[startLineNumber] - startIndex > maxCharacterContext)
+        {
             startIndex = Math.Max(0, startIndex - maxCharacterContext);
+        }
+
         if (endIndex - text.LineEnds[startLineNumber] > maxCharacterContext)
+        {
             endIndex = Math.Min(text.FullContent.Length - 1, endIndex + maxCharacterContext);
+        }
+
         return text.FullContent[startIndex..endIndex];
     }
 }

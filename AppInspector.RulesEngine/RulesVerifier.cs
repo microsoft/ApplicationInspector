@@ -47,11 +47,17 @@ public class RulesVerifier
         if (!string.IsNullOrEmpty(rulesPath))
         {
             if (Directory.Exists(rulesPath))
+            {
                 CompiledRuleset.AddDirectory(rulesPath);
+            }
             else if (File.Exists(rulesPath))
+            {
                 CompiledRuleset.AddFile(rulesPath);
+            }
             else
+            {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_RULE_PATH, rulesPath));
+            }
         }
 
         return Verify(CompiledRuleset);
@@ -108,11 +114,13 @@ public class RulesVerifier
             // Check for unknown language
             foreach (var lang in rule.AppliesTo)
                 if (!string.IsNullOrEmpty(lang))
+                {
                     if (!languages.Any(x => x.Equals(lang, StringComparison.CurrentCultureIgnoreCase)))
                     {
                         _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL), rule.Id ?? "", lang);
                         errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL, rule.Id ?? "", lang));
                     }
+                }
         }
 
         foreach (var pattern in rule.FileRegexes ?? Array.Empty<string>())
@@ -132,9 +140,14 @@ public class RulesVerifier
         foreach (var searchPattern in rule.Patterns ?? Array.Empty<SearchPattern>())
         {
             if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.Regex)
+            {
                 try
                 {
-                    if (string.IsNullOrEmpty(searchPattern.Pattern)) throw new ArgumentException();
+                    if (string.IsNullOrEmpty(searchPattern.Pattern))
+                    {
+                        throw new ArgumentException();
+                    }
+
                     _ = new Regex(searchPattern.Pattern);
                 }
                 catch (Exception e)
@@ -144,8 +157,10 @@ public class RulesVerifier
                     errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "",
                         searchPattern.Pattern ?? "", e.Message));
                 }
+            }
 
             if (searchPattern.JsonPaths is not null)
+            {
                 foreach (var jsonPath in searchPattern.JsonPaths)
                     try
                     {
@@ -159,8 +174,10 @@ public class RulesVerifier
                         errors.Add(string.Format("The provided JsonPath '{0}' value was not valid in Rule {1} : {2}",
                             searchPattern.JsonPaths, rule.Id, e.Message));
                     }
+            }
 
             if (searchPattern.XPaths is not null)
+            {
                 foreach (var xpath in searchPattern.XPaths)
                     try
                     {
@@ -173,6 +190,7 @@ public class RulesVerifier
                         errors.Add(string.Format("The provided XPath '{0}' value was not valid in Rule {1} : {2}",
                             searchPattern.JsonPaths, rule.Id, e.Message));
                     }
+            }
         }
 
         // validate conditions
@@ -191,6 +209,7 @@ public class RulesVerifier
                     if (splits.Length == 2)
                     {
                         if (int.TryParse(splits[0], out var int1) && int.TryParse(splits[1], out var int2))
+                        {
                             if (int1 > 0 && int2 < 0)
                             {
                                 _logger?.LogError(
@@ -199,6 +218,7 @@ public class RulesVerifier
                                 errors.Add(
                                     $"The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {rule.Id}");
                             }
+                        }
                     }
                     else
                     {
@@ -254,18 +274,22 @@ public class RulesVerifier
         }
 
         if (_options.RequireMustMatch)
+        {
             if (rule.MustMatch?.Any() is not true)
             {
                 _logger?.LogError("Rule must specify MustMatch when `RequireMustMatch` is set. {0}", rule.Id);
                 errors.Add($"Rule must specify MustMatch when `RequireMustMatch` is set. {rule.Id}");
             }
+        }
 
         if (_options.RequireMustNotMatch)
+        {
             if (rule.MustNotMatch?.Any() is not true)
             {
                 _logger?.LogError("Rule must specify MustNotMatch when `RequireMustNotMatch` is set. {0}", rule.Id);
                 errors.Add($"Rule must specify MustNotMatch when `RequireMustNotMatch` is set. {rule.Id}");
             }
+        }
 
         return new RuleStatus
         {

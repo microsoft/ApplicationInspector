@@ -98,7 +98,10 @@ public sealed class Languages
     /// <returns>True if the language could be detected based on the filename</returns>
     public bool FromFileName(string fileName, ref LanguageInfo info)
     {
-        if (fileName == null) return false;
+        if (fileName == null)
+        {
+            return false;
+        }
 
         var file = Path.GetFileName(fileName).ToLower(CultureInfo.CurrentCulture);
         var ext = Path.GetExtension(file);
@@ -114,6 +117,7 @@ public sealed class Languages
 
         // Look for extension only ext is defined
         if (!string.IsNullOrEmpty(ext))
+        {
             if (_languageInfos.FirstOrDefault(item =>
                     item.Extensions?.Contains(ext, StringComparer.InvariantCultureIgnoreCase) ?? false) is LanguageInfo
                 extLangInfo)
@@ -121,6 +125,7 @@ public sealed class Languages
                 info = extLangInfo;
                 return true;
             }
+        }
 
         return false;
     }
@@ -135,10 +140,14 @@ public sealed class Languages
         var result = string.Empty;
 
         if (language != null)
+        {
             foreach (var comment in _comments)
                 if (Array.Exists(comment.Languages ?? new[] { "" },
                         x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)) && comment.Inline is { })
+                {
                     return comment.Inline;
+                }
+        }
 
         return result;
     }
@@ -153,10 +162,14 @@ public sealed class Languages
         var result = string.Empty;
 
         if (language != null)
+        {
             foreach (var comment in _comments)
                 if ((comment.Languages?.Contains(language.ToLower(CultureInfo.InvariantCulture)) ?? false) &&
                     comment.Prefix is { })
+                {
                     return comment.Prefix;
+                }
+        }
 
         return result;
     }
@@ -171,10 +184,14 @@ public sealed class Languages
         var result = string.Empty;
 
         if (language != null)
+        {
             foreach (var comment in _comments)
                 if (Array.Exists(comment.Languages ?? new[] { "" },
                         x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)) && comment.Suffix is { })
+                {
                     return comment.Suffix;
+                }
+        }
 
         return result;
     }

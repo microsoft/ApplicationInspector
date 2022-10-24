@@ -49,7 +49,9 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     {
         foreach (var rule in _rules)
             if (rule is T ruleAsT)
+            {
                 yield return ruleAsT;
+            }
     }
 
 
@@ -67,11 +69,17 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     public void AddPath(string path, string? tag = null)
     {
         if (Directory.Exists(path))
+        {
             AddDirectory(path, tag);
+        }
         else if (File.Exists(path))
+        {
             AddFile(path, tag);
+        }
         else
+        {
             throw new ArgumentException("The path must exist.", nameof(path));
+        }
     }
 
     /// <summary>
@@ -88,7 +96,9 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     public void AddDirectory(string path, string? tag = null)
     {
         if (!Directory.Exists(path))
+        {
             throw new DirectoryNotFoundException();
+        }
 
         foreach (var filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
             AddFile(filename, tag);
@@ -108,10 +118,14 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     public void AddFile(string? filename, string? tag = null)
     {
         if (string.IsNullOrEmpty(filename))
+        {
             throw new ArgumentException(null, nameof(filename));
+        }
 
         if (!File.Exists(filename))
+        {
             throw new FileNotFoundException();
+        }
 
         using var file = File.OpenText(filename);
         AddString(file.ReadToEnd(), filename, tag);
@@ -127,7 +141,9 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     public void AddString(string jsonString, string sourceName, string? tag = null)
     {
         if (StringToRules(jsonString ?? string.Empty, sourceName ?? string.Empty, tag) is { } deserializedList)
+        {
             AddRange(deserializedList);
+        }
     }
 
     /// <summary>
@@ -180,11 +196,13 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
         }
 
         if (ruleList is not null)
+        {
             foreach (var r in ruleList)
             {
                 r.Source = sourceName;
                 r.RuntimeTag = tag;
                 yield return r;
             }
+        }
     }
 }

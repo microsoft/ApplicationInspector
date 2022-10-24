@@ -113,8 +113,11 @@ public class WriterFactory
     {
         TextWriter textWriter;
         if (string.IsNullOrEmpty(outputFileName))
+        {
             textWriter = Console.Out;
+        }
         else
+        {
             try
             {
                 textWriter = File.CreateText(outputFileName);
@@ -124,6 +127,7 @@ public class WriterFactory
                 _logger.LogError(MsgHelp.GetString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR), outputFileName);
                 throw;
             }
+        }
 
         return textWriter;
     }

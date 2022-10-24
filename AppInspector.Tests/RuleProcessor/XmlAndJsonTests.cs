@@ -396,10 +396,10 @@ test:
         var originalSource = "TestRules";
         rules.AddString(rule, originalSource);
         RuleSet rules2 = new();
-        rules.AddString(rule2, originalSource);
+        rules2.AddString(rule2, originalSource);
         var analyzer = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
             new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
-        var analyzer2 = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
+        var analyzer2 = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules2,
             new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("test.yml", out var info))
         {
@@ -497,10 +497,10 @@ test:
         var originalSource = "TestRules";
         rules.AddString(rule, originalSource);
         RuleSet rules2 = new();
-        rules.AddString(rule2, originalSource);
+        rules2.AddString(rule2, originalSource);
         var analyzer = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
             new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
-        var analyzer2 = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
+        var analyzer2 = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules2,
             new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("test.yml", out var info))
         {

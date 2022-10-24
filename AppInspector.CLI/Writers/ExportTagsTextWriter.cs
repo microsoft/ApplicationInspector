@@ -20,7 +20,10 @@ internal class ExportTagsTextWriter : CommandResultsWriter
 
     public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
     {
-        if (TextWriter is null) throw new ArgumentNullException(nameof(TextWriter));
+        if (TextWriter is null)
+        {
+            throw new ArgumentNullException(nameof(TextWriter));
+        }
 
         var exportTagsResult = (ExportTagsResult)result;
 
@@ -35,6 +38,9 @@ internal class ExportTagsTextWriter : CommandResultsWriter
             TextWriter.WriteLine("No tags found");
         }
 
-        if (autoClose) FlushAndClose();
+        if (autoClose)
+        {
+            FlushAndClose();
+        }
     }
 }

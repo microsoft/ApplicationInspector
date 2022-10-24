@@ -36,14 +36,19 @@ public class OatSubstringIndexOperation : OatOperation
     public static IEnumerable<Violation> SubstringIndexValidationDelegate(CST.OAT.Rule rule, Clause clause)
     {
         if (clause.Data?.Count is null or 0)
+        {
             yield return new Violation(
                 string.Format(Strings.Get("Err_ClauseNoData"), rule.Name,
                     clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)), rule, clause);
+        }
+
         if (clause.DictData?.Count is not null && clause.DictData.Count > 0)
+        {
             yield return new Violation(
                 string.Format(Strings.Get("Err_ClauseDictDataUnexpected"), rule.Name,
                     clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture),
                     clause.Operation.ToString()), rule, clause);
+        }
     }
 
     /// <summary>
@@ -63,6 +68,7 @@ public class OatSubstringIndexOperation : OatOperation
             ? StringComparison.InvariantCultureIgnoreCase
             : StringComparison.InvariantCulture;
         if (state1 is TextContainer tc && clause is OatSubstringIndexClause src)
+        {
             if (clause.Data is { Count: > 0 } stringList)
             {
                 var outmatches = new List<(int, Boundary)>(); //tuple results i.e. pattern index and where
@@ -70,6 +76,7 @@ public class OatSubstringIndexOperation : OatOperation
                 for (var i = 0; i < stringList.Count; i++)
                 {
                     if (src.XPaths is not null)
+                    {
                         foreach (var xmlPath in src.XPaths)
                         {
                             var targets = tc.GetStringFromXPath(xmlPath);
@@ -83,8 +90,10 @@ public class OatSubstringIndexOperation : OatOperation
                                 }
                             }
                         }
+                    }
 
                     if (src.JsonPaths is not null)
+                    {
                         foreach (var jsonPath in src.JsonPaths)
                         {
                             var targets = tc.GetStringFromJsonPath(jsonPath);
@@ -98,7 +107,10 @@ public class OatSubstringIndexOperation : OatOperation
                                 }
                             }
                         }
+                    }
+
                     if (src.YmlPaths is not null)
+                    {
                         foreach (var ymlPath in src.YmlPaths)
                         {
                             var targets = tc.GetStringFromYmlPath(ymlPath);
@@ -112,6 +124,7 @@ public class OatSubstringIndexOperation : OatOperation
                                 }
                             }
                         }
+                    }
 
                     if (src.JsonPaths is null && src.XPaths is null && src.YmlPaths is null)
                     {
@@ -136,6 +149,7 @@ public class OatSubstringIndexOperation : OatOperation
                         ? new TypedClauseCapture<List<(int, Boundary)>>(clause, outmatches, state1)
                         : null);
             }
+        }
 
         return new OperationResult(false);
     }
@@ -149,8 +163,15 @@ public class OatSubstringIndexOperation : OatOperation
             var skip = false;
             if (src.UseWordBoundaries)
             {
-                if (idx > 0 && char.IsLetterOrDigit(target[idx - 1])) skip = true;
-                if (idx + query.Length < target.Length && char.IsLetterOrDigit(target[idx + query.Length])) skip = true;
+                if (idx > 0 && char.IsLetterOrDigit(target[idx - 1]))
+                {
+                    skip = true;
+                }
+
+                if (idx + query.Length < target.Length && char.IsLetterOrDigit(target[idx + query.Length]))
+                {
+                    skip = true;
+                }
             }
 
             if (!skip)
@@ -160,7 +181,10 @@ public class OatSubstringIndexOperation : OatOperation
                     Length = query.Length,
                     Index = idx
                 };
-                if (tc.ScopeMatch(src.Scopes, newBoundary)) yield return newBoundary;
+                if (tc.ScopeMatch(src.Scopes, newBoundary))
+                {
+                    yield return newBoundary;
+                }
             }
 
             idx = target.IndexOf(query, idx + query.Length, comparisonType);

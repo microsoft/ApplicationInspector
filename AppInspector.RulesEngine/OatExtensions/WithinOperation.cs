@@ -37,6 +37,7 @@ public class WithinOperation : OatOperation
             foreach (var capture in captures ?? Array.Empty<ClauseCapture>())
             {
                 if (capture is TypedClauseCapture<List<(int, Boundary)>> tcc)
+                {
                     foreach ((var clauseNum, var boundary) in tcc.Result)
                     {
                         var boundaryToCheck = GetBoundaryToCheck();
@@ -44,14 +45,22 @@ public class WithinOperation : OatOperation
                         {
                             var operationResult = ProcessLambda(boundaryToCheck);
                             if (operationResult.Result)
+                            {
                                 passed.Add((clauseNum, boundary));
+                            }
                             else
+                            {
                                 failed.Add((clauseNum, boundary));
+                            }
                         }
 
                         Boundary? GetBoundaryToCheck()
                         {
-                            if (wc.FindingOnly) return boundary;
+                            if (wc.FindingOnly)
+                            {
+                                return boundary;
+                            }
+
                             if (wc.SameLineOnly)
                             {
                                 var startInner = tc.LineStarts[tc.GetLocation(boundary.Index).Line];
@@ -112,6 +121,7 @@ public class WithinOperation : OatOperation
                             return null;
                         }
                     }
+                }
 
                 var passedOrFailed = wc.Invert ? failed : passed;
                 return new OperationResult(passedOrFailed.Any(),
@@ -136,30 +146,40 @@ public class WithinOperation : OatOperation
             if (new[] { wc.FindingOnly, wc.SameLineOnly, wc.FindingRegion, wc.OnlyAfter, wc.OnlyBefore, wc.SameFile }
                     .Count(x => x) !=
                 1)
+            {
                 yield return new Violation(
                     "Exactly one of: FindingOnly, SameLineOnly, OnlyAfter, OnlyBefore, SameFile or FindingRegion must be set",
                     rule, clause);
+            }
 
             if (wc.FindingRegion)
             {
                 if (wc.Before == 0 && wc.After == 0)
+                {
                     yield return new Violation(
                         "Both parameters for finding-region may not be 0. Use same-line to only analyze the same line.",
                         rule, clause);
+                }
 
                 if (wc.Before > 0)
+                {
                     yield return new Violation(
                         "The first parameter for finding region, representing number of lines before, must be 0 or negative",
                         rule, clause);
+                }
 
                 if (wc.After < 0)
+                {
                     yield return new Violation(
                         "The second parameter for finding region, representing number of lines after, must be 0 or positive",
                         rule, clause);
+                }
             }
 
             if (wc.Data.Any())
+            {
                 yield return new Violation("Don't provide data directly. Instead use SubClause.", rule, clause);
+            }
 
             var subOp = _analyzer
                 .GetOperation(wc.SubClause.Key.Operation, wc.SubClause.Key.CustomOperation);
@@ -175,19 +195,32 @@ public class WithinOperation : OatOperation
                 foreach (var violation in subOp.ValidationDelegate.Invoke(rule, wc.SubClause)) yield return violation;
 
                 if (wc.SubClause is OatRegexWithIndexClause oatRegexWithIndexClause)
+                {
                     if ((oatRegexWithIndexClause.JsonPaths?.Any() ?? false) ||
                         (oatRegexWithIndexClause.XPaths?.Any() ?? false)||
                         (oatRegexWithIndexClause.YmlPaths?.Any() ?? false))
+                    {
                         if (wc.FindingOnly || wc.SameLineOnly || wc.FindingRegion || wc.OnlyAfter || wc.OnlyBefore)
+                        {
                             yield return new Violation("When providing JSONPaths, YMLPaths or XPaths must use same-file region.",
                                 rule, clause);
+                        }
+                    }
+                }
+
                 if (wc.SubClause is OatSubstringIndexClause oatSubstringIndexClause)
+                {
                     if ((oatSubstringIndexClause.JsonPaths?.Any() ?? false) ||
                         (oatSubstringIndexClause.XPaths?.Any() ?? false) || 
                         (oatSubstringIndexClause.YmlPaths?.Any() ?? false))
+                    {
                         if (wc.FindingOnly || wc.SameLineOnly || wc.FindingRegion || wc.OnlyAfter || wc.OnlyBefore)
+                        {
                             yield return new Violation("When providing JSONPaths, YMLPaths or XPaths must use same-file region.",
                                 rule, clause);
+                        }
+                    }
+                }
             }
         }
         else

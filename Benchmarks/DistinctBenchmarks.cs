@@ -21,9 +21,13 @@ public class DistinctBenchmarks
             //builds a list of unique tags
         foreach (var t in r?.Tags ?? Array.Empty<string>())
             if (uniqueTags.ContainsKey(t))
+            {
                 continue;
+            }
             else
+            {
                 uniqueTags.Add(t, t);
+            }
 
         //generate results list
         foreach (var s in uniqueTags.Values) outList.Add(s);

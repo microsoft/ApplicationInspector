@@ -33,8 +33,11 @@ public abstract class AbstractRuleSet
     public IEnumerable<ConvertedOatRule> ByLanguage(string language)
     {
         if (!string.IsNullOrEmpty(language))
+        {
             return _oatRules.Where(x =>
                 x.AppInspectorRule.AppliesTo is { } appliesList && appliesList.Contains(language));
+        }
+
         return Array.Empty<ConvertedOatRule>();
     }
 
@@ -46,7 +49,10 @@ public abstract class AbstractRuleSet
     public IEnumerable<ConvertedOatRule> ByFilename(string input)
     {
         if (!string.IsNullOrEmpty(input))
+        {
             return _oatRules.Where(x => x.AppInspectorRule.CompiledFileRegexes.Any(y => y.IsMatch(input)));
+        }
+
         return Array.Empty<ConvertedOatRule>();
     }
 
@@ -75,7 +81,11 @@ public abstract class AbstractRuleSet
             if (GenerateClause(pattern, clauseNumber) is { } clause)
             {
                 clauses.Add(clause);
-                if (clauseNumber > 0) expression.Append(" OR ");
+                if (clauseNumber > 0)
+                {
+                    expression.Append(" OR ");
+                }
+
                 expression.Append(clauseNumber);
                 clauseNumber++;
             }
@@ -85,9 +95,13 @@ public abstract class AbstractRuleSet
             }
 
         if (clauses.Count > 0)
+        {
             expression.Append(')');
+        }
         else
+        {
             return new ConvertedOatRule(rule.Id, rule);
+        }
 
         foreach (var condition in rule.Conditions ?? Array.Empty<SearchCondition>())
         {
@@ -120,24 +134,34 @@ public abstract class AbstractRuleSet
             else
             {
                 if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
+                {
                     return new WithinClause(subClause)
                     {
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         FindingOnly = true,
                         Invert = condition.NegateFinding
                     };
+                }
 
                 if (condition.SearchIn.StartsWith("finding-region", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var argList = new List<int>();
                     var m = _searchInRegex.Match(condition.SearchIn);
                     if (m.Success)
+                    {
                         for (var i = 1; i < m.Groups.Count; i++)
                             if (int.TryParse(m.Groups[i].Value, out var value))
+                            {
                                 argList.Add(value);
+                            }
                             else
+                            {
                                 break;
+                            }
+                    }
+
                     if (argList.Count == 2)
+                    {
                         return new WithinClause(subClause)
                         {
                             Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
@@ -146,6 +170,7 @@ public abstract class AbstractRuleSet
                             After = argList[1],
                             Invert = condition.NegateFinding
                         };
+                    }
                 }
                 else if (condition.SearchIn.Equals("same-line", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -202,6 +227,7 @@ public abstract class AbstractRuleSet
             var scopes = pattern.Scopes ?? new[] { PatternScope.All };
             var modifiers = pattern.Modifiers?.ToList() ?? new List<string>();
             if (pattern.PatternType is PatternType.String or PatternType.Substring)
+            {
                 return new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String,
                     xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths:pattern.YamlPaths)
                 {
@@ -211,7 +237,10 @@ public abstract class AbstractRuleSet
                     Capture = true,
                     Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
                 };
+            }
+
             if (pattern.PatternType == PatternType.Regex)
+            {
                 return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths)
                 {
                     Label = clauseNumber.ToString(CultureInfo
@@ -220,7 +249,10 @@ public abstract class AbstractRuleSet
                     Capture = true,
                     Arguments = modifiers
                 };
+            }
+
             if (pattern.PatternType == PatternType.RegexWord)
+            {
                 return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths)
                 {
                     Label = clauseNumber.ToString(CultureInfo
@@ -229,6 +261,7 @@ public abstract class AbstractRuleSet
                     Capture = true,
                     Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
                 };
+            }
         }
 
         return null;

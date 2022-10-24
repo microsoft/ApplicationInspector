@@ -26,9 +26,13 @@ public class TagDiffTextWriter : CommandResultsWriter
         TextWriter.WriteLine(MsgHelp.FormatString(MsgHelp.ID.TAGTEST_RESULTS_TEST_TYPE, cLITagDiffCmdOptions.TestType));
 
         if (tagDiffResult.ResultCode == TagDiffResult.ExitCode.TestFailed)
+        {
             TextWriter.WriteLine(MsgHelp.GetString(MsgHelp.ID.TAGTEST_RESULTS_FAIL));
+        }
         else
+        {
             TextWriter.WriteLine(MsgHelp.GetString(MsgHelp.ID.TAGTEST_RESULTS_SUCCESS));
+        }
 
         //Results list
         if (tagDiffResult.TagDiffList.Count > 0)
@@ -38,6 +42,9 @@ public class TagDiffTextWriter : CommandResultsWriter
                 TextWriter.WriteLine("Tag: {0}, Only found in file: {1}", tagDiff.Tag, tagDiff.Source);
         }
 
-        if (autoClose) FlushAndClose();
+        if (autoClose)
+        {
+            FlushAndClose();
+        }
     }
 }

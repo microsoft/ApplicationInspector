@@ -33,8 +33,16 @@ public record LogOptions
     {
         var configuration = new LoggerConfiguration()
             .MinimumLevel.Is(ConsoleVerbosityLevel < LogFileLevel ? ConsoleVerbosityLevel : LogFileLevel);
-        if (!string.IsNullOrEmpty(LogFilePath)) configuration = configuration.WriteTo.File(LogFilePath, LogFileLevel);
-        if (!DisableConsoleOutput) configuration = configuration.WriteTo.Console(ConsoleVerbosityLevel);
+        if (!string.IsNullOrEmpty(LogFilePath))
+        {
+            configuration = configuration.WriteTo.File(LogFilePath, LogFileLevel);
+        }
+
+        if (!DisableConsoleOutput)
+        {
+            configuration = configuration.WriteTo.Console(ConsoleVerbosityLevel);
+        }
+
         var serilogLogger = configuration
             .CreateLogger();
         return new LoggerFactory().AddSerilog(serilogLogger);
