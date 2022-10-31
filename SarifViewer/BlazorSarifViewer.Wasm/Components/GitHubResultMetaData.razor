@@ -1,0 +1,49 @@
+<div>File: <a href="https://github.com/@Organization/@Repository/blob/@Commit/@FileUri?.ToString()#@LinesTag" target="_blank"><i>@FileUri?.ToString()</i></a>. @LinesString</div>
+
+@code{
+	[Parameter]
+	public int? LineStart { get; set; }
+
+	[Parameter]
+	public int? LineEnd { get; set; }
+
+	[Parameter]
+	public Uri? FileUri { get; set; }
+
+	[Parameter]
+	public string? Organization { get; set; }
+
+	[Parameter]
+	public string? Repository { get; set; }
+
+	[Parameter]
+	public string? Commit { get; set; }
+
+	private string LinesString { 
+		get
+		{
+			if (LineStart == LineEnd)
+			{
+				return $"Line: {LineStart}";
+			}
+			else
+			{
+				return $"Lines: {LineStart}-{LineEnd}";
+			}
+		}
+	} 
+	
+	private string LinesTag { 
+		get
+		{
+			if (LineStart == LineEnd)
+			{
+				return $"L{LineStart}";
+			}
+			else
+			{
+				return $"L{LineStart}-{LineEnd}";
+			}
+		}
+	} 
+}

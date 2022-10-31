@@ -27,31 +27,34 @@
 			{
 				regionEndLine = regionStartLine;
 			}
-			<ResultMetaData FileUri="Result.Locations[0].PhysicalLocation.ArtifactLocation.Uri" LineStart="regionStartLine" LineEnd="regionEndLine"></ResultMetaData>
 
 			if (!string.IsNullOrEmpty(Result.Locations[0].PhysicalLocation?.ContextRegion?.Snippet?.Text))
 			{
+				<ResultMetaData FileUri="Result.Locations[0].PhysicalLocation.ArtifactLocation.Uri" LineStart="regionStartLine" LineEnd="regionEndLine"></ResultMetaData>
 				<CodeComponent DataLineStart="regionStartLine" DataLineEnd="regionEndLine" DataStart="Result.Locations[0].PhysicalLocation?.ContextRegion?.StartLine" Language="@language">@Result.Locations[0].PhysicalLocation.ContextRegion.Snippet.Text</CodeComponent>
 			}
 			else if (!string.IsNullOrEmpty(Result.Locations[0].PhysicalLocation?.Region?.Snippet?.Text))
 			{
+				<ResultMetaData FileUri="Result.Locations[0].PhysicalLocation.ArtifactLocation.Uri" LineStart="regionStartLine" LineEnd="regionEndLine"></ResultMetaData>
 				<CodeComponent DataLineStart="regionStartLine" DataLineEnd="regionEndLine" DataStart="regionStartLine" Language="@language">@Result.Locations[0].PhysicalLocation.Region.Snippet</CodeComponent>
 			}
 			else
 			{
-				@if (Run.Artifacts.FirstOrDefault(x => x.Location?.Uri?.Equals(Result.Locations[0].PhysicalLocation?.ArtifactLocation?.Uri) ?? false) is Artifact artifact && artifact.Contents is not null)
+				@if (Run.Artifacts.FirstOrDefault(x => x.Location?.Uri?.Equals(Result.Locations[0].PhysicalLocation?.ArtifactLocation?.Uri) ?? false) is { } artifact && artifact.Contents is not null)
 				{
+					<ResultMetaData FileUri="Result.Locations[0].PhysicalLocation.ArtifactLocation.Uri" LineStart="regionStartLine" LineEnd="regionEndLine"></ResultMetaData>
 					<CodeComponent DataLineStart="regionStartLine" DataLineEnd="regionEndLine" DataStart="regionStartLine" Language="@language">@artifact.Contents.Text</CodeComponent>
 				}
 				else if (Run.VersionControlProvenance?.Any(x => x.RepositoryUri is not null && (x.RevisionId is not null || x.RevisionTag is not null)) is true)
 				{
 					var versions = Run.VersionControlProvenance?.Where(x => x.RepositoryUri is not null && (x.RevisionId is not null || x.RevisionTag is not null));
 
-					if (versions.FirstOrDefault(x => x.RevisionId is not null) is VersionControlDetails versionControlDetailsByRevisionId)
+					if (versions?.FirstOrDefault(x => x.RevisionId is not null) is VersionControlDetails versionControlDetailsByRevisionId)
 					{
 						if (GitHubUrlConverter.TryParseGitHubUrl(versionControlDetailsByRevisionId.RepositoryUri, out var owner, out var repo))
 						{
 							var text = CodeCache.Get(owner, repo, versionControlDetailsByRevisionId.RevisionId, Result.Locations[0].PhysicalLocation.ArtifactLocation.Uri.ToString());
+							<GitHubResultMetaData Organization="@owner" Repository="@repo" Commit="@versionControlDetailsByRevisionId.RevisionId" FileUri="@Result.Locations[0].PhysicalLocation.ArtifactLocation.Uri" LineStart="regionStartLine" LineEnd="regionEndLine"></GitHubResultMetaData>
 							<CachedCodeComponent DataLineStart="regionStartLine" DataLineEnd="regionEndLine" CachedCode="text" Language="@language"></CachedCodeComponent>
 						}
 					}

@@ -10,28 +10,56 @@
 		<div class="row">
 			<div class="col-6">
 				<HxSelect Label="Sarif file"
-						  Data="appState.Files"
-						  TItem="SarifFile"
-						  TValue="SarifFile"
-						  TextSelector="sf => sf.FileName"
-						  Value="currentLog"
-						  ValueExpression="() => currentLog"
-						  ValueChanged="HandleCurrentLogChanged"
-						  Nullable="false" />
+				          Data="appState.Files"
+				          TItem="SarifFile"
+				          TValue="SarifFile"
+				          TextSelector="sf => sf.FileName"
+				          Value="currentLog"
+				          ValueExpression="() => currentLog"
+				          ValueChanged="HandleCurrentLogChanged"
+				          Nullable="false" />
 			</div>
 			<div class="col-6">
 				<HxSelect Data="currentLog.SarifLog.Runs"
-						  Label="Run"
-						  TItem="Run"
-						  TValue="Run"
-						  TextSelector="@(r => $"{r.Tool.Driver.Name} - {r.Results.Count}  result(s)")"
-						  Nullable="false"
-						  Value="settings.Run"
-						  ValueChanged="RunCallback"
-						  ValueExpression="() => settings.Run" />
+				          Label="Run"
+				          TItem="Run"
+				          TValue="Run"
+				          TextSelector="@(r => $"{r.Tool.Driver.Name} - {r.Results.Count}  result(s)")"
+				          Nullable="false"
+				          Value="settings.Run"
+				          ValueChanged="RunCallback"
+				          ValueExpression="() => settings.Run" />
 			</div>
 		</div>
-
+		@if (settings.Run.VersionControlProvenance.Count > 0)
+		{
+			<HxCard CssClass="my-4">
+				<BodyTemplate>
+					<div class="row">
+                    	<div class="col-6">
+                    		Repository URI
+                    	</div>
+                    	<div class="col-3">
+                    		Branch
+                    	</div>
+                    	<div class="col-3">
+                    		Commit Hash
+                        </div>
+                    </div>
+					<div class="row">
+						<div class="col-6">
+							@settings.Run.VersionControlProvenance[0].RepositoryUri
+						</div>
+						<div class="col-3">
+							@settings.Run.VersionControlProvenance[0].Branch
+						</div>
+						<div class="col-3">
+							@settings.Run.VersionControlProvenance[0].RevisionId
+						</div>
+					</div>
+				</BodyTemplate>
+			</HxCard>
+		}
 		<HxCard CssClass="my-4">
 			@*<HeaderTemplate>
 				<HxCardTitle>Issues filter</HxCardTitle>
@@ -42,7 +70,7 @@
 						<label class="form-label">Rules</label>
 						@if (settings.Run?.Tool?.Driver?.Rules?.Any() ?? false)
 						{
-							<HxDropdown CssClass="border-1 d-block">
+							<HxDropdownButtonGroup CssClass="border-1 d-block">
 								<HxDropdownToggleButton Color="ThemeColor.Dark" Outline="true">
 									@if (settings.Rules.Any())
 									{
@@ -62,7 +90,7 @@
 													ValueExpression="() => settings.Rules"
 													TextSelector="@(r => (r.Id == r.Name) ? r.Id : r.Id + " - " + r.Name)" />
 								</HxDropdownContent>
-							</HxDropdown>
+							</HxDropdownButtonGroup>
 						}
 						else
 						{
@@ -71,7 +99,7 @@
 					</div>
 					<div class="col-3">
 						<label class="form-label">Result Kind</label>
-						<HxDropdown CssClass="border-1 d-block">
+						<HxDropdownButtonGroup CssClass="border-1 d-block">
 							<HxDropdownToggleButton Color="ThemeColor.Dark" Outline="true">
 								@if (settings.ResultKinds.Any())
 								{
@@ -90,11 +118,11 @@
 												ValueChanged="ResultKindsCallback"
 												ValueExpression="() => settings.ResultKinds" />
 							</HxDropdownContent>
-						</HxDropdown>
+						</HxDropdownButtonGroup>
 					</div>
 					<div class="col-3">
 						<label class="form-label">Result Level</label>
-						<HxDropdown CssClass="border-1 d-block">
+						<HxDropdownButtonGroup CssClass="border-1 d-block">
 							<HxDropdownToggleButton Color="ThemeColor.Dark" Outline="true">
 								@if (settings.ResultLevels.Any())
 								{
@@ -113,7 +141,7 @@
 												ValueChanged="ResultLevelsCallback"
 												ValueExpression="() => settings.ResultLevels" />
 							</HxDropdownContent>
-						</HxDropdown>
+						</HxDropdownButtonGroup>
 					</div>
 					<div class="col-3">
 						<label class="form-label">Tags</label>
@@ -121,7 +149,7 @@
 						{
 							@if (settings.Run.Tags.Any() is true)
 							{
-								<HxDropdown CssClass="border-1 d-block">
+								<HxDropdownButtonGroup CssClass="border-1 d-block">
 									<HxDropdownToggleButton Color="ThemeColor.Dark" Outline="true">
 										@if (settings.Tags.Any())
 										{
@@ -140,14 +168,14 @@
 														ValueChanged="TagsCallback"
 														ValueExpression="() => settings.Tags" />
 									</HxDropdownContent>
-								</HxDropdown>
+								</HxDropdownButtonGroup>
 							}
 							else
 							{
 								
 								if (tagToRuleIdsMap.Any())
 								{
-									<HxDropdown CssClass="border-1 d-block">
+									<HxDropdownButtonGroup CssClass="border-1 d-block">
 									<HxDropdownToggleButton Color="ThemeColor.Dark" Outline="true">
 										@if (tagToRuleIdsMap.Any())
 										{
@@ -166,7 +194,7 @@
 														ValueChanged="TagsCallback"
 														ValueExpression="() => settings.Tags" />
 									</HxDropdownContent>
-									</HxDropdown>
+									</HxDropdownButtonGroup>
 								}
 								else
 								{

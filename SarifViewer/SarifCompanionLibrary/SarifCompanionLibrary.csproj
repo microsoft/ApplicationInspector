@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sarif.Sdk" Version="2.4.11" />
+    <PackageReference Include="Sarif.Sdk" Version="3.1.0" />
   </ItemGroup>
 
 </Project>

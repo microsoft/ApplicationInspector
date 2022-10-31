@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SarifCompanionLibrary", "Sa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinSarifViewer", "WinSarifViewer\WinSarifViewer.csproj", "{B6303215-4DFB-48B9-8EC0-7A97C9F3ABC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorSarifViewer.Wasm2", "BlazorSarifViewer.Wasm\BlazorSarifViewer.Wasm.csproj", "{67EE0F35-E62A-4E6D-9D48-6A7EC775598F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorSarifViewer.Wasm", "BlazorSarifViewer.Wasm\BlazorSarifViewer.Wasm.csproj", "{67EE0F35-E62A-4E6D-9D48-6A7EC775598F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{80A1A38E-9312-4201-94D4-5531CA143D52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80A1A38E-9312-4201-94D4-5531CA143D52}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80A1A38E-9312-4201-94D4-5531CA143D52}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80A1A38E-9312-4201-94D4-5531CA143D52}.Release|Any CPU.Build.0 = Release|Any CPU
 		{23A8CC8C-DD90-4D5D-A720-D264E7C46B23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{23A8CC8C-DD90-4D5D-A720-D264E7C46B23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23A8CC8C-DD90-4D5D-A720-D264E7C46B23}.Release|Any CPU.ActiveCfg = Release|Any CPU
