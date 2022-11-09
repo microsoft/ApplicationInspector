@@ -6,7 +6,10 @@ parameters:
 # Version of Dotnet SDK to use
 - name: dotnetVersion
   type: string
-  default: '6.0.x'
+  default: '7.0.x'
+- name: testFramework
+  type: string
+  default: 'net7.0'
 # List of paths to .csproj
 - name: projectPath
   type: string
@@ -34,5 +37,5 @@ jobs:
     inputs:
       command: 'test'
       projects: ${{ parameters.projectPath }}
-      arguments: '-f net6.0 --collect "Code coverage"'
+      arguments: '-f net7.0 --collect "Code coverage"'
       publishTestResults: true

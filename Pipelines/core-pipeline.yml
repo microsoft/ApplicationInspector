@@ -34,9 +34,16 @@ stages:
   jobs:
   - template: templates/dotnet-test-job.yml
     parameters:
-      dotnetVersion: 6.0.x
+      dotnetVersion: 7.0.x
+      testFramework: net7.0
       projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
-      
+- stage: Test
+  jobs:
+  - template: templates/dotnet-test-job.yml
+    parameters:
+      dotnetVersion: 6.0.x
+      testFramework: net6.0
+      projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
 - stage: SDL
   dependsOn: Test
   jobs:
@@ -49,14 +56,14 @@ stages:
   jobs:
   - template: templates/dotnet-publish-linux-mac-job.yml
     parameters:
-      dotnetVersion: '6.0.x'
+      dotnetVersion: '7.0.x'
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
       projectName: 'ApplicationInspector'
       preBuild:
       - template: templates/nbgv-set-version-steps.yml
   - template: templates/dotnet-publish-win-netcore-job.yml
     parameters:
-      dotnetVersion: '6.0.x'
+      dotnetVersion: '7.0.x'
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
       projectName: 'ApplicationInspector'
       preBuild:
@@ -64,31 +71,31 @@ stages:
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_lib'
-      dotnetVersion: '6.0.x'
+      dotnetVersion: '7.0.x'
       projectPath: 'AppInspector/AppInspector.Commands.csproj'
       projectName: 'ApplicationInspector_Commands'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_engine'
-      dotnetVersion: '6.0.x'
+      dotnetVersion: '7.0.x'
       projectPath: 'AppInspector.RulesEngine/AppInspector.RulesEngine.csproj'
       projectName: 'ApplicationInspector_RulesEngine'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_common'
-      dotnetVersion: '6.0.x'
+      dotnetVersion: '7.0.x'
       projectPath: 'AppInspector.Common/AppInspector.Common.csproj'
       projectName: 'ApplicationInspector_Common'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_logging'
-      dotnetVersion: '6.0.x'
+      dotnetVersion: '7.0.x'
       projectPath: 'AppInspector.Logging/AppInspector.Logging.csproj'
       projectName: 'ApplicationInspector_Logging'
   - template: templates/nuget-build-job.yml
     parameters:
       jobName: 'pack_cli'
-      dotnetVersion: '6.0.x'
+      dotnetVersion: '7.0.x'
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
       projectName: 'ApplicationInspector_CLI'
 
@@ -106,7 +113,7 @@ stages:
     - task: UseDotNet@2
       inputs:
         packageType: 'sdk'
-        version: '6.0.x'
+        version: '7.0.x'
     - script: 'dotnet tool update -g nbgv'
       displayName: 'Install GitVersioning'
     - task: PowerShell@2

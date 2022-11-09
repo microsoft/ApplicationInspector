@@ -31,7 +31,7 @@
 
     <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
         <ItemGroup>
-            <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
+            <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
         </ItemGroup>
     </Target>
 
@@ -43,23 +43,23 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <DefineConstants/>
+        <DefineConstants />
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="rules\default\**\*.json"/>
+        <EmbeddedResource Include="rules\default\**\*.json" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommandLineParser" Version="2.9.1"/>
-        <PackageReference Include="DotLiquid" Version="2.2.656"/>
-        <PackageReference Include="Glob" Version="1.1.9"/>
-        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.25"/>
-        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.11"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-        <PackageReference Include="ShellProgressBar" Version="5.2.0"/>
-        <PackageReference Include="System.Reflection.Metadata" Version="6.0.1"/>
+        <PackageReference Include="CommandLineParser" Version="2.9.1" />
+        <PackageReference Include="DotLiquid" Version="2.2.656" />
+        <PackageReference Include="Glob" Version="1.1.9" />
+        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.36" />
+        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.18" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="ShellProgressBar" Version="5.2.0" />
+        <PackageReference Include="System.Reflection.Metadata" Version="7.0.0" />
 
     </ItemGroup>
 
@@ -83,12 +83,16 @@
             <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
             <IncludeAssets>ApplicationInspector.Common.dll</IncludeAssets>
         </ProjectReference>
-        <ProjectReference Include="..\AppInspector.RulesEngine\AppInspector.RulesEngine.csproj"/>
+        <ProjectReference Include="..\AppInspector.RulesEngine\AppInspector.RulesEngine.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\.editorconfig" Link=".editorconfig"/>
-        <None Include="..\LICENSE.txt" Pack="true" PackagePath=""/>
-        <None Include="..\icon-128.png" Pack="true" PackagePath=""/>
+        <None Include="..\.editorconfig" Link=".editorconfig" />
+        <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+        <None Include="..\icon-128.png" Pack="true" PackagePath="" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="Nerdbank.GitVersioning" Version="3.5.119" />
     </ItemGroup>
 </Project>

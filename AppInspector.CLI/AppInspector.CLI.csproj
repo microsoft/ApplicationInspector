@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
         <RootNamespace>Microsoft.ApplicationInspector.CLI</RootNamespace>
         <AssemblyName>ApplicationInspector.CLI</AssemblyName>
         <copyright>© Microsoft Corporation. All rights reserved.</copyright>
@@ -29,20 +29,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Remove="Writers\AnalyzeHtmlWriter.cs.foo"/>
+        <None Remove="Writers\AnalyzeHtmlWriter.cs.foo" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="html\partials\_file_listing.liquid"/>
-        <EmbeddedResource Include="html\partials\_report_overview.liquid"/>
-        <EmbeddedResource Include="html\partials\_report_profile.liquid"/>
-        <EmbeddedResource Include="html\partials\_report_summary.liquid"/>
+        <EmbeddedResource Include="html\partials\_file_listing.liquid" />
+        <EmbeddedResource Include="html\partials\_report_overview.liquid" />
+        <EmbeddedResource Include="html\partials\_report_profile.liquid" />
+        <EmbeddedResource Include="html\partials\_report_summary.liquid" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AppInspector.Logging\AppInspector.Logging.csproj"/>
-        <ProjectReference Include="..\AppInspector.RulesEngine\AppInspector.RulesEngine.csproj"/>
-        <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj"/>
+        <ProjectReference Include="..\AppInspector.Logging\AppInspector.Logging.csproj" />
+        <ProjectReference Include="..\AppInspector.RulesEngine\AppInspector.RulesEngine.csproj" />
+        <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -61,18 +61,22 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\LICENSE.txt" Pack="true" PackagePath=""/>
-        <None Include="..\icon-128.png" Pack="true" PackagePath=""/>
+        <None Include="..\LICENSE.txt" Pack="true" PackagePath="" />
+        <None Include="..\icon-128.png" Pack="true" PackagePath="" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="DotLiquid" Version="2.2.656"/>
-        <PackageReference Include="Sarif.Sdk" Version="3.1.0"/>
-        <PackageReference Include="Serilog" Version="2.11.0"/>
-        <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1"/>
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0"/>
-        <PackageReference Include="ShellProgressBar" Version="5.2.0"/>
+        <PackageReference Include="DotLiquid" Version="2.2.656" />
+        <PackageReference Include="Sarif.Sdk" Version="3.1.0" />
+        <PackageReference Include="Serilog" Version="2.12.0" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+        <PackageReference Include="ShellProgressBar" Version="5.2.0" />
 
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="Nerdbank.GitVersioning" Version="3.5.119" />
     </ItemGroup>
 </Project>
