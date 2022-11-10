@@ -55,7 +55,7 @@ jobs:
       command: 'custom'
       custom: 'pack'
       arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o Packages'
-  - task: AntiMalware@3
+  - task: AntiMalware@4
     displayName: Anti-Malware Scan
     inputs:
       InputType: 'Basic'

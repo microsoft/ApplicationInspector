@@ -72,7 +72,7 @@ jobs:
       arguments: '${{ parameters.projectPath }} -c ${{ parameters.buildConfiguration }} -o bin/netcoreapp/${{ parameters.projectName }}_netcoreapp_$(ReleaseVersion)'
       publishWebProjects: false
       zipAfterPublish: false
-  - task: AntiMalware@3
+  - task: AntiMalware@4
     displayName: Anti-Malware Scan
     inputs:
       InputType: 'Basic'
