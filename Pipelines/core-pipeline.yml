@@ -30,14 +30,14 @@ pr:
     - AppInspector.Tests.CLI/*
 
 stages:
-- stage: Test .Net Current
+- stage: Test_Net_Current
   jobs:
   - template: templates/dotnet-test-job.yml
     parameters:
       dotnetVersion: 7.0.x
       testFramework: net7.0
       projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
-- stage: Test .Net LTS
+- stage: Test_Net_LTS
   jobs:
   - template: templates/dotnet-test-job.yml
     parameters:
