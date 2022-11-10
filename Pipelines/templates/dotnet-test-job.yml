@@ -7,6 +7,7 @@ parameters:
 - name: dotnetVersion
   type: string
   default: '7.0.x'
+# The framework to use for testing
 - name: testFramework
   type: string
   default: 'net7.0'
@@ -37,5 +38,5 @@ jobs:
     inputs:
       command: 'test'
       projects: ${{ parameters.projectPath }}
-      arguments: '-f net7.0 --collect "Code coverage"'
+      arguments: '-f ${{ parameters.TestFramework }} --collect "Code coverage"'
       publishTestResults: true
