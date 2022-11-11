@@ -137,7 +137,7 @@ stages:
         destinationFolder: '$(Build.BinariesDirectory)'
         cleanDestinationFolder: false
         overwriteExistingFiles: true
-    - task: AntiMalware@3
+    - task: AntiMalware@4
       displayName: Anti-Malware Scan
       inputs:
         InputType: 'Basic'
