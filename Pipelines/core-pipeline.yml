@@ -45,8 +45,8 @@ stages:
   - template: templates/dotnet-test-job.yml
     parameters:
       jobName: "test_current"
-      dotnetVersion: ${{ variables.currentFramework }}
-      testFramework: ${{ variables.currentSDK }}
+      dotnetVersion: ${{ variables.currentSDK }}
+      testFramework: ${{ variables.currentFramework }}
       projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
 - stage: Test_Net_LTS
   jobs:
