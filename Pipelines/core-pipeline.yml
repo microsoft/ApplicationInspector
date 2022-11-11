@@ -1,6 +1,16 @@
 # Azure Pipelines
 # https://aka.ms/yaml
 
+variables:
+- name: CurrentSDK
+  value: 7.0.x
+- name: CurrentFramework
+  value: net7.0
+- name: LTS_SDK
+  value: 6.0.x
+- name: LTS_Framework
+  value: net6.0
+
 name: ApplicationInspector_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 trigger:
   batch: true
@@ -34,15 +44,17 @@ stages:
   jobs:
   - template: templates/dotnet-test-job.yml
     parameters:
-      dotnetVersion: 7.0.x
-      testFramework: net7.0
+      jobName: "test_current"
+      dotnetVersion: ${{ variables.currentFramework }}
+      testFramework: ${{ variables.currentSDK }}
       projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
 - stage: Test_Net_LTS
   jobs:
   - template: templates/dotnet-test-job.yml
     parameters:
-      dotnetVersion: 6.0.x
-      testFramework: net6.0
+      jobName: "test_LTS"
+      dotnetVersion: ${{ variables.LTS_SDK }}
+      testFramework: ${{ variables.LTS_Framework }}
       projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
 - stage: SDL
   dependsOn: Test
