@@ -7,10 +7,10 @@ parameters:
 - name: dotnetVersion
   type: string
   default: '7.0.x'
-# The framework to use for testing
-- name: testFramework
+# Version of Dotnet SDK to use
+- name: dotnetVersionLTS
   type: string
-  default: 'net7.0'
+  default: '6.0.x'
 # List of paths to .csproj
 - name: projectPath
   type: string
@@ -26,11 +26,16 @@ jobs:
     displayName: Install Dotnet SDK
     inputs:
       packageType: 'sdk'
+      version: ${{ parameters.dotnetVersionLTS }}
+  - task: UseDotNet@2
+    displayName: Install Dotnet SDK
+    inputs:
+      packageType: 'sdk'
       version: ${{ parameters.dotnetVersion }}
   - task: DotNetCoreCLI@2
     displayName: Dotnet Test
     inputs:
       command: 'test'
       projects: ${{ parameters.projectPath }}
-      arguments: '-f ${{ parameters.TestFramework }} --collect "Code coverage"'
+      arguments: '--collect "Code coverage"'
       publishTestResults: true

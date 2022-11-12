@@ -46,16 +46,9 @@ stages:
     parameters:
       jobName: "test_current"
       dotnetVersion: ${{ variables.currentSDK }}
-      testFramework: ${{ variables.currentFramework }}
+      dotnetVersionLTS: ${{ variables.LTS_SDK }}
       projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
-- stage: Test_Net_LTS
-  jobs:
-  - template: templates/dotnet-test-job.yml
-    parameters:
-      jobName: "test_LTS"
-      dotnetVersion: ${{ variables.LTS_SDK }}
-      testFramework: ${{ variables.LTS_Framework }}
-      projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
+      
 - stage: SDL
   dependsOn: Test
   jobs:
