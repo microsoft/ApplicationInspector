@@ -71,7 +71,7 @@ stages:
     parameters:
       dotnetVersion: '${{ variables.CurrentSDK }}'
       publishFrameworkVersion: '${{ variables.CurrentFramework }}'
-            projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
       projectName: 'ApplicationInspector'
       preBuild:
       - template: templates/nbgv-set-version-steps.yml
