@@ -6,6 +6,10 @@ parameters:
 # Version of Dotnet SDK to use
 - name: dotnetVersion
   type: string
+  default: '7.0.x'
+# Version of Dotnet SDK to use
+- name: dotnetVersionLTS
+  type: string
   default: '6.0.x'
 # List of paths to .csproj
 - name: projectPath
@@ -22,17 +26,16 @@ jobs:
     displayName: Install Dotnet SDK
     inputs:
       packageType: 'sdk'
-      version: ${{ parameters.dotnetVersion }}
-  - task: DotNetCoreCLI@2
-    displayName: Dotnet Restore
+      version: ${{ parameters.dotnetVersionLTS }}
+  - task: UseDotNet@2
+    displayName: Install Dotnet SDK
     inputs:
-      command: 'restore'
-      projects: ${{ parameters.projectPath }}
-      verbosityRestore: 'Normal'
+      packageType: 'sdk'
+      version: ${{ parameters.dotnetVersion }}
   - task: DotNetCoreCLI@2
     displayName: Dotnet Test
     inputs:
       command: 'test'
       projects: ${{ parameters.projectPath }}
-      arguments: '-f net6.0 --collect "Code coverage"'
+      arguments: '--collect "Code coverage"'
       publishTestResults: true
