@@ -4,7 +4,7 @@
         <OutputType>Library</OutputType>
         <Nullable>enable</Nullable>
         <LangVersion>10.0</LangVersion>
-        <TargetFrameworks>net6.0;netcoreapp3.1</TargetFrameworks>
+        <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -30,5 +30,9 @@
     <ItemGroup>
         <ProjectReference Include="..\AppInspector.Logging\AppInspector.Logging.csproj" />
         <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="Nerdbank.GitVersioning" Version="3.5.119" />
     </ItemGroup>
 </Project>

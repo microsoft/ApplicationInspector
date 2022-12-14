@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
         <RootNamespace>Microsoft.ApplicationInspector.CLI</RootNamespace>
         <AssemblyName>ApplicationInspector.CLI</AssemblyName>
         <copyright>© Microsoft Corporation. All rights reserved.</copyright>
@@ -74,5 +74,9 @@
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
         <PackageReference Include="ShellProgressBar" Version="5.2.0" />
 
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="Nerdbank.GitVersioning" Version="3.5.119" />
     </ItemGroup>
 </Project>

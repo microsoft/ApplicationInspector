@@ -2,18 +2,21 @@
 using System.IO;
 using System.Reflection;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using Microsoft.ApplicationInspector.Commands;
 
-namespace Benchmarks;
-
+namespace ApplicationInspector.Benchmarks;
+[MemoryDiagnoser]
+[SimpleJob(RuntimeMoniker.Net70)]
+[SimpleJob(RuntimeMoniker.Net60)]
 //[ConcurrencyVisualizerProfiler]
 public class AnalyzeBenchmark
 {
     // Manually put the file you want to benchmark. But don't put this in a path with "Test" in the name ;)
-    private const string path = "C:\\Users\\gstocco\\Documents\\GitHub\\ApplicationInspector\\RulesEngine\\";
+    private const string path = "C:\\Users\\gstocco\\Documents\\GitHub\\ApplicationInspector\\AppInspector.RulesEngine";
 
     [Benchmark(Baseline = true)]
-    public static void AnalyzeSingleThreaded()
+    public void AnalyzeSingleThreaded()
     {
         AnalyzeCommand command = new(new AnalyzeOptions
         {
@@ -28,7 +31,7 @@ public class AnalyzeBenchmark
     }
 
     [Benchmark]
-    public static void AnalyzeMultiThread()
+    public void AnalyzeMultiThread()
     {
         AnalyzeCommand command = new(new AnalyzeOptions
         {
