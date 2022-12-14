@@ -182,12 +182,12 @@ public class WithinOperation : OatOperation
             }
 
             var subOp = _analyzer
-                .GetOperation(wc.SubClause.Key.Operation, wc.SubClause.Key.CustomOperation);
+                .GetOperation(wc.SubClause.Operation, wc.SubClause.CustomOperation);
 
             if (subOp is null)
             {
                 yield return new Violation(
-                    $"SubClause in Rule {rule.Name} Clause {clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)} is of type '{wc.SubClause.Key.Operation},{wc.SubClause.Key.CustomOperation}' is not present in the analyzer.",
+                    $"SubClause in Rule {rule.Name} Clause {clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)} is of type '{wc.SubClause.Operation},{wc.SubClause.CustomOperation}' is not present in the analyzer.",
                     rule, clause);
             }
             else
