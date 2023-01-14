@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Common;
@@ -109,7 +110,14 @@ public class TestExportTagsCmd
     [ClassCleanup]
     public static void CleanUp()
     {
-        Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
+        try
+        {
+            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e.Message);
+        }
     }
 
     [TestMethod]

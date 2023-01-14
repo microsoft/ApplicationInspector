@@ -1,5 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using CommandLine;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.Logging;
@@ -20,7 +22,7 @@ public class TestVerifyRulesCmd
     private readonly string _invalidFileRegexes = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
+    ""id"": ""AI_TEST_WINDOWS_INVALID_REGEX"",
     ""description"": ""This rule checks for the string 'windows'"",
     ""tags"": [
       ""Test.Tags.Windows""
@@ -44,7 +46,7 @@ public class TestVerifyRulesCmd
     private readonly string _invalidJsonValidRule = @"
 {
     ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
+    ""id"": ""AI_TEST_WINDOWS_INVALID_JSON"",
     ""description"": ""This rule checks for the string 'windows'"",
     ""tags"": [
       ""Test.Tags.Windows""
@@ -66,7 +68,7 @@ public class TestVerifyRulesCmd
     private readonly string _knownLanguages = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
+    ""id"": ""AI_TEST_WINDOWS_INVALID_LANGAUGE"",
     ""description"": ""This rule checks for the string 'windows'"",
     ""tags"": [
       ""Test.Tags.Windows""
@@ -90,7 +92,7 @@ public class TestVerifyRulesCmd
     private readonly string _mustMatchRule = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
+    ""id"": ""AI_TEST_WINDOWS_MUST_MATCH"",
     ""description"": ""This rule checks for the string 'windows'"",
     ""tags"": [
       ""Test.Tags.Windows""
@@ -115,7 +117,7 @@ public class TestVerifyRulesCmd
     private readonly string _mustMatchRuleFail = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
+    ""id"": ""AI_TEST_WINDOWS_MUST_MATCH_FAIL"",
     ""description"": ""This rule checks for the string 'windows'"",
     ""tags"": [
       ""Test.Tags.Windows""
@@ -140,7 +142,7 @@ public class TestVerifyRulesCmd
     private readonly string _mustNotMatchRule = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
+    ""id"": ""AI_TEST_WINDOWS_MUST_NOT_MATCH"",
     ""description"": ""This rule checks for the string 'windows'"",
     ""tags"": [
       ""Test.Tags.Windows""
@@ -165,7 +167,7 @@ public class TestVerifyRulesCmd
     private readonly string _mustNotMatchRuleFail = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
+    ""id"": ""AI_TEST_WINDOWS_MUST_NOT_MATCH_FAIL"",
     ""description"": ""This rule checks for the string 'windows'"",
     ""tags"": [
       ""Test.Tags.Windows""
@@ -190,7 +192,7 @@ public class TestVerifyRulesCmd
     private readonly string _sameId = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
+    ""id"": ""AI_TEST_WINDOWS_SAME_ID"",
     ""description"": ""This rule checks for the string 'windows'"",
     ""tags"": [
       ""Test.Tags.Windows""
@@ -209,7 +211,7 @@ public class TestVerifyRulesCmd
 },
 {
     ""name"": ""Platform: Linux"",
-    ""id"": ""AI_TEST_WINDOWS"",
+    ""id"": ""AI_TEST_WINDOWS_SAME_ID"",
     ""description"": ""This rule checks for the string 'linux'"",
     ""tags"": [
       ""Test.Tags.Linux""
@@ -305,7 +307,14 @@ public class TestVerifyRulesCmd
     [ClassCleanup]
     public static void CleanUp()
     {
-        Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
+        try
+        {
+            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e.Message);
+        }
     }
 
     /// <summary>
@@ -334,7 +343,7 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void UnclosedJson()
     {
-        var path = Path.GetTempFileName();
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         File.WriteAllText(path, _invalidJsonValidRule);
         VerifyRulesOptions options = new()
         {
@@ -363,7 +372,7 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void DuplicateId()
     {
-        var path = Path.GetTempFileName();
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         File.WriteAllText(path, _sameId);
         VerifyRulesOptions options = new()
         {
@@ -379,7 +388,7 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void DuplicateIdCheckDisabled()
     {
-        var path = Path.GetTempFileName();
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         File.WriteAllText(path, _sameId);
         VerifyRulesOptions options = new()
         {
@@ -396,7 +405,7 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void InvalidRegex()
     {
-        var path = Path.GetTempFileName();
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         File.WriteAllText(path, _invalidFileRegexes);
         VerifyRulesOptions options = new()
         {
@@ -412,7 +421,7 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void UnknownLanguage()
     {
-        var path = Path.GetTempFileName();
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         File.WriteAllText(path, _knownLanguages);
         VerifyRulesOptions options = new()
         {
@@ -428,7 +437,7 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void MustMatch()
     {
-        var path = Path.GetTempFileName();
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         File.WriteAllText(path, _mustMatchRule);
         VerifyRulesOptions options = new()
         {
@@ -444,7 +453,7 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void MustMatchDetectIncorrect()
     {
-        var path = Path.GetTempFileName();
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         File.WriteAllText(path, _mustMatchRuleFail);
         VerifyRulesOptions options = new()
         {
@@ -460,7 +469,7 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void MustNotMatch()
     {
-        var path = Path.GetTempFileName();
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         File.WriteAllText(path, _mustNotMatchRule);
         VerifyRulesOptions options = new()
         {
@@ -476,7 +485,7 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void MustNotMatchDetectIncorrect()
     {
-        var path = Path.GetTempFileName();
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         File.WriteAllText(path, _mustNotMatchRuleFail);
         VerifyRulesOptions options = new()
         {
