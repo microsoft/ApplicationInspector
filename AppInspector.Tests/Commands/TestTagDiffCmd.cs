@@ -107,7 +107,14 @@ windows
     [ClassCleanup]
     public static void CleanUp()
     {
-        Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
+        try
+        {
+            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e.Message);
+        }
     }
 
     [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestPassed)]

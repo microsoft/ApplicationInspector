@@ -52,10 +52,10 @@
 
     <ItemGroup>
         <PackageReference Include="CommandLineParser" Version="2.9.1" />
-        <PackageReference Include="DotLiquid" Version="2.2.663" />
+        <PackageReference Include="DotLiquid" Version="2.2.677" />
         <PackageReference Include="Glob" Version="1.1.9" />
-        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.39" />
-        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.1.20" />
+        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.42" />
+        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.8" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
         <PackageReference Include="ShellProgressBar" Version="5.2.0" />
