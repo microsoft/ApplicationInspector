@@ -41,11 +41,6 @@ public sealed class Languages
             {
                 _comments = result.Result.ToList();
             }
-
-            // using StreamReader commentStreamReader = new(commentResource);
-            // using JsonReader commentJsonReader = new Utf8JsonReader(commentStreamReader);
-            // JsonSerializer jsonSerializer = new();
-            // _comments = jsonSerializer.Deserialize<List<Comment>>(commentJsonReader) ?? new List<Comment>();
         }
 
         var languagesResource = languagesStream ?? assembly.GetManifestResourceStream(LanguagesResourcePath);
@@ -61,12 +56,6 @@ public sealed class Languages
             {
                 _languageInfos = result.Result.ToList();
             }
-
-           //  using StreamReader languagesStreamReader = new(languagesResource);
-           //using JsonReader languagesJsonReader = new JsonTextReader(languagesStreamReader);
-           //JsonSerializer jsonSerializer = new();
-           // _languageInfos = jsonSerializer.Deserialize<List<LanguageInfo>>(languagesJsonReader) ??
-           //                  new List<LanguageInfo>();
         }
     }
 
