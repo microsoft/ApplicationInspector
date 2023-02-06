@@ -1,11 +1,10 @@
 ﻿using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
 [Flags]
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Confidence
 {
     Unspecified = 0,

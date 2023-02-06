@@ -1,8 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
 using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
@@ -10,7 +9,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine;
 ///     Issue severity
 /// </summary>
 [Flags]
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Severity
 {
     /// <summary>

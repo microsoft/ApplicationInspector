@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
@@ -18,8 +18,8 @@ public sealed class Languages
 {
     private const string CommentResourcePath = "Microsoft.ApplicationInspector.RulesEngine.Resources.comments.json";
     private const string LanguagesResourcePath = "Microsoft.ApplicationInspector.RulesEngine.Resources.languages.json";
-    private readonly List<Comment> _comments;
-    private readonly List<LanguageInfo> _languageInfos;
+    private readonly List<Comment> _comments = new();
+    private readonly List<LanguageInfo> _languageInfos = new();
     private readonly ILogger _logger;
 
     public Languages(ILoggerFactory? loggerFactory = null, Stream? commentsStream = null,
@@ -33,14 +33,19 @@ public sealed class Languages
         {
             _logger.LogError("Failed to load embedded comments configuration from {CommentResourcePath}",
                 CommentResourcePath);
-            _comments = new List<Comment>();
         }
         else
         {
-            using StreamReader commentStreamReader = new(commentResource);
-            using JsonReader commentJsonReader = new JsonTextReader(commentStreamReader);
-            JsonSerializer jsonSerializer = new();
-            _comments = jsonSerializer.Deserialize<List<Comment>>(commentJsonReader) ?? new List<Comment>();
+            var result = JsonSerializer.DeserializeAsync<List<Comment>>(commentResource);
+            if (result.Result != null)
+            {
+                _comments = result.Result.ToList();
+            }
+
+            // using StreamReader commentStreamReader = new(commentResource);
+            // using JsonReader commentJsonReader = new Utf8JsonReader(commentStreamReader);
+            // JsonSerializer jsonSerializer = new();
+            // _comments = jsonSerializer.Deserialize<List<Comment>>(commentJsonReader) ?? new List<Comment>();
         }
 
         var languagesResource = languagesStream ?? assembly.GetManifestResourceStream(LanguagesResourcePath);
@@ -48,15 +53,20 @@ public sealed class Languages
         {
             _logger.LogError("Failed to load embedded languages configuration from {LanguagesResourcePath}",
                 LanguagesResourcePath);
-            _languageInfos = new List<LanguageInfo>();
         }
         else
         {
-            using StreamReader languagesStreamReader = new(languagesResource);
-            using JsonReader languagesJsonReader = new JsonTextReader(languagesStreamReader);
-            JsonSerializer jsonSerializer = new();
-            _languageInfos = jsonSerializer.Deserialize<List<LanguageInfo>>(languagesJsonReader) ??
-                             new List<LanguageInfo>();
+            var result = JsonSerializer.DeserializeAsync<List<LanguageInfo>>(languagesResource);
+            if (result.Result != null)
+            {
+                _languageInfos = result.Result.ToList();
+            }
+
+           //  using StreamReader languagesStreamReader = new(languagesResource);
+           //using JsonReader languagesJsonReader = new JsonTextReader(languagesStreamReader);
+           //JsonSerializer jsonSerializer = new();
+           // _languageInfos = jsonSerializer.Deserialize<List<LanguageInfo>>(languagesJsonReader) ??
+           //                  new List<LanguageInfo>();
         }
     }
 

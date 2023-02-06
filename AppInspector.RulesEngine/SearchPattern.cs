@@ -1,9 +1,6 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
@@ -12,41 +9,41 @@ namespace Microsoft.ApplicationInspector.RulesEngine;
 /// </summary>
 public class SearchPattern
 {
-    [JsonProperty(PropertyName = "confidence")]
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonPropertyName("confidence")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public Confidence Confidence { get; set; }
 
-    [JsonProperty(PropertyName = "modifiers")]
+    [JsonPropertyName("modifiers")]
     public string[]? Modifiers { get; set; }
 
-    [JsonProperty(PropertyName = "pattern")]
+    [JsonPropertyName("pattern")]
     public string? Pattern { get; set; }
 
-    [JsonProperty(PropertyName = "type")]
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonPropertyName("type")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public PatternType? PatternType { get; set; }
 
-    [JsonProperty(PropertyName = "scopes")]
+    [JsonPropertyName("scopes")]
     public PatternScope[]? Scopes { get; set; }
 
     /// <summary>
     ///     If set, attempt to parse the file as XML  and if that is possible,
     ///     before running the pattern, select down to the XPath provided
     /// </summary>
-    [JsonProperty(PropertyName = "xpaths")]
+    [JsonPropertyName("xpaths")]
     public string[]? XPaths { get; set; }
 
     /// <summary>
     ///     If set, attempt to parse the file as JSON and if that is possible,
     ///     before running the pattern, select down to the JsonPath provided
     /// </summary>
-    [JsonProperty(PropertyName = "jsonpaths")]
+    [JsonPropertyName("jsonpaths")]
     public string[]? JsonPaths { get; set; }
 
     /// <summary>
     ///     If set, attempt to parse the file as YML and if that is possible,
     ///     before running the pattern, select down to the JsonPath provided
     /// </summary>
-    [JsonProperty(PropertyName = "ymlpaths")]
+    [JsonPropertyName("ymlpaths")]
     public string[]? YamlPaths { get; set; }
 }

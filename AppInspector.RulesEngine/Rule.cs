@@ -4,9 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
@@ -39,20 +38,20 @@ public class Rule
     [JsonIgnore]
     public bool Disabled { get; set; }
 
-    [JsonProperty(PropertyName = "name")] public string Name { get; set; } = "";
+    [JsonPropertyName("name")] public string Name { get; set; } = "";
 
-    [JsonProperty(PropertyName = "id")] public string Id { get; set; } = "";
+    [JsonPropertyName("id")] public string Id { get; set; } = "";
 
-    [JsonProperty(PropertyName = "description")]
+    [JsonPropertyName("description")]
     public string? Description { get; set; } = "";
 
-    [JsonProperty(PropertyName = "does_not_apply_to")]
+    [JsonPropertyName("does_not_apply_to")]
     public List<string>? DoesNotApplyTo { get; set; }
 
-    [JsonProperty(PropertyName = "applies_to")]
+    [JsonPropertyName("applies_to")]
     public string[]? AppliesTo { get; set; }
 
-    [JsonProperty(PropertyName = "applies_to_file_regex")]
+    [JsonPropertyName("applies_to_file_regex")]
     public string[]? FileRegexes
     {
         get => _fileRegexes;
@@ -78,24 +77,24 @@ public class Rule
         }
     }
 
-    [JsonProperty(PropertyName = "tags")] public string[]? Tags { get; set; }
+    [JsonPropertyName("tags")] public string[]? Tags { get; set; }
 
-    [JsonProperty(PropertyName = "severity")]
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonPropertyName("severity")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public Severity Severity { get; set; } = Severity.Moderate;
 
-    [JsonProperty(PropertyName = "overrides")]
+    [JsonPropertyName("overrides")]
     public string[]? Overrides { get; set; }
 
-    [JsonProperty(PropertyName = "patterns")]
+    [JsonPropertyName("patterns")]
     public SearchPattern[] Patterns { get; set; } = Array.Empty<SearchPattern>();
 
-    [JsonProperty(PropertyName = "conditions")]
+    [JsonPropertyName("conditions")]
     public SearchCondition[]? Conditions { get; set; }
 
-    [JsonProperty(PropertyName = "must-match")]
+    [JsonPropertyName("must-match")]
     public string[]? MustMatch { get; set; }
 
-    [JsonProperty(PropertyName = "must-not-match")]
+    [JsonPropertyName("must-not-match")]
     public string[]? MustNotMatch { get; set; }
 }

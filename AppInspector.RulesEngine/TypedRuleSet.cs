@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
@@ -62,10 +62,6 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     /// <param name="tag"> Tag for the rules </param>
     /// <exception cref="ArgumentException">Thrown if the filename is null or empty</exception>
     /// <exception cref="FileNotFoundException">Thrown if the specified file cannot be found on the file system</exception>
-    /// <exception cref="Newtonsoft.Json.JsonSerializationException">
-    ///     Thrown if the specified file cannot be deserialized as a
-    ///     <see cref="List{T}" />
-    /// </exception>
     public void AddPath(string path, string? tag = null)
     {
         if (Directory.Exists(path))
@@ -88,11 +84,7 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     /// <param name="path"> Path to rules folder </param>
     /// <param name="tag"> Tag for the rules </param>
     /// <exception cref="ArgumentException">Thrown if the filename is null or empty</exception>
-    /// <exception cref="FileNotFoundException">Thrown if the specified file cannot be found on the file system</exception>
-    /// <exception cref="Newtonsoft.Json.JsonSerializationException">
-    ///     Thrown if the specified file cannot be deserialized as a
-    ///     <see cref="List{T}" />
-    /// </exception>
+    /// <exception cref="DirectoryNotFoundException">Thrown if the specified file cannot be found on the file system</exception>
     public void AddDirectory(string path, string? tag = null)
     {
         if (!Directory.Exists(path))
@@ -111,10 +103,6 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     /// <param name="tag"> Tag for the rules </param>
     /// <exception cref="ArgumentException">Thrown if the filename is null or empty</exception>
     /// <exception cref="FileNotFoundException">Thrown if the specified file cannot be found on the file system</exception>
-    /// <exception cref="Newtonsoft.Json.JsonSerializationException">
-    ///     Thrown if the specified file cannot be deserialized as a
-    ///     <see cref="List{T}" />
-    /// </exception>
     public void AddFile(string? filename, string? tag = null)
     {
         if (string.IsNullOrEmpty(filename))
@@ -180,18 +168,22 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     /// <param name="jsonString"></param>
     /// <param name="sourceName"></param>
     /// <param name="tag">Add an additional tag to the rules when added.</param>
+    /// <exception cref="System.Text.JsonException">
+    ///     Thrown if the specified json string cannot be deserialized as a
+    ///     <see cref="IEnumerable{T}" />
+    /// </exception>
     /// <returns></returns>
     internal IEnumerable<T> StringToRules(string jsonString, string sourceName, string? tag = null)
     {
-        List<T>? ruleList = null;
+        List<T>? ruleList;
         try
         {
-            ruleList = JsonConvert.DeserializeObject<List<T>>(jsonString);
+            ruleList = JsonSerializer.Deserialize<List<T>>(jsonString);
         }
-        catch (JsonSerializationException jsonSerializationException)
+        catch (JsonException jsonSerializationException)
         {
             _logger.LogError("Failed to deserialize '{0}' at Line {1} Column {2}", sourceName,
-                jsonSerializationException.LineNumber, jsonSerializationException.LinePosition);
+                jsonSerializationException.LineNumber, jsonSerializationException.BytePositionInLine);
             throw;
         }
 
