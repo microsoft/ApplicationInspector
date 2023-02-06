@@ -178,7 +178,11 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
         List<T>? ruleList;
         try
         {
-            ruleList = JsonSerializer.Deserialize<List<T>>(jsonString);
+            var options = new JsonSerializerOptions()
+            {
+                AllowTrailingCommas = true
+            };
+            ruleList = JsonSerializer.Deserialize<List<T>>(jsonString, options);
         }
         catch (JsonException jsonSerializationException)
         {
