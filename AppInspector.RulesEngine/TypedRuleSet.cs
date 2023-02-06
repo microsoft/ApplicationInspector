@@ -180,7 +180,8 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
         {
             var options = new JsonSerializerOptions()
             {
-                AllowTrailingCommas = true
+                AllowTrailingCommas = true,
+                
             };
             ruleList = JsonSerializer.Deserialize<List<T>>(jsonString, options);
         }

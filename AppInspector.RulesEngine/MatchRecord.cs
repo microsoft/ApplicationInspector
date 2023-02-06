@@ -93,7 +93,8 @@ public class MatchRecord
     [ExcludeFromCodeCoverage]
     public string? PatternType => MatchingPattern?.PatternType.ToString();
 
-    [JsonIgnore] [ExcludeFromCodeCoverage] public TextContainer? FullTextContainer { get; set; }
+    [JsonIgnore] [ExcludeFromCodeCoverage]
+    public TextContainer? FullTextContainer { get; set; }
 
     /// <summary>
     ///     Internal to namespace only
