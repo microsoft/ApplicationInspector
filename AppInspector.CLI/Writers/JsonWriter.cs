@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -20,9 +21,10 @@ internal class JsonWriter : CommandResultsWriter
     {
         var options = new JsonSerializerOptions
         {
-            WriteIndented = true,
-            //jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
-            //jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
+            WriteIndented = true,            
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault, // The WhenWritingDefault setting also prevents serialization of null-value reference type and nullable value type properties.
+            // jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+            // jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
         };
 
         if (TextWriter is null)
