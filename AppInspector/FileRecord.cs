@@ -1,6 +1,5 @@
 ﻿using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -15,7 +14,7 @@ public class FileRecord
     public DateTime AccessTime { get; set; } = DateTime.MinValue;
 }
 
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ScanState
 {
     None,

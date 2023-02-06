@@ -16,7 +16,7 @@ using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using ShellProgressBar;
 
 namespace Microsoft.ApplicationInspector.Commands;
@@ -123,13 +123,15 @@ public class AnalyzeResult : Result
         Metadata = new MetaData("", ""); //needed for serialization for other commands; replaced later
     }
 
-    [JsonProperty(Order = 2, PropertyName = "resultCode")]
+    [JsonPropertyName("resultCode")]
+    // [JsonPropertyOrder(2)] .NET 6.0 only
     public ExitCode ResultCode { get; set; }
 
     /// <summary>
     ///     Analyze command result object containing scan properties
     /// </summary>
-    [JsonProperty(Order = 3, PropertyName = "metaData")]
+    [JsonPropertyName("metaData")]
+    // [JsonPropertyOrder(3)]
     public MetaData Metadata { get; set; }
 }
 

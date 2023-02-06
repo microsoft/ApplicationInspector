@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Text.Json.Serialization;
 using System.Threading;
-using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -14,9 +14,11 @@ public class MetricTagCounter
 {
     private int _count;
 
-    [JsonProperty(PropertyName = "tag")] public string? Tag { get; set; }
+    [JsonPropertyName("tag")]
+    public string? Tag { get; set; }
 
-    [JsonProperty(PropertyName = "count")] public int Count => _count;
+    [JsonPropertyName("count")]
+    public int Count => _count;
 
     internal void IncrementCount(int amount = 1)
     {
