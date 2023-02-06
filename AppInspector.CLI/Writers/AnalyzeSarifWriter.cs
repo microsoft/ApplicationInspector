@@ -5,13 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CodeAnalysis.Sarif;
 using Microsoft.CST.OAT.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
 using Location = Microsoft.CodeAnalysis.Sarif.Location;
 using Result = Microsoft.ApplicationInspector.Commands.Result;
 
@@ -187,10 +187,23 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                 }
 
                 log.Runs.Add(run);
-                JsonSerializerSettings serializerSettings = new();
-                var serializer = new JsonSerializer();
-                serializer.Serialize(TextWriter, log);
-                FlushAndClose();
+                string? jsonData;
+                try
+                {
+                    jsonData = JsonSerializer.Serialize(log);
+                    TextWriter.WriteLine(jsonData);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(
+                        "Failed to serialize JSON representation of results in memory. {Type} : {Message}",
+                        e.GetType().Name, e.Message);
+                    throw;
+                }
+                if (autoClose)
+                {
+                    FlushAndClose();
+                }
             }
             else
             {

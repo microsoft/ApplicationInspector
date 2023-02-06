@@ -5,7 +5,9 @@ using System.IO;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System;
 
 namespace Microsoft.ApplicationInspector.CLI;
 
@@ -29,11 +31,23 @@ public class AnalyzeJsonWriter : CommandResultsWriter
     {
         var analyzeResult = (AnalyzeResult)result;
 
-        JsonSerializer jsonSerializer = new();
-        jsonSerializer.Formatting = Formatting.Indented;
-        if (TextWriter != null)
+        // https://stackoverflow.com/questions/72984930/how-to-serialize-to-the-given-textwriter-instance-using-system-text-json
+        string? jsonData;
+        try
         {
-            jsonSerializer.Serialize(TextWriter, analyzeResult);
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            };
+            jsonData = JsonSerializer.Serialize(analyzeResult, options);
+            TextWriter.Write(jsonData);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(
+                "Failed to serialize JSON representation of results in memory. {Type} : {Message}",
+                e.GetType().Name, e.Message);
+            throw;
         }
 
         if (autoClose)
@@ -47,6 +61,7 @@ public class AnalyzeJsonWriter : CommandResultsWriter
     /// </summary>
     private class TagsFile
     {
-        [JsonProperty(PropertyName = "tags")] public string[]? Tags { get; set; }
+        [JsonPropertyName("tags")]
+        public string[]? Tags { get; set; }
     }
 }

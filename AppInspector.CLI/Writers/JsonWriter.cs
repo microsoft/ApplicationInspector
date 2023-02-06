@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.CLI.Writers;
 
@@ -18,28 +18,43 @@ internal class JsonWriter : CommandResultsWriter
 
     public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
     {
-        JsonSerializer jsonSerializer = new();
-        jsonSerializer.Formatting = Formatting.Indented;
-        jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
-        jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            //jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+            //jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
+        };
 
         if (TextWriter is null)
         {
             throw new ArgumentNullException(nameof(TextWriter));
         }
 
-        switch (result)
+        string? jsonData;
+        try
         {
-            case TagDiffResult:
-            case ExportTagsResult:
-            case VerifyRulesResult:
-                jsonSerializer.Serialize(TextWriter, result);
-                break;
-            case PackRulesResult prr:
-                jsonSerializer.Serialize(TextWriter, prr.Rules);
-                break;
-            default:
-                throw new Exception("Unexpected object type for json writer");
+            switch (result)
+            {
+                case TagDiffResult:
+                case ExportTagsResult:
+                case VerifyRulesResult:
+                    jsonData = JsonSerializer.Serialize(result, options);
+                    TextWriter.Write(jsonData);
+                    break;
+                case PackRulesResult prr:
+                    jsonData = JsonSerializer.Serialize(prr.Rules, options);
+                    TextWriter.Write(jsonData);
+                    break;
+                default:
+                    throw new Exception("Unexpected object type for json writer");
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(
+                "Failed to serialize JSON representation of results in memory. {Type} : {Message}",
+                e.GetType().Name, e.Message);
+            throw;
         }
 
         if (autoClose)
