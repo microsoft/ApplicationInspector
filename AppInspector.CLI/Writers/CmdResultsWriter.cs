@@ -17,6 +17,12 @@ public abstract class CommandResultsWriter
     }
 
     public TextWriter TextWriter { get; }
+
+    public StreamWriter? StreamWriter
+    { 
+        get { return (StreamWriter)TextWriter; }
+    }
+    
     public abstract void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true);
 
     public void FlushAndClose()

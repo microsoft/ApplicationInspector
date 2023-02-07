@@ -22,7 +22,7 @@ public class AnalyzeJsonWriter : CommandResultsWriter
 {
     private readonly ILogger<AnalyzeJsonWriter> _logger;
 
-    public AnalyzeJsonWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    public AnalyzeJsonWriter(StreamWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
     {
         _logger = loggerFactory?.CreateLogger<AnalyzeJsonWriter>() ?? NullLogger<AnalyzeJsonWriter>.Instance;
     }
@@ -30,17 +30,18 @@ public class AnalyzeJsonWriter : CommandResultsWriter
     public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
     {
         var analyzeResult = (AnalyzeResult)result;
+        if (StreamWriter == null)
+        { 
+            throw new ArgumentNullException(nameof(StreamWriter));
+        }
 
-        // https://stackoverflow.com/questions/72984930/how-to-serialize-to-the-given-textwriter-instance-using-system-text-json
-        string? jsonData;
         try
         {
             var options = new JsonSerializerOptions
             {
                 WriteIndented = true,
             };
-            jsonData = JsonSerializer.Serialize(analyzeResult, options);
-            TextWriter.Write(jsonData);
+            JsonSerializer.Serialize(StreamWriter.BaseStream, analyzeResult, options);
         }
         catch (Exception e)
         {

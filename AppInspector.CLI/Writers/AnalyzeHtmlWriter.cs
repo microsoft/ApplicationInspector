@@ -28,7 +28,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
     private MetaData? _appMetaData;
 
-    public AnalyzeHtmlWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    public AnalyzeHtmlWriter(StreamWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
     {
         _logger = loggerFactory?.CreateLogger<AnalyzeHtmlWriter>() ?? NullLogger<AnalyzeHtmlWriter>.Instance;
         KeyedTagInfoLists = new Dictionary<string, List<TagInfo>>();

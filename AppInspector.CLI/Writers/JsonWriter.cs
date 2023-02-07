@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Sockets;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.ApplicationInspector.Commands;
@@ -12,7 +13,7 @@ internal class JsonWriter : CommandResultsWriter
 {
     private readonly ILogger<JsonWriter> _logger;
 
-    internal JsonWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    internal JsonWriter(StreamWriter streamWriter, ILoggerFactory? loggerFactory = null) : base(streamWriter)
     {
         _logger = loggerFactory?.CreateLogger<JsonWriter>() ?? NullLogger<JsonWriter>.Instance;
     }
@@ -27,12 +28,11 @@ internal class JsonWriter : CommandResultsWriter
             // jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
         };
 
-        if (TextWriter is null)
+        if (StreamWriter is null)
         {
             throw new ArgumentNullException(nameof(TextWriter));
         }
 
-        string? jsonData;
         try
         {
             switch (result)
@@ -40,12 +40,10 @@ internal class JsonWriter : CommandResultsWriter
                 case TagDiffResult:
                 case ExportTagsResult:
                 case VerifyRulesResult:
-                    jsonData = JsonSerializer.Serialize(result, options);
-                    TextWriter.Write(jsonData);
+                    JsonSerializer.Serialize(StreamWriter.BaseStream, result, options);
                     break;
                 case PackRulesResult prr:
-                    jsonData = JsonSerializer.Serialize(prr.Rules, options);
-                    TextWriter.Write(jsonData);
+                    JsonSerializer.Serialize(StreamWriter.BaseStream, prr.Rules, options);          
                     break;
                 default:
                     throw new Exception("Unexpected object type for json writer");

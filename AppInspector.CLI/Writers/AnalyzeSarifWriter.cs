@@ -37,16 +37,16 @@ public class AnalyzeSarifWriter : CommandResultsWriter
 {
     private readonly ILogger<AnalyzeSarifWriter> _logger;
 
-    public AnalyzeSarifWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    public AnalyzeSarifWriter(StreamWriter streamWriter, ILoggerFactory? loggerFactory = null) : base(streamWriter)
     {
         _logger = loggerFactory?.CreateLogger<AnalyzeSarifWriter>() ?? NullLogger<AnalyzeSarifWriter>.Instance;
     }
 
     public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
     {
-        if (TextWriter is null)
+        if (StreamWriter is null)
         {
-            throw new NullReferenceException(nameof(TextWriter));
+            throw new ArgumentNullException(nameof(StreamWriter));
         }
 
         string? basePath = null;
@@ -186,12 +186,10 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                     run.Results.Add(sarifResult);
                 }
 
-                log.Runs.Add(run);
-                string? jsonData;
+                log.Runs.Add(run);                
                 try
                 {
-                    jsonData = JsonSerializer.Serialize(log);
-                    TextWriter.WriteLine(jsonData);
+                    JsonSerializer.Serialize(StreamWriter.BaseStream, log);
                 }
                 catch (Exception e)
                 {
