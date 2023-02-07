@@ -28,6 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\AppInspector.CLI\AppInspector.CLI.csproj" />
         <ProjectReference Include="..\AppInspector.Logging\AppInspector.Logging.csproj" />
         <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
     </ItemGroup>

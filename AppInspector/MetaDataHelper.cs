@@ -151,6 +151,11 @@ public class MetaDataHelper
         }
     }
 
+    public MetaData GetMetadata()
+    {
+        return Metadata;
+    }
+
 
     /// <summary>
     ///     Transfer concurrent data from scan to analyze result with sorted, simplier types for callers

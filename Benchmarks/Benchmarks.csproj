@@ -13,6 +13,7 @@
 
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\AppInspector.CLI\AppInspector.CLI.csproj" />
         <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
         <ProjectReference Include="..\AppInspector.Tests\AppInspector.Tests.csproj" />
     </ItemGroup>

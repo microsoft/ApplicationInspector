@@ -9,6 +9,6 @@ public class Program
     {
         // new DebugInProcessConfig()
         //BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args, new DebugInProcessConfig());
-        var summary = BenchmarkRunner.Run<AnalyzeBenchmark>();
+        var summary = BenchmarkRunner.Run<WriterBench>();
     }
 }
