@@ -40,7 +40,7 @@ public class WriterBench
         }
         helper.PrepareReport();
 
-        _result = new AnalyzeResult() { Metadata = helper.GetMetadata(), ResultCode = 0 };
+        _result = new AnalyzeResult() { Metadata = helper.Metadata, ResultCode = 0 };
     }
     
     [Benchmark(Baseline = true)]
