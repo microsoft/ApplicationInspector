@@ -5,7 +5,9 @@ using System.IO;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using System;
 
 namespace Microsoft.ApplicationInspector.CLI;
 
@@ -20,7 +22,7 @@ public class AnalyzeJsonWriter : CommandResultsWriter
 {
     private readonly ILogger<AnalyzeJsonWriter> _logger;
 
-    public AnalyzeJsonWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    public AnalyzeJsonWriter(StreamWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
     {
         _logger = loggerFactory?.CreateLogger<AnalyzeJsonWriter>() ?? NullLogger<AnalyzeJsonWriter>.Instance;
     }
@@ -28,12 +30,25 @@ public class AnalyzeJsonWriter : CommandResultsWriter
     public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
     {
         var analyzeResult = (AnalyzeResult)result;
+        if (StreamWriter == null)
+        { 
+            throw new ArgumentNullException(nameof(StreamWriter));
+        }
 
-        JsonSerializer jsonSerializer = new();
-        jsonSerializer.Formatting = Formatting.Indented;
-        if (TextWriter != null)
+        try
         {
-            jsonSerializer.Serialize(TextWriter, analyzeResult);
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+            };
+            JsonSerializer.Serialize(StreamWriter.BaseStream, analyzeResult, options);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(
+                "Failed to serialize JSON representation of results in memory. {Type} : {Message}",
+                e.GetType().Name, e.Message);
+            throw;
         }
 
         if (autoClose)
@@ -47,6 +62,7 @@ public class AnalyzeJsonWriter : CommandResultsWriter
     /// </summary>
     private class TagsFile
     {
-        [JsonProperty(PropertyName = "tags")] public string[]? Tags { get; set; }
+        [JsonPropertyName("tags")]
+        public string[]? Tags { get; set; }
     }
 }

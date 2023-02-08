@@ -9,8 +9,8 @@ using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -27,7 +27,7 @@ public class VerifyRulesOptions
 
 public class VerifyRulesResult : Result
 {
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ExitCode
     {
         Verified = 0,
@@ -40,10 +40,10 @@ public class VerifyRulesResult : Result
         RuleStatusList = new List<RuleStatus>();
     }
 
-    [JsonProperty(PropertyName = "resultCode")]
+    [JsonPropertyName("resultCode")]
     public ExitCode ResultCode { get; set; }
 
-    [JsonProperty(PropertyName = "ruleStatusList")]
+    [JsonPropertyName("ruleStatusList")]
     public List<RuleStatus> RuleStatusList { get; set; }
 
     [JsonIgnore] public IEnumerable<RuleStatus> Unverified => RuleStatusList.Where(x => !x.Verified);

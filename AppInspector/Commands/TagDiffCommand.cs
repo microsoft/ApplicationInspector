@@ -8,7 +8,7 @@ using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -58,13 +58,13 @@ public class TagDiff
     /// <summary>
     ///     Tag value from rule used in comparison
     /// </summary>
-    [JsonProperty(PropertyName = "tag")]
+    [JsonPropertyName("tag")]
     public string? Tag { get; set; }
 
     /// <summary>
     ///     Source file (src1/src2) from the command option arguments
     /// </summary>
-    [JsonProperty(PropertyName = "source")]
+    [JsonPropertyName("source")]
     public DiffSource Source { get; set; }
 }
 
@@ -83,7 +83,7 @@ public class TagDiffResult : Result
     /// <summary>
     ///     List of tags which differ between src1 and src2
     /// </summary>
-    [JsonProperty(Order = 3, PropertyName = "tagDiffList")]
+    [JsonPropertyName("tagDiffList")]
     public List<TagDiff> TagDiffList;
 
     public TagDiffResult()
@@ -91,7 +91,7 @@ public class TagDiffResult : Result
         TagDiffList = new List<TagDiff>();
     }
 
-    [JsonProperty(Order = 2, PropertyName = "resultCode")]
+    [JsonPropertyName("resultCode")] // Order 2
     public ExitCode ResultCode { get; set; }
 }
 

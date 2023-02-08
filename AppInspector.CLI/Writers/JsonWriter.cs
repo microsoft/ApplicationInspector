@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Net.Sockets;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.CLI.Writers;
 
@@ -11,35 +13,48 @@ internal class JsonWriter : CommandResultsWriter
 {
     private readonly ILogger<JsonWriter> _logger;
 
-    internal JsonWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    internal JsonWriter(StreamWriter streamWriter, ILoggerFactory? loggerFactory = null) : base(streamWriter)
     {
         _logger = loggerFactory?.CreateLogger<JsonWriter>() ?? NullLogger<JsonWriter>.Instance;
     }
 
     public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
     {
-        JsonSerializer jsonSerializer = new();
-        jsonSerializer.Formatting = Formatting.Indented;
-        jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
-        jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,            
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault, // The WhenWritingDefault setting also prevents serialization of null-value reference type and nullable value type properties.
+            // jsonSerializer.NullValueHandling = NullValueHandling.Ignore;
+            // jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
+        };
 
-        if (TextWriter is null)
+        if (StreamWriter is null)
         {
             throw new ArgumentNullException(nameof(TextWriter));
         }
 
-        switch (result)
+        try
         {
-            case TagDiffResult:
-            case ExportTagsResult:
-            case VerifyRulesResult:
-                jsonSerializer.Serialize(TextWriter, result);
-                break;
-            case PackRulesResult prr:
-                jsonSerializer.Serialize(TextWriter, prr.Rules);
-                break;
-            default:
-                throw new Exception("Unexpected object type for json writer");
+            switch (result)
+            {
+                case TagDiffResult:
+                case ExportTagsResult:
+                case VerifyRulesResult:
+                    JsonSerializer.Serialize(StreamWriter.BaseStream, result, options);
+                    break;
+                case PackRulesResult prr:
+                    JsonSerializer.Serialize(StreamWriter.BaseStream, prr.Rules, options);          
+                    break;
+                default:
+                    throw new Exception("Unexpected object type for json writer");
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(
+                "Failed to serialize JSON representation of results in memory. {Type} : {Message}",
+                e.GetType().Name, e.Message);
+            throw;
         }
 
         if (autoClose)

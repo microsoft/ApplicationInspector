@@ -3,11 +3,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -31,12 +31,13 @@ public class PackRulesResult : Result
         CriticalError = Utils.ExitCode.CriticalError //ensure common value for final exit log mention
     }
 
-    [JsonProperty(Order = 2)] public ExitCode ResultCode { get; set; }
+    [JsonPropertyName("resultCode")] // Order 2
+    public ExitCode ResultCode { get; set; }
 
     /// <summary>
     ///     List of Rules to pack as specified in pack command
     /// </summary>
-    [JsonProperty(Order = 3)]
+    [JsonPropertyName("rules")] // Order 3
     public List<Rule>? Rules { get; set; }
 }
 

@@ -9,7 +9,7 @@ using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -39,13 +39,13 @@ public class ExportTagsResult : Result
         TagsList = new List<string>();
     }
 
-    [JsonProperty(Order = 2, PropertyName = "resultCode")]
+    [JsonPropertyName("resultCode")]
     public ExitCode ResultCode { get; set; }
 
     /// <summary>
     ///     List of tags exported from specified ruleset
     /// </summary>
-    [JsonProperty(Order = 3, PropertyName = "tagsList")]
+    [JsonPropertyName("tagsList")]
     public List<string> TagsList { get; set; }
 }
 

@@ -6,7 +6,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.ApplicationInspector.RulesEngine;
+[assembly:InternalsVisibleTo("AppInspector.Benchmarks")]
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -150,7 +152,6 @@ public class MetaDataHelper
             Matches.Add(matchRecord);
         }
     }
-
 
     /// <summary>
     ///     Transfer concurrent data from scan to analyze result with sorted, simplier types for callers

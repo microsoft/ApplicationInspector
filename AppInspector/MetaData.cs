@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.ApplicationInspector.RulesEngine;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -24,37 +24,37 @@ public class MetaData
     /// <summary>
     ///     Detected or derived project name
     /// </summary>
-    [JsonProperty(PropertyName = "applicationName")]
+    [JsonPropertyName("applicationName")]
     public string? ApplicationName { get; set; }
 
     /// <summary>
     ///     Source path provided argument
     /// </summary>
-    [JsonProperty(PropertyName = "sourcePath")]
+    [JsonPropertyName("sourcePath")]
     public string? SourcePath { get; set; }
 
     /// <summary>
     ///     Detected project source version
     /// </summary>
-    [JsonProperty(PropertyName = "sourceVersion")]
+    [JsonPropertyName("sourceVersion")]
     public string? SourceVersion { get; set; }
 
     /// <summary>
     ///     Detected source authors
     /// </summary>
-    [JsonProperty(PropertyName = "authors")]
+    [JsonPropertyName("authors")]
     public string? Authors { get; set; }
 
     /// <summary>
     ///     Detected source description
     /// </summary>
-    [JsonProperty(PropertyName = "description")]
+    [JsonPropertyName("description")]
     public string? Description { get; set; }
 
     /// <summary>
     ///     Last modified date for source code scanned
     /// </summary>
-    [JsonProperty(PropertyName = "lastUpdated")]
+    [JsonPropertyName("lastUpdated")]
     public string LastUpdated
     {
         get
@@ -71,27 +71,27 @@ public class MetaData
     /// <summary>
     ///     Date of analyze scan
     /// </summary>
-    [JsonProperty(PropertyName = "dateScanned")]
+    [JsonPropertyName("dateScanned")]
     public string? DateScanned { get; set; }
 
 
     /// <summary>
     ///     True if the overall analysis timed out
     /// </summary>
-    [JsonProperty(PropertyName = "timedOut")]
+    [JsonPropertyName("timedOut")]
     public bool TimedOut { get; set; }
 
     //stats
     /// <summary>
     ///     Total number of files in source path
     /// </summary>
-    [JsonProperty(PropertyName = "totalFiles")]
+    [JsonPropertyName("totalFiles")]
     public int TotalFiles => Files.Count;
 
     /// <summary>
     ///     Total number of files Timed out on an individual timeout
     /// </summary>
-    [JsonProperty(PropertyName = "filesTimedOut")]
+    [JsonPropertyName("filesTimedOut")]
     public int FilesTimedOut
     {
         get { return Files.Count(x => x.Status == ScanState.TimedOut); }
@@ -100,7 +100,7 @@ public class MetaData
     /// <summary>
     ///     Total number of files scanned
     /// </summary>
-    [JsonProperty(PropertyName = "filesAnalyzed")]
+    [JsonPropertyName("filesAnalyzed")]
     public int FilesAnalyzed
     {
         get { return Files.Count(x => x.Status is ScanState.Analyzed or ScanState.Affected); }
@@ -109,7 +109,7 @@ public class MetaData
     /// <summary>
     ///     Total number of skipped files based on supported formats
     /// </summary>
-    [JsonProperty(PropertyName = "filesSkipped")]
+    [JsonPropertyName("filesSkipped")]
     public int FilesSkipped
     {
         get { return Files.Count(x => x.Status == ScanState.Skipped); }
@@ -118,7 +118,7 @@ public class MetaData
     /// <summary>
     ///     Total number of skipped files based on overall timeout
     /// </summary>
-    [JsonProperty(PropertyName = "filesTimeOutSkipped")]
+    [JsonPropertyName("filesTimeOutSkipped")]
     public int FilesTimeOutSkipped
     {
         get { return Files.Count(x => x.Status == ScanState.TimeOutSkipped); }
@@ -127,7 +127,7 @@ public class MetaData
     /// <summary>
     ///     Total files with at least one result
     /// </summary>
-    [JsonProperty(PropertyName = "filesAffected")]
+    [JsonPropertyName("filesAffected")]
     public int FilesAffected
     {
         get { return Files.Count(x => x.Status == ScanState.Affected); }
@@ -136,7 +136,7 @@ public class MetaData
     /// <summary>
     ///     Number of files which encountered an error when processing other than timing out.
     /// </summary>
-    [JsonProperty(PropertyName = "filesErrored")]
+    [JsonPropertyName("filesErrored")]
     public int FileErrored
     {
         get { return Files.Count(x => x.Status == ScanState.Error); }
@@ -145,13 +145,13 @@ public class MetaData
     /// <summary>
     ///     Total matches with supplied argument settings
     /// </summary>
-    [JsonProperty(PropertyName = "totalMatchesCount")]
+    [JsonPropertyName("totalMatchesCount")]
     public int TotalMatchesCount => Matches?.Count ?? 0;
 
     /// <summary>
     ///     Total unique matches by Rule Id
     /// </summary>
-    [JsonProperty(PropertyName = "uniqueMatchesCount")]
+    [JsonPropertyName("uniqueMatchesCount")]
     public int UniqueMatchesCount
     {
         get { return Matches?.Select(x => x.RuleId).Distinct().Count() ?? 0; }
@@ -160,81 +160,81 @@ public class MetaData
     /// <summary>
     ///     List of detected package types
     /// </summary>
-    [JsonProperty(PropertyName = "packageTypes")]
+    [JsonPropertyName("packageTypes")]
     public List<string>? PackageTypes { get; set; } = new();
 
     /// <summary>
     ///     List of detected application types
     /// </summary>
-    [JsonProperty(PropertyName = "appTypes")]
+    [JsonPropertyName("appTypes")]
     public List<string>? AppTypes { get; set; } = new();
 
     /// <summary>
     ///     List of detected unique tags
     /// </summary>
-    [JsonProperty(PropertyName = "uniqueTags")]
+    [JsonPropertyName("uniqueTags")]
     public List<string> UniqueTags { get; set; } = new();
 
     /// <summary>
     ///     List of detected unique code dependency includes
     /// </summary>
-    [JsonProperty(PropertyName = "uniqueDependencies")]
+    [JsonPropertyName("uniqueDependencies")]
     public List<string>? UniqueDependencies { get; set; } = new();
 
     /// <summary>
     ///     List of detected output types
     /// </summary>
-    [JsonProperty(PropertyName = "outputs")]
+    [JsonPropertyName("outputs")]
     public List<string>? Outputs { get; set; } = new();
 
     /// <summary>
     ///     List of detected target types
     /// </summary>
-    [JsonProperty(PropertyName = "targets")]
+    [JsonPropertyName("targets")]
     public List<string> Targets { get; set; } = new();
 
     /// <summary>
     ///     List of detected OS targets
     /// </summary>
-    [JsonProperty(PropertyName = "OSTargets")]
+    [JsonPropertyName("OSTargets")]
     public List<string>? OSTargets { get; set; } = new();
 
     /// <summary>
     ///     LIst of detected file types (extension based)
     /// </summary>
-    [JsonProperty(PropertyName = "fileExtensions")]
+    [JsonPropertyName("fileExtensions")]
     public List<string>? FileExtensions { get; set; } = new();
 
     /// <summary>
     ///     List of detected cloud host targets
     /// </summary>
-    [JsonProperty(PropertyName = "cloudTargets")]
+    [JsonPropertyName("cloudTargets")]
     public List<string>? CloudTargets { get; set; } = new();
 
     /// <summary>
     ///     List of detected cpu targets
     /// </summary>
-    [JsonProperty(PropertyName = "CPUTargets")]
+    [JsonPropertyName("CPUTargets")]
     public List<string>? CPUTargets { get; set; } = new();
 
     /// <summary>
     ///     List of detected programming languages used and count of files
     /// </summary>
-    [JsonProperty(PropertyName = "languages")]
+    [JsonPropertyName("languages")]
     public IDictionary<string, int>? Languages { get; set; } //unable to init here for constr arg
 
     /// <summary>
     ///     List of detected tag counters i.e. metrics
     /// </summary>
-    [JsonProperty(PropertyName = "tagCounters")]
+    [JsonPropertyName("tagCounters")]
     public List<MetricTagCounter>? TagCounters { get; set; } = new();
 
     /// <summary>
     ///     List of detailed MatchRecords from scan
     /// </summary>
-    [JsonProperty(PropertyName = "detailedMatchList")]
+    [JsonPropertyName("detailedMatchList")]
     public List<MatchRecord> Matches { get; set; } = new();
 
-    [JsonProperty(PropertyName = "filesInformation")]
+    [JsonPropertyName("filesInformation")]
     public List<FileRecord> Files { get; set; } = new();
 }

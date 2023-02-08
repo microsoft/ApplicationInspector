@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using DotLiquid;
 using Microsoft.ApplicationInspector.RulesEngine;
-using Newtonsoft.Json;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -21,17 +21,18 @@ public class TagCategory
         allTags
     }
 
-    [JsonProperty(PropertyName = "type")] public tagInfoType Type;
+    [JsonPropertyName("type")]
+    public tagInfoType Type;
 
     public TagCategory()
     {
         Groups = new List<TagGroup>();
     }
 
-    [JsonProperty(PropertyName = "categoryName")]
+    [JsonPropertyName("categoryName")]
     public string? Name { get; set; }
 
-    [JsonProperty(PropertyName = "groups")]
+    [JsonPropertyName("groups")]
     public List<TagGroup>? Groups { get; set; }
 }
 
@@ -45,14 +46,14 @@ public class TagGroup : Drop
         Patterns = new List<TagSearchPattern>();
     }
 
-    [JsonProperty(PropertyName = "title")] public string? Title { get; set; }
+    [JsonPropertyName("title")] public string? Title { get; set; }
 
     [JsonIgnore] public string? IconURL { get; set; }
 
-    [JsonProperty(PropertyName = "dataRef")]
+    [JsonPropertyName("dataRef")]
     public string? DataRef { get; set; }
 
-    [JsonProperty(PropertyName = "patterns")]
+    [JsonPropertyName("patterns")]
     public List<TagSearchPattern>? Patterns { get; set; }
 }
 
@@ -61,7 +62,7 @@ public class TagSearchPattern : Drop
     private Regex? _expression;
     private string _searchPattern = "";
 
-    [JsonProperty(PropertyName = "searchPattern")]
+    [JsonPropertyName("searchPattern")]
     public string SearchPattern
     {
         get => _searchPattern;
@@ -85,19 +86,19 @@ public class TagSearchPattern : Drop
         }
     }
 
-    [JsonProperty(PropertyName = "displayName")]
+    [JsonPropertyName("displayName")]
     public string? DisplayName { get; set; }
 
-    [JsonProperty(PropertyName = "detectedIcon")]
+    [JsonPropertyName("detectedIcon")]
     public string? DetectedIcon { get; set; } = "fas fa-cat"; //default
 
-    [JsonProperty(PropertyName = "notDetectedIcon")]
+    [JsonPropertyName("notDetectedIcon")]
     public string? NotDetectedIcon { get; set; }
 
-    [JsonProperty(PropertyName = "detected")]
+    [JsonPropertyName("detected")]
     public bool Detected { get; set; }
 
-    [JsonProperty(PropertyName = "details")]
+    [JsonPropertyName("details")]
     public string Details
     {
         get
@@ -107,7 +108,7 @@ public class TagSearchPattern : Drop
         }
     }
 
-    [JsonProperty(PropertyName = "confidence")]
+    [JsonPropertyName("confidence")]
     public string Confidence { get; set; } = "Medium";
 
     public static bool ShouldSerializeExpression()
@@ -123,14 +124,14 @@ public class TagInfo : Drop
 {
     private string _confidence = "Medium";
 
-    [JsonProperty(PropertyName = "tag")] public string? Tag { get; set; }
+    [JsonPropertyName("tag")] public string? Tag { get; set; }
 
-    [JsonProperty(PropertyName = "displayName")]
+    [JsonPropertyName("displayName")]
     public string? ShortTag { get; set; }
 
     [JsonIgnore] public string? StatusIcon { get; set; }
 
-    [JsonProperty(PropertyName = "confidence")]
+    [JsonPropertyName("confidence")]
     public string Confidence
     {
         get => _confidence;
@@ -143,14 +144,14 @@ public class TagInfo : Drop
         }
     }
 
-    [JsonProperty(PropertyName = "severity")]
+    [JsonPropertyName("severity")]
     public string Severity { get; set; } = "Moderate";
 
-    [JsonProperty(PropertyName = "detected")]
+    [JsonPropertyName("detected")]
     public bool Detected { get; set; }
 }
 
 public class TagException
 {
-    [JsonProperty(PropertyName = "tag")] public string? Tag { get; set; }
+    [JsonPropertyName("tag")] public string? Tag { get; set; }
 }
