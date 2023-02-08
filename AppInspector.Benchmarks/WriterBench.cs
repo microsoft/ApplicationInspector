@@ -44,7 +44,7 @@ public class WriterBench
     }
     
     [Benchmark(Baseline = true)]
-    public void AnalyzeSingleThreaded()
+    public void ExportRecordsToJson()
     {
         var tmpPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         CLIAnalyzeCmdOptions analyzeOpts = new CLIAnalyzeCmdOptions()
