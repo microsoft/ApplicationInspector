@@ -33,7 +33,7 @@ public class RuleTests
     [TestMethod]
     public void ModifySource()
     {
-        RuleSet rules = new();
+        RuleSet rules = new(true);
         var originalSource = "TestRules";
         rules.AddString(MultiLineRuleWithoutMultiLine, originalSource);
         var rule = rules.First();
@@ -46,7 +46,7 @@ public class RuleTests
     [TestMethod]
     public void ModifyRuntimeTag()
     {
-        RuleSet rules = new();
+        RuleSet rules = new(true);
         var originalSource = "TestRules";
         rules.AddString(MultiLineRuleWithoutMultiLine, originalSource);
         var rule = rules.First();
@@ -58,7 +58,7 @@ public class RuleTests
     [TestMethod]
     public void ModifyDisabled()
     {
-        RuleSet rules = new();
+        RuleSet rules = new(true);
         var originalSource = "TestRules";
         rules.AddString(MultiLineRuleWithoutMultiLine, originalSource);
         var rule = rules.First();

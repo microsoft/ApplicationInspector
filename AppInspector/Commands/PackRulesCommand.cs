@@ -96,7 +96,7 @@ public class PackRulesCommand
                 RequireMustNotMatch = _options.RequireMustNotMatch
             };
             RulesVerifier verifier = new(options);
-            var ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();
+            var ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet(true);
             if (!string.IsNullOrEmpty(_options.CustomRulesPath))
             {
                 ruleSet.AddPath(_options.CustomRulesPath);

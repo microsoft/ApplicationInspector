@@ -24,6 +24,7 @@ public abstract class AbstractRuleSet
     private readonly Regex _searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
     protected ILogger _logger = NullLogger.Instance;
     protected IEnumerable<Rule> _rules => _oatRules.Select(x => x.AppInspectorRule);
+    protected bool EnableRegexBacktracking {  get; set; }
 
     /// <summary>
     ///     Filters rules within Ruleset by language
@@ -77,7 +78,14 @@ public abstract class AbstractRuleSet
         var clauses = new List<Clause>();
         var clauseNumber = 0;
         var expression = new StringBuilder("(");
+
         foreach (var pattern in rule.Patterns)
+        {
+            if (EnableRegexBacktracking && !pattern.Modifiers.Contains("-b"))
+            {
+                pattern.Modifiers.Add("-b");
+            }
+
             if (GenerateClause(pattern, clauseNumber) is { } clause)
             {
                 clauses.Add(clause);
@@ -225,17 +233,16 @@ public abstract class AbstractRuleSet
         if (pattern.Pattern != null)
         {
             var scopes = pattern.Scopes ?? new[] { PatternScope.All };
-            var modifiers = pattern.Modifiers?.ToList() ?? new List<string>();
             if (pattern.PatternType is PatternType.String or PatternType.Substring)
             {
                 return new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String,
-                    xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths:pattern.YamlPaths)
+                    xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths: pattern.YamlPaths)
                 {
                     Label = clauseNumber.ToString(CultureInfo
                         .InvariantCulture), //important to pattern index identification
                     Data = new List<string> { pattern.Pattern },
                     Capture = true,
-                    Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
+                    Arguments = pattern.Modifiers,
                 };
             }
 
@@ -247,7 +254,7 @@ public abstract class AbstractRuleSet
                         .InvariantCulture), //important to pattern index identification
                     Data = new List<string> { pattern.Pattern },
                     Capture = true,
-                    Arguments = modifiers
+                    Arguments = pattern.Modifiers,
                 };
             }
 
@@ -259,7 +266,7 @@ public abstract class AbstractRuleSet
                         .InvariantCulture), //important to pattern index identification
                     Data = new List<string> { $"\\b({pattern.Pattern})\\b" },
                     Capture = true,
-                    Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
+                    Arguments = pattern.Modifiers,
                 };
             }
         }

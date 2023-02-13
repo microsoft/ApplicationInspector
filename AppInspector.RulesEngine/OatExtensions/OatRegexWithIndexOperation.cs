@@ -96,6 +96,13 @@ public class OatRegexWithIndexOperation : OatOperation
                 regexOpts |= RegexOptions.Multiline;
             }
 
+            if (!src.Arguments.Contains("b"))
+            {
+#if NET7_0_OR_GREATER
+                regexOpts |= RegexOptions.NonBacktracking;
+#endif
+            }
+
             List<(int, Boundary)> outmatches = new(); //tuple results i.e. pattern index and where
 
             if (Analyzer != null)

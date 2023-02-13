@@ -370,7 +370,7 @@ int main(int argc, char **argv)
     internal void WithinClauseInvertTest(string testDataString, string conditionRegion, bool invert,
         int expectedMatches, int[] expectedMatchesLineStarts)
     {
-        RuleSet rules = new(_loggerFactory);
+        RuleSet rules = new(loggerFactory: _loggerFactory);
         var newRule = baseRule.Replace("REPLACE_REGION", conditionRegion)
             .Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
         rules.AddString(newRule, "TestRules");
@@ -398,7 +398,7 @@ int main(int argc, char **argv)
     [DataTestMethod]
     public void WithinClauseInvertTestForSameLine(bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
     {
-        RuleSet rules = new(_loggerFactory);
+        RuleSet rules = new(loggerFactory: _loggerFactory);
         var newRule = findingOnlyRule.Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
         rules.AddString(newRule, "TestRules");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
@@ -434,7 +434,7 @@ int main(int argc, char **argv)
     public void WithinClauseValidationTests(bool findingOnlySetting, bool findingRegionSetting,
         bool sameLineOnlySetting, int afterSetting, int beforeSetting, int expectedNumIssues)
     {
-        RuleSet rules = new(_loggerFactory);
+        RuleSet rules = new(loggerFactory: _loggerFactory);
         rules.AddString(validationRule, "TestRules");
         var withinClauses = rules
             .GetOatRules()
@@ -458,7 +458,7 @@ int main(int argc, char **argv)
     [TestMethod]
     public void WithinClauseWithMultipleConditions()
     {
-        RuleSet rules = new(_loggerFactory);
+        RuleSet rules = new(loggerFactory: _loggerFactory);
         var newRule = @"[{
         ""name"": ""Insecure URL"",
         ""id"": ""DS137138"",
@@ -562,7 +562,7 @@ http://
     public void WithinClauseInvertTestForFindingRange0(bool invert, int expectedMatches,
         int[] expectedMatchesLineStarts)
     {
-        RuleSet rules = new(_loggerFactory);
+        RuleSet rules = new(loggerFactory: _loggerFactory);
         var newRule = findingRangeZeroRule.Replace("REPLACE_NEGATE", invert.ToString().ToLowerInvariant());
         rules.AddString(newRule, "TestRules");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
@@ -588,7 +588,7 @@ http://
     [TestMethod]
     public void MultiLineRegexCondition()
     {
-        RuleSet rules = new(_loggerFactory);
+        RuleSet rules = new(loggerFactory: _loggerFactory);
         rules.AddString(multiLineRule, "multiline-tests");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { Parallel = false });

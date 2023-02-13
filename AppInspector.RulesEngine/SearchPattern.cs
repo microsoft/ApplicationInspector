@@ -1,5 +1,6 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
@@ -14,7 +15,7 @@ public class SearchPattern
     public Confidence Confidence { get; set; }
 
     [JsonPropertyName("modifiers")]
-    public string[]? Modifiers { get; set; }
+    public List<string> Modifiers { get; set; } = new List<string>();
 
     [JsonPropertyName("pattern")]
     public string? Pattern { get; set; }

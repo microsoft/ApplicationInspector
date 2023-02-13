@@ -112,6 +112,11 @@ public record CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions
             { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview })]
     public IEnumerable<Severity> SeverityFilters { get; set; } = new[]
         { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview };
+
+    [Option('b', "backtracking-enabled", Required = false,
+        HelpText = "Enables regex backtracking for all rules. Default: Off.",
+        Default = false),]
+    public bool EnableRegexBacktracking { get; set; }
 }
 
 /// <summary>

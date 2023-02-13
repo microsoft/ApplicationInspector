@@ -42,6 +42,8 @@ public class TagDiffOptions
 
     public bool RequireMustMatch { get; set; }
     public bool RequireMustNotMatch { get; set; }
+
+    public bool EnableRegexBacktracking { get; set; }
 }
 
 /// <summary>

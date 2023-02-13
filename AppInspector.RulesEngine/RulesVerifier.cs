@@ -42,7 +42,7 @@ public class RulesVerifier
     /// <exception cref="OpException"></exception>
     public RulesVerifierResult Verify(string rulesPath)
     {
-        RuleSet CompiledRuleset = new(_loggerFactory);
+        RuleSet CompiledRuleset = new(true, _loggerFactory);
 
         if (!string.IsNullOrEmpty(rulesPath))
         {

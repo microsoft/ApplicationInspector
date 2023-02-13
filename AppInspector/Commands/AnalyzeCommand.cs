@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json.Serialization;
 using ShellProgressBar;
+using System.Security;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -102,6 +103,8 @@ public class AnalyzeOptions
 
     public bool RequireMustMatch { get; set; }
     public bool RequireMustNotMatch { get; set; }
+
+    public bool EnableRegexBacktracking { get; set; }
 }
 
 /// <summary>
@@ -218,7 +221,8 @@ public class AnalyzeCommand
 
         if (!string.IsNullOrEmpty(_options.CustomRulesPath))
         {
-            rulesSet ??= new RuleSet(_loggerFactory);
+            rulesSet ??= new RuleSet(_options.EnableRegexBacktracking, _loggerFactory);
+            
             RulesVerifierOptions rulesVerifierOptions = new()
             {
                 LanguageSpecs = _languages,

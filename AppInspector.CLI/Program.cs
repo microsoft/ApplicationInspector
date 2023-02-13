@@ -302,7 +302,9 @@ public static class Program
             DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
             SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches,
             RequireMustMatch = cliOptions.RequireMustMatch,
-            RequireMustNotMatch = cliOptions.RequireMustNotMatch
+            RequireMustNotMatch = cliOptions.RequireMustNotMatch,
+            EnableRegexBacktracking = cliOptions.EnableRegexBacktracking,
+            
         }, adjustedFactory);
 
         var analyzeResult = command.GetResult();
@@ -374,7 +376,8 @@ public static class Program
             DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
             SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches,
             RequireMustMatch = cliOptions.RequireMustMatch,
-            RequireMustNotMatch = cliOptions.RequireMustNotMatch
+            RequireMustNotMatch = cliOptions.RequireMustNotMatch,
+            EnableRegexBacktracking = cliOptions.EnableRegexBacktracking,
         }, loggerFactory);
 
         var tagDiffResult = command.GetResult();

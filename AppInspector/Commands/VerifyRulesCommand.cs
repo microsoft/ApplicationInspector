@@ -108,7 +108,7 @@ public class VerifyRulesCommand
             RulesVerifier verifier = new(options);
             verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
 
-            RuleSet? ruleSet = new(_loggerFactory);
+            RuleSet? ruleSet = new(true,_loggerFactory);
             if (_options.VerifyDefaultRules)
             {
                 ruleSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
