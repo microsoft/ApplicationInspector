@@ -24,7 +24,7 @@ public abstract class AbstractRuleSet
     private readonly Regex _searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
     protected ILogger _logger = NullLogger.Instance;
     protected IEnumerable<Rule> _rules => _oatRules.Select(x => x.AppInspectorRule);
-    protected bool EnableRegexBacktracking {  get; set; }
+    protected bool EnableNonBacktrackingRegex {  get; set; }
 
     /// <summary>
     ///     Filters rules within Ruleset by language
@@ -81,7 +81,7 @@ public abstract class AbstractRuleSet
 
         foreach (var pattern in rule.Patterns)
         {
-            if (EnableRegexBacktracking && !pattern.Modifiers.Contains("-b"))
+            if (EnableNonBacktrackingRegex && !pattern.Modifiers.Contains("-b"))
             {
                 pattern.Modifiers.Add("-b");
             }
@@ -101,6 +101,7 @@ public abstract class AbstractRuleSet
             {
                 _logger.LogWarning("Clause could not be generated from pattern {pattern}", pattern.Pattern);
             }
+        }
 
         if (clauses.Count > 0)
         {

@@ -64,7 +64,7 @@ public class ExportTagsCommand
         _options = opt;
         _logger = loggerFactory?.CreateLogger<ExportTagsCommand>() ?? NullLogger<ExportTagsCommand>.Instance;
         _loggerFactory = loggerFactory;
-        _rules = new RuleSet(true);
+        _rules = new RuleSet();
         ConfigRules();
     }
 
@@ -72,7 +72,7 @@ public class ExportTagsCommand
     private void ConfigRules()
     {
         _logger.LogTrace("ExportTagsCommand::ConfigRules");
-        _rules = new RuleSet(true, _loggerFactory);
+        _rules = new RuleSet(_loggerFactory);
         if (!_options.IgnoreDefaultRules)
         {
             _rules = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);

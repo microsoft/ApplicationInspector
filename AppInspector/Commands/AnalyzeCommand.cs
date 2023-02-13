@@ -104,7 +104,7 @@ public class AnalyzeOptions
     public bool RequireMustMatch { get; set; }
     public bool RequireMustNotMatch { get; set; }
 
-    public bool EnableRegexBacktracking { get; set; }
+    public bool EnableNonBacktrackingRegex { get; set; }
 }
 
 /// <summary>
@@ -221,7 +221,7 @@ public class AnalyzeCommand
 
         if (!string.IsNullOrEmpty(_options.CustomRulesPath))
         {
-            rulesSet ??= new RuleSet(_options.EnableRegexBacktracking, _loggerFactory);
+            rulesSet ??= new RuleSet(_loggerFactory, _options.EnableNonBacktrackingRegex);
             
             RulesVerifierOptions rulesVerifierOptions = new()
             {

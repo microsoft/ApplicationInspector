@@ -23,6 +23,7 @@ public class VerifyRulesOptions
     public bool DisableRequireUniqueIds { get; set; }
     public bool RequireMustMatch { get; set; }
     public bool RequireMustNotMatch { get; set; }
+    public bool EnableNonBacktrackingRegex { get; internal set; }
 }
 
 public class VerifyRulesResult : Result
@@ -108,7 +109,7 @@ public class VerifyRulesCommand
             RulesVerifier verifier = new(options);
             verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
 
-            RuleSet? ruleSet = new(true,_loggerFactory);
+            RuleSet? ruleSet = new(_loggerFactory, _options.EnableNonBacktrackingRegex);
             if (_options.VerifyDefaultRules)
             {
                 ruleSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);

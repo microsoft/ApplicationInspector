@@ -14,9 +14,9 @@ public class RuleSet : TypedRuleSet<Rule>
     ///     Create a ruleset using the given (optional) logger.
     /// </summary>
     /// <param name="loggerFactory"></param>
-    public RuleSet(bool enableRegexBacktracking = true, ILoggerFactory? loggerFactory = null) 
+    public RuleSet(ILoggerFactory? loggerFactory = null, bool enableNonBacktrackingRegex = false) 
         : base(loggerFactory)
     {
-        EnableRegexBacktracking= enableRegexBacktracking;
+        EnableNonBacktrackingRegex = enableNonBacktrackingRegex;
     }
 }

@@ -303,7 +303,7 @@ public static class Program
             SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches,
             RequireMustMatch = cliOptions.RequireMustMatch,
             RequireMustNotMatch = cliOptions.RequireMustNotMatch,
-            EnableRegexBacktracking = cliOptions.EnableRegexBacktracking,
+            EnableNonBacktrackingRegex = cliOptions.EnableNonBacktrackingRegex,
             
         }, adjustedFactory);
 
@@ -377,7 +377,7 @@ public static class Program
             SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches,
             RequireMustMatch = cliOptions.RequireMustMatch,
             RequireMustNotMatch = cliOptions.RequireMustNotMatch,
-            EnableRegexBacktracking = cliOptions.EnableRegexBacktracking,
+            EnableRegexBacktracking = cliOptions.EnableNonBacktrackingRegex,
         }, loggerFactory);
 
         var tagDiffResult = command.GetResult();
