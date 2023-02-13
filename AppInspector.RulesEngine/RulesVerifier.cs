@@ -195,7 +195,7 @@ public class RulesVerifier
                         _logger?.LogError("The provided XPath '{XPath}' value was not valid in Rule {Id} : {message}",
                             searchPattern.XPaths, rule.Id, e.Message);
                         errors.Add(string.Format("The provided XPath '{0}' value was not valid in Rule {1} : {2}",
-                            searchPattern.JsonPaths, rule.Id, e.Message));
+                            searchPattern.XPaths, rule.Id, e.Message));
                     }
                 }
 
@@ -210,10 +210,10 @@ public class RulesVerifier
                         }
 
                         _logger?.LogError(
-                            "The provided YamlPath '{XPath}' value was not valid in Rule {Id} : {message}",
-                            searchPattern.XPaths, rule.Id, string.Join(',', problems));
-                        errors.Add(string.Format("The provided XPath '{0}' value was not valid in Rule {1} : {2}",
-                            searchPattern.JsonPaths, string.Join(',', problems)));
+                            "The provided YamlPath '{YamlPath}' value was not valid in Rule {Id} : {message}",
+                            searchPattern.YamlPaths, rule.Id, string.Join(',', problems));
+                        errors.Add(string.Format("The provided YamlPath '{0}' value was not valid in Rule {1} : {2}",
+                            searchPattern.YamlPaths, string.Join(',', problems)));
                     }
                 }
             }
