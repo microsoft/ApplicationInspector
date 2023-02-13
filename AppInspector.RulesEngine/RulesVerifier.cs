@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.XPath;
+using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
@@ -147,8 +148,9 @@ public class RulesVerifier
                     {
                         throw new ArgumentException();
                     }
+                    RegexOptions regexOpts = Utils.RegexModifierToRegexOptions(searchPattern.Modifiers ?? Array.Empty<string>());
 
-                    _ = new Regex(searchPattern.Pattern);
+                    _ = new Regex(searchPattern.Pattern, regexOpts);
                 }
                 catch (Exception e)
                 {
@@ -162,6 +164,7 @@ public class RulesVerifier
             if (searchPattern.JsonPaths is not null)
             {
                 foreach (var jsonPath in searchPattern.JsonPaths)
+                {
                     try
                     {
                         _ = JsonSelector.Parse(jsonPath);
@@ -174,11 +177,13 @@ public class RulesVerifier
                         errors.Add(string.Format("The provided JsonPath '{0}' value was not valid in Rule {1} : {2}",
                             searchPattern.JsonPaths, rule.Id, e.Message));
                     }
+                }
             }
 
             if (searchPattern.XPaths is not null)
             {
                 foreach (var xpath in searchPattern.XPaths)
+                {
                     try
                     {
                         XPathExpression.Compile(xpath);
@@ -190,34 +195,58 @@ public class RulesVerifier
                         errors.Add(string.Format("The provided XPath '{0}' value was not valid in Rule {1} : {2}",
                             searchPattern.JsonPaths, rule.Id, e.Message));
                     }
-            }
-        }
-
-        // validate conditions
-        foreach (var condition in rule.Conditions ?? Array.Empty<SearchCondition>())
-            if (condition.SearchIn is null)
-            {
-                _logger?.LogError("SearchIn is null in {ruleId}", rule.Id);
-                errors.Add($"SearchIn is null in {rule.Id}");
-            }
-            else if (condition.SearchIn.StartsWith("finding-region"))
-            {
-                var parSplits = condition.SearchIn.Split(')', '(');
-                if (parSplits.Length == 3)
+                }
+                
+                if (searchPattern.YamlPaths is not null)
                 {
-                    var splits = parSplits[1].Split(',');
-                    if (splits.Length == 2)
+                    foreach (var yamlPath in searchPattern.YamlPaths)
                     {
-                        if (int.TryParse(splits[0], out var int1) && int.TryParse(splits[1], out var int2))
+                        var problems = YamlPathExtensions.GetQueryProblems(yamlPath);
+                        if (!problems.Any())
                         {
-                            if (int1 > 0 && int2 < 0)
+                            continue;
+                        }
+
+                        _logger?.LogError("The provided YamlPath '{XPath}' value was not valid in Rule {Id} : {message}",
+                            searchPattern.XPaths, rule.Id, string.Join(',',problems));
+                        errors.Add(string.Format("The provided XPath '{0}' value was not valid in Rule {1} : {2}",
+                            searchPattern.JsonPaths, string.Join(',',problems)));
+                    }
+                }
+            }
+
+            // validate conditions
+            foreach (var condition in rule.Conditions ?? Array.Empty<SearchCondition>())
+            {
+                if (condition.SearchIn is null)
+                {
+                    _logger?.LogError("SearchIn is null in {ruleId}", rule.Id);
+                    errors.Add($"SearchIn is null in {rule.Id}");
+                }
+                else if (condition.SearchIn.StartsWith("finding-region"))
+                {
+                    var parSplits = condition.SearchIn.Split(')', '(');
+                    if (parSplits.Length == 3)
+                    {
+                        var splits = parSplits[1].Split(',');
+                        if (splits.Length == 2)
+                        {
+                            if (int.TryParse(splits[0], out var int1) && int.TryParse(splits[1], out var int2))
                             {
-                                _logger?.LogError(
-                                    "The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {0}",
-                                    rule.Id);
-                                errors.Add(
-                                    $"The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {rule.Id}");
+                                if (int1 > 0 && int2 < 0)
+                                {
+                                    _logger?.LogError(
+                                        "The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {0}",
+                                        rule.Id);
+                                    errors.Add(
+                                        $"The finding region must have a negative number or 0 for the lines before and a positive number or 0 for lines after. {rule.Id}");
+                                }
                             }
+                        }
+                        else
+                        {
+                            _logger?.LogError("Improperly specified finding region. {id}", rule.Id);
+                            errors.Add($"Improperly specified finding region. {rule.Id}");
                         }
                     }
                     else
@@ -226,12 +255,8 @@ public class RulesVerifier
                         errors.Add($"Improperly specified finding region. {rule.Id}");
                     }
                 }
-                else
-                {
-                    _logger?.LogError("Improperly specified finding region. {id}", rule.Id);
-                    errors.Add($"Improperly specified finding region. {rule.Id}");
-                }
             }
+            
 
         var singleList = new[] { convertedOatRule };
 

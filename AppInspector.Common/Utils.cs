@@ -1,11 +1,70 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.ApplicationInspector.Common;
 
 public static class Utils
 {
+    /// <summary>
+    /// Convert a list of string modifiers specified in a SearchPattern to the appropriate regex modifiers
+    /// </summary>
+    /// <param name="modifiers"></param>
+    /// <returns>A RegexOptions object with the correct modifiers set</returns>
+    public static RegexOptions RegexModifierToRegexOptions(IList<string> modifiers)
+    {
+        RegexOptions opts = new();
+        opts |= RegexOptions.Compiled;
+        foreach (var modifier in modifiers)
+        {
+            switch (modifier.ToLower())
+            {
+                case "m":
+                case "multiline":
+                    opts |= RegexOptions.Multiline;
+                    break;
+                case "s":
+                case "singleline":
+                    opts |= RegexOptions.Singleline;
+                    break;
+                case "i":
+                case "ignorecase":
+                    opts |= RegexOptions.IgnoreCase;
+                    break;
+                case "c":
+                case "cultureinvariant":
+                    opts |= RegexOptions.CultureInvariant;
+                    break;
+                // This is 'n' to match the options for the Regex api: https://learn.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-options
+                case "n":
+                case "explicitcapture":
+                    opts |= RegexOptions.ExplicitCapture;
+                    break;
+                case "x":
+                case "ignorepatternwhitespace":
+                    opts |= RegexOptions.IgnorePatternWhitespace;
+                    break;
+                case "e":
+                case "ecmascript":
+                    opts |= RegexOptions.ECMAScript;
+                    // ECMAScript option requires multiline, ignore case and compiled per docs
+                    opts |= RegexOptions.Multiline;
+                    opts |= RegexOptions.IgnoreCase;
+                    break;
+                case "r":
+                case "righttoleft":
+                    opts |= RegexOptions.RightToLeft;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return opts;
+    }
     public enum AppPath
     {
         basePath,
