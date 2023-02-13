@@ -1,14 +1,13 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
 /// <summary>
 ///     Pattern Type for search pattern
 /// </summary>
-[JsonConverter(typeof(StringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum PatternType
 {
     Regex,

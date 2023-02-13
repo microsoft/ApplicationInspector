@@ -16,7 +16,8 @@ using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Microsoft.ApplicationInspector.CLI;
 
@@ -27,7 +28,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
     private MetaData? _appMetaData;
 
-    public AnalyzeHtmlWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    public AnalyzeHtmlWriter(StreamWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
     {
         _logger = loggerFactory?.CreateLogger<AnalyzeHtmlWriter>() ?? NullLogger<AnalyzeHtmlWriter>.Instance;
         KeyedTagInfoLists = new Dictionary<string, List<TagInfo>>();
@@ -91,7 +92,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         string? jsonData;
         try
         {
-            jsonData = JsonConvert.SerializeObject(data);
+            jsonData = JsonSerializer.Serialize(data);
         }
         catch (Exception e)
         {
@@ -232,9 +233,23 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         //read default/user preferences on what tags to report presence on and groupings
         if (File.Exists(Utils.GetPath(Utils.AppPath.tagGroupPref)))
         {
-            TagGroupPreferences =
-                JsonConvert.DeserializeObject<List<TagCategory>>(
-                    File.ReadAllText(Utils.GetPath(Utils.AppPath.tagGroupPref)));
+            try
+            {
+                var options = new JsonSerializerOptions
+                {
+                    ReadCommentHandling = JsonCommentHandling.Skip, // Allow strings to start with '/', e.g.,	"// Copyright (C) Microsoft. All rights reserved"
+                };
+                TagGroupPreferences =
+                    JsonSerializer.Deserialize<List<TagCategory>>(
+                        File.ReadAllText(Utils.GetPath(Utils.AppPath.tagGroupPref)), options);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(
+                    "Failed to populate tag groups. Failed to serialize JSON representation of results in memory. {Type} : {Message}",
+                    e.GetType().Name, e.Message);
+                throw;
+            }
         }
         else
         {
@@ -627,13 +642,15 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 /// </summary>
 public class TagCounterUI : Drop
 {
-    [JsonProperty(PropertyName = "tag")] public string? Tag { get; set; }
+    [JsonPropertyName("tag")]
+    public string? Tag { get; set; }
 
-    [JsonProperty(PropertyName = "displayName")]
+    [JsonPropertyName("displayName")]
     public string? ShortTag { get; set; }
 
-    [JsonProperty(PropertyName = "count")] public int Count { get; set; }
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
 
-    [JsonProperty(PropertyName = "includeAsMatch")]
+    [JsonPropertyName("includeAsMatch")]
     public bool IncludeAsMatch => false;
 }

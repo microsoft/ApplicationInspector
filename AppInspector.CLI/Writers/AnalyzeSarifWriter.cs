@@ -5,13 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CodeAnalysis.Sarif;
 using Microsoft.CST.OAT.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Newtonsoft.Json;
 using Location = Microsoft.CodeAnalysis.Sarif.Location;
 using Result = Microsoft.ApplicationInspector.Commands.Result;
 
@@ -37,16 +37,16 @@ public class AnalyzeSarifWriter : CommandResultsWriter
 {
     private readonly ILogger<AnalyzeSarifWriter> _logger;
 
-    public AnalyzeSarifWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    public AnalyzeSarifWriter(StreamWriter streamWriter, ILoggerFactory? loggerFactory = null) : base(streamWriter)
     {
         _logger = loggerFactory?.CreateLogger<AnalyzeSarifWriter>() ?? NullLogger<AnalyzeSarifWriter>.Instance;
     }
 
     public override void WriteResults(Result result, CLICommandOptions commandOptions, bool autoClose = true)
     {
-        if (TextWriter is null)
+        if (StreamWriter is null)
         {
-            throw new NullReferenceException(nameof(TextWriter));
+            throw new ArgumentNullException(nameof(StreamWriter));
         }
 
         string? basePath = null;
@@ -186,11 +186,22 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                     run.Results.Add(sarifResult);
                 }
 
-                log.Runs.Add(run);
-                JsonSerializerSettings serializerSettings = new();
-                var serializer = new JsonSerializer();
-                serializer.Serialize(TextWriter, log);
-                FlushAndClose();
+                log.Runs.Add(run);                
+                try
+                {
+                    JsonSerializer.Serialize(StreamWriter.BaseStream, log);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(
+                        "Failed to serialize JSON representation of results in memory. {Type} : {Message}",
+                        e.GetType().Name, e.Message);
+                    throw;
+                }
+                if (autoClose)
+                {
+                    FlushAndClose();
+                }
             }
             else
             {

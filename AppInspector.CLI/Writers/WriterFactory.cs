@@ -49,21 +49,21 @@ public class WriterFactory
     /// <param name="options"></param>
     /// <returns></returns>
     private CommandResultsWriter GetAnalyzeWriter(CLIAnalyzeCmdOptions options)
-    {
-        var textWriter = GetTextWriter(options.OutputFilePath);
+    {       
+        var streamWriter = GetStreamWriter(options.OutputFilePath);
         return options.OutputFileFormat.ToLower() switch
         {
-            "json" => new AnalyzeJsonWriter(textWriter, _loggerFactory),
-            "text" => new AnalyzeTextWriter(textWriter, options.TextOutputFormat, _loggerFactory),
-            "html" => new AnalyzeHtmlWriter(textWriter, _loggerFactory),
-            "sarif" => new AnalyzeSarifWriter(textWriter, _loggerFactory),
+            "json" => new AnalyzeJsonWriter(streamWriter, _loggerFactory),
+            "text" => new AnalyzeTextWriter(streamWriter, options.TextOutputFormat, _loggerFactory),
+            "html" => new AnalyzeHtmlWriter(streamWriter, _loggerFactory),
+            "sarif" => new AnalyzeSarifWriter(streamWriter, _loggerFactory),
             _ => throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"))
         };
     }
 
     public CommandResultsWriter GetExportTagsWriter(CLIExportTagsCmdOptions options)
     {
-        var writer = GetTextWriter(options.OutputFilePath);
+        var writer = GetStreamWriter(options.OutputFilePath);
         return options.OutputFileFormat.ToLower() switch
         {
             "json" => new JsonWriter(writer, _loggerFactory),
@@ -74,7 +74,7 @@ public class WriterFactory
 
     private CommandResultsWriter GetTagDiffWriter(CLITagDiffCmdOptions options)
     {
-        var writer = GetTextWriter(options.OutputFilePath);
+        var writer = GetStreamWriter(options.OutputFilePath);
         return options.OutputFileFormat.ToLower() switch
         {
             "json" => new JsonWriter(writer, _loggerFactory),
@@ -85,7 +85,7 @@ public class WriterFactory
 
     private CommandResultsWriter GetVerifyRulesWriter(CLIVerifyRulesCmdOptions options)
     {
-        var writer = GetTextWriter(options.OutputFilePath);
+        var writer = GetStreamWriter(options.OutputFilePath);
         return options.OutputFileFormat.ToLower() switch
         {
             "json" => new JsonWriter(writer, _loggerFactory),
@@ -96,7 +96,7 @@ public class WriterFactory
 
     private CommandResultsWriter GetPackRulesWriter(CLIPackRulesCmdOptions options)
     {
-        var writer = GetTextWriter(options.OutputFilePath);
+        var writer = GetStreamWriter(options.OutputFilePath);
         return options.OutputFileFormat.ToLower() switch
         {
             "json" => new JsonWriter(writer, _loggerFactory),
@@ -109,6 +109,7 @@ public class WriterFactory
     /// </summary>
     /// <param name="outputFileName">The path to create, if null or empty will use Console.Out.</param>
     /// <returns></returns>
+    [Obsolete("Use GetStreamWriter instead.")]
     private TextWriter GetTextWriter(string? outputFileName)
     {
         TextWriter textWriter;
@@ -130,5 +131,35 @@ public class WriterFactory
         }
 
         return textWriter;
+    }
+
+    /// <summary>
+    ///     Create a StreamWriter for the given path or console.
+    /// </summary>
+    /// <param name="outputFileName">The path to create, if null or empty will use console output.</param>
+    /// <returns></returns>
+    private StreamWriter GetStreamWriter(string? outputFileName)
+    {
+        StreamWriter streamWriter;
+        if (string.IsNullOrEmpty(outputFileName))
+        {            
+            streamWriter = new StreamWriter(Console.OpenStandardOutput());
+            streamWriter.AutoFlush = true;
+            Console.SetOut(streamWriter);
+        }
+        else
+        {
+            try
+            {
+                streamWriter = File.CreateText(outputFileName);
+            }
+            catch (Exception)
+            {
+                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR), outputFileName);
+                throw;
+            }
+        }
+
+        return streamWriter;
     }
 }

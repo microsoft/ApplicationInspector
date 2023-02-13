@@ -5,6 +5,8 @@
         <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <LangVersion>10.0</LangVersion>
+        <RootNamespace>ApplicationInspector.Benchmarks</RootNamespace>
+        <Company>Microsoft Corporation</Company>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,6 +15,7 @@
 
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\AppInspector.CLI\AppInspector.CLI.csproj" />
         <ProjectReference Include="..\AppInspector\AppInspector.Commands.csproj" />
         <ProjectReference Include="..\AppInspector.Tests\AppInspector.Tests.csproj" />
     </ItemGroup>

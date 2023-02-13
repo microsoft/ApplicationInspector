@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -10,6 +10,6 @@ namespace Microsoft.ApplicationInspector.Commands;
 /// </summary>
 public class Result
 {
-    [JsonProperty(Order = 1, PropertyName = "appVersion")]
+    [JsonPropertyName("appVersion")] // Order 1
     public string? AppVersion { get; set; }
 }
