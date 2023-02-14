@@ -19,7 +19,7 @@ public static class RuleSetUtils
     /// <returns>The default RuleSet embedded in the App Inspector binary.</returns>
     public static RuleSet GetDefaultRuleSet(ILoggerFactory? loggerFactory = null)
     {
-        RuleSet ruleSet = new(loggerFactory: loggerFactory);
+        RuleSet ruleSet = new(loggerFactory);
         var assembly = Assembly.GetExecutingAssembly();
         var resNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
         foreach (var resName in resNames.Where(x =>
