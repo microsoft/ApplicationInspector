@@ -81,7 +81,7 @@ public abstract class AbstractRuleSet
 
         foreach (var pattern in rule.Patterns)
         {
-            if (EnableNonBacktrackingRegex && !pattern.Modifiers.Contains("b"))
+            if (EnableNonBacktrackingRegex && !pattern.Modifiers.Contains("b") && !pattern.Modifiers.Contains("nb"))
             {
                 pattern.Modifiers.Add("nb");
             }
