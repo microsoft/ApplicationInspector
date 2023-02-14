@@ -87,7 +87,7 @@ public class LoadRulesTests
     [TestMethod]
     public void AddFileByPath()
     {
-        RuleSet rules = new(loggerFactory: _loggerFactory);
+        RuleSet rules = new(_loggerFactory);
         var multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests",
             "multi_line_rule_file.json");
         File.WriteAllText(multiLineRuleLoc, multiLineRule);
@@ -98,7 +98,7 @@ public class LoadRulesTests
     [TestMethod]
     public void AddDirectoryByPath()
     {
-        RuleSet rules = new(loggerFactory: _loggerFactory);
+        RuleSet rules = new(_loggerFactory);
         var multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests",
             "multi_line_rule_file.json");
         File.WriteAllText(multiLineRuleLoc, multiLineRule);
@@ -114,7 +114,7 @@ public class LoadRulesTests
     [TestMethod]
     public void AddInvalidPath()
     {
-        RuleSet rules = new(loggerFactory: _loggerFactory);
+        RuleSet rules = new(_loggerFactory);
         var multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
             "ThisIsDefinitelyNotADirectoryThatExists");
         Assert.ThrowsException<ArgumentException>(() => rules.AddPath(multiLineRuleLoc, "multiline-tests"));
