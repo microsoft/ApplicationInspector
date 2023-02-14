@@ -83,18 +83,8 @@ public class OatRegexWithIndexOperation : OatOperation
         if (state1 is TextContainer tc && clause is OatRegexWithIndexClause src &&
             clause.Data is List<string> RegexList && RegexList.Count > 0)
         {
-            RegexOptions regexOpts = new();
+            RegexOptions regexOpts = Common.Utils.RegexModifierToRegexOptions(src.Arguments);
             var subBoundary = state2 is Boundary s2 ? s2 : null;
-
-            if (src.Arguments.Contains("i"))
-            {
-                regexOpts |= RegexOptions.IgnoreCase;
-            }
-
-            if (src.Arguments.Contains("m"))
-            {
-                regexOpts |= RegexOptions.Multiline;
-            }
 
 #if NET7_0_OR_GREATER
             if (src.Arguments.Contains("nb"))

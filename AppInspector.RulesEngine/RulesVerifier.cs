@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.XPath;
+using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
@@ -147,23 +148,26 @@ public class RulesVerifier
                     {
                         throw new ArgumentException();
                     }
-
-                    var options = new RegexOptions();
+                    
+                    RegexOptions regexOpts =
+                        Utils.RegexModifierToRegexOptions(searchPattern.Modifiers);
+                    
 #if NET7_0_OR_GREATER
                     if (_options.EnableNonBacktrackingRegex)
                     {
-                        options |= RegexOptions.NonBacktracking;
+                        regexOpts |= RegexOptions.NonBacktracking;
                     }
 #endif
 
-                    _ = new Regex(searchPattern.Pattern, options);
+                    _ = new Regex(searchPattern.Pattern, regexOpts);
                 }
                 catch (NotSupportedException e)
                 {
+                    // Regex requires backtracking, try without non-backtracking
                     _logger?.LogWarning(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "", searchPattern.Pattern ?? "", e.Message);
                     errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
 
-                    _ = new Regex(searchPattern.Pattern);      
+                    _ = new Regex(searchPattern.Pattern, Utils.RegexModifierToRegexOptions(searchPattern.Modifiers));      
                 }
                 catch (Exception e)
                 {
@@ -177,6 +181,7 @@ public class RulesVerifier
             if (searchPattern.JsonPaths is not null)
             {
                 foreach (var jsonPath in searchPattern.JsonPaths)
+                {
                     try
                     {
                         _ = JsonSelector.Parse(jsonPath);
@@ -189,11 +194,13 @@ public class RulesVerifier
                         errors.Add(string.Format("The provided JsonPath '{0}' value was not valid in Rule {1} : {2}",
                             searchPattern.JsonPaths, rule.Id, e.Message));
                     }
+                }
             }
 
             if (searchPattern.XPaths is not null)
             {
                 foreach (var xpath in searchPattern.XPaths)
+                {
                     try
                     {
                         XPathExpression.Compile(xpath);
@@ -203,13 +210,33 @@ public class RulesVerifier
                         _logger?.LogError("The provided XPath '{XPath}' value was not valid in Rule {Id} : {message}",
                             searchPattern.XPaths, rule.Id, e.Message);
                         errors.Add(string.Format("The provided XPath '{0}' value was not valid in Rule {1} : {2}",
-                            searchPattern.JsonPaths, rule.Id, e.Message));
+                            searchPattern.XPaths, rule.Id, e.Message));
                     }
+                }
+
+                if (searchPattern.YamlPaths is not null)
+                {
+                    foreach (var yamlPath in searchPattern.YamlPaths)
+                    {
+                        var problems = YamlPathExtensions.GetQueryProblems(yamlPath);
+                        if (!problems.Any())
+                        {
+                            continue;
+                        }
+
+                        _logger?.LogError(
+                            "The provided YamlPath '{YamlPath}' value was not valid in Rule {Id} : {message}",
+                            searchPattern.YamlPaths, rule.Id, string.Join(',', problems));
+                        errors.Add(string.Format("The provided YamlPath '{0}' value was not valid in Rule {1} : {2}",
+                            searchPattern.YamlPaths, string.Join(',', problems)));
+                    }
+                }
             }
         }
 
         // validate conditions
         foreach (var condition in rule.Conditions ?? Array.Empty<SearchCondition>())
+        {
             if (condition.SearchIn is null)
             {
                 _logger?.LogError("SearchIn is null in {ruleId}", rule.Id);
@@ -247,6 +274,8 @@ public class RulesVerifier
                     errors.Add($"Improperly specified finding region. {rule.Id}");
                 }
             }
+        }
+
 
         var singleList = new[] { convertedOatRule };
 
