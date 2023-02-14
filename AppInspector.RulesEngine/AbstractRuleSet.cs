@@ -81,9 +81,9 @@ public abstract class AbstractRuleSet
 
         foreach (var pattern in rule.Patterns)
         {
-            if (EnableNonBacktrackingRegex && !pattern.Modifiers.Contains("-b"))
+            if (EnableNonBacktrackingRegex && !pattern.Modifiers.Contains("b"))
             {
-                pattern.Modifiers.Add("-b");
+                pattern.Modifiers.Add("nb");
             }
 
             if (GenerateClause(pattern, clauseNumber) is { } clause)

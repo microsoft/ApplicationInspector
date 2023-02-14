@@ -229,7 +229,8 @@ public class AnalyzeCommand
                 LoggerFactory = _loggerFactory,
                 DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
                 RequireMustMatch = _options.RequireMustMatch,
-                RequireMustNotMatch = _options.RequireMustNotMatch
+                RequireMustNotMatch = _options.RequireMustNotMatch,
+                EnableNonBacktrackingRegex = _options.EnableNonBacktrackingRegex,
             };
             RulesVerifier verifier = new(rulesVerifierOptions);
             var anyFails = false;

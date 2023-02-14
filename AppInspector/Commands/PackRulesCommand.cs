@@ -95,7 +95,8 @@ public class PackRulesCommand
                     _options.CustomLanguagesPath),
                 DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
                 RequireMustMatch = _options.RequireMustMatch,
-                RequireMustNotMatch = _options.RequireMustNotMatch
+                RequireMustNotMatch = _options.RequireMustNotMatch,
+                EnableNonBacktrackingRegex = _options.EnableNonBacktrackingRegex,
             };
             RulesVerifier verifier = new(options);
             var ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet(enableNonBacktrackingRegex: _options.EnableNonBacktrackingRegex);

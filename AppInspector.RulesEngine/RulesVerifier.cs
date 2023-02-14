@@ -148,7 +148,22 @@ public class RulesVerifier
                         throw new ArgumentException();
                     }
 
-                    _ = new Regex(searchPattern.Pattern);
+                    var options = new RegexOptions();
+#if NET7_0_OR_GREATER
+                    if (_options.EnableNonBacktrackingRegex)
+                    {
+                        options |= RegexOptions.NonBacktracking;
+                    }
+#endif
+
+                    _ = new Regex(searchPattern.Pattern, options);
+                }
+                catch (NotSupportedException e)
+                {
+                    _logger?.LogWarning(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "", searchPattern.Pattern ?? "", e.Message);
+                    errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
+
+                    _ = new Regex(searchPattern.Pattern);      
                 }
                 catch (Exception e)
                 {
