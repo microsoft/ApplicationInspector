@@ -83,16 +83,8 @@ public class OatRegexWithIndexOperation : OatOperation
         if (state1 is TextContainer tc && clause is OatRegexWithIndexClause src &&
             clause.Data is List<string> RegexList && RegexList.Count > 0)
         {
-            RegexOptions regexOpts = Common.Utils.RegexModifierToRegexOptions(src.Arguments);
+            RegexOptions regexOpts = Common.Utils.RegexModifierToRegexOptions(src.Arguments, enableNonbacktrackingRegex: src.Arguments.Contains("nb"));
             var subBoundary = state2 is Boundary s2 ? s2 : null;
-
-#if NET7_0_OR_GREATER
-            if (src.Arguments.Contains("nb"))
-            {
-
-                regexOpts |= RegexOptions.NonBacktracking;
-            }
-#endif
 
             List<(int, Boundary)> outmatches = new(); //tuple results i.e. pattern index and where
 

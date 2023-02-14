@@ -20,8 +20,6 @@ public class PackRulesOptions
     public bool DisableRequireUniqueIds { get; set; }
     public bool RequireMustMatch { get; set; }
     public bool RequireMustNotMatch { get; set; }
-
-    public bool EnableNonBacktrackingRegex { get; set; }
 }
 
 public class PackRulesResult : Result
@@ -96,10 +94,10 @@ public class PackRulesCommand
                 DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
                 RequireMustMatch = _options.RequireMustMatch,
                 RequireMustNotMatch = _options.RequireMustNotMatch,
-                EnableNonBacktrackingRegex = _options.EnableNonBacktrackingRegex,
+                EnableNonBacktrackingRegex = false, // do not add "nb" to packed rules
             };
             RulesVerifier verifier = new(options);
-            var ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet(enableNonBacktrackingRegex: _options.EnableNonBacktrackingRegex);
+            var ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();
             if (!string.IsNullOrEmpty(_options.CustomRulesPath))
             {
                 ruleSet.AddPath(_options.CustomRulesPath);

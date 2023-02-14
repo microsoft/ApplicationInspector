@@ -142,32 +142,26 @@ public class RulesVerifier
         {
             if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.Regex)
             {
+                RegexOptions regexOpts = Utils.RegexModifierToRegexOptions(searchPattern.Modifiers, _options.EnableNonBacktrackingRegex);
                 try
                 {
                     if (string.IsNullOrEmpty(searchPattern.Pattern))
                     {
                         throw new ArgumentException();
                     }
-                    
-                    RegexOptions regexOpts =
-                        Utils.RegexModifierToRegexOptions(searchPattern.Modifiers);
-                    
-#if NET7_0_OR_GREATER
-                    if (_options.EnableNonBacktrackingRegex)
-                    {
-                        regexOpts |= RegexOptions.NonBacktracking;
-                    }
-#endif
-
+                                        
                     _ = new Regex(searchPattern.Pattern, regexOpts);
                 }
                 catch (NotSupportedException e)
                 {
                     // Regex requires backtracking, try without non-backtracking
                     _logger?.LogWarning(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "", searchPattern.Pattern ?? "", e.Message);
-                    errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", searchPattern.Pattern ?? "", e.Message));
+#if NET7_0_OR_GREATER
+                    // remove non-backtracking flag by applying XOR
+                    regexOpts ^= RegexOptions.NonBacktracking;
+#endif
 
-                    _ = new Regex(searchPattern.Pattern, Utils.RegexModifierToRegexOptions(searchPattern.Modifiers));      
+                    _ = new Regex(searchPattern.Pattern, regexOpts);      
                 }
                 catch (Exception e)
                 {

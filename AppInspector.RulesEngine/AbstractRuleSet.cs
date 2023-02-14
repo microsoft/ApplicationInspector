@@ -24,7 +24,7 @@ public abstract class AbstractRuleSet
     private readonly Regex _searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
     protected ILogger _logger = NullLogger.Instance;
     protected IEnumerable<Rule> _rules => _oatRules.Select(x => x.AppInspectorRule);
-    protected bool EnableNonBacktrackingRegex {  get; set; }
+    public bool EnableNonBacktrackingRegex {  get; set; }
 
     /// <summary>
     ///     Filters rules within Ruleset by language

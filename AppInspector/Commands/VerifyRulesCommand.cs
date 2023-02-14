@@ -104,12 +104,13 @@ public class VerifyRulesCommand
                 RequireMustNotMatch = _options.RequireMustNotMatch,
                 LoggerFactory = _loggerFactory,
                 LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath),
-                EnableNonBacktrackingRegex= _options.EnableNonBacktrackingRegex,
+                EnableNonBacktrackingRegex = _options.EnableNonBacktrackingRegex,
             };
             RulesVerifier verifier = new(options);
             verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
 
-            RuleSet? ruleSet = new(_loggerFactory, _options.EnableNonBacktrackingRegex);
+            RuleSet? ruleSet = new(_loggerFactory) { EnableNonBacktrackingRegex = options.EnableNonBacktrackingRegex };
+
             if (_options.VerifyDefaultRules)
             {
                 ruleSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);

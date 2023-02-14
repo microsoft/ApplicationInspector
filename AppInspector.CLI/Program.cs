@@ -414,7 +414,8 @@ public static class Program
             CustomLanguagesPath = cliOptions.CustomLanguagesPath,
             DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
             RequireMustMatch = cliOptions.RequireMustMatch,
-            RequireMustNotMatch = cliOptions.RequireMustNotMatch
+            RequireMustNotMatch = cliOptions.RequireMustNotMatch,
+            EnableNonBacktrackingRegex = cliOptions.EnableNonBacktrackingRegex,
         }, loggerFactory);
 
         var verifyRulesResult = command.GetResult();
