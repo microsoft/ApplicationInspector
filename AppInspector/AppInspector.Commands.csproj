@@ -54,7 +54,7 @@
         <PackageReference Include="CommandLineParser" Version="2.9.1" />
         <PackageReference Include="DotLiquid" Version="2.2.677" />
         <PackageReference Include="Glob" Version="1.1.9" />
-        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.42" />
+        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.43" />
         <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.9" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
         <PackageReference Include="ShellProgressBar" Version="5.2.0" />
