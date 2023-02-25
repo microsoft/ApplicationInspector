@@ -142,7 +142,7 @@ public class RulesVerifier
         {
             if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.Regex)
             {
-                RegexOptions regexOpts = Utils.RegexModifierToRegexOptions(searchPattern.Modifiers, _options.EnableNonBacktrackingRegex);
+                RegexOptions regexOpts = Utils.RegexModifierToRegexOptions(searchPattern.Modifiers);
                 try
                 {
                     if (string.IsNullOrEmpty(searchPattern.Pattern))

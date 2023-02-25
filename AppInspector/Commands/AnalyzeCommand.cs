@@ -215,7 +215,7 @@ public class AnalyzeCommand
 
         if (!_options.IgnoreDefaultRules)
         {
-            rulesSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
+            rulesSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory, _options.EnableNonBacktrackingRegex);
         }
 
         if (!string.IsNullOrEmpty(_options.CustomRulesPath))

@@ -14,14 +14,11 @@ public static class Utils
     /// </summary>
     /// <param name="modifiers"></param>
     /// <returns>A RegexOptions object with the correct modifiers set</returns>
-    public static RegexOptions RegexModifierToRegexOptions(IList<string> modifiers, bool enableNonbacktrackingRegex = false)
+    public static RegexOptions RegexModifierToRegexOptions(IList<string> modifiers)
     {
         RegexOptions opts = new();
         opts |= RegexOptions.Compiled;
-#if NET7_0_OR_GREATER
-        if (enableNonbacktrackingRegex)
-            opts |= RegexOptions.NonBacktracking;
-#endif
+
         foreach (var modifier in modifiers)
         {
             switch (modifier.ToLower())
@@ -61,6 +58,18 @@ public static class Utils
                 case "r":
                 case "righttoleft":
                     opts |= RegexOptions.RightToLeft;
+                    break;
+                case "b":
+#if NET7_0_OR_GREATER
+
+                opts &= ~RegexOptions.NonBacktracking;
+#endif
+                    break;
+                case "nb":
+#if NET7_0_OR_GREATER
+
+                opts |= RegexOptions.NonBacktracking;
+#endif
                     break;
                 default:
                     break;

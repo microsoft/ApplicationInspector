@@ -17,9 +17,9 @@ public static class RuleSetUtils
     /// </summary>
     /// <param name="loggerFactory">If you want log message, provide a loggerfactory configured to your preferences.</param>
     /// <returns>The default RuleSet embedded in the App Inspector binary.</returns>
-    public static RuleSet GetDefaultRuleSet(ILoggerFactory? loggerFactory = null)
+    public static RuleSet GetDefaultRuleSet(ILoggerFactory? loggerFactory = null, bool enableNonBacktrackingRegex = false)
     {
-        RuleSet ruleSet = new(loggerFactory);
+        RuleSet ruleSet = new(loggerFactory) { EnableNonBacktrackingRegex = enableNonBacktrackingRegex };
         var assembly = Assembly.GetExecutingAssembly();
         var resNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
         foreach (var resName in resNames.Where(x =>
