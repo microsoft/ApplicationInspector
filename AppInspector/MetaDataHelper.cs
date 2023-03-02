@@ -66,6 +66,7 @@ public class MetaDataHelper
     {
         //special handling for standard characteristics in report
         foreach (string tag in matchRecord.Tags ?? Array.Empty<string>())
+        {
             switch (tag)
             {
                 case "Metadata.Application.Author":
@@ -108,6 +109,7 @@ public class MetaDataHelper
 
                     break;
             }
+        }
 
         //Special handling; attempt to detect app types...review for multiple pattern rule limitation
         string solutionType = DetectSolutionType(matchRecord);
@@ -190,7 +192,10 @@ public class MetaDataHelper
 
         Metadata.Languages = new SortedDictionary<string, int>(Languages);
 
-        foreach (MetricTagCounter metricTagCounter in TagCounters.Values) Metadata.TagCounters?.Add(metricTagCounter);
+        foreach (MetricTagCounter metricTagCounter in TagCounters.Values)
+        {
+            Metadata.TagCounters?.Add(metricTagCounter);
+        }
     }
 
     /// <summary>

@@ -146,6 +146,7 @@ public class TextContainer
         else
         {
             foreach (var ele in values)
+            {
                 // Private access hack
                 // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
                 if (field.GetValue(ele) is int idx)
@@ -162,6 +163,7 @@ public class TextContainer
                         yield return (eleString, location);
                     }
                 }
+            }
         }
     }
 
@@ -243,7 +245,10 @@ public class TextContainer
                     suffixLoc = FullContent.Length - 1;
                 }
 
-                for (var i = prefixLoc; i <= suffixLoc; i++) CommentedStates[i] = true;
+                for (var i = prefixLoc; i <= suffixLoc; i++)
+                {
+                    CommentedStates[i] = true;
+                }
             }
         }
     }
@@ -320,12 +325,14 @@ public class TextContainer
         Boundary result = new();
 
         for (var i = 0; i < LineEnds.Count; i++)
+        {
             if (LineEnds[i] >= index)
             {
                 result.Index = LineStarts[i];
                 result.Length = LineEnds[i] - LineStarts[i] + 1;
                 break;
             }
+        }
 
         return result;
     }
@@ -355,6 +362,7 @@ public class TextContainer
     public Location GetLocation(int index)
     {
         for (var i = 1; i < LineEnds.Count; i++)
+        {
             if (LineEnds[i] >= index)
             {
                 return new Location
@@ -363,6 +371,7 @@ public class TextContainer
                     Line = i
                 };
             }
+        }
 
         return new Location();
     }

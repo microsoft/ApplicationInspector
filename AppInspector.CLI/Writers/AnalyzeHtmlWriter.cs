@@ -111,7 +111,9 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
         //add summary values for sorted tags lists of taginfo
         foreach (var outerKey in KeyedSortedTagInfoLists.Keys)
+        {
             hashData.Add(outerKey, KeyedSortedTagInfoLists[outerKey]);
+        }
 
         hashData["cputargets"] = _appMetaData?.CPUTargets;
         hashData["apptypes"] = _appMetaData?.AppTypes ?? new List<string>();
@@ -212,7 +214,10 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
     private void SafeList(List<string>? valuesList)
     {
-        for (var i = 0; i < valuesList?.Count; i++) valuesList[i] = SafeString(valuesList[i]);
+        for (var i = 0; i < valuesList?.Count; i++)
+        {
+            valuesList[i] = SafeString(valuesList[i]);
+        }
     }
 
     private string SafeString(string? value)
@@ -260,7 +265,8 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
         //for each preferred group of tag patterns determine if at least one instance was detected
         foreach (var tagCategory in TagGroupPreferences ?? new List<TagCategory>())
-        foreach (var tagGroup in tagCategory.Groups ?? new List<TagGroup>())
+        {
+            foreach (var tagGroup in tagCategory.Groups ?? new List<TagGroup>())
         {
             if (string.IsNullOrEmpty(tagGroup.Title))
             {
@@ -296,6 +302,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                 }
             }
         }
+        }
 
         //create simple ranked page lists HTML use
         KeyedSortedTagInfoLists["tagGrpAllTagsByConfidence"] = GetTagInfoListByConfidence();
@@ -313,14 +320,19 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         List<TagGroup> result = new();
         //get all tag groups for specified category
         foreach (var categoryTagGroup in TagGroupPreferences ?? new List<TagCategory>())
+        {
             if (categoryTagGroup.Name == category)
             {
                 result = categoryTagGroup.Groups ?? new List<TagGroup>();
                 break;
             }
+        }
 
         //now get all matches for that group i.e. Authentication
-        foreach (var group in result) GetTagInfoListByTagGroup(group);
+        foreach (var group in result)
+        {
+            GetTagInfoListByTagGroup(group);
+        }
 
         return result;
     }
@@ -334,8 +346,12 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         HashSet<string> results = new();
 
         foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
-        foreach (var tag in match.Tags ?? Array.Empty<string>())
-            results.Add(tag);
+        {
+            foreach (var tag in match.Tags ?? Array.Empty<string>())
+            {
+                results.Add(tag);
+            }
+        }
 
         return results;
     }
@@ -353,14 +369,17 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         HashSet<string> hashSet = new();
 
         foreach (var pattern in tagGroup.Patterns ?? new List<TagSearchPattern>())
+        {
             if (pattern.Detected) //set at program.RollUp already so don't search for again
             {
                 var tagPatternRegex = pattern.Expression;
                 if (_appMetaData?.TotalMatchesCount > 0)
                 {
                     foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
-                    foreach (var tagItem in match.Tags ?? Array.Empty<string>())
-                        if (tagPatternRegex.IsMatch(tagItem))
+                    {
+                        foreach (var tagItem in match.Tags ?? Array.Empty<string>())
+                        {
+                            if (tagPatternRegex.IsMatch(tagItem))
                         {
                             if (!hashSet.Contains(pattern.SearchPattern))
                             {
@@ -382,7 +401,8 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                             {
                                 //ensure we get highest confidence, severity as there are likely multiple matches for this tag pattern
                                 foreach (var updateItem in result)
-                                    if (updateItem.Tag == tagItem)
+                                    {
+                                        if (updateItem.Tag == tagItem)
                                     {
                                         Confidence oldConfidence;
                                         Enum.TryParse(updateItem.Confidence, out oldConfidence);
@@ -402,12 +422,16 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
                                         break;
                                     }
-                            }
+                                    }
+                                }
                         }
+                        }
+                    }
                 }
                 else
                 {
                     foreach (var tagItem in _appMetaData?.UniqueTags ?? new List<string>())
+                    {
                         if (tagPatternRegex.IsMatch(tagItem) && !hashSet.Contains(pattern.SearchPattern))
                         {
                             result.Add(new TagInfo
@@ -420,6 +444,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
                             hashSet.Add(tagItem);
                         }
+                    }
                 }
             }
             else if (addNotFound) //allow to report on false presense items
@@ -438,6 +463,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                 result.Add(tagInfo);
                 hashSet.Add(tagInfo.Tag);
             }
+        }
 
         return result;
     }
@@ -454,13 +480,16 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         HashSet<string> hashSet = new();
 
         foreach (var pattern in tagGroup.Patterns ?? new List<TagSearchPattern>())
+        {
             if (pattern.Detected)
             {
                 var tagPatternRegex = pattern.Expression;
 
                 foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
-                foreach (var tagItem in match.Tags ?? Array.Empty<string>())
-                    if (tagPatternRegex.IsMatch(tagItem))
+                {
+                    foreach (var tagItem in match.Tags ?? Array.Empty<string>())
+                    {
+                        if (tagPatternRegex.IsMatch(tagItem))
                     {
                         if (!hashSet.Contains(tagItem))
                         {
@@ -480,7 +509,8 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                         {
                             //ensure we have highest confidence, severity as there are likly multiple matches for this tag pattern
                             foreach (var updateItem in result)
-                                if (updateItem.Tag == tagItem)
+                                {
+                                    if (updateItem.Tag == tagItem)
                                 {
                                     Confidence oldConfidence;
                                     Enum.TryParse(updateItem.Confidence, out oldConfidence);
@@ -500,9 +530,13 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
 
                                     break;
                                 }
-                        }
+                                }
+                            }
                     }
+                    }
+                }
             }
+        }
 
         return result;
     }
@@ -517,11 +551,14 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         List<TagInfo> result = new();
 
         foreach (var tag in _appMetaData?.UniqueTags ?? new List<string>())
+        {
             if (_appMetaData?.TotalMatchesCount > 0)
             {
                 foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
-                foreach (var testTag in match.Tags ?? Array.Empty<string>())
-                    if (tag == testTag)
+                {
+                    foreach (var testTag in match.Tags ?? Array.Empty<string>())
+                    {
+                        if (tag == testTag)
                     {
                         if (dupCheck.Add(testTag))
                         {
@@ -536,6 +573,8 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                             break;
                         }
                     }
+                    }
+                }
             }
             else
             {
@@ -545,6 +584,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                     ShortTag = tag[(tag.LastIndexOf('.') + 1)..]
                 });
             }
+        }
 
         return result;
     }
@@ -563,9 +603,12 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         {
             var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
             foreach (var confidence in confidences)
-            foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
-            foreach (var testTag in match.Tags ?? Array.Empty<string>())
-                if (searchPattern.IsMatch(testTag))
+            {
+                foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
+                {
+                    foreach (var testTag in match.Tags ?? Array.Empty<string>())
+                    {
+                        if (searchPattern.IsMatch(testTag))
                 {
                     if (match.Confidence == confidence && dupCheck.Add(tag))
                     {
@@ -578,6 +621,9 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                         });
                     }
                 }
+                    }
+                }
+            }
         }
 
         return result;
@@ -598,9 +644,12 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         {
             var searchPattern = new Regex(tag, RegexOptions.IgnoreCase);
             foreach (var severity in severities)
-            foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
-            foreach (var testTag in match.Tags ?? Array.Empty<string>())
-                if (searchPattern.IsMatch(testTag))
+            {
+                foreach (var match in _appMetaData?.Matches ?? new List<MatchRecord>())
+                {
+                    foreach (var testTag in match.Tags ?? Array.Empty<string>())
+                    {
+                        if (searchPattern.IsMatch(testTag))
                 {
                     if (match.Severity == severity && dupCheck.Add(tag))
                     {
@@ -613,6 +662,9 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
                         });
                     }
                 }
+                    }
+                }
+            }
         }
 
         return result;

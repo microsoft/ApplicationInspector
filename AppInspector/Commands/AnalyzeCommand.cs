@@ -171,8 +171,15 @@ public class AnalyzeCommand
         //create metadata helper to wrap and help populate metadata from scan
         _metaDataHelper = new MetaDataHelper(string.Join(',', _options.SourcePath));
         DateScanned = DateTime.Now;
-        foreach (var confidence in _options.ConfidenceFilters) _confidence |= confidence;
-        foreach (var severity in _options.SeverityFilters) _severity |= severity;
+        foreach (var confidence in _options.ConfidenceFilters)
+        {
+            _confidence |= confidence;
+        }
+
+        foreach (var severity in _options.SeverityFilters)
+        {
+            _severity |= severity;
+        }
 
         _logger.LogTrace("AnalyzeCommand::ConfigSourcetoScan");
 
@@ -182,6 +189,7 @@ public class AnalyzeCommand
         }
 
         foreach (var entry in _options.SourcePath)
+        {
             if (Directory.Exists(entry))
             {
                 _srcfileList.AddRange(Directory.EnumerateFiles(entry, "*.*", SearchOption.AllDirectories));
@@ -194,6 +202,7 @@ public class AnalyzeCommand
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, entry));
             }
+        }
 
         if (_srcfileList.Count == 0)
         {
@@ -233,7 +242,9 @@ public class AnalyzeCommand
             {
                 foreach (var filename in Directory.EnumerateFileSystemEntries(_options.CustomRulesPath, "*.json",
                              SearchOption.AllDirectories))
+                {
                     VerifyFile(filename);
+                }
             }
             else if (File.Exists(_options.CustomRulesPath))
             {
@@ -632,6 +643,7 @@ public class AnalyzeCommand
         Extractor extractor = new();
         // For every file, if the file isn't excluded return it, and if it is track the exclusion in the metadata
         foreach (var srcFile in _srcfileList)
+        {
             if (_fileExclusionList.Any(x => x.IsMatch(srcFile)))
             {
                 _metaDataHelper?.Metadata.Files.Add(new FileRecord { FileName = srcFile, Status = ScanState.Skipped });
@@ -667,13 +679,17 @@ public class AnalyzeCommand
                         // This works if the contents contain any kind of file.
                         // If the file is an archive this gets all the entries it contains.
                         // If the file is not an archive, the stream is wrapped in a FileEntry container and yielded
-                        foreach (var entry in extractor.Extract(srcFile, contents, opts)) yield return entry;
+                        foreach (var entry in extractor.Extract(srcFile, contents, opts))
+                        {
+                            yield return entry;
+                        }
                     }
                 }
 
                 // Be sure to close the stream after we are done processing it.
                 contents?.Dispose();
             }
+        }
     }
 
     /// <summary>
@@ -686,6 +702,7 @@ public class AnalyzeCommand
 
         Extractor extractor = new();
         foreach (var srcFile in _srcfileList)
+        {
             if (_fileExclusionList.Any(x => x.IsMatch(srcFile)))
             {
                 _metaDataHelper?.Metadata.Files.Add(new FileRecord { FileName = srcFile, Status = ScanState.Skipped });
@@ -698,8 +715,11 @@ public class AnalyzeCommand
                                        Parallel = false, DenyFilters = _options.FilePathExclusions,
                                        MemoryStreamCutoff = 1
                                    }))
+                {
                     yield return entry;
+                }
             }
+        }
     }
 
 
@@ -862,7 +882,10 @@ public class AnalyzeCommand
             {
                 try
                 {
-                    foreach (var entry in EnumerateFileEntries()) fileQueue.Add(entry);
+                    foreach (var entry in EnumerateFileEntries())
+                    {
+                        fileQueue.Add(entry);
+                    }
                 }
                 catch (OverflowException e)
                 {
@@ -1020,11 +1043,13 @@ public class AnalyzeCommand
                 cts.Cancel();
                 // Populate skips for all the entries we didn't process
                 foreach (var entry in fileEntries.Where(x => _metaDataHelper.Files.All(y => x.FullPath != y.FileName)))
+                {
                     _metaDataHelper.Files.Add(new FileRecord
                     {
                         AccessTime = entry.AccessTime, CreateTime = entry.CreateTime, ModifyTime = entry.ModifyTime,
                         FileName = entry.FullPath, Status = ScanState.TimeOutSkipped
                     });
+                }
             }
         }
         else

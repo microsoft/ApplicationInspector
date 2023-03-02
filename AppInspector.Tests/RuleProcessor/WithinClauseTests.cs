@@ -451,7 +451,11 @@ int main(int argc, char **argv)
 
         RulesVerifier verifier = new(new RulesVerifierOptions { LoggerFactory = _loggerFactory });
         var oatIssues = verifier.CheckIntegrity(rules).SelectMany(x => x.OatIssues);
-        foreach (var violation in oatIssues) _logger.LogDebug(violation.Description);
+        foreach (var violation in oatIssues)
+        {
+            _logger.LogDebug(violation.Description);
+        }
+
         Assert.AreEqual(expectedNumIssues, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
     }
 

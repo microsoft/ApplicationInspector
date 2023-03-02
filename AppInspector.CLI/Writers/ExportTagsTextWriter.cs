@@ -31,7 +31,10 @@ internal class ExportTagsTextWriter : CommandResultsWriter
         {
             TextWriter.WriteLine("Results");
 
-            foreach (var tag in exportTagsResult.TagsList) TextWriter.WriteLine(tag);
+            foreach (var tag in exportTagsResult.TagsList)
+            {
+                TextWriter.WriteLine(tag);
+            }
         }
         else
         {

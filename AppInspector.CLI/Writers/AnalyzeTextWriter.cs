@@ -48,7 +48,10 @@ public class AnalyzeTextWriter : CommandResultsWriter
         WriteDependencies(analyzeResult.Metadata);
         TextWriter.WriteLine(MakeHeading("Match Details"));
 
-        foreach (var match in analyzeResult.Metadata.Matches ?? new List<MatchRecord>()) WriteMatch(match);
+        foreach (var match in analyzeResult.Metadata.Matches ?? new List<MatchRecord>())
+        {
+            WriteMatch(match);
+        }
 
         if (autoClose)
         {
@@ -89,7 +92,10 @@ public class AnalyzeTextWriter : CommandResultsWriter
     {
         StringBuilder build = new();
         build.Append(string.Format("[{0}]", header));
-        for (var i = header.Length; i < COLUMN_MAX; i++) build.Append("-");
+        for (var i = header.Length; i < COLUMN_MAX; i++)
+        {
+            build.Append("-");
+        }
 
         return build.ToString();
     }
@@ -130,11 +136,16 @@ public class AnalyzeTextWriter : CommandResultsWriter
         TextWriter.WriteLine($"Unique matches: {metaData.UniqueMatchesCount}");
 
         TextWriter.WriteLine(MakeHeading("UniqueTags"));
-        foreach (var tag in metaData.UniqueTags) TextWriter.WriteLine(tag);
+        foreach (var tag in metaData.UniqueTags)
+        {
+            TextWriter.WriteLine(tag);
+        }
 
         TextWriter.WriteLine(MakeHeading("Select Counters"));
         foreach (var tagCounter in metaData.TagCounters ?? new List<MetricTagCounter>())
+        {
             TextWriter.WriteLine($"Tagname: {tagCounter.Tag}, Count: {tagCounter.Count}");
+        }
     }
 
     public void WriteMatch(MatchRecord match)
@@ -171,6 +182,9 @@ public class AnalyzeTextWriter : CommandResultsWriter
 
         TextWriter.WriteLine(MakeHeading("Dependencies"));
 
-        foreach (var s in metaData.UniqueDependencies ?? new List<string>()) TextWriter.WriteLine(s);
+        foreach (var s in metaData.UniqueDependencies ?? new List<string>())
+        {
+            TextWriter.WriteLine(s);
+        }
     }
 }

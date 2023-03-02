@@ -192,7 +192,10 @@ public class WithinOperation : OatOperation
             }
             else
             {
-                foreach (var violation in subOp.ValidationDelegate.Invoke(rule, wc.SubClause)) yield return violation;
+                foreach (var violation in subOp.ValidationDelegate.Invoke(rule, wc.SubClause))
+                {
+                    yield return violation;
+                }
 
                 if (wc.SubClause is OatRegexWithIndexClause oatRegexWithIndexClause)
                 {

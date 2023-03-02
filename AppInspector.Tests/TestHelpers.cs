@@ -96,10 +96,12 @@ public static class TestHelpers
 
         int i;
         for (i = 0; i < contentLines.Length; i++)
+        {
             if (contentLines[i].Contains("[UniqueTags]"))
             {
                 break;
             }
+        }
 
         i++; //get past marker
         while (!contentLines[i].Contains("Select Counters"))

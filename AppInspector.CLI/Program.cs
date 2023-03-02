@@ -335,7 +335,10 @@ public static class Program
                     done = true;
                 });
 
-                while (!done) Thread.Sleep(100);
+                while (!done)
+                {
+                    Thread.Sleep(100);
+                }
 
                 pbar.ObservedError = !initialSuccess;
                 pbar.Message = !initialSuccess

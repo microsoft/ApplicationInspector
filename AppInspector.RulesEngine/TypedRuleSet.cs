@@ -48,10 +48,12 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     private IEnumerable<T> AppInspectorRulesAsEnumerableT()
     {
         foreach (var rule in _rules)
+        {
             if (rule is T ruleAsT)
             {
                 yield return ruleAsT;
             }
+        }
     }
 
 
@@ -93,7 +95,9 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
         }
 
         foreach (var filename in Directory.EnumerateFileSystemEntries(path, "*.json", SearchOption.AllDirectories))
+        {
             AddFile(filename, tag);
+        }
     }
 
     /// <summary>
@@ -140,7 +144,10 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     /// <param name="collection"> Collection of rules </param>
     public void AddRange(IEnumerable<T>? collection)
     {
-        foreach (var rule in collection ?? Array.Empty<T>()) AddRule(rule);
+        foreach (var rule in collection ?? Array.Empty<T>())
+        {
+            AddRule(rule);
+        }
     }
 
     /// <summary>
