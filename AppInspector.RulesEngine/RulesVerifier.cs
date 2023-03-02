@@ -93,7 +93,7 @@ public class RulesVerifier
         }
 
         var allTags = ruleSet.GetAppInspectorRules().SelectMany(x => x.Tags ?? Array.Empty<string>()).ToList();
-        var rulesWithDependsOnWithNoMatchingTags = ruleSet.GetAppInspectorRules().Where(x => !x.DependsOnTags?.All(tag => allTags.Contains(tag)) ?? true);
+        var rulesWithDependsOnWithNoMatchingTags = ruleSet.GetAppInspectorRules().Where(x => !x.DependsOnTags?.All(tag => allTags.Contains(tag)) ?? false);
         foreach(var dependslessRule in rulesWithDependsOnWithNoMatchingTags)
         {
             _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING), dependslessRule.Id);
