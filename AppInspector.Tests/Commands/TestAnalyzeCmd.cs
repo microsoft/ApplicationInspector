@@ -25,6 +25,107 @@ public class TestAnalyzeCmd
     private const int numTimeOutFiles = 25;
     private const int numTimesContent = 25;
 
+
+    private const string dependsOnOneWay = @"[
+    {
+        ""id"": ""SA000005"",
+        ""name"": ""Testing.Rules.DependsOnTags.OneWay"",
+        ""tags"": [
+            ""Dependant""
+        ],
+        ""depends_on_tags"": [""Dependee""],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule finds windows 2000"",
+        ""patterns"": [
+            {
+                ""pattern"": ""windows 2000"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""modifiers"": [
+                    ""m""
+                ],
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    },
+    {
+        ""id"": ""SA000006"",
+        ""name"": ""Testing.Rules.DependsOnTags.OneWay"",
+        ""tags"": [
+            ""Dependee""
+        ],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule finds linux"",
+        ""patterns"": [
+            {
+                ""pattern"": ""linux"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""modifiers"": [
+                    ""m""
+                ],
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    }
+]";
+    private const string dependsOnTwoWay = @"[
+    {
+        ""id"": ""SA000005"",
+        ""name"": ""Testing.Rules.DependsOnTags.TwoWay"",
+        ""tags"": [
+            ""RuleOne""
+        ],
+        ""depends_on_tags"": [""RuleTwo""],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule finds windows 2000"",
+        ""patterns"": [
+            {
+                ""pattern"": ""windows 2000"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""modifiers"": [
+                    ""m""
+                ],
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    },
+    {
+        ""id"": ""SA000006"",
+        ""name"": ""Testing.Rules.DependsOnTags.TwoWay"",
+        ""tags"": [
+            ""RuleTwo""
+        ],
+        ""depends_on_tags"": [""RuleOne""],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule finds linux"",
+        ""patterns"": [
+            {
+                ""pattern"": ""linux"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""modifiers"": [
+                    ""m""
+                ],
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    }
+]";
+
     private const string hardToFindContent = @"
 asefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlak@company.com1
 buy@tacos.com
@@ -289,6 +390,8 @@ windows
     private static string testRulesPath = string.Empty;
     private static string appliesToTestRulePath = string.Empty;
     private static string doesNotApplyToTestRulePath = string.Empty;
+    private static string dependsOnOneWayRulePath;
+    private static string dependsOnTwoWayRulePath;
 
     // Test files for timeout tests
     private static readonly List<string> enumeratingTimeOutTestsFiles = new();
@@ -296,6 +399,7 @@ windows
     private static string heavyRulePath = string.Empty;
 
     private ILoggerFactory factory = new NullLoggerFactory();
+    private static string fourWindowsOne2000Path;
 
     [ClassInitialize]
     public static void ClassInit(TestContext context)
@@ -308,13 +412,21 @@ windows
             Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "AppliesToTestRules.json");
         doesNotApplyToTestRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
             "DoesNotApplyToTestRules.json");
-
+        dependsOnOneWayRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
+            "DependsOnOneWay.json");
+        dependsOnTwoWayRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
+            "DependsOnTwoWay.json");
         File.WriteAllText(heavyRulePath, heavyRule);
         File.WriteAllText(testFilePath, fourWindowsOneLinux);
         File.WriteAllText(testRulesPath, findWindows);
         File.WriteAllText(appliesToTestRulePath, findWindowsWithAppliesTo);
         File.WriteAllText(doesNotApplyToTestRulePath, findWindowsWithDoesNotApplyTo);
+        File.WriteAllText(dependsOnOneWayRulePath, dependsOnOneWay);
+        File.WriteAllText(dependsOnTwoWayRulePath, dependsOnTwoWay);
+        fourWindowsOne2000Path =
+            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "FourWindowsOne2000.cs");
 
+        File.WriteAllText(fourWindowsOne2000Path, threeWindowsOneWindows2000);
         for (var i = 0; i < numTimeOutFiles; i++)
         {
             var newPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), $"TestFile-{i}.js");
@@ -349,10 +461,7 @@ windows
             Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "OverrideTestRule.json");
         var overridesWithoutOverrideTestRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
             "OverrideTestRuleWithoutOverride.json");
-        var fourWindowsOne2000Path =
-            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "FourWindowsOne2000.cs");
 
-        File.WriteAllText(fourWindowsOne2000Path, threeWindowsOneWindows2000);
         File.WriteAllText(overridesTestRulePath, findWindowsWithOverride);
         File.WriteAllText(overridesWithoutOverrideTestRulePath, findWindowsWithOverrideRuleWithoutOverride);
 
@@ -1024,6 +1133,108 @@ windows
         var result = command.GetResult();
         Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
         Assert.AreEqual(4, result.Metadata.TotalMatchesCount);
+    }
+
+    /// <summary>
+    ///     Test that the depends_on rule parameter properly limits matches one way
+    /// </summary>
+    [TestMethod]
+    public void TestDependsOnOneWay()
+    {
+        AnalyzeOptions options = new()
+        {
+            SourcePath = new string[] { testFilePath, fourWindowsOne2000Path },
+            CustomRulesPath = dependsOnOneWayRulePath,
+            IgnoreDefaultRules = true
+        };
+
+        AnalyzeCommand command = new(options, factory);
+        var result = command.GetResult();
+        Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+        Assert.AreEqual(2, result.Metadata.TotalMatchesCount);
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("Dependee"));
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("Dependant"));
+    }
+
+    /// <summary>
+    ///     Test that the depends_on rule parameter properly limits matches one way
+    /// </summary>
+    [TestMethod]
+    public void TestDependsOnOneWayWithoutDependee()
+    {
+        AnalyzeOptions options = new()
+        {
+            SourcePath = new string[] { testFilePath },
+            CustomRulesPath = dependsOnOneWayRulePath,
+            IgnoreDefaultRules = true
+        };
+
+        AnalyzeCommand command = new(options, factory);
+        var result = command.GetResult();
+        Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+        Assert.AreEqual(1, result.Metadata.TotalMatchesCount);
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("Dependee"));
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("Dependant"));
+    }
+
+    /// <summary>
+    ///     Test that the depends_on rule parameter properly limits matches two ways
+    /// </summary>
+    [TestMethod]
+    public void TestDependsOnTwoWay()
+    {
+        AnalyzeOptions options = new()
+        {
+            SourcePath = new string[] { testFilePath, fourWindowsOne2000Path },
+            CustomRulesPath = dependsOnTwoWayRulePath,
+            IgnoreDefaultRules = true
+        };
+
+        AnalyzeCommand command = new(options, factory);
+        var result = command.GetResult();
+        Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+        Assert.AreEqual(2, result.Metadata.TotalMatchesCount);
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("RuleOne"));
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("RuleTwo"));
+    }
+
+    /// <summary>
+    ///     Test that the depends_on rule parameter properly limits matches two ways
+    /// </summary>
+    [TestMethod]
+    public void TestDependsOnTwoWayWithoutDependee()
+    {
+        AnalyzeOptions options = new()
+        {
+            SourcePath = new string[] { testFilePath },
+            CustomRulesPath = dependsOnTwoWayRulePath,
+            IgnoreDefaultRules = true
+        };
+
+        AnalyzeCommand command = new(options, factory);
+        var result = command.GetResult();
+        Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, result.ResultCode);
+        Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("RuleOne"));
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("RuleTwo"));
+    }
+
+    [TestMethod]
+    public void TestDependsOnTwoWayWithoutDependant()
+    {
+        AnalyzeOptions options = new()
+        {
+            SourcePath = new string[] { fourWindowsOne2000Path },
+            CustomRulesPath = dependsOnTwoWayRulePath,
+            IgnoreDefaultRules = true
+        };
+
+        AnalyzeCommand command = new(options, factory);
+        var result = command.GetResult();
+        Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, result.ResultCode);
+        Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("RuleOne"));
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("RuleTwo"));
     }
 
     /// <summary>

@@ -14,9 +14,9 @@ namespace Microsoft.ApplicationInspector.RulesEngine;
 /// </summary>
 public class Rule
 {
-    private IEnumerable<Regex> _compiled = Array.Empty<Regex>();
+    private IList<Regex> _compiled = Array.Empty<Regex>();
 
-    private string[]? _fileRegexes;
+    private IList<string>? _fileRegexes;
     private bool _updateCompiledFileRegex;
 
     /// <summary>
@@ -38,6 +38,11 @@ public class Rule
     [JsonIgnore]
     public bool Disabled { get; set; }
 
+    /// <summary>
+    /// Tags that are required to be present from other rules - regardless of file - for this match to be valid
+    /// </summary>
+    [JsonPropertyName("depends_on_tags")] public IList<string>? DependsOnTags { get; set; }
+
     [JsonPropertyName("name")] public string Name { get; set; } = "";
 
     [JsonPropertyName("id")] public string Id { get; set; } = "";
@@ -46,13 +51,13 @@ public class Rule
     public string? Description { get; set; } = "";
 
     [JsonPropertyName("does_not_apply_to")]
-    public List<string>? DoesNotApplyTo { get; set; }
+    public IList<string>? DoesNotApplyTo { get; set; }
 
     [JsonPropertyName("applies_to")]
-    public string[]? AppliesTo { get; set; }
+    public IList<string>? AppliesTo { get; set; }
 
     [JsonPropertyName("applies_to_file_regex")]
-    public string[]? FileRegexes
+    public IList<string>? FileRegexes
     {
         get => _fileRegexes;
         set
@@ -69,7 +74,7 @@ public class Rule
         {
             if (_updateCompiledFileRegex)
             {
-                _compiled = FileRegexes?.Select(x => new Regex(x, RegexOptions.Compiled)) ?? Array.Empty<Regex>();
+                _compiled = (IList<Regex>?)FileRegexes?.Select(x => new Regex(x, RegexOptions.Compiled)).ToList() ?? Array.Empty<Regex>();
                 _updateCompiledFileRegex = false;
             }
 
@@ -77,14 +82,14 @@ public class Rule
         }
     }
 
-    [JsonPropertyName("tags")] public string[]? Tags { get; set; }
+    [JsonPropertyName("tags")] public IList<string>? Tags { get; set; }
 
     [JsonPropertyName("severity")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public Severity Severity { get; set; } = Severity.Moderate;
 
     [JsonPropertyName("overrides")]
-    public string[]? Overrides { get; set; }
+    public IList<string>? Overrides { get; set; }
 
     [JsonPropertyName("patterns")]
     public SearchPattern[] Patterns { get; set; } = Array.Empty<SearchPattern>();
@@ -93,8 +98,8 @@ public class Rule
     public SearchCondition[]? Conditions { get; set; }
 
     [JsonPropertyName("must-match")]
-    public string[]? MustMatch { get; set; }
+    public IList<string>? MustMatch { get; set; }
 
     [JsonPropertyName("must-not-match")]
-    public string[]? MustNotMatch { get; set; }
+    public IList<string>? MustNotMatch { get; set; }
 }

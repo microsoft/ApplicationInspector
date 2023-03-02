@@ -22,13 +22,16 @@ public class MetaDataHelper
 {
     public MetaDataHelper(string sourcePath)
     {
+        SourcePath = sourcePath;
         if (!sourcePath.Contains(','))
         {
-            sourcePath = Path.GetFullPath(sourcePath); //normalize for .\ and similar
+            SourcePath = Path.GetFullPath(SourcePath); //normalize for .\ and similar
         }
 
-        Metadata = new MetaData(sourcePath, sourcePath);
+        Metadata = new MetaData(SourcePath, SourcePath);
     }
+
+    internal string SourcePath { get; set; }
 
     //visible to callers i.e. AnalyzeCommand
     internal ConcurrentDictionary<string, byte> PackageTypes { get; set; } = new();
@@ -43,7 +46,7 @@ public class MetaDataHelper
     private ConcurrentDictionary<string, byte> CloudTargets { get; } = new();
     private ConcurrentDictionary<string, byte> OSTargets { get; } = new();
     private ConcurrentDictionary<string, MetricTagCounter> TagCounters { get; } = new();
-    private ConcurrentDictionary<string, int> Languages { get; } = new();
+    private ConcurrentDictionary<string, int> Languages { get; set; } = new();
 
     internal ConcurrentBag<MatchRecord> Matches { get; set; } = new();
     internal ConcurrentBag<FileRecord> Files { get; set; } = new();
@@ -62,7 +65,7 @@ public class MetaDataHelper
     public void AddTagsFromMatchRecord(MatchRecord matchRecord)
     {
         //special handling for standard characteristics in report
-        foreach (var tag in matchRecord.Tags ?? Array.Empty<string>())
+        foreach (string tag in matchRecord.Tags ?? Array.Empty<string>())
             switch (tag)
             {
                 case "Metadata.Application.Author":
@@ -107,31 +110,33 @@ public class MetaDataHelper
             }
 
         //Special handling; attempt to detect app types...review for multiple pattern rule limitation
-        var solutionType = DetectSolutionType(matchRecord);
+        string solutionType = DetectSolutionType(matchRecord);
         if (!string.IsNullOrEmpty(solutionType))
         {
             AppTypes.TryAdd(solutionType, 0);
         }
 
-        var CounterOnlyTagSet = false;
-        var selected = matchRecord.Tags is not null
+        bool CounterOnlyTagSet = false;
+        IEnumerable<KeyValuePair<string, MetricTagCounter>> selected = matchRecord.Tags is not null
             ? TagCounters.Where(x => matchRecord.Tags.Any(y => y.Contains(x.Value.Tag ?? "")))
             : new Dictionary<string, MetricTagCounter>();
-        foreach (var select in selected)
+        foreach (KeyValuePair<string, MetricTagCounter> select in selected)
         {
             CounterOnlyTagSet = true;
             select.Value.IncrementCount();
         }
 
-        //omit adding if ther a counter metric tag
+        //omit adding if there is a counter metric tag
         if (!CounterOnlyTagSet)
             //update list of unique tags as we go
         {
-            foreach (var tag in matchRecord.Tags ?? Array.Empty<string>())
+            foreach (string tag in matchRecord.Tags ?? Array.Empty<string>())
+            {
                 if (!UniqueTags.TryAdd(tag, 1))
                 {
                     UniqueTags[tag]++;
                 }
+            }
         }
     }
 
@@ -144,7 +149,7 @@ public class MetaDataHelper
     {
         AddTagsFromMatchRecord(matchRecord);
 
-        var nonCounters = matchRecord.Tags?.Where(x => !TagCounters.Any(y => y.Key == x)) ?? Array.Empty<string>();
+        IEnumerable<string> nonCounters = matchRecord.Tags?.Where(x => !TagCounters.Any(y => y.Key == x)) ?? Array.Empty<string>();
 
         //omit adding if it if all the tags were counters
         if (nonCounters.Any())
@@ -185,7 +190,7 @@ public class MetaDataHelper
 
         Metadata.Languages = new SortedDictionary<string, int>(Languages);
 
-        foreach (var metricTagCounter in TagCounters.Values) Metadata.TagCounters?.Add(metricTagCounter);
+        foreach (MetricTagCounter metricTagCounter in TagCounters.Values) Metadata.TagCounters?.Add(metricTagCounter);
     }
 
     /// <summary>
@@ -198,50 +203,18 @@ public class MetaDataHelper
     }
 
     /// <summary>
-    ///     Initial best guess to deduce project name; if scanned metadata from project solution value is replaced later
-    /// </summary>
-    /// <param name="sourcePath"></param>
-    /// <returns></returns>
-    private string GetDefaultProjectName(string sourcePath)
-    {
-        var applicationName = string.Empty;
-
-        if (Directory.Exists(sourcePath))
-        {
-            if (sourcePath != string.Empty)
-            {
-                if (sourcePath[^1] == Path.DirectorySeparatorChar) //in case path ends with dir separator; remove
-                {
-                    applicationName = sourcePath.Trim(Path.DirectorySeparatorChar);
-                }
-
-                if (applicationName.LastIndexOf(Path.DirectorySeparatorChar) is int idx && idx != -1)
-                {
-                    applicationName = applicationName[idx..].Trim();
-                }
-            }
-        }
-        else
-        {
-            applicationName = Path.GetFileNameWithoutExtension(sourcePath);
-        }
-
-        return applicationName;
-    }
-
-    /// <summary>
     ///     Attempt to map application type tags or file type or language to identify
     ///     WebApplications, Windows Services, Client Apps, WebServices, Azure Functions etc.
     /// </summary>
     /// <param name="match"></param>
     public string DetectSolutionType(MatchRecord match)
     {
-        var result = "";
+        string result = "";
         if (match.Tags is not null && match.Tags.Any(s => s.Contains("Application.Type")))
         {
-            foreach (var tag in match.Tags ?? Array.Empty<string>())
+            foreach (string tag in match.Tags ?? Array.Empty<string>())
             {
-                var index = tag.IndexOf("Application.Type");
+                int index = tag.IndexOf("Application.Type");
                 if (-1 != index)
                 {
                     result = tag[(index + 17)..];
@@ -323,7 +296,7 @@ public class MetaDataHelper
 
     private static string ExtractJSONValue(string s)
     {
-        var parts = s.Split(':');
+        string[] parts = s.Split(':');
         if (parts.Length == 2)
         {
             return parts[1].Replace("\"", "").Trim();
@@ -334,10 +307,10 @@ public class MetaDataHelper
 
     private string ExtractXMLValue(string s)
     {
-        var firstTag = s.IndexOf(">");
+        int firstTag = s.IndexOf(">");
         if (firstTag > -1 && firstTag < s.Length - 1)
         {
-            var endTag = s.IndexOf("</", firstTag);
+            int endTag = s.IndexOf("</", firstTag);
             if (endTag > -1)
             {
                 return s[(firstTag + 1)..endTag];
@@ -349,12 +322,26 @@ public class MetaDataHelper
 
     private string ExtractXMLValueMultiLine(string s)
     {
-        var firstTag = s.IndexOf(">");
+        int firstTag = s.IndexOf(">");
         if (firstTag > -1 && firstTag < s.Length - 1)
         {
             return s[(firstTag + 1)..];
         }
 
         return s;
+    }
+
+    /// <summary>
+    /// Returns a new MetaDataHelper with the same SourcePath, Files, Languages and FileExtensions
+    /// </summary>
+    /// <returns></returns>
+    internal MetaDataHelper CreateFresh()
+    {
+        return new MetaDataHelper(SourcePath)
+        {
+            Files = Files,
+            FileExtensions = FileExtensions,
+            Languages = Languages
+        };
     }
 }

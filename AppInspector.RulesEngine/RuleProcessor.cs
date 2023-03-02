@@ -229,8 +229,8 @@ public class RuleProcessor
 
         List<MatchRecord> removes = new();
 
-        foreach (var m in resultsList.Where(x => x.Rule?.Overrides?.Length > 0))
-        foreach (var idsToOverride in m.Rule?.Overrides ?? Array.Empty<string>())
+        foreach (var m in resultsList.Where(x => x.Rule?.Overrides?.Count > 0))
+        foreach (var idsToOverride in (IList<string>)m.Rule?.Overrides ?? Array.Empty<string>())
             // Find all overriden rules and mark them for removal from issues list
         foreach (var om in resultsList.FindAll(x => x.Rule?.Id == idsToOverride))
             // If the overridden match is a subset of the overriding match
@@ -416,14 +416,14 @@ public class RuleProcessor
 
         List<MatchRecord> removes = new();
 
-        foreach (var m in resultsList.Where(x => x.Rule?.Overrides?.Length > 0))
+        foreach (var m in resultsList.Where(x => x.Rule?.Overrides?.Count > 0))
         {
             if (cancellationToken?.IsCancellationRequested is true)
             {
                 return resultsList;
             }
 
-            foreach (var ovrd in m.Rule?.Overrides ?? Array.Empty<string>())
+            foreach (var ovrd in (IList<string>?)m.Rule?.Overrides ?? Array.Empty<string>())
                 // Find all overriden rules and mark them for removal from issues list
             foreach (var om in resultsList.FindAll(x => x.Rule?.Id == ovrd))
                 if (om.Boundary.Index >= m.Boundary.Index &&

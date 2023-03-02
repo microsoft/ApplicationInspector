@@ -150,7 +150,7 @@ public class AnalyzeCommand
     private readonly Severity _severity = Severity.Unspecified;
     private readonly List<string> _srcfileList = new();
     private readonly Languages _languages = new();
-    private readonly MetaDataHelper _metaDataHelper; //wrapper containing MetaData object to be assigned to result
+    private MetaDataHelper _metaDataHelper; //wrapper containing MetaData object to be assigned to result
     private readonly RuleProcessor _rulesProcessor;
 
     /// <summary>
@@ -335,6 +335,17 @@ public class AnalyzeCommand
             }
         }
 
+        // Remove match records that don't have the matching depends on tags
+        List<MatchRecord> filteredMatchRecords = _metaDataHelper.Matches.Where(x => x.Rule?.DependsOnTags?.All(tag => _metaDataHelper.UniqueTags.ContainsKey(tag)) ?? true).ToList();
+        if (filteredMatchRecords.Count != _metaDataHelper.Matches.Count)
+        {
+            _metaDataHelper = _metaDataHelper.CreateFresh();
+            foreach (MatchRecord matchRecord in filteredMatchRecords)
+            {
+                _metaDataHelper.AddMatchRecord(matchRecord);
+            }
+        }
+
         return AnalyzeResult.ExitCode.Success;
 
         void ProcessAndAddToMetadata(FileEntry file)
@@ -445,6 +456,7 @@ public class AnalyzeCommand
                     }
 
                     foreach (var matchRecord in results)
+                    {
                         if (_options.TagsOnly)
                         {
                             _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
@@ -463,6 +475,7 @@ public class AnalyzeCommand
                         {
                             _metaDataHelper.AddMatchRecord(matchRecord);
                         }
+                    }
                 }
             }
 
@@ -499,6 +512,17 @@ public class AnalyzeCommand
             }
 
             await ProcessAndAddToMetadata(entry, cancellationToken);
+        }
+
+        // Remove match records that don't have the matching depends on tags
+        List<MatchRecord> filteredMatchRecords = _metaDataHelper.Matches.Where(x => x.Rule?.DependsOnTags?.All(tag => _metaDataHelper.UniqueTags.ContainsKey(tag)) ?? true).ToList();
+        if (filteredMatchRecords.Count != _metaDataHelper.Matches.Count)
+        {
+            _metaDataHelper = _metaDataHelper.CreateFresh();
+            foreach (MatchRecord matchRecord in filteredMatchRecords)
+            {
+                _metaDataHelper.AddMatchRecord(matchRecord);
+            }
         }
 
         return AnalyzeResult.ExitCode.Success;
@@ -565,6 +589,7 @@ public class AnalyzeCommand
                         }
 
                         foreach (var matchRecord in results)
+                        {
                             if (_options.TagsOnly)
                             {
                                 _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
@@ -583,6 +608,7 @@ public class AnalyzeCommand
                             {
                                 _metaDataHelper.AddMatchRecord(matchRecord);
                             }
+                        }
                     }
                 }
             }

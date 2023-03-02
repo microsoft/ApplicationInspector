@@ -92,6 +92,16 @@ public class RulesVerifier
             }
         }
 
+        var allTags = ruleSet.GetAppInspectorRules().SelectMany(x => x.Tags ?? Array.Empty<string>()).ToList();
+        var rulesWithDependsOnWithNoMatchingTags = ruleSet.GetAppInspectorRules().Where(x => !x.DependsOnTags?.All(tag => allTags.Contains(tag)) ?? true);
+        foreach(var dependslessRule in rulesWithDependsOnWithNoMatchingTags)
+        {
+            _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING), dependslessRule.Id);
+            foreach(var status in ruleStatuses.Where(x => x.RulesId == dependslessRule.Id))
+            {
+                status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING, dependslessRule.Id));
+            }
+        }
         return ruleStatuses;
     }
 
@@ -124,7 +134,7 @@ public class RulesVerifier
                 }
         }
 
-        foreach (var pattern in rule.FileRegexes ?? Array.Empty<string>())
+        foreach (var pattern in (IList<string>?)rule.FileRegexes ?? Array.Empty<string>())
             try
             {
                 _ = new Regex(pattern, RegexOptions.Compiled);
@@ -273,7 +283,7 @@ public class RulesVerifier
                                StringComparer.InvariantCultureIgnoreCase) ?? true) ?? "csharp";
 
         // validate all must match samples are matched
-        foreach (var mustMatchElement in rule.MustMatch ?? Array.Empty<string>())
+        foreach (var mustMatchElement in (IList<string>?)rule.MustMatch ?? Array.Empty<string>())
         {
             var tc = new TextContainer(mustMatchElement, language, _options.LanguageSpecs);
             if (!_analyzer.Analyze(singleList, tc).Any())
@@ -285,7 +295,7 @@ public class RulesVerifier
         }
 
         // validate no must not match conditions are matched
-        foreach (var mustNotMatchElement in rule.MustNotMatch ?? Array.Empty<string>())
+        foreach (var mustNotMatchElement in (IList<string>?)rule.MustNotMatch ?? Array.Empty<string>())
         {
             var tc = new TextContainer(mustNotMatchElement, language, _options.LanguageSpecs);
             if (_analyzer.Analyze(singleList, tc).Any())
@@ -296,7 +306,7 @@ public class RulesVerifier
             }
         }
 
-        if (rule.Tags?.Length == 0)
+        if (rule.Tags?.Count == 0)
         {
             _logger?.LogError("Rule must specify tags. {0}", rule.Id);
             errors.Add($"Rule must specify tags. {rule.Id}");
@@ -326,8 +336,8 @@ public class RulesVerifier
             RulesName = rule.Name,
             Errors = errors,
             OatIssues = _analyzer.EnumerateRuleIssues(convertedOatRule),
-            HasPositiveSelfTests = rule.MustMatch?.Length > 0,
-            HasNegativeSelfTests = rule.MustNotMatch?.Length > 0
+            HasPositiveSelfTests = rule.MustMatch?.Count > 0,
+            HasNegativeSelfTests = rule.MustNotMatch?.Count > 0
         };
     }
 }
