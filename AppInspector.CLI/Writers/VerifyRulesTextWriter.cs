@@ -40,10 +40,8 @@ internal class VerifyRulesTextWriter : CommandResultsWriter
         {
             TextWriter.WriteLine("Rule status");
             foreach (var ruleStatus in verifyRulesResult.RuleStatusList)
-            {
                 TextWriter.WriteLine("Ruleid: {0}, Rulename: {1}, Status: {2}", ruleStatus.RulesId,
                     ruleStatus.RulesName, ruleStatus.Verified);
-            }
         }
 
         if (autoClose)

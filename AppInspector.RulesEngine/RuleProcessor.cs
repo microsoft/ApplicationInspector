@@ -211,22 +211,17 @@ public class RuleProcessor
                     // WithinClauses are always ANDed, but each contains all the captures that passed *that* clause.
                     // We need the captures that passed every clause.
                     foreach (var aCapture in allCaptured)
-                    {
                         numberOfInstances.AddOrUpdate(aCapture, 1, (tuple, i) => i + 1);
-                    }
-
                     return numberOfInstances.Where(x => x.Value == onlyWithinCaptures.Count).Select(x => x.Key)
                         .ToList();
                 }
 
                 var outList = new List<(int, Boundary)>();
                 foreach (var cap in captures)
-                {
                     if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
                     {
                         outList.AddRange(tcc.Result);
                     }
-                }
 
                 return outList;
             }
@@ -235,21 +230,15 @@ public class RuleProcessor
         List<MatchRecord> removes = new();
 
         foreach (var m in resultsList.Where(x => x.Rule?.Overrides?.Count > 0))
-        {
-            foreach (var idsToOverride in (IList<string>)m.Rule?.Overrides ?? Array.Empty<string>())
-            {
-                // Find all overriden rules and mark them for removal from issues list
-                foreach (var om in resultsList.FindAll(x => x.Rule?.Id == idsToOverride))
-                {
-                    // If the overridden match is a subset of the overriding match
-                    if (om.Boundary.Index >= m.Boundary.Index &&
+        foreach (var idsToOverride in (IList<string>)m.Rule?.Overrides ?? Array.Empty<string>())
+            // Find all overriden rules and mark them for removal from issues list
+        foreach (var om in resultsList.FindAll(x => x.Rule?.Id == idsToOverride))
+            // If the overridden match is a subset of the overriding match
+            if (om.Boundary.Index >= m.Boundary.Index &&
                 om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
             {
                 removes.Add(om);
             }
-                }
-            }
-        }
 
         // Remove overriden rules
         resultsList.RemoveAll(x => removes.Contains(x));
@@ -349,10 +338,7 @@ public class RuleProcessor
                 return resultsList;
             }
 
-            foreach (var cap in filteredCaptures)
-            {
-                resultsList.AddRange(ProcessBoundary(cap));
-            }
+            foreach (var cap in filteredCaptures) resultsList.AddRange(ProcessBoundary(cap));
 
             List<MatchRecord> ProcessBoundary(ClauseCapture cap)
             {
@@ -438,17 +424,13 @@ public class RuleProcessor
             }
 
             foreach (var ovrd in (IList<string>?)m.Rule?.Overrides ?? Array.Empty<string>())
-            {
                 // Find all overriden rules and mark them for removal from issues list
-                foreach (var om in resultsList.FindAll(x => x.Rule?.Id == ovrd))
-                {
-                    if (om.Boundary.Index >= m.Boundary.Index &&
+            foreach (var om in resultsList.FindAll(x => x.Rule?.Id == ovrd))
+                if (om.Boundary.Index >= m.Boundary.Index &&
                     om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
                 {
                     removes.Add(om);
                 }
-                }
-            }
         }
 
         // Remove overriden rules

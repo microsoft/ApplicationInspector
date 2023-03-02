@@ -18,11 +18,9 @@ public class DistinctBenchmarks
         SortedDictionary<string, string> uniqueTags = new();
         List<string> outList = new();
         foreach (var r in ruleSet)
-        {
             //builds a list of unique tags
-            foreach (var t in (IList<string>?)r?.Tags ?? Array.Empty<string>())
-            {
-                if (uniqueTags.ContainsKey(t))
+        foreach (var t in (IList<string>?)r?.Tags ?? Array.Empty<string>())
+            if (uniqueTags.ContainsKey(t))
             {
                 continue;
             }
@@ -30,14 +28,9 @@ public class DistinctBenchmarks
             {
                 uniqueTags.Add(t, t);
             }
-            }
-        }
 
         //generate results list
-        foreach (var s in uniqueTags.Values)
-        {
-            outList.Add(s);
-        }
+        foreach (var s in uniqueTags.Values) outList.Add(s);
 
         return outList;
     }
@@ -47,13 +40,9 @@ public class DistinctBenchmarks
     {
         HashSet<string> hashSet = new();
         foreach (var r in ruleSet)
-        {
             //builds a list of unique tags
-            foreach (var t in (IList<string>?)r?.Tags ?? Array.Empty<string>())
-            {
-                hashSet.Add(t);
-            }
-        }
+        foreach (var t in (IList<string>?)r?.Tags ?? Array.Empty<string>())
+            hashSet.Add(t);
 
         var theList = hashSet.ToList();
         theList.Sort();

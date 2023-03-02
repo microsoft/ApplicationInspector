@@ -141,13 +141,11 @@ public sealed class Languages
         if (language != null)
         {
             foreach (var comment in _comments)
-            {
                 if (Array.Exists(comment.Languages ?? new[] { "" },
                         x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)) && comment.Inline is { })
                 {
                     return comment.Inline;
                 }
-            }
         }
 
         return result;
@@ -165,13 +163,11 @@ public sealed class Languages
         if (language != null)
         {
             foreach (var comment in _comments)
-            {
                 if ((comment.Languages?.Contains(language.ToLower(CultureInfo.InvariantCulture)) ?? false) &&
                     comment.Prefix is { })
                 {
                     return comment.Prefix;
                 }
-            }
         }
 
         return result;
@@ -189,13 +185,11 @@ public sealed class Languages
         if (language != null)
         {
             foreach (var comment in _comments)
-            {
                 if (Array.Exists(comment.Languages ?? new[] { "" },
                         x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)) && comment.Suffix is { })
                 {
                     return comment.Suffix;
                 }
-            }
         }
 
         return result;

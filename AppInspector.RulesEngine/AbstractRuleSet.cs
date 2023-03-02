@@ -78,7 +78,6 @@ public abstract class AbstractRuleSet
         var clauseNumber = 0;
         var expression = new StringBuilder("(");
         foreach (var pattern in rule.Patterns)
-        {
             if (GenerateClause(pattern, clauseNumber) is { } clause)
             {
                 clauses.Add(clause);
@@ -94,7 +93,6 @@ public abstract class AbstractRuleSet
             {
                 _logger.LogWarning("Clause could not be generated from pattern {pattern}", pattern.Pattern);
             }
-        }
 
         if (clauses.Count > 0)
         {
@@ -152,7 +150,6 @@ public abstract class AbstractRuleSet
                     if (m.Success)
                     {
                         for (var i = 1; i < m.Groups.Count; i++)
-                        {
                             if (int.TryParse(m.Groups[i].Value, out var value))
                             {
                                 argList.Add(value);
@@ -161,7 +158,6 @@ public abstract class AbstractRuleSet
                             {
                                 break;
                             }
-                        }
                     }
 
                     if (argList.Count == 2)

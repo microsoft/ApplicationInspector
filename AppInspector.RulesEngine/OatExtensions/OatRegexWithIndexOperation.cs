@@ -49,7 +49,6 @@ public class OatRegexWithIndexOperation : OatOperation
         else if (clause.Data is List<string> regexList)
         {
             foreach (var regex in regexList)
-            {
                 if (!Helpers.IsValidRegex(regex))
                 {
                     yield return new Violation(
@@ -57,7 +56,6 @@ public class OatRegexWithIndexOperation : OatOperation
                             clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture), regex),
                         rule, clause);
                 }
-            }
         }
 
         if (clause.DictData?.Count > 0)
@@ -93,7 +91,6 @@ public class OatRegexWithIndexOperation : OatOperation
             if (Analyzer != null)
             {
                 foreach (var regexString in RegexList)
-                {
                     if (StringToRegex(regexString, regexOpts) is { } regex)
                     {
                         if (src.XPaths is not null)
@@ -115,9 +112,7 @@ public class OatRegexWithIndexOperation : OatOperation
                             {
                                 var targets = tc.GetStringFromJsonPath(jsonPath);
                                 foreach (var target in targets)
-                                {
                                     outmatches.AddRange(GetMatches(regex, tc, clause, src.Scopes, target.Item2));
-                                }
                             }
                         }
 
@@ -145,7 +140,6 @@ public class OatRegexWithIndexOperation : OatOperation
                             }
                         }
                     }
-                }
 
                 var result = src.Invert ? outmatches.Count == 0 : outmatches.Count > 0;
                 return new OperationResult(result,
@@ -162,7 +156,6 @@ public class OatRegexWithIndexOperation : OatOperation
         Boundary? boundary)
     {
         foreach (var match in regex.Matches(boundary is null ? tc.FullContent : tc.GetBoundaryText(boundary)))
-        {
             if (match is Match m)
             {
                 Boundary translatedBoundary = new()
@@ -180,7 +173,6 @@ public class OatRegexWithIndexOperation : OatOperation
                     yield return (patternIndex, translatedBoundary);
                 }
             }
-        }
     }
 
     /// <summary>

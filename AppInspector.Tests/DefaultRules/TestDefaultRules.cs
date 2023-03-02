@@ -42,15 +42,9 @@ public class TestDefaultRules
         foreach (var unverified in result.Unverified)
         {
             logger.Log(LogLevel.Error, "Failed to validate {0}", unverified.RulesId);
-            foreach (var error in unverified.Errors)
-            {
-                logger.Log(LogLevel.Error, error);
-            }
+            foreach (var error in unverified.Errors) logger.Log(LogLevel.Error, error);
 
-            foreach (var oatError in unverified.OatIssues)
-            {
-                logger.Log(LogLevel.Error, oatError.Description);
-            }
+            foreach (var oatError in unverified.OatIssues) logger.Log(LogLevel.Error, oatError.Description);
         }
 
         logger.Log(LogLevel.Information, "{0} of {1} rules have positive self tests.",
@@ -59,14 +53,9 @@ public class TestDefaultRules
             result.RuleStatusList.Count(x => x.HasNegativeSelfTests), result.RuleStatusList.Count);
 
         foreach (var rule in result.RuleStatusList.Where(x => !x.HasPositiveSelfTests))
-        {
             logger.Log(LogLevel.Warning, "Rule {0} does not have any positive test cases", rule.RulesId);
-        }
-
         foreach (var rule in result.RuleStatusList.Where(x => !x.HasNegativeSelfTests))
-        {
             logger.Log(LogLevel.Warning, "Rule {0} does not have any negative test cases", rule.RulesId);
-        }
 
         Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
         Assert.AreNotEqual(0, result.RuleStatusList.Count);

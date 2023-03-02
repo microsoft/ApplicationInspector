@@ -39,9 +39,7 @@ public class TagDiffTextWriter : CommandResultsWriter
         {
             TextWriter.WriteLine("Differences");
             foreach (var tagDiff in tagDiffResult.TagDiffList)
-            {
                 TextWriter.WriteLine("Tag: {0}, Only found in file: {1}", tagDiff.Tag, tagDiff.Source);
-            }
         }
 
         if (autoClose)

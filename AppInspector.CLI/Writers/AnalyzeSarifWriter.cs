@@ -26,10 +26,7 @@ internal static class AnalyzeSarifWriterExtensions
             return;
         }
 
-        foreach (var tag in tagsToAdd)
-        {
-            tc.Add(tag);
-        }
+        foreach (var tag in tagsToAdd) tc.Add(tag);
     }
 }
 

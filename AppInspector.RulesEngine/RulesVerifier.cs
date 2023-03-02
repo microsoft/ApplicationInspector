@@ -87,19 +87,17 @@ public class RulesVerifier
                 _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL), rule.Key);
                 var relevantStati = ruleStatuses.Where(x => x.RulesId == rule.Key);
                 foreach (var status in relevantStati)
-                {
                     status.Errors =
                         status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DUPLICATEID_FAIL, rule.Key));
-                }
             }
         }
 
         var allTags = ruleSet.GetAppInspectorRules().SelectMany(x => x.Tags ?? Array.Empty<string>()).ToList();
         var rulesWithDependsOnWithNoMatchingTags = ruleSet.GetAppInspectorRules().Where(x => !x.DependsOnTags?.All(tag => allTags.Contains(tag)) ?? false);
-        foreach (var dependslessRule in rulesWithDependsOnWithNoMatchingTags)
+        foreach(var dependslessRule in rulesWithDependsOnWithNoMatchingTags)
         {
             _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING), dependslessRule.Id);
-            foreach (var status in ruleStatuses.Where(x => x.RulesId == dependslessRule.Id))
+            foreach(var status in ruleStatuses.Where(x => x.RulesId == dependslessRule.Id))
             {
                 status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING, dependslessRule.Id));
             }
@@ -124,20 +122,19 @@ public class RulesVerifier
         if (rule.AppliesTo != null)
         {
             var languages = _options.LanguageSpecs.GetNames();
-            foreach (string lang in
-                // Check for unknown language
-                from lang in rule.AppliesTo
-                where !string.IsNullOrEmpty(lang)
-                where !languages.Any(x => x.Equals(lang, StringComparison.CurrentCultureIgnoreCase))
-                select lang)
-            {
-                _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL), rule.Id ?? "", lang);
-                errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL, rule.Id ?? "", lang));
-            }
+            // Check for unknown language
+            foreach (var lang in rule.AppliesTo)
+                if (!string.IsNullOrEmpty(lang))
+                {
+                    if (!languages.Any(x => x.Equals(lang, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL), rule.Id ?? "", lang);
+                        errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_LANGUAGE_FAIL, rule.Id ?? "", lang));
+                    }
+                }
         }
 
         foreach (var pattern in (IList<string>?)rule.FileRegexes ?? Array.Empty<string>())
-        {
             try
             {
                 _ = new Regex(pattern, RegexOptions.Compiled);
@@ -149,7 +146,6 @@ public class RulesVerifier
                 errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", pattern ?? "",
                     e.Message));
             }
-        }
 
         //valid search pattern
         foreach (var searchPattern in rule.Patterns ?? Array.Empty<SearchPattern>())

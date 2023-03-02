@@ -224,22 +224,18 @@ public class TagDiffCommand
             var added = list2.Except(list1);
 
             foreach (var add in added)
-            {
                 tagDiffResult.TagDiffList.Add(new TagDiff
                 {
                     Source = TagDiff.DiffSource.Source2,
                     Tag = add
                 });
-            }
-
             foreach (var remove in removed)
-            {
                 tagDiffResult.TagDiffList.Add(new TagDiff
                 {
                     Source = TagDiff.DiffSource.Source1,
                     Tag = remove
                 });
-            }
+
 
             if (tagDiffResult.TagDiffList.Count > 0)
             {

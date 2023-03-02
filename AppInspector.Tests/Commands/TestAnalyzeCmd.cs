@@ -537,10 +537,7 @@ windows
 
     private void DeleteTestFiles(IEnumerable<string> pathsToDelete)
     {
-        foreach (var path in pathsToDelete)
-        {
-            File.Delete(path);
-        }
+        foreach (var path in pathsToDelete) File.Delete(path);
     }
 
     /// <summary>
