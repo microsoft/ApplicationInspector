@@ -25,7 +25,6 @@ public class TestAnalyzeCmd
     private const int numTimeOutFiles = 25;
     private const int numTimesContent = 25;
 
-
     private const string dependsOnOneWay = @"[
     {
         ""id"": ""SA000005"",
@@ -35,7 +34,7 @@ public class TestAnalyzeCmd
         ],
         ""depends_on_tags"": [""Dependee""],
         ""severity"": ""Critical"",
-        ""description"": ""This rule finds windows 2000"",
+        ""description"": ""This rule finds windows 2000 and is dependent on the Dependee tag"",
         ""patterns"": [
             {
                 ""pattern"": ""windows 2000"",
@@ -58,7 +57,7 @@ public class TestAnalyzeCmd
             ""Dependee""
         ],
         ""severity"": ""Critical"",
-        ""description"": ""This rule finds linux"",
+        ""description"": ""This rule finds linux and is depended on to provide the Dependee tag"",
         ""patterns"": [
             {
                 ""pattern"": ""linux"",
@@ -84,7 +83,7 @@ public class TestAnalyzeCmd
         ],
         ""depends_on_tags"": [""RuleTwo""],
         ""severity"": ""Critical"",
-        ""description"": ""This rule finds windows 2000"",
+        ""description"": ""This rule finds windows 2000 and is dependent the RuleTwo tag"",
         ""patterns"": [
             {
                 ""pattern"": ""windows 2000"",
@@ -108,7 +107,7 @@ public class TestAnalyzeCmd
         ],
         ""depends_on_tags"": [""RuleOne""],
         ""severity"": ""Critical"",
-        ""description"": ""This rule finds linux"",
+        ""description"": ""This rule finds linux and is dependent the RuleOne tag"",
         ""patterns"": [
             {
                 ""pattern"": ""linux"",
