@@ -103,12 +103,34 @@ public class RulesVerifier
         var rulesWithDependsOnWithNoMatchingTags = ruleSet.GetAppInspectorRules().Where(x => !x.DependsOnTags?.All(tag => allTags.Contains(tag)) ?? false);
         foreach(var dependslessRule in rulesWithDependsOnWithNoMatchingTags)
         {
-            _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING), dependslessRule.Id, string.Join(',', dependslessRule.Tags?.Where(tag => !allTags.Contains(tag)) ?? Array.Empty<string>()));
+            _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING), dependslessRule.Id, string.Join(',', dependslessRule.DependsOnTags?.Where(tag => !allTags.Contains(tag)) ?? Array.Empty<string>()));
             foreach(var status in ruleStatuses.Where(x => x.Rule == dependslessRule))
             {
                 status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING, dependslessRule.Id, string.Join(',',dependslessRule.DependsOnTags?.Where(tag => !allTags.Contains(tag)) ?? Array.Empty<string>())));
             }
         }
+
+        // Overrides are removed on a per file basis where depends_on is removed on a cross scan basis. Because of this, if you have RuleA with no DependsOnTags which is overriden with RuleB which does have tags,
+        // and then those tags are not present, you may expect to get RuleA but will not.
+        // This checks to ensure if a rule is overridden it has at least all the depends on tags of its overrider
+        var appInsStyleRules = ruleSet.GetAppInspectorRules();
+        foreach (var rule in ruleSet.GetAppInspectorRules())
+        {
+            foreach(var overrde in rule.Overrides ?? Array.Empty<string>())
+            {
+                foreach(var overriddenRule in appInsStyleRules.Where(x => x.Id == overrde))
+                {
+                    var missingTags = rule.DependsOnTags?.Where(x => !(overriddenRule.DependsOnTags?.Contains(x) ?? false));
+                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_OVERRIDDEN_RULE_DEPENDS_ON_TAG_MISSING), overriddenRule.Id, string.Join(',', missingTags ?? Array.Empty<string>()));
+                    foreach (var status in ruleStatuses.Where(x => x.Rule == overriddenRule))
+                    {
+                        status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_OVERRIDDEN_RULE_DEPENDS_ON_TAG_MISSING, overriddenRule.Id, string.Join(',', missingTags ?? Array.Empty<string>())));
+                    }
+                }
+
+            }
+        }
+
         return ruleStatuses;
     }
 

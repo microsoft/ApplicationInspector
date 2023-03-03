@@ -630,6 +630,15 @@ namespace Microsoft.ApplicationInspector.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rule {0} failed verification. When a rule is overridden it must have all the depends_on_tags of the overridder, these tags are missing: {1}.
+        /// </summary>
+        internal static string VERIFY_RULES_OVERRIDDEN_RULE_DEPENDS_ON_TAG_MISSING {
+            get {
+                return ResourceManager.GetString("VERIFY_RULES_OVERRIDDEN_RULE_DEPENDS_ON_TAG_MISSING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rule {0} failed from invalid regex &apos;{1}&apos; with {2}.
         /// </summary>
         internal static string VERIFY_RULES_REGEX_FAIL {

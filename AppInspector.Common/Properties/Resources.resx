@@ -305,7 +305,10 @@
 	<data name="VERIFY_RULES_DEPENDS_ON_TAG_MISSING" xml:space="preserve">
     <value>Rule {0} failed verification. depends_on_tags is set but the the following tags do not exist in the RuleSet: {1}</value>
   </data>
-    <data name="VERIFY_RULES_LANGUAGE_FAIL" xml:space="preserve">
+	<data name="VERIFY_RULES_OVERRIDDEN_RULE_DEPENDS_ON_TAG_MISSING" xml:space="preserve">
+    <value>Rule {0} failed verification. When a rule is overridden it must have all the depends_on_tags of the overridder, these tags are missing: {1}</value>
+  </data>
+	<data name="VERIFY_RULES_LANGUAGE_FAIL" xml:space="preserve">
     <value>Rule {0} failed from unrecognized language {1} specified</value>
   </data>
     <data name="VERIFY_RULES_NO_CLI_DEFAULT" xml:space="preserve">
