@@ -26,15 +26,36 @@ namespace Microsoft.ApplicationInspector.Commands;
 /// </summary>
 public class AnalyzeOptions
 {
+    /// <summary>
+    ///     Any number of source paths to scan.
+    /// </summary>
     public IEnumerable<string> SourcePath { get; set; } = Array.Empty<string>();
+    /// <summary>
+    ///     A path (file or directory) on disk to your custom rule file(s).
+    /// </summary>
     public string? CustomRulesPath { get; set; }
+    /// <summary>
+    ///     Disable the Default ApplicationInspector RuleSet.
+    /// </summary>
     public bool IgnoreDefaultRules { get; set; }
+    /// <summary>
+    ///     Which confidence values to use.
+    /// </summary>
     public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new[] { Confidence.High, Confidence.Medium };
 
+    /// <summary>
+    ///     Which severity values to use.
+    /// </summary>
     public IEnumerable<Severity> SeverityFilters { get; set; } = new[]
         { Severity.Critical | Severity.Important | Severity.Moderate | Severity.BestPractice | Severity.ManualReview };
 
+    /// <summary>
+    ///     File paths which should be excluded from scanning.
+    /// </summary>
     public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
+    /// <summary>
+    ///     If enabled, processing will be performed on one file at a time.
+    /// </summary>
     public bool SingleThread { get; set; }
 
     /// <summary>
@@ -48,6 +69,9 @@ public class AnalyzeOptions
     /// </summary>
     public bool NoShowProgress { get; set; } = true;
 
+    /// <summary>
+    ///     If enabled, only tags are collected, with no detailed match or file information.
+    /// </summary>
     public bool TagsOnly { get; set; }
 
     /// <summary>
@@ -60,8 +84,17 @@ public class AnalyzeOptions
     /// </summary>
     public int ProcessingTimeOut { get; set; } = 0;
 
+    /// <summary>
+    ///     Number of lines of Context to collect from each file for the Excerpt. Set to -1 to disable gathering context entirely.
+    /// </summary>
     public int ContextLines { get; set; } = 3;
+    /// <summary>
+    ///     Run rules against files for which the appropriate Language cannot be determined.
+    /// </summary>
     public bool ScanUnknownTypes { get; set; }
+    /// <summary>
+    ///     Don't gather metadata about the files scanned.
+    /// </summary>
     public bool NoFileMetadata { get; set; }
 
     /// <summary>
@@ -70,7 +103,13 @@ public class AnalyzeOptions
     /// </summary>
     public int MaxNumMatchesPerTag { get; set; } = 0;
 
+    /// <summary>
+    ///     A path to a custom comments.json file to modify the set of comment styles understood by Application Inspector.
+    /// </summary>
     public string? CustomCommentsPath { get; set; }
+    /// <summary>
+    ///     A path to a custom languages.json file to modify the set of languages understood by Application Inspector.
+    /// </summary>
     public string? CustomLanguagesPath { get; set; }
 
     /// <summary>
@@ -100,7 +139,13 @@ public class AnalyzeOptions
     /// </summary>
     public bool SuccessErrorCodeOnNoMatches { get; set; }
 
+    /// <summary>
+    ///     If set, when validating rules, require that every rule have a must-match self-test with at least one entry
+    /// </summary>
     public bool RequireMustMatch { get; set; }
+    /// <summary>
+    ///     If set, when validating rules, require that every rule have a must-not-match self-test with at least one entry
+    /// </summary>
     public bool RequireMustNotMatch { get; set; }
 }
 
