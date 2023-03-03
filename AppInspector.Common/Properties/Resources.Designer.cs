@@ -585,7 +585,16 @@ namespace Microsoft.ApplicationInspector.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rule {0} failed verification. depends_on_tags is set but the specified tags are not set by any rules in the set..
+        ///   Looks up a localized string similar to Rule {0} failed verification. depends_on_tags is set but the the following tags do not exist in the RuleSet: {1}.
+        /// </summary>
+        internal static string VERIFY_RULES_DEPENDS_ON_TAG_MISSING {
+            get {
+                return ResourceManager.GetString("VERIFY_RULES_DEPENDS_ON_TAG_MISSING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rule {0} failed from dupicate rule id specified.
         /// </summary>
         internal static string VERIFY_RULES_DUPLICATEID_FAIL {
             get {

@@ -69,7 +69,12 @@ public class RulesVerifier
         return new RulesVerifierResult(CheckIntegrity(ruleset), ruleset);
     }
 
-    public List<RuleStatus> CheckIntegrity(AbstractRuleSet ruleSet)
+    /// <summary>
+    /// Check an <see cref="AbstractRuleSet"/> for rules errors
+    /// </summary>
+    /// <param name="ruleSet">The rule set to check</param>
+    /// <returns>An <see cref="IList{RuleStatus}"/> with a <see cref="RuleStatus"/> for each <see cref="Rule"/> in the <paramref name="ruleSet"/></returns>
+    public IList<RuleStatus> CheckIntegrity(AbstractRuleSet ruleSet)
     {
         List<RuleStatus> ruleStatuses = new();
         foreach (var rule in ruleSet.GetOatRules())
@@ -79,6 +84,7 @@ public class RulesVerifier
             ruleStatuses.Add(ruleVerified);
         }
 
+        // By default unique IDs are required for rules
         if (!_options.DisableRequireUniqueIds)
         {
             var duplicatedRules = ruleSet.GetAppInspectorRules().GroupBy(x => x.Id).Where(y => y.Count() > 1);
@@ -92,14 +98,15 @@ public class RulesVerifier
             }
         }
 
+        // Check for the presence of the `depends_on` field and ensure that any tags which are depended on exist in the full set of rules
         var allTags = ruleSet.GetAppInspectorRules().SelectMany(x => x.Tags ?? Array.Empty<string>()).ToList();
         var rulesWithDependsOnWithNoMatchingTags = ruleSet.GetAppInspectorRules().Where(x => !x.DependsOnTags?.All(tag => allTags.Contains(tag)) ?? false);
         foreach(var dependslessRule in rulesWithDependsOnWithNoMatchingTags)
         {
-            _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING), dependslessRule.Id);
-            foreach(var status in ruleStatuses.Where(x => x.RulesId == dependslessRule.Id))
+            _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING), dependslessRule.Id, string.Join(',', dependslessRule.Tags?.Where(tag => !allTags.Contains(tag)) ?? Array.Empty<string>()));
+            foreach(var status in ruleStatuses.Where(x => x.Rule == dependslessRule))
             {
-                status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING, dependslessRule.Id));
+                status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_DEPENDS_ON_TAG_MISSING, dependslessRule.Id, string.Join(',',dependslessRule.DependsOnTags?.Where(tag => !allTags.Contains(tag)) ?? Array.Empty<string>())));
             }
         }
         return ruleStatuses;
@@ -134,6 +141,7 @@ public class RulesVerifier
                 }
         }
 
+        // Check that regexes for filenames are valid
         foreach (var pattern in (IList<string>?)rule.FileRegexes ?? Array.Empty<string>())
             try
             {
@@ -150,6 +158,7 @@ public class RulesVerifier
         //valid search pattern
         foreach (var searchPattern in rule.Patterns ?? Array.Empty<SearchPattern>())
         {
+            // Check that pattern regex arguments are valid
             if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.Regex)
             {
                 try
@@ -173,6 +182,7 @@ public class RulesVerifier
                 }
             }
 
+            // Check that JsonPaths are valid
             if (searchPattern.JsonPaths is not null)
             {
                 foreach (var jsonPath in searchPattern.JsonPaths)
@@ -192,6 +202,7 @@ public class RulesVerifier
                 }
             }
 
+            // Check that XPaths are valid
             if (searchPattern.XPaths is not null)
             {
                 foreach (var xpath in searchPattern.XPaths)
@@ -209,6 +220,7 @@ public class RulesVerifier
                     }
                 }
 
+                // Check that YamlPaths are valid
                 if (searchPattern.YamlPaths is not null)
                 {
                     foreach (var yamlPath in searchPattern.YamlPaths)
@@ -306,12 +318,14 @@ public class RulesVerifier
             }
         }
 
-        if (rule.Tags?.Count == 0)
+        // Check for at least one tag being populated
+        if ((rule.Tags?.Count ?? 0) == 0)
         {
             _logger?.LogError("Rule must specify tags. {0}", rule.Id);
             errors.Add($"Rule must specify tags. {rule.Id}");
         }
 
+        // If RequireMustMatch is set every rule must have a must-match self-test
         if (_options.RequireMustMatch)
         {
             if (rule.MustMatch?.Any() is not true)
@@ -321,6 +335,7 @@ public class RulesVerifier
             }
         }
 
+        // If RequireMustNotMatch is set every rule must have a must-not-match self-test
         if (_options.RequireMustNotMatch)
         {
             if (rule.MustNotMatch?.Any() is not true)
@@ -332,6 +347,7 @@ public class RulesVerifier
 
         return new RuleStatus
         {
+            Rule = rule,
             RulesId = rule.Id,
             RulesName = rule.Name,
             Errors = errors,

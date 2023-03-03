@@ -13,4 +13,5 @@ public class RuleStatus
     public IEnumerable<Violation> OatIssues { get; set; } = Enumerable.Empty<Violation>();
     public bool HasPositiveSelfTests { get; set; }
     public bool HasNegativeSelfTests { get; set; }
+    internal Rule Rule { get; set; }
 }
