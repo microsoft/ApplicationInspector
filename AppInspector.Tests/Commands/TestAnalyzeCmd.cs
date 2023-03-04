@@ -25,6 +25,79 @@ public class TestAnalyzeCmd
     private const int numTimeOutFiles = 25;
     private const int numTimesContent = 25;
 
+    private const string dependsOnChain = @"[
+    {
+        ""id"": ""SA000001"",
+        ""name"": ""Testing.Rules.DependsOnTags.Chain.A"",
+        ""tags"": [
+            ""Category.A""
+        ],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule finds A"",
+        ""patterns"": [
+            {
+                ""pattern"": ""A"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""modifiers"": [
+                    ""m""
+                ],
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    },
+    {
+        ""id"": ""SA000002"",
+        ""name"": ""Testing.Rules.DependsOnTags.Chain.B"",
+        ""tags"": [
+            ""Category.B""
+        ],
+        ""depends_on_tags"": [""Category.A""],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule finds B"",
+        ""patterns"": [
+            {
+                ""pattern"": ""B"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""modifiers"": [
+                    ""m""
+                ],
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    },
+    {
+        ""id"": ""SA000003"",
+        ""name"": ""Testing.Rules.DependsOnTags.Chain.C"",
+        ""tags"": [
+            ""Category.C""
+        ],
+        ""depends_on_tags"": [""Category.B""],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule finds B"",
+        ""patterns"": [
+            {
+                ""pattern"": ""C"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""modifiers"": [
+                    ""m""
+                ],
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    }
+]";
     private const string dependsOnOneWay = @"[
     {
         ""id"": ""SA000005"",
@@ -384,12 +457,17 @@ windows
 windows 2000
 windows
 ";
+    /// Used for the depends on chain tests
+    private const string justA = "A";
+    private const string justB = "B";
+    private const string justC = "C";
 
     private static string testFilePath = string.Empty;
     private static string testRulesPath = string.Empty;
     private static string appliesToTestRulePath = string.Empty;
     private static string doesNotApplyToTestRulePath = string.Empty;
     private static string dependsOnOneWayRulePath;
+    private static string dependsOnChainRulePath;
     private static string dependsOnTwoWayRulePath;
 
     // Test files for timeout tests
@@ -399,6 +477,9 @@ windows
 
     private ILoggerFactory factory = new NullLoggerFactory();
     private static string fourWindowsOne2000Path;
+    private static string justAPath;
+    private static string justBPath;
+    private static string justCPath;
 
     [ClassInitialize]
     public static void ClassInit(TestContext context)
@@ -413,17 +494,29 @@ windows
             "DoesNotApplyToTestRules.json");
         dependsOnOneWayRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
             "DependsOnOneWay.json");
+        dependsOnChainRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
+            "DependsOnChain.json");
         dependsOnTwoWayRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
             "DependsOnTwoWay.json");
+        fourWindowsOne2000Path =
+            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "FourWindowsOne2000.cs");
+        justAPath =
+            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "justA.cs");
+        justBPath =
+            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "justB.cs");
+        justCPath =
+            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "justC.cs");
         File.WriteAllText(heavyRulePath, heavyRule);
         File.WriteAllText(testFilePath, fourWindowsOneLinux);
         File.WriteAllText(testRulesPath, findWindows);
         File.WriteAllText(appliesToTestRulePath, findWindowsWithAppliesTo);
         File.WriteAllText(doesNotApplyToTestRulePath, findWindowsWithDoesNotApplyTo);
         File.WriteAllText(dependsOnOneWayRulePath, dependsOnOneWay);
+        File.WriteAllText(dependsOnChainRulePath, dependsOnChain);
         File.WriteAllText(dependsOnTwoWayRulePath, dependsOnTwoWay);
-        fourWindowsOne2000Path =
-            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "FourWindowsOne2000.cs");
+        File.WriteAllText(justAPath, justA);
+        File.WriteAllText(justBPath, justB);
+        File.WriteAllText(justCPath, justC);
 
         File.WriteAllText(fourWindowsOne2000Path, threeWindowsOneWindows2000);
         for (var i = 0; i < numTimeOutFiles; i++)
@@ -1153,6 +1246,73 @@ windows
         Assert.AreEqual(2, result.Metadata.TotalMatchesCount);
         Assert.IsTrue(result.Metadata.UniqueTags.Contains("Dependee"));
         Assert.IsTrue(result.Metadata.UniqueTags.Contains("Dependant"));
+    }
+
+    /// <summary>
+    ///     Test that the depends_on rule parameter properly limits matches one way
+    /// </summary>
+    [TestMethod]
+    public void TestDependsOnChain()
+    {
+        AnalyzeOptions options = new()
+        {
+            SourcePath = new string[] { justAPath, justBPath, justCPath },
+            CustomRulesPath = dependsOnChainRulePath,
+            IgnoreDefaultRules = true
+        };
+
+        AnalyzeCommand command = new(options, factory);
+        var result = command.GetResult();
+        Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+        Assert.AreEqual(3, result.Metadata.TotalMatchesCount);
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("Category.A"));
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("Category.B"));
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("Category.C"));
+
+        options = new()
+        {
+            SourcePath = new string[] { justBPath, justCPath },
+            CustomRulesPath = dependsOnChainRulePath,
+            IgnoreDefaultRules = true
+        };
+
+        command = new(options, factory);
+        result = command.GetResult();
+        Assert.AreEqual(AnalyzeResult.ExitCode.NoMatches, result.ResultCode);
+        Assert.AreEqual(0, result.Metadata.TotalMatchesCount);
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("Category.A"));
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("Category.B"));
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("Category.C"));
+
+        options = new()
+        {
+            SourcePath = new string[] { justAPath, justCPath },
+            CustomRulesPath = dependsOnChainRulePath,
+            IgnoreDefaultRules = true
+        };
+
+        command = new(options, factory);
+        result = command.GetResult();
+        Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+        Assert.AreEqual(1, result.Metadata.TotalMatchesCount);
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("Category.A"));
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("Category.B"));
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("Category.C"));
+
+        options = new()
+        {
+            SourcePath = new string[] { justAPath, justBPath },
+            CustomRulesPath = dependsOnChainRulePath,
+            IgnoreDefaultRules = true
+        };
+
+        command = new(options, factory);
+        result = command.GetResult();
+        Assert.AreEqual(AnalyzeResult.ExitCode.Success, result.ResultCode);
+        Assert.AreEqual(2, result.Metadata.TotalMatchesCount);
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("Category.A"));
+        Assert.IsTrue(result.Metadata.UniqueTags.Contains("Category.B"));
+        Assert.IsFalse(result.Metadata.UniqueTags.Contains("Category.C"));
     }
 
     /// <summary>

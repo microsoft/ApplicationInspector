@@ -380,15 +380,9 @@ public class AnalyzeCommand
             }
         }
 
-        // Remove match records that don't have the matching depends on tags
-        List<MatchRecord> filteredMatchRecords = _metaDataHelper.Matches.Where(x => x.Rule?.DependsOnTags?.All(tag => _metaDataHelper.UniqueTags.ContainsKey(tag)) ?? true).ToList();
-        if (filteredMatchRecords.Count != _metaDataHelper.Matches.Count)
+        if (!_options.TagsOnly)
         {
-            _metaDataHelper = _metaDataHelper.CreateFresh();
-            foreach (MatchRecord matchRecord in filteredMatchRecords)
-            {
-                _metaDataHelper.AddMatchRecord(matchRecord);
-            }
+            RemoveDependsOnNotPresent();
         }
 
         return AnalyzeResult.ExitCode.Success;
@@ -535,6 +529,25 @@ public class AnalyzeCommand
         }
     }
 
+    // Remove matches from the metadata when the DependsOnTags are not satisfied.
+    private void RemoveDependsOnNotPresent()
+    {
+        // Remove match records that don't have the matching depends on tags
+        HashSet<string> tags = _metaDataHelper.UniqueTags.Select(x => x.Key).ToHashSet<string>();
+        List<MatchRecord> originalMatches = _metaDataHelper.Matches.ToList();
+        List<MatchRecord> filteredMatchRecords = originalMatches.Where(x => x.Rule?.DependsOnTags?.All(tag => tags.Contains(tag)) ?? true).ToList();
+        while (filteredMatchRecords.Count != originalMatches.Count)
+        {
+            tags = filteredMatchRecords.SelectMany(x => x.Tags).Distinct().ToHashSet();
+            (filteredMatchRecords, originalMatches) = (filteredMatchRecords.Where(x => x.Rule?.DependsOnTags?.All(tag => tags.Contains(tag)) ?? true).ToList(), filteredMatchRecords);
+        }
+        _metaDataHelper = _metaDataHelper.CreateFresh();
+        foreach (MatchRecord matchRecord in filteredMatchRecords)
+        {
+            _metaDataHelper.AddMatchRecord(matchRecord);
+        }
+    }
+
     /// <summary>
     ///     Populate the records in the metadata asynchronously.
     /// </summary>
@@ -559,15 +572,9 @@ public class AnalyzeCommand
             await ProcessAndAddToMetadata(entry, cancellationToken);
         }
 
-        // Remove match records that don't have the matching depends on tags
-        List<MatchRecord> filteredMatchRecords = _metaDataHelper.Matches.Where(x => x.Rule?.DependsOnTags?.All(tag => _metaDataHelper.UniqueTags.ContainsKey(tag)) ?? true).ToList();
-        if (filteredMatchRecords.Count != _metaDataHelper.Matches.Count)
+        if (!_options.TagsOnly)
         {
-            _metaDataHelper = _metaDataHelper.CreateFresh();
-            foreach (MatchRecord matchRecord in filteredMatchRecords)
-            {
-                _metaDataHelper.AddMatchRecord(matchRecord);
-            }
+            RemoveDependsOnNotPresent();
         }
 
         return AnalyzeResult.ExitCode.Success;

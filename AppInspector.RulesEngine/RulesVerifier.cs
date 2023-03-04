@@ -121,10 +121,13 @@ public class RulesVerifier
                 foreach(var overriddenRule in appInsStyleRules.Where(x => x.Id == overrde))
                 {
                     var missingTags = rule.DependsOnTags?.Where(x => !(overriddenRule.DependsOnTags?.Contains(x) ?? false));
-                    _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_OVERRIDDEN_RULE_DEPENDS_ON_TAG_MISSING), overriddenRule.Id, string.Join(',', missingTags ?? Array.Empty<string>()));
-                    foreach (var status in ruleStatuses.Where(x => x.Rule == overriddenRule))
+                    if (missingTags?.Any() ?? false)
                     {
-                        status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_OVERRIDDEN_RULE_DEPENDS_ON_TAG_MISSING, overriddenRule.Id, string.Join(',', missingTags ?? Array.Empty<string>())));
+                        _logger.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_OVERRIDDEN_RULE_DEPENDS_ON_TAG_MISSING), overriddenRule.Id, string.Join(',', missingTags ?? Array.Empty<string>()));
+                        foreach (var status in ruleStatuses.Where(x => x.Rule == overriddenRule))
+                        {
+                            status.Errors = status.Errors.Append(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_OVERRIDDEN_RULE_DEPENDS_ON_TAG_MISSING, overriddenRule.Id, string.Join(',', missingTags ?? Array.Empty<string>())));
+                        }
                     }
                 }
 
