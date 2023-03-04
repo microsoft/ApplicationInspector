@@ -529,23 +529,35 @@ public class AnalyzeCommand
         }
     }
 
-    // Remove matches from the metadata when the DependsOnTags are not satisfied.
+    /// <summary>
+    /// Remove matches from the metadata when the DependsOnTags are not satisfied.
+    /// </summary>
     private void RemoveDependsOnNotPresent()
     {
-        // Remove match records that don't have the matching depends on tags
-        HashSet<string> tags = _metaDataHelper.UniqueTags.Select(x => x.Key).ToHashSet<string>();
         List<MatchRecord> originalMatches = _metaDataHelper.Matches.ToList();
-        List<MatchRecord> filteredMatchRecords = originalMatches.Where(x => x.Rule?.DependsOnTags?.All(tag => tags.Contains(tag)) ?? true).ToList();
+        List<MatchRecord> filteredMatchRecords = FilterRecordsByMissingDependsOnTags(originalMatches);
+        // Continue iterating as long as records were removed in the last iteration, as their tags may have been depended on by another rule
         while (filteredMatchRecords.Count != originalMatches.Count)
         {
-            tags = filteredMatchRecords.SelectMany(x => x.Tags).Distinct().ToHashSet();
-            (filteredMatchRecords, originalMatches) = (filteredMatchRecords.Where(x => x.Rule?.DependsOnTags?.All(tag => tags.Contains(tag)) ?? true).ToList(), filteredMatchRecords);
+            (filteredMatchRecords, originalMatches) = (FilterRecordsByMissingDependsOnTags(filteredMatchRecords), filteredMatchRecords);
         }
         _metaDataHelper = _metaDataHelper.CreateFresh();
         foreach (MatchRecord matchRecord in filteredMatchRecords)
         {
             _metaDataHelper.AddMatchRecord(matchRecord);
         }
+    }
+
+    /// <summary>
+    /// Return a new List of MatchRecords with records removed which depend on tags not present in the set of records.
+    /// </summary>
+    /// <param name="listToFilter"></param>
+    /// <returns></returns>
+    private List<MatchRecord> FilterRecordsByMissingDependsOnTags(List<MatchRecord> listToFilter)
+    {
+        HashSet<string> tags = listToFilter.SelectMany(x => x.Tags).Distinct().ToHashSet();
+        return listToFilter.Where(x => x.Rule?.DependsOnTags?.All(tag => tags.Contains(tag)) ?? true).ToList();
+
     }
 
     /// <summary>
