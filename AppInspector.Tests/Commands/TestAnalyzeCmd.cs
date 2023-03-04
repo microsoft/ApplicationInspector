@@ -81,7 +81,7 @@ public class TestAnalyzeCmd
         ],
         ""depends_on_tags"": [""Category.B""],
         ""severity"": ""Critical"",
-        ""description"": ""This rule finds B"",
+        ""description"": ""This rule finds C"",
         ""patterns"": [
             {
                 ""pattern"": ""C"",
