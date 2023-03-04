@@ -81,10 +81,33 @@ public abstract class AbstractRuleSet
 
         foreach (var pattern in rule.Patterns)
         {
-            if (EnableNonBacktrackingRegex && !pattern.Modifiers.Contains("b") && !pattern.Modifiers.Contains("nb"))
+            // "b" and "nb" can be added manually to rules. Options are exclusive.
+            if (EnableNonBacktrackingRegex)
             {
-                pattern.Modifiers.Add("nb");
+                // non-backtracking on. "b" will override "nb"
+                if (pattern.Modifiers.Any(m => m.Equals("b", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    pattern.Modifiers.RemoveAll(m => m.Equals("nb", StringComparison.InvariantCultureIgnoreCase));
+                }
+                else
+                {
+                    if (!pattern.Modifiers.Any(m => m.Equals("nb", StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        pattern.Modifiers.Add("nb");
+                    }
+                }    
+               
             }
+            else
+            {
+                // backtracking on. "nb" will override "b"
+                if (pattern.Modifiers.Any(m => m.Equals("nb", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    pattern.Modifiers.RemoveAll(m => m.Equals("b", StringComparison.InvariantCultureIgnoreCase));
+                }
+
+                // "b" is a default option for regex engine, so no need to add "b" explicitly
+            }            
 
             if (GenerateClause(pattern, clauseNumber) is { } clause)
             {

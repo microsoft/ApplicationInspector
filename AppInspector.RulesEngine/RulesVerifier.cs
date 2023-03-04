@@ -142,7 +142,7 @@ public class RulesVerifier
         {
             if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.Regex)
             {
-                RegexOptions regexOpts = Utils.RegexModifierToRegexOptions(searchPattern.Modifiers, _options.EnableNonBacktrackingRegex);
+                RegexOptions regexOpts = Utils.RegexModifierToRegexOptions(searchPattern.Modifiers);
                 try
                 {
                     if (string.IsNullOrEmpty(searchPattern.Pattern))
@@ -157,8 +157,8 @@ public class RulesVerifier
                     // Regex requires backtracking, try without non-backtracking
                     _logger?.LogWarning(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "", searchPattern.Pattern ?? "", e.Message);
 #if NET7_0_OR_GREATER
-                    // remove non-backtracking flag by applying XOR
-                    regexOpts ^= RegexOptions.NonBacktracking;
+                    // remove non-backtracking flag
+                    regexOpts &= ~RegexOptions.NonBacktracking;
 #endif
 
                     _ = new Regex(searchPattern.Pattern, regexOpts);      

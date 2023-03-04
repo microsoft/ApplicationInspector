@@ -143,7 +143,7 @@ appinspector analyze -s path/to/files
 #### Output Sarif
 
 ```
-appinspector analyse -s path/to/files -f sarif -o output.sarif
+appinspector analyze -s path/to/files -f sarif -o output.sarif
 ```
 
 #### Excluding Files using Globs
