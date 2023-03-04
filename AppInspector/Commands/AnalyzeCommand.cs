@@ -534,15 +534,15 @@ public class AnalyzeCommand
     /// </summary>
     private void RemoveDependsOnNotPresent()
     {
-        List<MatchRecord> originalMatches = _metaDataHelper.Matches.ToList();
-        List<MatchRecord> filteredMatchRecords = FilterRecordsByMissingDependsOnTags(originalMatches);
+        List<MatchRecord> previousMatches = _metaDataHelper.Matches.ToList();
+        List<MatchRecord> nextMatches = FilterRecordsByMissingDependsOnTags(previousMatches);
         // Continue iterating as long as records were removed in the last iteration, as their tags may have been depended on by another rule
-        while (filteredMatchRecords.Count != originalMatches.Count)
+        while (nextMatches.Count != previousMatches.Count)
         {
-            (filteredMatchRecords, originalMatches) = (FilterRecordsByMissingDependsOnTags(filteredMatchRecords), filteredMatchRecords);
+            (nextMatches, previousMatches) = (FilterRecordsByMissingDependsOnTags(nextMatches), nextMatches);
         }
         _metaDataHelper = _metaDataHelper.CreateFresh();
-        foreach (MatchRecord matchRecord in filteredMatchRecords)
+        foreach (MatchRecord matchRecord in nextMatches)
         {
             _metaDataHelper.AddMatchRecord(matchRecord);
         }
@@ -550,6 +550,7 @@ public class AnalyzeCommand
 
     /// <summary>
     /// Return a new List of MatchRecords with records removed which depend on tags not present in the set of records.
+    /// Does not modify the original list.
     /// </summary>
     /// <param name="listToFilter"></param>
     /// <returns></returns>
