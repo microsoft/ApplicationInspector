@@ -10,6 +10,50 @@ namespace Microsoft.ApplicationInspector.Common;
 public static class Utils
 {
     /// <summary>
+    ///     Converts a strings to a compiled regex.
+    ///     Uses an internal cache.
+    /// </summary>
+    /// <param name="built">The regex to build</param>
+    /// <param name="regexOptions">The options to use.</param>
+    /// <returns>The built Regex</returns>
+    public static Regex? StringToRegex(string built, RegexOptions regexOptions)
+    {
+        try
+        {
+            return new Regex(built, regexOptions);
+        }
+        catch (NotSupportedException)
+        {
+#if NET7_0_OR_GREATER
+            // Its possible that this regex is not compatible with the non-backtracking engine
+            // Try constructing it without NonBackTracking
+            regexOptions &= ~RegexOptions.NonBacktracking;
+            try
+            {
+                return new Regex(built, regexOptions);
+            }
+            catch (Exception)
+            {
+            }
+#endif
+        }
+        catch (Exception)
+        {
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    ///     Converts a strings to a compiled regex.
+    ///     Uses an internal cache.
+    /// </summary>
+    /// <param name="built">The regex to build</param>
+    /// <param name="modifiers">The options to use.</param>
+    /// <returns>The built Regex</returns>
+    public static Regex? StringToRegex(string built, IList<string> modifiers) => StringToRegex(built, RegexModifierToRegexOptions(modifiers));
+
+    /// <summary>
     /// Convert a list of string modifiers specified in a SearchPattern to the appropriate regex modifiers
     /// </summary>
     /// <param name="modifiers"></param>

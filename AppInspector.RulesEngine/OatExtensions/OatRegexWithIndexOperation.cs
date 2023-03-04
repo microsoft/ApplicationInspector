@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.ApplicationInspector.Common;
 using Microsoft.CST.OAT;
 using Microsoft.CST.OAT.Operations;
 using Microsoft.CST.OAT.Utils;
@@ -186,30 +187,14 @@ public class OatRegexWithIndexOperation : OatOperation
     {
         if (!RegexCache.ContainsKey((built, regexOptions)))
         {
-            try
+            Regex? constructed = Utils.StringToRegex(built, regexOptions);
+            if (constructed is null)
             {
-                RegexCache.TryAdd((built, regexOptions), new Regex(built, regexOptions));
-            }
-            catch (ArgumentException)
-            {
-#if NET7_0_OR_GREATER
-                // Its possible that this regex is not compatible with the non-backtracking engine
-                // Try constructing it without NonBackTracking
-                regexOptions &= ~RegexOptions.NonBacktracking;
-                try
-                {
-                    RegexCache.TryAdd((built, regexOptions), new Regex(built, regexOptions));
-                }
-                catch (ArgumentException)
-                {
-                    _logger.LogWarning("Provided regex {Regex} was not valid and could not be used", built);
-                }
-#else
                 _logger.LogWarning("Provided regex {Regex} was not valid and could not be used", built);
-#endif
             }
+            RegexCache.TryAdd((built, regexOptions), constructed);
         }
 
-            return RegexCache[(built, regexOptions)];
+        return RegexCache[(built, regexOptions)];
     }
 }

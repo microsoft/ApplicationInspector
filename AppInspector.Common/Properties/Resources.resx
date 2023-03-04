@@ -312,7 +312,10 @@
     <value>Rule {0} failed from missing rule id</value>
   </data>
     <data name="VERIFY_RULES_REGEX_FAIL" xml:space="preserve">
-    <value>Rule {0} failed from invalid regex '{1}' with {2}</value>
+    <value>Rule {0} failed from invalid regex '{1}' with modifiers {2}</value>
+  </data>
+	<data name="VERIFY_RULES_REGEX_FAIL_PATTERN_NULL" xml:space="preserve">
+    <value>Rule {0} failed. Pattern value was null with modifiers {2}</value>
   </data>
     <data name="VERIFY_RULES_RESULTS_FAIL" xml:space="preserve">
     <value>Verify rules failed.  See log file for details</value>

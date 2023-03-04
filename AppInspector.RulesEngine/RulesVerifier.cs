@@ -142,33 +142,20 @@ public class RulesVerifier
         {
             if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.Regex)
             {
-                RegexOptions regexOpts = Utils.RegexModifierToRegexOptions(searchPattern.Modifiers);
-                try
+                if (searchPattern.Pattern is null)
                 {
-                    if (string.IsNullOrEmpty(searchPattern.Pattern))
+                    _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL_PATTERN_NULL), rule.Id ?? "");
+                }
+                else
+                {
+                    Regex? resultingRegex = Utils.StringToRegex(searchPattern.Pattern, searchPattern.Modifiers);
+                    if (resultingRegex is null)
                     {
-                        throw new ArgumentException();
+                        _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "",
+                                                searchPattern.Pattern ?? "", string.Join(",", searchPattern.Modifiers));
+                        errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "",
+                            searchPattern.Pattern ?? "", string.Join(",",searchPattern.Modifiers)));
                     }
-                                        
-                    _ = new Regex(searchPattern.Pattern, regexOpts);
-                }
-                catch (NotSupportedException e)
-                {
-                    // Regex requires backtracking, try without non-backtracking
-                    _logger?.LogWarning(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "", searchPattern.Pattern ?? "", e.Message);
-#if NET7_0_OR_GREATER
-                    // remove non-backtracking flag
-                    regexOpts &= ~RegexOptions.NonBacktracking;
-#endif
-
-                    _ = new Regex(searchPattern.Pattern, regexOpts);      
-                }
-                catch (Exception e)
-                {
-                    _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "",
-                        searchPattern.Pattern ?? "", e.Message);
-                    errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "",
-                        searchPattern.Pattern ?? "", e.Message));
                 }
             }
 
