@@ -192,11 +192,24 @@ public class OatRegexWithIndexOperation : OatOperation
             }
             catch (ArgumentException)
             {
+#if NET7_0_OR_GREATER
+                // Its possible that this regex is not compatible with the non-backtracking engine
+                // Try constructing it without NonBackTracking
+                regexOptions &= ~RegexOptions.NonBacktracking;
+                try
+                {
+                    RegexCache.TryAdd((built, regexOptions), new Regex(built, regexOptions));
+                }
+                catch (ArgumentException)
+                {
+                    _logger.LogWarning("Provided regex {Regex} was not valid and could not be used", built);
+                }
+#else
                 _logger.LogWarning("Provided regex {Regex} was not valid and could not be used", built);
-                RegexCache.TryAdd((built, regexOptions), null);
+#endif
             }
         }
 
-        return RegexCache[(built, regexOptions)];
+            return RegexCache[(built, regexOptions)];
     }
 }
