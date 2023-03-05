@@ -92,6 +92,7 @@ public class OatRegexWithIndexOperation : OatOperation
             if (Analyzer != null)
             {
                 foreach (var regexString in RegexList)
+                {
                     if (StringToRegex(regexString, regexOpts) is { } regex)
                     {
                         if (src.XPaths is not null)
@@ -141,6 +142,12 @@ public class OatRegexWithIndexOperation : OatOperation
                             }
                         }
                     }
+                    else
+                    {
+                        _logger?.LogWarning("Could not construct the regular expression {pattern} with options {regOpts}. This pattern will not be processed.", regexString, string.Join(",", regexOpts));
+                    }
+                }
+                    
 
                 var result = src.Invert ? outmatches.Count == 0 : outmatches.Count > 0;
                 return new OperationResult(result,
@@ -187,12 +194,7 @@ public class OatRegexWithIndexOperation : OatOperation
     {
         if (!RegexCache.ContainsKey((built, regexOptions)))
         {
-            Regex? constructed = Utils.StringToRegex(built, regexOptions);
-            if (constructed is null)
-            {
-                _logger.LogWarning("Provided regex {Regex} was not valid and could not be used", built);
-            }
-            RegexCache.TryAdd((built, regexOptions), constructed);
+            RegexCache.TryAdd((built, regexOptions), Utils.StringToRegex(built, regexOptions, _logger));
         }
 
         return RegexCache[(built, regexOptions)];

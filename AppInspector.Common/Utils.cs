@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,60 +11,64 @@ namespace Microsoft.ApplicationInspector.Common;
 public static class Utils
 {
     /// <summary>
-    ///     Converts a strings to a compiled regex.
-    ///     Uses an internal cache.
+    ///     Converts a strings to a compiled regex. Returns null if the Regex cannot be constructed with the given arguments. See <paramref name="logger"/> for details.
     /// </summary>
     /// <param name="built">The regex to build</param>
     /// <param name="regexOptions">The options to use.</param>
-    /// <returns>The built Regex</returns>
-    public static Regex? StringToRegex(string built, RegexOptions regexOptions)
+    /// <param name="logger">Optional logger to get any exception details details</param>
+    /// <returns>The built Regex, or null if a Regex could not be constructed</returns>
+    public static Regex? StringToRegex(string built, RegexOptions regexOptions, ILogger? logger)
     {
         try
         {
             return new Regex(built, regexOptions);
         }
+#if NET7_0_OR_GREATER
         catch (NotSupportedException)
         {
-#if NET7_0_OR_GREATER
             // Its possible that this regex is not compatible with the non-backtracking engine
             // Try constructing it without NonBackTracking
             regexOptions &= ~RegexOptions.NonBacktracking;
             try
             {
-                return new Regex(built, regexOptions);
+                Regex backTrackedRegex = new Regex(built, regexOptions);
+                logger?.LogDebug("Could not construct the regular expression {pattern} with NonBackTracking so it was constructed without NonBackTracking.", built);
+                return backTrackedRegex;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                logger?.LogWarning("Could not construct the regular expression {pattern} with options {regOpts}. ({exceptionType}: {exceptionMessage})", built, string.Join(",", regexOptions), e.GetType().Name, e.Message);
             }
-#endif
         }
-        catch (Exception)
+#endif
+        catch (Exception e)
         {
+            logger?.LogWarning("Could not construct the regular expression {pattern} with options {regOpts}. ({exceptionType}: {exceptionMessage})", built, string.Join(",", regexOptions), e.GetType().Name, e.Message);
         }
 
         return null;
     }
 
     /// <summary>
-    ///     Converts a strings to a compiled regex.
-    ///     Uses an internal cache.
+    ///     Converts a strings to a compiled regex. Returns null if the Regex cannot be constructed with the given arguments. See <paramref name="logger"/> for details.
     /// </summary>
     /// <param name="built">The regex to build</param>
     /// <param name="modifiers">The options to use.</param>
-    /// <returns>The built Regex</returns>
-    public static Regex? StringToRegex(string built, IList<string> modifiers) => StringToRegex(built, RegexModifierToRegexOptions(modifiers));
+    /// <param name="logger">Optional logger</param>
+    /// <returns>The built Regex or null if the provided arguments cannot construct a Regex.</returns>
+    public static Regex? StringToRegex(string built, IList<string> modifiers, ILogger? logger) => StringToRegex(built, RegexModifierToRegexOptions(modifiers), logger);
 
     /// <summary>
-    /// Convert a list of string modifiers specified in a SearchPattern to the appropriate regex modifiers
+    ///     Convert a list of string modifiers specified in a SearchPattern to the appropriate <see cref="RegexOptions"/>
     /// </summary>
-    /// <param name="modifiers"></param>
+    /// <param name="modifiers">A list of specified Regex options</param>
     /// <returns>A RegexOptions object with the correct modifiers set</returns>
     public static RegexOptions RegexModifierToRegexOptions(IList<string> modifiers)
     {
         RegexOptions opts = new();
         opts |= RegexOptions.Compiled;
 
-        foreach (var modifier in modifiers)
+        foreach (string modifier in modifiers)
         {
             switch (modifier.ToLower())
             {
@@ -104,6 +109,7 @@ public static class Utils
                     opts |= RegexOptions.RightToLeft;
                     break;
                 case "b":
+                    // The NonBackTracking option was added in .NET 7
 #if NET7_0_OR_GREATER
 
                 opts &= ~RegexOptions.NonBacktracking;

@@ -148,7 +148,7 @@ public class RulesVerifier
                 }
                 else
                 {
-                    Regex? resultingRegex = Utils.StringToRegex(searchPattern.Pattern, searchPattern.Modifiers);
+                    Regex? resultingRegex = Utils.StringToRegex(searchPattern.Pattern, searchPattern.Modifiers, _logger);
                     if (resultingRegex is null)
                     {
                         _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "",
