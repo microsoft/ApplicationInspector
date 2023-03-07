@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
@@ -21,7 +22,7 @@ public class MatchRecord
         RuleId = rule.Id;
         RuleName = rule.Name;
         RuleDescription = rule.Description;
-        Tags = rule.Tags;
+        Tags = rule.Tags?.ToArray();
         Severity = rule.Severity;
     }
 

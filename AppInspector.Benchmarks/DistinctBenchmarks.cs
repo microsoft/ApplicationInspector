@@ -19,7 +19,7 @@ public class DistinctBenchmarks
         List<string> outList = new();
         foreach (var r in ruleSet)
             //builds a list of unique tags
-        foreach (var t in r?.Tags ?? Array.Empty<string>())
+        foreach (var t in (IList<string>?)r?.Tags ?? Array.Empty<string>())
             if (uniqueTags.ContainsKey(t))
             {
                 continue;
@@ -41,7 +41,7 @@ public class DistinctBenchmarks
         HashSet<string> hashSet = new();
         foreach (var r in ruleSet)
             //builds a list of unique tags
-        foreach (var t in r?.Tags ?? Array.Empty<string>())
+        foreach (var t in (IList<string>?)r?.Tags ?? Array.Empty<string>())
             hashSet.Add(t);
 
         var theList = hashSet.ToList();
@@ -52,14 +52,14 @@ public class DistinctBenchmarks
     [Benchmark]
     public List<string> WithLinq()
     {
-        return ruleSet.SelectMany(x => x.Tags ?? Array.Empty<string>()).Distinct().OrderBy(x => x)
+        return ruleSet.SelectMany(x => (IList<string>?)x.Tags ?? Array.Empty<string>()).Distinct().OrderBy(x => x)
             .ToList();
     }
 
     [Benchmark]
     public List<string> WithLinqAndHashSet()
     {
-        var theList = ruleSet.SelectMany(x => x.Tags ?? Array.Empty<string>()).ToHashSet().ToList();
+        var theList = ruleSet.SelectMany(x => (IList<string>?)x.Tags ?? Array.Empty<string>()).ToHashSet().ToList();
         theList.Sort();
         return theList;
     }

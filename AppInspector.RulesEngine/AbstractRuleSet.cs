@@ -64,8 +64,8 @@ public abstract class AbstractRuleSet
     public IEnumerable<ConvertedOatRule> GetUniversalRules()
     {
         return _oatRules.Where(x =>
-            (x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Length == 0) &&
-            (x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Length == 0));
+            (x.AppInspectorRule.FileRegexes is null || x.AppInspectorRule.FileRegexes.Count == 0) &&
+            (x.AppInspectorRule.AppliesTo is null || x.AppInspectorRule.AppliesTo.Count == 0));
     }
 
     /// <summary>
