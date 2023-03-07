@@ -93,7 +93,8 @@ public class PackRulesCommand
                     _options.CustomLanguagesPath),
                 DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
                 RequireMustMatch = _options.RequireMustMatch,
-                RequireMustNotMatch = _options.RequireMustNotMatch
+                RequireMustNotMatch = _options.RequireMustNotMatch,
+                EnableNonBacktrackingRegex = false, // do not add "nb" to packed rules
             };
             RulesVerifier verifier = new(options);
             var ruleSet = _options.PackEmbeddedRules ? RuleSetUtils.GetDefaultRuleSet() : new RuleSet();

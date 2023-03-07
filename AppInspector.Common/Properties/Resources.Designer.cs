@@ -639,11 +639,20 @@ namespace Microsoft.ApplicationInspector.Common.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rule {0} failed from invalid regex &apos;{1}&apos; with {2}.
+        ///   Looks up a localized string similar to Rule {0} failed from invalid regex &apos;{1}&apos; with modifiers {2}.
         /// </summary>
         internal static string VERIFY_RULES_REGEX_FAIL {
             get {
                 return ResourceManager.GetString("VERIFY_RULES_REGEX_FAIL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rule {0} failed. Pattern value was null with modifiers {2}.
+        /// </summary>
+        internal static string VERIFY_RULES_REGEX_FAIL_PATTERN_NULL {
+            get {
+                return ResourceManager.GetString("VERIFY_RULES_REGEX_FAIL_PATTERN_NULL", resourceCulture);
             }
         }
         

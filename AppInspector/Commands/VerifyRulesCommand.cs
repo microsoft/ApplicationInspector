@@ -23,6 +23,7 @@ public class VerifyRulesOptions
     public bool DisableRequireUniqueIds { get; set; }
     public bool RequireMustMatch { get; set; }
     public bool RequireMustNotMatch { get; set; }
+    public bool EnableNonBacktrackingRegex { get; set; }
 }
 
 public class VerifyRulesResult : Result
@@ -102,13 +103,14 @@ public class VerifyRulesCommand
                 RequireMustMatch = _options.RequireMustMatch,
                 RequireMustNotMatch = _options.RequireMustNotMatch,
                 LoggerFactory = _loggerFactory,
-                LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath,
-                    _options.CustomLanguagesPath)
+                LanguageSpecs = Languages.FromConfigurationFiles(_loggerFactory, _options.CustomCommentsPath, _options.CustomLanguagesPath),
+                EnableNonBacktrackingRegex = _options.EnableNonBacktrackingRegex,
             };
             RulesVerifier verifier = new(options);
             verifyRulesResult.ResultCode = VerifyRulesResult.ExitCode.Verified;
 
-            RuleSet? ruleSet = new(_loggerFactory);
+            RuleSet? ruleSet = new(_loggerFactory) { EnableNonBacktrackingRegex = options.EnableNonBacktrackingRegex };
+
             if (_options.VerifyDefaultRules)
             {
                 ruleSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);

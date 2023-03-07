@@ -186,24 +186,20 @@ public class RulesVerifier
             // Check that pattern regex arguments are valid
             if (searchPattern.PatternType == PatternType.RegexWord || searchPattern.PatternType == PatternType.Regex)
             {
-                try
+                if (searchPattern.Pattern is null)
                 {
-                    if (string.IsNullOrEmpty(searchPattern.Pattern))
-                    {
-                        throw new ArgumentException();
-                    }
-
-                    RegexOptions regexOpts =
-                        Utils.RegexModifierToRegexOptions(searchPattern.Modifiers ?? Array.Empty<string>());
-
-                    _ = new Regex(searchPattern.Pattern, regexOpts);
+                    _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL_PATTERN_NULL), rule.Id ?? "");
                 }
-                catch (Exception e)
+                else
                 {
-                    _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "",
-                        searchPattern.Pattern ?? "", e.Message);
-                    errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "",
-                        searchPattern.Pattern ?? "", e.Message));
+                    Regex? resultingRegex = Utils.StringToRegex(searchPattern.Pattern, searchPattern.Modifiers, _logger);
+                    if (resultingRegex is null)
+                    {
+                        _logger?.LogError(MsgHelp.GetString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL), rule.Id ?? "",
+                                                searchPattern.Pattern ?? "", string.Join(",", searchPattern.Modifiers));
+                        errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "",
+                            searchPattern.Pattern ?? "", string.Join(",",searchPattern.Modifiers)));
+                    }
                 }
             }
 

@@ -36,4 +36,6 @@ public class RulesVerifierOptions
     ///     is populated. Enabling this will cause an error to be raised during rule validation if it is not populated.
     /// </summary>
     public bool RequireMustNotMatch { get; set; }
+
+    public bool EnableNonBacktrackingRegex { get; set; }
 }

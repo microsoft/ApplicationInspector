@@ -42,6 +42,8 @@ public class TagDiffOptions
 
     public bool RequireMustMatch { get; set; }
     public bool RequireMustNotMatch { get; set; }
+
+    public bool EnableNonBacktrackingRegex { get; set; }
 }
 
 /// <summary>
@@ -177,7 +179,8 @@ public class TagDiffCommand
                 DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
                 SuccessErrorCodeOnNoMatches = _options.SuccessErrorCodeOnNoMatches,
                 RequireMustMatch = _options.RequireMustMatch,
-                RequireMustNotMatch = _options.RequireMustNotMatch
+                RequireMustNotMatch = _options.RequireMustNotMatch,
+                EnableNonBacktrackingRegex = _options.EnableNonBacktrackingRegex,
             }, _factory);
             AnalyzeCommand cmd2 = new(new AnalyzeOptions
             {
@@ -197,7 +200,8 @@ public class TagDiffCommand
                 CustomCommentsPath = _options.CustomCommentsPath,
                 CustomLanguagesPath = _options.CustomLanguagesPath,
                 DisableCustomRuleVerification = true, // Rules are already validated by the first command
-                SuccessErrorCodeOnNoMatches = _options.SuccessErrorCodeOnNoMatches
+                SuccessErrorCodeOnNoMatches = _options.SuccessErrorCodeOnNoMatches,
+                EnableNonBacktrackingRegex = _options.EnableNonBacktrackingRegex,
             }, _factory);
 
             var analyze1 = cmd1.GetResult();

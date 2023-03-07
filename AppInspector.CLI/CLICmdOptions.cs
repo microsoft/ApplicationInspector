@@ -54,6 +54,11 @@ public record CLICustomRulesCommandOptions : CLICommandOptions
     [Option("require-must-not-match", Required = false,
         HelpText = "When validating, require rules to have MustNotMatch self-tests.")]
     public bool RequireMustNotMatch { get; set; }
+
+    [Option('R', "non-backtracking-regex", Required = false,
+    HelpText = "Enables non-backtracking regex for all rules. A warning will be displayed for all regular expressions that require backtracking support. Default: Off.",
+    Default = false),]
+    public bool EnableNonBacktrackingRegex { get; set; }
 }
 
 public record CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions
@@ -112,6 +117,7 @@ public record CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions
             { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview })]
     public IEnumerable<Severity> SeverityFilters { get; set; } = new[]
         { Severity.Critical, Severity.Important, Severity.Moderate, Severity.BestPractice, Severity.ManualReview };
+
 }
 
 /// <summary>

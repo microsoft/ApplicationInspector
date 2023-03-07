@@ -302,7 +302,9 @@ public static class Program
             DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
             SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches,
             RequireMustMatch = cliOptions.RequireMustMatch,
-            RequireMustNotMatch = cliOptions.RequireMustNotMatch
+            RequireMustNotMatch = cliOptions.RequireMustNotMatch,
+            EnableNonBacktrackingRegex = cliOptions.EnableNonBacktrackingRegex,
+            
         }, adjustedFactory);
 
         var analyzeResult = command.GetResult();
@@ -374,7 +376,8 @@ public static class Program
             DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
             SuccessErrorCodeOnNoMatches = cliOptions.SuccessErrorCodeOnNoMatches,
             RequireMustMatch = cliOptions.RequireMustMatch,
-            RequireMustNotMatch = cliOptions.RequireMustNotMatch
+            RequireMustNotMatch = cliOptions.RequireMustNotMatch,
+            EnableNonBacktrackingRegex = cliOptions.EnableNonBacktrackingRegex,
         }, loggerFactory);
 
         var tagDiffResult = command.GetResult();
@@ -411,7 +414,8 @@ public static class Program
             CustomLanguagesPath = cliOptions.CustomLanguagesPath,
             DisableRequireUniqueIds = cliOptions.DisableRequireUniqueIds,
             RequireMustMatch = cliOptions.RequireMustMatch,
-            RequireMustNotMatch = cliOptions.RequireMustNotMatch
+            RequireMustNotMatch = cliOptions.RequireMustNotMatch,
+            EnableNonBacktrackingRegex = cliOptions.EnableNonBacktrackingRegex,
         }, loggerFactory);
 
         var verifyRulesResult = command.GetResult();

@@ -24,6 +24,7 @@ public abstract class AbstractRuleSet
     private readonly Regex _searchInRegex = new("\\((.*),(.*)\\)", RegexOptions.Compiled);
     protected ILogger _logger = NullLogger.Instance;
     protected IEnumerable<Rule> _rules => _oatRules.Select(x => x.AppInspectorRule);
+    public bool EnableNonBacktrackingRegex {  get; set; }
 
     /// <summary>
     ///     Filters rules within Ruleset by language
@@ -77,7 +78,37 @@ public abstract class AbstractRuleSet
         var clauses = new List<Clause>();
         var clauseNumber = 0;
         var expression = new StringBuilder("(");
+
         foreach (var pattern in rule.Patterns)
+        {
+            // "b" and "nb" can be added manually to rules. Options are exclusive.
+            if (EnableNonBacktrackingRegex)
+            {
+                // non-backtracking on. "b" will override "nb"
+                if (pattern.Modifiers.Any(m => m.Equals("b", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    pattern.Modifiers.RemoveAll(m => m.Equals("nb", StringComparison.InvariantCultureIgnoreCase));
+                }
+                else
+                {
+                    if (!pattern.Modifiers.Any(m => m.Equals("nb", StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        pattern.Modifiers.Add("nb");
+                    }
+                }    
+               
+            }
+            else
+            {
+                // backtracking on. "nb" will override "b"
+                if (pattern.Modifiers.Any(m => m.Equals("nb", StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    pattern.Modifiers.RemoveAll(m => m.Equals("b", StringComparison.InvariantCultureIgnoreCase));
+                }
+
+                // "b" is a default option for regex engine, so no need to add "b" explicitly
+            }            
+
             if (GenerateClause(pattern, clauseNumber) is { } clause)
             {
                 clauses.Add(clause);
@@ -93,6 +124,7 @@ public abstract class AbstractRuleSet
             {
                 _logger.LogWarning("Clause could not be generated from pattern {pattern}", pattern.Pattern);
             }
+        }
 
         if (clauses.Count > 0)
         {
@@ -225,17 +257,16 @@ public abstract class AbstractRuleSet
         if (pattern.Pattern != null)
         {
             var scopes = pattern.Scopes ?? new[] { PatternScope.All };
-            var modifiers = pattern.Modifiers?.ToList() ?? new List<string>();
             if (pattern.PatternType is PatternType.String or PatternType.Substring)
             {
                 return new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String,
-                    xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths:pattern.YamlPaths)
+                    xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths: pattern.YamlPaths)
                 {
                     Label = clauseNumber.ToString(CultureInfo
                         .InvariantCulture), //important to pattern index identification
                     Data = new List<string> { pattern.Pattern },
                     Capture = true,
-                    Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
+                    Arguments = pattern.Modifiers,
                 };
             }
 
@@ -247,7 +278,7 @@ public abstract class AbstractRuleSet
                         .InvariantCulture), //important to pattern index identification
                     Data = new List<string> { pattern.Pattern },
                     Capture = true,
-                    Arguments = modifiers
+                    Arguments = pattern.Modifiers,
                 };
             }
 
@@ -259,7 +290,7 @@ public abstract class AbstractRuleSet
                         .InvariantCulture), //important to pattern index identification
                     Data = new List<string> { $"\\b({pattern.Pattern})\\b" },
                     Capture = true,
-                    Arguments = pattern.Modifiers?.ToList() ?? new List<string>()
+                    Arguments = pattern.Modifiers,
                 };
             }
         }

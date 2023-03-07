@@ -147,6 +147,8 @@ public class AnalyzeOptions
     ///     If set, when validating rules, require that every rule have a must-not-match self-test with at least one entry
     /// </summary>
     public bool RequireMustNotMatch { get; set; }
+
+    public bool EnableNonBacktrackingRegex { get; set; }
 }
 
 /// <summary>
@@ -258,19 +260,21 @@ public class AnalyzeCommand
 
         if (!_options.IgnoreDefaultRules)
         {
-            rulesSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory);
+            rulesSet = RuleSetUtils.GetDefaultRuleSet(_loggerFactory, _options.EnableNonBacktrackingRegex);
         }
 
         if (!string.IsNullOrEmpty(_options.CustomRulesPath))
         {
-            rulesSet ??= new RuleSet(_loggerFactory);
+            rulesSet ??= new RuleSet(_loggerFactory) { EnableNonBacktrackingRegex = _options.EnableNonBacktrackingRegex };
+            
             RulesVerifierOptions rulesVerifierOptions = new()
             {
                 LanguageSpecs = _languages,
                 LoggerFactory = _loggerFactory,
                 DisableRequireUniqueIds = _options.DisableRequireUniqueIds,
                 RequireMustMatch = _options.RequireMustMatch,
-                RequireMustNotMatch = _options.RequireMustNotMatch
+                RequireMustNotMatch = _options.RequireMustNotMatch,
+                EnableNonBacktrackingRegex = _options.EnableNonBacktrackingRegex,
             };
             RulesVerifier verifier = new(rulesVerifierOptions);
             var anyFails = false;
