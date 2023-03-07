@@ -138,6 +138,101 @@ public class TestVerifyRulesCmd
 }
 ]";
 
+    // This rule depends on another tag but that tag isn't in the ruleset
+    private readonly string _dependsOnTagMissingRule = @"[
+{
+    ""name"": ""Platform: Microsoft Windows"",
+    ""id"": ""AI_TEST_WINDOWS_MUST_NOT_MATCH"",
+    ""description"": ""This rule checks for the string 'windows'"",
+    ""tags"": [
+      ""Test.Tags.Windows""
+    ],
+    ""depends_on_tags"": [""tag_not_present""],
+    ""applies_to"": [ ""csharp""],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+        ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ],
+    ""must-not-match"" : [ ""linux""]
+}
+]";
+
+    // One of these rules overrides the other and depends on another tag but that tag isn't set on the rule being overridden
+    private readonly string _overriddenDependsOnTagMissingRule = @"[
+    {
+        ""name"": ""Platform: Microsoft Windows"",
+        ""id"": ""_overriddenDependsOnTagMissingRule"",
+        ""description"": ""This rule checks for the string 'windows'"",
+        ""tags"": [
+          ""Test.Tags.Windows""
+        ],
+        ""applies_to"": [ ""csharp""],
+        ""severity"": ""Important"",
+        ""patterns"": [
+          {
+            ""confidence"": ""Medium"",
+            ""modifiers"": [
+              ""i""
+            ],
+            ""pattern"": ""windows"",
+            ""type"": ""String"",
+          }
+        ],
+        ""must-not-match"" : [ ""linux""]
+    },
+    {
+        ""name"": ""Platform: Microsoft Windows"",
+        ""id"": ""_overriddenDependsOnTagMissingRule_2"",
+        ""description"": ""This rule checks for the string 'windows'"",
+        ""tags"": [
+          ""Test.Tags.Windows""
+        ],
+        ""overrides"": [""_overriddenDependsOnTagMissingRule""],
+        ""depends_on_tags"": [""a_tag""],
+        ""applies_to"": [ ""csharp""],
+        ""severity"": ""Important"",
+        ""patterns"": [
+          {
+            ""confidence"": ""Medium"",
+            ""modifiers"": [
+              ""i""
+            ],
+            ""pattern"": ""windows"",
+            ""type"": ""String"",
+          }
+        ],
+        ""must-not-match"" : [ ""linux""]
+    },
+    {
+        ""name"": ""Platform: Microsoft Windows"",
+        ""id"": ""_overriddenDependsOnTagMissingRule_3"",
+        ""description"": ""This rule checks for the string 'windows'"",
+        ""tags"": [
+          ""a_tag""
+        ],
+        ""applies_to"": [ ""csharp""],
+        ""severity"": ""Important"",
+        ""patterns"": [
+          {
+            ""confidence"": ""Medium"",
+            ""modifiers"": [
+              ""i""
+            ],
+            ""pattern"": ""windows"",
+            ""type"": ""String"",
+          }
+        ],
+        ""must-not-match"" : [ ""linux""]
+    }
+]";
+
     // MustNotMatch if specified must not be matched
     private readonly string _mustNotMatchRule = @"[
 {
@@ -374,6 +469,38 @@ public class TestVerifyRulesCmd
     {
         var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         File.WriteAllText(path, _sameId);
+        VerifyRulesOptions options = new()
+        {
+            CustomRulesPath = path
+        };
+
+        VerifyRulesCommand command = new(options, _factory);
+        var result = command.GetResult();
+        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        File.Delete(path);
+    }
+
+    [TestMethod]
+    public void OverriddenRuleMissingDependsOnTag()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        File.WriteAllText(path, _overriddenDependsOnTagMissingRule);
+        VerifyRulesOptions options = new()
+        {
+            CustomRulesPath = path
+        };
+
+        VerifyRulesCommand command = new(options, _factory);
+        var result = command.GetResult();
+        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        File.Delete(path);
+    }
+
+    [TestMethod]
+    public void MissingDependsOnTag()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        File.WriteAllText(path, _dependsOnTagMissingRule);
         VerifyRulesOptions options = new()
         {
             CustomRulesPath = path

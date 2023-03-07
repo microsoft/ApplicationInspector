@@ -114,7 +114,7 @@ public class ExportTagsCommand
 
         HashSet<string> tags = new();
         foreach (var rule in _rules.GetAppInspectorRules())
-        foreach (var tag in rule.Tags ?? Array.Empty<string>())
+        foreach (var tag in (IList<string>?)rule.Tags ?? Array.Empty<string>())
             tags.Add(tag);
 
         exportTagsResult.TagsList = tags.ToList();

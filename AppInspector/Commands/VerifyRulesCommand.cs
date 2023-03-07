@@ -44,7 +44,7 @@ public class VerifyRulesResult : Result
     public ExitCode ResultCode { get; set; }
 
     [JsonPropertyName("ruleStatusList")]
-    public List<RuleStatus> RuleStatusList { get; set; }
+    public IList<RuleStatus> RuleStatusList { get; set; }
 
     [JsonIgnore] public IEnumerable<RuleStatus> Unverified => RuleStatusList.Where(x => !x.Verified);
 }

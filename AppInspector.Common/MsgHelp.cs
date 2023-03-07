@@ -77,7 +77,9 @@ public static class MsgHelp
         BROWSER_START_SUCCESS,
         PACK_MISSING_OUTPUT_ARG,
         PACK_RULES_NO_CLI_DEFAULT,
-        PACK_RULES_NO_DEFAULT
+        PACK_RULES_NO_DEFAULT,
+        VERIFY_RULES_DEPENDS_ON_TAG_MISSING,
+        VERIFY_RULES_OVERRIDDEN_RULE_DEPENDS_ON_TAG_MISSING
     }
 
     public static string GetString(ID id)
