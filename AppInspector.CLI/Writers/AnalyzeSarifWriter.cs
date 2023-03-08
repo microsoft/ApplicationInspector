@@ -74,6 +74,18 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                         }
                     };
                 }
+                else if (analyzeResult.Metadata.RepositoryUri is { })
+                {
+                    run.VersionControlProvenance = new List<VersionControlDetails>
+                    {
+                        new()
+                        {
+                            RepositoryUri = analyzeResult.Metadata.RepositoryUri,
+                            RevisionId = analyzeResult.Metadata.CommitHash ?? string.Empty,
+                            Branch = analyzeResult.Metadata.Branch ?? string.Empty
+                        }
+                    };
+                }
 
                 var artifacts = new List<Artifact>();
                 run.Tool = new Tool

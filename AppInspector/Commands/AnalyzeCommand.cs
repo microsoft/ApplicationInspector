@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json.Serialization;
 using ShellProgressBar;
+using LibGit2Sharp;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -148,6 +149,10 @@ public class AnalyzeOptions
     /// </summary>
     public bool RequireMustNotMatch { get; set; }
 
+    /// <summary>
+    ///     If set, prefer to build rule Regex with the Non-BackTracking engine unless the modifiers contain `b`
+    ///     Will fall back to BackTracking engine if the Rule cannot be built with Non-BackTracking.
+    /// </summary>
     public bool EnableNonBacktrackingRegex { get; set; }
 }
 
@@ -389,6 +394,8 @@ public class AnalyzeCommand
             RemoveDependsOnNotPresent();
         }
 
+        _metaDataHelper.AddGitInformation(GenerateGitInformation(Path.GetFullPath(_options.SourcePath.FirstOrDefault())));
+
         return AnalyzeResult.ExitCode.Success;
 
         void ProcessAndAddToMetadata(FileEntry file)
@@ -533,22 +540,58 @@ public class AnalyzeCommand
         }
     }
 
+    private GitInformation? GenerateGitInformation(string optsPath)
+    {
+        try
+        {
+            using var repo = new Repository(optsPath);
+            var info = new GitInformation()
+            {
+                Branch = repo.Head.FriendlyName
+            };
+            if (repo.Network.Remotes.Any())
+            {
+                info.RepositoryUri = new Uri(repo.Network.Remotes.First().Url);
+            }
+            if (repo.Head.Commits.Any())
+            {
+                info.CommitHash = repo.Head.Commits.First().Sha;
+            }
+
+            return info;
+        }
+        catch
+        {
+            if (Directory.GetParent(optsPath) is { } notNullParent)
+            {
+                return GenerateGitInformation(notNullParent.FullName);
+            }
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// Remove matches from the metadata when the DependsOnTags are not satisfied.
     /// </summary>
     private void RemoveDependsOnNotPresent()
     {
+        bool anyChanges = false;
         List<MatchRecord> previousMatches = _metaDataHelper.Matches.ToList();
         List<MatchRecord> nextMatches = FilterRecordsByMissingDependsOnTags(previousMatches);
         // Continue iterating as long as records were removed in the last iteration, as their tags may have been depended on by another rule
         while (nextMatches.Count != previousMatches.Count)
         {
+            anyChanges = true;
             (nextMatches, previousMatches) = (FilterRecordsByMissingDependsOnTags(nextMatches), nextMatches);
         }
-        _metaDataHelper = _metaDataHelper.CreateFresh();
-        foreach (MatchRecord matchRecord in nextMatches)
+        if (anyChanges)
         {
-            _metaDataHelper.AddMatchRecord(matchRecord);
+            _metaDataHelper = _metaDataHelper.CreateFresh();
+            foreach (MatchRecord matchRecord in nextMatches)
+            {
+                _metaDataHelper.AddMatchRecord(matchRecord);
+            }
         }
     }
 
@@ -593,6 +636,8 @@ public class AnalyzeCommand
         {
             RemoveDependsOnNotPresent();
         }
+
+        _metaDataHelper.AddGitInformation(GenerateGitInformation(Path.GetFullPath(_options.SourcePath.FirstOrDefault())));
 
         return AnalyzeResult.ExitCode.Success;
 

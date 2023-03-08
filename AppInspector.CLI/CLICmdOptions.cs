@@ -56,7 +56,7 @@ public record CLICustomRulesCommandOptions : CLICommandOptions
     public bool RequireMustNotMatch { get; set; }
 
     [Option('R', "non-backtracking-regex", Required = false,
-    HelpText = "Enables non-backtracking regex for all rules. A warning will be displayed for all regular expressions that require backtracking support. Default: Off.",
+    HelpText = "Prefer non-backtracking regex for all rules unless they require the backtracking engine. A warning will be displayed for all regular expressions that require backtracking support. Default: Off.",
     Default = false),]
     public bool EnableNonBacktrackingRegex { get; set; }
 }
@@ -166,10 +166,10 @@ public record CLIAnalyzeCmdOptions : CLIAnalysisSharedCommandOptions
         HelpText = "If set, when outputting sarif, will have paths made relative to the provided path.")]
     public string? BasePath { get; set; } = null;
 
-    [Option("repository-uri", Required = false, HelpText = "If set, when outputting sarif, include this information.")]
+    [Option("repository-uri", Required = false, HelpText = "If set, override any automatically detected RepositoryUri in Sarif report.")]
     public string? RepositoryUri { get; set; } = null;
 
-    [Option("commit-hash", Required = false, HelpText = "If set, when outputting sarif, include this information.")]
+    [Option("commit-hash", Required = false, HelpText = "If set, override any automatically detected CommitHash in Sarif report.")]
     public string? CommitHash { get; set; } = null;
 }
 
