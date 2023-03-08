@@ -394,9 +394,7 @@ public class AnalyzeCommand
             RemoveDependsOnNotPresent();
         }
 
-        GitInformation? information = GenerateGitInformation(Path.GetFullPath(_options.SourcePath.FirstOrDefault()));
-
-        _metaDataHelper.AddGitInformation(information);
+        _metaDataHelper.AddGitInformation(GenerateGitInformation(Path.GetFullPath(_options.SourcePath.FirstOrDefault())));
 
         return AnalyzeResult.ExitCode.Success;
 
@@ -633,6 +631,8 @@ public class AnalyzeCommand
         {
             RemoveDependsOnNotPresent();
         }
+
+        _metaDataHelper.AddGitInformation(GenerateGitInformation(Path.GetFullPath(_options.SourcePath.FirstOrDefault())));
 
         return AnalyzeResult.ExitCode.Success;
 
