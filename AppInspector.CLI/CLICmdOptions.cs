@@ -56,7 +56,7 @@ public record CLICustomRulesCommandOptions : CLICommandOptions
     public bool RequireMustNotMatch { get; set; }
 
     [Option('R', "non-backtracking-regex", Required = false,
-    HelpText = "Enables non-backtracking regex for all rules. A warning will be displayed for all regular expressions that require backtracking support. Default: Off.",
+    HelpText = "Prefer non-backtracking regex for all rules unless they require the backtracking engine. A warning will be displayed for all regular expressions that require backtracking support. Default: Off.",
     Default = false),]
     public bool EnableNonBacktrackingRegex { get; set; }
 }

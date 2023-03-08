@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json.Serialization;
 using ShellProgressBar;
+using LibGit2Sharp;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
@@ -148,6 +149,10 @@ public class AnalyzeOptions
     /// </summary>
     public bool RequireMustNotMatch { get; set; }
 
+    /// <summary>
+    ///     If set, prefer to build rule Regex with the Non-BackTracking engine unless the modifiers contain `b`
+    ///     Will fall back to BackTracking engine if the Rule cannot be built with Non-BackTracking.
+    /// </summary>
     public bool EnableNonBacktrackingRegex { get; set; }
 }
 
@@ -389,6 +394,10 @@ public class AnalyzeCommand
             RemoveDependsOnNotPresent();
         }
 
+        GitInformation? information = GenerateGitInformation(Path.GetFullPath(_options.SourcePath.FirstOrDefault()));
+
+        _metaDataHelper.AddGitInformation(information);
+
         return AnalyzeResult.ExitCode.Success;
 
         void ProcessAndAddToMetadata(FileEntry file)
@@ -531,6 +540,37 @@ public class AnalyzeCommand
                 _metaDataHelper.Files.Add(fileRecord);
             }
         }
+    }
+
+    private GitInformation? GenerateGitInformation(string optsPath)
+    {
+        try
+        {
+            using var repo = new Repository(optsPath);
+            var info = new GitInformation()
+            {
+                Branch = repo.Head.FriendlyName
+            };
+            if (repo.Network.Remotes.Any())
+            {
+                info.RepositoryUri = new Uri(repo.Network.Remotes.First().Url);
+            }
+            if (repo.Head.Commits.Any())
+            {
+                info.CommitHash = repo.Head.Commits.First().Sha;
+            }
+
+            return info;
+        }
+        catch
+        {
+            if (Directory.GetParent(optsPath) is { } notNullParent)
+            {
+                return GenerateGitInformation(notNullParent.FullName);
+            }
+        }
+
+        return null;
     }
 
     /// <summary>

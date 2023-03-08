@@ -344,4 +344,11 @@ public class MetaDataHelper
             Languages = Languages
         };
     }
+
+    internal void AddGitInformation(GitInformation? information)
+    {
+        Metadata.RepositoryUri = information?.RepositoryUri;
+        Metadata.CommitHash = information?.CommitHash;
+        Metadata.Branch = information?.Branch;
+    }
 }

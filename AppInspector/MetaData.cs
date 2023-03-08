@@ -28,6 +28,24 @@ public class MetaData
     public string? ApplicationName { get; set; }
 
     /// <summary>
+    ///     Detected repository uri
+    /// </summary>
+    [JsonPropertyName("repositoryUri")]
+    public Uri? RepositoryUri { get; set; }
+
+    /// <summary>
+    ///     Detected CommitHash
+    /// </summary>
+    [JsonPropertyName("commitHash")]
+    public string? CommitHash { get; set; }
+
+    /// <summary>
+    ///     Detected Branch Name
+    /// </summary>
+    [JsonPropertyName("branch")]
+    public string? Branch { get; set; }
+
+    /// <summary>
     ///     Source path provided argument
     /// </summary>
     [JsonPropertyName("sourcePath")]
