@@ -332,7 +332,7 @@ public class MetaDataHelper
     }
 
     /// <summary>
-    /// Returns a new MetaDataHelper with the same SourcePath, Files, Languages and FileExtensions
+    /// Returns a new MetaDataHelper with the same SourcePath, Files, Languages and FileExtensions but no Matches
     /// </summary>
     /// <returns></returns>
     internal MetaDataHelper CreateFresh()
