@@ -424,21 +424,29 @@ public class RuleProcessor
 
         List<MatchRecord> removes = new();
 
-        foreach (var m in resultsList.Where(x => x.Rule?.Overrides?.Count > 0))
+        foreach (var matchRecord in resultsList.Where(x => x.Rule?.Overrides?.Count > 0))
         {
             if (cancellationToken?.IsCancellationRequested is true)
             {
                 return resultsList;
             }
 
-            foreach (var ovrd in (IList<string>?)m.Rule?.Overrides ?? Array.Empty<string>())
+            foreach (var idToOverride in matchRecord.Rule?.Overrides ?? Array.Empty<string>())
+            {
                 // Find all overriden rules and mark them for removal from issues list
-            foreach (var om in resultsList.FindAll(x => x.Rule?.Id == ovrd))
-                if (om.Boundary.Index >= m.Boundary.Index &&
-                    om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
+                foreach (var potentialOverriddenMatch in resultsList.FindAll(x => x.Rule?.Id == idToOverride))
                 {
-                    removes.Add(om);
+                    // Start after or matching start
+                    if (potentialOverriddenMatch.Boundary.Index >= matchRecord.Boundary.Index &&
+                        // End before or matching end
+                        (potentialOverriddenMatch.Boundary.Index + potentialOverriddenMatch.Boundary.Length)
+                            <= (matchRecord.Boundary.Index + matchRecord.Boundary.Length))
+                    {
+                        removes.Add(potentialOverriddenMatch);
+                    }
                 }
+            }
+           
         }
 
         // Remove overriden rules
