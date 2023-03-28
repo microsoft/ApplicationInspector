@@ -96,7 +96,7 @@ as [Microsoft.CST.ApplicationInspector.Commands](https://www.nuget.org/packages/
 The .NET Global Tool is available on NuGet
 as [Microsoft.CST.ApplicationInspector.CLI](https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.CLI/).
 
-If you use the .NET Core version, you will need to have .NET Core 6.0 or later installed. See
+If you use the .NET Core version, you will need to have .NET 6.0 or later installed. See
 the [JustRunIt.md](https://github.com/microsoft/ApplicationInspector/blob/master/JustRunIt.md)
 or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/master/BUILD.md) files for more.
 
@@ -104,18 +104,21 @@ or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/master/BUIL
 
 ```
 > appinspector --help
-ApplicationInspector.CLI 1.4.0+6bdef0356b
+ApplicationInspector.CLI 1.8.4-beta+976ee3cdd1
 c Microsoft Corporation. All rights reserved.
 
-  analyze        Inspect source directory/file/compressed file (.tgz|zip) against defined characteristics
+  analyze        Inspect source directory/file/compressed file (.tgz|zip)
+                 against defined characteristics
 
   tagdiff        Compares unique tag values between two source paths
 
-  exporttags     Export unique rule tags to view what code features may be detected
+  exporttags     Export the list of tags associated with the specified rules.
+                 Does not scan source code.
 
   verifyrules    Verify custom rules syntax is valid
 
-  packrules      Combine multiple rule files into one file for ease in distribution
+  packrules      Combine multiple rule files into one file for ease in
+                 distribution
 
   help           Display more information on a specific command.
 
