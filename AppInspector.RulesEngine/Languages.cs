@@ -22,6 +22,13 @@ public sealed class Languages
     private readonly List<LanguageInfo> _languageInfos = new();
     private readonly ILogger _logger;
 
+    /// <summary>
+    ///     Returns a new instance of Languages from the provided streams. If null is provided the default embedded comments
+    ///     and/or languages will be used.
+    /// </summary>
+    /// <param name="loggerFactory">Optional logger factory to use.</param>
+    /// <param name="commentsStream">Optional stream to the comments.json file.</param>
+    /// <param name="languagesStream">Optional stream to the languages.json file.</param>
     public Languages(ILoggerFactory? loggerFactory = null, Stream? commentsStream = null,
         Stream? languagesStream = null)
     {
@@ -59,6 +66,14 @@ public sealed class Languages
         }
     }
 
+    /// <summary>
+    ///     Returns a new instance of Languages from the provided configuration files. 
+    ///         If null is provided the default embedded comments and/or languages will be used.
+    /// </summary>
+    /// <param name="loggerFactory">Optional logger factory to use.</param>
+    /// <param name="commentsPath">Optional path to the comments.json file.</param>
+    /// <param name="languagesPath">Optional path to the languages.json file.</param>
+    /// <returns>A new instance of Languages.</returns>
     public static Languages FromConfigurationFiles(ILoggerFactory? loggerFactory = null, string? commentsPath = null,
         string? languagesPath = null)
     {
