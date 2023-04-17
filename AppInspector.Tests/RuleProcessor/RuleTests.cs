@@ -1,6 +1,10 @@
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static Microsoft.CST.RecursiveExtractor.FileEntry;
 
 namespace AppInspector.Tests.RuleProcessor;
 
@@ -64,5 +68,88 @@ public class RuleTests
         var rule = rules.First();
         rule.Disabled = true;
         Assert.AreEqual(true, rule.Disabled);
+    }
+
+    private const string overrideRules = @"[
+    {
+        ""id"": ""SA000005"",
+        ""name"": ""Testing.Rules.Overridee"",
+        ""tags"": [
+            ""Testing.Rules.Overridee""
+        ],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule finds car"",
+        ""patterns"": [
+            {
+                ""pattern"": ""car"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    },
+    {
+        ""id"": ""SA000006"",
+        ""name"": ""Testing.Rules.Overridee"",
+        ""tags"": [
+            ""Testing.Rules.Overridee""
+        ],
+        ""overrides"": [""SA000005""],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule finds racecar"",
+        ""patterns"": [
+            {
+                ""pattern"": ""racecar"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    },
+    {
+        ""id"": ""SA000007"",
+        ""name"": ""Testing.Rules.Overridee"",
+        ""tags"": [
+            ""Testing.Rules.Overridee""
+        ],
+        ""overrides"": [""SA000005""],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule finds ar"",
+        ""patterns"": [
+            {
+                ""pattern"": ""ar"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    }
+]
+";
+    
+    [TestMethod]
+    public async Task Overrides()
+    {
+        RuleSet rules = new();
+        var originalSource = "TestRules";
+        rules.AddString(overrideRules, originalSource);
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
+        var entry = await FromStreamAsync("dummy", new MemoryStream(Encoding.UTF8.GetBytes("racecar car")));
+        var langs = new Microsoft.ApplicationInspector.RulesEngine.Languages();
+        langs.FromFileNameOut("dummy.cs", out LanguageInfo info);
+        var results = processor.AnalyzeFile(entry, info);
+        Assert.AreEqual(4, results.Count);
+        Assert.AreEqual(1, results.Count(x=> x.Rule.Id == "SA000006"));
+        Assert.AreEqual(1, results.Count(x=> x.Rule.Id == "SA000005"));
+        Assert.AreEqual(2, results.Count(x=> x.Rule.Id == "SA000007"));
     }
 }
