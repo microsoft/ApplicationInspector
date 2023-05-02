@@ -156,9 +156,9 @@ public class XmlAndJsonTests
     [TestMethod]
     public void XmlAttributeTest()
     {
-        var testContent =
+        var attributeContent =
             "<system.web>\n<trace enabled='true' pageOutput='false' requestLimit='40' localOnly='false' />\n</system.web>";
-        var daRule = @"[{
+        var attributeRule = @"[{
         ""name"": ""Trace is enabled in system.web"",
         ""id"": ""DS450002"",
         ""description"": ""Having traces enabled could leak sensitive application information in production."",
@@ -186,12 +186,12 @@ public class XmlAndJsonTests
         ]
     }]";
         RuleSet rules = new();
-        rules.AddString(daRule, "JsonTestRules");
+        rules.AddString(attributeRule, "JsonTestRules");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("test.config", out var info))
         {
-            var matches = processor.AnalyzeFile(testContent, new FileEntry("test.config", new MemoryStream()), info);
+            var matches = processor.AnalyzeFile(attributeContent, new FileEntry("test.config", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
         }
     }
