@@ -206,15 +206,15 @@ public class TextContainer
             }
 
             // First we find the name
-            var nameIndex = FullContent[minIndex..].IndexOf(nodeIter.Current.Name, StringComparison.Ordinal);
+            var nameIndex = FullContent[minIndex..].IndexOf(nodeIter.Current.Name, StringComparison.Ordinal) + minIndex;
             // Then we grab the index of the end of this tag.
             // We can't use OuterXML because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
             var endTagIndex = FullContent[nameIndex..].IndexOf('>');
-            var totalOffset = nameIndex + endTagIndex + minIndex;
-            var offset = FullContent[totalOffset..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + totalOffset;
+            var offset = FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
             // Move the minimum index up in case there are multiple instances of identical OuterXML
             // This ensures we won't re-find the same one
-            minIndex = offset;
+            var totalOffset = minIndex + nameIndex + endTagIndex;
+            minIndex = totalOffset;
             var location = new Boundary
             {
                 Index = offset,
