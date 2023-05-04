@@ -270,7 +270,7 @@ public class RuleProcessor
         IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
     {
         TextContainer textContainer = new(contents, languageInfo.Name, _languages,
-            _opts.LoggerFactory ?? NullLoggerFactory.Instance);
+            _opts.LoggerFactory ?? NullLoggerFactory.Instance, fileEntry.FullPath);
         return AnalyzeFile(textContainer, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
     }
 
@@ -334,7 +334,7 @@ public class RuleProcessor
         using var sr = new StreamReader(fileEntry.Content);
 
         TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name,
-            _languages, _opts.LoggerFactory ?? NullLoggerFactory.Instance);
+            _languages, _opts.LoggerFactory ?? NullLoggerFactory.Instance, fileEntry.FullPath);
         foreach (var ruleCapture in _analyzer.GetCaptures(rules, textContainer))
         {
             // If we had a WithinClause we only want the captures that passed the within filter.

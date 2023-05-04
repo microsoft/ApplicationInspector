@@ -37,8 +37,9 @@ public class TextContainer
     private object _xpathLock = new();
 
     private bool _triedToConstructYmlDocument;
-    private YamlStream _ymlDocument;
+    private YamlStream? _ymlDocument;
     private object _yamlLock = new();
+    private readonly string? _filePath;
 
     /// <summary>
     ///     Creates new instance
@@ -49,8 +50,11 @@ public class TextContainer
     ///     An instance of the <see cref="Languages" /> class containing the information for language
     ///     mapping to use.
     /// </param>
-    public TextContainer(string content, string language, Languages languages, ILoggerFactory? loggerFactory = null)
+    /// <param name="loggerFactory">An optional logger factory to receive error messages</param>
+    /// <param name="filePath">A string which represents the location of the file the contents of this container contains used to enrich error messages to the <paramref name="loggerFactory"/></param>
+    public TextContainer(string content, string language, Languages languages, ILoggerFactory? loggerFactory = null, string? filePath = null)
     {
+        _filePath = filePath;
         _logger = loggerFactory?.CreateLogger<TextContainer>() ?? NullLogger<TextContainer>.Instance;
         Language = language;
         FullContent = content;
@@ -123,7 +127,7 @@ public class TextContainer
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("Failed to parse as a JSON document: {0}", e.Message);
+                    _logger.LogError("Failed to parse {1} as a JSON document: {0}", e.Message, _filePath);
                     _jsonDocument = null;
                 }
             }
@@ -184,7 +188,7 @@ public class TextContainer
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("Failed to parse as an XML document: {0}", e.Message);
+                    _logger.LogError("Failed to parse {1} as a XML document: {0}", e.Message, _filePath);
                     _xmlDoc = null;
                 }
             }
@@ -383,7 +387,7 @@ public class TextContainer
     /// <param name="scopes"> The scopes to check </param>
     /// <param name="boundary"> Boundary in the text </param>
     /// <returns> True if boundary is in a provided scope </returns>
-    public bool ScopeMatch(IEnumerable<PatternScope> scopes, Boundary boundary)
+    public bool ScopeMatch(IList<PatternScope> scopes, Boundary boundary)
     {
         if (scopes is null || !scopes.Any() || scopes.Contains(PatternScope.All))
         {
@@ -415,7 +419,7 @@ public class TextContainer
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError("Failed to parse as a YML document: {0}", e.Message);
+                    _logger.LogError("Failed to parse {1} as a YML document: {0}", e.Message, _filePath);
                     _ymlDocument = null;
                 }
             }
