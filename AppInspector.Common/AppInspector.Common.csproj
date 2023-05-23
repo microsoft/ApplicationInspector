@@ -31,9 +31,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-        <PackageReference Update="Nerdbank.GitVersioning">
-          <Version>3.6.128</Version>
-        </PackageReference>
+
 
     </ItemGroup>
 
