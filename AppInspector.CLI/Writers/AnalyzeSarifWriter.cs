@@ -49,10 +49,9 @@ public class AnalyzeSarifWriter : CommandResultsWriter
             throw new ArgumentNullException(nameof(StreamWriter));
         }
 
-        string? basePath;
         if (commandOptions is CLIAnalyzeCmdOptions cliAnalyzeCmdOptions)
         {
-            basePath = cliAnalyzeCmdOptions.BasePath;
+            string? basePath = cliAnalyzeCmdOptions.BasePath;
 
             if (result is AnalyzeResult analyzeResult)
             {
@@ -106,7 +105,7 @@ public class AnalyzeSarifWriter : CommandResultsWriter
 
                     if (match.Rule is not null)
                     {
-                        if (!reportingDescriptors.Any(r => r.Id == match.Rule.Id))
+                        if (reportingDescriptors.All(r => r.Id != match.Rule.Id))
                         {
                             ReportingDescriptor reportingDescriptor = new()
                             {
