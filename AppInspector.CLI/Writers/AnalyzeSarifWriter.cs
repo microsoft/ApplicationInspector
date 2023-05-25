@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Location = Microsoft.CodeAnalysis.Sarif.Location;
 using Result = Microsoft.ApplicationInspector.Commands.Result;
 
-namespace Microsoft.ApplicationInspector.CLI;
+namespace Microsoft.ApplicationInspector.CLI.Writers;
 
 internal static class AnalyzeSarifWriterExtensions
 {
@@ -49,10 +49,9 @@ public class AnalyzeSarifWriter : CommandResultsWriter
             throw new ArgumentNullException(nameof(StreamWriter));
         }
 
-        string? basePath = null;
-        if (commandOptions is CLIAnalyzeCmdOptions cLIAnalyzeCmdOptions)
+        if (commandOptions is CLIAnalyzeCmdOptions cliAnalyzeCmdOptions)
         {
-            basePath = cLIAnalyzeCmdOptions.BasePath;
+            string? basePath = cliAnalyzeCmdOptions.BasePath;
 
             if (result is AnalyzeResult analyzeResult)
             {
@@ -63,14 +62,14 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                 log.Runs = new List<Run>();
                 var run = new Run();
 
-                if (Uri.TryCreate(cLIAnalyzeCmdOptions.RepositoryUri, UriKind.RelativeOrAbsolute, out var uri))
+                if (Uri.TryCreate(cliAnalyzeCmdOptions.RepositoryUri, UriKind.RelativeOrAbsolute, out var uri))
                 {
                     run.VersionControlProvenance = new List<VersionControlDetails>
                     {
                         new()
                         {
                             RepositoryUri = uri,
-                            RevisionId = cLIAnalyzeCmdOptions.CommitHash
+                            RevisionId = cliAnalyzeCmdOptions.CommitHash
                         }
                     };
                 }
@@ -106,7 +105,7 @@ public class AnalyzeSarifWriter : CommandResultsWriter
 
                     if (match.Rule is not null)
                     {
-                        if (!reportingDescriptors.Any(r => r.Id == match.Rule.Id))
+                        if (reportingDescriptors.All(r => r.Id != match.Rule.Id))
                         {
                             ReportingDescriptor reportingDescriptor = new()
                             {

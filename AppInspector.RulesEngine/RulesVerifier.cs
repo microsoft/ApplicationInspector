@@ -168,6 +168,7 @@ public class RulesVerifier
 
         // Check that regexes for filenames are valid
         foreach (var pattern in (IList<string>?)rule.FileRegexes ?? Array.Empty<string>())
+        {
             try
             {
                 _ = new Regex(pattern, RegexOptions.Compiled);
@@ -179,6 +180,7 @@ public class RulesVerifier
                 errors.Add(MsgHelp.FormatString(MsgHelp.ID.VERIFY_RULES_REGEX_FAIL, rule.Id ?? "", pattern ?? "",
                     e.Message));
             }
+        }
 
         //valid search pattern
         foreach (var searchPattern in rule.Patterns ?? Array.Empty<SearchPattern>())
@@ -364,6 +366,13 @@ public class RulesVerifier
                 _logger?.LogError("Rule must specify MustNotMatch when `RequireMustNotMatch` is set. {0}", rule.Id);
                 errors.Add($"Rule must specify MustNotMatch when `RequireMustNotMatch` is set. {rule.Id}");
             }
+        }
+        
+        // Require Description so the Sarif is valid for GitHub sarif upload action
+        if (string.IsNullOrEmpty(rule.Description))
+        {
+            _logger?.LogError("Rule must contain a Description. {0}", rule.Id);
+            errors.Add($"Rule must contain a Description. {rule.Id}");
         }
 
         return new RuleStatus
