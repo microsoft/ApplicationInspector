@@ -60,7 +60,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         ///     Human readable description for the rule
         /// </summary>
         [JsonPropertyName("description")]
-        public string? Description { get; set; } = "";
+        public string Description { get; set; } = "";
 
         /// <summary>
         ///     Languages that the rule does not apply to
