@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using CommandLine;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Common;
@@ -32,6 +33,27 @@ public class TestVerifyRulesCmd
     ""patterns"": [
       {
                 ""confidence"": ""Medium"",
+        ""modifiers"": [
+          ""i""
+        ],
+        ""pattern"": ""windows"",
+        ""type"": ""String"",
+      }
+    ]
+}
+]";
+    
+    private readonly string _ruleWithoutDescription = @"[
+{
+    ""name"": ""Rule: No Description"",
+    ""id"": ""AI_TEST_NO_DESCRIPTION"",
+    ""tags"": [
+      ""Test.Tags.NoDescription""
+    ],
+    ""severity"": ""Important"",
+    ""patterns"": [
+      {
+        ""confidence"": ""Medium"",
         ""modifiers"": [
           ""i""
         ],
@@ -419,6 +441,23 @@ public class TestVerifyRulesCmd
     public void NoDefaultNoCustomRules()
     {
         Assert.ThrowsException<OpException>(() => new VerifyRulesCommand(new VerifyRulesOptions()));
+    }
+    
+    [TestMethod]
+    public void NoDescription()
+    {
+        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        File.WriteAllText(path, _ruleWithoutDescription);
+        VerifyRulesOptions options = new()
+        {
+            CustomRulesPath = path
+        };
+
+        VerifyRulesCommand command = new(options, _factory);
+        var result = command.GetResult();
+        File.Delete(path);
+        Assert.AreEqual(1, result.Unverified.Count());
+        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
     [TestMethod]
