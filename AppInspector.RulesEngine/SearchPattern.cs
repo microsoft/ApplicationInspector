@@ -38,6 +38,8 @@ public class SearchPattern
     ///     Set of mappings between namespace name as used in the xml document as the key
     ///     and the uri for the schema as the value
     /// </summary>
+    ///
+    [JsonPropertyName("xpathnamespaces")]
     public Dictionary<string, string> XPathNamespaces { get; set; } = new();
 
     /// <summary>
