@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Xml;
 using System.Xml.XPath;
 using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
@@ -175,7 +176,7 @@ public class TextContainer
     /// </summary>
     /// <param name="Path"></param>
     /// <returns></returns>
-    internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path)
+    internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path, Dictionary<string, string> xpathNameSpaces)
     {
         lock (_xpathLock)
         {
@@ -200,7 +201,17 @@ public class TextContainer
         }
 
         var navigator = _xmlDoc.CreateNavigator();
-        var nodeIter = navigator.Select(Path);
+        var query = navigator.Compile(Path);
+        if (xpathNameSpaces.Any())
+        {
+            var manager = new XmlNamespaceManager(navigator.NameTable);
+            foreach (var pair in xpathNameSpaces)
+            {
+                manager.AddNamespace(pair.Key, pair.Value);
+            }
+            query.SetContext(manager);
+        }
+        var nodeIter = navigator.Select(query);
         var minIndex = 0;
         while (nodeIter.MoveNext())
         {

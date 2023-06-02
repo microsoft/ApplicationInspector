@@ -35,6 +35,12 @@ public class SearchPattern
     public string[]? XPaths { get; set; }
 
     /// <summary>
+    ///     Set of mappings between namespace name as used in the xml document as the key
+    ///     and the uri for the schema as the value
+    /// </summary>
+    public Dictionary<string, string> XPathNamespaces { get; set; } = new();
+
+    /// <summary>
     ///     If set, attempt to parse the file as JSON and if that is possible,
     ///     before running the pattern, select down to the JsonPath provided
     /// </summary>

@@ -260,7 +260,7 @@ public abstract class AbstractRuleSet
             if (pattern.PatternType is PatternType.String or PatternType.Substring)
             {
                 return new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String,
-                    xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths: pattern.YamlPaths)
+                    xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths: pattern.YamlPaths, xPathNameSpaces: pattern.XPathNamespaces)
                 {
                     Label = clauseNumber.ToString(CultureInfo
                         .InvariantCulture), //important to pattern index identification
@@ -272,7 +272,7 @@ public abstract class AbstractRuleSet
 
             if (pattern.PatternType == PatternType.Regex)
             {
-                return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths)
+                return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths, pattern.XPathNamespaces)
                 {
                     Label = clauseNumber.ToString(CultureInfo
                         .InvariantCulture), //important to pattern index identification
@@ -284,7 +284,7 @@ public abstract class AbstractRuleSet
 
             if (pattern.PatternType == PatternType.RegexWord)
             {
-                return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths)
+                return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths, pattern.XPathNamespaces)
                 {
                     Label = clauseNumber.ToString(CultureInfo
                         .InvariantCulture), //important to pattern index identification
