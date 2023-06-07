@@ -153,6 +153,65 @@ public class XmlAndJsonTests
   </bookstore>
 ";
 
+    private const string NamespacedXmlData = @"
+[
+    {
+        ""name"": ""Android debug is enabled."",
+        ""id"": ""DS180000"",
+        ""description"": ""The android:debuggable element is set to true, which should be disabled for release builds."",
+        ""recommendation"": ""Set android:debuggable to false for release builds."",
+        ""applies_to_file_regex"": [
+            ""AndroidManifest.xml""
+        ],
+        ""applies_to"":[
+            ""XML""
+        ],
+        ""tags"": [
+            ""Framework.Android""
+        ],
+        ""severity"": ""BestPractice"",
+        ""rule_info"": ""DS180000.md"",
+        ""patterns"": [
+            {
+                ""xpaths"": [""//default:application/@android:debuggable""],
+                ""pattern"": ""true"",
+                ""type"": ""regex"",
+                ""scopes"": [
+                    ""code""
+                ],
+                ""modifiers"" : [""i""],
+                ""xpathnamespaces"": {
+                    ""default"": ""http://maven.apache.org/POM/4.0.0"",
+                    ""android"": ""http://schemas.android.com/apk/res/android""
+                }
+            }
+        ],
+        ""must-match"": [
+            ""<?xml version=\""1.0\"" encoding=\""utf-8\""?><manifest xmlns=\""http://maven.apache.org/POM/4.0.0\"" xmlns:android=\""http://schemas.android.com/apk/res/android\""><application android:debuggable='true' /></manifest>""
+        ],
+        ""must-not-match"": [
+            ""<?xml version=\""1.0\"" encoding=\""utf-8\""?><manifest xmlns=\""http://maven.apache.org/POM/4.0.0\"" xmlns:android=\""http://schemas.android.com/apk/res/android\""><application android:debuggable='false' /></manifest>""
+        ]
+    }
+]";
+
+    [TestMethod]
+    public void XmlWithNamespaces()
+    {
+        RuleSet rules = new();
+        rules.AddString(NamespacedXmlData, "JsonTestRules");
+        RulesVerifier verifier = new RulesVerifier(new RulesVerifierOptions());
+        //var verification= verifier.Verify(rules);
+        //Assert.AreEqual(true,verification.Verified);
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        if (_languages.FromFileNameOut("AndroidManifest.xml", out var info))
+        {
+            var matches = processor.AnalyzeFile(@"<?xml version=""1.0"" encoding=""utf-8""?><manifest xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:android=""http://schemas.android.com/apk/res/android""><application android:debuggable='true' /></manifest>", new FileEntry("AndroidManifest.xml", new MemoryStream()), info);
+            Assert.AreEqual(1, matches.Count);
+        }
+    }
+
     [TestMethod]
     public void XmlAttributeTest()
     {
