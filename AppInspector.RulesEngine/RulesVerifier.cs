@@ -312,10 +312,11 @@ public class RulesVerifier
         // We need to provide a language for the TextContainer, which will later be referenced by the Rule when executed.
         // We can grab any Language that the rule applies to, if there are none, it means it applies to all languages, except any in DoesNotApplyTo.
         // Then we fall back to grab any language from the languages configuration that isn't DoesNotApplyTo for this rule.
+        // Finally we fall back to a default value that has no comment styling
         var language = convertedOatRule.AppInspectorRule.AppliesTo?.FirstOrDefault() ??
                        _options.LanguageSpecs.GetNames().FirstOrDefault(x =>
                            !convertedOatRule.AppInspectorRule.DoesNotApplyTo?.Contains(x,
-                               StringComparer.InvariantCultureIgnoreCase) ?? true) ?? "csharp";
+                               StringComparer.InvariantCultureIgnoreCase) ?? true) ?? "Rule Verifier Default Value";
 
         // validate all must match samples are matched
         foreach (var mustMatchElement in (IList<string>?)rule.MustMatch ?? Array.Empty<string>())

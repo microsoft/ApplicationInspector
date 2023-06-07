@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Xml;
 using System.Xml.XPath;
 using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
@@ -175,7 +176,7 @@ public class TextContainer
     /// </summary>
     /// <param name="Path"></param>
     /// <returns></returns>
-    internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path)
+    internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path, Dictionary<string, string> xpathNameSpaces)
     {
         lock (_xpathLock)
         {
@@ -200,7 +201,17 @@ public class TextContainer
         }
 
         var navigator = _xmlDoc.CreateNavigator();
-        var nodeIter = navigator.Select(Path);
+        var query = navigator.Compile(Path);
+        if (xpathNameSpaces.Any())
+        {
+            var manager = new XmlNamespaceManager(navigator.NameTable);
+            foreach (var pair in xpathNameSpaces)
+            {
+                manager.AddNamespace(pair.Key, pair.Value);
+            }
+            query.SetContext(manager);
+        }
+        var nodeIter = navigator.Select(query);
         var minIndex = 0;
         while (nodeIter.MoveNext())
         {
@@ -214,7 +225,11 @@ public class TextContainer
             // Then we grab the index of the end of this tag.
             // We can't use OuterXML because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
             var endTagIndex = FullContent[nameIndex..].IndexOf('>');
-            var offset = FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
+            // We also look for self-closing tag
+            var selfClosedTag = FullContent[endTagIndex-1] == '/';
+            // If the tag is self closing innerxml will be empty string, so the finding is located at the end of the tag and is empty string
+            // Otherwise the finding is the content of the xml tag
+            var offset = selfClosedTag ? endTagIndex : FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
             // Move the minimum index up in case there are multiple instances of identical OuterXML
             // This ensures we won't re-find the same one
             var totalOffset = minIndex + nameIndex + endTagIndex;

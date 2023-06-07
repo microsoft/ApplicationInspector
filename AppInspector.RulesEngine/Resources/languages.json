@@ -383,5 +383,12 @@
       ".xml"
     ],
     "type": "build"
+  },
+  {
+    "name": "Rule Verifier Default Value",
+    "extensions": [
+      ".ruleverifiertestcase"
+    ],
+    "type": "code"
   }
 ]

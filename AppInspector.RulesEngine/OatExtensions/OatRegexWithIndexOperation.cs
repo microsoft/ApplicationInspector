@@ -99,7 +99,7 @@ public class OatRegexWithIndexOperation : OatOperation
                         {
                             foreach (var xmlPath in src.XPaths)
                             {
-                                var targets = tc.GetStringFromXPath(xmlPath);
+                                var targets = tc.GetStringFromXPath(xmlPath, src.XPathNameSpaces);
                                 foreach (var target in targets)
                                 {
                                     var matches = GetMatches(regex, tc, clause, src.Scopes, target.Item2);

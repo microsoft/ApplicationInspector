@@ -79,7 +79,7 @@ public class OatSubstringIndexOperation : OatOperation
                     {
                         foreach (var xmlPath in src.XPaths)
                         {
-                            var targets = tc.GetStringFromXPath(xmlPath);
+                            var targets = tc.GetStringFromXPath(xmlPath, src.XPathNameSpaces);
                             foreach (var target in targets)
                             {
                                 var matches = GetMatches(target.Item1, stringList[i], comparisonType, tc, src);

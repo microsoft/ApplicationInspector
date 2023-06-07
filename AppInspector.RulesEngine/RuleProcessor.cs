@@ -285,11 +285,11 @@ public class RuleProcessor
         IEnumerable<string>? tagsToIgnore)
     {
         return GetRulesByLanguage(languageInfo.Name)
-            .Union(GetRulesByFileName(fileEntry.FullPath))
-            .Union(GetUniversalRules()
-                .Where(x => !x.AppInspectorRule.DoesNotApplyTo?.Contains(languageInfo.Name) ?? true))
-            .Where(x => !x.AppInspectorRule.Tags?.Any(y => tagsToIgnore?.Contains(y) ?? false) ?? true)
-            .Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
+            .Concat(GetRulesByFileName(fileEntry.FullPath))
+            .Concat(GetUniversalRules())
+                .Where(x => !x.AppInspectorRule.DoesNotApplyTo?.Contains(languageInfo.Name) ?? true)
+                .Where(x => !x.AppInspectorRule.Tags?.Any(y => tagsToIgnore?.Contains(y) ?? false) ?? true)
+                .Where(x => !x.AppInspectorRule.Disabled && SeverityLevel.HasFlag(x.AppInspectorRule.Severity));
     }
 
     /// <summary>
