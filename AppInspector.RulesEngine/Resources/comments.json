@@ -59,5 +59,12 @@
     "inline": "#",
     "prefix": "=begin",
     "suffix": "=end"
+  },
+  {
+    "language": [
+      "XML"
+    ],
+    "prefix": "<!--",
+    "suffix": "-->"
   }
 ]
