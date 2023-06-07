@@ -51,7 +51,7 @@ public abstract class AbstractRuleSet
     {
         if (!string.IsNullOrEmpty(input))
         {
-            return _oatRules.Where(x => x.AppInspectorRule.CompiledFileRegexes.Any(y => y.IsMatch(input)));
+            return _oatRules.Where(x => x.AppInspectorRule.CompiledFileRegexes.Any(y => y.IsMatch(input) && !x.AppInspectorRule.CompiledExcludeFileRegexes.Any(z => z.IsMatch(input))));
         }
 
         return Array.Empty<ConvertedOatRule>();

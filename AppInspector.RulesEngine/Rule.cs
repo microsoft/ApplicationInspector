@@ -18,6 +18,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine
 
         private IList<string>? _fileRegexes;
         private bool _updateCompiledFileRegex;
+        private IList<string>? _excludeFileRegexes;
+        private bool _updateCompiledExcludeFileRegex;
 
         /// <summary>
         ///     Name of the source where the rule definition came from.
@@ -87,7 +89,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 _updateCompiledFileRegex = true;
             }
         }
-
+        
         /// <summary>
         ///     Internal API to cache construction of <see cref="FileRegexes"/>
         /// </summary>
@@ -105,6 +107,39 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 return _compiled;
             }
         }
+        
+        /// <summary>
+        ///     Regular expressions for file names that the Rule applies to
+        /// </summary>
+        [JsonPropertyName("exclude_file_regex")]
+        public IList<string>? DoesNotApplyFileRegex
+        {
+            get => _excludeFileRegexes;
+            set
+            {
+                _excludeFileRegexes = value;
+                _updateCompiledExcludeFileRegex = true;
+            }
+        }
+
+        /// <summary>
+        ///     Internal API to cache construction of <see cref="FileRegexes"/>
+        /// </summary>
+        [JsonIgnore]
+        internal IEnumerable<Regex> CompiledExcludeFileRegexes
+        {
+            get
+            {
+                if (_updateCompiledExcludeFileRegex)
+                {
+                    _compiled = (IList<Regex>?)DoesNotApplyFileRegex?.Select(x => new Regex(x, RegexOptions.Compiled)).ToList() ?? Array.Empty<Regex>();
+                    _updateCompiledFileRegex = false;
+                }
+
+                return _compiled;
+            }
+        }
+
 
         /// <summary>
         ///     The Tags the rule provides
