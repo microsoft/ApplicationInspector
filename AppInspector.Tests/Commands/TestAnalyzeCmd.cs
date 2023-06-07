@@ -408,6 +408,7 @@ buy@tacos.com
     ],
     ""severity"": ""Important"",
     ""applies_to_file_regex"": [""afile.js""],
+    ""exclude_file_regex"": [""afile.js.cs""],
     ""patterns"": [
       {
                 ""confidence"": ""Medium"",
@@ -931,6 +932,7 @@ windows
     }
 
     [DataRow("afile.js", AnalyzeResult.ExitCode.Success, 4, 1)]
+    [DataRow("afile.js.cs", AnalyzeResult.ExitCode.NoMatches, 0, 0)]
     [DataRow("adifferentfile.js", AnalyzeResult.ExitCode.Success, 1, 1)]
     [DataTestMethod]
     public void AppliesToFileName(string testFileName, AnalyzeResult.ExitCode expectedExitCode,

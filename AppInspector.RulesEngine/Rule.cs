@@ -20,6 +20,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         private bool _updateCompiledFileRegex;
         private IList<string>? _excludeFileRegexes;
         private bool _updateCompiledExcludeFileRegex;
+        private IList<Regex> _compiledExclusions = Array.Empty<Regex>();
 
         /// <summary>
         ///     Name of the source where the rule definition came from.
@@ -132,11 +133,11 @@ namespace Microsoft.ApplicationInspector.RulesEngine
             {
                 if (_updateCompiledExcludeFileRegex)
                 {
-                    _compiled = (IList<Regex>?)DoesNotApplyFileRegex?.Select(x => new Regex(x, RegexOptions.Compiled)).ToList() ?? Array.Empty<Regex>();
+                    _compiledExclusions = (IList<Regex>?)DoesNotApplyFileRegex?.Select(x => new Regex(x, RegexOptions.Compiled)).ToList() ?? Array.Empty<Regex>();
                     _updateCompiledFileRegex = false;
                 }
 
-                return _compiled;
+                return _compiledExclusions;
             }
         }
 
