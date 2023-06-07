@@ -163,9 +163,6 @@ public class XmlAndJsonTests
         ""applies_to_file_regex"": [
             ""AndroidManifest.xml""
         ],
-        ""applies_to"":[
-            ""XML""
-        ],
         ""tags"": [
             ""Framework.Android""
         ],
