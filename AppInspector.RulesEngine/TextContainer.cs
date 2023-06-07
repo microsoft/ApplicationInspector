@@ -225,7 +225,11 @@ public class TextContainer
             // Then we grab the index of the end of this tag.
             // We can't use OuterXML because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
             var endTagIndex = FullContent[nameIndex..].IndexOf('>');
-            var offset = FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
+            // We also look for self-closing tag
+            var selfClosedTag = FullContent[endTagIndex-1] == '/';
+            // If the tag is self closing innerxml will be empty string, so the finding is located at the end of the tag and is empty string
+            // Otherwise the finding is the content of the xml tag
+            var offset = selfClosedTag ? endTagIndex : FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
             // Move the minimum index up in case there are multiple instances of identical OuterXML
             // This ensures we won't re-find the same one
             var totalOffset = minIndex + nameIndex + endTagIndex;
