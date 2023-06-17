@@ -39,13 +39,6 @@ stages:
       dotnetVersionLTS: ${{ variables.DotnetVersionLTS }}
       vmImage: 'oss-tools-win2022_1es-managed'
       projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
-  - template: dotnet-test-job.yml@templates
-    parameters:
-      jobName: 'dotnet_test_ubuntu'
-      dotnetVersion: ${{ variables.DotnetVersion }}
-      dotnetVersionLTS: ${{ variables.DotnetVersionLTS }}
-      vmImage: 'ubuntu-22.04-image-base'
-      projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
 
 - stage: SDL
   dependsOn: []
