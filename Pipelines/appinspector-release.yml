@@ -1,0 +1,577 @@
+name: ApplicationInspector_Release_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - AppInspector/*
+    - AppInspector.CLI/*
+    - AppInspector.Common/*
+    - AppInspector.Logging/*
+    - AppInspector.RulesEngine/*
+pr: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: SecurityEngineering/OSS-Tools-Pipeline-Templates
+      ref: refs/tags/v1.0.7
+
+variables:
+  BuildConfiguration: 'Release'
+  DotnetVersion: '7.0.x'
+  DotnetVersionLTS: '6.0.x'
+  DotnetTargetFramework: 'net7.0'
+
+stages:
+- stage: Test
+  dependsOn: []
+  jobs:
+  - template: dotnet-test-job.yml@templates
+    parameters:
+      jobName: 'dotnet_test_windows'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      dotnetVersionLTS: ${{ variables.DotnetVersionLTS }}
+      vmImage: 'oss-tools-win2022_1es-managed'
+      projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
+
+- stage: SDL
+  dependsOn: []
+  jobs:
+  - template: sdl-job.yml@templates
+      
+- stage: Build
+  dependsOn:
+  - Test
+  jobs:
+  - template: dotnet-publish-linux-mac-job.yml@templates
+    parameters:
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      targetFramework: '${{ variables.DotnetTargetFramework }}'
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectName: 'ApplicationInspector'
+      exePath: 'ApplicationInspector.CLI'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: dotnet-publish-win-netcore-job.yml@templates
+    parameters:
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      targetFramework: '${{ variables.DotnetTargetFramework }}'
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectName: 'ApplicationInspector'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
+    parameters:
+      jobName: 'pack_lib'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      projectPath: 'AppInspector/AppInspector.Commands.csproj'
+      projectName: 'ApplicationInspector_Commands'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
+    parameters:
+      jobName: 'pack_engine'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      projectPath: 'AppInspector.RulesEngine/AppInspector.RulesEngine.csproj'
+      projectName: 'ApplicationInspector_RulesEngine'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
+    parameters:
+      jobName: 'pack_common'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      projectPath: 'AppInspector.Common/AppInspector.Common.csproj'
+      projectName: 'ApplicationInspector_Common'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
+    parameters:
+      jobName: 'pack_logging'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      projectPath: 'AppInspector.Logging/AppInspector.Logging.csproj'
+      projectName: 'ApplicationInspector_Logging'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
+    parameters:
+      jobName: 'pack_cli'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectName: 'ApplicationInspector_CLI'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+
+- stage: Release
+  dependsOn:
+  - SDL
+  - Build
+  condition: succeeded()
+  jobs:
+  - job: sign_hash_release
+    displayName: Code Sign, Generate Hashes, Publish Public Releases
+    pool:
+      name: 'OSS-Tools-1ESPool'
+      vmImage: 'oss-tools-win2022_1es-managed'
+    steps:
+    - task: UseDotNet@2 # For ESRP. Do not use variable.
+      inputs:
+        packageType: 'sdk'
+        version: '6.0.x'
+    - template: nbgv-set-version-steps.yml@templates
+    - task: DownloadBuildArtifacts@0
+      displayName: Download Unsigned Archives
+      inputs:
+        buildType: 'current'
+        downloadType: 'specific'
+        itemPattern: 'Unsigned_Binaries/*.zip'
+        downloadPath: '$(Build.BinariesDirectory)'
+    - task: ExtractFiles@1
+      displayName: Extract Artifacts for Signing
+      inputs:
+        archiveFilePatterns: '$(Build.BinariesDirectory)\Unsigned_Binaries\*.zip'
+        destinationFolder: '$(Build.BinariesDirectory)'
+        cleanDestinationFolder: false
+        overwriteExistingFiles: true
+    - task: AntiMalware@4
+      displayName: Anti-Malware Scan
+      inputs:
+        InputType: 'Basic'
+        ScanType: 'CustomScan'
+        FileDirPath: '$(Build.BinariesDirectory)'
+        EnableServices: true
+        SupportLogOnError: true
+        TreatSignatureUpdateFailureAs: 'Warning'
+        SignatureFreshness: 'UpToDate'
+        TreatStaleSignatureAs: 'Warning'
+    # First party code signing
+    - task: EsrpCodeSigning@1
+      displayName: First Party Code Sign Linux
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/linux/ApplicationInspector_linux_$(ReleaseVersion)'
+        Pattern: 'ApplicationInspector.*.dll, OAT.dll, RecursiveExtractor.dll, Sarif.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: First Party Code Sign MacOS
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/macos/ApplicationInspector_macos_$(ReleaseVersion)'
+        Pattern: 'ApplicationInspector.*.dll, OAT.dll, RecursiveExtractor.dll, Sarif.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: First Party Code Sign Windows
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/win/ApplicationInspector_win_$(ReleaseVersion)'
+        Pattern: 'ApplicationInspector.*.dll, ApplicationInspector.CLI.exe, OAT.dll, RecursiveExtractor.dll, Sarif.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: First Party Code Sign .NET Core App
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_netcoreapp_$(ReleaseVersion)'
+        Pattern: 'ApplicationInspector.*.dll, ApplicationInspector.CLI.exe, OAT.dll, RecursiveExtractor.dll, Sarif.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-230012",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    # Third party code signing
+    - task: EsrpCodeSigning@1
+      displayName: Third Party Code Sign Linux
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/linux/ApplicationInspector_linux_$(ReleaseVersion)'
+        Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: Third Party Code Sign MacOS
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/macos/ApplicationInspector_macos_$(ReleaseVersion)'
+        Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: Third Party Code Sign Windows
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/win/ApplicationInspector_win_$(ReleaseVersion)'
+        Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, git2-e632535.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: Third Party Code Sign .NET Core App
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_netcoreapp_$(ReleaseVersion)'
+        Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, git2-e632535.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'      
+    # Nuget package code signing
+    - task: EsrpCodeSigning@1
+      displayName: Code Sign Nuget Packages
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)'
+        Pattern: '*.nupkg, *.snupkg'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-401405",
+                      "OperationCode" : "NuGetSign",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-401405",
+                      "OperationCode" : "NuGetVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - powershell: 'Get-ChildItem -Path ''$(Build.BinariesDirectory)'' -Recurse CodeSign* | foreach { Remove-Item -Path $_.FullName }'
+      displayName: 'Delete Code Sign Summaries'
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - Linux
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/linux/ApplicationInspector_linux_$(ReleaseVersion)'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_linux_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - MacOS
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/macos/ApplicationInspector_macos_$(ReleaseVersion)'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_macos_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - Windows
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/win/ApplicationInspector_win_$(ReleaseVersion)'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_win_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: ArchiveFiles@2
+      displayName: Archive Artifact - .NET Core App
+      inputs:
+        rootFolderOrFile: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_netcoreapp_$(ReleaseVersion)'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/ApplicationInspector_netcoreapp_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: PowerShell@2
+      displayName: Generate Hashes
+      inputs:
+        targetType: 'inline'
+        script: |
+          Get-ChildItem $(Build.StagingDirectory) | Foreach-Object {
+            $name = $_.Name
+            $tmp = (Get-FileHash "$(Build.StagingDirectory)\$name").Hash
+            Add-Content $(Build.StagingDirectory)\HASHES.txt "$tmp`t$name"
+          }
+    - task: PowerShell@2
+      displayName: Move NuGet Packages
+      inputs:
+        targetType: 'inline'
+        script: |
+          mv $env:BUILD_BINARIESDIRECTORY/*.nupkg $env:BUILD_STAGINGDIRECTORY/
+          mv $env:BUILD_BINARIESDIRECTORY/*.snupkg $env:BUILD_STAGINGDIRECTORY/
+    - task: PublishPipelineArtifact@1
+      displayName: Publish Signed Artifacts to Pipeline
+      inputs:
+        targetPath: '$(Build.StagingDirectory)'
+        artifact: 'Signed_Binaries'
+    # - task: GitHubRelease@1
+    #   displayName: Release to GitHub
+    #   inputs:
+    #     gitHubConnection: 'github.com_scovetta'
+    #     repositoryName: 'microsoft/ApplicationInspector'
+    #     action: 'create'
+    #     target: '$(Build.SourceVersion)'
+    #     tagSource: 'userSpecifiedTag'
+    #     tag: 'v$(ReleaseVersion)'
+    #     title: 'Release v$(ReleaseVersion)'
+    #     releaseNotesSource: 'inline'
+    #     assets: |
+    #       $(Build.StagingDirectory)/*.zip
+    #       $(Build.StagingDirectory)/HASHES.txt
+    #     changeLogCompareToRelease: 'lastNonDraftRelease'
+    #     changeLogType: 'commitBased'
+    # - task: NuGetCommand@2
+    #   displayName: Push NuGet Packages
+    #   inputs:
+    #     command: 'push'
+    #     packagesToPush: '$(Build.StagingDirectory)/*.nupkg'
+    #     nuGetFeedType: 'external'
+    #     publishFeedCredentials: 'CST-E Nuget CI'
+    #     verbosityPush: 'Normal'
+    - task: PowerShell@2
+      displayName: Mkdir for Manifests
+      inputs:
+        targetType: 'inline'
+        script: mkdir sbom/win/ ; mkdir sbom/netcoreapp/ ; mkdir sbom/linux ; mkdir sbom/macos
+        workingDirectory: '$(Build.StagingDirectory)'
+    - task: ManifestGeneratorTask@0
+      displayName: Generate Windows Manifest
+      inputs:
+        BuildDropPath: '$(Build.BinariesDirectory)/win/'
+        ManifestDirPath: '$(Build.StagingDirectory)/sbom/win/'
+        PackageName: 'ASA'
+        PackageVersion: '$(ReleaseVersion)'
+    - task: ManifestGeneratorTask@0
+      displayName: Generate NetCoreApp Manifest
+      inputs:
+        BuildDropPath: '$(Build.BinariesDirectory)/netcoreapp/'
+        ManifestDirPath: '$(Build.StagingDirectory)/sbom/netcoreapp/'
+        PackageName: 'ASA'
+        PackageVersion: '$(ReleaseVersion)'
+    - task: ManifestGeneratorTask@0
+      displayName: Generate Linux Manifest
+      inputs:
+        BuildDropPath: '$(Build.BinariesDirectory)/linux/'
+        ManifestDirPath: '$(Build.StagingDirectory)/sbom/linux/'
+        PackageName: 'ASA'
+        PackageVersion: '$(ReleaseVersion)'
+    - task: ManifestGeneratorTask@0
+      displayName: Generate MacOS Manifest
+      inputs:
+        BuildDropPath: '$(Build.BinariesDirectory)/macos/'
+        ManifestDirPath: '$(Build.StagingDirectory)/sbom/macos/'
+        PackageName: 'ASA'
+        PackageVersion: '$(ReleaseVersion)'
+    - task: ArchiveFiles@2
+      displayName: Archive Manifests
+      inputs:
+        rootFolderOrFile: '$(Build.StagingDirectory)/sbom/'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/Manifests/ApplicationInspector_Release_Manifests_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: PublishBuildArtifacts@1
+      displayName: Pipeline Publish Manifest Archive
+      inputs:
+        PathtoPublish: '$(Build.StagingDirectory)/Manifests'
+        ArtifactName: 'Release Manifests'
