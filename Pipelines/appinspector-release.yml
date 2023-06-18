@@ -504,30 +504,30 @@ stages:
       inputs:
         targetPath: '$(Build.StagingDirectory)'
         artifact: 'Signed_Binaries'
-    # - task: GitHubRelease@1
-    #   displayName: Release to GitHub
-    #   inputs:
-    #     gitHubConnection: 'github.com_scovetta'
-    #     repositoryName: 'microsoft/ApplicationInspector'
-    #     action: 'create'
-    #     target: '$(Build.SourceVersion)'
-    #     tagSource: 'userSpecifiedTag'
-    #     tag: 'v$(ReleaseVersion)'
-    #     title: 'Release v$(ReleaseVersion)'
-    #     releaseNotesSource: 'inline'
-    #     assets: |
-    #       $(Build.StagingDirectory)/*.zip
-    #       $(Build.StagingDirectory)/HASHES.txt
-    #     changeLogCompareToRelease: 'lastNonDraftRelease'
-    #     changeLogType: 'commitBased'
-    # - task: NuGetCommand@2
-    #   displayName: Push NuGet Packages
-    #   inputs:
-    #     command: 'push'
-    #     packagesToPush: '$(Build.StagingDirectory)/*.nupkg'
-    #     nuGetFeedType: 'external'
-    #     publishFeedCredentials: 'CST-E Nuget CI'
-    #     verbosityPush: 'Normal'
+    - task: GitHubRelease@1
+      displayName: Release to GitHub
+      inputs:
+        gitHubConnection: 'github.com_scovetta'
+        repositoryName: 'microsoft/ApplicationInspector'
+        action: 'create'
+        target: '$(Build.SourceVersion)'
+        tagSource: 'userSpecifiedTag'
+        tag: 'v$(ReleaseVersion)'
+        title: 'Release v$(ReleaseVersion)'
+        releaseNotesSource: 'inline'
+        assets: |
+          $(Build.StagingDirectory)/*.zip
+          $(Build.StagingDirectory)/HASHES.txt
+        changeLogCompareToRelease: 'lastNonDraftRelease'
+        changeLogType: 'commitBased'
+    - task: NuGetCommand@2
+      displayName: Push NuGet Packages
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.StagingDirectory)/*.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: 'CST-E Nuget CI'
+        verbosityPush: 'Normal'
     - task: PowerShell@2
       displayName: Mkdir for Manifests
       inputs:
