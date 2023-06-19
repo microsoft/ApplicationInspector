@@ -1,17 +1,4 @@
-# Azure Pipelines
-# https://aka.ms/yaml
-
-variables:
-- name: CurrentSDK
-  value: 7.0.x
-- name: CurrentFramework
-  value: net7.0
-- name: LTS_SDK
-  value: 6.0.x
-- name: LTS_Framework
-  value: net6.0
-
-name: ApplicationInspector_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+name: ApplicationInspector_Release_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 trigger:
   batch: true
   branches:
@@ -24,112 +11,124 @@ trigger:
     - AppInspector.Common/*
     - AppInspector.Logging/*
     - AppInspector.RulesEngine/*
-pr:
-  branches:
-    include:
-    - main
-  paths:
-    include:
-    - Pipelines
-    - AppInspector/*
-    - AppInspector.CLI/*
-    - AppInspector.Common/*
-    - AppInspector.Logging/*
-    - AppInspector.RulesEngine/*
-    - AppInspector.Tests/*
-    - AppInspector.Tests.CLI/*
+pr: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: SecurityEngineering/OSS-Tools-Pipeline-Templates
+      ref: refs/tags/v1.0.7
+
+variables:
+  BuildConfiguration: 'Release'
+  DotnetVersion: '7.0.x'
+  DotnetVersionLTS: '6.0.x'
+  DotnetTargetFramework: 'net7.0'
 
 stages:
 - stage: Test
+  dependsOn: []
   jobs:
-  - template: templates/dotnet-test-job.yml
+  - template: dotnet-test-job.yml@templates
     parameters:
-      jobName: "test_current"
-      dotnetVersion: ${{ variables.currentSDK }}
-      dotnetVersionLTS: ${{ variables.LTS_SDK }}
+      jobName: 'dotnet_test_windows'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      dotnetVersionLTS: ${{ variables.DotnetVersionLTS }}
+      vmImage: 'oss-tools-win2022_1es-managed'
       projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
-      
+
 - stage: SDL
-  dependsOn: Test
+  dependsOn: []
   jobs:
-  - template: templates/sdl-job.yml
-    parameters:
-      serviceTreeID: '80207f22-ee58-4fd1-bdd5-4b1ecc3e7c9f'
+  - template: sdl-job.yml@templates
       
 - stage: Build
-  dependsOn: Test
+  dependsOn:
+  - Test
   jobs:
-  - template: templates/dotnet-publish-linux-mac-job.yml
+  - template: dotnet-publish-linux-mac-job.yml@templates
     parameters:
-      dotnetVersion: '${{ variables.CurrentSDK }}'
-      publishFrameworkVersion: '${{ variables.CurrentFramework }}'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      targetFramework: '${{ variables.DotnetTargetFramework }}'
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectName: 'ApplicationInspector'
+      exePath: 'ApplicationInspector.CLI'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: dotnet-publish-win-netcore-job.yml@templates
+    parameters:
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      targetFramework: '${{ variables.DotnetTargetFramework }}'
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
       projectName: 'ApplicationInspector'
       preBuild:
-      - template: templates/nbgv-set-version-steps.yml
-  - template: templates/dotnet-publish-win-netcore-job.yml
-    parameters:
-      dotnetVersion: '${{ variables.CurrentSDK }}'
-      publishFrameworkVersion: '${{ variables.CurrentFramework }}'
-      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
-      projectName: 'ApplicationInspector'
-      preBuild:
-      - template: templates/nbgv-set-version-steps.yml
-  - template: templates/nuget-build-job.yml
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
     parameters:
       jobName: 'pack_lib'
-      dotnetVersion: '${{ variables.CurrentSDK }}'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
       projectPath: 'AppInspector/AppInspector.Commands.csproj'
       projectName: 'ApplicationInspector_Commands'
-  - template: templates/nuget-build-job.yml
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
     parameters:
       jobName: 'pack_engine'
-      dotnetVersion: '${{ variables.CurrentSDK }}'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
       projectPath: 'AppInspector.RulesEngine/AppInspector.RulesEngine.csproj'
       projectName: 'ApplicationInspector_RulesEngine'
-  - template: templates/nuget-build-job.yml
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
     parameters:
       jobName: 'pack_common'
-      dotnetVersion: '${{ variables.CurrentSDK }}'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
       projectPath: 'AppInspector.Common/AppInspector.Common.csproj'
       projectName: 'ApplicationInspector_Common'
-  - template: templates/nuget-build-job.yml
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
     parameters:
       jobName: 'pack_logging'
-      dotnetVersion: '${{ variables.CurrentSDK }}'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
       projectPath: 'AppInspector.Logging/AppInspector.Logging.csproj'
       projectName: 'ApplicationInspector_Logging'
-  - template: templates/nuget-build-job.yml
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
     parameters:
       jobName: 'pack_cli'
-      dotnetVersion: '${{ variables.CurrentSDK }}'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
       projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
       projectName: 'ApplicationInspector_CLI'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
 
 - stage: Release
   dependsOn:
   - SDL
   - Build
-  condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI'))
+  condition: succeeded()
   jobs:
   - job: sign_hash_release
     displayName: Code Sign, Generate Hashes, Publish Public Releases
     pool:
-      vmImage: 'windows-latest'
+      name: 'OSS-Tools-1ESPool'
+      vmImage: 'oss-tools-win2022_1es-managed'
     steps:
-    - task: UseDotNet@2
+    - task: UseDotNet@2 # For ESRP. Do not use variable.
       inputs:
         packageType: 'sdk'
-        version: '${{ variables.CurrentSDK }}'
-    - script: 'dotnet tool update -g nbgv'
-      displayName: 'Install GitVersioning'
-    - task: PowerShell@2
-      displayName: Set Release Version
-      inputs:
-        targetType: 'inline'
-        script: |
-          $version = (nbgv get-version -v AssemblyInformationalVersion).split('+')[0]
-          Write-Host "##vso[task.setvariable variable=ReleaseVersion;]$version"
+        version: '6.0.x'
+    - template: nbgv-set-version-steps.yml@templates
     - task: DownloadBuildArtifacts@0
       displayName: Download Unsigned Archives
       inputs:
@@ -155,16 +154,13 @@ stages:
         TreatSignatureUpdateFailureAs: 'Warning'
         SignatureFreshness: 'UpToDate'
         TreatStaleSignatureAs: 'Warning'
-    - task: UseDotNet@2
-      inputs:
-        packageType: 'sdk'
-        version: '2.1.804'
+    # First party code signing
     - task: EsrpCodeSigning@1
-      displayName: Code Sign Linux
+      displayName: First Party Code Sign Linux
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/linux/ApplicationInspector_linux_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll'
+        Pattern: 'ApplicationInspector.*.dll, OAT.dll, RecursiveExtractor.dll, Sarif.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
@@ -193,11 +189,11 @@ stages:
         MaxConcurrency: '50'
         MaxRetryAttempts: '5'
     - task: EsrpCodeSigning@1
-      displayName: Code Sign MacOS
+      displayName: First Party Code Sign MacOS
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/macos/ApplicationInspector_macos_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, ApplicationInspector.Common.dll'
+        Pattern: 'ApplicationInspector.*.dll, OAT.dll, RecursiveExtractor.dll, Sarif.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
@@ -226,11 +222,11 @@ stages:
         MaxConcurrency: '50'
         MaxRetryAttempts: '5'
     - task: EsrpCodeSigning@1
-      displayName: Code Sign Windows
+      displayName: First Party Code Sign Windows
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/win/ApplicationInspector_win_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, ApplicationInspector.Common.dll'
+        Pattern: 'ApplicationInspector.*.dll, ApplicationInspector.CLI.exe, OAT.dll, RecursiveExtractor.dll, Sarif.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
@@ -259,11 +255,11 @@ stages:
         MaxConcurrency: '50'
         MaxRetryAttempts: '5'
     - task: EsrpCodeSigning@1
-      displayName: Code Sign .NET Core App
+      displayName: First Party Code Sign .NET Core App
       inputs:
         ConnectedServiceName: 'AppInspector_CodeSign'
         FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_netcoreapp_$(ReleaseVersion)'
-        Pattern: 'ApplicationInspector.CLI.dll, ApplicationInspector.CLI.exe, ApplicationInspector.Commands.dll, ApplicationInspector.RulesEngine.dll, ApplicationInspector.Common.dll'
+        Pattern: 'ApplicationInspector.*.dll, ApplicationInspector.CLI.exe, OAT.dll, RecursiveExtractor.dll, Sarif.dll'
         signConfigType: 'inlineSignParams'
         inlineOperation: |
           [
@@ -291,6 +287,140 @@ stages:
         SessionTimeout: '60'
         MaxConcurrency: '50'
         MaxRetryAttempts: '5'
+    # Third party code signing
+    - task: EsrpCodeSigning@1
+      displayName: Third Party Code Sign Linux
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/linux/ApplicationInspector_linux_$(ReleaseVersion)'
+        Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: Third Party Code Sign MacOS
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/macos/ApplicationInspector_macos_$(ReleaseVersion)'
+        Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: Third Party Code Sign Windows
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/win/ApplicationInspector_win_$(ReleaseVersion)'
+        Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, git2-e632535.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'
+    - task: EsrpCodeSigning@1
+      displayName: Third Party Code Sign .NET Core App
+      inputs:
+        ConnectedServiceName: 'AppInspector_CodeSign'
+        FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_netcoreapp_$(ReleaseVersion)'
+        Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, git2-e632535.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+        signConfigType: 'inlineSignParams'
+        inlineOperation: |
+          [
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolSign",
+                      "Parameters" : {
+                          "OpusName" : "Microsoft",
+                          "OpusInfo" : "http://www.microsoft.com",
+                          "FileDigest" : "/fd \"SHA256\"",
+                          "PageHash" : "/NPH",
+                          "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                      },
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  },
+                  {
+                      "KeyCode" : "CP-231522",
+                      "OperationCode" : "SigntoolVerify",
+                      "Parameters" : {},
+                      "ToolName" : "sign",
+                      "ToolVersion" : "1.0"
+                  }
+              ]
+        SessionTimeout: '60'
+        MaxConcurrency: '50'
+        MaxRetryAttempts: '5'      
+    # Nuget package code signing
     - task: EsrpCodeSigning@1
       displayName: Code Sign Nuget Packages
       inputs:
@@ -398,3 +528,50 @@ stages:
         nuGetFeedType: 'external'
         publishFeedCredentials: 'CST-E Nuget CI'
         verbosityPush: 'Normal'
+    - task: PowerShell@2
+      displayName: Mkdir for Manifests
+      inputs:
+        targetType: 'inline'
+        script: mkdir sbom/win/ ; mkdir sbom/netcoreapp/ ; mkdir sbom/linux ; mkdir sbom/macos
+        workingDirectory: '$(Build.StagingDirectory)'
+    - task: ManifestGeneratorTask@0
+      displayName: Generate Windows Manifest
+      inputs:
+        BuildDropPath: '$(Build.BinariesDirectory)/win/'
+        ManifestDirPath: '$(Build.StagingDirectory)/sbom/win/'
+        PackageName: 'ASA'
+        PackageVersion: '$(ReleaseVersion)'
+    - task: ManifestGeneratorTask@0
+      displayName: Generate NetCoreApp Manifest
+      inputs:
+        BuildDropPath: '$(Build.BinariesDirectory)/netcoreapp/'
+        ManifestDirPath: '$(Build.StagingDirectory)/sbom/netcoreapp/'
+        PackageName: 'ASA'
+        PackageVersion: '$(ReleaseVersion)'
+    - task: ManifestGeneratorTask@0
+      displayName: Generate Linux Manifest
+      inputs:
+        BuildDropPath: '$(Build.BinariesDirectory)/linux/'
+        ManifestDirPath: '$(Build.StagingDirectory)/sbom/linux/'
+        PackageName: 'ASA'
+        PackageVersion: '$(ReleaseVersion)'
+    - task: ManifestGeneratorTask@0
+      displayName: Generate MacOS Manifest
+      inputs:
+        BuildDropPath: '$(Build.BinariesDirectory)/macos/'
+        ManifestDirPath: '$(Build.StagingDirectory)/sbom/macos/'
+        PackageName: 'ASA'
+        PackageVersion: '$(ReleaseVersion)'
+    - task: ArchiveFiles@2
+      displayName: Archive Manifests
+      inputs:
+        rootFolderOrFile: '$(Build.StagingDirectory)/sbom/'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.StagingDirectory)/Manifests/ApplicationInspector_Release_Manifests_$(ReleaseVersion).zip'
+        replaceExistingArchive: true
+    - task: PublishBuildArtifacts@1
+      displayName: Pipeline Publish Manifest Archive
+      inputs:
+        PathtoPublish: '$(Build.StagingDirectory)/Manifests'
+        ArtifactName: 'Release Manifests'

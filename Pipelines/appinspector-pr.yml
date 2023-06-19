@@ -1,0 +1,115 @@
+name: ApplicationInspector_PR_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+trigger: none
+pr:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - Pipelines
+    - AppInspector/*
+    - AppInspector.CLI/*
+    - AppInspector.Common/*
+    - AppInspector.Logging/*
+    - AppInspector.RulesEngine/*
+    - AppInspector.Tests/*
+    - AppInspector.Tests.CLI/*
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: SecurityEngineering/OSS-Tools-Pipeline-Templates
+      ref: refs/tags/v1.0.7
+
+variables:
+  BuildConfiguration: 'Release'
+  DotnetVersion: '7.0.x'
+  DotnetVersionLTS: '6.0.x'
+  DotnetTargetFramework: 'net7.0'
+
+stages:
+- stage: Test
+  dependsOn: []
+  jobs:
+  - template: dotnet-test-job.yml@templates
+    parameters:
+      jobName: 'dotnet_test_windows'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      dotnetVersionLTS: ${{ variables.DotnetVersionLTS }}
+      vmImage: 'oss-tools-win2022_1es-managed'
+      projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
+
+- stage: SDL
+  dependsOn: []
+  jobs:
+  - template: sdl-job.yml@templates
+
+- stage: Build
+  dependsOn:
+  - Test
+  jobs:
+  - template: dotnet-publish-linux-mac-job.yml@templates
+    parameters:
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      targetFramework: '${{ variables.DotnetTargetFramework }}'
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectName: 'ApplicationInspector'
+      exePath: 'ApplicationInspector.CLI'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: dotnet-publish-win-netcore-job.yml@templates
+    parameters:
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      targetFramework: '${{ variables.DotnetTargetFramework }}'
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectName: 'ApplicationInspector'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
+    parameters:
+      jobName: 'pack_lib'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      projectPath: 'AppInspector/AppInspector.Commands.csproj'
+      projectName: 'ApplicationInspector_Commands'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
+    parameters:
+      jobName: 'pack_engine'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      projectPath: 'AppInspector.RulesEngine/AppInspector.RulesEngine.csproj'
+      projectName: 'ApplicationInspector_RulesEngine'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
+    parameters:
+      jobName: 'pack_common'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      projectPath: 'AppInspector.Common/AppInspector.Common.csproj'
+      projectName: 'ApplicationInspector_Common'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
+    parameters:
+      jobName: 'pack_logging'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      projectPath: 'AppInspector.Logging/AppInspector.Logging.csproj'
+      projectName: 'ApplicationInspector_Logging'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
+  - template: nuget-build-job.yml@templates
+    parameters:
+      jobName: 'pack_cli'
+      buildConfiguration: '${{ variables.BuildConfiguration }}'
+      dotnetVersion: ${{ variables.DotnetVersion }}
+      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+      projectName: 'ApplicationInspector_CLI'
+      preBuild:
+      - template: nbgv-set-version-steps.yml@templates
