@@ -270,3 +270,4 @@ output.html
 result.json
 AppInspector.Tests/logs/
 RulesPacker/appinspector.log.txt
+AppInspector.CLI/out.sarif

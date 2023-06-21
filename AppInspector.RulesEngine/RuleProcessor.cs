@@ -181,7 +181,7 @@ public class RuleProcessor
                     EndLocationColumn = endLocation.Column,
                     MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
                     Excerpt = numLinesContext > 0
-                        ? ExtractExcerpt(textContainer, startLocation.Line, numLinesContext)
+                        ? ExtractExcerpt(textContainer, startLocation, endLocation, boundary, numLinesContext)
                         : string.Empty,
                     Sample = numLinesContext > -1
                         ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
@@ -399,7 +399,7 @@ public class RuleProcessor
                                             : startLocation.Line + 1, //match is on last line
                                     MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
                                     Excerpt = numLinesContext > 0
-                                        ? ExtractExcerpt(textContainer, startLocation.Line, numLinesContext)
+                                        ? ExtractExcerpt(textContainer, startLocation, endLocation, boundary, numLinesContext)
                                         : string.Empty,
                                     Sample = numLinesContext > -1
                                         ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
@@ -554,37 +554,29 @@ public class RuleProcessor
     ///     from the template
     /// </summary>
     /// <returns></returns>
-    private static string ExtractExcerpt(TextContainer text, int startLineNumber, int context = 3)
+    private static string ExtractExcerpt(TextContainer text, Location start, Location end, Boundary matchBoundary, int context = 3)
     {
         if (context == 0)
         {
             return string.Empty;
         }
 
-        if (startLineNumber < 0)
-        {
-            startLineNumber = 0;
-        }
-
-        if (startLineNumber >= text.LineEnds.Count)
-        {
-            startLineNumber = text.LineEnds.Count - 1;
-        }
-
+        int startLineNumber =
+            start.Line < 0 ? 0 : start.Line > text.LineEnds.Count ? text.LineEnds.Count - 1 : start.Line;
+        int endLineNUmber =
+            end.Line < 0 ? 0 : end.Line > text.LineEnds.Count ? text.LineEnds.Count - 1 : end.Line;
+        // First we try to include the number of lines of context requested
         var excerptStartLine = Math.Max(0, startLineNumber - context);
-        var excerptEndLine = Math.Min(text.LineEnds.Count - 1, startLineNumber + context);
+        var excerptEndLine = Math.Min(text.LineEnds.Count - 1, endLineNUmber + context);
         var startIndex = text.LineStarts[excerptStartLine];
         var endIndex = text.LineEnds[excerptEndLine] + 1;
         var maxCharacterContext = context * 100;
-        // Only gather 100*lines context characters to avoid gathering super long lines
-        if (text.LineStarts[startLineNumber] - startIndex > maxCharacterContext)
+        // If the number of characters captured for context is larger than 100*number of lines,
+        //  instead gather an appropriate number of characters
+        if (endIndex - startIndex - matchBoundary.Length > maxCharacterContext)
         {
-            startIndex = Math.Max(0, startIndex - maxCharacterContext);
-        }
-
-        if (endIndex - text.LineEnds[startLineNumber] > maxCharacterContext)
-        {
-            endIndex = Math.Min(text.FullContent.Length - 1, endIndex + maxCharacterContext);
+            startIndex = Math.Max(0, matchBoundary.Index - (maxCharacterContext / 2));
+            endIndex = Math.Max(0, matchBoundary.Index + matchBoundary.Length + (maxCharacterContext / 2));
         }
 
         return text.FullContent[startIndex..endIndex];
