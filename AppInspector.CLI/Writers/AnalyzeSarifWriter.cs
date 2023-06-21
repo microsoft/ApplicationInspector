@@ -146,14 +146,15 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                                 Name = match.Rule.Name,
                                 DefaultConfiguration = new ReportingConfiguration
                                 {
-                                    Level = GetSarifFailureLevel(match.Rule.Severity)
+                                    Level = FailureLevel.Note
                                 }
                             };
                             reportingDescriptor.Tags.AddRange(match.Rule.Tags);
+                            reportingDescriptor.SetProperty("AppInspector:Severity", match.Rule.Severity.ToString());
                             reportingDescriptors.Add(reportingDescriptor);
                         }
 
-                        sarifResult.Level = GetSarifFailureLevel(match.Rule.Severity);
+                        sarifResult.Level = FailureLevel.Note;
                         sarifResult.RuleId = match.Rule.Id;
                         sarifResult.Tags.AddRange(match.Rule.Tags);
                         sarifResult.Message = new Message
@@ -226,6 +227,7 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                                 {
                                     location.PhysicalLocation.ArtifactLocation.UriBaseId = "ROOT";
                                 }
+                                sarifResult.SetProperty("AppInspector:Severity", match.Rule.Severity.ToString());
                                 sarifResult.Locations = new List<Location>
                                 {
                                     location
