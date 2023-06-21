@@ -570,13 +570,14 @@ public class RuleProcessor
         var excerptEndLine = Math.Min(text.LineEnds.Count - 1, endLineNUmber + context);
         var startIndex = text.LineStarts[excerptStartLine];
         var endIndex = text.LineEnds[excerptEndLine] + 1;
+        // Maximum number of characters to capture on each side
         var maxCharacterContext = context * 100;
         // If the number of characters captured for context is larger than 100*number of lines,
         //  instead gather an appropriate number of characters
-        if (endIndex - startIndex - matchBoundary.Length > maxCharacterContext)
+        if (endIndex - startIndex - matchBoundary.Length > maxCharacterContext * 2)
         {
-            startIndex = Math.Max(0, matchBoundary.Index - (maxCharacterContext / 2));
-            endIndex = Math.Max(0, matchBoundary.Index + matchBoundary.Length + (maxCharacterContext / 2));
+            startIndex = Math.Max(0, matchBoundary.Index - maxCharacterContext);
+            endIndex = Math.Max(0, matchBoundary.Index + matchBoundary.Length + maxCharacterContext);
         }
 
         return text.FullContent[startIndex..endIndex];
