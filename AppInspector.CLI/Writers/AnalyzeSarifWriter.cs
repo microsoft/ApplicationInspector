@@ -55,12 +55,45 @@ public class AnalyzeSarifWriter : CommandResultsWriter
 
             if (result is AnalyzeResult analyzeResult)
             {
-                SarifLog log = new();
-                var sarifVersion = SarifVersion.Current;
-                log.SchemaUri = sarifVersion.ConvertToSchemaUri();
-                log.Version = sarifVersion;
+                SarifLog log = new()
+                {
+                    Version = SarifVersion.Current
+                };
+
                 log.Runs = new List<Run>();
-                var run = new Run();
+                // Convert Base Path to Forward Slashes to be a valid URI
+                
+                var run = new Run()
+                {
+                    Tool = new Tool
+                    {
+                        Driver = new ToolComponent
+                        {
+                            Name = "Application Inspector",
+                            InformationUri = new Uri("https://github.com/microsoft/ApplicationInspector/"),
+                            Organization = "Microsoft",
+                            Version = Helpers.GetVersionString()
+                        }
+                    }
+                };
+                if (!string.IsNullOrEmpty(basePath))
+                {
+                    if (Path.DirectorySeparatorChar == '\\')
+                    {
+                        basePath = basePath.Replace("\\","/");
+                        if (!basePath.EndsWith("/"))
+                        {
+                            basePath = $"{basePath}/";
+                        }
+
+                    }
+
+                    run.OriginalUriBaseIds = new Dictionary<string, ArtifactLocation>()
+                    {
+
+                        { "ROOT", new ArtifactLocation() { Uri = new Uri($"file://{basePath}") } }
+                    };
+                }
 
                 if (Uri.TryCreate(cliAnalyzeCmdOptions.RepositoryUri, UriKind.RelativeOrAbsolute, out var uri))
                 {
@@ -69,7 +102,11 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                         new()
                         {
                             RepositoryUri = uri,
-                            RevisionId = cliAnalyzeCmdOptions.CommitHash
+                            RevisionId = cliAnalyzeCmdOptions.CommitHash,
+                            MappedTo = new ArtifactLocation()
+                            {
+                                UriBaseId = "ROOT"
+                            }
                         }
                     };
                 }
@@ -81,22 +118,17 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                         {
                             RepositoryUri = analyzeResult.Metadata.RepositoryUri,
                             RevisionId = analyzeResult.Metadata.CommitHash ?? string.Empty,
-                            Branch = analyzeResult.Metadata.Branch ?? string.Empty
+                            Branch = analyzeResult.Metadata.Branch ?? string.Empty,
+                            MappedTo = new ArtifactLocation()
+                            {
+                                UriBaseId = "ROOT"
+                            }
                         }
                     };
                 }
 
                 var artifacts = new List<Artifact>();
-                run.Tool = new Tool
-                {
-                    Driver = new ToolComponent
-                    {
-                        Name = "Application Inspector",
-                        InformationUri = new Uri("https://github.com/microsoft/ApplicationInspector/"),
-                        Organization = "Microsoft",
-                        Version = Helpers.GetVersionString()
-                    }
-                };
+
                 var reportingDescriptors = new List<ReportingDescriptor>();
                 run.Results = new List<CodeAnalysis.Sarif.Result>();
                 foreach (var match in analyzeResult.Metadata.Matches)
@@ -134,7 +166,7 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                             var fileName = match.FileName;
                             if (basePath is not null)
                             {
-                                fileName = Path.GetRelativePath(basePath, fileName);
+                                fileName = Path.GetRelativePath(basePath, fileName).Replace("\\","/");
                             }
 
                             if (Uri.TryCreate(fileName, UriKind.RelativeOrAbsolute, out var outUri))
@@ -150,6 +182,10 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                                             Uri = outUri
                                         }
                                     };
+                                    if (basePath != null)
+                                    {
+                                        artifact.Location.UriBaseId = "ROOT";
+                                    }
                                     artifactIndex = artifact.Location.Index;
                                     artifact.Tags.AddRange(match.Rule.Tags);
                                     if (match.LanguageInfo is { } languageInfo)
@@ -164,29 +200,35 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                                     artifacts[artifactIndex].Tags.AddRange(match.Rule.Tags);
                                 }
 
-                                sarifResult.Locations = new List<Location>
+                                Location location = new()
                                 {
-                                    new()
+                                    PhysicalLocation = new PhysicalLocation
                                     {
-                                        PhysicalLocation = new PhysicalLocation
+                                        ArtifactLocation = new ArtifactLocation
                                         {
-                                            ArtifactLocation = new ArtifactLocation
+                                            Index = artifactIndex,
+                                            Uri = outUri
+                                        },
+                                        Region = new Region
+                                        {
+                                            StartLine = match.StartLocationLine,
+                                            StartColumn = match.StartLocationColumn,
+                                            EndLine = match.EndLocationLine,
+                                            EndColumn = match.EndLocationColumn,
+                                            Snippet = new ArtifactContent
                                             {
-                                                Index = artifactIndex
-                                            },
-                                            Region = new Region
-                                            {
-                                                StartLine = match.StartLocationLine,
-                                                StartColumn = match.StartLocationColumn,
-                                                EndLine = match.EndLocationLine,
-                                                EndColumn = match.EndLocationColumn,
-                                                Snippet = new ArtifactContent
-                                                {
-                                                    Text = match.Sample
-                                                }
+                                                Text = match.Sample
                                             }
                                         }
                                     }
+                                };
+                                if (basePath != null)
+                                {
+                                    location.PhysicalLocation.ArtifactLocation.UriBaseId = "ROOT";
+                                }
+                                sarifResult.Locations = new List<Location>
+                                {
+                                    location
                                 };
                             }
                         }
@@ -200,7 +242,7 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                 log.Runs.Add(run);                
                 try
                 {
-                    JsonSerializer.Serialize(StreamWriter.BaseStream, log);
+                    log.Save(StreamWriter.BaseStream);
                 }
                 catch (Exception e)
                 {
