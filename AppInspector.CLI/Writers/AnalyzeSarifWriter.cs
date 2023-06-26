@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis.Sarif;
 using Microsoft.CST.OAT.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Location = Microsoft.CodeAnalysis.Sarif.Location;
 using Result = Microsoft.ApplicationInspector.Commands.Result;
 
@@ -241,18 +243,55 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                     run.Results.Add(sarifResult);
                 }
 
-                log.Runs.Add(run);                
-                try
+                log.Runs.Add(run);
+                
+                /* Sarif SDK workarounds */
+                // Begin Workaround for https://github.com/microsoft/sarif-sdk/issues/2024 - results with level warning are not serialized
+                // Save the sarif log to a stream
+                var stream = new MemoryStream();
+                log.Save(stream);
+                stream.Position = 0;
+                // Read the saved log back in
+                var reReadLog = JObject.Parse(new StreamReader(stream).ReadToEnd());
+                // Find results with levels that are not set
+                var resultsWithoutLevels =
+                    reReadLog.SelectTokens("$.runs[*].results[*]").Where(t => t["level"] == null).ToList();
+                // For each result with no level set its level to warning
+                foreach (var resultWithoutLevel in resultsWithoutLevels)
                 {
-                    log.Save(StreamWriter.BaseStream);
+                    resultWithoutLevel["level"] = "warning";
                 }
-                catch (Exception e)
+
+                // Rules which had a default configuration of Warning will also not have the field populated
+                var rulesWithoutDefaultConfiguration = reReadLog.SelectTokens("$.runs[*].tool.driver.rules[*]")
+                    .Where(t => t["defaultConfiguration"] == null).ToList();
+                // For each result with no default configuration option, add one with the level warning
+                foreach (var rule in rulesWithoutDefaultConfiguration)
                 {
-                    _logger.LogError(
-                        "Failed to serialize JSON representation of results in memory. {Type} : {Message}",
-                        e.GetType().Name, e.Message);
-                    throw;
+                    rule["defaultConfiguration"] = new JObject { { "level", "warning" } };
                 }
+
+                // Rules with a DefaultConfiguration object, but where that object has no level also should be set
+                //  ApplicationInspector should always populate this object with a level, but potentially
+                var rulesWithoutDefaultConfigurationLevel = reReadLog.SelectTokens("$.runs[*].tool.driver.rules[*].defaultConfiguration")
+                    .Where(t => t["level"] == null).ToList();
+                // For each result with a default configuration object that has no level
+                //  add a level property equal to warning
+                foreach (var rule in rulesWithoutDefaultConfigurationLevel)
+                {
+                    rule["level"] = "warning";
+                }
+
+                // Begin Workaround for https://github.com/microsoft/sarif-sdk/issues/2662
+                // The provided schema (rtm.6) is 404, so replace it with a 2.1.0 that is available.
+                reReadLog["$schema"] = "https://www.schemastore.org/schemas/json/sarif-2.1.0-rtm.5.json";
+                using var jsonWriter = new JsonTextWriter(TextWriter);
+                reReadLog.WriteTo(jsonWriter);
+                // Add a newline at the end to make logging messages cleaner
+                TextWriter.WriteLine();
+
+                // End Workarounds
+                TextWriter.Flush();
                 if (autoClose)
                 {
                     FlushAndClose();
