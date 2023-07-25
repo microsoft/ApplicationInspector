@@ -279,7 +279,7 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
             foreach (var pattern in tagGroup.Patterns ?? new List<TagSearchPattern>())
             {
                 pattern.Detected = _appMetaData?.UniqueTags is not null &&
-                                   _appMetaData.UniqueTags.Any(v => v == pattern.SearchPattern);
+                                   _appMetaData.UniqueTags.Any(v => pattern.Expression.IsMatch(v));
                 if (unSupportedGroupsOrPatterns.Any(x => pattern.SearchPattern.ToLower().Contains(x)))
                 {
                     _logger.LogWarning(
