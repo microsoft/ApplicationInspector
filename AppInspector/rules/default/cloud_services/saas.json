@@ -1,0 +1,69 @@
+[
+    {
+      "name": "SaaS: Salesforce",
+      "id": "AI060001",
+      "description": "SaaS: Salesforce Rest API",
+      "tags": [
+        "CloudServices.Salesforce"
+      ],
+      "severity": "moderate",
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "my\\.salesforce\\.com",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        }
+      ]
+    },
+    {
+        "name": "SaaS: ServiceNow",
+        "id": "AI060002",
+        "description": "SaaS: ServiceNow Rest API",
+        "tags": [
+          "CloudServices.ServiceNow"
+        ],
+        "severity": "moderate",
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "service-now\\.com/api",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ],
+            "modifiers": [
+              "i"
+            ]
+          }
+        ]
+      }
+      ,
+    {
+        "name": "SaaS: WorkDay",
+        "id": "AI060000",
+        "description": "SaaS: WorkDay Rest API",
+        "tags": [
+          "CloudServices.WorkDay"
+        ],
+        "severity": "moderate",
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "workday.com",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ],
+            "modifiers": [
+              "i"
+            ]
+          }
+        ]
+      }
+]

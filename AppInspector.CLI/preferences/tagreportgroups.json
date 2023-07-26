@@ -82,6 +82,21 @@
             "searchPattern": "^CloudServices.AdvertisingNetwork.*",
             "displayName": "Advertising network",
             "detectedIcon": "fas fa-ad"
+          },
+          {
+            "searchPattern": "^CloudServices.SalesForce$",
+            "displayName": "Salesforce",
+            "detectedIcon": "fa-brands fa-salesforce"
+          },
+          {
+            "searchPattern": "^CloudServices.ServiceNow$",
+            "displayName": "ServiceNow",
+            "detectedIcon": "fa-solid fa-bell-concierge"
+          },
+          {
+            "searchPattern": "^CloudServices.WorkDay$",
+            "displayName": "WorkDay",
+            "detectedIcon": "fa-solid fa-calendar-day"
           }
         ]
       },
@@ -315,12 +330,12 @@
             "detectedIcon": "far fa-file-archive"
           },
           {
-            "searchPattern": "^Metric.Code.HTMLForm.Defined$",
+            "searchPattern": ".Code.HTMLForm.Defined$",
             "displayName": "HTML form",
             "detectedIcon": "far fa-window-maximize"
           },
           {
-            "searchPattern": "^Metric.Code.Exception.Caught$",
+            "searchPattern": ".Code.Exception.Caught$",
             "displayName": "Exception caught",
             "detectedIcon": "fas fa-meteor"
           },
