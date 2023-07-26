@@ -86,7 +86,7 @@
           {
             "searchPattern": "^CloudServices.SalesForce$",
             "displayName": "Salesforce",
-            "detectedIcon": "fa-brands fa-salesforce"
+            "detectedIcon": "fa-solid fa-cloud"
           },
           {
             "searchPattern": "^CloudServices.ServiceNow$",
