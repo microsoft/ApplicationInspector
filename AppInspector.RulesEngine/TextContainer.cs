@@ -243,15 +243,50 @@ public class TextContainer
         }
     }
 
+    private int GetPrefixLocation(int startOfLineIndex, int currentIndex, string prefix, bool multiline)
+    {
+        // Find the first potential index of the prefix
+        var prefixLoc = FullContent.LastIndexOf(prefix, currentIndex, StringComparison.Ordinal);
+        if (prefixLoc != -1)
+        {
+            // TODO: Possibly support quoted multiline comment markers
+            if (multiline)
+            {
+                return prefixLoc;
+            }
+            if (prefixLoc < startOfLineIndex)
+            {
+                return -1;
+            }
+            // Check how many quote marks occur on the line before the prefix location
+            // TODO: This doesn't account for multi-line strings
+            var numDoubleQuotes = FullContent[startOfLineIndex..prefixLoc].Count(x => x == '"');
+            var numSingleQuotes = FullContent[startOfLineIndex..prefixLoc].Count(x => x == '\'');
+
+            // If the number of quotes is odd, this is in a string, so not actually a comment prefix
+            // It might be like var address = "http://contoso.com";
+            if (numDoubleQuotes % 2 == 1 || numSingleQuotes % 2 == 1)
+            {
+                return GetPrefixLocation(startOfLineIndex, prefixLoc, prefix, multiline);
+            }
+        }
+
+        return prefixLoc;
+    }
+
     /// <summary>
     ///     Populates the CommentedStates Dictionary based on the index and the provided comment prefix and suffix
     /// </summary>
     /// <param name="index">The character index in FullContent</param>
     /// <param name="prefix">The comment prefix</param>
     /// <param name="suffix">The comment suffix</param>
-    private void PopulateCommentedStatesInternal(int index, string prefix, string suffix)
+    private void PopulateCommentedStatesInternal(int index, string prefix, string suffix, bool multiline)
     {
-        var prefixLoc = FullContent.LastIndexOf(prefix, index, StringComparison.Ordinal);
+        // Get the line boundary for the prefix location
+        var startOfLine = GetLineBoundary(index);
+        // Get the index of the prefix
+        var prefixLoc = GetPrefixLocation(startOfLine.Index, index, prefix, multiline);
+
         if (prefixLoc != -1)
         {
             if (!CommentedStates.ContainsKey(prefixLoc))
@@ -287,13 +322,13 @@ public class TextContainer
         // Populate true for the indexes of the most immediately preceding instance of the multiline comment type if found
         if (!string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(suffix))
         {
-            PopulateCommentedStatesInternal(index, prefix, suffix);
+            PopulateCommentedStatesInternal(index, prefix, suffix, true);
         }
 
         // Populate true for indexes of the most immediately preceding instance of the single-line comment type if found
         if (!CommentedStates.ContainsKey(index) && !string.IsNullOrEmpty(inline))
         {
-            PopulateCommentedStatesInternal(index, inline, "\n");
+            PopulateCommentedStatesInternal(index, inline, "\n", false);
         }
 
         var i = index;

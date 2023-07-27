@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
-using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AppInspector.Tests.RuleProcessor;
