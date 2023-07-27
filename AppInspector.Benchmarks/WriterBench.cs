@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
-using DotLiquid;
 using Microsoft.ApplicationInspector.CLI;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.RulesEngine;

@@ -7,7 +7,6 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Principal;
 using System.Text.Json;
 using System.Xml;
 using System.Xml.XPath;

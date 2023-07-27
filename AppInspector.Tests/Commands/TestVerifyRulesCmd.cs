@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using CommandLine;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.Logging;
