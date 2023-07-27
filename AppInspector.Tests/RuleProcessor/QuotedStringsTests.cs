@@ -19,8 +19,17 @@ public class QuotedStringsTests
     private const string testSingleQuotesAreCode = "var url = 'https://contoso.com'; // contoso.com";
     private const string testSingleLineWithQuotesInComment = "// var url = 'https://contoso.com';";
     private const string testSingleLineWithDoubleQuotesInComment = "// var url = 'https://contoso.com';";
-    private const string testMultiLine = "/* https://contoso.com /*";
-    private const string testMultiLineWithoutProto = "/* contoso.com /*";
+    private const string testMultiLine = @"/* 
+https://contoso.com 
+*/";
+    private const string testMultiLineWithoutProto = @"
+/* 
+contoso.com 
+*/";
+    private const string testMultiLineWithResultFollowingCommentEnd = @"
+/* 
+contoso.com 
+*/ var url = ""https://contoso.com""";
 
     private static string detectContosoRule = @"
     [
@@ -56,6 +65,7 @@ public class QuotedStringsTests
     [DataRow(testSingleQuotesAreCode,1)]
     [DataRow(testMultiLine,0)]
     [DataRow(testMultiLineWithoutProto,0)]
+    [DataRow(testMultiLineWithResultFollowingCommentEnd,1)]
     [DataRow(testSingleLineWithQuotesInComment,0)]
     [DataRow(testSingleLineWithDoubleQuotesInComment,0)]
     [DataTestMethod]
