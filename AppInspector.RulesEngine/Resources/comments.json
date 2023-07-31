@@ -66,5 +66,11 @@
     ],
     "prefix": "<!--",
     "suffix": "-->"
+  },
+  {
+    "language": [
+      "plaintext"
+    ],
+    "always": true
   }
 ]

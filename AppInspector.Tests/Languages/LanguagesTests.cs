@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.Json;
 using Microsoft.ApplicationInspector.Logging;
+using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -115,5 +117,17 @@ public class LanguagesTests
             Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, testCommentsPath,
                 testLanguagesPath);
         Assert.AreEqual(expected, languages.FromFileNameOut(filename!, out _));
+    }
+    
+        
+    [TestMethod]
+    public void ScopeMatchAlwaysCommented()
+    {
+        var _languages = new Microsoft.ApplicationInspector.RulesEngine.Languages();
+        var textContainer = new TextContainer("Hello this is some content", "plaintext", _languages);
+        var boundary = new Boundary() { Index = 1, Length = 2 };
+        Assert.IsTrue(textContainer.ScopeMatch(new List<PatternScope>() { PatternScope.All }, boundary));
+        Assert.IsFalse(textContainer.ScopeMatch(new List<PatternScope>() { PatternScope.Code }, boundary));
+        Assert.IsTrue(textContainer.ScopeMatch(new List<PatternScope>() { PatternScope.Comment }, boundary));
     }
 }

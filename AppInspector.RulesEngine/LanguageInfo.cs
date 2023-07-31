@@ -13,7 +13,8 @@ public class LanguageInfo
     public enum LangFileType
     {
         Code,
-        Build
+        Build,
+        Docs
     }
 
     [JsonPropertyName("name")]
