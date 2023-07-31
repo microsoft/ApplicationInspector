@@ -385,6 +385,13 @@
     "type": "build"
   },
   {
+    "name": "plaintext",
+    "extensions": [
+      ".txt"
+    ],
+    "type": "docs"
+  },
+  {
     "name": "Rule Verifier Default Value",
     "extensions": [
       ".ruleverifiertestcase"

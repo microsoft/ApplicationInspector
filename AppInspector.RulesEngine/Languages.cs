@@ -221,4 +221,26 @@ public sealed class Languages
 
         return names.ToArray();
     }
+
+    /// <summary>
+    /// Check if the given language is marked to always be commented
+    /// </summary>
+    /// <param name="language"></param>
+    /// <returns></returns>
+    public bool IsAlwaysCommented(string language)
+    {
+        if (language != null)
+        {
+            foreach (var comment in _comments)
+            {
+                if (Array.Exists(comment.Languages ?? new[] { "" },
+                        x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    return comment.AlwaysCommented;
+                }
+            }
+        }
+
+        return false;
+    }
 }

@@ -444,6 +444,11 @@ public class TextContainer
             return true;
         }
 
+        if (Languages.IsAlwaysCommented(Language))
+        {
+            return scopes.Contains(PatternScope.Comment);
+        }
+        
         if (scopes.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
         {
             return true;

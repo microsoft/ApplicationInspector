@@ -21,4 +21,10 @@ internal class Comment
 
     [JsonPropertyName("suffix")]
     public string? Suffix { get; set; }
+
+    /// <summary>
+    /// Set to true when these languages should always be considered comments (i.e. Plaintext files)
+    /// </summary>
+    [JsonPropertyName("always")] 
+    public bool AlwaysCommented { get; set; }
 }
