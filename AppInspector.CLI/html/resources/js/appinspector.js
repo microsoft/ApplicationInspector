@@ -45,18 +45,18 @@
         // TODO: Better handle context that isn't 3 length
         const actualStartNumber = Math.max(1, startLocationLine - 3);
         editor.setOption('firstLineNumber', actualStartNumber);
-
         // Decode the content (HTML encoded) for Ace to display
         // Disabled, needs better testing, since it's prone to XSS if content contains JS.
-        // Maybe there is a better way of doing this.
-        if (false) {
-            const htmlEntityDecoder = (content) => {
-                const textArea = document.createElement('textarea');
-                textArea.innerHTML = content;
-                return textArea.value;
-            }
-            content = htmlEntityDecoder(content);
-        }
+        // TODO: Can this be rewritten to properly escape in a more limited fashion and use something like a <pre> tag?
+
+        // if (false) {
+        //     const htmlEntityDecoder = (content) => {
+        //         const textArea = document.createElement('textarea');
+        //         textArea.innerHTML = content;
+        //         return textArea.value;
+        //     }
+        //     content = htmlEntityDecoder(content);
+        // }
         editor.getSession().setValue(content);
         editor.resize();
         editor.scrollToLine(0);
