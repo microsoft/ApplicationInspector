@@ -41,7 +41,9 @@
         const endLocationLine = $(e.target).data('endLocationLine');
         const editor = ace.edit("editor");
 
-        editor.setOption('firstLineNumber', startLocationLine - 3);
+        // Assume that the default context of 3 is used, the minimum line number is 1
+        const actualStartNumber = Math.max(1, startLocationLine - 3);
+        editor.setOption('firstLineNumber', actualStartNumber);
 
         // Decode the content (HTML encoded) for Ace to display
         // Disabled, needs better testing, since it's prone to XSS if content contains JS.
@@ -58,7 +60,7 @@
         editor.getSession().setValue(content);
         editor.resize();
         editor.scrollToLine(0);
-        editor.gotoLine(endLocationLine - startLocationLine + 1 + 3);
+        editor.gotoLine(startLocationLine);
 
         $('editor-container').removeClass('d-none');
         $('#match-line-number').text('Line number: ' + startLocationLine.toString());
