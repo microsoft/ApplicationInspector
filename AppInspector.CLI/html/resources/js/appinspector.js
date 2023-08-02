@@ -175,7 +175,7 @@ class TemplateInsertion {
             }
             return fn.slice($this.mt.sourcePath.length);
         };
-
+        var matchCount = 1;
         for (let match of $this.md) {
             let excerpt = (match.excerpt || '') || match.sample;
             if (match.ruleId === ruleId || match.ruleName === ruleId) {
@@ -190,6 +190,8 @@ class TemplateInsertion {
                     .data('startLocationLine', $l)
                     .data('endLocationLine', $e)
                     .text(removePrefix(match.fileName));
+                $li.append(matchCount++);
+                $li.append(". ");
                 $li.append($a);
                 $('#file_listing_modal ul').append($li);
 
