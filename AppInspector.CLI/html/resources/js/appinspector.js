@@ -42,6 +42,7 @@
         const editor = ace.edit("editor");
 
         // Assume that the default context of 3 is used, the minimum line number is 1
+        // TODO: Better handle context that isn't 3 length
         const actualStartNumber = Math.max(1, startLocationLine - 3);
         editor.setOption('firstLineNumber', actualStartNumber);
 
@@ -56,14 +57,15 @@
             }
             content = htmlEntityDecoder(content);
         }
-
         editor.getSession().setValue(content);
         editor.resize();
         editor.scrollToLine(0);
-        editor.gotoLine(startLocationLine);
-
+        // We need to calculate the number relative to the number of lines in the content available
+        // This assumes the first line is 1, even though we have explicitly numbered the lines otherwise
+        editor.gotoLine(startLocationLine - actualStartNumber + 1);
         $('editor-container').removeClass('d-none');
-        $('#match-line-number').text('Line number: ' + startLocationLine.toString());
+        const locationString = startLocationLine < endLocationLine ? (startLocationLine.toString() + " - " + endLocationLine.toString()) : startLocationLine.toString();
+        $('#match-line-number').text('Line number: ' + locationString);
     });
 
     const templateInsertion = new TemplateInsertion(data);
