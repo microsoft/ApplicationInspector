@@ -41,27 +41,31 @@
         const endLocationLine = $(e.target).data('endLocationLine');
         const editor = ace.edit("editor");
 
-        editor.setOption('firstLineNumber', startLocationLine - 3);
-
+        // Assume that the default context of 3 is used, the minimum line number is 1
+        // TODO: Better handle context that isn't 3 length
+        const actualStartNumber = Math.max(1, startLocationLine - 3);
+        editor.setOption('firstLineNumber', actualStartNumber);
         // Decode the content (HTML encoded) for Ace to display
         // Disabled, needs better testing, since it's prone to XSS if content contains JS.
-        // Maybe there is a better way of doing this.
-        if (false) {
-            const htmlEntityDecoder = (content) => {
-                const textArea = document.createElement('textarea');
-                textArea.innerHTML = content;
-                return textArea.value;
-            }
-            content = htmlEntityDecoder(content);
-        }
+        // TODO: Can this be rewritten to properly escape in a more limited fashion and use something like a <pre> tag?
 
+        // if (false) {
+        //     const htmlEntityDecoder = (content) => {
+        //         const textArea = document.createElement('textarea');
+        //         textArea.innerHTML = content;
+        //         return textArea.value;
+        //     }
+        //     content = htmlEntityDecoder(content);
+        // }
         editor.getSession().setValue(content);
         editor.resize();
         editor.scrollToLine(0);
-        editor.gotoLine(endLocationLine - startLocationLine + 1 + 3);
-
+        // We need to calculate the number relative to the number of lines in the content available
+        // This assumes the first line is 1, even though we have explicitly numbered the lines otherwise
+        editor.gotoLine(startLocationLine - actualStartNumber + 1);
         $('editor-container').removeClass('d-none');
-        $('#match-line-number').text('Line number: ' + startLocationLine.toString());
+        const locationString = startLocationLine < endLocationLine ? (startLocationLine.toString() + " - " + endLocationLine.toString()) : startLocationLine.toString();
+        $('#match-line-number').text('Line number: ' + locationString);
     });
 
     const templateInsertion = new TemplateInsertion(data);
@@ -175,7 +179,7 @@ class TemplateInsertion {
             }
             return fn.slice($this.mt.sourcePath.length);
         };
-
+        var matchCount = 1;
         for (let match of $this.md) {
             let excerpt = (match.excerpt || '') || match.sample;
             if (match.ruleId === ruleId || match.ruleName === ruleId) {
@@ -190,6 +194,8 @@ class TemplateInsertion {
                     .data('startLocationLine', $l)
                     .data('endLocationLine', $e)
                     .text(removePrefix(match.fileName));
+                $li.append(matchCount++);
+                $li.append(". ");
                 $li.append($a);
                 $('#file_listing_modal ul').append($li);
 
