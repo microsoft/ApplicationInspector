@@ -13,7 +13,6 @@
       "Cryptography.Protocol.TLS.WeakSSL"
     ],
     "severity": "critical",
-    "rule_info": "",
     "patterns": [
       {
         "pattern": "^iv.*=| +iv.*=",
