@@ -113,8 +113,7 @@
         "confidence": "high",
         "modifiers": [
           "i"
-        ],
-        "_comment": "e.g. ssl_crl, ssl_ecdh_curve, others"
+        ]
       },
       {
         "pattern": "SSLCADNRequest|SSLCARevocation|SSLCompression|SSLEngine|SSLFIPS|SSLInsecureRenegotiation",
@@ -194,8 +193,7 @@
         ],
         "confidence": "high",
         "modifiers": [
-          "i",
-          "comment"
+          "i"
         ]
       }
     ]

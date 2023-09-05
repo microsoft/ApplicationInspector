@@ -197,7 +197,6 @@
       "CloudServices.Hosting.DigitalOcean"
     ],
     "severity": "moderate",
-    "rule_info": "",
     "patterns": [
       {
         "pattern": "digitalocean.com",

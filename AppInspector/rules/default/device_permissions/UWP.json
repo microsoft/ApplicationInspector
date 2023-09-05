@@ -199,7 +199,6 @@
   {
     "name": "Declared Capabilities: VoipCall (Microsoft UWP)",
     "id": "AI016752",
-    "VoipCall": null,
     "description": "Declared Capabilities:  VoipCall (Microsoft UWP)",
     "applies_to": [
       "Package.appxmanifest"

@@ -175,7 +175,7 @@
         "scopes": [
           "code"
         ],
-        "modified": [
+        "modifiers": [
           "i"
         ],
         "confidence": "high"
