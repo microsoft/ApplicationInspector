@@ -12,7 +12,6 @@ using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.Logging;
 using Microsoft.Extensions.Logging;
-using ShellProgressBar;
 
 namespace Microsoft.ApplicationInspector.CLI;
 
