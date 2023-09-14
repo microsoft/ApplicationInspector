@@ -55,8 +55,8 @@
         <PackageReference Include="DotLiquid" Version="2.2.692" />
         <PackageReference Include="Glob" Version="1.1.9" />
         <PackageReference Include="LibGit2Sharp" Version="0.27.2" />
-        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.49" />
-        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.16" />
+        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.51" />
+        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.17" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
         <PackageReference Include="ShellProgressBar" Version="5.2.0" />
         <PackageReference Include="System.Reflection.Metadata" Version="7.0.2" />
