@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -286,6 +287,57 @@ public class XmlAndJsonTests
         else
         {
             Assert.Fail();
+        }
+    }
+
+    [TestMethod]
+    public void JsonBooleanRule()
+    {
+        var testContent = @"{
+    ""list"":
+    [
+        {
+            ""field1"": ""Foo"",
+            ""field2"": ""Bar"",
+            ""field3"": false
+        },
+        {
+            ""field1"": ""Contoso"",
+            ""field2"": ""Elephant"",
+            ""field3"": true
+        }
+    ]
+}";
+        var testRule = @"[
+    {
+        ""id"": ""Field3true"",
+        ""name"": ""Testing.Rules.JSON"",
+        ""tags"": [
+            ""Testing.Rules.JSON""
+        ],
+        ""severity"": ""Critical"",
+        ""confidence"": ""High"",
+        ""description"": ""This rule finds field3 is true"",
+        ""patterns"": [
+            {
+                ""pattern"": ""true"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""jsonpaths"" : [""$.list[*].field3""]
+            }
+        ]
+    }
+]";
+        RuleSet rules = new();
+        var originalSource = "TestRules";
+        rules.AddString(testRule, originalSource);
+        var analyzer = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules,
+            new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
+        if (_languages.FromFileNameOut("test.json", out var info))
+        {
+            var matches = analyzer.AnalyzeFile(testContent, new FileEntry("test.json", new MemoryStream()), info);
+            Assert.AreEqual(1, matches.Count);
+            Assert.AreEqual(237, matches.First().Boundary.Index);
         }
     }
 
