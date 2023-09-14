@@ -155,7 +155,8 @@ public class TextContainer
                 // The idx field is the start of the JSON element, including markup that isn't directly part of the element itself
                 if (field.GetValue(ele) is int idx)
                 {
-                    var eleString = ele.ToString();
+                    // ele.ToString doesn't return the raw string from the json for booleans, it returns a capitalized False/True but JSON requires lower case false/true to parse
+                    var eleString = ele.ValueKind is JsonValueKind.False ? "false" : ele.ValueKind is JsonValueKind.True ? "true" : ele.ToString();
                     if (eleString is { } denulledString)
                     {
                         var location = new Boundary
