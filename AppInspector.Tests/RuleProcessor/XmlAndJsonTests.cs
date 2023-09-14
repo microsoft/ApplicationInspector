@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -337,7 +336,7 @@ public class XmlAndJsonTests
         {
             var matches = analyzer.AnalyzeFile(testContent, new FileEntry("test.json", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
-            Assert.AreEqual(237, matches.First().Boundary.Index);
+            Assert.AreEqual(237, matches[0].Boundary.Index);
         }
     }
 
