@@ -73,8 +73,11 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
         <PackageReference Include="ShellProgressBar" Version="5.2.0" />
-
     </ItemGroup>
 
+    <ItemGroup>
+        <!-- Update Sarif.Sdk -->
+        <PackageReference Include="Newtonsoft.Json" Version="[13.0.3, 14.0.0)" />
+    </ItemGroup>
 
 </Project>
