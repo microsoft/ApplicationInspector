@@ -221,26 +221,47 @@ public class TextContainer
                 continue;
             }
 
-            // First we find the name
+            // First we find the name, absolute position index
             var nameIndex = FullContent[minIndex..].IndexOf(nodeIter.Current.Name, StringComparison.Ordinal) + minIndex;
             // Then we grab the index of the end of this tag.
             // We can't use OuterXML because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
-            var endTagIndex = FullContent[nameIndex..].IndexOf('>');
-            // We also look for self-closing tag
-            var selfClosedTag = FullContent[endTagIndex-1] == '/';
-            // If the tag is self closing innerxml will be empty string, so the finding is located at the end of the tag and is empty string
-            // Otherwise the finding is the content of the xml tag
-            var offset = selfClosedTag ? endTagIndex : FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
-            // Move the minimum index up in case there are multiple instances of identical OuterXML
-            // This ensures we won't re-find the same one
-            var totalOffset = minIndex + nameIndex + endTagIndex;
-            minIndex = totalOffset;
-            var location = new Boundary
+            // Position relative to nameIndex
+            var endTagIndex = FullContent[nameIndex..].IndexOf('>') + nameIndex;
+            // If we are matching a tag itself, the previous char should be the open tag
+            // If its a property it won't be
+            var isProp = FullContent[(nameIndex - 1)] != '<';
+            // Check for self-closing tag
+            var selfClosedTag = FullContent[endTagIndex - 1] == '/';
+
+            // This is for when we're capturing the value of a property of the tag rather than the tag itself
+            if (isProp)
             {
-                Index = offset,
-                Length = nodeIter.Current.InnerXml.Length
-            };
-            yield return (nodeIter.Current.Value, location);
+                // Move the offset to the end of the opening tag
+                var nextClosingIndexAfterName = FullContent[nameIndex..].IndexOf('>', StringComparison.Ordinal)+ nameIndex+1;
+                var offset = selfClosedTag ? endTagIndex : FullContent[nextClosingIndexAfterName..].IndexOf('>') + nextClosingIndexAfterName + 1;
+                // Move the minimum index up to the end of the closing tag
+                minIndex = selfClosedTag ? offset : FullContent[offset..].IndexOf('>') + offset + 1;
+                var location = new Boundary
+                {
+                    // +2 for the \" before the value for the property
+                    Index = nameIndex + nodeIter.Current.Name.Length + 2,
+                    Length = nodeIter.Current.InnerXml.Length
+                };
+                yield return (nodeIter.Current.Value, location);
+            }
+            else
+            {
+                // Move the offset to the end of the opening tag
+                var offset = selfClosedTag ? endTagIndex : FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
+                // Move the minimum index up to the end of the closing tag
+                minIndex = selfClosedTag ? offset : FullContent[offset..].IndexOf('>') + offset + 1;
+                var location = new Boundary
+                {
+                    Index = offset,
+                    Length = nodeIter.Current.InnerXml.Length
+                };
+                yield return (nodeIter.Current.Value, location);
+            }
         }
     }
 
