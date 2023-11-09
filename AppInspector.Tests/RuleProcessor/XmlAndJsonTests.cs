@@ -344,10 +344,10 @@ public class XmlAndJsonTests
             Assert.Fail();
         }
     }
-    [DataRow(xmlStringRuleForPropWithDataForData)]
-    [DataRow(xmlStringRuleForPropWithData)]
+    [DataRow(xmlStringRuleForPropWithDataForData, "Franklin", 212)]
+    [DataRow(xmlStringRuleForPropWithData, "true", 176)]
     [DataTestMethod]
-    public void XmlTagWithPropsAndValue(string rule)
+    public void XmlTagWithPropsAndValue(string rule, string expectedValue, int expectedIndex)
     {
         RuleSet rules = new();
         rules.AddString(rule, "XmlTestRules");
@@ -357,6 +357,9 @@ public class XmlAndJsonTests
         {
             var matches = processor.AnalyzeFile(xmlDataPropsWithTagValue, new FileEntry("test.xml", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
+            var match = matches[0];
+            Assert.AreEqual(expectedValue, match.Sample);
+            Assert.AreEqual(expectedIndex, match.Boundary.Index);
         }
         else
         {
