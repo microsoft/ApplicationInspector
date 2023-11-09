@@ -83,6 +83,82 @@ public class XmlAndJsonTests
     }
 ]";
 
+    private const string xmlStringRuleForPropWithData = @"[
+    {
+        ""id"": ""SA000005"",
+        ""name"": ""Testing.Rules.XML"",
+        ""tags"": [
+            ""Testing.Rules.XML""
+        ],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule checks the value of the property property to be true"",
+        ""patterns"": [
+            {
+                ""pattern"": ""true"",
+                ""type"": ""string"",
+                ""confidence"": ""High"",
+                ""scopes"": [
+                    ""code""
+                ],
+                ""xpaths"" : [""/bookstore/book/title/@*[name()='property']""]
+            }
+        ],
+        ""_comment"": """"
+    }
+]";
+
+    private const string xmlStringRuleForPropWithDataForData = @"[
+    {
+        ""id"": ""SA000005"",
+        ""name"": ""Testing.Rules.XML"",
+        ""tags"": [
+            ""Testing.Rules.XML""
+        ],
+        ""severity"": ""Critical"",
+        ""description"": ""This rule checks the value of the title tag when it has a property"",
+        ""patterns"": [
+            {
+                ""pattern"": ""Franklin"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""scopes"": [
+                    ""code""
+                ],
+                ""xpaths"" : [""/bookstore/book/title""]
+            }
+        ],
+        ""_comment"": """"
+    }
+]";
+
+    private const string xmlDataPropsWithTagValue =
+        @"<?xml version=""1.0"" encoding=""utf-8"" ?>   
+  <bookstore>  
+      <book genre=""autobiography"" publicationdate=""1981-03-22"" ISBN=""1-861003-11-0"">  
+          <title property=""true"">The Autobiography of Benjamin Franklin</title>  
+          <author>  
+              <first-name>Benjamin</first-name>  
+              <last-name>Franklin</last-name>  
+          </author>  
+          <price>8.99</price>  
+      </book>  
+      <book genre=""novel"" publicationdate=""1967-11-17"" ISBN=""0-201-63361-2"">  
+          <title property=""false"">The Confidence Man</title>  
+          <author>  
+              <first-name>Herman</first-name>  
+              <last-name>Melville</last-name>  
+          </author>  
+          <price>11.99</price>  
+      </book>  
+      <book genre=""philosophy"" publicationdate=""1991-02-15"" ISBN=""1-861001-57-6"">  
+          <title property=""false"">The Gorgias</title>  
+          <author>  
+              <name>Plato</name>  
+          </author>  
+          <price>9.99</price>  
+      </book>  
+  </bookstore>";
+
     private const string jsonData =
         @"{
     ""books"":
@@ -228,14 +304,14 @@ public class XmlAndJsonTests
             {
                 ""xpaths"": [""system.web/trace/@enabled""],
                 ""pattern"": ""true"",
-                ""type"": ""regex""
+                ""type"": ""string""
             }
         ],
         ""must-match"": [
-            ""<system.web>\n<trace enabled='true' pageOutput='false' requestLimit='40' localOnly='false' />\n</system.web>""
+            ""<system.web>\n<trace enabled='true' pageOutput='false' requestLimit='40' localOnly='true' />\n</system.web>""
         ],
         ""must-not-match"": [
-            ""<system.web>\n<trace enabled='true' pageOutput='false' requestLimit='40' localOnly='true' />\n</system.web>""
+            ""<system.web>\n<trace enabled='false' pageOutput='false' requestLimit='40' localOnly='true' />\n</system.web>""
         ]
     }]";
         RuleSet rules = new();
@@ -262,6 +338,28 @@ public class XmlAndJsonTests
         {
             var matches = processor.AnalyzeFile(jsonData, new FileEntry("test.json", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
+        }
+        else
+        {
+            Assert.Fail();
+        }
+    }
+    [DataRow(xmlStringRuleForPropWithDataForData, "Franklin", 212)]
+    [DataRow(xmlStringRuleForPropWithData, "true", 176)]
+    [DataTestMethod]
+    public void XmlTagWithPropsAndValue(string rule, string expectedValue, int expectedIndex)
+    {
+        RuleSet rules = new();
+        rules.AddString(rule, "XmlTestRules");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        if (_languages.FromFileNameOut("test.xml", out var info))
+        {
+            var matches = processor.AnalyzeFile(xmlDataPropsWithTagValue, new FileEntry("test.xml", new MemoryStream()), info);
+            Assert.AreEqual(1, matches.Count);
+            var match = matches[0];
+            Assert.AreEqual(expectedValue, match.Sample);
+            Assert.AreEqual(expectedIndex, match.Boundary.Index);
         }
         else
         {

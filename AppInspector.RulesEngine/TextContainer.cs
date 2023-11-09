@@ -172,11 +172,13 @@ public class TextContainer
     }
 
     /// <summary>
-    ///     If this file is a JSON, XML or YML file, returns the string contents of the specified path.
+    ///     If this file is XML, attempts to return the the string contents of the specified XPath applied to the file.
     ///     If the path does not exist, or the file is not JSON, XML or YML returns null.
+    ///     Method contains some heuristic behavior and may not cover all cases. 
+    ///     Please report any issues with a sample XML and XPATH to reproduce.
     /// </summary>
-    /// <param name="Path"></param>
-    /// <returns></returns>
+    /// <param name="Path">XPath to query document with</param>
+    /// <returns>Enumeration of string and Boundary tuples for the XPath matches. Boundary locations refer to the locations in the original document on disk.</returns>
     internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path, Dictionary<string, string> xpathNameSpaces)
     {
         lock (_xpathLock)
@@ -221,26 +223,56 @@ public class TextContainer
                 continue;
             }
 
-            // First we find the name
+            // We have to heuristically calculate the original indexes of the locations in the original document because the internal representation differs
+            // For example it will convert <Tag Prop="Val"/> to <Tag Prop=\"Val\"/>
+
+            // First we find the name, absolute position index
             var nameIndex = FullContent[minIndex..].IndexOf(nodeIter.Current.Name, StringComparison.Ordinal) + minIndex;
-            // Then we grab the index of the end of this tag.
-            // We can't use OuterXML because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
-            var endTagIndex = FullContent[nameIndex..].IndexOf('>');
-            // We also look for self-closing tag
-            var selfClosedTag = FullContent[endTagIndex-1] == '/';
-            // If the tag is self closing innerxml will be empty string, so the finding is located at the end of the tag and is empty string
-            // Otherwise the finding is the content of the xml tag
-            var offset = selfClosedTag ? endTagIndex : FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
-            // Move the minimum index up in case there are multiple instances of identical OuterXML
-            // This ensures we won't re-find the same one
-            var totalOffset = minIndex + nameIndex + endTagIndex;
-            minIndex = totalOffset;
-            var location = new Boundary
+            // Then we calculate the absolute index of the end of the tag.
+            // We can't use OuterXML property because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
+            var endTagIndex = FullContent[nameIndex..].IndexOf('>', StringComparison.Ordinal) + nameIndex;
+            // If we are matching a tag itself, the previous char should be the open tag
+            //  |
+            //  v
+            // <Tag>
+            // If its a property it won't be
+            //      |
+            //      v
+            // <Tag Prop="Value">
+            var isProp = FullContent[(nameIndex - 1)] != '<';
+            // Check for self-closing tag
+            var selfClosedTag = FullContent[endTagIndex - 1] == '/';
+
+            // This is for when we're capturing the value of a property of the tag rather than the tag itself
+            if (isProp)
             {
-                Index = offset,
-                Length = nodeIter.Current.InnerXml.Length
-            };
-            yield return (nodeIter.Current.Value, location);
+                // Find the index of character after the next end tag index after the name
+                var nextClosingIndexAfterName = endTagIndex+1;
+                // If we have a self closing tag, we can use that index, otherwise we need the closure of this tag
+                var offset = selfClosedTag ? endTagIndex : FullContent[nextClosingIndexAfterName..].IndexOf('>') + nextClosingIndexAfterName + 1;
+                // Move the minimum index up to the end of the closing tag to avoid additioanl matches of the same values
+                minIndex = selfClosedTag ? offset : FullContent[offset..].IndexOf('>') + offset + 1;
+                var location = new Boundary
+                {
+                    // +2 for the \" before the value for the property
+                    Index = nameIndex + nodeIter.Current.Name.Length + 2,
+                    Length = nodeIter.Current.InnerXml.Length
+                };
+                yield return (nodeIter.Current.Value, location);
+            }
+            else
+            {
+                // Move the offset to the end of the opening tag
+                var offset = selfClosedTag ? endTagIndex : FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
+                // Move the minimum index up to the end of the closing tag
+                minIndex = selfClosedTag ? offset : FullContent[offset..].IndexOf('>') + offset + 1;
+                var location = new Boundary
+                {
+                    Index = offset,
+                    Length = nodeIter.Current.InnerXml.Length
+                };
+                yield return (nodeIter.Current.Value, location);
+            }
         }
     }
 
