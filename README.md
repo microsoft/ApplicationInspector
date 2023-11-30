@@ -84,7 +84,7 @@ the [Rules](https://github.com/microsoft/ApplicationInspector/wiki/3.-Understand
 Application Inspector is in GENERAL AUDIENCE release status. Your feedback is important to us. If you're interested in
 contributing, please review the CONTRIBUTING.md.
 
-Application Inspector is availble as a command line tool or NuGet package and is supported on Windows, Linux, or MacOS.
+Application Inspector is available as a command line tool or NuGet package and is supported on Windows, Linux, or MacOS.
 
 Platform specific binaries of the ApplicationInspector CLI are available on our
 GitHub [releases page](https://github.com/microsoft/ApplicationInspector/releases).

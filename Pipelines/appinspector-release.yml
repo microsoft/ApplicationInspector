@@ -18,13 +18,12 @@ resources:
     - repository: templates
       type: git
       name: SecurityEngineering/OSS-Tools-Pipeline-Templates
-      ref: refs/tags/v1.0.7
+      ref: refs/tags/v1.1.0
 
 variables:
   BuildConfiguration: 'Release'
-  DotnetVersion: '7.0.x'
-  DotnetVersionLTS: '6.0.x'
-  DotnetTargetFramework: 'net7.0'
+  DotnetVersion: '8.0.x'
+  DotnetTargetFramework: 'net8.0'
 
 stages:
 - stage: Test
@@ -33,8 +32,7 @@ stages:
   - template: dotnet-test-job.yml@templates
     parameters:
       jobName: 'dotnet_test_windows'
-      dotnetVersion: ${{ variables.DotnetVersion }}
-      dotnetVersionLTS: ${{ variables.DotnetVersionLTS }}
+      dotnetVersions: ['6.0.x','7.0.x','8.0.x']
       vmImage: 'oss-tools-win2022_1es-managed'
       projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
 
