@@ -576,8 +576,10 @@ public class RuleProcessor
         //  instead gather an appropriate number of characters
         if (endIndex - startIndex - matchBoundary.Length > maxCharacterContext * 2)
         {
+            // Limit start index to 0
             startIndex = Math.Max(0, matchBoundary.Index - maxCharacterContext);
-            endIndex = Math.Max(0, matchBoundary.Index + matchBoundary.Length + maxCharacterContext);
+            // Limit end index to length of overall content
+            endIndex = Math.Min(text.FullContent.Length, Math.Max(0, matchBoundary.Index + matchBoundary.Length + maxCharacterContext));
         }
 
         return text.FullContent[startIndex..endIndex];
