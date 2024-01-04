@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ using Microsoft.CST.OAT;
 using Microsoft.CST.RecursiveExtractor;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+
+[assembly: InternalsVisibleTo("AppInspector.Tests")]
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
@@ -531,7 +534,7 @@ public class RuleProcessor
     ///     Simple wrapper but keeps calling code consistent
     ///     Do not html code result which is accomplished later before out put to report
     /// </summary>
-    private string ExtractTextSample(string fileText, int index, int length)
+    internal string ExtractTextSample(string fileText, int index, int length)
     {
         if (index < 0 || length < 0)
         {
@@ -554,7 +557,7 @@ public class RuleProcessor
     ///     from the template
     /// </summary>
     /// <returns></returns>
-    private static string ExtractExcerpt(TextContainer text, Location start, Location end, Boundary matchBoundary, int context = 3)
+    internal static string ExtractExcerpt(TextContainer text, Location start, Location end, Boundary matchBoundary, int context = 3)
     {
         if (context == 0)
         {
