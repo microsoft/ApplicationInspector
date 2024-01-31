@@ -20,7 +20,7 @@ resources:
     - repository: templates
       type: git
       name: SecurityEngineering/OSS-Tools-Pipeline-Templates
-      ref: refs/tags/v1.1.0
+      ref: refs/tags/v1.1.1
 
 variables:
   BuildConfiguration: 'Release'
