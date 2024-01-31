@@ -18,7 +18,7 @@ resources:
     - repository: templates
       type: git
       name: SecurityEngineering/OSS-Tools-Pipeline-Templates
-      ref: refs/tags/v1.1.0
+      ref: refs/tags/v1.1.1
 
 variables:
   BuildConfiguration: 'Release'
@@ -33,7 +33,7 @@ stages:
     parameters:
       jobName: 'dotnet_test_windows'
       dotnetVersions: ['6.0.x','7.0.x','8.0.x']
-      vmImage: 'oss-tools-win2022_1es-managed'
+      vmImage: 'win2022-image-base'
       projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
 
 - stage: SDL
@@ -119,8 +119,7 @@ stages:
   - job: sign_hash_release
     displayName: Code Sign, Generate Hashes, Publish Public Releases
     pool:
-      name: 'OSS-Tools-1ESPool'
-      vmImage: 'oss-tools-win2022_1es-managed'
+      vmImage: 'win2022-image-base'
     steps:
     - task: UseDotNet@2 # For ESRP. Do not use variable.
       inputs:
