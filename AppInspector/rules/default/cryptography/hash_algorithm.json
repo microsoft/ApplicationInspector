@@ -144,7 +144,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "SHAKE(128|256)",
+        "pattern": "SHAKE(_?)(128|256)",
         "type": "regexword",
         "scopes": [
           "code",
@@ -156,5 +156,5 @@
         "confidence": "high"
       }
     ]
-  },
+  }
 ]

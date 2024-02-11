@@ -105,5 +105,39 @@
         "must-match": [
           "using Microsoft.SemanticKernel.Connectors.OpenAI;"
         ]
+      },
+      {
+        "name": "Generative AI Library (Semantic Kernel)",
+        "id": "AI070005",
+        "description": "Generative AI Library (Semantic Kernel)",
+        "tags": [
+          "AI.Library.GenerativeAI.SemanticKernel"
+        ],
+        "applies_to": [
+            "python"
+        ],
+        "severity": "unspecified",
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "(from|import) semantic_kernel",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          },
+          {
+            "confidence": "high",
+            "pattern": "AzureChatCompletion|register_semantic_function|SemanticFunctionConfig|ChatPromptTemplate|PromptTemplateConfig",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          },
+        ],
+        "must-match": [
+          "import semantic_kernel.connectors.ai.open_ai as sk_oai",
+          "pc = sk.PromptTemplateConfig.from_completion_parameters()"
+        ]
       }
   ]
