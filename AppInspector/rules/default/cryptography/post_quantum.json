@@ -1,0 +1,404 @@
+[
+  {
+    "name": "Cryptography: Quantum-Resistant: General Terms",
+    "id": "AI009501",
+    "description": "Cryptography: Quantum-Resistant: General Terms",
+    "tags": [
+      "Cryptography.HashAlgorithm.QuantumResistant.General"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "openquantumsafe\\.org|open-quantum-safe|quantum safe|quantum[ -](safe|resistant|resistence|safety|proof|secure)|post[ -]quantum",
+        "type": "regexword",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "must-match": [
+      "This class implements a post-quantum secure key exchange algorithm based on the NTRUEncrypt cryptosystem."
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: Module-Lattice KEM (Kyber)",
+    "id": "AI009505",
+    "description": "Cryptography: Quantum-Resistant: Kyber/ML-KEM",
+    "tags": [
+      "Cryptography.HashAlgorithm.QuantumResistant",
+      "Cryptography.HashAlgorithm.MLKEM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ml[_-]?kem|PQCgenKAT_kem|pqc_kyber|ccakem|generate_kyber_keys|fips203",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "\\bkyber[a-z0-9_-]+",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "kyber[_]?(encrypt|decrypt|sign)",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "516,\\s*3321,\\s*3009",
+        "_comment": "Kyber parameters",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "must-match": [
+      "encrypted_message = pqc.kyber_encrypt(public_key, message)",
+      "KYBER_INDCPA_PUBLICKEYBYTES",
+      "1785, 516, 3321, 3009, 2663, 1711, 2167, 126, 1469, 2476, 3239, 3058, 830,"
+    ],
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: Module-Lattice DSA",
+    "id": "AI009506",
+    "description": "Cryptography: Quantum-Resistant: Dilithium/ML-DSA",
+    "tags": [
+      "Cryptography.HashAlgorithm.QuantumResistant",
+      "Cryptography.HashAlgorithm.MLDSA"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(ml[_-]?dsa|fips[_]?204|crystals-kyber)",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "516,\\s*3321,\\s*3009",
+        "_comment": "Kyber parameters",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: FrodoKEM",
+    "id": "AI009507",
+    "description": "Cryptography: Quantum-Resistant: FrodoKEM",
+    "tags": [
+      "Cryptography.HashAlgorithm.QuantumResistant",
+      "Cryptography.KeyEncapsulation.FrodoKEM"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "frodo-\\d+-(shake|aes)-sha\\d+",
+        "_comment": "FrodoKEM algorithms",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: Hybrid Key Exchange Algorithms",
+    "id": "AI009508",
+    "description": "Cryptography: Quantum-Resistant: Hybrid Key Exchange Algorithms",
+    "tags": [
+      "Cryptography.KeyExchange.QuantumResistant.HybridKeyExchange"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ecdh-nistp384-(.{12,35})@openquantumsafe.org",
+        "_comment": "https://github.com/microsoft/Quantum-Safe-OpenSSH/blob/07d1592ac37f4b45ab7b577c7fbcc00f0003a493/docs/Algorithms.md?plain=1#L80",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "must-match": [
+      "ecdh-nistp384-classic-mceliece-6960119f-sha384@openquantumsafe.org"
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: Signature Algorithms",
+    "id": "AI009509",
+    "description": "Cryptography: Quantum-Resistant: Signature Algorithms",
+    "tags": [
+      "Cryptography.DigitalSignature.QuantumResistant"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ssh-(dilithium2|falcoln512|mqdss3148|picnicl1fs|picnic3l1|qteslapi|rainbowiaclassic|rainbowiiicclassic|rainbowvcclassic|spincsharka128frobust|sphincssha256128frobust|sphincsshake256128frobust)",
+        "_comment": "https://github.com/microsoft/Quantum-Safe-OpenSSH/blob/07d1592ac37f4b45ab7b577c7fbcc00f0003a493/docs/Algorithms.md?plain=1#L149",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "must-match": [
+      "ssh-rainbowiiicclassic"
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: Hybrid Signatures",
+    "id": "AI009510",
+    "description": "Cryptography: Quantum-Resistant: Hybrid Signatures",
+    "tags": [
+      "Cryptography.DigitalSignature.QuantumResistant.HybridSignatures"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ssh-(rsa3072|p256|p384|p521)-(dilithium2|falcon512|mqdss3148|picnicl1fs|picnic3l1|qteslapi|rainbowiaclassic|rainbowiiicclassic|rainbowvcclassic|sphincsharaka128frobust|sphincssha256128frobust|sphincsshake256128frobust)",
+        "_comment": "https://github.com/microsoft/Quantum-Safe-OpenSSH/blob/07d1592ac37f4b45ab7b577c7fbcc00f0003a493/docs/Algorithms.md?plain=1#L164",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "must-match": [
+      "ssh-rsa3072-sphincsharaka128frobust"
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: Stateless Hash-Based DSS",
+    "id": "AI009511",
+    "description": "Cryptography: Quantum-Resistant: Stateless Hash-Based DSS",
+    "tags": [
+      "Cryptography.DigitalSignature.QuantumResistant.StatelessHashBasedDSS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "slh-dsa|fips[ -]205|hdd|xmss",
+        "_comment": "",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: SPHINCS+",
+    "id": "AI009512",
+    "description": "Cryptography: Quantum-Resistant: SPHINCS+",
+    "tags": [
+      "Cryptography.DigitalSignature.QuantumResistant.SPHINCSplus"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "sphincx|haraka",
+        "_comment": "",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: Falcon",
+    "id": "AI009513",
+    "description": "Cryptography: Quantum-Resistant: Falcon",
+    "tags": [
+      "Cryptography.DigitalSignature.QuantumResistant.Falcon"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "falcon[-]?(512|1024)",
+        "_comment": "",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: mbedTLS",
+    "id": "AI009514",
+    "description": "Cryptography: Quantum-Resistant: mbedTLS",
+    "tags": [
+      "Cryptography.Implementation.QuantumResistant.mbedTLS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "mbedtls_(lmots|lms)_[a-z0-9]+",
+        "_comment": "",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: NTRU",
+    "id": "AI009515",
+    "description": "Cryptography: Quantum-Resistant: NTRU",
+    "tags": [
+      "Cryptography.Implementation.QuantumResistant.NTRU"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ntru[_]?(encrypt|decrypt|sign)",
+        "_comment": "",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "must-match": [
+      "decrypted_message = pyqrypt.ntru_decrypt(private_key, encrypted_message)"
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: BouncyCastle (Java)",
+    "id": "AI009516",
+    "description": "Cryptography: Quantum-Resistant: BouncyCastle (Java)",
+    "tags": [
+      "Cryptography.Implementation.QuantumResistant.BouncyCastle"
+    ],
+    "severity": "moderate",
+    "applies_to": [
+      "java"
+    ],
+    "patterns": [
+      {
+        "pattern": "^import org\\.bouncycastle\\.pqc\\.(crypto|jcajce)\\..*;",
+        "_comment": "",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "must-match": [
+      "import org.bouncycastle.pqc.crypto.falcon.Falcon512KeyPairGenerator;",
+      "import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;"
+    ]
+  },
+  {
+    "name": "Cryptography: Quantum-Resistant: BouncyCastle (C#)",
+    "id": "AI009517",
+    "description": "Cryptography: Quantum-Resistant: BouncyCastle *C#",
+    "tags": [
+      "Cryptography.Implementation.QuantumResistant.BouncyCastle"
+    ],
+    "severity": "moderate",
+    "applies_to": [
+      "csharp"
+    ],
+    "patterns": [
+      {
+        "pattern": "^using Org\\.BouncyCastle\\.Pqc\\.Crypto",
+        "_comment": "",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ],
+    "must-match": [
+      "using Org.BouncyCastle.Pqc.Crypto.Crystals.Kyber;"
+    ]
+  }
+]

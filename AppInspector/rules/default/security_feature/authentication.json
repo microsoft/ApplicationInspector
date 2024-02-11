@@ -204,16 +204,17 @@
     ]
   },
   {
-    "name": "Authentication: Microsoft (Active Directory)",
+    "name": "Authentication: Microsoft (Entra)",
     "id": "AI039300",
-    "description": "Authentication: Microsoft (Active Directory)",
+    "description": "Authentication: Microsoft (Entra)",
     "tags": [
-      "Authentication.Microsoft.Windows.ActiveDirectory"
+      "Authentication.Microsoft.Windows.ActiveDirectory",
+      "Authentication.Microsoft.Windows.Entra"
     ],
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "active.?directory|ADFS",
+        "pattern": "active.?directory|ADFS|entra",
         "type": "regexword",
         "scopes": [
           "code",
@@ -242,6 +243,14 @@
         "confidence": "high"
       },
       {
+        "pattern": "ManagedIdentityClient|UsernamePasswordCredentialOptions|SharedTokenCacheCredential|EnvironmentalCredential|DeviceCodeCredential|InteractiveBrowserCredential|ClientSecretCredential|ClientCertificateCredential|AuthorizationCodeCredential|DefaultAzureCredential|AzureCliCredential",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
+      },
+      {
         "pattern": "System\\.DirectoryServices|IDirectoryObject|IDirectorySearch",
         "type": "regexword",
         "scopes": [
@@ -249,7 +258,19 @@
           "comment"
         ],
         "confidence": "medium"
+      },
+      {
+        "pattern": "AddMicrosoftIdentityUI",
+        "type": "regexword",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "confidence": "medium"
       }
+    ],
+    "must-match": [
+      "options.AddMicrosoftIdentityUI();"
     ]
   },
   {
@@ -276,9 +297,9 @@
     ]
   },
   {
-    "name": "Authentication: Microsoft Windows (NTML)",
+    "name": "Authentication: Microsoft Windows (NTLM)",
     "id": "AI039500",
-    "description": "AAuthentication: Microsoft Windows (NTML)",
+    "description": "AAuthentication: Microsoft Windows (NTLM)",
     "tags": [
       "Authentication.Microsoft.Windows.NTLM"
     ],
@@ -478,7 +499,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "principal|identity|auth|authenticated|authentication|signin|sign-?in|signout|sign-?out|networkcredential",
+        "pattern": "principal|identity|auth|authenticated|authentication|signin|sign-?in|signout|sign-?out|networkcredential|isauthenticated|isloggedin",
         "type": "regexword",
         "scopes": [
           "code"

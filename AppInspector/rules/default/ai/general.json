@@ -1,0 +1,35 @@
+[
+    {
+      "name": "Generative AI - General Term",
+      "id": "AI070201",
+      "description": "Generative AI - General Term",
+      "tags": [
+        "AI.Library.GenerativeAI"
+      ],
+      "severity": "unspecified",
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "GAN|Generative Adversarial Network|VAE|Variational Autoencoder|Seq2Seq|Sequence-to-Sequence|Transformer|GAN[0-9]+|Generational Adversarial Network[0-9]+|RNN|Recurrent Neural Network|LSTM|Long Short-Term Memory|GANs|Generational Adversarial Networks|VQ-VAQ|Vector Quantized Variational Autoencoder|DCGAN|Deep Convolutional Generative Adversarial Network",
+          "type": "regexword",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": "gpt[-]?[234]",
+          "type": "regexword",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        }
+      ]
+    }
+  ]

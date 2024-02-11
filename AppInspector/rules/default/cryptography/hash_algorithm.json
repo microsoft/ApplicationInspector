@@ -133,5 +133,28 @@
         "confidence": "low"
       }
     ]
-  }
+  },
+  {
+    "name": "Cryptography: Hash Algorithm (SHAKE)",
+    "id": "AI009301",
+    "description": "Cryptography: Hash Algorithm (SHAKE)",
+    "tags": [
+      "Cryptography.HashAlgorithm.SHAKE"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "SHAKE(128|256)",
+        "type": "regexword",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
 ]

@@ -1,0 +1,46 @@
+[
+    {
+      "name": "Neural Network AI Library (requirements.txt)",
+      "id": "AI070010",
+      "description": "Neural Network AI Library (requirements.txt)",
+      "tags": [
+        "AI.Library.NeuralNetwork"
+      ],
+      "severity": "unspecified",
+      "applies_to_file_regex": [
+        "requirements\\.txt"
+      ],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "blocks|pylearn2|lasagne|onnx",
+          "type": "regexword",
+          "scopes": [
+            "code"
+          ]
+        }
+      ]
+    },
+    {
+        "name": "Neural Network AI Library (import)",
+        "id": "AI070011",
+        "description": "Neural Network AI Library (import)",
+        "tags": [
+          "AI.Library.NeuralNetwork"
+        ],
+        "severity": "unspecified",
+        "applies_to": [
+          "python"
+        ],
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "(from|import)\\s+(blocks|pylearn2|lasagne|onnx)[^\\s]",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          }
+        ]
+      }
+  ]
