@@ -36,6 +36,11 @@
             "searchPattern": "^OS.Process.DynamicExecution.*",
             "displayName": "Dynamic command execution",
             "detectedIcon": "fab fa-audible"
+          },
+          {
+            "searchPattern": "^AI\\..*$",
+            "displayName": "AI",
+            "detectedIcon": "fa-solid fa-robot"
           }
         ]
       },
