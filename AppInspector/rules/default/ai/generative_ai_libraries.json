@@ -14,10 +14,7 @@
         {
           "confidence": "high",
           "pattern": "adapters|transformers|asteroid|bertopic|diffusers|doctr|espnet|gpt2|fastai|gpt_2_simple|huggingface_hub|openai|textgenrnn|langchain|langchain_community|semantic_kernel|t5|t5x|tensorflow",
-          "type": "regexword",
-          "scopes": [
-            "code"
-          ]
+          "type": "regexword"
         }
       ],
       "must-match": [

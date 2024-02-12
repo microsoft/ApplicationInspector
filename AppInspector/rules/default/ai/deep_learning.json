@@ -14,10 +14,7 @@
         {
           "confidence": "high",
           "pattern": "caffe|chainer|cntk|deepy|keras|keras_cv|mxnet|tensorly|tensor2tensor|torch|torchaudio|torchtext|torchvision",
-          "type": "regexword",
-          "scopes": [
-            "code"
-          ]
+          "type": "regexword"
         }
       ]
     },

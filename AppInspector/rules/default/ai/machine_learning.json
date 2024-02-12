@@ -14,10 +14,7 @@
         {
           "confidence": "high",
           "pattern": "sklearn|seaborn|gym|gymnasium|pycaret|xgboost|yellowbrick",
-          "type": "regexword",
-          "scopes": [
-            "code"
-          ]
+          "type": "regexword"
         }
       ]
     },

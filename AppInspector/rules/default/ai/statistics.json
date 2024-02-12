@@ -14,10 +14,7 @@
         {
           "confidence": "high",
           "pattern": "jax|numpy|statsmodels|theano|matplotlib|scipy",
-          "type": "regexword",
-          "scopes": [
-            "code"
-          ]
+          "type": "regexword"
         }
       ]
     },

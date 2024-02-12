@@ -14,10 +14,7 @@
         {
           "confidence": "high",
           "pattern": "allennlp|cltk|corenlp|flair|gensim|keras_nlp|nlp_architect|nltk|polyglot|pynlpl|quepy|spacy|textblob",
-          "type": "regexword",
-          "scopes": [
-            "code"
-          ]
+          "type": "regexword"
         }
       ]
     },

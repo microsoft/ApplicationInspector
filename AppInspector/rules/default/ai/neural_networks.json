@@ -14,10 +14,7 @@
         {
           "confidence": "high",
           "pattern": "blocks|pylearn2|lasagne|onnx",
-          "type": "regexword",
-          "scopes": [
-            "code"
-          ]
+          "type": "regexword"
         }
       ]
     },
