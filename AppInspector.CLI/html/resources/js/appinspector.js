@@ -80,68 +80,62 @@ class TemplateInsertion {
     }
 
     processSummaryPage() {
-        c3.generate({
-            bindto: '#s_pi_analysis_chart',
-            size: {
-                width: 200
-            },
-            data: {
-                columns: [
-                    ['Analyzed', this.mt.filesAnalyzed],
-                    ['Skipped', this.mt.filesSkipped],
-                ],
-                type: 'donut'
-            },
-            donut: {
-                title: "Analyzed Files",
-                label: {
-                    format: function (value) {
-                        return value;
+        const analysisChartData ={
+            labels:['Analyzed', 'Skipped'],
+            datasets:[{data:[this.mt.filesAnalyzed, this.mt.filesSkipped]}]
+        };
+        const analysisChartConfig = {
+            type: 'doughnut',
+            data: analysisChartData,
+            options:{
+                plugins:{
+                    title:{
+                        display:true,
+                        text:"Analyzed Files"
                     }
                 }
             }
-        });
+        };
+        const analysisChartContext = $('#s_pi_analysis_chart').get(0).getContext('2d');
+        new Chart(analysisChartContext, analysisChartConfig);
 
-        c3.generate({
-            bindto: '#s_pi_patterns_chart',
-            size: {
-                width: 200
-            },
-            data: {
-                columns: [
-                    ['Unique Matches', this.mt.uniqueMatchesCount],
-                    ['Repeats', this.mt.totalMatchesCount - this.mt.uniqueMatchesCount],
-                ],
-                type: 'donut'
-            },
-            donut: {
-                title: "Results",
-                label: {
-                    format: function (value) {
-                        return value;
+        const patternsChartData ={
+            labels:['Unique Matches', 'Repeats'],
+            datasets:[{data:[this.mt.uniqueMatchesCount, this.mt.totalMatchesCount - this.mt.uniqueMatchesCount]}]
+        };
+        const patternsChartConfig = {
+            type: 'doughnut',
+            data: patternsChartData,
+            options:{
+                plugins:{
+                    title:{
+                        display:true,
+                        text:"Results"
                     }
                 }
             }
-        });
+        };
+        const patternsChartContext = $('#s_pi_patterns_chart').get(0).getContext('2d');
+        new Chart(patternsChartContext, patternsChartConfig);
 
-        c3.generate({
-            bindto: '#s_pi_languages_chart',
-            size: {
-                width: 200
-            },
-            data: {
-                columns: Object.entries(this.mt.languages),
-                type: 'donut'
-            },
-            donut: {
-                title: "Source Types",
-                label: {
-                    format: function (value) {
-                        return value;
+        const languagesChartData ={
+            labels:Object.keys(this.mt.languages),
+            datasets:[{data:Object.values(this.mt.languages)}]
+        };
+        const languagesChartConfig = {
+            type: 'doughnut',
+            data: languagesChartData,
+            options:{
+                plugins:{
+                    title:{
+                        display:true,
+                        text:"Languages"
                     }
                 }
             }
-        });
+        };
+        const languagesChartContext = $('#s_pi_languages_chart').get(0).getContext('2d');
+        new Chart(languagesChartContext, languagesChartConfig);
 
         $('#s_pi_application_name').text(this.mt.applicationName);
         $('#s_pi_version').text(this.mt.sourceVersion);
