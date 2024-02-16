@@ -218,8 +218,10 @@ class TemplateInsertion {
         $('#file_listing_modal').on('shown.bs.modal', function (e) {
             $('a.content-link').first().trigger('click');
         });
-
-        $('#file_listing_modal').modal();
+        var fileListingModal = new bootstrap.Modal(document.getElementById('file_listing_modal'), {
+            keyboard: false
+          });
+        fileListingModal.show();
     }
 
     /*
