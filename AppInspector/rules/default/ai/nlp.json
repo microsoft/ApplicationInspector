@@ -1,0 +1,43 @@
+[
+    {
+      "name": "NLP AI Library (requirements.txt)",
+      "id": "AI070020",
+      "description": "NLP AI Library (requirements.txt)",
+      "tags": [
+        "AI.Library.NLP"
+      ],
+      "severity": "unspecified",
+      "applies_to_file_regex": [
+        "requirements\\.txt"
+      ],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "allennlp|cltk|corenlp|flair|gensim|keras_nlp|nlp_architect|nltk|polyglot|pynlpl|quepy|spacy|textblob",
+          "type": "regexword"
+        }
+      ]
+    },
+    {
+        "name": "NLP AI Library (import)",
+        "id": "AI070021",
+        "description": "NLP AI Library (import)",
+        "tags": [
+          "AI.Library.NLP"
+        ],
+        "severity": "unspecified",
+        "applies_to": [
+          "python"
+        ],
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "(from|import)\\s+(allennlp|cltk|corenlp|flair|gensim|keras_nlp|nlp_architect|nltk|polyglot|pynlpl|quepy|spacy|textblob)[^\\s]",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          }
+        ]
+      }
+  ]

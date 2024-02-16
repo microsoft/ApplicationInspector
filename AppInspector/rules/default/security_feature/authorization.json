@@ -192,5 +192,91 @@
         "negate_finding": true
       }
     ]
+  },
+  {
+    "name": "Authorization: MSAL (ASP.NET)",
+    "id": "AI040601",
+    "description": "Authorization: MSAL (ASP.NET)",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "Authorization.Microsoft.MSAL"
+    ],
+    "severity": "unspecified",
+    "patterns": [
+      {
+        "pattern": "AuthorizationPolicyBuilder|RequireAuthenticatedUser|AuthorizeFilter|TokenValidationParameters",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "Azure.Identity",
+        "type": "string",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Authorization: MSAL (JavaScript)",
+    "id": "AI040602",
+    "description": "Authorization: MSAL (JavaScript)",
+    "applies_to": [
+      "javascript"
+    ],
+    "tags": [
+      "Authorization.Microsoft.MSAL"
+    ],
+    "severity": "unspecified",
+    "patterns": [
+      {
+        "pattern": "ConfidentialClientApplication|acquireTokenByClientCredential",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ]
+  },
+  {
+    "name": "Authorization: Entra (Custom Claims)",
+    "id": "AI040603",
+    "description": "Authorization: Entra (Custom Claims)",
+    "applies_to": [
+      "javascript"
+    ],
+    "tags": [
+      "Authorization.Microsoft.MSAL.CustomClaims"
+    ],
+    "severity": "unspecified",
+    "patterns": [
+      {
+        "pattern": "onTokenIssuanceStartResponseData|tokenIssuanceStart\\.provideClaimsForToken",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      }
+    ]
   }
 ]

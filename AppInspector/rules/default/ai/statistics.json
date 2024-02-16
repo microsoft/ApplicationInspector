@@ -1,0 +1,43 @@
+[
+    {
+      "name": "Statistics AI Library (requirements.txt)",
+      "id": "AI070050",
+      "description": "Statistics AI Library (requirements.txt)",
+      "tags": [
+        "AI.Library.Statistics"
+      ],
+      "severity": "unspecified",
+      "applies_to_file_regex": [
+        "requirements\\.txt"
+      ],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "jax|numpy|statsmodels|theano|matplotlib|scipy",
+          "type": "regexword"
+        }
+      ]
+    },
+    {
+        "name": "Statistics AI Library (import)",
+        "id": "AI070051",
+        "description": "Statistics AI Library (import)",
+        "tags": [
+          "AI.Library.Statistics"
+        ],
+        "severity": "unspecified",
+        "applies_to": [
+          "python"
+        ],
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "(from|import)\\s+(jax|numpy|statsmodels|theano|matplotlib|scipy)[^\\s]",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          }
+        ]
+      }
+  ]
