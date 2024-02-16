@@ -1,0 +1,140 @@
+[
+    {
+      "name": "Generative AI Library (requirements.txt)",
+      "id": "AI070001",
+      "description": "Generative AI Library (requirements.txt)",
+      "tags": [
+        "AI.Library.GenerativeAI"
+      ],
+      "severity": "unspecified",
+      "applies_to_file_regex": [
+        "requirements\\.txt"
+      ],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "adapters|transformers|asteroid|bertopic|diffusers|doctr|espnet|gpt2|fastai|gpt_2_simple|huggingface_hub|openai|textgenrnn|langchain|langchain_community|semantic_kernel|t5|t5x|tensorflow",
+          "type": "regexword"
+        }
+      ],
+      "must-match": [
+        "langchain",
+        "openai==1.6.0"
+      ]
+
+    },
+    {
+        "name": "Generative AI Library (import)",
+        "id": "AI070002",
+        "description": "Generative AI Library (import)",
+        "tags": [
+          "AI.Library.GenerativeAI"
+        ],
+        "severity": "unspecified",
+        "applies_to": [
+          "python"
+        ],
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "(from|import)\\s+(adapters|transformers|asteroid|bertopic|diffusers|doctr|espnet|gpt2|fastai|gpt_2_simple|huggingface_hub|openai|textgenrnn|langchain|langchain_community|semantic_kernel|t5|t5x|tensorflow)\\s?",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          },
+          {
+            "confidence": "high",
+            "pattern": "tensorflow|keras|pytorch",
+            "type": "regexword",
+            "scopes": [
+              "code"
+            ]
+          }
+        ],
+        "must-match": [
+          "from tensorflow.keras.layers import Dense, Flatten, Reshape"
+        ]
+      },
+      {
+        "name": "Generative AI Library (*.csproj)",
+        "id": "AI070003",
+        "description": "Generative AI Library (*.csproj)",
+        "tags": [
+          "AI.Library.GenerativeAI"
+        ],
+        "applies_to": [
+            "VSProject"
+        ],
+        "severity": "unspecified",
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "(Microsoft\\.SemanticKernel|OpenAI|OpenAI-DotNet|Azure\\.AI\\.OpenAI)",
+            "xpaths": [
+                "/Project/ItemGroup/PackageReference/@Include"
+            ],
+            "type": "regex"
+          }
+        ]
+      },
+      {
+        "name": "Generative AI Library (Semantic Kernel)",
+        "id": "AI070004",
+        "description": "Generative AI Library (Semantic Kernel)",
+        "tags": [
+          "AI.Library.GenerativeAI.SemanticKernel"
+        ],
+        "applies_to": [
+            "csharp"
+        ],
+        "severity": "unspecified",
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "using Microsoft\\.SemanticKernel.*;",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          }
+        ],
+        "must-match": [
+          "using Microsoft.SemanticKernel.Connectors.OpenAI;"
+        ]
+      },
+      {
+        "name": "Generative AI Library (Semantic Kernel)",
+        "id": "AI070005",
+        "description": "Generative AI Library (Semantic Kernel)",
+        "tags": [
+          "AI.Library.GenerativeAI.SemanticKernel"
+        ],
+        "applies_to": [
+            "python"
+        ],
+        "severity": "unspecified",
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "(from|import) semantic_kernel",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          },
+          {
+            "confidence": "high",
+            "pattern": "AzureChatCompletion|register_semantic_function|SemanticFunctionConfig|ChatPromptTemplate|PromptTemplateConfig",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          },
+        ],
+        "must-match": [
+          "import semantic_kernel.connectors.ai.open_ai as sk_oai",
+          "pc = sk.PromptTemplateConfig.from_completion_parameters()"
+        ]
+      }
+  ]

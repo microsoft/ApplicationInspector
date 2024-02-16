@@ -1,0 +1,43 @@
+[
+    {
+      "name": "Machine Learning AI Library (requirements.txt)",
+      "id": "AI070030",
+      "description": "Machine Learning AI Library (requirements.txt)",
+      "tags": [
+        "AI.Library.MachineLearning"
+      ],
+      "severity": "unspecified",
+      "applies_to_file_regex": [
+        "requirements\\.txt"
+      ],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "sklearn|seaborn|gym|gymnasium|pycaret|xgboost|yellowbrick",
+          "type": "regexword"
+        }
+      ]
+    },
+    {
+        "name": "Machine Learning AI Library (import)",
+        "id": "AI070031",
+        "description": "Machine Learning AI Library (import)",
+        "tags": [
+          "AI.Library.MachineLearning"
+        ],
+        "severity": "unspecified",
+        "applies_to": [
+          "python"
+        ],
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "(from|import)\\s+(sklearn|seaborn|gym|gymnasium|pycaret|xgboost|yellowbrick)[^\\s]",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          }
+        ]
+      }
+  ]

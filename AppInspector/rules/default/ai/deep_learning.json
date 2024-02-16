@@ -1,0 +1,43 @@
+[
+    {
+      "name": "Deep Learning AI Library (requirements.txt)",
+      "id": "AI070040",
+      "description": "Deep Learning AI Library (requirements.txt)",
+      "tags": [
+        "AI.Library.DeepLearning"
+      ],
+      "severity": "unspecified",
+      "applies_to_file_regex": [
+        "requirements\\.txt"
+      ],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "caffe|chainer|cntk|deepy|keras|keras_cv|mxnet|tensorly|tensor2tensor|torch|torchaudio|torchtext|torchvision",
+          "type": "regexword"
+        }
+      ]
+    },
+    {
+        "name": "Deep Learning AI Library (import)",
+        "id": "AI070041",
+        "description": "Deep Learning AI Library (import)",
+        "tags": [
+          "AI.Library.DeepLearning"
+        ],
+        "severity": "unspecified",
+        "applies_to": [
+          "python"
+        ],
+        "patterns": [
+          {
+            "confidence": "high",
+            "pattern": "(from|import)\\s+(caffe|chainer|cntk|deepy|keras|keras_cv|mxnet|tensorly|tensor2tensor|torch|torchaudio|torchtext|torchvision)[^\\s]",
+            "type": "regex",
+            "scopes": [
+              "code"
+            ]
+          }
+        ]
+      }
+  ]
