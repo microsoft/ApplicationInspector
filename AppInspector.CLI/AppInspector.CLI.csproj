@@ -55,10 +55,10 @@
         <None Update="html\resources\css\bootstrap.min.css">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="html\resources\css\c3.css">
+        <None Update="html\resources\css\fa-all.css">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="html\resources\css\fa-all.css">
+        <None Update="html\resources\css\prism.css">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="html\resources\js\appinspector.js">

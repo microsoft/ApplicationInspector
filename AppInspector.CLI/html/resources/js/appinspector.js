@@ -31,6 +31,12 @@
         $('#file_listing_modal').modal();
     })
 
+    $('button.close').on('click', (e) => {
+        var fileListingModal = document.getElementById('file_listing_modal');
+        var modal = bootstrap.Modal.getInstance(fileListingModal);
+        modal.hide();
+    })
+
     /*
      * When a user clicks on a file listing filename, load the data
      * to show into the Ace editor in the popup dialog.
@@ -39,31 +45,22 @@
         const content = $(e.target).data('excerpt');
         const startLocationLine = $(e.target).data('startLocationLine');
         const endLocationLine = $(e.target).data('endLocationLine');
-        const editor = ace.edit("editor");
+        const language = $(e.target).data('language');
+        let snippetElement = $('#snippet-container');
+        snippetElement.empty();
+        snippetElement.removeClass();
+        snippetElement.addClass('line-numbers');
+        snippetElement.addClass('language-'+language);
 
-        // Assume that the default context of 3 is used, the minimum line number is 1
-        // TODO: Better handle context that isn't 3 length
         const actualStartNumber = Math.max(1, startLocationLine - 3);
-        editor.setOption('firstLineNumber', actualStartNumber);
-        // Decode the content (HTML encoded) for Ace to display
-        // Disabled, needs better testing, since it's prone to XSS if content contains JS.
-        // TODO: Can this be rewritten to properly escape in a more limited fashion and use something like a <pre> tag?
-
-        // if (false) {
-        //     const htmlEntityDecoder = (content) => {
-        //         const textArea = document.createElement('textarea');
-        //         textArea.innerHTML = content;
-        //         return textArea.value;
-        //     }
-        //     content = htmlEntityDecoder(content);
-        // }
-        editor.getSession().setValue(content);
-        editor.resize();
-        editor.scrollToLine(0);
-        // We need to calculate the number relative to the number of lines in the content available
-        // This assumes the first line is 1, even though we have explicitly numbered the lines otherwise
-        editor.gotoLine(startLocationLine - actualStartNumber + 1);
-        $('editor-container').removeClass('d-none');
+        snippetElement.attr('data-line', startLocationLine);
+        snippetElement.attr('data-line-offset', actualStartNumber);
+        snippetElement.attr('data-start', actualStartNumber);
+        let codeBlock = $('<code>');
+        codeBlock.addClass('language-'+language);
+        codeBlock.text(content);
+        snippetElement.append(codeBlock);
+        Prism.highlightAll();
         const locationString = startLocationLine < endLocationLine ? (startLocationLine.toString() + " - " + endLocationLine.toString()) : startLocationLine.toString();
         $('#match-line-number').text('Line number: ' + locationString);
     });
@@ -206,6 +203,7 @@ class TemplateInsertion {
                     .data('excerpt', excerpt)
                     .data('startLocationLine', $l)
                     .data('endLocationLine', $e)
+                    .data('language', match.language)
                     .text(removePrefix(match.fileName));
                 $li.append(matchCount++);
                 $li.append(". ");
@@ -217,6 +215,7 @@ class TemplateInsertion {
         }
         $('#file_listing_modal').on('shown.bs.modal', function (e) {
             $('a.content-link').first().trigger('click');
+            Prism.highlightAllUnder($('#file_listing_modal')[0]);
         });
         var fileListingModal = new bootstrap.Modal(document.getElementById('file_listing_modal'), {
             keyboard: false
