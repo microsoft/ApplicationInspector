@@ -41,6 +41,12 @@
      * When a user clicks on a file listing filename, load the data
      * to show into the Ace editor in the popup dialog.
      */
+    // Method to fix html encoded &quot/&lt/&gt etc. before rendinging in pre tag
+    function htmlDecode(input) {
+        var doc = new DOMParser().parseFromString(input, "text/html");
+        return doc.documentElement.textContent;
+    }
+
     $('#file_listing_modal').on('click', 'a.content-link', (e) => {
         const content = $(e.target).data('excerpt');
         const startLocationLine = $(e.target).data('startLocationLine');
@@ -58,7 +64,7 @@
         snippetElement.attr('data-start', actualStartNumber);
         let codeBlock = $('<code>');
         codeBlock.addClass('language-'+language);
-        codeBlock.text(content);
+        codeBlock.text(htmlDecode(content));
         snippetElement.append(codeBlock);
         Prism.highlightAll();
         const locationString = startLocationLine < endLocationLine ? (startLocationLine.toString() + " - " + endLocationLine.toString()) : startLocationLine.toString();
