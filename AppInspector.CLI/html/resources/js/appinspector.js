@@ -80,6 +80,7 @@ class TemplateInsertion {
     }
 
     processSummaryPage() {
+        Chart.register(ChartDataLabels);
         const analysisChartData ={
             labels:['Analyzed', 'Skipped'],
             datasets:[{data:[this.mt.filesAnalyzed, this.mt.filesSkipped]}]
@@ -92,6 +93,12 @@ class TemplateInsertion {
                     title:{
                         display:true,
                         text:"Analyzed Files"
+                    },
+                    datalabels: {
+                        display: function(context) {
+                            return context.dataset.data[context.dataIndex] !== 0;
+                        },
+                        color: '#fff'
                     }
                 }
             }
@@ -111,6 +118,12 @@ class TemplateInsertion {
                     title:{
                         display:true,
                         text:"Results"
+                    },
+                    datalabels: {
+                        display: function(context) {
+                            return context.dataset.data[context.dataIndex] !== 0;
+                        },
+                        color: '#fff'
                     }
                 }
             }
@@ -130,6 +143,12 @@ class TemplateInsertion {
                     title:{
                         display:true,
                         text:"Languages"
+                    },
+                    datalabels: {
+                        display: function(context) {
+                            return context.dataset.data[context.dataIndex] !== 0;
+                        },
+                        color: '#fff'
                     }
                 }
             }
