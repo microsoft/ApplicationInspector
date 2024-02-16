@@ -6,24 +6,24 @@
   <div class="container">
       <div class="row">
           <div class="col-2">
-              <ul class="nav flex-column">
-				        <li class="nav-item">
-					        <a class="nav-link active" href="#project_info" role="tab" data-toggle="tab">Project Info</a>
+              <ul class="nav nav-tabs flex-column">
+				        <li class="nav-item" role="presentation">
+					        <a class="nav-link active" id="project_tab" data-bs-toggle="tab" data-bs-target="#project_info" href="#project_info" role="tab" aria-controls="project_info" aria-selected="true">Project Info</a>
 				        </li>
-				        <li class="nav-item">
-					        <a class="nav-link" href="#scan_metadata" role="tab" data-toggle="tab">Metadata</a>
+				        <li class="nav-item" role="presentation">
+					        <a class="nav-link" id="scan_metadata_tab" data-bs-toggle="tab" data-bs-target="#scan_metadata" href="#scan_metadata" role="tab" aria-controls="metadata_tab">Metadata</a>
 				        </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#sorted_uniquetags" role="tab" data-toggle="tab">All Tags</a>
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" id="sorted_uniquetags_tab" data-bs-toggle="tab" data-bs-target="#sorted_uniquetags" href="#sorted_uniquetags" role="tab" aria-controls="sorted_uniquetags">All Tags</a>
                 </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#select_tagcounters" role="tab" data-toggle="tab">Tag Counters</a>
+                  <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="sorted_uniquetags_tab" data-bs-toggle="tab" data-bs-target="#select_tagcounters" href="#select_tagcounters" role="tab" aria-controls="select_tagcounters">Tag Counters</a>
                </li>
 			        </ul>
           </div>
           <div class="col">
             <div class="tab-content">
-              <div role="tabpanel" class="tab-pane active show" id="project_info">
+              <div role="tabpanel" class="tab-pane active show" id="project_info" aria-labelledby="project_tab">
                 <h4>Project Info</h4>
                 <div class="container">
                   <div class="row">
@@ -66,7 +66,7 @@
                   </tr>
                 </table>
               </div>
-              <div role="tabpanel" class="tab-pane" id="scan_metadata">
+              <div role="tabpanel" class="tab-pane" id="scan_metadata" aria-labelledby="scan_metadata_tab">
                 <h4>Metadata</h4>
                 <div>
                   Application targets or packaging detected.
@@ -104,7 +104,7 @@
                   </tr>
                 </table>
               </div>
-              <div role="tabpanel" class="tab-pane" id="sorted_uniquetags">
+              <div role="tabpanel" class="tab-pane" id="sorted_uniquetags" aria-labelledby="sorted_uniquetags_tab">
                 <h4>Tags List View</h4>
                 <div>
                   A list view of the unique tags found and matching rule. Select a tag on the left then select
@@ -243,7 +243,7 @@
                   </div>
                 </div>
               </div>
-              <div role="tabpanel" class="tab-pane" id="select_tagcounters">
+              <div role="tabpanel" class="tab-pane" id="select_tagcounters" aria-labelledby="select_tagcounters_tab">
                 <h4>Tag Counters</h4>
                 <div>
                   Tags found that are identified as Metric related matches and therefore counted but not included in detailed results.
