@@ -66,20 +66,14 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         var allCSS = "<style>\n" +
                      MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html", "resources",
                          "css"));
-        var allJS = "<script type=\"text/javascript\">\n" +
-                    MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html", "resources", "js"));
+        var depsJs = "<script type=\"text/javascript\">\n" +
+                    MergeResourceFiles(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html", "resources", "js", "deps")) + "</script>";
+        var baseJs = "<script type =\"text/javascript\">\n" + File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html", "resources", "js", "appinspector.js"));
 
         //Prepare html template merge
         var htmlTemplateText = File.ReadAllText(Path.Combine(Utils.GetPath(Utils.AppPath.basePath), "html/index.html"));
         Template.FileSystem = new EmbeddedFileSystem(Assembly.GetEntryAssembly(),
             "Microsoft.ApplicationInspector.CLI.html.partials");
-
-        //Update template with local aggregated code for easy relocation of output file
-        htmlTemplateText = htmlTemplateText.Replace("<script type=\"text/javascript\">", allJS);
-        htmlTemplateText =
-            htmlTemplateText.Replace(
-                "<link rel=\"stylesheet\" type=\"text/css\" href=\"html/resources/css/appinspector.css\" />",
-                allCSS + "</style>");
 
         RegisterSafeType(typeof(MetaData));
 
@@ -121,8 +115,17 @@ public class AnalyzeHtmlWriter : CommandResultsWriter
         hashData["filetypes"] = _appMetaData?.FileExtensions ?? new List<string>();
         hashData["tagcounters"] = ConvertTagCounters(_appMetaData?.TagCounters ?? new List<MetricTagCounter>());
 
-        //final render and close
+        // Liquid  render and close
         var htmlResult = htmlTemplate.Render(hashData);
+
+        // Update template with local aggregated code
+        // Liquid will break the embedded JS if this replacement is performed before render
+        htmlResult = htmlResult.Replace("<DEPSJS/>", depsJs);
+        htmlResult = htmlResult.Replace("<REPLACEJS/>", baseJs);
+        htmlResult =
+            htmlResult.Replace(
+                "<REPLACECSS/>",
+                allCSS + "</style>");
         TextWriter?.Write(htmlResult);
         FlushAndClose();
     }
