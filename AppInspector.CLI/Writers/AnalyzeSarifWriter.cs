@@ -285,6 +285,7 @@ public class AnalyzeSarifWriter : CommandResultsWriter
                 // The provided schema (rtm.6) is 404, so replace it with a 2.1.0 that is available.
                 reReadLog["$schema"] = "https://www.schemastore.org/schemas/json/sarif-2.1.0-rtm.5.json";
                 using var jsonWriter = new JsonTextWriter(TextWriter);
+                jsonWriter.Formatting = Formatting.Indented;
                 reReadLog.WriteTo(jsonWriter);
                 // Add a newline at the end to make logging messages cleaner
                 TextWriter.WriteLine();
