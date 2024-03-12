@@ -34,8 +34,8 @@
         <PackageReference Include="JsonCons.JsonPath" Version="1.1.0" />
         <PackageReference Include="Microsoft.CST.OAT" Version="1.2.62" />
         <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.26" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
-        <PackageReference Include="YamlDotNet" Version="15.1.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
+        <PackageReference Include="YamlDotNet" Version="15.1.2" />
     </ItemGroup>
 
     <ItemGroup>
