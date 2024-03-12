@@ -1,0 +1,468 @@
+[
+    {
+        "name": "Network Listener: Socket",
+        "description": "Socket Listener",
+        "id": "AI080000",
+        "applies_to": [
+            "csharp"
+        ],
+        "tags": [
+            "OS.Network.Connection.Inbound.Socket"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "new Socket(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Socket instantiation"
+            }
+        ],
+        "must-match": [
+            "var sock = new Socket(123);"
+        ]
+    },
+    {
+        "name": "Network Listener: Socket",
+        "description": "Socket Listener",
+        "id": "AI080001",
+        "applies_to": [
+            "csharp"
+        ],
+        "tags": [
+            "OS.Network.Connection.Inbound.Socket"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": ".Listen(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Socket instantiation"
+            },
+            {
+                "pattern": "Socket [^\\s]*? =",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Socket instantiation"
+            },
+            {
+                "pattern": "Socket",
+                "type": "regexword",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "medium",
+                "_comment": "Socket instantiation"
+            }
+        ],
+        "conditions": [
+            {
+                "pattern": {
+                    "pattern": "Socket",
+                    "type": "regexword",
+                    "scopes": [
+                        "code"
+                    ]
+                },
+                "search_in": "same-file",
+                "negate_finding": false
+            }
+        ],
+        "must-match": [
+            "void func(Socket input){ input.Listen(); }"
+        ]
+    },
+    {
+        "name": "Network Listener: HTTP",
+        "description": "HTTP Listener Listener",
+        "id": "AI080002",
+        "applies_to": [
+            "csharp"
+        ],
+        "tags": [
+            "OS.Network.Connection.Inbound.HTTP"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "new HTTPListener(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "HttpListener instantiation"
+            },
+            {
+                "pattern": "HTTPListener [^\\s]*? =",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "HttpListener instantiation"
+            },
+            {
+                "pattern": "HTTPListener",
+                "type": "regexword",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "medium",
+                "_comment": "HttpListener instantiation"
+            }
+        ],
+        "must-match": [
+            "var listener = new HttpListener();"
+        ]
+    },
+    {
+        "name": "Network Listener: Socket",
+        "description": "Socket Listener",
+        "id": "AI081000",
+        "applies_to": [
+            "c",
+            "cpp"
+        ],
+        "tags": [
+            "OS.Network.Connection.Inbound.Socket"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "int\\s+[^\\s]*?\\s+=\\s+socket\\(",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Socket instantiation"
+            }
+        ],
+        "must-match": [
+            "int sockfd = socket(domain, type, protocol)"
+        ]
+    },
+    {
+        "name": "Network Listener: Socket",
+        "description": "Socket Configuration",
+        "id": "AI081001",
+        "applies_to": [
+            "c",
+            "cpp"
+        ],
+        "tags": [
+            "OS.Network.Connection.Inbound.Socket"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "bind\\(.*?,.*?,.*?\\)",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Socket bind"
+            },
+            {
+                "pattern": "setsockopt\\(.*?,.*?,.*?,.*?,.*?\\)",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Socket configuration"
+            },
+            {
+                "pattern": "listen\\(.*?,.*?\\)",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Socket listener"
+            }
+        ],
+        "must-match": [
+            "bind(10, &someaddr, somevar);",
+            "setsockopt(10, 10, 10, &aptr, somevar);",
+            "listen(10,10);"
+        ]
+    },
+    {
+        "name": "Network Listener: Socket",
+        "description": "Socket Listener",
+        "id": "AI082000",
+        "applies_to": [
+            "java"
+        ],
+        "tags": [
+            "OS.Network.Connection.Inbound.Socket"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "new Socket(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Socket instantiation"
+            }
+        ],
+        "must-match": [
+            "Socket sock = new Socket(Proxy.NO_PROXY);"
+        ]
+    },
+    {
+        "name": "Network Listener: WebServer",
+        "description": "WebServer Listener",
+        "id": "AI083000",
+        "applies_to": [
+            "javascript"
+        ],
+        "tags": [
+            "OS.Network.Connection.Inbound.Socket"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "Deno.serve(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Deno server instantiation"
+            },
+            {
+                "pattern": "require('express')",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "medium",
+                "_comment": "Express server"
+            },
+            {
+                "pattern": "require('@hapi/hapi')",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "medium",
+                "_comment": "Hapi server"
+            },
+            {
+                "pattern": "require('koa')",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "medium",
+                "_comment": "Express server"
+            },
+            {
+                "pattern": "require('socket.io')",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "medium",
+                "_comment": "Socket.io server"
+            }
+        ],
+        "must-match": [
+            "Deno.serve({ port: 80,"
+        ]
+    },
+    {
+        "name": "Network Listener: Socket",
+        "description": "Socket Listener",
+        "id": "AI084000",
+        "applies_to": [
+            "python"
+        ],
+        "tags": [
+            "OS.Network.Connection.Inbound.Socket"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "socket.socket(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "medium",
+                "_comment": "Python socket instantiation"
+            },
+            {
+                "pattern": ".bind(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Python socket bind"
+            },
+            {
+                "pattern": ".listen(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Python socket listen"
+            }
+        ],
+        "conditions": [
+            {
+                "pattern": {
+                    "pattern": "socket.socket(",
+                    "type": "substring",
+                    "scopes": [
+                        "code"
+                    ]
+                },
+                "search_in": "same-file",
+                "negate_finding": false
+            }
+        ],
+        "must-match": [
+            "serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)"
+        ]
+    },
+    {
+        "name": "Network Listener: HttpServer",
+        "description": "HttpServer Listener",
+        "id": "AI084001",
+        "applies_to": [
+            "python"
+        ],
+        "tags": [
+            "OS.Network.Connection.Inbound.Http"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "http.server",
+                "type": "regexword",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "high",
+                "_comment": "Python http server instantiation"
+            }
+        ],
+        "must-match": [
+            "http.server"
+        ]
+    },
+    {
+        "name": "Network Listener: Socket (Generic)",
+        "description": "Socket Listener",
+        "id": "AI085000",
+        "does_not_apply_to": [
+            "csharp",
+            "javascript",
+            "c",
+            "cpp",
+            "python",
+            "java"
+        ],
+        "tags": [
+            "OS.Network.Connection.Inbound.Socket"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "socket",
+                "type": "regexword",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "i"
+                ],
+                "confidence": "medium",
+                "_comment": "Socket instantiation"
+            }
+        ]
+    }
+]
