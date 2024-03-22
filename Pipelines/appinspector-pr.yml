@@ -4,16 +4,6 @@ pr:
   branches:
     include:
     - main
-  paths:
-    include:
-    - Pipelines
-    - AppInspector/*
-    - AppInspector.CLI/*
-    - AppInspector.Common/*
-    - AppInspector.Logging/*
-    - AppInspector.RulesEngine/*
-    - AppInspector.Tests/*
-    - AppInspector.Tests.CLI/*
 
 resources:
   repositories:
