@@ -17,6 +17,7 @@ using Microsoft.CST.RecursiveExtractor;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json.Serialization;
+using ShellProgressBar;
 
 using LibGit2Sharp;
 
