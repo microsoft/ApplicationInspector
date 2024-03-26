@@ -29,6 +29,9 @@ extends:
       name: MSSecurity-1ES-Build-Agents-Pool
       image: MSSecurity-1ES-Windows-2022
       os: windows
+    sdl:
+      git:
+        submodules: false
     stages:
     - stage: Test
       dependsOn: []
