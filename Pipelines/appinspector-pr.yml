@@ -10,8 +10,7 @@ resources:
     - repository: templates
       type: git
       name: SecurityEngineering/OSS-Tools-Pipeline-Templates
-      # ref: refs/tags/v1.1.1
-      ref: refs/heads/gfs/UpdateTemplates
+      ref: refs/tags/v2.0.0
     - repository: 1esPipelines
       type: git
       name: 1ESPipelineTemplates/1ESPipelineTemplates
