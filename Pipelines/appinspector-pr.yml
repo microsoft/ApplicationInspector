@@ -4,110 +4,118 @@ pr:
   branches:
     include:
     - main
-  paths:
-    include:
-    - Pipelines
-    - AppInspector/*
-    - AppInspector.CLI/*
-    - AppInspector.Common/*
-    - AppInspector.Logging/*
-    - AppInspector.RulesEngine/*
-    - AppInspector.Tests/*
-    - AppInspector.Tests.CLI/*
 
 resources:
   repositories:
     - repository: templates
       type: git
       name: SecurityEngineering/OSS-Tools-Pipeline-Templates
-      ref: refs/tags/v1.1.1
+      ref: refs/tags/v2.0.0
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/1ESPipelineTemplates
+      ref: refs/tags/release
 
 variables:
   BuildConfiguration: 'Release'
   DotnetVersion: '8.0.x'
   DotnetTargetFramework: 'net8.0'
 
-stages:
-- stage: Test
-  dependsOn: []
-  jobs:
-  - template: dotnet-test-job.yml@templates
-    parameters:
-      jobName: 'dotnet_test_windows'
-      dotnetVersions: ['6.0.x','7.0.x','8.0.x']
-      vmImage: 'win2022-image-base'
-      projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
+extends:
+  template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
+  parameters:
+    pool:
+      name: MSSecurity-1ES-Build-Agents-Pool
+      image: MSSecurity-1ES-Windows-2022
+      os: windows
+    sdl:
+      git:
+        submodules: false
+    stages:
+    - stage: Test
+      dependsOn: []
+      jobs:
+      - template: dotnet-test-job.yml@templates
+        parameters:
+          jobName: 'dotnet_test_windows'
+          dotnetVersions: ['6.0.x','7.0.x','8.0.x']
+          poolName: MSSecurity-1ES-Build-Agents-Pool
+          poolImage: MSSecurity-1ES-Windows-2022
+          poolOs: windows
+          projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
 
-- stage: SDL
-  dependsOn: []
-  jobs:
-  - template: sdl-job.yml@templates
-
-- stage: Build
-  dependsOn:
-  - Test
-  jobs:
-  - template: dotnet-publish-linux-mac-job.yml@templates
-    parameters:
-      buildConfiguration: '${{ variables.BuildConfiguration }}'
-      dotnetVersion: ${{ variables.DotnetVersion }}
-      targetFramework: '${{ variables.DotnetTargetFramework }}'
-      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
-      projectName: 'ApplicationInspector'
-      exePath: 'ApplicationInspector.CLI'
-      preBuild:
-      - template: nbgv-set-version-steps.yml@templates
-  - template: dotnet-publish-win-netcore-job.yml@templates
-    parameters:
-      buildConfiguration: '${{ variables.BuildConfiguration }}'
-      dotnetVersion: ${{ variables.DotnetVersion }}
-      targetFramework: '${{ variables.DotnetTargetFramework }}'
-      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
-      projectName: 'ApplicationInspector'
-      preBuild:
-      - template: nbgv-set-version-steps.yml@templates
-  - template: nuget-build-job.yml@templates
-    parameters:
-      jobName: 'pack_lib'
-      buildConfiguration: '${{ variables.BuildConfiguration }}'
-      dotnetVersion: ${{ variables.DotnetVersion }}
-      projectPath: 'AppInspector/AppInspector.Commands.csproj'
-      projectName: 'ApplicationInspector_Commands'
-      preBuild:
-      - template: nbgv-set-version-steps.yml@templates
-  - template: nuget-build-job.yml@templates
-    parameters:
-      jobName: 'pack_engine'
-      buildConfiguration: '${{ variables.BuildConfiguration }}'
-      dotnetVersion: ${{ variables.DotnetVersion }}
-      projectPath: 'AppInspector.RulesEngine/AppInspector.RulesEngine.csproj'
-      projectName: 'ApplicationInspector_RulesEngine'
-      preBuild:
-      - template: nbgv-set-version-steps.yml@templates
-  - template: nuget-build-job.yml@templates
-    parameters:
-      jobName: 'pack_common'
-      buildConfiguration: '${{ variables.BuildConfiguration }}'
-      dotnetVersion: ${{ variables.DotnetVersion }}
-      projectPath: 'AppInspector.Common/AppInspector.Common.csproj'
-      projectName: 'ApplicationInspector_Common'
-      preBuild:
-      - template: nbgv-set-version-steps.yml@templates
-  - template: nuget-build-job.yml@templates
-    parameters:
-      jobName: 'pack_logging'
-      buildConfiguration: '${{ variables.BuildConfiguration }}'
-      dotnetVersion: ${{ variables.DotnetVersion }}
-      projectPath: 'AppInspector.Logging/AppInspector.Logging.csproj'
-      projectName: 'ApplicationInspector_Logging'
-      preBuild:
-      - template: nbgv-set-version-steps.yml@templates
-  - template: nuget-build-job.yml@templates
-    parameters:
-      jobName: 'pack_cli'
-      buildConfiguration: '${{ variables.BuildConfiguration }}'
-      dotnetVersion: ${{ variables.DotnetVersion }}
-      projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
-      projectName: 'ApplicationInspector_CLI'
-      preBuild:
-      - template: nbgv-set-version-steps.yml@templates
+    - stage: Build
+      dependsOn:
+      - Test
+      jobs:
+      - template: dotnet-publish-linux-mac-job.yml@templates
+        parameters:
+          buildConfiguration: '${{ variables.BuildConfiguration }}'
+          dotnetVersion: ${{ variables.DotnetVersion }}
+          targetFramework: '${{ variables.DotnetTargetFramework }}'
+          projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+          projectName: 'ApplicationInspector'
+          exePath: 'ApplicationInspector.CLI'
+          artifactName: 'linux-mac-archive'
+          preBuild:
+          - template: nbgv-set-version-steps.yml@templates
+      - template: dotnet-publish-win-netcore-job.yml@templates
+        parameters:
+          buildConfiguration: '${{ variables.BuildConfiguration }}'
+          dotnetVersion: ${{ variables.DotnetVersion }}
+          targetFramework: '${{ variables.DotnetTargetFramework }}'
+          projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+          projectName: 'ApplicationInspector'
+          artifactName: 'win-netcore-archive'
+          preBuild:
+          - template: nbgv-set-version-steps.yml@templates
+      - template: nuget-build-job.yml@templates
+        parameters:
+          jobName: 'pack_lib'
+          buildConfiguration: '${{ variables.BuildConfiguration }}'
+          dotnetVersion: ${{ variables.DotnetVersion }}
+          projectPath: 'AppInspector/AppInspector.Commands.csproj'
+          projectName: 'ApplicationInspector_Commands'
+          artifactName: 'nuget-lib-archive'
+          preBuild:
+          - template: nbgv-set-version-steps.yml@templates
+      - template: nuget-build-job.yml@templates
+        parameters:
+          jobName: 'pack_engine'
+          buildConfiguration: '${{ variables.BuildConfiguration }}'
+          dotnetVersion: ${{ variables.DotnetVersion }}
+          projectPath: 'AppInspector.RulesEngine/AppInspector.RulesEngine.csproj'
+          projectName: 'ApplicationInspector_RulesEngine'
+          artifactName: 'nuget-engine-archive'
+          preBuild:
+          - template: nbgv-set-version-steps.yml@templates
+      - template: nuget-build-job.yml@templates
+        parameters:
+          jobName: 'pack_common'
+          buildConfiguration: '${{ variables.BuildConfiguration }}'
+          dotnetVersion: ${{ variables.DotnetVersion }}
+          projectPath: 'AppInspector.Common/AppInspector.Common.csproj'
+          projectName: 'ApplicationInspector_Common'
+          artifactName: 'nuget-common-archive'
+          preBuild:
+          - template: nbgv-set-version-steps.yml@templates
+      - template: nuget-build-job.yml@templates
+        parameters:
+          jobName: 'pack_logging'
+          buildConfiguration: '${{ variables.BuildConfiguration }}'
+          dotnetVersion: ${{ variables.DotnetVersion }}
+          projectPath: 'AppInspector.Logging/AppInspector.Logging.csproj'
+          projectName: 'ApplicationInspector_Logging'
+          artifactName: 'nuget-logging-archive'
+          preBuild:
+          - template: nbgv-set-version-steps.yml@templates
+      - template: nuget-build-job.yml@templates
+        parameters:
+          jobName: 'pack_cli'
+          buildConfiguration: '${{ variables.BuildConfiguration }}'
+          dotnetVersion: ${{ variables.DotnetVersion }}
+          projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
+          projectName: 'ApplicationInspector_CLI'
+          artifactName: 'nuget-cli-archive'
+          preBuild:
+          - template: nbgv-set-version-steps.yml@templates
