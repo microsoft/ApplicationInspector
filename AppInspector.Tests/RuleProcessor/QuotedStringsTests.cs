@@ -10,6 +10,9 @@ using Serilog.Events;
 
 namespace AppInspector.Tests.RuleProcessor;
 
+/// <summary>
+/// Tests for properly detecting commented/live code status in the presence of comment markers inside of quoted strings
+/// </summary>
 [TestClass]
 public class QuotedStringsTests
 {
@@ -29,6 +32,12 @@ contoso.com
 /* 
 contoso.com 
 */ var url = ""https://contoso.com""";
+    private const string testRubyInterpolatedStrings = @"findMe = ""findMe""
+puts ""Hello, #{findMe}!"" # findMe
+def inspect # :nodoc:
+    ""#<#{findMe} #{findMe}>"" #findMe
+end
+"; // Should find 5 instances, excluding the two true comments
 
     private static string detectContosoRule = @"
     [
@@ -54,7 +63,32 @@ contoso.com
     }
 ]
 ";
-    
+
+    private static string detectFindMeRule = @"
+    [
+    {
+        ""id"": ""RE000001"",
+        ""name"": ""Testing.Rules.Quotes"",
+        ""tags"": [
+            ""Testing.Rules.Quotes""
+        ],
+        ""severity"": ""Critical"",
+        ""description"": ""Find findMe"",
+        ""patterns"": [
+            {
+                ""pattern"": ""findMe"",
+                ""type"": ""regex"",
+                ""confidence"": ""High"",
+                ""scopes"": [
+                    ""code""
+                ]
+            }
+        ],
+        ""_comment"": """"
+    }
+]
+";
+
     private readonly ILoggerFactory _loggerFactory =
         new LogOptions { ConsoleVerbosityLevel = LogEventLevel.Verbose }.GetLoggerFactory();
 
@@ -77,5 +111,25 @@ contoso.com
         _languages.FromFileNameOut("testfile.cs", out LanguageInfo info);
         Assert.AreEqual(numIssues,
             ruleProcessor.AnalyzeFile(content, new FileEntry("testfile.cs", new MemoryStream()), info).Count());
+    }
+
+    /// <summary>
+    /// Ruby interpolated strings provide an interesting test case because they use the comment character as part of interpolation
+    ///     the comment marker is one character long, and it may often come right after the quotation mark
+    /// </summary>
+    /// <param name="content"></param>
+    /// <param name="numIssues"></param>
+    
+    [DataRow(testRubyInterpolatedStrings, 5)]
+    [DataTestMethod]
+    public void QuotedStringsRuby(string content, int numIssues)
+    {
+        RuleSet rules = new(_loggerFactory);
+        rules.AddString(detectFindMeRule, "findMeRule");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor ruleProcessor =
+            new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new RuleProcessorOptions());
+        _languages.FromFileNameOut("testfile.rb", out LanguageInfo info);
+        Assert.AreEqual(numIssues,
+            ruleProcessor.AnalyzeFile(content, new FileEntry("testfile.rb", new MemoryStream()), info).Count());
     }
 }
