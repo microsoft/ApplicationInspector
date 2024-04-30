@@ -276,6 +276,14 @@ public class TextContainer
         }
     }
 
+    /// <summary>
+    /// Find the location of the provided prefix string if any in the text container between the provided start of line index and the current index
+    /// </summary>
+    /// <param name="startOfLineIndex">Minimum Character index in FullContent to locate Prefix</param>
+    /// <param name="currentIndex">Maximal Chracter index in FullContent to locate Prefix</param>
+    /// <param name="prefix">Prefix string to attempt to locate</param>
+    /// <param name="multiline">If multi-line comments should be detected</param>
+    /// <returns>The index of the specified prefix string in the FullContent if found, otherwise -1</returns>
     private int GetPrefixLocation(int startOfLineIndex, int currentIndex, string prefix, bool multiline)
     {
         // Find the first potential index of the prefix
@@ -300,7 +308,12 @@ public class TextContainer
             // It might be like var address = "http://contoso.com";
             if (numDoubleQuotes % 2 == 1 || numSingleQuotes % 2 == 1)
             {
-                return GetPrefixLocation(startOfLineIndex, prefixLoc, prefix, multiline);
+                // The second argument is the maximal index to return since this calls LastIndexOf, subtract 1 to exclude this instance
+                if ((prefixLoc -1) >= startOfLineIndex)
+                {
+                    return GetPrefixLocation(startOfLineIndex, prefixLoc - 1, prefix, multiline);
+                }
+                return -1;
             }
         }
 
