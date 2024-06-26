@@ -14,10 +14,7 @@ name: ApplicationInspector_Release_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
 # pr: none
 
 trigger: none
-pr:
-  branches:
-    include:
-    - main
+pr: none
 
 resources:
   repositories:
