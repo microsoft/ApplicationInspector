@@ -247,7 +247,7 @@ public class AnalyzeCommand
             }
             else
             {
-                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, entry));
+                throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, entryFullPath));
             }
         }
 
