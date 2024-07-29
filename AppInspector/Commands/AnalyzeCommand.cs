@@ -234,18 +234,22 @@ public class AnalyzeCommand
         }
 
         foreach (var entry in _options.SourcePath)
-            if (Directory.Exists(entry))
+        {
+            // Turn any relative paths into absolute paths for consistent behavior with file name regexes in rules
+            var entryFullPath = Path.GetFullPath(entry);
+            if (Directory.Exists(entryFullPath))
             {
-                _srcfileList.AddRange(Directory.EnumerateFiles(entry, "*.*", SearchOption.AllDirectories));
+                _srcfileList.AddRange(Directory.EnumerateFiles(entryFullPath, "*.*", SearchOption.AllDirectories));
             }
-            else if (File.Exists(entry))
+            else if (File.Exists(entryFullPath))
             {
-                _srcfileList.Add(entry);
+                _srcfileList.Add(entryFullPath);
             }
             else
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, entry));
             }
+        }
 
         if (_srcfileList.Count == 0)
         {
