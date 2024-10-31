@@ -588,3 +588,27 @@ extends:
             script: |
               mv $env:BUILD_BINARIESDIRECTORY/*.nupkg $env:BUILD_STAGINGDIRECTORY/
               mv $env:BUILD_BINARIESDIRECTORY/*.snupkg $env:BUILD_STAGINGDIRECTORY/
+        - task: GitHubRelease@1
+          displayName: Release to GitHub
+          inputs:
+            gitHubConnection: 'github.com_gfs'
+            repositoryName: 'microsoft/ApplicationInspector'
+            action: 'create'
+            target: '$(Build.SourceVersion)'
+            tagSource: 'userSpecifiedTag'
+            tag: 'v$(ReleaseVersion)'
+            title: 'Release v$(ReleaseVersion)'
+            releaseNotesSource: 'inline'
+            assets: |
+              $(Build.StagingDirectory)/*.zip
+              $(Build.StagingDirectory)/HASHES.txt
+            changeLogCompareToRelease: 'lastNonDraftRelease'
+            changeLogType: 'commitBased'
+        - task: NuGetCommand@2
+          displayName: Push NuGet Packages
+          inputs:
+            command: 'push'
+            packagesToPush: '$(Build.StagingDirectory)/*.nupkg'
+            nuGetFeedType: 'external'
+            publishFeedCredentials: 'sdl-oss-nuget-publish'
+            verbosityPush: 'Normal'
