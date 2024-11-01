@@ -534,8 +534,9 @@ public class TextContainer
         var theDocuments = _ymlDocument.Documents.ToImmutableArray();
         foreach (var match in theDocuments.Select(document => document.RootNode.Query(Path)).SelectMany(matches => matches))
         {
+            // TODO: Should update Boundary object to have longs intead of int rather than this casting
             yield return (match.ToString(),
-                new Boundary() { Index = match.Start.Index, Length = match.End.Index - match.Start.Index });
+                new Boundary() { Index = (int)match.Start.Index, Length = (int)match.End.Index - (int)match.Start.Index });
         }
     }
 }
