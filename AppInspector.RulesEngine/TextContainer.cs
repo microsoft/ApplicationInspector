@@ -449,12 +449,14 @@ public class TextContainer
 
     /// <summary>
     ///     Returns location (Line, Column) for given index in text
+    ///     If the index is beyond the end of the file, clamps to the end
     /// </summary>
     /// <param name="index"> Position in text (line is one-indexed)</param>
     /// <returns> Location </returns>
     public Location GetLocation(int index)
     {
         for (var i = 1; i < LineEnds.Count; i++)
+        {
             if (LineEnds[i] >= index)
             {
                 return new Location
@@ -463,6 +465,17 @@ public class TextContainer
                     Line = i
                 };
             }
+        }
+
+        // If the index is beyond the end of the file, clamp to the end of the file
+        if (index > LineEnds[^1])
+        {
+            return new Location()
+            {
+                Column = LineEnds[^1] - LineStarts[^1],
+                Line = LineEnds.Count
+            };
+        }
 
         return new Location();
     }
