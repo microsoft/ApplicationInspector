@@ -566,11 +566,11 @@ public class RuleProcessor
 
         int startLineNumber =
             start.Line < 0 ? 0 : start.Line > text.LineEnds.Count ? text.LineEnds.Count - 1 : start.Line;
-        int endLineNUmber =
+        int endLineNumber =
             end.Line < 0 ? 0 : end.Line > text.LineEnds.Count ? text.LineEnds.Count - 1 : end.Line;
         // First we try to include the number of lines of context requested
         var excerptStartLine = Math.Max(0, startLineNumber - context);
-        var excerptEndLine = Math.Min(text.LineEnds.Count - 1, endLineNUmber + context);
+        var excerptEndLine = Math.Min(text.LineEnds.Count - 1, endLineNumber + context);
         var startIndex = text.LineStarts[excerptStartLine];
         var endIndex = text.LineEnds[excerptEndLine] + 1;
         // Maximum number of characters to capture on each side
