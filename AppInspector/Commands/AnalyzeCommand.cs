@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -771,21 +772,38 @@ public class AnalyzeCommand
 
                 if (contents != null)
                 {
-                    if (_options.DisableCrawlArchives)
+                    IList<FileEntry> entriesToYield = new List<FileEntry>();
+                    try
                     {
-                        yield return new FileEntry(srcFile, contents);
-                    }
-                    else
-                    {
-                        // Use MemoryStreamCutoff = 1 to force using FileStream with DeleteOnClose for backing, and avoid memory exhaustion.
-                        ExtractorOptions opts = new()
+                        if (_options.DisableCrawlArchives)
                         {
-                            Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1
-                        };
-                        // This works if the contents contain any kind of file.
-                        // If the file is an archive this gets all the entries it contains.
-                        // If the file is not an archive, the stream is wrapped in a FileEntry container and yielded
-                        foreach (var entry in extractor.Extract(srcFile, contents, opts)) yield return entry;
+                            entriesToYield.Add(new FileEntry(srcFile, contents));
+                        }
+                        else
+                        {
+                            // Use MemoryStreamCutoff = 1 to force using FileStream with DeleteOnClose for backing, and avoid memory exhaustion.
+                            ExtractorOptions opts = new()
+                            {
+                                Parallel = false, DenyFilters = _options.FilePathExclusions, MemoryStreamCutoff = 1
+                            };
+                            // This works if the contents contain any kind of file.
+                            // If the file is an archive this gets all the entries it contains.
+                            // If the file is not an archive, the stream is wrapped in a FileEntry container and yielded
+                            entriesToYield = extractor.Extract(srcFile, contents, opts).ToImmutableList();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogDebug(
+                            "Failed to analyze file {Path}. {Type}:{Message}. ({StackTrace})",
+                            srcFile, e.GetType(), e.Message, e.StackTrace);
+                        _metaDataHelper?.Metadata.Files.Add(new FileRecord
+                            { FileName = srcFile, Status = ScanState.Error });
+                    }
+
+                    foreach (var entry in entriesToYield)
+                    {
+                        yield return entry;
                     }
                 }
 
