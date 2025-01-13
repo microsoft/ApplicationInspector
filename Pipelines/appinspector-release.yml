@@ -39,7 +39,7 @@ extends:
       - template: dotnet-test-job.yml@templates
         parameters:
           jobName: 'dotnet_test_windows'
-          dotnetVersions: ['6.0.x','7.0.x','8.0.x']
+          dotnetVersions: ['8.0.x','9.0.x']
           poolName: MSSecurity-1ES-Build-Agents-Pool
           poolImage: MSSecurity-1ES-Windows-2022
           poolOs: windows
