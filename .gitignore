@@ -260,6 +260,9 @@ paket-files/
 __pycache__/
 *.pyc
 
+# Mac Metadata
+**/.DS_Store
+
 # App Inspector artifacts
 /AppInspector/Resources/defaultRulesPkd.json
 /AppInspector.Tests/output
