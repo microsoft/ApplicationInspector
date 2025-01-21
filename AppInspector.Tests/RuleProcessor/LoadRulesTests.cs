@@ -66,20 +66,25 @@ public class LoadRulesTests
     }
 ]";
 
-    private readonly ILoggerFactory _loggerFactory =
+    private static readonly ILoggerFactory _loggerFactory =
         new LogOptions { ConsoleVerbosityLevel = LogEventLevel.Verbose }.GetLoggerFactory();
 
-    private ILogger _logger = new NullLogger<WithinClauseTests>();
+    private static ILogger _logger = new NullLogger<WithinClauseTests>();
 
-    [TestInitialize]
-    public void TestInit()
+    private static string multiLineRuleLoc = string.Empty;
+    
+    [ClassInitialize]
+    public static void TestInit()
     {
         _logger = _loggerFactory.CreateLogger<LoadRulesTests>();
         Directory.CreateDirectory(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests"));
+        multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests",
+            "multi_line_rule_file.json");
+        File.WriteAllText(multiLineRuleLoc, multiLineRule);
     }
 
-    [TestCleanup]
-    public void TestCleanup()
+    [ClassCleanup]
+    public static void TestCleanup()
     {
         Directory.Delete(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests"), true);
     }
@@ -88,9 +93,7 @@ public class LoadRulesTests
     public void AddFileByPath()
     {
         RuleSet rules = new(_loggerFactory);
-        var multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests",
-            "multi_line_rule_file.json");
-        File.WriteAllText(multiLineRuleLoc, multiLineRule);
+
         rules.AddPath(multiLineRuleLoc, "multiline-tests");
         Assert.AreEqual(1, rules.Count());
     }
@@ -99,9 +102,6 @@ public class LoadRulesTests
     public void AddDirectoryByPath()
     {
         RuleSet rules = new(_loggerFactory);
-        var multiLineRuleLoc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests",
-            "multi_line_rule_file.json");
-        File.WriteAllText(multiLineRuleLoc, multiLineRule);
         var rule2Loc = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests",
             "rule2_file.json");
         File.WriteAllText(rule2Loc, rule2);
