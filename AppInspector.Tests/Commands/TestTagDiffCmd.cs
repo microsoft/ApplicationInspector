@@ -104,8 +104,8 @@ windows
         File.WriteAllText(testRulesPath, findWindows);
     }
 
-    [ClassCleanup]
-    public static void CleanUp()
+    [TestCleanup]
+    public void CleanUp()
     {
         try
         {
