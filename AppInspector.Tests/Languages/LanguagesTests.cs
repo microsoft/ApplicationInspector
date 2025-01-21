@@ -16,7 +16,7 @@ namespace AppInspector.Tests.Languages;
 [ExcludeFromCodeCoverage]
 public class LanguagesTests
 {
-    private readonly string comments_z = @"
+    private static readonly string comments_z = @"
 [
   {
     ""language"": [
@@ -28,7 +28,7 @@ public class LanguagesTests
   }
 ]";
 
-    private readonly string languages_z = @"
+    private static readonly string languages_z = @"
 [
   {
     ""name"": ""z"",
@@ -37,15 +37,15 @@ public class LanguagesTests
   }
 ]";
 
-    private ILoggerFactory _factory = new NullLoggerFactory();
-    private string invalidTestCommentsPath = string.Empty;
-    private string invalidTestLanguagesPath = string.Empty;
-    private string testCommentsPath = string.Empty;
+    private static ILoggerFactory _factory = new NullLoggerFactory();
+    private static string invalidTestCommentsPath = string.Empty;
+    private static string invalidTestLanguagesPath = string.Empty;
+    private static string testCommentsPath = string.Empty;
 
-    private string testLanguagesPath = string.Empty;
+    private static string testLanguagesPath = string.Empty;
 
-    [TestInitialize]
-    public void InitOutput()
+    [ClassInitialize]
+    public static void InitOutput()
     {
         Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         testLanguagesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "test_languages.json");
@@ -63,8 +63,8 @@ public class LanguagesTests
         _factory = new LogOptions { ConsoleVerbosityLevel = LogEventLevel.Verbose }.GetLoggerFactory();
     }
 
-    [TestCleanup]
-    public void CleanUp()
+    [ClassCleanup]
+    public static void CleanUp()
     {
         try
         {
