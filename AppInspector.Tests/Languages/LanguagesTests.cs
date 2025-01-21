@@ -63,8 +63,8 @@ public class LanguagesTests
         _factory = new LogOptions { ConsoleVerbosityLevel = LogEventLevel.Verbose }.GetLoggerFactory();
     }
 
-    [ClassCleanup]
-    public static void CleanUp()
+    [TestCleanup]
+    public void CleanUp()
     {
         try
         {
