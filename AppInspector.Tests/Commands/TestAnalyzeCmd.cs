@@ -593,10 +593,6 @@ windows
             Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "OverrideTestRule.json");
         var overridesWithoutOverrideTestRulePath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
             "OverrideTestRuleWithoutOverride.json");
-        var fourWindowsOne2000Path =
-            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "FourWindowsOne2000.cs");
-
-        File.WriteAllText(fourWindowsOne2000Path, threeWindowsOneWindows2000);
         File.WriteAllText(overridesTestRulePath, findWindowsWithOverride);
         File.WriteAllText(overridesWithoutOverrideTestRulePath, findWindowsWithOverrideRuleWithoutOverride);
 
