@@ -18,7 +18,7 @@ namespace AppInspector.Tests.Commands;
 public class TestTagDiffCmd
 {
     // These simple test rules rules look for the string "windows" and "linux"
-    private readonly string findWindows = @"[
+    private static readonly string findWindows = @"[
 {
     ""name"": ""Platform: Microsoft Windows"",
     ""id"": ""AI_TEST_WINDOWS"",
@@ -59,7 +59,7 @@ public class TestTagDiffCmd
 }
 ]";
 
-    private readonly string fourWindowsNoLinux =
+    private static readonly string fourWindowsNoLinux =
         @"windows
 windows
 windows
@@ -67,7 +67,7 @@ windows
 ";
 
     // This string contains windows four times and linux once.
-    private readonly string fourWindowsOneLinux =
+    private static readonly string fourWindowsOneLinux =
         @"windows
 windows
 linux
@@ -75,16 +75,16 @@ windows
 windows
 ";
 
-    private ILoggerFactory loggerFactory = new NullLoggerFactory();
+    private static ILoggerFactory loggerFactory = new NullLoggerFactory();
 
-    private readonly LogOptions logOptions = new();
-    private string testFileFourWindowsNoLinuxPath = string.Empty;
-    private string testFileFourWindowsOneLinuxCopyPath = string.Empty;
-    private string testFileFourWindowsOneLinuxPath = string.Empty;
-    private string testRulesPath = string.Empty;
+    private static readonly LogOptions logOptions = new();
+    private static string testFileFourWindowsNoLinuxPath = string.Empty;
+    private static string testFileFourWindowsOneLinuxCopyPath = string.Empty;
+    private static string testFileFourWindowsOneLinuxPath = string.Empty;
+    private static string testRulesPath = string.Empty;
 
-    [TestInitialize]
-    public void InitOutput()
+    [ClassInitialize]
+    public static void InitOutput()
     {
         loggerFactory = logOptions.GetLoggerFactory();
         Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
@@ -104,8 +104,8 @@ windows
         File.WriteAllText(testRulesPath, findWindows);
     }
 
-    [TestCleanup]
-    public void CleanUp()
+    [ClassCleanup]
+    public static void CleanUp()
     {
         try
         {
