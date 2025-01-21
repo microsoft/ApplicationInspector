@@ -45,7 +45,7 @@ public class LanguagesTests
     private static string testLanguagesPath = string.Empty;
 
     [ClassInitialize]
-    public static void InitOutput()
+    public static void InitOutput(TestContext testContext)
     {
         Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         testLanguagesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "test_languages.json");

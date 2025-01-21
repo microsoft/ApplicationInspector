@@ -84,7 +84,7 @@ windows
     private static string testRulesPath = string.Empty;
 
     [ClassInitialize]
-    public static void InitOutput()
+    public static void InitOutput(TestContext testContext)
     {
         loggerFactory = logOptions.GetLoggerFactory();
         Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));

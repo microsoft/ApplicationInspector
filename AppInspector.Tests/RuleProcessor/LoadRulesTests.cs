@@ -72,9 +72,9 @@ public class LoadRulesTests
     private static ILogger _logger = new NullLogger<WithinClauseTests>();
 
     private static string multiLineRuleLoc = string.Empty;
-    
+
     [ClassInitialize]
-    public static void TestInit()
+    public static void TestInit(TestContext testContext)
     {
         _logger = _loggerFactory.CreateLogger<LoadRulesTests>();
         Directory.CreateDirectory(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests"));
