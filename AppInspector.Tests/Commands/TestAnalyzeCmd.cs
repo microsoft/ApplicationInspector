@@ -788,8 +788,6 @@ windows
     [TestMethod]
     public void DetectMissingRulesPath()
     {
-        // We need to ensure the test file exists, it doesn't matter what is in it.
-        File.WriteAllText(testFilePath, fourWindowsOneLinux);
         AnalyzeOptions options = new()
         {
             SourcePath = new string[1] { testFilePath },
