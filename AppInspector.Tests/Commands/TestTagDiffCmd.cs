@@ -17,64 +17,6 @@ namespace AppInspector.Tests.Commands;
 [ExcludeFromCodeCoverage]
 public class TestTagDiffCmd
 {
-    // These simple test rules rules look for the string "windows" and "linux"
-    private static readonly string findWindows = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-                ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-},
-{
-    ""name"": ""Platform: Linux"",
-    ""id"": ""AI_TEST_LINUX"",
-    ""description"": ""This rule checks for the string 'linux'"",
-    ""tags"": [
-      ""Test.Tags.Linux""
-    ],
-    ""severity"": ""Moderate"",
-    ""patterns"": [
-      {
-                ""confidence"": ""High"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""linux"",
-        ""type"": ""String"",
-      }
-    ]
-}
-]";
-
-    private static readonly string fourWindowsNoLinux =
-        @"windows
-windows
-windows
-windows
-";
-
-    // This string contains windows four times and linux once.
-    private static readonly string fourWindowsOneLinux =
-        @"windows
-windows
-linux
-windows
-windows
-";
-
     private static ILoggerFactory loggerFactory = new NullLoggerFactory();
 
     private static readonly LogOptions logOptions = new();
@@ -89,32 +31,14 @@ windows
         loggerFactory = logOptions.GetLoggerFactory();
         Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         testFileFourWindowsOneLinuxPath =
-            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFile.js");
-        File.WriteAllText(testFileFourWindowsOneLinuxPath, fourWindowsOneLinux);
+            Path.Combine("TestData", "TestTagDiffCmd", "Samples", "FourWindowsOneLinux.js");
 
-        testFileFourWindowsOneLinuxCopyPath =
-            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFileCopy.js");
-        File.WriteAllText(testFileFourWindowsOneLinuxCopyPath, fourWindowsOneLinux);
+        testFileFourWindowsOneLinuxCopyPath = testFileFourWindowsOneLinuxPath;
 
         testFileFourWindowsNoLinuxPath =
-            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFileNoLinux.js");
-        File.WriteAllText(testFileFourWindowsNoLinuxPath, fourWindowsNoLinux);
+            Path.Combine("TestData", "TestTagDiffCmd", "Samples", "FourWindowsNoLinux.js");
 
-        testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
-        File.WriteAllText(testRulesPath, findWindows);
-    }
-
-    [ClassCleanup]
-    public static void CleanUp()
-    {
-        try
-        {
-            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
-        }
-        catch (Exception e)
-        {
-            Console.Error.WriteLine(e.Message);
-        }
+        testRulesPath = Path.Combine("TestData", "TestTagDiffCmd", "Rules", "FindWindows.json");
     }
 
     [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestPassed)]

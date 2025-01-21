@@ -14,6 +14,15 @@
         <None Update="TestData\FourWindowsOneLinux.zip">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="TestData\TestTagDiffCmd\Rules\FindWindows.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestTagDiffCmd\Samples\FourWindowsNoLinux.js">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestTagDiffCmd\Samples\FourWindowsOneLinux.js">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
