@@ -16,27 +16,6 @@ namespace AppInspector.Tests.Languages;
 [ExcludeFromCodeCoverage]
 public class LanguagesTests
 {
-    private static readonly string comments_z = @"
-[
-  {
-    ""language"": [
-      ""z""
-    ],
-    ""inline"": ""//"",
-    ""prefix"": ""/*"",
-    ""suffix"": ""*/""
-  }
-]";
-
-    private static readonly string languages_z = @"
-[
-  {
-    ""name"": ""z"",
-    ""extensions"": [ "".z"", "".xw"" ],
-    ""type"": ""code""
-  }
-]";
-
     private static ILoggerFactory _factory = new NullLoggerFactory();
     private static string invalidTestCommentsPath = string.Empty;
     private static string invalidTestLanguagesPath = string.Empty;
@@ -48,32 +27,13 @@ public class LanguagesTests
     public static void InitOutput(TestContext testContext)
     {
         Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
-        testLanguagesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "test_languages.json");
-        testCommentsPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "test_comments.json");
-        File.WriteAllText(testLanguagesPath, languages_z);
-        File.WriteAllText(testCommentsPath, comments_z);
-        invalidTestLanguagesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
+        testLanguagesPath = Path.Combine("TestData","TestLanguages", "test_languages.json");
+        testCommentsPath = Path.Combine("TestData","TestLanguages", "test_comments.json");
+        invalidTestLanguagesPath = Path.Combine("TestData","TestLanguages", 
             "test_languages_invalid.json");
         invalidTestCommentsPath =
-            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "test_comments_invalid.json");
-        File.WriteAllText(invalidTestLanguagesPath,
-            languages_z.Trim().Substring(1)); // Not a valid json array, should be missing the opening [
-        File.WriteAllText(invalidTestCommentsPath,
-            comments_z.Trim().Substring(1)); // Not a valid json, should be missing the opening [
+            Path.Combine("TestData","TestLanguages", "test_comments_invalid.json");
         _factory = new LogOptions { ConsoleVerbosityLevel = LogEventLevel.Verbose }.GetLoggerFactory();
-    }
-
-    [ClassCleanup]
-    public static void CleanUp()
-    {
-        try
-        {
-            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
-        }
-        catch (Exception e)
-        {
-            Console.Error.WriteLine(e.Message);
-        }
     }
 
     [TestMethod]
