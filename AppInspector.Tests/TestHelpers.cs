@@ -75,10 +75,10 @@ public static class TestHelpers
             case AppPath.appInspectorCLI:
 #if DEBUG
                     result =
- Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "debug", "net6.0", "applicationinspector.cli.exe");
+ Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "debug", "net8.0", "applicationinspector.cli.exe");
 #else
                 result = Path.Combine(GetBaseAppPath(), "..", "..", "..", "..", "AppInspector.CLI", "bin", "release",
-                    "net6.0", "applicationinspector.cli.exe");
+                    "net8.0", "applicationinspector.cli.exe");
 #endif
                 break;
             case AppPath.testLogOutput:

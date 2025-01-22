@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Platform: Microsoft Windows",
+        "id": "AI_TEST_WINDOWS",
+        "description": "This rule checks for the string 'windows'",
+        "tags": [
+          "Test.Tags.Windows"
+        ],
+        "severity": "Important",
+        "applies_to_file_regex": ["afile.js"],
+        "exclude_file_regex": ["afile.js.cs"],
+        "patterns": [
+          {
+                    "confidence": "Medium",
+            "modifiers": [
+              "i"
+            ],
+            "pattern": "windows",
+            "type": "String",
+          }
+        ]
+    },
+    {
+        "name": "Platform: Linux",
+        "id": "AI_TEST_LINUX",
+        "description": "This rule checks for the string 'linux'",
+        "tags": [
+          "Test.Tags.Linux"
+        ],
+        "severity": "Moderate",
+        "applies_to_file_regex": ["adifferentfile.js"],
+        "patterns": [
+          {
+                    "confidence": "High",
+            "modifiers": [
+              "i"
+            ],
+            "pattern": "linux",
+            "type": "String",
+          }
+        ]
+    }
+    ]

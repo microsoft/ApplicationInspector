@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Platform: Microsoft Windows",
+        "id": "AI_TEST_WINDOWS",
+        "description": "This rule checks for the string 'windows'",
+        "tags": [
+          "Test.Tags.Windows"
+        ],
+        "applies_to": [ "javascript" ],
+        "severity": "Important",
+        "patterns": [
+          {
+                    "confidence": "Medium",
+            "modifiers": [
+              "i"
+            ],
+            "pattern": "windows",
+            "type": "String",
+          }
+        ]
+    }]

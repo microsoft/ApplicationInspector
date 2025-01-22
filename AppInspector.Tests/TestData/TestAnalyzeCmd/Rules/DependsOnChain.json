@@ -1,0 +1,73 @@
+[
+    {
+        "id": "SA000001",
+        "name": "Testing.Rules.DependsOnTags.Chain.A",
+        "tags": [
+            "Category.A"
+        ],
+        "severity": "Critical",
+        "description": "This rule finds A",
+        "patterns": [
+            {
+                "pattern": "A",
+                "type": "regex",
+                "confidence": "High",
+                "modifiers": [
+                    "m"
+                ],
+                "scopes": [
+                    "code"
+                ]
+            }
+        ],
+        "_comment": ""
+    },
+    {
+        "id": "SA000002",
+        "name": "Testing.Rules.DependsOnTags.Chain.B",
+        "tags": [
+            "Category.B"
+        ],
+        "depends_on_tags": ["Category.A"],
+        "severity": "Critical",
+        "description": "This rule finds B",
+        "patterns": [
+            {
+                "pattern": "B",
+                "type": "regex",
+                "confidence": "High",
+                "modifiers": [
+                    "m"
+                ],
+                "scopes": [
+                    "code"
+                ]
+            }
+        ],
+        "_comment": ""
+    },
+    {
+        "id": "SA000003",
+        "name": "Testing.Rules.DependsOnTags.Chain.C",
+        "tags": [
+            "Category.C"
+        ],
+        "depends_on_tags": ["Category.B"],
+        "severity": "Critical",
+        "description": "This rule finds C",
+        "patterns": [
+            {
+                "pattern": "C",
+                "type": "regex",
+                "confidence": "High",
+                "modifiers": [
+                    "m"
+                ],
+                "scopes": [
+                    "code"
+                ]
+            }
+        ],
+        "_comment": ""
+    }
+]

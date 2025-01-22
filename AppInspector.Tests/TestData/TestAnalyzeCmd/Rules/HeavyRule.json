@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Runaway CSV Regex",
+        "id": "AI_TEST_WINDOWS",
+        "description": "This rule is an ineffcient regex for csvs to trigger the timeout",
+        "tags": [
+          "Test.Tags.Windows"
+        ],
+        "severity": "Important",
+        "patterns": [
+          {
+                    "confidence": "Medium",
+            "modifiers": [
+              "i"
+            ],
+            "pattern": "\\w+([\\.-]?\\w+)*@\\w+([\\.-]?w+)*(\\.\\w{2,3})+$",
+            "type": "Regex",
+            "_comment": "This is a catastrophic performance backtracking regex intentionally constructed to trigger the timeout during tests"
+          }
+        ]
+    }]
