@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Platform: Microsoft Windows",
+        "id": "AI_TEST_WINDOWS_MUST_MATCH",
+        "description": "This rule checks for the string 'windows'",
+        "tags": [
+          "Test.Tags.Windows"
+        ],
+        "applies_to": [ "csharp"],
+        "severity": "Important",
+        "patterns": [
+          {
+            "confidence": "Medium",
+            "modifiers": [
+              "i"
+            ],
+            "pattern": "windows",
+            "type": "String"
+          }
+        ],
+        "must-match" : [ "windows 2000"]
+    }
+]

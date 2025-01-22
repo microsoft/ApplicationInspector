@@ -4,7 +4,7 @@
         <OutputType>Library</OutputType>
         <Nullable>enable</Nullable>
         <LangVersion>10.0</LangVersion>
-        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,13 +14,146 @@
         <None Update="TestData\FourWindowsOneLinux.zip">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="TestData\TestTagDiffCmd\Rules\FindWindows.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestTagDiffCmd\Samples\FourWindowsNoLinux.js">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestTagDiffCmd\Samples\FourWindowsOneLinux.js">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Samples\FourWindowsOneLinux.js">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Samples\FourWindowsOneLinux.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Samples\FourWindowsOneLinux.unknownextension">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <Compile Remove="TestData\TestAnalyzeCmd\Samples\JustA.cs" />
+        <None Include="TestData\TestAnalyzeCmd\Samples\JustA.cs">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <Compile Remove="TestData\TestAnalyzeCmd\Samples\JustB.cs" />
+        <None Include="TestData\TestAnalyzeCmd\Samples\JustB.cs">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <Compile Remove="TestData\TestAnalyzeCmd\Samples\JustC.cs" />
+        <None Include="TestData\TestAnalyzeCmd\Samples\JustC.cs">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Samples\ThreeWindowsOneWindows2000.js">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Rules\DependsOnChain.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Rules\DependsOnOneWay.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Rules\DependsOnTwoWay.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Rules\FindWindows.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Rules\FindWindowsWithAppliesTo.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Rules\FindWindowsWithDoesNotApplyTo.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Rules\FindWindowsWithFileRegex.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Rules\FindWindowsWithOverride.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Rules\FindWindowsWithOverrideRuleWithoutOverride.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Rules\HeavyRule.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Samples\afile.js">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <Compile Remove="TestData\TestAnalyzeCmd\Samples\afile.js.cs" />
+        <None Include="TestData\TestAnalyzeCmd\Samples\afile.js.cs">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestAnalyzeCmd\Samples\adifferentfile.js">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestExportTagsCmd\Rules\TestRules.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\DependsOnTagMissingRule.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\InvalidFileRegexesRule.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\InvalidJsonValidRule.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\KnownLanguages.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\MustMatchRule.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\MustMatchRuleFail.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\MustNotMatchRule.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\MustNotMatchRuleFail.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\OverriddenDependsOnTagMissingRule.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\RuleWithoutDescription.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\SameId.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\ValidJsonInvalidRuleNoId.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestVerifyRulesCmd\Rules\ValidRules.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestLanguages\test_comments.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestLanguages\test_comments_invalid.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestLanguages\test_languages.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestLanguages\test_languages_invalid.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestRuleProcessor\Rules\MultiLineRule.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestRuleProcessor\Rules\MultiLineRule2.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.1" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-        <PackageReference Include="MSTest.TestAdapter" Version="3.6.4" />
-        <PackageReference Include="MSTest.TestFramework" Version="3.6.4" />
+        <PackageReference Include="MSTest.TestAdapter" Version="3.7.1" />
+        <PackageReference Include="MSTest.TestFramework" Version="3.7.1" />
         <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
         <PackageReference Include="System.Reflection" Version="4.3.0" />
         <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />

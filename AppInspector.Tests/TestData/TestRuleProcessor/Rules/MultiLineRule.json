@@ -1,0 +1,25 @@
+[
+    {
+        "id": "SA000005",
+        "name": "Testing.Rules.MultiLine",
+        "tags": [
+            "Testing.Rules.MultiLine"
+        ],
+        "severity": "Critical",
+        "description": "this rule finds race car split across two lines.",
+        "patterns": [
+            {
+                "pattern": "race\\r\\ncar",
+                "type": "regex",
+                "confidence": "High",
+                "modifiers": [
+                    "m"
+                ],
+                "scopes": [
+                    "code"
+                ]
+            }
+        ],
+        "_comment": ""
+    }
+]

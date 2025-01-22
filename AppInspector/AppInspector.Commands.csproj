@@ -26,7 +26,7 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <Nullable>enable</Nullable>
         <LangVersion>10.0</LangVersion>
-        <TargetFrameworks>net6.0;net7.0;net8.0;netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;netstandard2.1</TargetFrameworks>
     </PropertyGroup>
 
     <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
@@ -52,14 +52,14 @@
 
     <ItemGroup>
         <PackageReference Include="CommandLineParser" Version="2.9.1" />
-        <PackageReference Include="DotLiquid" Version="2.3.0" />
+        <PackageReference Include="DotLiquid" Version="2.3.18" />
         <PackageReference Include="Glob" Version="1.1.9" />
         <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
-        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.70" />
+        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.73" />
         <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.34" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
         <PackageReference Include="ShellProgressBar" Version="5.2.0" />
-        <PackageReference Include="System.Reflection.Metadata" Version="9.0.0" />
+        <PackageReference Include="System.Reflection.Metadata" Version="9.0.1" />
 
 
     </ItemGroup>

@@ -16,85 +16,6 @@ public class TestExportTagsCmd
 {
     private ILoggerFactory factory = new NullLoggerFactory();
 
-    private readonly string findWindows = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-                ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-},
-{
-    ""name"": ""Platform: Linux"",
-    ""id"": ""AI_TEST_LINUX"",
-    ""description"": ""This rule checks for the string 'linux'"",
-    ""tags"": [
-      ""Test.Tags.Linux""
-    ],
-    ""severity"": ""Moderate"",
-    ""patterns"": [
-      {
-                ""confidence"": ""High"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""linux"",
-        ""type"": ""String"",
-      }
-    ]
-},
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS_2"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-                ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-},
-{
-    ""name"": ""Platform: Linux"",
-    ""id"": ""AI_TEST_LINUX_2"",
-    ""description"": ""This rule checks for the string 'linux'"",
-    ""tags"": [
-      ""Test.Tags.Linux""
-    ],
-    ""severity"": ""Moderate"",
-    ""patterns"": [
-      {
-                ""confidence"": ""High"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""linux"",
-        ""type"": ""String"",
-      }
-    ]
-}
-]";
-
     private readonly LogOptions logOptions = new();
     private string testRulesPath = string.Empty;
 
@@ -102,22 +23,7 @@ public class TestExportTagsCmd
     public void InitOutput()
     {
         factory = logOptions.GetLoggerFactory();
-        Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
-        testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
-        File.WriteAllText(testRulesPath, findWindows);
-    }
-
-    [ClassCleanup]
-    public static void CleanUp()
-    {
-        try
-        {
-            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
-        }
-        catch (Exception e)
-        {
-            Console.Error.WriteLine(e.Message);
-        }
+        testRulesPath = Path.Combine("TestData","TestExportTagsCmd","Rules", "TestRules.json");
     }
 
     [TestMethod]

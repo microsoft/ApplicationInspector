@@ -17,104 +17,27 @@ namespace AppInspector.Tests.Commands;
 [ExcludeFromCodeCoverage]
 public class TestTagDiffCmd
 {
-    // These simple test rules rules look for the string "windows" and "linux"
-    private readonly string findWindows = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-                ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-},
-{
-    ""name"": ""Platform: Linux"",
-    ""id"": ""AI_TEST_LINUX"",
-    ""description"": ""This rule checks for the string 'linux'"",
-    ""tags"": [
-      ""Test.Tags.Linux""
-    ],
-    ""severity"": ""Moderate"",
-    ""patterns"": [
-      {
-                ""confidence"": ""High"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""linux"",
-        ""type"": ""String"",
-      }
-    ]
-}
-]";
+    private static ILoggerFactory loggerFactory = new NullLoggerFactory();
 
-    private readonly string fourWindowsNoLinux =
-        @"windows
-windows
-windows
-windows
-";
+    private static readonly LogOptions logOptions = new();
+    private static string testFileFourWindowsNoLinuxPath = string.Empty;
+    private static string testFileFourWindowsOneLinuxCopyPath = string.Empty;
+    private static string testFileFourWindowsOneLinuxPath = string.Empty;
+    private static string testRulesPath = string.Empty;
 
-    // This string contains windows four times and linux once.
-    private readonly string fourWindowsOneLinux =
-        @"windows
-windows
-linux
-windows
-windows
-";
-
-    private ILoggerFactory loggerFactory = new NullLoggerFactory();
-
-    private readonly LogOptions logOptions = new();
-    private string testFileFourWindowsNoLinuxPath = string.Empty;
-    private string testFileFourWindowsOneLinuxCopyPath = string.Empty;
-    private string testFileFourWindowsOneLinuxPath = string.Empty;
-    private string testRulesPath = string.Empty;
-
-    [TestInitialize]
-    public void InitOutput()
+    [ClassInitialize]
+    public static void InitOutput(TestContext testContext)
     {
         loggerFactory = logOptions.GetLoggerFactory();
-        Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         testFileFourWindowsOneLinuxPath =
-            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFile.js");
-        File.WriteAllText(testFileFourWindowsOneLinuxPath, fourWindowsOneLinux);
+            Path.Combine("TestData", "TestTagDiffCmd", "Samples", "FourWindowsOneLinux.js");
 
-        testFileFourWindowsOneLinuxCopyPath =
-            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFileCopy.js");
-        File.WriteAllText(testFileFourWindowsOneLinuxCopyPath, fourWindowsOneLinux);
+        testFileFourWindowsOneLinuxCopyPath = testFileFourWindowsOneLinuxPath;
 
         testFileFourWindowsNoLinuxPath =
-            Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestFileNoLinux.js");
-        File.WriteAllText(testFileFourWindowsNoLinuxPath, fourWindowsNoLinux);
+            Path.Combine("TestData", "TestTagDiffCmd", "Samples", "FourWindowsNoLinux.js");
 
-        testRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
-        File.WriteAllText(testRulesPath, findWindows);
-    }
-
-    [ClassCleanup]
-    public static void CleanUp()
-    {
-        try
-        {
-            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
-        }
-        catch (Exception e)
-        {
-            Console.Error.WriteLine(e.Message);
-        }
+        testRulesPath = Path.Combine("TestData", "TestTagDiffCmd", "Rules", "FindWindows.json");
     }
 
     [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestPassed)]

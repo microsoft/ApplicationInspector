@@ -15,8 +15,8 @@ resources:
 
 variables:
   BuildConfiguration: 'Release'
-  DotnetVersion: '8.0.x'
-  DotnetTargetFramework: 'net8.0'
+  DotnetVersion: '9.0.x'
+  DotnetTargetFramework: 'net9.0'
 
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
@@ -39,7 +39,7 @@ extends:
       - template: dotnet-test-job.yml@templates
         parameters:
           jobName: 'dotnet_test_windows'
-          dotnetVersions: ['6.0.x','7.0.x','8.0.x']
+          dotnetVersions: ['8.0.x','9.0.x']
           poolName: MSSecurity-1ES-Build-Agents-Pool
           poolImage: MSSecurity-1ES-Windows-2022
           poolOs: windows
@@ -141,11 +141,11 @@ extends:
             publishPackageMetadata: true 
             publishFeedCredentials: 'sdl-oss-nuget-publish'
         steps:
+        - template: nbgv-set-version-steps.yml@templates
         - task: UseDotNet@2 # For ESRP. Do not use variable.
           inputs:
             packageType: 'sdk'
             version: '6.0.x'
-        - template: nbgv-set-version-steps.yml@templates
         - task: DownloadPipelineArtifact@2
           inputs:
             displayName: 'Download Unsigned linux-mac-archive'  

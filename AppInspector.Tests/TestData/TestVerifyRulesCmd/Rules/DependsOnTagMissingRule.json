@@ -1,0 +1,24 @@
+[
+    {
+        "name": "Platform: Microsoft Windows",
+        "id": "AI_TEST_WINDOWS_MUST_NOT_MATCH",
+        "description": "This rule checks for the string 'windows'",
+        "tags": [
+          "Test.Tags.Windows"
+        ],
+        "depends_on_tags": ["tag_not_present"],
+        "applies_to": [ "csharp"],
+        "severity": "Important",
+        "patterns": [
+          {
+            "confidence": "Medium",
+            "modifiers": [
+              "i"
+            ],
+            "pattern": "windows",
+            "type": "String",
+          }
+        ],
+        "must-not-match" : [ "linux"]
+    }
+]

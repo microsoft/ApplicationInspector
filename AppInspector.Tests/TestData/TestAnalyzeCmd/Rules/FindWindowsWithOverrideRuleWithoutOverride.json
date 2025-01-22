@@ -1,0 +1,40 @@
+[
+    {
+        "name": "Platform: Microsoft Windows",
+        "id": "AI_TEST_WINDOWS",
+        "description": "This rule checks for the string 'windows'",
+        "tags": [
+          "Test.Tags.Windows"
+        ],
+        "severity": "Important",
+        "patterns": [
+          {
+                    "confidence": "Medium",
+            "modifiers": [
+              "i"
+            ],
+            "pattern": "windows",
+            "type": "String",
+          }
+        ]
+    },
+    {
+        "name": "Platform: Linux",
+        "id": "AI_TEST_LINUX",
+        "description": "This rule checks for the string 'windows2000'",
+        "tags": [
+          "Test.Tags.Win2000"
+        ],
+        "severity": "Moderate",
+        "patterns": [
+          {
+                    "confidence": "High",
+            "modifiers": [
+              "i"
+            ],
+            "pattern": "windows 2000",
+            "type": "String",
+          }
+        ]
+    }
+    ]

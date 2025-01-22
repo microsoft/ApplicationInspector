@@ -26,16 +26,16 @@
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <Nullable>enable</Nullable>
         <LangVersion>10.0</LangVersion>
-        <TargetFrameworks>net7.0;net6.0;net8.0;netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;netstandard2.1</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="gstocco.YamlDotNet.YamlPath" Version="1.0.26" />
         <PackageReference Include="JsonCons.JsonPath" Version="1.1.0" />
-        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.70" />
+        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.73" />
         <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.34" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
-        <PackageReference Include="YamlDotNet" Version="16.2.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
+        <PackageReference Include="YamlDotNet" Version="16.3.0" />
     </ItemGroup>
 
     <ItemGroup>
