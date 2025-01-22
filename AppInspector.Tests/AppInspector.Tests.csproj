@@ -141,6 +141,12 @@
         <None Update="TestData\TestLanguages\test_languages_invalid.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="TestData\TestRuleProcessor\Rules\MultiLineRule.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData\TestRuleProcessor\Rules\MultiLineRule2.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
