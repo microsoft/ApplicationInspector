@@ -94,19 +94,6 @@ buy@tacos.com
         factory = new LogOptions().GetLoggerFactory();
     }
 
-    [ClassCleanup]
-    public static void CleanUp()
-    {
-        try
-        {
-            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
-        }
-        catch (Exception e)
-        {
-            Console.Error.WriteLine(e.Message);
-        }
-    }
-
     [DataTestMethod]
     public void Overrides()
     {
