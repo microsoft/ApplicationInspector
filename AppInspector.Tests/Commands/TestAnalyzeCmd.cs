@@ -542,18 +542,18 @@ buy@tacos.com
         Assert.AreEqual(2, result.Metadata.UniqueTags.Count);
     }
 
-    [Ignore]
     [TestMethod]
     public void SingleVsMultiThread()
     {
         List<string> testFiles = new();
-
+        Directory.CreateDirectory("TestOutput");
         var iterations = 100;
+        var content = File.ReadAllText(testFilePath);
         for (var i = 0; i < iterations; i++)
         {
             var testFileName = Path.Combine("TestOutput",
                 $"SingleVsMultiThread-TestFile-{i}.js");
-//            File.WriteAllText(testFileName, fourWindowsOneLinux);
+            File.WriteAllText(testFileName, content);
             testFiles.Add(testFileName);
         }
 
