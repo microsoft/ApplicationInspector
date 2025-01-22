@@ -29,7 +29,6 @@ public class TestTagDiffCmd
     public static void InitOutput(TestContext testContext)
     {
         loggerFactory = logOptions.GetLoggerFactory();
-        Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         testFileFourWindowsOneLinuxPath =
             Path.Combine("TestData", "TestTagDiffCmd", "Samples", "FourWindowsOneLinux.js");
 

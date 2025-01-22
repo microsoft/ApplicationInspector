@@ -26,7 +26,6 @@ public class LanguagesTests
     [ClassInitialize]
     public static void InitOutput(TestContext testContext)
     {
-        Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         testLanguagesPath = Path.Combine("TestData","TestLanguages", "test_languages.json");
         testCommentsPath = Path.Combine("TestData","TestLanguages", "test_comments.json");
         invalidTestLanguagesPath = Path.Combine("TestData","TestLanguages", 

@@ -25,17 +25,10 @@ public class LoadRulesTests
     public static void TestInit(TestContext testContext)
     {
         _logger = _loggerFactory.CreateLogger<LoadRulesTests>();
-        Directory.CreateDirectory(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests"));
         multiLineRuleLoc = Path.Combine("TestData", "TestRuleProcessor","Rules",
             "MultiLineRule.json");
         multiLineRuleLoc2 = Path.Combine("TestData", "TestRuleProcessor","Rules",
             "MultiLineRule2.json");
-    }
-
-    [ClassCleanup]
-    public static void TestCleanup()
-    {
-        Directory.Delete(Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "LoadRuleTests"), true);
     }
 
     [TestMethod]

@@ -57,7 +57,6 @@ buy@tacos.com
     [ClassInitialize]
     public static void ClassInit(TestContext context)
     {
-        Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
         testFilePath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "FourWindowsOneLinux.js");
         unknownFileTypePath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "FourWindowsOneLinux.unknownextension");
         testFilePathWithJsonExt = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "FourWindowsOneLinux.json");
@@ -79,10 +78,11 @@ buy@tacos.com
         overridesTestRulePath =
             Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithOverride.json");
         overridesWithoutOverrideTestRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithOverrideRuleWithoutOverride.json");
-        
+
+        Directory.CreateDirectory("TestOutput");
         for (var i = 0; i < numTimeOutFiles; i++)
         {
-            var newPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), $"TestFile-{i}.js");
+            var newPath = Path.Combine("TestOutput", $"TestFile-{i}.js");
             File.WriteAllText(newPath, string.Join('\n', Enumerable.Repeat(hardToFindContent, numTimesContent)));
             enumeratingTimeOutTestsFiles.Add(newPath);
         }
@@ -551,7 +551,7 @@ buy@tacos.com
         var iterations = 100;
         for (var i = 0; i < iterations; i++)
         {
-            var testFileName = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput),
+            var testFileName = Path.Combine("TestOutput",
                 $"SingleVsMultiThread-TestFile-{i}.js");
 //            File.WriteAllText(testFileName, fourWindowsOneLinux);
             testFiles.Add(testFileName);
