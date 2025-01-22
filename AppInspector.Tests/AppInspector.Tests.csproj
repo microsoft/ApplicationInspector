@@ -87,6 +87,9 @@
         <None Update="TestData\TestAnalyzeCmd\Samples\adifferentfile.js">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="TestData\TestExportTagsCmd\Rules\TestRules.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
