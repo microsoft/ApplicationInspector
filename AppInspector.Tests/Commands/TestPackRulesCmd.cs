@@ -10,24 +10,6 @@ namespace AppInspector.Tests.Commands;
 [ExcludeFromCodeCoverage]
 public class TestPackRulesCmd
 {
-    [TestInitialize]
-    public void InitOutput()
-    {
-        Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
-    }
-
-    [TestCleanup]
-    public void CleanUp()
-    {
-        try
-        {
-            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
-        }
-        catch
-        {
-        }
-    }
-
     [TestMethod]
     public void NoCustomNoEmbeddedRules()
     {
