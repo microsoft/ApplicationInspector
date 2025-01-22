@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Rule: No Description",
+        "id": "AI_TEST_NO_DESCRIPTION",
+        "tags": [
+          "Test.Tags.NoDescription"
+        ],
+        "severity": "Important",
+        "patterns": [
+          {
+            "confidence": "Medium",
+            "modifiers": [
+              "i"
+            ],
+            "pattern": "windows",
+            "type": "String"
+          }
+        ]
+    }
+]

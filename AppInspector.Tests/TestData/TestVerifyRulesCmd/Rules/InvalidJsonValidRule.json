@@ -1,0 +1,19 @@
+{
+    "name": "Platform: Microsoft Windows",
+    "id": "AI_TEST_WINDOWS_INVALID_JSON",
+    "description": "This rule checks for the string 'windows'",
+    "tags": [
+      "Test.Tags.Windows"
+    ],
+    "severity": "Important",
+    "patterns": [
+      {
+                "confidence": "Medium",
+        "modifiers": [
+          "i"
+        ],
+        "pattern": "windows",
+        "type": "String",
+      }
+    ]
+}

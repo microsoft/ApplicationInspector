@@ -18,419 +18,40 @@ namespace AppInspector.Tests.Commands;
 [ExcludeFromCodeCoverage]
 public class TestVerifyRulesCmd
 {
-    // FileRegexes if specified must be valid
-    private readonly string _invalidFileRegexes = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS_INVALID_REGEX"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""applies_to_file_regex"": [ ""$(^""],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-                ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-}
-]";
-    
-    private readonly string _ruleWithoutDescription = @"[
-{
-    ""name"": ""Rule: No Description"",
-    ""id"": ""AI_TEST_NO_DESCRIPTION"",
-    ""tags"": [
-      ""Test.Tags.NoDescription""
-    ],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-        ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-}
-]";
-
-    // Rules are a List<Rule> so they must be contained in []
-    private readonly string _invalidJsonValidRule = @"
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS_INVALID_JSON"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-                ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-}";
-
-    // Languages if specified must be known
-    private readonly string _knownLanguages = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS_INVALID_LANGAUGE"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""applies_to"": [ ""malboge""],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-                ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-}
-]";
-
-    // MustMatch if specified must be matched
-    private readonly string _mustMatchRule = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS_MUST_MATCH"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""applies_to"": [ ""csharp""],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-        ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String""
-      }
-    ],
-    ""must-match"" : [ ""windows 2000""]
-}
-]";
-
-    // MustMatch if specified must not fail to match
-    private readonly string _mustMatchRuleFail = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS_MUST_MATCH_FAIL"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""applies_to"": [ ""csharp""],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-        ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ],
-    ""must-match"" : [ ""wimdoos""]
-}
-]";
-
-    // This rule depends on another tag but that tag isn't in the ruleset
-    private readonly string _dependsOnTagMissingRule = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS_MUST_NOT_MATCH"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""depends_on_tags"": [""tag_not_present""],
-    ""applies_to"": [ ""csharp""],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-        ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ],
-    ""must-not-match"" : [ ""linux""]
-}
-]";
-
-    // One of these rules overrides the other and depends on another tag but that tag isn't set on the rule being overridden
-    private readonly string _overriddenDependsOnTagMissingRule = @"[
-    {
-        ""name"": ""Platform: Microsoft Windows"",
-        ""id"": ""_overriddenDependsOnTagMissingRule"",
-        ""description"": ""This rule checks for the string 'windows'"",
-        ""tags"": [
-          ""Test.Tags.Windows""
-        ],
-        ""applies_to"": [ ""csharp""],
-        ""severity"": ""Important"",
-        ""patterns"": [
-          {
-            ""confidence"": ""Medium"",
-            ""modifiers"": [
-              ""i""
-            ],
-            ""pattern"": ""windows"",
-            ""type"": ""String"",
-          }
-        ],
-        ""must-not-match"" : [ ""linux""]
-    },
-    {
-        ""name"": ""Platform: Microsoft Windows"",
-        ""id"": ""_overriddenDependsOnTagMissingRule_2"",
-        ""description"": ""This rule checks for the string 'windows'"",
-        ""tags"": [
-          ""Test.Tags.Windows""
-        ],
-        ""overrides"": [""_overriddenDependsOnTagMissingRule""],
-        ""depends_on_tags"": [""a_tag""],
-        ""applies_to"": [ ""csharp""],
-        ""severity"": ""Important"",
-        ""patterns"": [
-          {
-            ""confidence"": ""Medium"",
-            ""modifiers"": [
-              ""i""
-            ],
-            ""pattern"": ""windows"",
-            ""type"": ""String"",
-          }
-        ],
-        ""must-not-match"" : [ ""linux""]
-    },
-    {
-        ""name"": ""Platform: Microsoft Windows"",
-        ""id"": ""_overriddenDependsOnTagMissingRule_3"",
-        ""description"": ""This rule checks for the string 'windows'"",
-        ""tags"": [
-          ""a_tag""
-        ],
-        ""applies_to"": [ ""csharp""],
-        ""severity"": ""Important"",
-        ""patterns"": [
-          {
-            ""confidence"": ""Medium"",
-            ""modifiers"": [
-              ""i""
-            ],
-            ""pattern"": ""windows"",
-            ""type"": ""String"",
-          }
-        ],
-        ""must-not-match"" : [ ""linux""]
-    }
-]";
-
-    // MustNotMatch if specified must not be matched
-    private readonly string _mustNotMatchRule = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS_MUST_NOT_MATCH"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""applies_to"": [ ""csharp""],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-        ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ],
-    ""must-not-match"" : [ ""linux""]
-}
-]";
-
-    // MustNotMatch if specified must not fail to not be matched
-    private readonly string _mustNotMatchRuleFail = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS_MUST_NOT_MATCH_FAIL"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""applies_to"": [ ""csharp""],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-        ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ],
-    ""must-not-match"" : [ ""windows""]
-}
-]";
-
-    // Two rules may not have the same id
-    private readonly string _sameId = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS_SAME_ID"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-                ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-},
-{
-    ""name"": ""Platform: Linux"",
-    ""id"": ""AI_TEST_WINDOWS_SAME_ID"",
-    ""description"": ""This rule checks for the string 'linux'"",
-    ""tags"": [
-      ""Test.Tags.Linux""
-    ],
-    ""severity"": ""Moderate"",
-    ""patterns"": [
-      {
-                ""confidence"": ""High"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""linux"",
-        ""type"": ""String"",
-      }
-    ]
-}
-]";
-
-    // Rules must contain an id
-    private readonly string _validJsonInvalidRuleNoId = @"[{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-                ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-}]";
-
-    private readonly string _validRules = @"[
-{
-    ""name"": ""Platform: Microsoft Windows"",
-    ""id"": ""AI_TEST_WINDOWS"",
-    ""description"": ""This rule checks for the string 'windows'"",
-    ""tags"": [
-      ""Test.Tags.Windows""
-    ],
-    ""severity"": ""Important"",
-    ""patterns"": [
-      {
-                ""confidence"": ""Medium"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""windows"",
-        ""type"": ""String"",
-      }
-    ]
-},
-{
-    ""name"": ""Platform: Linux"",
-    ""id"": ""AI_TEST_LINUX"",
-    ""description"": ""This rule checks for the string 'linux'"",
-    ""tags"": [
-      ""Test.Tags.Linux""
-    ],
-    ""severity"": ""Moderate"",
-    ""patterns"": [
-      {
-                ""confidence"": ""High"",
-        ""modifiers"": [
-          ""i""
-        ],
-        ""pattern"": ""linux"",
-        ""type"": ""String"",
-      }
-    ]
-}
-]";
-
     private ILoggerFactory _factory = new NullLoggerFactory();
     private readonly LogOptions _logOptions = new();
     private string _validRulesPath = string.Empty;
+    private string _ruleWithoutDescriptionPath = string.Empty;
+    private string _invalidJsonValidRulePath = string.Empty;
+    private string _validJsonInvalidRuleNoIdPath = string.Empty;
+    private string _sameIdPath = string.Empty;
+    private string _overriddenDependsOnTagMissingRulePath = string.Empty;
+    private string _dependsOnTagMissingRulePath = string.Empty;
+    private string _invalidFileRegexesPath = string.Empty;
+    private string _knownLanguagesPath = string.Empty;
+    private string _mustMatchRulePath = string.Empty;
+    private string _mustMatchRuleFailPath = string.Empty;
+    private string _mustNotMatchRulePath = string.Empty;
+    private string _mustNotMatchRuleFailPath = string.Empty;
 
     [TestInitialize]
     public void InitOutput()
     {
         _factory = _logOptions.GetLoggerFactory();
-        Directory.CreateDirectory(TestHelpers.GetPath(TestHelpers.AppPath.testOutput));
-        _validRulesPath = Path.Combine(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), "TestRules.json");
-        File.WriteAllText(_validRulesPath, _validRules);
-    }
+        _validRulesPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "ValidRules.json");
+        _ruleWithoutDescriptionPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "RuleWithoutDescription.json");
+        _invalidJsonValidRulePath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "InvalidJsonValidRule.json");
+        _validJsonInvalidRuleNoIdPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "ValidJsonInvalidRuleNoId.json");
+        _sameIdPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "SameId.json");
+        _overriddenDependsOnTagMissingRulePath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "OverriddenDependsOnTagMissingRule.json");
+        _dependsOnTagMissingRulePath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "DependsOnTagMissingRule.json");
+        _invalidFileRegexesPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "InvalidFileRegexesRule.json");
+        _knownLanguagesPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "KnownLanguages.json");
+        _mustMatchRulePath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "MustMatchRule.json");
+        _mustMatchRuleFailPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "MustMatchRuleFail.json");
+        _mustNotMatchRulePath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "MustNotMatchRule.json");
+        _mustNotMatchRuleFailPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "MustNotMatchRuleFail.json");
 
-    [ClassCleanup]
-    public static void CleanUp()
-    {
-        try
-        {
-            Directory.Delete(TestHelpers.GetPath(TestHelpers.AppPath.testOutput), true);
-        }
-        catch (Exception e)
-        {
-            Console.Error.WriteLine(e.Message);
-        }
     }
 
     /// <summary>
@@ -445,16 +66,13 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void NoDescription()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _ruleWithoutDescription);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _ruleWithoutDescriptionPath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        File.Delete(path);
         Assert.AreEqual(1, result.Unverified.Count());
         Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
@@ -476,16 +94,13 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void UnclosedJson()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _invalidJsonValidRule);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _invalidJsonValidRulePath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        File.Delete(path);
         Assert.AreEqual(VerifyRulesResult.ExitCode.CriticalError, result.ResultCode);
     }
 
@@ -493,7 +108,7 @@ public class TestVerifyRulesCmd
     public void NullId()
     {
         var set = new RuleSet();
-        set.AddString(_validJsonInvalidRuleNoId, "NoIdTest");
+        set.AddString(File.ReadAllText(_validJsonInvalidRuleNoIdPath), "NoIdTest");
         RulesVerifierOptions options = new()
         {
             LoggerFactory = _factory
@@ -505,161 +120,131 @@ public class TestVerifyRulesCmd
     [TestMethod]
     public void DuplicateId()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _sameId);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _sameIdPath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
         Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
-        File.Delete(path);
     }
 
     [TestMethod]
     public void OverriddenRuleMissingDependsOnTag()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _overriddenDependsOnTagMissingRule);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _overriddenDependsOnTagMissingRulePath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
         Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
-        File.Delete(path);
     }
 
     [TestMethod]
     public void MissingDependsOnTag()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _dependsOnTagMissingRule);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _dependsOnTagMissingRulePath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
         Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
-        File.Delete(path);
     }
 
     [TestMethod]
     public void DuplicateIdCheckDisabled()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _sameId);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path,
+            CustomRulesPath = _sameIdPath,
             DisableRequireUniqueIds = true
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
         Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
-        File.Delete(path);
     }
 
     [TestMethod]
     public void InvalidRegex()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _invalidFileRegexes);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _invalidFileRegexesPath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        File.Delete(path);
         Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
     [TestMethod]
     public void UnknownLanguage()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _knownLanguages);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _knownLanguagesPath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        File.Delete(path);
         Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
     [TestMethod]
     public void MustMatch()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _mustMatchRule);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _mustMatchRulePath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        File.Delete(path);
         Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
     }
 
     [TestMethod]
     public void MustMatchDetectIncorrect()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _mustMatchRuleFail);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _mustMatchRuleFailPath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        File.Delete(path);
         Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
     [TestMethod]
     public void MustNotMatch()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _mustNotMatchRule);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _mustNotMatchRulePath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        File.Delete(path);
         Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
     }
 
     [TestMethod]
     public void MustNotMatchDetectIncorrect()
     {
-        var path = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        File.WriteAllText(path, _mustNotMatchRuleFail);
         VerifyRulesOptions options = new()
         {
-            CustomRulesPath = path
+            CustomRulesPath = _mustNotMatchRuleFailPath
         };
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        File.Delete(path);
         Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 }

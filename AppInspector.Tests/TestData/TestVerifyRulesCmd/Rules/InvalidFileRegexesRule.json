@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Platform: Microsoft Windows",
+        "id": "AI_TEST_WINDOWS_INVALID_REGEX",
+        "description": "This rule checks for the string 'windows'",
+        "tags": [
+          "Test.Tags.Windows"
+        ],
+        "applies_to_file_regex": [ "$(^"],
+        "severity": "Important",
+        "patterns": [
+          {
+                    "confidence": "Medium",
+            "modifiers": [
+              "i"
+            ],
+            "pattern": "windows",
+            "type": "String",
+          }
+        ]
+    }
+    ]
