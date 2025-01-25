@@ -3,16 +3,16 @@
     <PropertyGroup>
         <TargetFramework>net6.0;net7.0;net8.0</TargetFramework>
         <Nullable>enable</Nullable>
-
+        <OutputType>Exe</OutputType>
         <IsPackable>false</IsPackable>
 
         <RootNamespace>AppInspector.CLI.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
-        <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
-        <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.13.1" />
+        <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.5.2" />
+        <PackageReference Include="MSTest" Version="3.7.2" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
