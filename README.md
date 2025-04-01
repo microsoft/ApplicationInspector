@@ -168,3 +168,7 @@ see [NuGet Support](https://github.com/microsoft/ApplicationInspector/wiki/2.-Nu
 # Build Instructions
 
 See [build.md](https://github.com/microsoft/ApplicationInspector/blob/main/BUILD.md)
+
+## Privacy
+
+Usage of this application is governed by the [Microsoft Privacy Statement](https://https://go.microsoft.com/fwlink/?LinkId=521839).
