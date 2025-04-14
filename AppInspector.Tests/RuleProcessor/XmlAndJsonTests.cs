@@ -434,7 +434,10 @@ public class XmlAndJsonTests
         {
             var matches = analyzer.AnalyzeFile(testContent, new FileEntry("test.json", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
-            Assert.AreEqual(237, matches[0].Boundary.Index);
+            // Conincidentally in this content there's no other true
+            // Better than a constant because the string literal above may differ when compiled based on platform
+            Assert.AreEqual(testContent.IndexOf("true"), matches[0].Boundary.Index);
+            Assert.AreEqual("true",matches[0].Sample);
         }
     }
 
@@ -653,16 +656,16 @@ test:
             var matches = analyzer.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
             Assert.AreEqual(2, matches.Count);
             Assert.AreEqual("ok", matches[0].Sample);
-            Assert.AreEqual(185, matches[0].Boundary.Index);
+            Assert.AreEqual(content.IndexOf("ok"), matches[0].Boundary.Index);
             Assert.AreEqual(2, matches[0].Boundary.Length);
-            Assert.AreEqual(372, matches[1].Boundary.Index);
+            Assert.AreEqual(content.IndexOf("ok",content.IndexOf("ok")+1), matches[1].Boundary.Index);
             Assert.AreEqual(2, matches[1].Boundary.Length);
             var matches2 = analyzer2.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
             Assert.AreEqual(2, matches2.Count);
             Assert.AreEqual("ok", matches2[0].Sample);
-            Assert.AreEqual(185, matches[0].Boundary.Index);
+            Assert.AreEqual(content.IndexOf("ok"), matches[0].Boundary.Index);
             Assert.AreEqual(2, matches[0].Boundary.Length);
-            Assert.AreEqual(372, matches[1].Boundary.Index);
+            Assert.AreEqual(content.IndexOf("ok",content.IndexOf("ok")+1), matches[1].Boundary.Index);
             Assert.AreEqual(2, matches[1].Boundary.Length);
         }
     }
@@ -754,12 +757,12 @@ test:
             var matches = analyzer.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
             Assert.AreEqual("ok", matches[0].Sample);
-            Assert.AreEqual(178, matches[0].Boundary.Index);
+            Assert.AreEqual(content.IndexOf("ok"), matches[0].Boundary.Index);
             Assert.AreEqual(2, matches[0].Boundary.Length);
             var matches2 = analyzer2.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
             Assert.AreEqual(1, matches2.Count);
             Assert.AreEqual("ok", matches2[0].Sample);
-            Assert.AreEqual(178, matches2[0].Boundary.Index);
+            Assert.AreEqual(content.IndexOf("ok"), matches[0].Boundary.Index);
             Assert.AreEqual(2, matches2[0].Boundary.Length);
         }
     }
