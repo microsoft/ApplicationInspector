@@ -7,7 +7,7 @@ resources:
     - repository: templates
       type: git
       name: Data/OSS-Tools-Pipeline-Templates
-      ref: refs/tags/v2.0.0
+      ref: refs/tags/v2.0.1
     - repository: 1esPipelines
       type: git
       name: 1ESPipelineTemplates/1ESPipelineTemplates
@@ -44,6 +44,7 @@ extends:
           poolImage: MSSecurity-1ES-Windows-2022
           poolOs: windows
           projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
+          dotnetTestArgs: '-- --coverage --report-trx'
     - stage: Build
       dependsOn:
       - Test

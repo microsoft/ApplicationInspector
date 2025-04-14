@@ -6,4 +6,11 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
+
+    <!-- MSTest config -->
+    <PropertyGroup>
+        <EnableMSTestRunner>true</EnableMSTestRunner>
+        <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+        <MSTestAnalysisMode>Recommended</MSTestAnalysisMode>
+    </PropertyGroup>
 </Project>
