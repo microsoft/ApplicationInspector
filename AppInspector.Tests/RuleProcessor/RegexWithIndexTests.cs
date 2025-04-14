@@ -188,7 +188,7 @@ public class RegexWithIndexTests
         ""description"": ""this rule finds race car split across two lines."",
         ""patterns"": [
             {
-                ""pattern"": ""race\\r\\ncar"",
+                ""pattern"": ""race\\r?\\ncar"",
                 ""type"": ""regex"",
                 ""confidence"": ""High"",
                 ""modifiers"": [
@@ -214,7 +214,7 @@ public class RegexWithIndexTests
         ""description"": ""this rule finds race car split across two lines."",
         ""patterns"": [
             {
-                ""pattern"": ""race\\r\\ncar"",
+                ""pattern"": ""race\\r?\\ncar"",
                 ""type"": ""regex"",
                 ""confidence"": ""High"",
                 ""modifiers"": [
