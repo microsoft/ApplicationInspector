@@ -355,7 +355,7 @@ public class XmlAndJsonTests
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(xmlDataPropsWithTagValue.ReplaceLineEndings(), new FileEntry("test.xml", new MemoryStream()), info);
+            var matches = processor.AnalyzeFile(xmlDataPropsWithTagValue.ReplaceLineEndings("\n"), new FileEntry("test.xml", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
             var match = matches[0];
             Assert.AreEqual(expectedValue, match.Sample);
@@ -432,7 +432,7 @@ public class XmlAndJsonTests
             new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("test.json", out var info))
         {
-            var matches = analyzer.AnalyzeFile(testContent.ReplaceLineEndings(), new FileEntry("test.json", new MemoryStream()), info);
+            var matches = analyzer.AnalyzeFile(testContent.ReplaceLineEndings("\n"), new FileEntry("test.json", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
             Assert.AreEqual(226, matches[0].Boundary.Index);
             Assert.AreEqual("true",matches[0].Sample);
@@ -640,7 +640,7 @@ test:
         ]
     }
     ]";
-        string standardizedContent = content.ReplaceLineEndings();
+        string standardizedContent = content.ReplaceLineEndings("\n");
         RuleSet rules = new();
         var originalSource = "TestRules";
         rules.AddString(rule, originalSource);
@@ -742,7 +742,7 @@ test:
         ]
     }
     ]";
-        string standardizedContent = content.ReplaceLineEndings();
+        string standardizedContent = content.ReplaceLineEndings("\n");
         RuleSet rules = new();
         var originalSource = "TestRules";
         rules.AddString(rule, originalSource);
