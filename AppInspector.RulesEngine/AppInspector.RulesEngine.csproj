@@ -32,8 +32,8 @@
     <ItemGroup>
         <PackageReference Include="gstocco.YamlDotNet.YamlPath" Version="1.0.26" />
         <PackageReference Include="JsonCons.JsonPath" Version="1.1.0" />
-        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.73" />
-        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.37" />
+        <PackageReference Include="Microsoft.CST.OAT" Version="1.2.77" />
+        <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.40" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.4" />
         <PackageReference Include="YamlDotNet" Version="16.3.0" />
     </ItemGroup>

@@ -278,7 +278,7 @@ int main(int argc, char **argv)
         ""conditions"": [
             {
                 ""pattern"": {
-                    ""pattern"": ""free\\r\\n\\("",
+                    ""pattern"": ""free\\r?\\n\\("",
                     ""type"": ""regex"",
                     ""scopes"": [
                         ""code""

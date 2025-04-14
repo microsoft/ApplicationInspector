@@ -344,8 +344,8 @@ public class XmlAndJsonTests
             Assert.Fail();
         }
     }
-    [DataRow(xmlStringRuleForPropWithDataForData, "Franklin", 212)]
-    [DataRow(xmlStringRuleForPropWithData, "true", 176)]
+    [DataRow(xmlStringRuleForPropWithDataForData, "Franklin", 209)]
+    [DataRow(xmlStringRuleForPropWithData, "true", 173)]
     [DataTestMethod]
     public void XmlTagWithPropsAndValue(string rule, string expectedValue, int expectedIndex)
     {
@@ -355,7 +355,7 @@ public class XmlAndJsonTests
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(xmlDataPropsWithTagValue, new FileEntry("test.xml", new MemoryStream()), info);
+            var matches = processor.AnalyzeFile(xmlDataPropsWithTagValue.ReplaceLineEndings("\n"), new FileEntry("test.xml", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
             var match = matches[0];
             Assert.AreEqual(expectedValue, match.Sample);
@@ -432,9 +432,10 @@ public class XmlAndJsonTests
             new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("test.json", out var info))
         {
-            var matches = analyzer.AnalyzeFile(testContent, new FileEntry("test.json", new MemoryStream()), info);
+            var matches = analyzer.AnalyzeFile(testContent.ReplaceLineEndings("\n"), new FileEntry("test.json", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
-            Assert.AreEqual(237, matches[0].Boundary.Index);
+            Assert.AreEqual(226, matches[0].Boundary.Index);
+            Assert.AreEqual("true",matches[0].Sample);
         }
     }
 
@@ -639,6 +640,7 @@ test:
         ]
     }
     ]";
+        string standardizedContent = content.ReplaceLineEndings("\n");
         RuleSet rules = new();
         var originalSource = "TestRules";
         rules.AddString(rule, originalSource);
@@ -650,19 +652,19 @@ test:
             new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("test.yml", out var info))
         {
-            var matches = analyzer.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
+            var matches = analyzer.AnalyzeFile(standardizedContent, new FileEntry("test.yml", new MemoryStream()), info);
             Assert.AreEqual(2, matches.Count);
             Assert.AreEqual("ok", matches[0].Sample);
-            Assert.AreEqual(185, matches[0].Boundary.Index);
+            Assert.AreEqual(172, matches[0].Boundary.Index);
             Assert.AreEqual(2, matches[0].Boundary.Length);
-            Assert.AreEqual(372, matches[1].Boundary.Index);
+            Assert.AreEqual(346, matches[1].Boundary.Index);
             Assert.AreEqual(2, matches[1].Boundary.Length);
-            var matches2 = analyzer2.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
+            var matches2 = analyzer2.AnalyzeFile(standardizedContent, new FileEntry("test.yml", new MemoryStream()), info);
             Assert.AreEqual(2, matches2.Count);
             Assert.AreEqual("ok", matches2[0].Sample);
-            Assert.AreEqual(185, matches[0].Boundary.Index);
+            Assert.AreEqual(172, matches[0].Boundary.Index);
             Assert.AreEqual(2, matches[0].Boundary.Length);
-            Assert.AreEqual(372, matches[1].Boundary.Index);
+            Assert.AreEqual(346, matches[1].Boundary.Index);
             Assert.AreEqual(2, matches[1].Boundary.Length);
         }
     }
@@ -740,6 +742,7 @@ test:
         ]
     }
     ]";
+        string standardizedContent = content.ReplaceLineEndings("\n");
         RuleSet rules = new();
         var originalSource = "TestRules";
         rules.AddString(rule, originalSource);
@@ -751,15 +754,15 @@ test:
             new RuleProcessorOptions { Parallel = false, AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("test.yml", out var info))
         {
-            var matches = analyzer.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
+            var matches = analyzer.AnalyzeFile(standardizedContent, new FileEntry("test.yml", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
             Assert.AreEqual("ok", matches[0].Sample);
-            Assert.AreEqual(178, matches[0].Boundary.Index);
+            Assert.AreEqual(167, matches[0].Boundary.Index);
             Assert.AreEqual(2, matches[0].Boundary.Length);
-            var matches2 = analyzer2.AnalyzeFile(content, new FileEntry("test.yml", new MemoryStream()), info);
+            var matches2 = analyzer2.AnalyzeFile(standardizedContent, new FileEntry("test.yml", new MemoryStream()), info);
             Assert.AreEqual(1, matches2.Count);
             Assert.AreEqual("ok", matches2[0].Sample);
-            Assert.AreEqual(178, matches2[0].Boundary.Index);
+            Assert.AreEqual(167, matches[0].Boundary.Index);
             Assert.AreEqual(2, matches2[0].Boundary.Length);
         }
     }
