@@ -344,8 +344,8 @@ public class XmlAndJsonTests
             Assert.Fail();
         }
     }
-    [DataRow(xmlStringRuleForPropWithDataForData, "Franklin", 212)]
-    [DataRow(xmlStringRuleForPropWithData, "true", 176)]
+    [DataRow(xmlStringRuleForPropWithDataForData, "Franklin", 209)]
+    [DataRow(xmlStringRuleForPropWithData, "true", 173)]
     [DataTestMethod]
     public void XmlTagWithPropsAndValue(string rule, string expectedValue, int expectedIndex)
     {
@@ -355,7 +355,7 @@ public class XmlAndJsonTests
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(xmlDataPropsWithTagValue, new FileEntry("test.xml", new MemoryStream()), info);
+            var matches = processor.AnalyzeFile(xmlDataPropsWithTagValue.ReplaceLineEndings(), new FileEntry("test.xml", new MemoryStream()), info);
             Assert.AreEqual(1, matches.Count);
             var match = matches[0];
             Assert.AreEqual(expectedValue, match.Sample);
