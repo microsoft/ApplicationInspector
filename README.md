@@ -171,4 +171,4 @@ See [build.md](https://github.com/microsoft/ApplicationInspector/blob/main/BUILD
 
 ## Privacy
 
-Usage of this application is governed by the [Microsoft Privacy Statement](https://https://go.microsoft.com/fwlink/?LinkId=521839).
+Usage of this application is governed by the [Microsoft Privacy Statement](https://go.microsoft.com/fwlink/?LinkId=521839).
