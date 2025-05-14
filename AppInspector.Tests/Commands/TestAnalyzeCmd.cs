@@ -95,7 +95,7 @@ buy@tacos.com
         factory = new LogOptions().GetLoggerFactory();
     }
 
-    [DataTestMethod]
+    [TestMethod]
     public void Overrides()
     {
         AnalyzeOptions options = new()
@@ -126,7 +126,7 @@ buy@tacos.com
         Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     public async Task OverridesAsync()
     {
         AnalyzeOptions options = new()
@@ -242,7 +242,7 @@ buy@tacos.com
     [DataRow(3, 3)]
     [DataRow(4, 4)]
     [DataRow(9999, 4)] // 9999 is larger than 4, but there are only 4 to find.
-    [DataTestMethod]
+    [TestMethod]
     public void MaxNumMatches(int MaxNumberOfMatchesParameter, int ActualExpectedNumberOfMatches)
     {
         AnalyzeOptions options = new()
@@ -272,7 +272,7 @@ buy@tacos.com
     [DataRow(3, 3)]
     [DataRow(4, 4)]
     [DataRow(9999, 4)] // 9999 is larger than 4, but there are only 4 to find.
-    [DataTestMethod]
+    [TestMethod]
     public async Task MaxNumMatchesAsync(int MaxNumberOfMatchesParameter, int ActualExpectedNumberOfMatches)
     {
         AnalyzeOptions options = new()
@@ -410,7 +410,7 @@ buy@tacos.com
         Assert.AreEqual(2, result.Metadata.UniqueMatchesCount);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(true, 0, 0)]
     [DataRow(false, 2, 5)]
     public void ExpectedResultCounts(bool disableArchive, int expectedUniqueCount, int expectedCount)
@@ -452,7 +452,7 @@ buy@tacos.com
     [DataRow("afile.js", AnalyzeResult.ExitCode.Success, 4, 1)]
     [DataRow("afile.js.cs", AnalyzeResult.ExitCode.NoMatches, 0, 0)]
     [DataRow("adifferentfile.js", AnalyzeResult.ExitCode.Success, 1, 1)]
-    [DataTestMethod]
+    [TestMethod]
     public void AppliesToFileName(string testFileName, AnalyzeResult.ExitCode expectedExitCode,
         int expectedTotalMatches, int expectedUniqueMatches)
     {
@@ -583,7 +583,7 @@ buy@tacos.com
     [DataRow(new[] { Severity.Moderate }, 1)]
     [DataRow(new[] { Severity.Important }, 4)]
     [DataRow(new[] { Severity.Important | Severity.Moderate }, 5)]
-    [DataTestMethod]
+    [TestMethod]
     public void SeverityFilters(Severity[] severityFilter, int ActualExpectedNumberOfMatches)
     {
         AnalyzeOptions options = new()
@@ -604,7 +604,7 @@ buy@tacos.com
     [DataRow(new[] { Confidence.High }, 1)]
     [DataRow(new[] { Confidence.Medium }, 4)]
     [DataRow(new[] { Confidence.Medium | Confidence.High }, 5)]
-    [DataTestMethod]
+    [TestMethod]
     public void ConfidenceFilters(Confidence[] confidenceFilter, int ActualExpectedNumberOfMatches)
     {
         AnalyzeOptions options = new()
@@ -661,7 +661,7 @@ buy@tacos.com
     [DataRow(3, 5)]
     [DataRow(50, 5)]
     [DataRow(0, 0)]
-    [DataTestMethod]
+    [TestMethod]
     public void ContextLines(int numLinesContextArgument, int expectedNewLinesInResult)
     {
         AnalyzeOptions options = new()

@@ -359,7 +359,7 @@ int main(int argc, char **argv)
     [DataRow("WithinClauseWithoutInvertWithAfterOnly")]
     [DataRow("WithinClauseWithInvertWithSameFile")]
     [DataRow("WithinClauseWithoutInvertWithSameFile")]
-    [DataTestMethod]
+    [TestMethod]
     public void WithinClauseInvertTest(string testDataKey)
     {
         WithinClauseInvertTest(testData[testDataKey].testData, testData[testDataKey].conditionRegion,
@@ -395,7 +395,7 @@ int main(int argc, char **argv)
 
     [DataRow(true, 1, new[] { 2 })]
     [DataRow(false, 1, new[] { 3 })]
-    [DataTestMethod]
+    [TestMethod]
     public void WithinClauseInvertTestForSameLine(bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
     {
         RuleSet rules = new(_loggerFactory);
@@ -430,7 +430,7 @@ int main(int argc, char **argv)
     [DataRow(false, true, false, 0, 1, 1)]
     [DataRow(false, true, false, 1, -1, 0)]
     [DataRow(false, true, false, -1, 0, 1)]
-    [DataTestMethod]
+    [TestMethod]
     public void WithinClauseValidationTests(bool findingOnlySetting, bool findingRegionSetting,
         bool sameLineOnlySetting, int afterSetting, int beforeSetting, int expectedNumIssues)
     {
@@ -558,7 +558,7 @@ http://
 
     [DataRow(true, 1, new[] { 2 })]
     [DataRow(false, 1, new[] { 3 })]
-    [DataTestMethod]
+    [TestMethod]
     public void WithinClauseInvertTestForFindingRange0(bool invert, int expectedMatches,
         int[] expectedMatchesLineStarts)
     {
