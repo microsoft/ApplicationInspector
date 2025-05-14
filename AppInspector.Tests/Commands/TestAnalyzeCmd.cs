@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Combinatorial.MSTest;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.Logging;
@@ -164,11 +165,8 @@ buy@tacos.com
     /// <summary>
     ///     Checks that the enumeration timeout works
     /// </summary>
-    [DataRow(true, true)]
-    [DataRow(true, false)]
-    [DataRow(false, true)]
-    [DataRow(false, false)]
-    [DataTestMethod]
+    [TestMethod]
+    [CombinatorialData]
     public void EnumeratingTimeoutTimesOut(bool singleThread, bool noShowProgress)
     {
         AnalyzeOptions options = new()
@@ -190,11 +188,8 @@ buy@tacos.com
     /// <summary>
     ///     Checks that the overall processing timeout works
     /// </summary>
-    [DataRow(true, true)]
-    [DataRow(true, false)]
-    [DataRow(false, true)]
-    [DataRow(false, false)]
-    [DataTestMethod]
+    [TestMethod]
+    [CombinatorialData]
     public void ProcessingTimeoutTimesOut(bool singleThread, bool noShowProgress)
     {
         AnalyzeOptions options = new()
@@ -216,11 +211,8 @@ buy@tacos.com
     /// <summary>
     ///     Checks that the individual file timeout times out
     /// </summary>
-    [DataRow(true, true)]
-    [DataRow(true, false)]
-    [DataRow(false, true)]
-    [DataRow(false, false)]
-    [DataTestMethod]
+    [TestMethod]
+    [CombinatorialData]
     public void FileTimeoutTimesOut(bool singleThread, bool noShowProgress)
     {
         AnalyzeOptions options = new()

@@ -49,10 +49,10 @@ public class LanguagesTests
     [TestMethod]
     public void EmptyLanguagesOnInvalidCommentsAndLanguages()
     {
-        Assert.ThrowsException<JsonException>(() =>
+        Assert.ThrowsExactly<JsonException>(() =>
             Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory,
                 invalidTestCommentsPath));
-        Assert.ThrowsException<JsonException>(() =>
+        Assert.ThrowsExactly<JsonException>(() =>
             Microsoft.ApplicationInspector.RulesEngine.Languages.FromConfigurationFiles(_factory, null,
                 invalidTestLanguagesPath));
     }

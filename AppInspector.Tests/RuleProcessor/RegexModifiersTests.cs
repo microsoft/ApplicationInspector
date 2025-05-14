@@ -1,4 +1,5 @@
-﻿using Microsoft.ApplicationInspector.RulesEngine;
+﻿using Combinatorial.MSTest;
+using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Microsoft.CST.OAT;
 using Microsoft.CST.RecursiveExtractor;
@@ -133,9 +134,8 @@ namespace AppInspector.Tests.RuleProcessor
             Assert.AreEqual(expectedModifiers, actualModifiers);
         }
 
-        [DataRow(false)]
-        [DataRow(true)]
         [TestMethod]
+        [CombinatorialData]
         public void RegexWithLookBehind(bool enableNonBacktracking)
         {
             RuleSet rules = new() { EnableNonBacktrackingRegex = enableNonBacktracking };
@@ -158,9 +158,8 @@ namespace AppInspector.Tests.RuleProcessor
             }
         }
 
-        [DataRow(false)]
-        [DataRow(true)]
         [TestMethod]
+        [CombinatorialData]
         public void RegexWithoutLookBehind(bool enableNonBacktracking)
         {
             RuleSet rules = new() { EnableNonBacktrackingRegex = enableNonBacktracking };
