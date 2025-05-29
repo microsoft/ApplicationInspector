@@ -327,7 +327,7 @@ public class XmlAndJsonTests
     
     [DataRow(jsonStringRule)]
     [DataRow(jsonAndXmlStringRule)]
-    [DataTestMethod]
+    [TestMethod]
     public void JsonStringRule(string rule)
     {
         RuleSet rules = new();
@@ -346,7 +346,7 @@ public class XmlAndJsonTests
     }
     [DataRow(xmlStringRuleForPropWithDataForData, "Franklin", 209)]
     [DataRow(xmlStringRuleForPropWithData, "true", 173)]
-    [DataTestMethod]
+    [TestMethod]
     public void XmlTagWithPropsAndValue(string rule, string expectedValue, int expectedIndex)
     {
         RuleSet rules = new();
@@ -369,7 +369,7 @@ public class XmlAndJsonTests
 
     [DataRow(xmlStringRule)]
     [DataRow(jsonAndXmlStringRule)]
-    [DataTestMethod]
+    [TestMethod]
     public void XmlStringRule(string rule)
     {
         RuleSet rules = new();

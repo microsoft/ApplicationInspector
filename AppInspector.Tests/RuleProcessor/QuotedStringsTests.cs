@@ -101,7 +101,7 @@ end
     [DataRow(testMultiLineWithResultFollowingCommentEnd,1)]
     [DataRow(testSingleLineWithQuotesInComment,0)]
     [DataRow(testSingleLineWithDoubleQuotesInComment,0)]
-    [DataTestMethod]
+    [TestMethod]
     public void QuotedStrings(string content, int numIssues)
     {
         RuleSet rules = new(_loggerFactory);
@@ -121,7 +121,7 @@ end
     /// <param name="numIssues"></param>
     
     [DataRow(testRubyInterpolatedStrings, 5)]
-    [DataTestMethod]
+    [TestMethod]
     public void QuotedStringsRuby(string content, int numIssues)
     {
         RuleSet rules = new(_loggerFactory);

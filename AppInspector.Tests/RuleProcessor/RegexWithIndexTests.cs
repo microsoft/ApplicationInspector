@@ -371,7 +371,7 @@ racecar";
 
     [DataRow(jsonRule)]
     [DataRow(jsonAndXmlRule)]
-    [DataTestMethod]
+    [TestMethod]
     public void JsonRule(string rule)
     {
         RuleSet rules = new();
@@ -391,7 +391,7 @@ racecar";
 
     [DataRow(xmlRule)]
     [DataRow(jsonAndXmlRule)]
-    [DataTestMethod]
+    [TestMethod]
     public void XmlRule(string rule)
     {
         RuleSet rules = new();

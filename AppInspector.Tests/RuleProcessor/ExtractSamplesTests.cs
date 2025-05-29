@@ -46,7 +46,7 @@ public class ExtractSamplesTests
     // Third line is 10 character, context is set to 500 (specified as 5 lines then multiplied by 100) so 500 before, 10 after (clamped on end)
     [DataRow(longTestStringShortThirdLine, 1, 3, 5, 3, 2000, 5, 5, 510)]
 
-    [DataTestMethod]
+    [TestMethod]
     public void ExtractExcerptClampingTests(string testText, int StartCol, int StartLine, int EndCol, int EndLine, int Idx, int Length, int context, int expectedLength)
     {
         // Extract excerpt requires a text container
