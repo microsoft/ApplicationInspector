@@ -32,20 +32,6 @@ extends:
       git:
         submodules: false
     stages:
-    - stage: DefineAndReadVar
-      jobs:
-      - job: A
-        steps:
-        - powershell: |
-           Write-Host "##vso[task.setvariable variable=myOutputVar;isOutput=true]this is from job A"
-          name: passOutput
-      - job: B
-        dependsOn: A
-        variables:
-          myVarFromJobA: $[ dependencies.A.outputs['passOutput.myOutputVar'] ]  
-        steps:
-        - powershell: |
-           Write-Host $(myVarFromJobA)
     - stage: Test
       dependsOn: []
       jobs:
