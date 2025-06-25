@@ -618,7 +618,6 @@ extends:
             artifactName: Signed_Binaries  # Required, name of the pipeline artifact
             targetPath: $(Pipeline.Workspace)/drop  # Optional, specifies where the artifact is downloaded
         steps:
-        - template: nbgv-set-version-steps.yml@templates
         - task: GitHubRelease@1
           displayName: Release to GitHub
           inputs:
