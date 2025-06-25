@@ -608,7 +608,7 @@ extends:
         displayName: GitHub Release Job
         dependsOn: sign_hash_release
         variables:
-          ReleaseVersion: $[dependencies.sign_hash_release.outputs['outputReleaseVersionVar.releaseVersion']]
+          ReleaseVersion: $[ dependencies.sign_hash_release.outputs['outputReleaseVersionVar.releaseVersion'] ]
         # pool: you can optionally specify pool as you would normally do for a standard job
         templateContext:
           type: releaseJob  # Required, this indicates this job is a release job
