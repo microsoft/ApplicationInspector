@@ -3,12 +3,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInspector.RulesEngine;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using static Microsoft.CST.RecursiveExtractor.FileEntry;
 
 namespace AppInspector.Tests.RuleProcessor;
 
-[TestClass]
 public class RuleTests
 {
     private const string MultiLineRuleWithoutMultiLine = @"[
@@ -34,20 +33,20 @@ public class RuleTests
     }
 ]";
 
-    [TestMethod]
+    [Fact]
     public void ModifySource()
     {
         RuleSet rules = new();
         var originalSource = "TestRules";
         rules.AddString(MultiLineRuleWithoutMultiLine, originalSource);
         var rule = rules.First();
-        Assert.AreEqual(originalSource, rule.Source);
+        Assert.Equal(originalSource, rule.Source);
         var newSource = "Somewhere";
         rule.Source = newSource;
-        Assert.AreEqual(newSource, rule.Source);
+        Assert.Equal(newSource, rule.Source);
     }
 
-    [TestMethod]
+    [Fact]
     public void ModifyRuntimeTag()
     {
         RuleSet rules = new();
@@ -56,10 +55,10 @@ public class RuleTests
         var rule = rules.First();
         var newTag = "SomeTag";
         rule.RuntimeTag = newTag;
-        Assert.AreEqual(newTag, rule.RuntimeTag);
+        Assert.Equal(newTag, rule.RuntimeTag);
     }
 
-    [TestMethod]
+    [Fact]
     public void ModifyDisabled()
     {
         RuleSet rules = new();
@@ -67,7 +66,7 @@ public class RuleTests
         rules.AddString(MultiLineRuleWithoutMultiLine, originalSource);
         var rule = rules.First();
         rule.Disabled = true;
-        Assert.AreEqual(true, rule.Disabled);
+        Assert.True(rule.Disabled);
     }
 
     private const string overrideRules = @"[
@@ -136,7 +135,7 @@ public class RuleTests
 ]
 ";
     
-    [TestMethod]
+    [Fact]
     public async Task Overrides()
     {
         RuleSet rules = new();
@@ -147,9 +146,9 @@ public class RuleTests
         var langs = new Microsoft.ApplicationInspector.RulesEngine.Languages();
         langs.FromFileNameOut("dummy.cs", out LanguageInfo info);
         var results = processor.AnalyzeFile(entry, info);
-        Assert.AreEqual(4, results.Count);
-        Assert.AreEqual(1, results.Count(x=> x.Rule.Id == "SA000006"));
-        Assert.AreEqual(1, results.Count(x=> x.Rule.Id == "SA000005"));
-        Assert.AreEqual(2, results.Count(x=> x.Rule.Id == "SA000007"));
+        Assert.Equal(4, results.Count);
+        Assert.Equal(1, results.Count(x=> x.Rule?.Id == "SA000006"));
+        Assert.Equal(1, results.Count(x=> x.Rule?.Id == "SA000005"));
+        Assert.Equal(2, results.Count(x=> x.Rule?.Id == "SA000007"));
     }
 }

@@ -5,12 +5,11 @@ using Microsoft.ApplicationInspector.Logging;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
+using Xunit;
 
 namespace AppInspector.Tests.RuleProcessor;
 
-[TestClass]
 public class LoadRulesTests
 {
     private static readonly ILoggerFactory _loggerFactory =
@@ -21,8 +20,7 @@ public class LoadRulesTests
     private static string multiLineRuleLoc = string.Empty;
     private static string multiLineRuleLoc2 = string.Empty;
 
-    [ClassInitialize]
-    public static void TestInit(TestContext testContext)
+    public LoadRulesTests()
     {
         _logger = _loggerFactory.CreateLogger<LoadRulesTests>();
         multiLineRuleLoc = Path.Combine("TestData", "TestRuleProcessor","Rules",
@@ -31,30 +29,30 @@ public class LoadRulesTests
             "MultiLineRule2.json");
     }
 
-    [TestMethod]
+    [Fact]
     public void AddFileByPath()
     {
         RuleSet rules = new(_loggerFactory);
 
         rules.AddPath(multiLineRuleLoc, "multiline-tests");
-        Assert.AreEqual(1, rules.Count());
+        Assert.Single(rules);
     }
 
-    [TestMethod]
+    [Fact]
     public void AddDirectoryByPath()
     {
         RuleSet rules = new(_loggerFactory);
         rules.AddPath(
             Path.GetDirectoryName(multiLineRuleLoc) ?? throw new ArgumentNullException(nameof(multiLineRuleLoc)),
             "multiline-tests");
-        Assert.AreEqual(2, rules.Count());
+        Assert.Equal(2, rules.Count());
     }
 
-    [TestMethod]
+    [Fact]
     public void AddInvalidPath()
     {
         RuleSet rules = new(_loggerFactory);
         var multiLineRuleLoc = "ThisIsDefinitelyNotADirectoryThatExists";
-        Assert.ThrowsException<ArgumentException>(() => rules.AddPath(multiLineRuleLoc, "multiline-tests"));
+        Assert.Throws<ArgumentException>(() => rules.AddPath(multiLineRuleLoc, "multiline-tests"));
     }
 }

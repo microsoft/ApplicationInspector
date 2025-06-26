@@ -8,12 +8,11 @@ using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Microsoft.CST.RecursiveExtractor;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
+using Xunit;
 
 namespace AppInspector.Tests.RuleProcessor;
 
-[TestClass]
 [ExcludeFromCodeCoverage]
 public class WithinClauseTests
 {
@@ -349,25 +348,25 @@ int main(int argc, char **argv)
             }
         };
 
-    [DataRow("WithinClauseWithInvertWithFindingRange")]
-    [DataRow("WithinClauseWithoutInvertWithFindingRange")]
-    [DataRow("WithinClauseWithInvertWithSameLine")]
-    [DataRow("WithinClauseWithoutInvertWithSameLine")]
-    [DataRow("WithinClauseWithInvertWithBeforeOnly")]
-    [DataRow("WithinClauseWithoutInvertWithBeforeOnly")]
-    [DataRow("WithinClauseWithInvertWithAfterOnly")]
-    [DataRow("WithinClauseWithoutInvertWithAfterOnly")]
-    [DataRow("WithinClauseWithInvertWithSameFile")]
-    [DataRow("WithinClauseWithoutInvertWithSameFile")]
-    [TestMethod]
+    [InlineData("WithinClauseWithInvertWithFindingRange")]
+    [InlineData("WithinClauseWithoutInvertWithFindingRange")]
+    [InlineData("WithinClauseWithInvertWithSameLine")]
+    [InlineData("WithinClauseWithoutInvertWithSameLine")]
+    [InlineData("WithinClauseWithInvertWithBeforeOnly")]
+    [InlineData("WithinClauseWithoutInvertWithBeforeOnly")]
+    [InlineData("WithinClauseWithInvertWithAfterOnly")]
+    [InlineData("WithinClauseWithoutInvertWithAfterOnly")]
+    [InlineData("WithinClauseWithInvertWithSameFile")]
+    [InlineData("WithinClauseWithoutInvertWithSameFile")]
+    [Theory]
     public void WithinClauseInvertTest(string testDataKey)
     {
-        WithinClauseInvertTest(testData[testDataKey].testData, testData[testDataKey].conditionRegion,
+        WithinClauseInvertTestInternal(testData[testDataKey].testData, testData[testDataKey].conditionRegion,
             testData[testDataKey].negate, testData[testDataKey].expectedNumMatches,
             testData[testDataKey].expectedMatchesLineStarts);
     }
 
-    internal void WithinClauseInvertTest(string testDataString, string conditionRegion, bool invert,
+    internal void WithinClauseInvertTestInternal(string testDataString, string conditionRegion, bool invert,
         int expectedMatches, int[] expectedMatchesLineStarts)
     {
         RuleSet rules = new(_loggerFactory);
@@ -378,12 +377,12 @@ int main(int argc, char **argv)
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(testDataString, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(expectedMatches, matches.Count);
+            Assert.Equal(expectedMatches, matches.Count);
             foreach (var expectedMatchLineStart in expectedMatchesLineStarts)
             {
                 var correctLineMatch =
                     matches.FirstOrDefault(match => match.StartLocationLine == expectedMatchLineStart);
-                Assert.IsNotNull(correctLineMatch);
+                Assert.NotNull(correctLineMatch);
                 matches.Remove(correctLineMatch);
             }
         }
@@ -393,9 +392,9 @@ int main(int argc, char **argv)
         }
     }
 
-    [DataRow(true, 1, new[] { 2 })]
-    [DataRow(false, 1, new[] { 3 })]
-    [TestMethod]
+    [InlineData(true, 1, new[] { 2 })]
+    [InlineData(false, 1, new[] { 3 })]
+    [Theory]
     public void WithinClauseInvertTestForSameLine(bool invert, int expectedMatches, int[] expectedMatchesLineStarts)
     {
         RuleSet rules = new(_loggerFactory);
@@ -405,12 +404,12 @@ int main(int argc, char **argv)
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(insideFindingData, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(expectedMatches, matches.Count);
+            Assert.Equal(expectedMatches, matches.Count);
             foreach (var expectedMatchLineStart in expectedMatchesLineStarts)
             {
                 var correctLineMatch =
                     matches.FirstOrDefault(match => match.StartLocationLine == expectedMatchLineStart);
-                Assert.IsNotNull(correctLineMatch);
+                Assert.NotNull(correctLineMatch);
                 matches.Remove(correctLineMatch);
             }
         }
@@ -420,17 +419,17 @@ int main(int argc, char **argv)
         }
     }
 
-    [DataRow(true, true, true, 0, 0, 2)]
-    [DataRow(true, false, true, 0, 0, 1)]
-    [DataRow(true, true, false, 0, 0, 2)]
-    [DataRow(false, true, true, 0, 0, 2)]
-    [DataRow(true, false, false, 0, 0, 0)]
-    [DataRow(false, false, true, 0, 0, 0)]
-    [DataRow(false, true, false, 0, 0, 1)]
-    [DataRow(false, true, false, 0, 1, 1)]
-    [DataRow(false, true, false, 1, -1, 0)]
-    [DataRow(false, true, false, -1, 0, 1)]
-    [TestMethod]
+    [InlineData(true, true, true, 0, 0, 2)]
+    [InlineData(true, false, true, 0, 0, 1)]
+    [InlineData(true, true, false, 0, 0, 2)]
+    [InlineData(false, true, true, 0, 0, 2)]
+    [InlineData(true, false, false, 0, 0, 0)]
+    [InlineData(false, false, true, 0, 0, 0)]
+    [InlineData(false, true, false, 0, 0, 1)]
+    [InlineData(false, true, false, 0, 1, 1)]
+    [InlineData(false, true, false, 1, -1, 0)]
+    [InlineData(false, true, false, -1, 0, 1)]
+    [Theory]
     public void WithinClauseValidationTests(bool findingOnlySetting, bool findingRegionSetting,
         bool sameLineOnlySetting, int afterSetting, int beforeSetting, int expectedNumIssues)
     {
@@ -452,10 +451,10 @@ int main(int argc, char **argv)
         RulesVerifier verifier = new(new RulesVerifierOptions { LoggerFactory = _loggerFactory });
         var oatIssues = verifier.CheckIntegrity(rules).SelectMany(x => x.OatIssues);
         foreach (var violation in oatIssues) _logger.LogDebug(violation.Description);
-        Assert.AreEqual(expectedNumIssues, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
+        Assert.Equal(expectedNumIssues, verifier.CheckIntegrity(rules).Sum(x => x.OatIssues.Count()));
     }
 
-    [TestMethod]
+    [Fact]
     public void WithinClauseWithMultipleConditions()
     {
         RuleSet rules = new(_loggerFactory);
@@ -552,13 +551,13 @@ http://
         {
             var matches = processor.AnalyzeFile(testData,
                 new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(2, matches.Count);
+            Assert.Equal(2, matches.Count);
         }
     }
 
-    [DataRow(true, 1, new[] { 2 })]
-    [DataRow(false, 1, new[] { 3 })]
-    [TestMethod]
+    [InlineData(true, 1, new[] { 2 })]
+    [InlineData(false, 1, new[] { 3 })]
+    [Theory]
     public void WithinClauseInvertTestForFindingRange0(bool invert, int expectedMatches,
         int[] expectedMatchesLineStarts)
     {
@@ -570,12 +569,12 @@ http://
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(insideFindingData, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(expectedMatches, matches.Count);
+            Assert.Equal(expectedMatches, matches.Count);
             foreach (var expectedMatchLineStart in expectedMatchesLineStarts)
             {
                 var correctLineMatch =
                     matches.FirstOrDefault(match => match.StartLocationLine == expectedMatchLineStart);
-                Assert.IsNotNull(correctLineMatch);
+                Assert.NotNull(correctLineMatch);
                 matches.Remove(correctLineMatch);
             }
         }
@@ -585,7 +584,7 @@ http://
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void MultiLineRegexCondition()
     {
         RuleSet rules = new(_loggerFactory);
@@ -595,7 +594,7 @@ http://
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(multiLineData, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(0, matches.Count);
+            Assert.Empty(matches);
         }
         else
         {
@@ -603,8 +602,7 @@ http://
         }
     }
 
-    [TestInitialize]
-    public void TestInit()
+    public WithinClauseTests()
     {
         _logger = _loggerFactory.CreateLogger<WithinClauseTests>();
     }

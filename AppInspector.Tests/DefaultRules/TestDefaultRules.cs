@@ -4,20 +4,19 @@ using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Logging;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
+using Xunit;
 
 namespace AppInspector.Tests.DefaultRules;
 
 /// <summary>
 ///     Tests for the default set of rules which are embedded in the executable.
 /// </summary>
-[TestClass]
 [ExcludeFromCodeCoverage]
 public class TestDefaultRules
 {
     // This test ensures that the rules that are bundled with Application Inspector are valid.
-    [TestMethod]
+    [Fact]
     public void VerifyDefaultRulesAreValid()
     {
         VerifyRulesOptions options = new()
@@ -57,11 +56,11 @@ public class TestDefaultRules
         foreach (var rule in result.RuleStatusList.Where(x => !x.HasNegativeSelfTests))
             logger.Log(LogLevel.Warning, "Rule {0} does not have any negative test cases", rule.RulesId);
 
-        Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
-        Assert.AreNotEqual(0, result.RuleStatusList.Count);
+        Assert.Equal(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+        Assert.NotEmpty(result.RuleStatusList);
     }
 
-    [TestMethod]
+    [Fact]
     public void VerifyDefaultRulesAreValidWithNonBacktracking()
     {
         VerifyRulesOptions options = new()
@@ -102,21 +101,21 @@ public class TestDefaultRules
         foreach (var rule in result.RuleStatusList.Where(x => !x.HasNegativeSelfTests))
             logger.Log(LogLevel.Warning, "Rule {0} does not have any negative test cases", rule.RulesId);
 
-        Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
-        Assert.AreNotEqual(0, result.RuleStatusList.Count);
+        Assert.Equal(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+        Assert.NotEmpty(result.RuleStatusList);
     }
 
-    [TestMethod]
+    [Fact]
     public void VerifyNonZeroDefaultRules()
     {
         var set = RuleSetUtils.GetDefaultRuleSet();
-        Assert.IsTrue(set.Any());
+        Assert.True(set.Any());
 
         RulesVerifier verifier = new(new RulesVerifierOptions());
         var result = verifier.Verify(set);
 
-        Assert.IsTrue(result.Verified);
-        Assert.AreNotEqual(0, result.RuleStatuses.Count);
-        Assert.AreNotEqual(0, result.CompiledRuleSet.GetAppInspectorRules().Count());
+        Assert.True(result.Verified);
+        Assert.NotEmpty(result.RuleStatuses);
+        Assert.NotEmpty(result.CompiledRuleSet.GetAppInspectorRules());
     }
 }

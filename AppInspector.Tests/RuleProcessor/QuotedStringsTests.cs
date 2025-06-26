@@ -5,22 +5,21 @@ using Microsoft.ApplicationInspector.Logging;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog.Events;
+using Xunit;
 
 namespace AppInspector.Tests.RuleProcessor;
 
 /// <summary>
 /// Tests for properly detecting commented/live code status in the presence of comment markers inside of quoted strings
 /// </summary>
-[TestClass]
 public class QuotedStringsTests
 {
 
     private const string testDoubleQuotesAreCode = "var url = \"https://contoso.com\"; // contoso.com";
     private const string testSingleQuotesAreCode = "var url = 'https://contoso.com'; // contoso.com";
     private const string testSingleLineWithQuotesInComment = "// var url = 'https://contoso.com';";
-    private const string testSingleLineWithDoubleQuotesInComment = "// var url = 'https://contoso.com';";
+    private const string testSingleLineWithDoubleQuotesInComment = "// var url = \"https://contoso.com\";";
     private const string testMultiLine = @"/* 
 https://contoso.com 
 */";
@@ -94,14 +93,14 @@ end
 
     private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
     
-    [DataRow(testDoubleQuotesAreCode,1)]
-    [DataRow(testSingleQuotesAreCode,1)]
-    [DataRow(testMultiLine,0)]
-    [DataRow(testMultiLineWithoutProto,0)]
-    [DataRow(testMultiLineWithResultFollowingCommentEnd,1)]
-    [DataRow(testSingleLineWithQuotesInComment,0)]
-    [DataRow(testSingleLineWithDoubleQuotesInComment,0)]
-    [TestMethod]
+    [InlineData(testDoubleQuotesAreCode,1)]
+    [InlineData(testSingleQuotesAreCode,1)]
+    [InlineData(testMultiLine,0)]
+    [InlineData(testMultiLineWithoutProto,0)]
+    [InlineData(testMultiLineWithResultFollowingCommentEnd,1)]
+    [InlineData(testSingleLineWithQuotesInComment,0)]
+    [InlineData(testSingleLineWithDoubleQuotesInComment,0)]
+    [Theory]
     public void QuotedStrings(string content, int numIssues)
     {
         RuleSet rules = new(_loggerFactory);
@@ -109,7 +108,7 @@ end
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor ruleProcessor =
             new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new RuleProcessorOptions());
         _languages.FromFileNameOut("testfile.cs", out LanguageInfo info);
-        Assert.AreEqual(numIssues,
+        Assert.Equal(numIssues,
             ruleProcessor.AnalyzeFile(content, new FileEntry("testfile.cs", new MemoryStream()), info).Count());
     }
 
@@ -120,8 +119,8 @@ end
     /// <param name="content"></param>
     /// <param name="numIssues"></param>
     
-    [DataRow(testRubyInterpolatedStrings, 5)]
-    [TestMethod]
+    [InlineData(testRubyInterpolatedStrings, 5)]
+    [Theory]
     public void QuotedStringsRuby(string content, int numIssues)
     {
         RuleSet rules = new(_loggerFactory);
@@ -129,7 +128,7 @@ end
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor ruleProcessor =
             new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new RuleProcessorOptions());
         _languages.FromFileNameOut("testfile.rb", out LanguageInfo info);
-        Assert.AreEqual(numIssues,
+        Assert.Equal(numIssues,
             ruleProcessor.AnalyzeFile(content, new FileEntry("testfile.rb", new MemoryStream()), info).Count());
     }
 }

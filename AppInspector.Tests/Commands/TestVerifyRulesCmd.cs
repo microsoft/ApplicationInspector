@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Microsoft.ApplicationInspector.Commands;
@@ -8,13 +7,12 @@ using Microsoft.ApplicationInspector.Logging;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace AppInspector.Tests.Commands;
 
 // TODO: This does not intentionally try to make the OAT rule maker fail
 // The OAT rules are being validated but there aren't test cases that intentionally try to break it.
-[TestClass]
 [ExcludeFromCodeCoverage]
 public class TestVerifyRulesCmd
 {
@@ -34,8 +32,7 @@ public class TestVerifyRulesCmd
     private string _mustNotMatchRulePath = string.Empty;
     private string _mustNotMatchRuleFailPath = string.Empty;
 
-    [TestInitialize]
-    public void InitOutput()
+    public TestVerifyRulesCmd()
     {
         _factory = _logOptions.GetLoggerFactory();
         _validRulesPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "ValidRules.json");
@@ -51,19 +48,18 @@ public class TestVerifyRulesCmd
         _mustMatchRuleFailPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "MustMatchRuleFail.json");
         _mustNotMatchRulePath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "MustNotMatchRule.json");
         _mustNotMatchRuleFailPath = Path.Combine("TestData","TestVerifyRulesCmd","Rules", "MustNotMatchRuleFail.json");
-
     }
 
     /// <summary>
     ///     Ensure an exception is thrown if you don't specify any rules to verify
     /// </summary>
-    [TestMethod]
+    [Fact]
     public void NoDefaultNoCustomRules()
     {
-        Assert.ThrowsException<OpException>(() => new VerifyRulesCommand(new VerifyRulesOptions()));
+        Assert.Throws<OpException>(() => new VerifyRulesCommand(new VerifyRulesOptions()));
     }
     
-    [TestMethod]
+    [Fact]
     public void NoDescription()
     {
         VerifyRulesOptions options = new()
@@ -73,11 +69,11 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(1, result.Unverified.Count());
-        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        Assert.Single(result.Unverified);
+        Assert.Equal(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void CustomRules()
     {
         VerifyRulesOptions options = new()
@@ -88,10 +84,10 @@ public class TestVerifyRulesCmd
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
 
-        Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void UnclosedJson()
     {
         VerifyRulesOptions options = new()
@@ -101,10 +97,10 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.CriticalError, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.CriticalError, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void NullId()
     {
         var set = new RuleSet();
@@ -114,10 +110,10 @@ public class TestVerifyRulesCmd
             LoggerFactory = _factory
         };
         var rulesVerifier = new RulesVerifier(options);
-        Assert.IsFalse(rulesVerifier.Verify(set).Verified);
+        Assert.False(rulesVerifier.Verify(set).Verified);
     }
 
-    [TestMethod]
+    [Fact]
     public void DuplicateId()
     {
         VerifyRulesOptions options = new()
@@ -127,10 +123,10 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void OverriddenRuleMissingDependsOnTag()
     {
         VerifyRulesOptions options = new()
@@ -140,10 +136,10 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void MissingDependsOnTag()
     {
         VerifyRulesOptions options = new()
@@ -153,10 +149,10 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void DuplicateIdCheckDisabled()
     {
         VerifyRulesOptions options = new()
@@ -167,10 +163,10 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void InvalidRegex()
     {
         VerifyRulesOptions options = new()
@@ -180,10 +176,10 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void UnknownLanguage()
     {
         VerifyRulesOptions options = new()
@@ -193,10 +189,10 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void MustMatch()
     {
         VerifyRulesOptions options = new()
@@ -206,10 +202,10 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void MustMatchDetectIncorrect()
     {
         VerifyRulesOptions options = new()
@@ -219,10 +215,10 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void MustNotMatch()
     {
         VerifyRulesOptions options = new()
@@ -232,10 +228,10 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.Verified, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void MustNotMatchDetectIncorrect()
     {
         VerifyRulesOptions options = new()
@@ -245,6 +241,6 @@ public class TestVerifyRulesCmd
 
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
-        Assert.AreEqual(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+        Assert.Equal(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
     }
 }

@@ -6,11 +6,10 @@ using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Microsoft.CST.OAT;
 using Microsoft.CST.RecursiveExtractor;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace AppInspector.Tests.RuleProcessor;
 
-[TestClass]
 [ExcludeFromCodeCoverage]
 public class RegexWithIndexTests
 {
@@ -243,7 +242,7 @@ racecar";
     private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
 
 
-    [TestMethod]
+    [Fact]
     public void NoDictDataAllowed()
     {
         RuleSet rules = new();
@@ -255,10 +254,10 @@ racecar";
         Analyzer analyzer = new ApplicationInspectorAnalyzer();
         var issues = analyzer.EnumerateRuleIssues(theRule);
 
-        Assert.AreEqual(1, issues.Count());
+        Assert.Single(issues);
     }
 
-    [TestMethod]
+    [Fact]
     public void NoData()
     {
         RuleSet rules = new();
@@ -269,10 +268,10 @@ racecar";
         Analyzer analyzer = new ApplicationInspectorAnalyzer();
         var issues = analyzer.EnumerateRuleIssues(theRule);
 
-        Assert.AreEqual(1, issues.Count());
+        Assert.Single(issues);
     }
 
-    [TestMethod]
+    [Fact]
     public void InvalidRegex()
     {
         RuleSet rules = new();
@@ -283,10 +282,10 @@ racecar";
         Analyzer analyzer = new ApplicationInspectorAnalyzer();
         var issues = analyzer.EnumerateRuleIssues(theRule);
 
-        Assert.AreEqual(1, issues.Count());
+        Assert.Single(issues);
     }
 
-    [TestMethod]
+    [Fact]
     public void InvalidRegexWhenAnalyzing()
     {
         RuleSet rules = new();
@@ -298,10 +297,10 @@ racecar";
         var issues = analyzer.Analyze(rules.GetOatRules(),
             new TextContainer("TestContent", "csharp", new Microsoft.ApplicationInspector.RulesEngine.Languages()));
 
-        Assert.AreEqual(0, issues.Count());
+        Assert.Empty(issues);
     }
 
-    [TestMethod]
+    [Fact]
     public void MultiLine()
     {
         RuleSet rules = new();
@@ -310,7 +309,7 @@ racecar";
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(multiLineData, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(1, matches.Count);
+            Assert.Single(matches);
         }
         else
         {
@@ -318,7 +317,7 @@ racecar";
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void MultiLineCaseInsensitive()
     {
         RuleSet rules = new();
@@ -327,7 +326,7 @@ racecar";
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(multiLineData, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(2, matches.Count);
+            Assert.Equal(2, matches.Count);
         }
         else
         {
@@ -335,7 +334,7 @@ racecar";
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void MultiLineRuleWithSingleLineData()
     {
         RuleSet rules = new();
@@ -344,7 +343,7 @@ racecar";
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(singleLineData, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(0, matches.Count);
+            Assert.Empty(matches);
         }
         else
         {
@@ -352,7 +351,7 @@ racecar";
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void MultiLineRuleWithoutOptionSet()
     {
         RuleSet rules = new();
@@ -361,7 +360,7 @@ racecar";
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(singleLineData, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(0, matches.Count);
+            Assert.Empty(matches);
         }
         else
         {
@@ -369,9 +368,9 @@ racecar";
         }
     }
 
-    [DataRow(jsonRule)]
-    [DataRow(jsonAndXmlRule)]
-    [TestMethod]
+    [InlineData(jsonRule)]
+    [InlineData(jsonAndXmlRule)]
+    [Theory]
     public void JsonRule(string rule)
     {
         RuleSet rules = new();
@@ -381,7 +380,7 @@ racecar";
         if (_languages.FromFileNameOut("test.json", out var info))
         {
             var matches = processor.AnalyzeFile(jsonData, new FileEntry("test.json", new MemoryStream()), info);
-            Assert.AreEqual(1, matches.Count);
+            Assert.Single(matches);
         }
         else
         {
@@ -389,9 +388,9 @@ racecar";
         }
     }
 
-    [DataRow(xmlRule)]
-    [DataRow(jsonAndXmlRule)]
-    [TestMethod]
+    [InlineData(xmlRule)]
+    [InlineData(jsonAndXmlRule)]
+    [Theory]
     public void XmlRule(string rule)
     {
         RuleSet rules = new();
@@ -401,7 +400,7 @@ racecar";
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
             var matches = processor.AnalyzeFile(xmlData, new FileEntry("test.xml", new MemoryStream()), info);
-            Assert.AreEqual(1, matches.Count);
+            Assert.Single(matches);
         }
         else
         {

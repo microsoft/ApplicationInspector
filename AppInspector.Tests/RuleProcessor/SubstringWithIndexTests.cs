@@ -6,11 +6,10 @@ using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Microsoft.CST.OAT;
 using Microsoft.CST.RecursiveExtractor;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace AppInspector.Tests.RuleProcessor;
 
-[TestClass]
 [ExcludeFromCodeCoverage]
 public class SubstringWithIndexTests
 {
@@ -120,7 +119,7 @@ racecar withmorestuff";
 
     private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
 
-    [TestMethod]
+    [Fact]
     public void NoDictDataAllowed()
     {
         RuleSet rules = new();
@@ -132,10 +131,10 @@ racecar withmorestuff";
         Analyzer analyzer = new ApplicationInspectorAnalyzer();
         var issues = analyzer.EnumerateRuleIssues(theRule);
 
-        Assert.AreEqual(1, issues.Count());
+        Assert.Single(issues);
     }
 
-    [TestMethod]
+    [Fact]
     public void NoData()
     {
         RuleSet rules = new();
@@ -146,10 +145,10 @@ racecar withmorestuff";
         Analyzer analyzer = new ApplicationInspectorAnalyzer();
         var issues = analyzer.EnumerateRuleIssues(theRule);
 
-        Assert.AreEqual(1, issues.Count());
+        Assert.Single(issues);
     }
 
-    [TestMethod]
+    [Fact]
     public void WordBoundaryEnabledCaseSensitive()
     {
         RuleSet rules = new();
@@ -158,7 +157,7 @@ racecar withmorestuff";
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(data, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(1, matches.Count);
+            Assert.Single(matches);
         }
         else
         {
@@ -166,7 +165,7 @@ racecar withmorestuff";
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void WordBoundaryDisabledCaseSensitive()
     {
         RuleSet rules = new();
@@ -175,7 +174,7 @@ racecar withmorestuff";
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(data, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(2, matches.Count);
+            Assert.Equal(2, matches.Count);
         }
         else
         {
@@ -183,7 +182,7 @@ racecar withmorestuff";
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void WordBoundaryEnabledCaseInsensitive()
     {
         RuleSet rules = new();
@@ -192,7 +191,7 @@ racecar withmorestuff";
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(data, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(2, matches.Count);
+            Assert.Equal(2, matches.Count);
         }
         else
         {
@@ -200,7 +199,7 @@ racecar withmorestuff";
         }
     }
 
-    [TestMethod]
+    [Fact]
     public void WordBoundaryDisabledCaseInsensitive()
     {
         RuleSet rules = new();
@@ -209,7 +208,7 @@ racecar withmorestuff";
         if (_languages.FromFileNameOut("test.c", out var info))
         {
             var matches = processor.AnalyzeFile(data, new FileEntry("test.cs", new MemoryStream()), info);
-            Assert.AreEqual(4, matches.Count);
+            Assert.Equal(4, matches.Count);
         }
         else
         {
