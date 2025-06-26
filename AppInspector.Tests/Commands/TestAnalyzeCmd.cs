@@ -53,7 +53,6 @@ public class TestAnalyzeCmdFixture : IDisposable
 
     public void Dispose()
     {
-        Directory.Delete("testOutput", true);
     }
 }
 
