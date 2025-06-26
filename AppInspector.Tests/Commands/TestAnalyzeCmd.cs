@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -15,74 +16,91 @@ using Assert = Xunit.Assert;
 
 namespace AppInspector.Tests.Commands;
 
+public class TestAnalyzeCmdFixture : IDisposable
+{
+    public TestAnalyzeCmdFixture()
+    {
+        // One-time setup logic
+        TestAnalyzeCmd.testFilePath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "FourWindowsOneLinux.js");
+        TestAnalyzeCmd.unknownFileTypePath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "FourWindowsOneLinux.unknownextension");
+        TestAnalyzeCmd.testFilePathWithJsonExt = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "FourWindowsOneLinux.json");
+        TestAnalyzeCmd.fourWindowsOne2000Path = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "ThreeWindowsOneWindows2000.js");
+        TestAnalyzeCmd.justAPath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "JustA.cs");
+        TestAnalyzeCmd.justBPath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "JustB.cs");
+        TestAnalyzeCmd.justCPath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "JustC.cs");
+        
+        TestAnalyzeCmd.testRulesPath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindows.json");
+        TestAnalyzeCmd.heavyRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "HeavyRule.json");
+        TestAnalyzeCmd.appliesToTestRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithAppliesTo.json");
+        TestAnalyzeCmd.doesNotApplyToTestRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithDoesNotApplyTo.json");
+        TestAnalyzeCmd.dependsOnOneWayRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "DependsOnOneWay.json");
+        TestAnalyzeCmd.dependsOnChainRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "DependsOnChain.json");
+        TestAnalyzeCmd.dependsOnTwoWayRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "DependsOnTwoWay.json");
+        TestAnalyzeCmd.findWindowsWithFileRegex = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithFileRegex.json");
+        
+        TestAnalyzeCmd.overridesTestRulePath =
+            Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithOverride.json");
+        TestAnalyzeCmd.overridesWithoutOverrideTestRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithOverrideRuleWithoutOverride.json");
+
+        Directory.CreateDirectory("TestOutput");
+        for (var i = 0; i < TestAnalyzeCmd.numTimeOutFiles; i++)
+        {
+            var newPath = Path.Combine("TestOutput", $"TestFile-{i}.js");
+            File.WriteAllText(newPath, string.Join('\n', Enumerable.Repeat(TestAnalyzeCmd.hardToFindContent, TestAnalyzeCmd.numTimesContent)));
+            TestAnalyzeCmd.enumeratingTimeOutTestsFiles.Add(newPath);
+        }
+    }
+
+    public void Dispose()
+    {
+        Directory.Delete("testOutput", true);
+    }
+}
+
+
 /// <summary>
 ///     Test class for the Analyze Command
 /// </summary>
 [ExcludeFromCodeCoverage]
-public class TestAnalyzeCmd
+public class TestAnalyzeCmd : IClassFixture<TestAnalyzeCmdFixture>
 {
-    private const int numTimeOutFiles = 25;
-    private const int numTimesContent = 25;
+    internal const int numTimeOutFiles = 25;
+    internal const int numTimesContent = 25;
     
-    private const string hardToFindContent = @"
+    internal const string hardToFindContent = @"
 asefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlakasefljkajsdfklasjdfklasjdfklasdfjklasdjfaklsdfjaklsdjfaklsfaksdjfkasdasdklfalskdfjalskdjfalskdjflaksdjflaskjdflaksjdflaksjdfljaskldfjjdkfaklsdfjlak@company.com1
 buy@tacos.com
 ";
 
-    private static string testFilePath = string.Empty;
-    private static string testFilePathWithJsonExt = string.Empty;
-    private static string testRulesPath = string.Empty;
-    private static string appliesToTestRulePath = string.Empty;
-    private static string doesNotApplyToTestRulePath = string.Empty;
-    private static string dependsOnOneWayRulePath = string.Empty;
-    private static string dependsOnChainRulePath = string.Empty;
-    private static string dependsOnTwoWayRulePath = string.Empty;
-    private static string overridesTestRulePath = string.Empty;
-    private static string overridesWithoutOverrideTestRulePath = string.Empty;
-    private static string unknownFileTypePath = string.Empty;
-    private static string findWindowsWithFileRegex = string.Empty;
+    internal static string testFilePath = string.Empty;
+    internal static string testFilePathWithJsonExt = string.Empty;
+    internal static string testRulesPath = string.Empty;
+    internal static string appliesToTestRulePath = string.Empty;
+    internal static string doesNotApplyToTestRulePath = string.Empty;
+    internal static string dependsOnOneWayRulePath = string.Empty;
+    internal static string dependsOnChainRulePath = string.Empty;
+    internal static string dependsOnTwoWayRulePath = string.Empty;
+    internal static string overridesTestRulePath = string.Empty;
+    internal static string overridesWithoutOverrideTestRulePath = string.Empty;
+    internal static string unknownFileTypePath = string.Empty;
+    internal static string findWindowsWithFileRegex = string.Empty;
 
     // Test files for timeout tests
-    private static readonly List<string> enumeratingTimeOutTestsFiles = new();
+    internal static readonly List<string> enumeratingTimeOutTestsFiles = new();
 
-    private static string heavyRulePath = string.Empty;
+    internal static string heavyRulePath = string.Empty;
 
     private ILoggerFactory factory = new NullLoggerFactory();
-    private static string fourWindowsOne2000Path;
-    private static string justAPath;
-    private static string justBPath;
-    private static string justCPath;
-    public TestAnalyzeCmd()
+    internal static string fourWindowsOne2000Path;
+    internal static string justAPath;
+    internal static string justBPath;
+    internal static string justCPath;
+    private readonly TestAnalyzeCmdFixture _fixture;
+
+    public TestAnalyzeCmd(TestAnalyzeCmdFixture fixture)
     {
-        testFilePath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "FourWindowsOneLinux.js");
-        unknownFileTypePath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "FourWindowsOneLinux.unknownextension");
-        testFilePathWithJsonExt = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "FourWindowsOneLinux.json");
-        fourWindowsOne2000Path = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "ThreeWindowsOneWindows2000.js");
-        justAPath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "JustA.cs");
-        justBPath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "JustB.cs");
-        justCPath = Path.Combine("TestData", "TestAnalyzeCmd", "Samples", "JustC.cs");
-        
-        testRulesPath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindows.json");
-        heavyRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "HeavyRule.json");
-        appliesToTestRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithAppliesTo.json");
-        doesNotApplyToTestRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithDoesNotApplyTo.json");
-        dependsOnOneWayRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "DependsOnOneWay.json");
-        dependsOnChainRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "DependsOnChain.json");
-        dependsOnTwoWayRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "DependsOnTwoWay.json");
-        findWindowsWithFileRegex = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithFileRegex.json");
+        _fixture = fixture;
 
-
-        overridesTestRulePath =
-            Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithOverride.json");
-        overridesWithoutOverrideTestRulePath = Path.Combine("TestData", "TestAnalyzeCmd", "Rules", "FindWindowsWithOverrideRuleWithoutOverride.json");
-
-        Directory.CreateDirectory("TestOutput");
-        for (var i = 0; i < numTimeOutFiles; i++)
-        {
-            var newPath = Path.Combine("TestOutput", $"TestFile-{i}.js");
-            File.WriteAllText(newPath, string.Join('\n', Enumerable.Repeat(hardToFindContent, numTimesContent)));
-            enumeratingTimeOutTestsFiles.Add(newPath);
-        }
         factory = new LogOptions().GetLoggerFactory();
     }
     
