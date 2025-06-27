@@ -43,7 +43,6 @@ extends:
           poolImage: MSSecurity-1ES-Windows-2022
           poolOs: windows
           projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
-          dotnetTestArgs: '-- --coverage --report-trx'
 
     - stage: Build
       dependsOn:

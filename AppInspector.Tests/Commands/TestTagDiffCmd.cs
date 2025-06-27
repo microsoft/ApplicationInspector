@@ -6,14 +6,13 @@ using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace AppInspector.Tests.Commands;
 
 /// <summary>
 ///     Test class for TagDiff Command
 /// </summary>
-[TestClass]
 [ExcludeFromCodeCoverage]
 public class TestTagDiffCmd
 {
@@ -25,8 +24,7 @@ public class TestTagDiffCmd
     private static string testFileFourWindowsOneLinuxPath = string.Empty;
     private static string testRulesPath = string.Empty;
 
-    [ClassInitialize]
-    public static void InitOutput(TestContext testContext)
+    public TestTagDiffCmd()
     {
         loggerFactory = logOptions.GetLoggerFactory();
         testFileFourWindowsOneLinuxPath =
@@ -40,9 +38,9 @@ public class TestTagDiffCmd
         testRulesPath = Path.Combine("TestData", "TestTagDiffCmd", "Rules", "FindWindows.json");
     }
 
-    [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestPassed)]
-    [DataRow(TagTestType.Inequality, TagDiffResult.ExitCode.TestFailed)]
-    [TestMethod]
+    [InlineData(TagTestType.Equality, TagDiffResult.ExitCode.TestPassed)]
+    [InlineData(TagTestType.Inequality, TagDiffResult.ExitCode.TestFailed)]
+    [Theory]
     public void Equality(TagTestType tagTestType, TagDiffResult.ExitCode expectedExitCode)
     {
         TagDiffOptions options = new()
@@ -58,12 +56,12 @@ public class TestTagDiffCmd
         TagDiffCommand command = new(options, loggerFactory);
         var result = command.GetResult();
 
-        Assert.AreEqual(expectedExitCode, result.ResultCode);
+        Assert.Equal(expectedExitCode, result.ResultCode);
     }
 
-    [DataRow(TagTestType.Equality, TagDiffResult.ExitCode.TestFailed)]
-    [DataRow(TagTestType.Inequality, TagDiffResult.ExitCode.TestPassed)]
-    [TestMethod]
+    [InlineData(TagTestType.Equality, TagDiffResult.ExitCode.TestFailed)]
+    [InlineData(TagTestType.Inequality, TagDiffResult.ExitCode.TestPassed)]
+    [Theory]
     public void Inequality(TagTestType tagTestType, TagDiffResult.ExitCode expectedExitCode)
     {
         TagDiffOptions options = new()
@@ -79,10 +77,10 @@ public class TestTagDiffCmd
         TagDiffCommand command = new(options, loggerFactory);
         var result = command.GetResult();
 
-        Assert.AreEqual(expectedExitCode, result.ResultCode);
+        Assert.Equal(expectedExitCode, result.ResultCode);
     }
 
-    [TestMethod]
+    [Fact]
     public void InvalidSourcePath_Fail()
     {
         TagDiffOptions options = new()
@@ -92,10 +90,10 @@ public class TestTagDiffCmd
             FilePathExclusions = Array.Empty<string>() //allow source under unittest path
         };
         var cmd = new TagDiffCommand(options, loggerFactory);
-        Assert.ThrowsException<OpException>(() => cmd.GetResult());
+        Assert.Throws<OpException>(() => cmd.GetResult());
     }
 
-    [TestMethod]
+    [Fact]
     public void NoDefaultNoCustomRules_Fail()
     {
         TagDiffOptions options = new()
@@ -107,6 +105,6 @@ public class TestTagDiffCmd
         };
 
         var command = new TagDiffCommand(options, loggerFactory);
-        Assert.ThrowsException<OpException>(() => command.GetResult());
+        Assert.Throws<OpException>(() => command.GetResult());
     }
 }

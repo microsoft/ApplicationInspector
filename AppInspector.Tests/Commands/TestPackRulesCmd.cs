@@ -2,26 +2,25 @@
 using System.IO;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace AppInspector.Tests.Commands;
 
-[TestClass]
 [ExcludeFromCodeCoverage]
 public class TestPackRulesCmd
 {
-    [TestMethod]
+    [Fact]
     public void NoCustomNoEmbeddedRules()
     {
-        Assert.ThrowsException<OpException>(() => new PackRulesCommand(new PackRulesOptions()));
+        Assert.Throws<OpException>(() => new PackRulesCommand(new PackRulesOptions()));
     }
 
-    [TestMethod]
+    [Fact]
     public void PackEmbeddedRules()
     {
         PackRulesOptions options = new() { PackEmbeddedRules = true };
         PackRulesCommand command = new(options);
         var result = command.GetResult();
-        Assert.AreEqual(PackRulesResult.ExitCode.Success, result.ResultCode);
+        Assert.Equal(PackRulesResult.ExitCode.Success, result.ResultCode);
     }
 }

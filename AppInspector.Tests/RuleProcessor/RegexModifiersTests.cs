@@ -1,17 +1,15 @@
-﻿using Combinatorial.MSTest;
-using Microsoft.ApplicationInspector.RulesEngine;
+﻿using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Microsoft.CST.OAT;
 using Microsoft.CST.RecursiveExtractor;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Xunit;
 
 namespace AppInspector.Tests.RuleProcessor
 {
-    [TestClass]
-    public class RegexModifiersTests
+        public class RegexModifiersTests
     {
         private const string regexWithoutLookBehind = @"[
     {{
@@ -87,9 +85,9 @@ namespace AppInspector.Tests.RuleProcessor
             return processor.AnalyzeFile(input, new FileEntry("test.cs", new MemoryStream()), info);
         }
 
-        [DataRow(false, modifier_i)]
-        [DataRow(true, modifier_i)]
-        [TestMethod]
+        [InlineData(false, modifier_i)]
+        [InlineData(true, modifier_i)]
+        [Theory]
         public void InvalidRegex(bool enableNonBacktracking, string modifiers)
         {
             RuleSet rules = new() {  EnableNonBacktrackingRegex = enableNonBacktracking };
@@ -100,41 +98,41 @@ namespace AppInspector.Tests.RuleProcessor
             Analyzer analyzer = new ApplicationInspectorAnalyzer();
             var issues = analyzer.EnumerateRuleIssues(theRule);
 
-            Assert.AreEqual(1, issues.Count());
-            Assert.AreEqual("Err_ClauseInvalidRegex", issues.First().Description);
+            Assert.Single(issues);
+            Assert.Equal("Err_ClauseInvalidRegex", issues.First().Description);
         }
 
-        [DataRow(false, modifier_i, actualModifer_i)]        // nb not added, b not added
-        [DataRow(false, modifier_ib, actualModifer_ib)]      // nb not added, b added
-        [DataRow(false, modifier_iB, actualModifer_iB)]      // nb not added, B added
-        [DataRow(false, modifier_inb, actualModifer_inb)]    // nb present, nb added 
-        [DataRow(false, modifier_iNB, actualModifer_iNB)]    // NB present, NB added
-        [DataRow(false, modifier_ibnb, actualModifer_inb)]   // b and nb present, nb added
-        [DataRow(false, modifier_iBNB, actualModifer_iNB)]   // B and NB present, NB added
-        [DataRow(true, modifier_i, actualModifer_inb)]       // nb not present, nb added
-        [DataRow(true, modifier_inb, actualModifer_inb)]     // nb present, nb added
-        [DataRow(true, modifier_iNB, actualModifer_iNB)]     // NB present, NB added
-        [DataRow(true, modifier_ib, actualModifer_ib)]       // b present, b added
-        [DataRow(true, modifier_iB, actualModifer_iB)]       // B present, B added
-        [DataRow(true, modifier_ibnb, actualModifer_ib)]     // b and nb present, b added
-        [DataRow(true, modifier_iBNB, actualModifer_iB)]     // B and NB present, b added
-        [TestMethod]
+        [InlineData(false, modifier_i, actualModifer_i)]        // nb not added, b not added
+        [InlineData(false, modifier_ib, actualModifer_ib)]      // nb not added, b added
+        [InlineData(false, modifier_iB, actualModifer_iB)]      // nb not added, B added
+        [InlineData(false, modifier_inb, actualModifer_inb)]    // nb present, nb added 
+        [InlineData(false, modifier_iNB, actualModifer_iNB)]    // NB present, NB added
+        [InlineData(false, modifier_ibnb, actualModifer_inb)]   // b and nb present, nb added
+        [InlineData(false, modifier_iBNB, actualModifer_iNB)]   // B and NB present, NB added
+        [InlineData(true, modifier_i, actualModifer_inb)]       // nb not present, nb added
+        [InlineData(true, modifier_inb, actualModifer_inb)]     // nb present, nb added
+        [InlineData(true, modifier_iNB, actualModifer_iNB)]     // NB present, NB added
+        [InlineData(true, modifier_ib, actualModifer_ib)]       // b present, b added
+        [InlineData(true, modifier_iB, actualModifer_iB)]       // B present, B added
+        [InlineData(true, modifier_ibnb, actualModifer_ib)]     // b and nb present, b added
+        [InlineData(true, modifier_iBNB, actualModifer_iB)]     // B and NB present, b added
+        [Theory]
         public void ValidateModifiers(bool enableNonBacktracking, string inputModifiers, string expectedModifiers)
         {
             RuleSet rules = new() { EnableNonBacktrackingRegex = enableNonBacktracking };
 
             rules.AddString(string.Format(regexWithoutLookBehind, inputModifiers), "TestRules");
-            Assert.AreEqual(1, rules.Count());
+            Assert.Single(rules);
 
             var patterns = rules.First().Patterns;
-            Assert.AreEqual(1, patterns.Count());
+            Assert.Single(patterns);
 
             var modifiers = patterns.First().Modifiers;            
             var actualModifiers = string.Join(",", modifiers.OrderBy(m => m));
-            Assert.AreEqual(expectedModifiers, actualModifiers);
+            Assert.Equal(expectedModifiers, actualModifiers);
         }
 
-        [TestMethod]
+        [Theory]
         [CombinatorialData]
         public void RegexWithLookBehind(bool enableNonBacktracking)
         {
@@ -142,7 +140,7 @@ namespace AppInspector.Tests.RuleProcessor
 
             rules.AddString(string.Format(regexWithLookBehind, modifier_i), "TestRules");
 
-            Assert.AreEqual(1, rules.Count());      
+            Assert.Single(rules);      
 
             Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
             if (_languages.FromFileNameOut("te" +
@@ -150,7 +148,7 @@ namespace AppInspector.Tests.RuleProcessor
             {
                 // not throwing exception here, the code will remove non-backtracking directive and produce a single match
                 var matches = GetMatches(processor, info);
-                Assert.AreEqual(1, matches.Count);
+                Assert.Single(matches);
             }
             else
             {
@@ -158,7 +156,7 @@ namespace AppInspector.Tests.RuleProcessor
             }
         }
 
-        [TestMethod]
+        [Theory]
         [CombinatorialData]
         public void RegexWithoutLookBehind(bool enableNonBacktracking)
         {
@@ -166,7 +164,7 @@ namespace AppInspector.Tests.RuleProcessor
 
             rules.AddString(string.Format(regexWithoutLookBehind, modifier_i), "TestRules");
 
-            Assert.AreEqual(1, rules.Count());
+            Assert.Single(rules);
 
             Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules, new RuleProcessorOptions());
             if (_languages.FromFileNameOut("te" +
@@ -174,7 +172,7 @@ namespace AppInspector.Tests.RuleProcessor
             {
                 // "no look behind" will work with both options (backtracking and non-backtracking)
                 var matches = GetMatches(processor, info);
-                Assert.AreEqual(1, matches.Count);
+                Assert.Single(matches);
             }
             else
             {

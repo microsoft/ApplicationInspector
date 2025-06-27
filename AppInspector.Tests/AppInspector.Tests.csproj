@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
         <Nullable>enable</Nullable>
         <LangVersion>10.0</LangVersion>
         <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
@@ -150,11 +149,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.4" />
-        <PackageReference Include="MSTest" Version="3.8.3" />
-        <PackageReference Include="Combinatorial.MSTest" Version="1.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.6" />
         <PackageReference Include="System.Reflection" Version="4.3.0" />
         <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
+        <PackageReference Include="xunit" Version="2.9.3" />
+        <PackageReference Include="Xunit.Combinatorial" Version="1.6.24" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     </ItemGroup>
 
     <ItemGroup>
