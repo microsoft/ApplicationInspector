@@ -163,5 +163,51 @@
         }
       ],
       "must-match":["import { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";", "const server = new McpServer({ name: \"Demo Server\", version: \"1.0.0\" });"]
+    },
+    {
+      "name": "Python MCP SDK",
+      "id": "AI070304",
+      "description": "MCP Implemented using Python SDK (https://github.com/modelcontextprotocol/python-sdk)",
+      "tags": [
+        "AI.Library.MCP"
+      ],
+      "severity": "unspecified",
+      "applies_to":["python"],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "import FastMCP",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": " FastMCP(",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": "@mcp.tool",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        }
+      ],
+      "must-match":["from mcp.server.fastmcp import FastMCP", "mcp = FastMCP(\"Demo\")", "@mcp.tool()"]
     }
   ]
