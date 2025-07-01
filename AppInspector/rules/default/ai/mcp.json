@@ -128,5 +128,40 @@
         }
       ],
       "must-match":["<Project Sdk=\"Microsoft.NET.Sdk\">\n    <ItemGroup>\n        <PackageReference Include=\"Anthropic.SDK\" />\n        <PackageReference Include=\"Microsoft.Extensions.Hosting\" />\n        <PackageReference Include=\"Microsoft.Extensions.AI\" />\n        <PackageReference Include=\"ModelContextProtocol\" />\n    </ItemGroup>\n</Project>\n"]
+    },
+    {
+      "name": "Node MCP SDK",
+      "id": "AI070303",
+      "description": "MCP Implemented using Node SDK",
+      "tags": [
+        "AI.Library.MCP"
+      ],
+      "severity": "unspecified",
+      "applies_to":["javascript"],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "@modelcontextprotocol/sdk",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": "new McpServer",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        }
+      ],
+      "must-match":["import { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";", "const server = new McpServer({ name: \"Demo Server\", version: \"1.0.0\" });"]
     }
   ]
