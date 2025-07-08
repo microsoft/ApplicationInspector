@@ -1,0 +1,213 @@
+[
+    {
+      "name": ".NET MCP SDK",
+      "id": "AI070301",
+      "description": "MCP Implemented using .NET Model Context Protocol API",
+      "tags": [
+        "AI.Library.MCP"
+      ],
+      "severity": "unspecified",
+      "applies_to":["csharp"],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "using ModelContextProtocol.Server;",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": "using ModelContextProtocol;",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": "using ModelContextProtocol.Protocol;",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": ".AddMcpServer()",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": "[McpServerToolType]",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "medium",
+          "pattern": "McpServerTool",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": "[McpServerPromptType]",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "medium",
+          "pattern": "McpServerPrompt",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        }
+      ],
+      "must-match" : 
+        [ 
+            "using ModelContextProtocol.Server;", 
+            "using ModelContextProtocol;",
+            "using ModelContextProtocol.Protocol;",
+            "builder.Services\n     .AddMcpServer()",
+            "[McpServerToolType]\n  public static class EchoTool\n  {\n    [McpServerTool, Description(\"Echoes the message back to the client.\")]\n    public static string Echo(string message) => $\"hello {message}\";\n}"
+        ]
+    },
+    {
+      "name": ".NET MCP SDK",
+      "id": "AI070302",
+      "description": "Package include of model contxt protocol API",
+      "tags": [
+        "AI.Library.MCP"
+      ],
+      "severity": "unspecified",
+      "applies_to":["VSProject"],
+      "patterns": 
+      [
+        {
+            "confidence": "high",
+            "pattern": "ModelContextProtocol",
+            "xpaths": [
+                "/Project/ItemGroup/PackageReference/@Include"
+            ],
+            "type": "regex" 
+        }
+      ],
+      "must-match":["<Project Sdk=\"Microsoft.NET.Sdk\">\n    <ItemGroup>\n        <PackageReference Include=\"Anthropic.SDK\" />\n        <PackageReference Include=\"Microsoft.Extensions.Hosting\" />\n        <PackageReference Include=\"Microsoft.Extensions.AI\" />\n        <PackageReference Include=\"ModelContextProtocol\" />\n    </ItemGroup>\n</Project>\n"]
+    },
+    {
+      "name": "Node MCP SDK",
+      "id": "AI070303",
+      "description": "MCP Implemented using Node SDK",
+      "tags": [
+        "AI.Library.MCP"
+      ],
+      "severity": "unspecified",
+      "applies_to":["javascript"],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "@modelcontextprotocol/sdk",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": "new McpServer",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        }
+      ],
+      "must-match":["import { McpServer } from \"@modelcontextprotocol/sdk/server/mcp.js\";", "const server = new McpServer({ name: \"Demo Server\", version: \"1.0.0\" });"]
+    },
+    {
+      "name": "Python MCP SDK",
+      "id": "AI070304",
+      "description": "MCP Implemented using Python SDK (https://github.com/modelcontextprotocol/python-sdk)",
+      "tags": [
+        "AI.Library.MCP"
+      ],
+      "severity": "unspecified",
+      "applies_to":["python"],
+      "patterns": [
+        {
+          "confidence": "high",
+          "pattern": "import FastMCP",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": " FastMCP(",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        {
+          "confidence": "high",
+          "pattern": "@mcp.tool",
+          "type": "substring",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        }
+      ],
+      "must-match":["from mcp.server.fastmcp import FastMCP", "mcp = FastMCP(\"Demo\")", "@mcp.tool()"]
+    }
+  ]
