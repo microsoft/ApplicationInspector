@@ -57,9 +57,9 @@
         <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
         <PackageReference Include="Microsoft.CST.OAT" Version="1.2.79" />
         <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.41" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.6" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
         <PackageReference Include="ShellProgressBar" Version="5.2.0" />
-        <PackageReference Include="System.Reflection.Metadata" Version="9.0.6" />
+        <PackageReference Include="System.Reflection.Metadata" Version="9.0.7" />
 
 
     </ItemGroup>
