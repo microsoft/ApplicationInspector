@@ -44,6 +44,11 @@ extends:
           poolImage: MSSecurity-1ES-Windows-2022
           poolOs: windows
           projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
+          includeNuGetOrg: false
+          nugetFeedsToUse: 'config'
+          nugetConfigPath: 'nuget.config.azure'
+          onInit:
+            - task: NuGetAuthenticate@1
 
     - stage: Build
       dependsOn:
@@ -58,6 +63,11 @@ extends:
           projectName: 'ApplicationInspector'
           exePath: 'ApplicationInspector.CLI'
           artifactName: 'linux-mac-archive'
+          includeNuGetOrg: false
+          nugetFeedsToUse: 'config'
+          nugetConfigPath: 'nuget.config.azure'
+          onInit:
+            - task: NuGetAuthenticate@1
           preBuild:
           - template: nbgv-set-version-steps.yml@templates
       - template: dotnet-publish-win-netcore-job.yml@templates
@@ -68,6 +78,11 @@ extends:
           projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
           projectName: 'ApplicationInspector'
           artifactName: 'win-netcore-archive'
+          includeNuGetOrg: false
+          nugetFeedsToUse: 'config'
+          nugetConfigPath: 'nuget.config.azure'
+          onInit:
+            - task: NuGetAuthenticate@1
           preBuild:
           - template: nbgv-set-version-steps.yml@templates
       - template: nuget-build-job.yml@templates
@@ -78,6 +93,11 @@ extends:
           projectPath: 'AppInspector/AppInspector.Commands.csproj'
           projectName: 'ApplicationInspector_Commands'
           artifactName: 'nuget-lib-archive'
+          includeNuGetOrg: false
+          nugetFeedsToUse: 'config'
+          nugetConfigPath: 'nuget.config.azure'
+          onInit:
+            - task: NuGetAuthenticate@1
           preBuild:
           - template: nbgv-set-version-steps.yml@templates
       - template: nuget-build-job.yml@templates
@@ -88,6 +108,11 @@ extends:
           projectPath: 'AppInspector.RulesEngine/AppInspector.RulesEngine.csproj'
           projectName: 'ApplicationInspector_RulesEngine'
           artifactName: 'nuget-engine-archive'
+          includeNuGetOrg: false
+          nugetFeedsToUse: 'config'
+          nugetConfigPath: 'nuget.config.azure'
+          onInit:
+            - task: NuGetAuthenticate@1
           preBuild:
           - template: nbgv-set-version-steps.yml@templates
       - template: nuget-build-job.yml@templates
@@ -98,6 +123,11 @@ extends:
           projectPath: 'AppInspector.Common/AppInspector.Common.csproj'
           projectName: 'ApplicationInspector_Common'
           artifactName: 'nuget-common-archive'
+          includeNuGetOrg: false
+          nugetFeedsToUse: 'config'
+          nugetConfigPath: 'nuget.config.azure'
+          onInit:
+            - task: NuGetAuthenticate@1
           preBuild:
           - template: nbgv-set-version-steps.yml@templates
       - template: nuget-build-job.yml@templates
@@ -108,6 +138,11 @@ extends:
           projectPath: 'AppInspector.Logging/AppInspector.Logging.csproj'
           projectName: 'ApplicationInspector_Logging'
           artifactName: 'nuget-logging-archive'
+          includeNuGetOrg: false
+          nugetFeedsToUse: 'config'
+          nugetConfigPath: 'nuget.config.azure'
+          onInit:
+            - task: NuGetAuthenticate@1
           preBuild:
           - template: nbgv-set-version-steps.yml@templates
       - template: nuget-build-job.yml@templates
@@ -118,6 +153,11 @@ extends:
           projectPath: 'AppInspector.CLI/AppInspector.CLI.csproj'
           projectName: 'ApplicationInspector_CLI'
           artifactName: 'nuget-cli-archive'
+          includeNuGetOrg: false
+          nugetFeedsToUse: 'config'
+          nugetConfigPath: 'nuget.config.azure'
+          onInit:
+            - task: NuGetAuthenticate@1
           preBuild:
           - template: nbgv-set-version-steps.yml@templates
   
