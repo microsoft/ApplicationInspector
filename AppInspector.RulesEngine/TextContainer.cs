@@ -191,7 +191,16 @@ public class TextContainer
                     
                     var xmlDoc = new XmlDocument();
                     xmlDoc.PreserveWhitespace = true; // Preserve formatting
-                    xmlDoc.LoadXml(FullContent);
+                    
+                    // Use XmlReader with line info support for better position tracking
+                    using var stringReader = new StringReader(FullContent);
+                    using var xmlReader = XmlReader.Create(stringReader, new XmlReaderSettings
+                    {
+                        DtdProcessing = DtdProcessing.Ignore,
+                        XmlResolver = null
+                    });
+                    
+                    xmlDoc.Load(xmlReader);
                     _xmlDocument = xmlDoc;
                 }
                 catch (Exception e)
@@ -256,8 +265,11 @@ public class TextContainer
             }
             else
             {
-                // Fallback to improved heuristic if line info is not available
-                var boundary = GetBoundaryUsingImprovedHeuristic(xmlNodeIter.Current);
+                // Line information not available, fall back to heuristic search
+                // This can happen with certain XPath queries or XML parsing approaches
+                _logger.LogDebug("Line information not available for XPath result in file {0}. Using fallback position detection.", _filePath ?? "unknown");
+                
+                var boundary = GetBoundaryUsingImprovedHeuristic(xmlNodeIter.Current.Value);
                 if (boundary != null)
                 {
                     yield return (xmlNodeIter.Current.Value, boundary);
@@ -375,29 +387,6 @@ public class TextContainer
                     }
                 }
             }
-        }
-        
-        return null;
-    }
-
-    private Boundary? GetBoundaryUsingImprovedHeuristic(XPathNavigator navigator)
-    {
-        // Fallback heuristic method - improved version of the original logic
-        var value = navigator.Value;
-        if (string.IsNullOrEmpty(value))
-        {
-            return null;
-        }
-        
-        // Simple search for the value in the document
-        var valueIndex = FullContent.IndexOf(value, StringComparison.Ordinal);
-        if (valueIndex > -1)
-        {
-            return new Boundary 
-            { 
-                Index = valueIndex, 
-                Length = value.Length 
-            };
         }
         
         return null;
@@ -678,5 +667,31 @@ public class TextContainer
             yield return (match.ToString(),
                 new Boundary() { Index = (int)match.Start.Index, Length = (int)match.End.Index - (int)match.Start.Index });
         }
+    }
+
+    /// <summary>
+    /// Fallback method to determine boundary using improved heuristics when line info is not available
+    /// </summary>
+    /// <param name="value">The value to search for</param>
+    /// <returns>Boundary of the value or null if not found</returns>
+    private Boundary? GetBoundaryUsingImprovedHeuristic(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return null;
+        }
+
+        // Search for the value in the full content
+        var index = FullContent.IndexOf(value, StringComparison.Ordinal);
+        if (index == -1)
+        {
+            return null;
+        }
+
+        return new Boundary
+        {
+            Index = index,
+            Length = value.Length
+        };
     }
 }
