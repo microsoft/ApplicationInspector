@@ -847,9 +847,9 @@ test:
     [Fact]
     public void XPathComplexSampleExtractionBug()
     {
-        // This test case reproduces the bug reported in https://github.com/microsoft/ApplicationInspector/issues/621
-        // The issue is that when using complex XPath expressions, the sample and excerpt returned are from the beginning 
-        // of the document instead of the matched content.
+        // This test case verifies the fix for the bug reported in https://github.com/microsoft/ApplicationInspector/issues/621
+        // The issue was that when using complex XPath expressions, the sample and excerpt returned were from the beginning 
+        // of the document instead of the matched content. This has been fixed.
         
         var complexXPathRule = @"[
     {
@@ -908,15 +908,15 @@ test:
             
             var match = matches[0];
             
-            // Test for correct behavior (this will fail until the bug is fixed)
-            // BUG: https://github.com/microsoft/ApplicationInspector/issues/621
-            // When using complex XPath expressions, the sample should contain the actual matched content
-            // but currently returns content from the beginning of the document
+            // Test for correct behavior - verifies the bug fix
+            // FIXED: https://github.com/microsoft/ApplicationInspector/issues/621
+            // When using complex XPath expressions, the sample now correctly contains the actual matched content
+            // instead of content from the beginning of the document
             
             var expectedVersionPosition = complexPomXml.IndexOf("1.6.0");
             Assert.True(expectedVersionPosition > 0, "Version should be found in the document");
             
-            // These assertions test the correct behavior that should happen once the bug is fixed
+            // These assertions verify the correct behavior after the bug was fixed
             Assert.Equal(expectedVersionPosition, match.Boundary.Index);
             Assert.Equal(5, match.Boundary.Length); // Length of "1.6.0"
             Assert.Equal("1.6.0", match.Sample);
@@ -930,7 +930,7 @@ test:
     [Fact]
     public void XPathComplexSampleExtractionBugStringPattern()
     {
-        // This test case reproduces the second part of the bug reported in issue #621
+        // This test case verifies the fix for the bug reported in issue #621 using string patterns
         // Testing with string pattern type instead of regex
         
         var complexXPathRuleString = @"[
@@ -990,15 +990,15 @@ test:
             
             var match = matches[0];
             
-            // Test for correct behavior (this will fail until the bug is fixed)
-            // BUG: https://github.com/microsoft/ApplicationInspector/issues/621
-            // When using complex XPath expressions, the sample should contain the actual matched content
-            // but currently returns content from the beginning of the document
+            // Test for correct behavior - verifies the bug fix for string patterns
+            // FIXED: https://github.com/microsoft/ApplicationInspector/issues/621
+            // When using complex XPath expressions, the sample now correctly contains the actual matched content
+            // instead of content from the beginning of the document
             
             var expectedVersionPosition = complexPomXmlVersion2.IndexOf("2.6.0");
             Assert.True(expectedVersionPosition > 0, "Version should be found in the document");
             
-            // These assertions test the correct behavior that should happen once the bug is fixed
+            // These assertions verify the correct behavior after the bug was fixed
             Assert.Equal(expectedVersionPosition, match.Boundary.Index);
             Assert.Equal(5, match.Boundary.Length); // Length of "2.6.0"
             Assert.Equal("2.6.0", match.Sample);
@@ -1166,7 +1166,7 @@ test:
     [Fact]
     public void XPathMultipleVersionsComparison()
     {
-        // This test verifies that our fix works correctly for multiple different version patterns
+        // This test verifies that the fix works correctly for multiple different version patterns
         // and that regex correctly distinguishes between different version ranges
         
         var multiVersionRule = @"[
