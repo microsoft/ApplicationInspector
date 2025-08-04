@@ -35,6 +35,7 @@ public class TextContainer
 
     private bool _triedToConstructXPathDocument;
     private XPathDocument? _xmlDoc;
+    private XmlDocument? _xmlDocumentForPositions;
     private object _xpathLock = new();
 
     private bool _triedToConstructYmlDocument;
@@ -188,92 +189,225 @@ public class TextContainer
                 try
                 {
                     _triedToConstructXPathDocument = true;
+                    
+                    // Create XmlDocument for position tracking
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.PreserveWhitespace = true; // Preserve formatting
+                    xmlDoc.LoadXml(FullContent);
+                    _xmlDocumentForPositions = xmlDoc;
+                    
+                    // Still create XPathDocument for XPath execution (better performance)
                     _xmlDoc = new XPathDocument(new StringReader(FullContent));
                 }
                 catch (Exception e)
                 {
                     _logger.LogError("Failed to parse {1} as a XML document: {0}", e.Message, _filePath);
                     _xmlDoc = null;
+                    _xmlDocumentForPositions = null;
                 }
             }
         }
 
-        if (_xmlDoc is null)
+        if (_xmlDoc is null || _xmlDocumentForPositions is null)
         {
             yield break;
         }
 
-        var navigator = _xmlDoc.CreateNavigator();
-        var query = navigator.Compile(Path);
+        // Execute XPath on XmlDocument for position tracking
+        var xmlNavigator = _xmlDocumentForPositions.CreateNavigator();
+        var xmlQuery = xmlNavigator.Compile(Path);
+        
         if (xpathNameSpaces.Any())
         {
-            var manager = new XmlNamespaceManager(navigator.NameTable);
+            var xmlManager = new XmlNamespaceManager(xmlNavigator.NameTable);
             foreach (var pair in xpathNameSpaces)
             {
-                manager.AddNamespace(pair.Key, pair.Value);
+                xmlManager.AddNamespace(pair.Key, pair.Value);
             }
-            query.SetContext(manager);
+            xmlQuery.SetContext(xmlManager);
         }
-        var nodeIter = navigator.Select(query);
-        var minIndex = 0;
-        while (nodeIter.MoveNext())
+        
+        var xmlNodeIter = xmlNavigator.Select(xmlQuery);
+        
+        while (xmlNodeIter.MoveNext())
         {
-            if (nodeIter.Current is null)
+            if (xmlNodeIter.Current is null)
             {
                 continue;
             }
 
-            // We have to heuristically calculate the original indexes of the locations in the original document because the internal representation differs
-            // For example it will convert <Tag Prop="Val"/> to <Tag Prop=\"Val\"/>
-
-            // First we find the name, absolute position index
-            var nameIndex = FullContent[minIndex..].IndexOf(nodeIter.Current.Name, StringComparison.Ordinal) + minIndex;
-            // Then we calculate the absolute index of the end of the tag.
-            // We can't use OuterXML property because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
-            var endTagIndex = FullContent[nameIndex..].IndexOf('>', StringComparison.Ordinal) + nameIndex;
-            // If we are matching a tag itself, the previous char should be the open tag
-            //  |
-            //  v
-            // <Tag>
-            // If its a property it won't be
-            //      |
-            //      v
-            // <Tag Prop="Value">
-            var isProp = FullContent[(nameIndex - 1)] != '<';
-            // Check for self-closing tag
-            var selfClosedTag = FullContent[endTagIndex - 1] == '/';
-
-            // This is for when we're capturing the value of a property of the tag rather than the tag itself
-            if (isProp)
+            // Get the actual position using IXmlLineInfo if available
+            if (xmlNodeIter.Current is IXmlLineInfo lineInfo && lineInfo.HasLineInfo())
             {
-                // Find the index of character after the next end tag index after the name
-                var nextClosingIndexAfterName = endTagIndex+1;
-                // If we have a self closing tag, we can use that index, otherwise we need the closure of this tag
-                var offset = selfClosedTag ? endTagIndex : FullContent[nextClosingIndexAfterName..].IndexOf('>') + nextClosingIndexAfterName + 1;
-                // Move the minimum index up to the end of the closing tag to avoid additioanl matches of the same values
-                minIndex = selfClosedTag ? offset : FullContent[offset..].IndexOf('>') + offset + 1;
-                var location = new Boundary
+                // Calculate the actual position based on line and column info
+                var approximatePosition = CalculatePositionFromLineInfo(lineInfo.LineNumber, lineInfo.LinePosition);
+                
+                // For attributes, we need special handling
+                if (xmlNodeIter.Current.NodeType == XPathNodeType.Attribute)
                 {
-                    // +2 for the \" before the value for the property
-                    Index = nameIndex + nodeIter.Current.Name.Length + 2,
-                    Length = nodeIter.Current.InnerXml.Length
-                };
-                yield return (nodeIter.Current.Value, location);
+                    var boundary = FindAttributeValuePosition(xmlNodeIter.Current, approximatePosition);
+                    if (boundary != null)
+                    {
+                        yield return (xmlNodeIter.Current.Value, boundary);
+                    }
+                }
+                else
+                {
+                    // For elements, find the content between tags
+                    var boundary = FindElementValuePosition(xmlNodeIter.Current, approximatePosition);
+                    if (boundary != null)
+                    {
+                        yield return (xmlNodeIter.Current.Value, boundary);
+                    }
+                }
             }
             else
             {
-                // Move the offset to the end of the opening tag
-                var offset = selfClosedTag ? endTagIndex : FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
-                // Move the minimum index up to the end of the closing tag
-                minIndex = selfClosedTag ? offset : FullContent[offset..].IndexOf('>') + offset + 1;
-                var location = new Boundary
+                // Fallback to improved heuristic if line info is not available
+                var boundary = GetBoundaryUsingImprovedHeuristic(xmlNodeIter.Current);
+                if (boundary != null)
                 {
-                    Index = offset,
-                    Length = nodeIter.Current.InnerXml.Length
-                };
-                yield return (nodeIter.Current.Value, location);
+                    yield return (xmlNodeIter.Current.Value, boundary);
+                }
             }
         }
+    }
+
+    private int CalculatePositionFromLineInfo(int lineNumber, int linePosition)
+    {
+        // Line numbers and positions are 1-based, but our arrays are 0-based
+        if (lineNumber <= 0 || lineNumber > LineStarts.Count)
+        {
+            return 0;
+        }
+        
+        var lineStartIndex = LineStarts[lineNumber - 1];
+        return lineStartIndex + Math.Max(0, linePosition - 1);
+    }
+
+    private Boundary? FindAttributeValuePosition(XPathNavigator navigator, int approximatePosition)
+    {
+        var attrName = navigator.Name;
+        var attrValue = navigator.Value;
+        
+        if (string.IsNullOrEmpty(attrName) || string.IsNullOrEmpty(attrValue))
+        {
+            return null;
+        }
+        
+        // Search for pattern: attrName="value" or attrName='value' starting from approximate position
+        // Look backwards and forwards from the approximate position to handle inaccuracies
+        var searchStart = Math.Max(0, approximatePosition - 100);
+        var searchEnd = Math.Min(FullContent.Length, approximatePosition + 200);
+        var searchText = FullContent[searchStart..searchEnd];
+        
+        var searchPattern = $"{attrName}=";
+        var patternIndex = searchText.IndexOf(searchPattern, StringComparison.Ordinal);
+        
+        if (patternIndex > -1)
+        {
+            var absolutePatternIndex = searchStart + patternIndex;
+            var quoteIndex = absolutePatternIndex + searchPattern.Length;
+            
+            if (quoteIndex < FullContent.Length)
+            {
+                var quote = FullContent[quoteIndex]; // ' or "
+                if (quote == '"' || quote == '\'')
+                {
+                    var valueStart = quoteIndex + 1;
+                    
+                    return new Boundary 
+                    { 
+                        Index = valueStart, 
+                        Length = attrValue.Length 
+                    };
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    private Boundary? FindElementValuePosition(XPathNavigator navigator, int approximatePosition)
+    {
+        var elementValue = navigator.Value;
+        var innerXml = navigator.InnerXml;
+        
+        if (string.IsNullOrEmpty(elementValue))
+        {
+            return null;
+        }
+        
+        // Search around the approximate position for the element value
+        var searchStart = Math.Max(0, approximatePosition - 50);
+        var searchEnd = Math.Min(FullContent.Length, approximatePosition + 300);
+        
+        // Look for the element value in the search area
+        var valueIndex = FullContent.IndexOf(elementValue, searchStart, searchEnd - searchStart, StringComparison.Ordinal);
+        
+        if (valueIndex > -1)
+        {
+            return new Boundary 
+            { 
+                Index = valueIndex, 
+                Length = elementValue.Length 
+            };
+        }
+        
+        // Fallback: if direct value search fails, try to find opening tag and look after it
+        if (!string.IsNullOrEmpty(navigator.Name))
+        {
+            var tagName = navigator.Name;
+            var tagPattern = $"<{tagName}";
+            var tagIndex = FullContent.IndexOf(tagPattern, searchStart, searchEnd - searchStart, StringComparison.Ordinal);
+            
+            if (tagIndex > -1)
+            {
+                // Find the closing > of the opening tag
+                var openTagEnd = FullContent.IndexOf('>', tagIndex);
+                if (openTagEnd > -1 && openTagEnd + 1 < FullContent.Length)
+                {
+                    // Look for the value after the opening tag
+                    var contentStart = openTagEnd + 1;
+                    var contentSearchEnd = Math.Min(FullContent.Length, contentStart + 200);
+                    var contentValueIndex = FullContent.IndexOf(elementValue, contentStart, contentSearchEnd - contentStart, StringComparison.Ordinal);
+                    
+                    if (contentValueIndex > -1)
+                    {
+                        return new Boundary 
+                        { 
+                            Index = contentValueIndex, 
+                            Length = elementValue.Length 
+                        };
+                    }
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    private Boundary? GetBoundaryUsingImprovedHeuristic(XPathNavigator navigator)
+    {
+        // Fallback heuristic method - improved version of the original logic
+        var value = navigator.Value;
+        if (string.IsNullOrEmpty(value))
+        {
+            return null;
+        }
+        
+        // Simple search for the value in the document
+        var valueIndex = FullContent.IndexOf(value, StringComparison.Ordinal);
+        if (valueIndex > -1)
+        {
+            return new Boundary 
+            { 
+                Index = valueIndex, 
+                Length = value.Length 
+            };
+        }
+        
+        return null;
     }
 
     /// <summary>
