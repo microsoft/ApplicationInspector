@@ -34,8 +34,7 @@ public class TextContainer
     private object _jsonLock = new();
 
     private bool _triedToConstructXPathDocument;
-    private XPathDocument? _xmlDoc;
-    private XmlDocument? _xmlDocumentForPositions;
+    private XmlDocument? _xmlDocument;
     private object _xpathLock = new();
 
     private bool _triedToConstructYmlDocument;
@@ -190,31 +189,25 @@ public class TextContainer
                 {
                     _triedToConstructXPathDocument = true;
                     
-                    // Create XmlDocument for position tracking
                     var xmlDoc = new XmlDocument();
                     xmlDoc.PreserveWhitespace = true; // Preserve formatting
                     xmlDoc.LoadXml(FullContent);
-                    _xmlDocumentForPositions = xmlDoc;
-                    
-                    // Still create XPathDocument for XPath execution (better performance)
-                    _xmlDoc = new XPathDocument(new StringReader(FullContent));
+                    _xmlDocument = xmlDoc;
                 }
                 catch (Exception e)
                 {
                     _logger.LogError("Failed to parse {1} as a XML document: {0}", e.Message, _filePath);
-                    _xmlDoc = null;
-                    _xmlDocumentForPositions = null;
+                    _xmlDocument = null;
                 }
             }
         }
 
-        if (_xmlDoc is null || _xmlDocumentForPositions is null)
+        if (_xmlDocument is null)
         {
             yield break;
         }
 
-        // Execute XPath on XmlDocument for position tracking
-        var xmlNavigator = _xmlDocumentForPositions.CreateNavigator();
+        var xmlNavigator = _xmlDocument.CreateNavigator();
         var xmlQuery = xmlNavigator.Compile(Path);
         
         if (xpathNameSpaces.Any())
