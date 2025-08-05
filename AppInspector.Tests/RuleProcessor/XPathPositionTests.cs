@@ -765,7 +765,36 @@ public class XPathPositionTests
 
     #endregion
 
-    #region Cross-Platform Tests
+    #region Cross-Platform Tests        [Fact]
+        public void XPath_CrossPlatformLineEndings_BothUnixAndWindows()
+        {
+            // Test Unix line endings (\n)
+            var unixXml = "<root>\n  <item>value</item>\n</root>";
+            var unixContainer = new TextContainer(unixXml, "xml", _languages);
+            
+            // Test Windows line endings (\r\n)
+            var windowsXml = "<root>\r\n  <item>value</item>\r\n</root>";
+            var windowsContainer = new TextContainer(windowsXml, "xml", _languages);
+            
+            // Verify line boundary calculation is correct for both formats
+            Assert.True(unixContainer.LineEnds.Count > 1);
+            Assert.True(windowsContainer.LineEnds.Count > 1);
+            
+            // Unix: line ends should be at \n positions
+            Assert.Equal(6, unixContainer.LineEnds[1]); // Position of first \n
+            
+            // Windows: line ends should be at \r positions (before \n) 
+            Assert.Equal(6, windowsContainer.LineEnds[1]); // Position of first \r (before \r\n)
+            
+            // Test that both can extract content correctly
+            var unixExtraction = unixContainer.GetStringFromXPath("//item", new()).ToArray();
+            var windowsExtraction = windowsContainer.GetStringFromXPath("//item", new()).ToArray();
+            
+            Assert.Single(unixExtraction);
+            Assert.Single(windowsExtraction);
+            Assert.Contains("value", unixExtraction.First().Item1);
+            Assert.Contains("value", windowsExtraction.First().Item1);
+        }
 
     #endregion
 }

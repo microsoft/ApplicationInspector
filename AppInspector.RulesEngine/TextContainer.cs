@@ -76,7 +76,12 @@ public class TextContainer
             var nextNewline = FullContent.IndexOf('\n', pos);
             if (nextNewline == -1) break;
             
-            LineEnds.Add(nextNewline);
+            // For \r\n line endings, the line actually ends at the \r character
+            var lineEndPos = (nextNewline > 0 && FullContent[nextNewline - 1] == '\r') 
+                ? nextNewline - 1 
+                : nextNewline;
+            
+            LineEnds.Add(lineEndPos);
 
             if (nextNewline + 1 < FullContent.Length)
             {
