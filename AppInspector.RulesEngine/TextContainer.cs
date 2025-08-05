@@ -69,18 +69,21 @@ public class TextContainer
         LineEnds = new List<int> { 0 };
         LineStarts = new List<int> { 0, 0 };
 
-        // Find line end in the text
-        var pos = FullContent.IndexOf('\n');
-        while (pos > -1)
+        // Find line end in the text - handle both \r\n and \n line endings
+        var pos = 0;
+        while (pos < FullContent.Length)
         {
-            LineEnds.Add(pos);
+            var nextNewline = FullContent.IndexOf('\n', pos);
+            if (nextNewline == -1) break;
+            
+            LineEnds.Add(nextNewline);
 
-            if (pos + 1 < FullContent.Length)
+            if (nextNewline + 1 < FullContent.Length)
             {
-                LineStarts.Add(pos + 1);
+                LineStarts.Add(nextNewline + 1);
             }
 
-            pos = FullContent.IndexOf('\n', pos + 1);
+            pos = nextNewline + 1;
         }
 
         if (LineEnds.Count < LineStarts.Count)
@@ -339,10 +342,8 @@ public class TextContainer
             return approximatePosition;
         }
         
-        // First try searching forward from the approximate position
+        // First try searching for the exact value
         var forwardIndex = FullContent.IndexOf(value, approximatePosition, StringComparison.Ordinal);
-        
-        // Then try searching backward from the approximate position
         var backwardIndex = FullContent.LastIndexOf(value, approximatePosition, StringComparison.Ordinal);
         
         // Choose the closest match to the approximate position
