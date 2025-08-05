@@ -617,4 +617,137 @@ public class XPathPositionTests
     }
 
     #endregion
+
+    #region New Edge Case Tests
+
+    /// <summary>
+    /// Test edge cases that would fail with hardcoded 50/200 search windows
+    /// </summary>
+    [Fact]
+    public void XPath_EdgeCases_RefactoredMethodHandlesBetter()
+    {
+        // XML with long attribute names and multi-line attributes that would exceed the old 50/200 limits
+        var xmlWithLongAttributes = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<configuration>
+    <feature veryLongAttributeNameThatExceedsFiftyCharactersEasily=""test-value""
+             anotherLongAttributeNameForTestingPurposes=""another-value""
+             shortAttr=""target-value""/>
+    <element>
+        <nestedElement someVeryLongAttributeNameThatWouldHaveBeenMissedByTheOldSearchWindow=""target-value""
+                       additionalAttribute=""other-value"">
+            <content>Some text content</content>
+        </nestedElement>
+    </element>
+</configuration>";
+
+        if (_languages.FromFileNameOut("test.xml", out var langInfo))
+        {
+            var tc = new TextContainer(xmlWithLongAttributes, langInfo.Name, _languages);
+            
+            // Test finding attributes with very long names that would exceed the old 50-char backward search
+            var results = tc.GetStringFromXPath("//@someVeryLongAttributeNameThatWouldHaveBeenMissedByTheOldSearchWindow", new()).ToArray();
+            
+            Assert.Single(results);
+            var (value, boundary) = results[0];
+            Assert.Equal("target-value", value);
+            
+            // Verify the position is correct by extracting the text at that position
+            var extractedText = xmlWithLongAttributes.Substring(boundary.Index, boundary.Length);
+            Assert.Equal("target-value", extractedText);
+            
+            // Verify it's in the correct context (should be in the nestedElement)
+            var contextStart = Math.Max(0, boundary.Index - 100);
+            var contextEnd = Math.Min(xmlWithLongAttributes.Length, boundary.Index + 100);
+            var context = xmlWithLongAttributes[contextStart..contextEnd];
+            Assert.Contains("nestedElement", context);
+            Assert.Contains("someVeryLongAttributeNameThatWouldHaveBeenMissedByTheOldSearchWindow", context);
+        }
+    }
+
+    /// <summary>
+    /// Test attributes with values that appear multiple times in the document
+    /// </summary>
+    [Fact]
+    public void XPath_AttributeValueDuplicates_ReturnsCorrectPosition()
+    {
+        var xmlWithDuplicateValues = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<root>
+    <element name=""common-value"">common-value</element>
+    <items>
+        <item id=""common-value"" type=""first"">Some content</item>
+        <item id=""different-value"" type=""second"">common-value</item>
+        <item id=""another-value"" type=""common-value"">Other content</item>
+    </items>
+</root>";
+
+        if (_languages.FromFileNameOut("test.xml", out var langInfo))
+        {
+            var tc = new TextContainer(xmlWithDuplicateValues, langInfo.Name, _languages);
+            
+            // Get all @id attributes with value "common-value"
+            var results = tc.GetStringFromXPath("//item[@id='common-value']/@id", new()).ToArray();
+            
+            Assert.Single(results);
+            var (value, boundary) = results[0];
+            Assert.Equal("common-value", value);
+            
+            // Verify this is the first item's id attribute, not the element text or other occurrences
+            var extractedText = xmlWithDuplicateValues.Substring(boundary.Index, boundary.Length);
+            Assert.Equal("common-value", extractedText);
+            
+            // Verify it's in the correct attribute context (should be in the id attribute, not content)
+            var lineStart = xmlWithDuplicateValues.LastIndexOf('\n', boundary.Index) + 1;
+            var lineEnd = xmlWithDuplicateValues.IndexOf('\n', boundary.Index);
+            if (lineEnd == -1) lineEnd = xmlWithDuplicateValues.Length;
+            var line = xmlWithDuplicateValues[lineStart..lineEnd];
+            
+            Assert.Contains("id=\"common-value\"", line);
+            Assert.Contains("type=\"first\"", line);
+        }
+    }
+
+    /// <summary>
+    /// Test multi-line attributes that would fail with the old fixed search window
+    /// </summary>
+    [Fact]
+    public void XPath_MultiLineAttributes_HandledCorrectly()
+    {
+        var xmlWithMultiLineAttr = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<configuration>
+    <component name=""test-component""
+               description=""This is a very long description that spans multiple lines 
+                           and contains lots of detailed information about the component
+                           including usage instructions and examples""
+               version=""1.2.3""
+               enabled=""true"">
+        <settings>
+            <setting key=""timeout"" value=""30000""/>
+        </settings>
+    </component>
+</configuration>";
+
+        if (_languages.FromFileNameOut("test.xml", out var langInfo))
+        {
+            var tc = new TextContainer(xmlWithMultiLineAttr, langInfo.Name, _languages);
+            
+            // Test finding the version attribute after a very long multi-line description
+            var results = tc.GetStringFromXPath("//component/@version", new()).ToArray();
+            
+            Assert.Single(results);
+            var (value, boundary) = results[0];
+            Assert.Equal("1.2.3", value);
+            
+            // Verify the position is correct
+            var extractedText = xmlWithMultiLineAttr.Substring(boundary.Index, boundary.Length);
+            Assert.Equal("1.2.3", extractedText);
+            
+            // Verify it's in the version attribute context
+            var contextStart = Math.Max(0, boundary.Index - 20);
+            var contextEnd = Math.Min(xmlWithMultiLineAttr.Length, boundary.Index + 20);
+            var context = xmlWithMultiLineAttr[contextStart..contextEnd];
+            Assert.Contains("version=\"1.2.3\"", context);
+        }
+    }
+
+    #endregion
 }

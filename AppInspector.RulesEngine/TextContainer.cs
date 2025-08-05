@@ -277,13 +277,26 @@ public class TextContainer
             return approximatePosition;
         }
         
-        // Search around the approximate position for the attribute pattern: attrName="value"
-        var searchStart = Math.Max(0, approximatePosition - 50);
-        var searchEnd = Math.Min(FullContent.Length, approximatePosition + 200);
-        
-        // Look for the attribute pattern
+        // Start from the approximate position and search forward for the attribute pattern
+        // This is more reliable than using arbitrary search windows
         var searchPattern = $"{attributeName}=";
-        var patternIndex = FullContent.IndexOf(searchPattern, searchStart, searchEnd - searchStart, StringComparison.Ordinal);
+        
+        // First, try to find the attribute pattern starting from the approximate position
+        // The line info should point close to where the attribute name starts
+        var patternIndex = FullContent.IndexOf(searchPattern, approximatePosition, StringComparison.Ordinal);
+        
+        // If not found forward, try searching backward from the approximate position
+        // This handles cases where the line info points slightly past the attribute name
+        if (patternIndex == -1)
+        {
+            // Search backward from approximate position to start of current line
+            var lineStart = GetLineBoundary(approximatePosition).Index;
+            var searchStart = Math.Max(0, lineStart);
+            
+            // Search in the current line and a reasonable distance forward
+            var searchLength = Math.Min(FullContent.Length - searchStart, approximatePosition - searchStart + 500);
+            patternIndex = FullContent.IndexOf(searchPattern, searchStart, searchLength, StringComparison.Ordinal);
+        }
         
         if (patternIndex >= 0)
         {
@@ -309,8 +322,35 @@ public class TextContainer
             }
         }
         
-        // Fallback: search for the value directly around the approximate position
-        return FindExactTextPosition(approximatePosition, value);
+        // Fallback: search for the value directly using a more targeted approach
+        return FindValueInProximity(approximatePosition, value);
+    }
+
+    private int FindValueInProximity(int approximatePosition, string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return approximatePosition;
+        }
+        
+        // First try searching forward from the approximate position
+        var forwardIndex = FullContent.IndexOf(value, approximatePosition, StringComparison.Ordinal);
+        
+        // Then try searching backward from the approximate position
+        var backwardIndex = FullContent.LastIndexOf(value, approximatePosition, StringComparison.Ordinal);
+        
+        // Choose the closest match to the approximate position
+        if (forwardIndex >= 0 && backwardIndex >= 0)
+        {
+            var forwardDistance = forwardIndex - approximatePosition;
+            var backwardDistance = approximatePosition - backwardIndex;
+            return forwardDistance <= backwardDistance ? forwardIndex : backwardIndex;
+        }
+        
+        if (forwardIndex >= 0) return forwardIndex;
+        if (backwardIndex >= 0) return backwardIndex;
+        
+        return approximatePosition;
     }
 
     private int FindElementTextPosition(string value, int approximatePosition)
@@ -609,10 +649,7 @@ public class TextContainer
         }
 
         // Search for the exact value around the approximate position
-        var searchStart = Math.Max(0, approximatePosition - 50);
-        var searchEnd = Math.Min(FullContent.Length, approximatePosition + 200);
-        
-        var index = FullContent.IndexOf(value, searchStart, searchEnd - searchStart, StringComparison.Ordinal);
-        return index >= 0 ? index : approximatePosition;
+        // For elements, search around the approximate position for the text content
+        return FindValueInProximity(approximatePosition, value);
     }
 }
