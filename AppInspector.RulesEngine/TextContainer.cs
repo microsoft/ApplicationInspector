@@ -24,6 +24,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine;
 /// </summary>
 public class TextContainer
 {
+    /// <summary>
+    /// Maximum search distance forward from approximate position when searching for XML attributes.
+    /// This provides a reasonable buffer for long attribute lists without searching the entire document.
+    /// </summary>
+    private const int MaxAttributeSearchDistance = 500;
+    
     private readonly ILogger _logger;
 
     private readonly string inline;
@@ -294,7 +300,7 @@ public class TextContainer
             var searchStart = Math.Max(0, lineStart);
             
             // Search in the current line and a reasonable distance forward
-            var searchLength = Math.Min(FullContent.Length - searchStart, approximatePosition - searchStart + 500);
+            var searchLength = Math.Min(FullContent.Length - searchStart, approximatePosition - searchStart + MaxAttributeSearchDistance);
             patternIndex = FullContent.IndexOf(searchPattern, searchStart, searchLength, StringComparison.Ordinal);
         }
         
