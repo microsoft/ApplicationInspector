@@ -537,8 +537,22 @@ public class XPathPositionTests
             Assert.Single(matches);
             
             var match = matches[0];
-            // The XPath should return the actual content including whitespace
+            // The XPath returns the actual content including whitespace, but the pattern matches the trimmed content
+            // Since we're using PreserveWhitespace, the full text node content is returned
             Assert.Contains("value with spaces", match.Sample);
+            
+            // Verify the position points to the correct location in the document  
+            var actualTextAtPosition = xmlWithWhitespace.Substring(match.Boundary.Index, match.Boundary.Length);
+            Assert.Equal(match.Sample, actualTextAtPosition);
+            
+            // Platform-independent verification: normalize line endings for comparison
+            var normalizedSample = match.Sample.Replace("\r\n", "\n").Replace("\r", "\n");
+            var normalizedActual = actualTextAtPosition.Replace("\r\n", "\n").Replace("\r", "\n");
+            Assert.Equal(normalizedSample, normalizedActual);
+            
+            // Additional verification: the content should contain our target text regardless of line endings
+            Assert.True(normalizedSample.Contains("value with spaces"), 
+                $"Expected normalized sample to contain 'value with spaces', but got: '{normalizedSample}'");
         }
         else
         {
@@ -746,6 +760,57 @@ public class XPathPositionTests
             var contextEnd = Math.Min(xmlWithMultiLineAttr.Length, boundary.Index + 20);
             var context = xmlWithMultiLineAttr[contextStart..contextEnd];
             Assert.Contains("version=\"1.2.3\"", context);
+        }
+    }
+
+    #endregion
+
+    #region Cross-Platform Tests
+
+    /// <summary>
+    /// Test that ensures the whitespace handling works correctly across different platforms (Windows vs Unix line endings)
+    /// </summary>
+    [Fact]
+    public void XPath_CrossPlatform_LineEndingIndependent()
+    {
+        // Test both Windows and Unix line endings to ensure platform independence
+        var xmlWithUnixLineEndings = "<?xml version=\"1.0\"?>\n<root>\n    <item>\n        test content    \n    </item>\n</root>";
+        var xmlWithWindowsLineEndings = "<?xml version=\"1.0\"?>\r\n<root>\r\n    <item>\r\n        test content    \r\n    </item>\r\n</root>";
+        
+        var rule = CreateXPathRule("XPATH_PLATFORM_001", "//item[contains(text(), 'test content')]", "test content", "string");
+        
+        RuleSet rules = new();
+        rules.AddString(rule, "XPathPlatformTest");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        
+        if (_languages.FromFileNameOut("test.xml", out var info))
+        {
+            // Test Unix line endings
+            var unixMatches = processor.AnalyzeFile(xmlWithUnixLineEndings, new FileEntry("test.xml", new MemoryStream()), info);
+            Assert.Single(unixMatches);
+            
+            // Test Windows line endings  
+            var windowsMatches = processor.AnalyzeFile(xmlWithWindowsLineEndings, new FileEntry("test.xml", new MemoryStream()), info);
+            Assert.Single(windowsMatches);
+            
+            // Both should contain the target text when normalized
+            var unixSample = unixMatches[0].Sample.Replace("\r\n", "\n").Replace("\r", "\n");
+            var windowsSample = windowsMatches[0].Sample.Replace("\r\n", "\n").Replace("\r", "\n");
+            
+            Assert.Contains("test content", unixSample);
+            Assert.Contains("test content", windowsSample);
+            
+            // Position validation should work for both
+            var unixActual = xmlWithUnixLineEndings.Substring(unixMatches[0].Boundary.Index, unixMatches[0].Boundary.Length);
+            var windowsActual = xmlWithWindowsLineEndings.Substring(windowsMatches[0].Boundary.Index, windowsMatches[0].Boundary.Length);
+            
+            Assert.Equal(unixMatches[0].Sample, unixActual);
+            Assert.Equal(windowsMatches[0].Sample, windowsActual);
+        }
+        else
+        {
+            Assert.Fail("Failed to get language info for test.xml");
         }
     }
 
