@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.XPath;
 using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
@@ -34,7 +35,7 @@ public class TextContainer
     private object _jsonLock = new();
 
     private bool _triedToConstructXPathDocument;
-    private XmlDocument? _xmlDocument;
+    private XDocument? _xmlDocument;
     private object _xpathLock = new();
 
     private bool _triedToConstructYmlDocument;
@@ -188,20 +189,8 @@ public class TextContainer
                 try
                 {
                     _triedToConstructXPathDocument = true;
-                    
-                    var xmlDoc = new XmlDocument();
-                    xmlDoc.PreserveWhitespace = true; // Preserve formatting
-                    
-                    // Use XmlReader with line info support for better position tracking
-                    using var stringReader = new StringReader(FullContent);
-                    using var xmlReader = XmlReader.Create(stringReader, new XmlReaderSettings
-                    {
-                        DtdProcessing = DtdProcessing.Ignore,
-                        XmlResolver = null
-                    });
-                    
-                    xmlDoc.Load(xmlReader);
-                    _xmlDocument = xmlDoc;
+                                        
+                    _xmlDocument = XDocument.Parse(FullContent, LoadOptions.SetLineInfo | LoadOptions.PreserveWhitespace);
                 }
                 catch (Exception e)
                 {
