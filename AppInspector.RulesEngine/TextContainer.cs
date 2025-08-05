@@ -227,42 +227,33 @@ public class TextContainer
                 continue;
             }
 
-            // Get the actual position using IXmlLineInfo if available
+            // Get the position using XDocument line info
             if (xmlNodeIter.Current is IXmlLineInfo lineInfo && lineInfo.HasLineInfo())
             {
-                // Calculate the actual position based on line and column info
-                var approximatePosition = CalculatePositionFromLineInfo(lineInfo.LineNumber, lineInfo.LinePosition);
+                var basePosition = CalculatePositionFromLineInfo(lineInfo.LineNumber, lineInfo.LinePosition);
+                var value = xmlNodeIter.Current.Value;
                 
-                // For attributes, we need special handling
+                if (string.IsNullOrEmpty(value))
+                {
+                    continue;
+                }
+                
+                // For attributes, the line info points to the attribute name, we need to find the value
                 if (xmlNodeIter.Current.NodeType == XPathNodeType.Attribute)
                 {
-                    var boundary = FindAttributeValuePosition(xmlNodeIter.Current, approximatePosition);
-                    if (boundary != null)
-                    {
-                        yield return (xmlNodeIter.Current.Value, boundary);
-                    }
+                    var actualPosition = FindAttributeValuePosition(xmlNodeIter.Current.Name, value, basePosition);
+                    yield return (value, new Boundary { Index = actualPosition, Length = value.Length });
                 }
                 else
                 {
-                    // For elements, find the content between tags
-                    var boundary = FindElementValuePosition(xmlNodeIter.Current, approximatePosition);
-                    if (boundary != null)
-                    {
-                        yield return (xmlNodeIter.Current.Value, boundary);
-                    }
+                    // For elements, find the actual text content position
+                    var actualPosition = FindElementTextPosition(value, basePosition);
+                    yield return (value, new Boundary { Index = actualPosition, Length = value.Length });
                 }
             }
             else
             {
-                // Line information not available, fall back to heuristic search
-                // This can happen with certain XPath queries or XML parsing approaches
-                _logger.LogDebug("Line information not available for XPath result in file {0}. Using fallback position detection.", _filePath ?? "unknown");
-                
-                var boundary = GetBoundaryUsingImprovedHeuristic(xmlNodeIter.Current.Value);
-                if (boundary != null)
-                {
-                    yield return (xmlNodeIter.Current.Value, boundary);
-                }
+                _logger.LogDebug("Line information not available for XPath result in file {0}. Skipping this result.", _filePath ?? "unknown");
             }
         }
     }
@@ -279,106 +270,58 @@ public class TextContainer
         return lineStartIndex + Math.Max(0, linePosition - 1);
     }
 
-    private Boundary? FindAttributeValuePosition(XPathNavigator navigator, int approximatePosition)
+    private int FindAttributeValuePosition(string attributeName, string value, int approximatePosition)
     {
-        var attrName = navigator.Name;
-        var attrValue = navigator.Value;
-        
-        if (string.IsNullOrEmpty(attrName) || string.IsNullOrEmpty(attrValue))
+        if (string.IsNullOrEmpty(attributeName) || string.IsNullOrEmpty(value))
         {
-            return null;
+            return approximatePosition;
         }
         
-        // Search for pattern: attrName="value" or attrName='value' starting from approximate position
-        // Look backwards and forwards from the approximate position to handle inaccuracies
-        var searchStart = Math.Max(0, approximatePosition - 100);
+        // Search around the approximate position for the attribute pattern: attrName="value"
+        var searchStart = Math.Max(0, approximatePosition - 50);
         var searchEnd = Math.Min(FullContent.Length, approximatePosition + 200);
-        var searchText = FullContent[searchStart..searchEnd];
         
-        var searchPattern = $"{attrName}=";
-        var patternIndex = searchText.IndexOf(searchPattern, StringComparison.Ordinal);
+        // Look for the attribute pattern
+        var searchPattern = $"{attributeName}=";
+        var patternIndex = FullContent.IndexOf(searchPattern, searchStart, searchEnd - searchStart, StringComparison.Ordinal);
         
-        if (patternIndex > -1)
+        if (patternIndex >= 0)
         {
-            var absolutePatternIndex = searchStart + patternIndex;
-            var quoteIndex = absolutePatternIndex + searchPattern.Length;
+            var quoteIndex = patternIndex + searchPattern.Length;
             
-            if (quoteIndex < FullContent.Length)
+            // Skip any whitespace between = and the quote
+            while (quoteIndex < FullContent.Length && char.IsWhiteSpace(FullContent[quoteIndex]))
             {
-                var quote = FullContent[quoteIndex]; // ' or "
-                if (quote == '"' || quote == '\'')
+                quoteIndex++;
+            }
+            
+            if (quoteIndex < FullContent.Length && (FullContent[quoteIndex] == '"' || FullContent[quoteIndex] == '\''))
+            {
+                // Position after the opening quote
+                var valueStart = quoteIndex + 1;
+                
+                // Verify the value matches what we expect
+                if (valueStart + value.Length <= FullContent.Length &&
+                    FullContent.Substring(valueStart, value.Length) == value)
                 {
-                    var valueStart = quoteIndex + 1;
-                    
-                    return new Boundary 
-                    { 
-                        Index = valueStart, 
-                        Length = attrValue.Length 
-                    };
+                    return valueStart;
                 }
             }
         }
         
-        return null;
+        // Fallback: search for the value directly around the approximate position
+        return FindExactTextPosition(approximatePosition, value);
     }
 
-    private Boundary? FindElementValuePosition(XPathNavigator navigator, int approximatePosition)
+    private int FindElementTextPosition(string value, int approximatePosition)
     {
-        var elementValue = navigator.Value;
-        var innerXml = navigator.InnerXml;
-        
-        if (string.IsNullOrEmpty(elementValue))
+        if (string.IsNullOrEmpty(value))
         {
-            return null;
+            return approximatePosition;
         }
         
-        // Search around the approximate position for the element value
-        var searchStart = Math.Max(0, approximatePosition - 50);
-        var searchEnd = Math.Min(FullContent.Length, approximatePosition + 300);
-        
-        // Look for the element value in the search area
-        var valueIndex = FullContent.IndexOf(elementValue, searchStart, searchEnd - searchStart, StringComparison.Ordinal);
-        
-        if (valueIndex > -1)
-        {
-            return new Boundary 
-            { 
-                Index = valueIndex, 
-                Length = elementValue.Length 
-            };
-        }
-        
-        // Fallback: if direct value search fails, try to find opening tag and look after it
-        if (!string.IsNullOrEmpty(navigator.Name))
-        {
-            var tagName = navigator.Name;
-            var tagPattern = $"<{tagName}";
-            var tagIndex = FullContent.IndexOf(tagPattern, searchStart, searchEnd - searchStart, StringComparison.Ordinal);
-            
-            if (tagIndex > -1)
-            {
-                // Find the closing > of the opening tag
-                var openTagEnd = FullContent.IndexOf('>', tagIndex);
-                if (openTagEnd > -1 && openTagEnd + 1 < FullContent.Length)
-                {
-                    // Look for the value after the opening tag
-                    var contentStart = openTagEnd + 1;
-                    var contentSearchEnd = Math.Min(FullContent.Length, contentStart + 200);
-                    var contentValueIndex = FullContent.IndexOf(elementValue, contentStart, contentSearchEnd - contentStart, StringComparison.Ordinal);
-                    
-                    if (contentValueIndex > -1)
-                    {
-                        return new Boundary 
-                        { 
-                            Index = contentValueIndex, 
-                            Length = elementValue.Length 
-                        };
-                    }
-                }
-            }
-        }
-        
-        return null;
+        // For elements, search around the approximate position for the text content
+        return FindExactTextPosition(approximatePosition, value);
     }
 
     /// <summary>
@@ -658,29 +601,18 @@ public class TextContainer
         }
     }
 
-    /// <summary>
-    /// Fallback method to determine boundary using improved heuristics when line info is not available
-    /// </summary>
-    /// <param name="value">The value to search for</param>
-    /// <returns>Boundary of the value or null if not found</returns>
-    private Boundary? GetBoundaryUsingImprovedHeuristic(string value)
+    private int FindExactTextPosition(int approximatePosition, string value)
     {
         if (string.IsNullOrEmpty(value))
         {
-            return null;
+            return approximatePosition;
         }
 
-        // Search for the value in the full content
-        var index = FullContent.IndexOf(value, StringComparison.Ordinal);
-        if (index == -1)
-        {
-            return null;
-        }
-
-        return new Boundary
-        {
-            Index = index,
-            Length = value.Length
-        };
+        // Search for the exact value around the approximate position
+        var searchStart = Math.Max(0, approximatePosition - 50);
+        var searchEnd = Math.Min(FullContent.Length, approximatePosition + 200);
+        
+        var index = FullContent.IndexOf(value, searchStart, searchEnd - searchStart, StringComparison.Ordinal);
+        return index >= 0 ? index : approximatePosition;
     }
 }

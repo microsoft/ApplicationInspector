@@ -185,7 +185,7 @@ public class XPathPositionTests
                 ""confidence"": ""High"",
                 ""scopes"": [""code""],
                 ""xpaths"": [""{xpath}""],
-                ""xpath_namespaces"": {{
+                ""xpathnamespaces"": {{
                     ""android"": ""http://schemas.android.com/apk/res/android"",
                     ""tools"": ""http://schemas.android.com/tools""
                 }}
@@ -286,7 +286,7 @@ public class XPathPositionTests
         // Test complex XPath expressions that should match specific elements despite duplicates
         
         var rule = CreateXPathRule("XPATH_COMPLEX_001", 
-            "//dependency[name='first-lib']/version", "1.0.0");
+            "//dependency[n='first-lib']/version", "1.0.0");
         
         RuleSet rules = new();
         rules.AddString(rule, "XPathPositionTest");
@@ -403,7 +403,7 @@ public class XPathPositionTests
         // Test the specific scenario from issue #621 - Maven POM with multiple dependencies
         
         var rule = CreateXPathRule("XPATH_MAVEN_001", 
-            "//dependency[artifactId='junit-jupiter']/version", "5.8.2");
+            "//*[local-name()='dependency'][*[local-name()='artifactId']='junit-jupiter']/*[local-name()='version']", "5.8.2");
         
         RuleSet rules = new();
         rules.AddString(rule, "XPathMavenTest");
@@ -439,7 +439,7 @@ public class XPathPositionTests
         // Test that all dependency versions are found with correct positions
         
         var rule = CreateXPathRule("XPATH_MAVEN_002", 
-            "//dependencies//version", "\\\\d+\\\\.\\\\d+\\\\.\\\\d+", "regex");
+            "//*[local-name()='dependencies']//*[local-name()='version']", "\\\\d+\\\\.\\\\d+\\\\.\\\\d+", "regex");
         
         RuleSet rules = new();
         rules.AddString(rule, "XPathMavenTest");
