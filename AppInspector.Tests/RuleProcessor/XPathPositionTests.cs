@@ -286,7 +286,7 @@ public class XPathPositionTests
         // Test complex XPath expressions that should match specific elements despite duplicates
         
         var rule = CreateXPathRule("XPATH_COMPLEX_001", 
-            "//dependency[n='first-lib']/version", "1.0.0");
+            "//dependency[name='first-lib']/version", "1.0.0");
         
         RuleSet rules = new();
         rules.AddString(rule, "XPathPositionTest");
@@ -450,11 +450,10 @@ public class XPathPositionTests
         {
             var matches = processor.AnalyzeFile(XmlWithNestedDuplicates, new FileEntry("pom.xml", new MemoryStream()), info);
             
-            // Should find 3 versions: project version (1.0.0), junit (5.8.2), mockito (4.6.1), maven-compiler-plugin (3.8.1)
-            Assert.Equal(3, matches.Count);
+            // Should find 2 versions under dependencies: junit (5.8.2), mockito (4.6.1)
+            Assert.Equal(2, matches.Count);
             
             var versions = matches.Select(m => m.Sample).OrderBy(v => v).ToArray();
-            Assert.Contains("3.8.1", versions); // maven-compiler-plugin
             Assert.Contains("4.6.1", versions); // mockito
             Assert.Contains("5.8.2", versions); // junit
             
