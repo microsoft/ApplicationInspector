@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <element name="common-value">common-value</element>
+    <items>
+        <item id="common-value" type="first">Some content</item>
+        <item id="different-value" type="second">common-value</item>
+        <item id="another-value" type="common-value">Other content</item>
+    </items>
+</root>

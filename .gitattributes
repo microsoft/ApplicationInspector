@@ -3,6 +3,10 @@
 ###############################################################################
 * text=auto
 
+# Ensure test XML fixtures keep committed line endings (we provide both _unix and _windows variants)
+AppInspector.Tests/TestData/TestXPathPositions/*_unix.xml text eol=lf
+AppInspector.Tests/TestData/TestXPathPositions/*_windows.xml text eol=crlf
+
 ###############################################################################
 # Set default behavior for command prompt diff.
 #

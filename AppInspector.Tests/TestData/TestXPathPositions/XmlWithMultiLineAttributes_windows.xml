@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <component name="test-component"
+               description="This is a very long description that spans multiple lines 
+                           and contains lots of detailed information about the component
+                           including usage instructions and examples"
+               version="1.2.3"
+               enabled="true">
+        <settings>
+            <setting key="timeout" value="30000"/>
+        </settings>
+    </component>
+</configuration>
