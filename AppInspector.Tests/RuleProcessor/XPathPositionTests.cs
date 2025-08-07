@@ -59,6 +59,11 @@ public class XPathPositionTests
     private string GetXmlWithMavenNamespace() => LoadTestData("XmlWithMavenNamespace");
     private string GetXmlWithAttributeAndElementDuplicates() => LoadTestData("XmlWithAttributeAndElementDuplicates");
     private string GetXmlWithNamespaces() => LoadTestData("XmlWithNamespaces");
+    private string GetXmlWithEmptyElements() => LoadTestData("XmlWithEmptyElements");
+    private string GetXmlWithWhitespace() => LoadTestData("XmlWithWhitespace");
+    private string GetXmlWithLongAttributes() => LoadTestData("XmlWithLongAttributes");
+    private string GetXmlWithDuplicateAttributeValues() => LoadTestData("XmlWithDuplicateAttributeValues");
+    private string GetXmlWithMultiLineAttributes() => LoadTestData("XmlWithMultiLineAttributes");
 
     #endregion
 
@@ -502,14 +507,8 @@ public class XPathPositionTests
     [Fact]
     public void XPath_EmptyElements_HandledCorrectly()
     {
-        var xmlWithEmptyElements = @"<?xml version=""1.0""?>
-<root>
-    <empty></empty>
-    <selfClosing/>
-    <withContent>actual content</withContent>
-    <empty></empty>
-</root>";
-        
+        var xmlWithEmptyElements = GetXmlWithEmptyElements();
+
         var rule = CreateXPathRule("XPATH_EMPTY_001", "//withContent", "actual content");
         
         RuleSet rules = new();
@@ -540,13 +539,7 @@ public class XPathPositionTests
     [Fact]
     public void XPath_WhitespaceInContent_PreservesCorrectPosition()
     {
-        var xmlWithWhitespace = @"<?xml version=""1.0""?>
-<root>
-    <item>
-        value with spaces    
-    </item>
-    <item>compact</item>
-</root>";
+        var xmlWithWhitespace = GetXmlWithWhitespace();
         
         var rule = CreateXPathRule("XPATH_WHITESPACE_001", "//item[contains(text(), 'spaces')]", "value with spaces", "string");
         
@@ -736,19 +729,7 @@ public class XPathPositionTests
     [Fact]
     public void XPath_EdgeCases_RefactoredMethodHandlesBetter()
     {
-        // XML with long attribute names and multi-line attributes that would exceed the old 50/200 limits
-        var xmlWithLongAttributes = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<configuration>
-    <feature veryLongAttributeNameThatExceedsFiftyCharactersEasily=""test-value""
-             anotherLongAttributeNameForTestingPurposes=""another-value""
-             shortAttr=""target-value""/>
-    <element>
-        <nestedElement someVeryLongAttributeNameThatWouldHaveBeenMissedByTheOldSearchWindow=""target-value""
-                       additionalAttribute=""other-value"">
-            <content>Some text content</content>
-        </nestedElement>
-    </element>
-</configuration>";
+        var xmlWithLongAttributes = GetXmlWithLongAttributes();
 
         if (_languages.FromFileNameOut("test.xml", out var langInfo))
         {
@@ -780,15 +761,7 @@ public class XPathPositionTests
     [Fact]
     public void XPath_AttributeValueDuplicates_ReturnsCorrectPosition()
     {
-        var xmlWithDuplicateValues = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<root>
-    <element name=""common-value"">common-value</element>
-    <items>
-        <item id=""common-value"" type=""first"">Some content</item>
-        <item id=""different-value"" type=""second"">common-value</item>
-        <item id=""another-value"" type=""common-value"">Other content</item>
-    </items>
-</root>";
+        var xmlWithDuplicateValues = GetXmlWithDuplicateAttributeValues();
 
         if (_languages.FromFileNameOut("test.xml", out var langInfo))
         {
@@ -822,19 +795,7 @@ public class XPathPositionTests
     [Fact]
     public void XPath_MultiLineAttributes_HandledCorrectly()
     {
-        var xmlWithMultiLineAttr = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<configuration>
-    <component name=""test-component""
-               description=""This is a very long description that spans multiple lines 
-                           and contains lots of detailed information about the component
-                           including usage instructions and examples""
-               version=""1.2.3""
-               enabled=""true"">
-        <settings>
-            <setting key=""timeout"" value=""30000""/>
-        </settings>
-    </component>
-</configuration>";
+        var xmlWithMultiLineAttr = GetXmlWithMultiLineAttributes();
 
         if (_languages.FromFileNameOut("test.xml", out var langInfo))
         {
