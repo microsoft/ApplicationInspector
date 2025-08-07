@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -18,346 +19,46 @@ public class XPathPositionTests
 
     #region Test Data
 
-    /// <summary>
-    /// XML with multiple elements containing the same text value to test position accuracy
-    /// </summary>
-    // Keep the original constant as a fallback if test data files are not found at runtime
-    private const string XmlWithDuplicateValues = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<root>
-    <metadata>
-        <version>1.0.0</version>
-        <description>Test description</description>
-    </metadata>
-    <dependencies>
-        <dependency>
-            <name>first-lib</name>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <name>second-lib</name>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <name>third-lib</name>
-            <version>1.0.0</version>
-        </dependency>
-    </dependencies>
-    <configuration>
-        <setting name=""timeout"" value=""1.0.0""/>
-        <setting name=""retries"" value=""5""/>
-    </configuration>
-</root>";
+    // Centralized test data cache and loader. If files are missing, tests should fail
+    private readonly Dictionary<string, string> _testDataCache = new();
 
-    private static string? _xmlWithDuplicateValuesCached;
-    private string GetXmlWithDuplicateValues()
+    private string LoadTestData(string baseName)
     {
-        if (_xmlWithDuplicateValuesCached is not null)
+        if (_testDataCache.TryGetValue(baseName, out var cached))
         {
-            return _xmlWithDuplicateValuesCached;
+            return cached;
         }
 
-        try
+        var baseDir = AppContext.BaseDirectory; // points to bin/.../netX.Y/
+        var relativePath = Path.Combine("TestData", "TestXPathPositions");
+        var unixPath = Path.Combine(baseDir, relativePath, baseName + "_unix.xml");
+        var windowsPath = Path.Combine(baseDir, relativePath, baseName + "_windows.xml");
+
+        string? pathToUse = null;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            // AppContext.BaseDirectory points to bin/.../netX.Y/
-            var baseDir = AppContext.BaseDirectory;
-            var relativePath = Path.Combine("TestData", "TestXPathPositions");
-            var unixPath = Path.Combine(baseDir, relativePath, "XmlWithDuplicateValues_unix.xml");
-            var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithDuplicateValues_windows.xml");
-
-            string? pathToUse = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
-            }
-            else
-            {
-                if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
-            }
-
-            if (pathToUse is not null)
-            {
-                _xmlWithDuplicateValuesCached = File.ReadAllText(pathToUse);
-                return _xmlWithDuplicateValuesCached;
-            }
+            if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
         }
-        catch
+        else
         {
-            // Ignore and fall back to constant
+            if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
         }
 
-        _xmlWithDuplicateValuesCached = XmlWithDuplicateValues;
-        return _xmlWithDuplicateValuesCached;
+        if (pathToUse is null || !File.Exists(pathToUse))
+        {
+            throw new FileNotFoundException($"Required test data file not found for '{baseName}'. Expected at: '{unixPath}' or '{windowsPath}'");
+        }
+
+        var content = File.ReadAllText(pathToUse);
+        _testDataCache[baseName] = content;
+        return content;
     }
 
-    /// <summary>
-    /// XML with nested elements and attributes containing similar values - NON-NAMESPACED version for local-name() tests
-    /// </summary>
-    private const string XmlWithNestedDuplicates = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<project>
-    <groupId>com.example</groupId>
-    <artifactId>test-project</artifactId>
-    <version>1.0.0</version>
-    
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
-    
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.8.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>4.6.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-</project>";
-
-    private static string? _xmlWithNestedDuplicatesCached;
-    private string GetXmlWithNestedDuplicates()
-    {
-        if (_xmlWithNestedDuplicatesCached is not null)
-            return _xmlWithNestedDuplicatesCached;
-        try
-        {
-            var baseDir = AppContext.BaseDirectory;
-            var relativePath = Path.Combine("TestData", "TestXPathPositions");
-            var unixPath = Path.Combine(baseDir, relativePath, "XmlWithNestedDuplicates_unix.xml");
-            var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithNestedDuplicates_windows.xml");
-            string? pathToUse = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
-            }
-            else
-            {
-                if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
-            }
-            if (pathToUse is not null)
-            {
-                _xmlWithNestedDuplicatesCached = File.ReadAllText(pathToUse);
-                return _xmlWithNestedDuplicatesCached;
-            }
-        }
-        catch { }
-        _xmlWithNestedDuplicatesCached = XmlWithNestedDuplicates;
-        return _xmlWithNestedDuplicatesCached;
-    }
-
-    /// <summary>
-    /// XML with Maven namespace for proper namespace handling tests
-    /// </summary>
-    private const string XmlWithMavenNamespace = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<project xmlns=""http://maven.apache.org/POM/4.0.0""
-         xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
-         xsi:schemaLocation=""http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"">
-    <modelVersion>4.0.0</modelVersion>
-    
-    <groupId>com.example</groupId>
-    <artifactId>test-project</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
-    
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
-    
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.8.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>4.6.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-</project>";
-
-    private static string? _xmlWithMavenNamespaceCached;
-    private string GetXmlWithMavenNamespace()
-    {
-        if (_xmlWithMavenNamespaceCached is not null)
-            return _xmlWithMavenNamespaceCached;
-        try
-        {
-            var baseDir = AppContext.BaseDirectory;
-            var relativePath = Path.Combine("TestData", "TestXPathPositions");
-            var unixPath = Path.Combine(baseDir, relativePath, "XmlWithMavenNamespace_unix.xml");
-            var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithMavenNamespace_windows.xml");
-            string? pathToUse = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
-            }
-            else
-            {
-                if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
-            }
-            if (pathToUse is not null)
-            {
-                _xmlWithMavenNamespaceCached = File.ReadAllText(pathToUse);
-                return _xmlWithMavenNamespaceCached;
-            }
-        }
-        catch { }
-        _xmlWithMavenNamespaceCached = XmlWithMavenNamespace;
-        return _xmlWithMavenNamespaceCached;
-    }
-
-    /// <summary>
-    /// XML with attributes that have the same values as element text
-    /// </summary>
-    private const string XmlWithAttributeAndElementDuplicates = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<catalog>
-    <book id=""book1"" category=""fiction"">
-        <title author=""Smith"">The Test Book</title>
-        <author>Smith</author>
-        <price currency=""USD"">19.99</price>
-        <isbn>978-0123456789</isbn>
-    </book>
-    <book id=""book2"" category=""non-fiction"">
-        <title author=""Johnson"">Learning Guide</title>
-        <author>Johnson</author>
-        <price currency=""USD"">29.99</price>
-        <isbn>978-0987654321</isbn>
-    </book>
-    <metadata>
-        <category>fiction</category>
-        <category>non-fiction</category>
-    </metadata>
-</catalog>";
-
-    private static string? _xmlWithAttributeAndElementDuplicatesCached;
-    private string GetXmlWithAttributeAndElementDuplicates()
-    {
-        if (_xmlWithAttributeAndElementDuplicatesCached is not null)
-            return _xmlWithAttributeAndElementDuplicatesCached;
-        try
-        {
-            var baseDir = AppContext.BaseDirectory;
-            var relativePath = Path.Combine("TestData", "TestXPathPositions");
-            var unixPath = Path.Combine(baseDir, relativePath, "XmlWithAttributeAndElementDuplicates_unix.xml");
-            var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithAttributeAndElementDuplicates_windows.xml");
-            string? pathToUse = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
-            }
-            else
-            {
-                if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
-            }
-            if (pathToUse is not null)
-            {
-                _xmlWithAttributeAndElementDuplicatesCached = File.ReadAllText(pathToUse);
-                return _xmlWithAttributeAndElementDuplicatesCached;
-            }
-        }
-        catch { }
-        _xmlWithAttributeAndElementDuplicatesCached = XmlWithAttributeAndElementDuplicates;
-        return _xmlWithAttributeAndElementDuplicatesCached;
-    }
-
-    /// <summary>
-    /// XML with namespace declarations
-    /// </summary>
-    private const string XmlWithNamespaces = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<manifest xmlns:android=""http://schemas.android.com/apk/res/android""
-          xmlns:tools=""http://schemas.android.com/tools""
-          package=""com.example.app"">
-    
-    <application android:debuggable=""true""
-                 android:label=""@string/app_name""
-                 tools:ignore=""HardcodedDebugMode"">
-        
-        <activity android:name="".MainActivity""
-                  android:debuggable=""false""
-                  android:exported=""true"">
-            <intent-filter>
-                <action android:name=""android.intent.action.MAIN"" />
-                <category android:name=""android.intent.category.LAUNCHER"" />
-            </intent-filter>
-        </activity>
-        
-        <service android:name="".BackgroundService""
-                 android:enabled=""true""
-                 android:exported=""false"" />
-    </application>
-    
-    <uses-permission android:name=""android.permission.INTERNET"" />
-    <uses-permission android:name=""android.permission.ACCESS_NETWORK_STATE"" />
-</manifest>";
-
-    private static string? _xmlWithNamespacesCached;
-    private string GetXmlWithNamespaces()
-    {
-        if (_xmlWithNamespacesCached is not null)
-            return _xmlWithNamespacesCached;
-        try
-        {
-            var baseDir = AppContext.BaseDirectory;
-            var relativePath = Path.Combine("TestData", "TestXPathPositions");
-            var unixPath = Path.Combine(baseDir, relativePath, "XmlWithNamespaces_unix.xml");
-            var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithNamespaces_windows.xml");
-            string? pathToUse = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
-            }
-            else
-            {
-                if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
-            }
-            if (pathToUse is not null)
-            {
-                _xmlWithNamespacesCached = File.ReadAllText(pathToUse);
-                return _xmlWithNamespacesCached;
-            }
-        }
-        catch { }
-        _xmlWithNamespacesCached = XmlWithNamespaces;
-        return _xmlWithNamespacesCached;
-    }
+    private string GetXmlWithDuplicateValues() => LoadTestData("XmlWithDuplicateValues");
+    private string GetXmlWithNestedDuplicates() => LoadTestData("XmlWithNestedDuplicates");
+    private string GetXmlWithMavenNamespace() => LoadTestData("XmlWithMavenNamespace");
+    private string GetXmlWithAttributeAndElementDuplicates() => LoadTestData("XmlWithAttributeAndElementDuplicates");
+    private string GetXmlWithNamespaces() => LoadTestData("XmlWithNamespaces");
 
     #endregion
 
