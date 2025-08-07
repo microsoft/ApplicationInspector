@@ -47,13 +47,62 @@ public class XPathPositionTests
 </root>";
 
     /// <summary>
-    /// XML with nested elements and attributes containing similar values
+    /// XML with nested elements and attributes containing similar values - NON-NAMESPACED version for local-name() tests
     /// </summary>
     private const string XmlWithNestedDuplicates = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<project xmlns=""http://maven.apache.org/POM/4.0.0"">
+<project>
     <groupId>com.example</groupId>
     <artifactId>test-project</artifactId>
     <version>1.0.0</version>
+    
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>4.6.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>";
+
+    /// <summary>
+    /// XML with Maven namespace for proper namespace handling tests
+    /// </summary>
+    private const string XmlWithMavenNamespace = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<project xmlns=""http://maven.apache.org/POM/4.0.0""
+         xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
+         xsi:schemaLocation=""http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.example</groupId>
+    <artifactId>test-project</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
     
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -188,6 +237,32 @@ public class XPathPositionTests
                 ""xpathnamespaces"": {{
                     ""android"": ""http://schemas.android.com/apk/res/android"",
                     ""tools"": ""http://schemas.android.com/tools""
+                }}
+            }}
+        ]
+    }}
+]";
+    }
+
+    private string CreateXPathRuleWithMavenNamespaces(string id, string xpath, string pattern, string patternType = "string")
+    {
+        return $@"[
+    {{
+        ""id"": ""{id}"",
+        ""name"": ""XPath Maven Namespace Test Rule"",
+        ""tags"": [""Test.XPath.Maven.Namespace""],
+        ""severity"": ""Critical"",
+        ""description"": ""Test rule for XPath with Maven namespaces"",
+        ""patterns"": [
+            {{
+                ""pattern"": ""{pattern}"",
+                ""type"": ""{patternType}"",
+                ""confidence"": ""High"",
+                ""scopes"": [""code""],
+                ""xpaths"": [""{xpath}""],
+                ""xpathnamespaces"": {{
+                    ""mvn"": ""http://maven.apache.org/POM/4.0.0"",
+                    ""xsi"": ""http://www.w3.org/2001/XMLSchema-instance""
                 }}
             }}
         ]
@@ -398,9 +473,9 @@ public class XPathPositionTests
     #region Complex Maven POM Tests
 
     [Fact]
-    public void XPath_MavenPOM_SpecificDependencyVersion_ReturnsCorrectPosition()
+    public void XPath_MavenPOM_LocalName_SpecificDependencyVersion_ReturnsCorrectPosition()
     {
-        // Test the specific scenario from issue #621 - Maven POM with multiple dependencies
+        // Test using local-name() to ignore namespaces - uses non-namespaced XML for clarity
         
         var rule = CreateXPathRule("XPATH_MAVEN_001", 
             "//*[local-name()='dependency'][*[local-name()='artifactId']='junit-jupiter']/*[local-name()='version']", "5.8.2");
@@ -434,9 +509,9 @@ public class XPathPositionTests
     }
 
     [Fact]
-    public void XPath_MavenPOM_AllDependencyVersions_ReturnsCorrectPositions()
+    public void XPath_MavenPOM_LocalName_AllDependencyVersions_ReturnsCorrectPositions()
     {
-        // Test that all dependency versions are found with correct positions
+        // Test using local-name() to find all dependency versions - uses non-namespaced XML
         
         var rule = CreateXPathRule("XPATH_MAVEN_002", 
             "//*[local-name()='dependencies']//*[local-name()='version']", "\\\\d+\\\\.\\\\d+\\\\.\\\\d+", "regex");
@@ -461,6 +536,79 @@ public class XPathPositionTests
             foreach (var match in matches)
             {
                 var actualText = XmlWithNestedDuplicates.Substring(match.Boundary.Index, match.Boundary.Length);
+                Assert.Equal(match.Sample, actualText);
+            }
+        }
+        else
+        {
+            Assert.Fail("Failed to get language info for pom.xml");
+        }
+    }
+
+    [Fact]
+    public void XPath_MavenPOM_WithNamespaces_SpecificDependencyVersion_ReturnsCorrectPosition()
+    {
+        // Test proper namespace handling for Maven POM with default namespace
+        
+        var rule = CreateXPathRuleWithMavenNamespaces("XPATH_MAVEN_NS_001", 
+            "//mvn:dependency[mvn:artifactId='junit-jupiter']/mvn:version", "5.8.2");
+        
+        RuleSet rules = new();
+        rules.AddString(rule, "XPathMavenNamespaceTest");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        
+        if (_languages.FromFileNameOut("pom.xml", out var info))
+        {
+            var matches = processor.AnalyzeFile(XmlWithMavenNamespace, new FileEntry("pom.xml", new MemoryStream()), info);
+            
+            Assert.Single(matches);
+            
+            var match = matches[0];
+            Assert.Equal("5.8.2", match.Sample);
+            Assert.Equal(5, match.Boundary.Length);
+            
+            // Verify this is specifically the JUnit Jupiter dependency version
+            var contextStart = Math.Max(0, match.Boundary.Index - 200);
+            var contextEnd = Math.Min(XmlWithMavenNamespace.Length, match.Boundary.Index + 50);
+            var context = XmlWithMavenNamespace[contextStart..contextEnd];
+            Assert.Contains("junit-jupiter", context);
+            Assert.DoesNotContain("mockito", context);
+        }
+        else
+        {
+            Assert.Fail("Failed to get language info for pom.xml");
+        }
+    }
+
+    [Fact]
+    public void XPath_MavenPOM_WithNamespaces_AllDependencyVersions_ReturnsCorrectPositions()
+    {
+        // Test proper namespace handling for all dependency versions
+        
+        var rule = CreateXPathRuleWithMavenNamespaces("XPATH_MAVEN_NS_002", 
+            "//mvn:dependencies//mvn:version", "\\\\d+\\\\.\\\\d+\\\\.\\\\d+", "regex");
+        
+        RuleSet rules = new();
+        rules.AddString(rule, "XPathMavenNamespaceTest");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        
+        if (_languages.FromFileNameOut("pom.xml", out var info))
+        {
+            var matches = processor.AnalyzeFile(XmlWithMavenNamespace, new FileEntry("pom.xml", new MemoryStream()), info);
+            
+            // Should find 2 versions under dependencies: junit (5.8.2), mockito (4.6.1)
+            Assert.Equal(2, matches.Count);
+            
+            var versions = matches.Select(m => m.Sample).OrderBy(v => v).ToArray();
+            Assert.Contains("4.6.1", versions); // mockito
+            Assert.Contains("5.8.2", versions); // junit
+            
+            // Verify each position is correct
+            foreach (var match in matches)
+            {
+                var actualText = XmlWithMavenNamespace.Substring(match.Boundary.Index, match.Boundary.Length);
                 Assert.Equal(match.Sample, actualText);
             }
         }
@@ -565,20 +713,20 @@ public class XPathPositionTests
     #region Regression Tests for Issue #621
 
     [Fact]
-    public void XPath_Issue621_ComplexVersionQuery_ReturnsCorrectPosition()
+    public void XPath_Issue621_LocalName_ComplexVersionQuery_ReturnsCorrectPosition()
     {
-        // Direct test for the issue reported in #621
+        // Direct test for the issue reported in #621 - using local-name() with non-namespaced XML
         
         var complexXPathRule = @"[
     {
-        ""name"": ""TEST xpath complex issue 621"",
-        ""description"": ""Detects the use of specific version patterns"",
+        ""name"": ""TEST xpath complex issue 621 - local-name()"",
+        ""description"": ""Detects the use of specific version patterns using local-name() to ignore namespaces"",
         ""id"": ""XPATH621001"",
         ""applies_to"": [
             ""pom.xml""
         ],
         ""tags"": [
-            ""XPATH.Issue621""
+            ""XPATH.Issue621.LocalName""
         ],
         ""severity"": ""critical"",
         ""patterns"": [
@@ -622,6 +770,75 @@ public class XPathPositionTests
             var contextStart = Math.Max(0, match.Boundary.Index - 100);
             var contextEnd = Math.Min(XmlWithNestedDuplicates.Length, match.Boundary.Index + 100);
             var context = XmlWithNestedDuplicates[contextStart..contextEnd];
+            Assert.Contains("junit-jupiter", context);
+        }
+        else
+        {
+            Assert.Fail("Failed to get language info for pom.xml");
+        }
+    }
+
+    [Fact]
+    public void XPath_Issue621_WithNamespaces_ComplexVersionQuery_ReturnsCorrectPosition()
+    {
+        // Test the same Issue #621 scenario but with proper namespace handling
+        
+        var complexNamespacedXPathRule = @"[
+    {
+        ""name"": ""TEST xpath complex issue 621 - with namespaces"",
+        ""description"": ""Detects the use of specific version patterns using proper namespace handling"",
+        ""id"": ""XPATH621002"",
+        ""applies_to"": [
+            ""pom.xml""
+        ],
+        ""tags"": [
+            ""XPATH.Issue621.Namespaced""
+        ],
+        ""severity"": ""critical"",
+        ""patterns"": [
+            {
+                ""pattern"": ""5\\..+"",
+                ""type"": ""regex"",
+                ""scopes"": [
+                    ""code""
+                ],
+                ""modifiers"": [],
+                ""confidence"": ""high"",
+                ""xpaths"": [""//mvn:dependency[mvn:artifactId='junit-jupiter']/mvn:version""],
+                ""xpathnamespaces"": {
+                    ""mvn"": ""http://maven.apache.org/POM/4.0.0""
+                }
+            }
+        ]
+    }
+]";
+
+        RuleSet rules = new();
+        rules.AddString(complexNamespacedXPathRule, "XPathIssue621NamespaceTest");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        
+        if (_languages.FromFileNameOut("pom.xml", out var info))
+        {
+            var matches = processor.AnalyzeFile(XmlWithMavenNamespace, new FileEntry("pom.xml", new MemoryStream()), info);
+            
+            Assert.Single(matches);
+            
+            var match = matches[0];
+            
+            // The key fix: position should point to the actual matched content, not document start
+            var expectedPosition = XmlWithMavenNamespace.IndexOf("5.8.2");
+            Assert.True(expectedPosition > 0, "Version should be found in the document");
+            
+            // These assertions verify the bug fix for issue #621 with proper namespace handling
+            Assert.Equal(expectedPosition, match.Boundary.Index);
+            Assert.Equal(5, match.Boundary.Length); // Length of "5.8.2"
+            Assert.Equal("5.8.2", match.Sample);
+            
+            // Additional verification: ensure the position is actually within the JUnit dependency
+            var contextStart = Math.Max(0, match.Boundary.Index - 100);
+            var contextEnd = Math.Min(XmlWithMavenNamespace.Length, match.Boundary.Index + 100);
+            var context = XmlWithMavenNamespace[contextStart..contextEnd];
             Assert.Contains("junit-jupiter", context);
         }
         else
@@ -765,7 +982,8 @@ public class XPathPositionTests
 
     #endregion
 
-    #region Cross-Platform Tests        [Fact]
+    #region Cross-Platform Tests        
+        [Fact]
         public void XPath_CrossPlatformLineEndings_BothUnixAndWindows()
         {
             // Test Unix line endings (\n)

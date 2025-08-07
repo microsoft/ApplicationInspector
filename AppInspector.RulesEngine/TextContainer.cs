@@ -203,7 +203,7 @@ public class TextContainer
                 try
                 {
                     _triedToConstructXPathDocument = true;
-                                        
+                    
                     _xmlDocument = XDocument.Parse(FullContent, LoadOptions.SetLineInfo | LoadOptions.PreserveWhitespace);
                 }
                 catch (Exception e)
@@ -219,56 +219,180 @@ public class TextContainer
             yield break;
         }
 
-        var xmlNavigator = _xmlDocument.CreateNavigator();
-        var xmlQuery = xmlNavigator.Compile(Path);
-        
-        if (xpathNameSpaces.Any())
+        // Prepare namespace resolver if needed
+        IXmlNamespaceResolver? nsResolver = null;
+        if (xpathNameSpaces != null && xpathNameSpaces.Any())
         {
-            var xmlManager = new XmlNamespaceManager(xmlNavigator.NameTable);
+            var nt = new NameTable();
+            var nsmgr = new XmlNamespaceManager(nt);
             foreach (var pair in xpathNameSpaces)
             {
-                xmlManager.AddNamespace(pair.Key, pair.Value);
+                try
+                {
+                    nsmgr.AddNamespace(pair.Key, pair.Value);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning("Failed to add namespace prefix '{0}' for '{1}': {2}", pair.Key, pair.Value, ex.Message);
+                }
             }
-            xmlQuery.SetContext(xmlManager);
+            nsResolver = nsmgr;
         }
-        
-        var xmlNodeIter = xmlNavigator.Select(xmlQuery);
-        
-        while (xmlNodeIter.MoveNext())
-        {
-            if (xmlNodeIter.Current is null)
-            {
-                continue;
-            }
 
-            // Get the position using XDocument line info
-            if (xmlNodeIter.Current is IXmlLineInfo lineInfo && lineInfo.HasLineInfo())
+        object evalResult;
+        try
+        {
+            evalResult = nsResolver is null
+                ? _xmlDocument.XPathEvaluate(Path)
+                : _xmlDocument.XPathEvaluate(Path, nsResolver);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Failed to evaluate XPath '{0}' against file {1}: {2}", Path, _filePath ?? "unknown", e.Message);
+            yield break;
+        }
+
+        // Helper local to calculate position from XObject
+        int PosFromXObject(XObject xobj)
+        {
+            if (xobj is IXmlLineInfo li && li.HasLineInfo())
             {
-                var basePosition = CalculatePositionFromLineInfo(lineInfo.LineNumber, lineInfo.LinePosition);
-                var value = xmlNodeIter.Current.Value;
-                
-                if (string.IsNullOrEmpty(value))
+                return CalculatePositionFromLineInfo(li.LineNumber, li.LinePosition);
+            }
+            return 0;
+        }
+
+        // Iterate node-set results
+        if (evalResult is System.Collections.IEnumerable enumerable && evalResult is not string)
+        {
+            foreach (var item in enumerable)
+            {
+                if (item is null) continue;
+
+                switch (item)
                 {
-                    continue;
-                }
-                
-                // For attributes, the line info points to the attribute name, we need to find the value
-                if (xmlNodeIter.Current.NodeType == XPathNodeType.Attribute)
-                {
-                    var actualPosition = FindAttributeValuePosition(xmlNodeIter.Current.Name, value, basePosition);
-                    yield return (value, new Boundary { Index = actualPosition, Length = value.Length });
-                }
-                else
-                {
-                    // For elements, find the actual text content position
-                    var actualPosition = FindElementTextPosition(value, basePosition);
-                    yield return (value, new Boundary { Index = actualPosition, Length = value.Length });
+                    case XAttribute attr:
+                    {
+                        var value = attr.Value ?? string.Empty;
+                        if (value.Length == 0) { break; }
+
+                        var basePos = PosFromXObject(attr);
+
+                        // Build the qualified attribute name as it appears in the document (with prefix if any)
+                        var attrName = attr.Name.LocalName;
+                        var prefix = attr.Parent?.GetPrefixOfNamespace(attr.Name.Namespace);
+                        if (!string.IsNullOrEmpty(prefix))
+                        {
+                            attrName = prefix + ":" + attrName;
+                        }
+
+                        var valueStart = FindAttributeValuePosition(attrName, value, basePos);
+                        yield return (value, new Boundary { Index = valueStart, Length = value.Length });
+                        break;
+                    }
+                    case XElement el:
+                    {
+                        var value = el.Value ?? string.Empty;
+                        if (value.Length == 0) { break; }
+
+                        var basePos = PosFromXObject(el);
+                        var textStart = FindElementTextPosition(value, basePos);
+                        yield return (value, new Boundary { Index = textStart, Length = value.Length });
+                        break;
+                    }
+                    case XCData cdata:
+                    {
+                        var value = cdata.Value ?? string.Empty;
+                        if (value.Length == 0) { break; }
+
+                        var basePos = PosFromXObject(cdata);
+                        var start = FindValueInProximity(basePos, value);
+                        yield return (value, new Boundary { Index = start, Length = value.Length });
+                        break;
+                    }
+                    case XText xt:
+                    {
+                        var value = xt.Value ?? string.Empty;
+                        if (value.Length == 0) { break; }
+
+                        var basePos = PosFromXObject(xt);
+                        var start = FindValueInProximity(basePos, value);
+                        yield return (value, new Boundary { Index = start, Length = value.Length });
+                        break;
+                    }
+                    case XComment comment:
+                    {
+                        var value = comment.Value ?? string.Empty;
+                        if (value.Length == 0) { break; }
+
+                        var basePos = PosFromXObject(comment);
+                        var start = FindValueInProximity(basePos, value);
+                        yield return (value, new Boundary { Index = start, Length = value.Length });
+                        break;
+                    }
+                    case XProcessingInstruction pi:
+                    {
+                        var value = pi.Data ?? string.Empty;
+                        if (value.Length == 0) { break; }
+
+                        var basePos = PosFromXObject(pi);
+                        var start = FindValueInProximity(basePos, value);
+                        yield return (value, new Boundary { Index = start, Length = value.Length });
+                        break;
+                    }
+                    case XObject xobj:
+                    {
+                        // Generic fallback for other XObject types (prefer XNode for formatted value)
+                        string s = xobj is XNode xn
+                            ? xn.ToString(SaveOptions.DisableFormatting)
+                            : (xobj.ToString() ?? string.Empty);
+                        if (!string.IsNullOrEmpty(s))
+                        {
+                            var basePos = PosFromXObject(xobj);
+                            var start = FindValueInProximity(basePos, s);
+                            yield return (s, new Boundary { Index = start, Length = s.Length });
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                        // Unexpected type; attempt string conversion and proximity search
+                        var s = item.ToString();
+                        if (!string.IsNullOrEmpty(s))
+                        {
+                            var start = FindValueInProximity(0, s);
+                            yield return (s, new Boundary { Index = start, Length = s.Length });
+                        }
+                        else
+                        {
+                            _logger.LogDebug("Unsupported XPath result type {0} in file {1}.", item.GetType().FullName, _filePath ?? "unknown");
+                        }
+                        break;
+                    }
                 }
             }
-            else
+            yield break;
+        }
+
+        // Scalar results (string, bool, number)
+        string? scalar = evalResult switch
+        {
+            null => null,
+            string s => s,
+            bool b => b ? "true" : "false",
+            double d => d.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            _ => evalResult.ToString()
+        };
+
+        if (!string.IsNullOrEmpty(scalar))
+        {
+            var idx = FullContent.IndexOf(scalar, StringComparison.Ordinal);
+            if (idx < 0)
             {
-                _logger.LogDebug("Line information not available for XPath result in file {0}. Skipping this result.", _filePath ?? "unknown");
+                // If not found, best-effort proximity search from start
+                idx = FindValueInProximity(0, scalar);
             }
+            yield return (scalar, new Boundary { Index = idx, Length = scalar.Length });
         }
     }
 
