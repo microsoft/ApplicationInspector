@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+    <book id="book1" category="fiction">
+        <title author="Smith">The Test Book</title>
+        <author>Smith</author>
+        <price currency="USD">19.99</price>
+        <isbn>978-0123456789</isbn>
+    </book>
+    <book id="book2" category="non-fiction">
+        <title author="Johnson">Learning Guide</title>
+        <author>Johnson</author>
+        <price currency="USD">29.99</price>
+        <isbn>978-0987654321</isbn>
+    </book>
+    <metadata>
+        <category>fiction</category>
+        <category>non-fiction</category>
+    </metadata>
+</catalog>

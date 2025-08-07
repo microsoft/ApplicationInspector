@@ -146,6 +146,36 @@
         <None Update="TestData\TestRuleProcessor\Rules\MultiLineRule2.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="TestData/TestXPathPositions/XmlWithDuplicateValues_unix.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData/TestXPathPositions/XmlWithDuplicateValues_windows.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData/TestXPathPositions/XmlWithNestedDuplicates_unix.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData/TestXPathPositions/XmlWithNestedDuplicates_windows.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData/TestXPathPositions/XmlWithNamespaces_unix.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData/TestXPathPositions/XmlWithNamespaces_windows.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData/TestXPathPositions/XmlWithAttributeAndElementDuplicates_unix.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData/TestXPathPositions/XmlWithAttributeAndElementDuplicates_windows.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData/TestXPathPositions/XmlWithMavenNamespace_unix.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData/TestXPathPositions/XmlWithMavenNamespace_windows.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>

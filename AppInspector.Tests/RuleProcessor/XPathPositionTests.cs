@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Xunit;
@@ -20,6 +21,7 @@ public class XPathPositionTests
     /// <summary>
     /// XML with multiple elements containing the same text value to test position accuracy
     /// </summary>
+    // Keep the original constant as a fallback if test data files are not found at runtime
     private const string XmlWithDuplicateValues = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <root>
     <metadata>
@@ -45,6 +47,47 @@ public class XPathPositionTests
         <setting name=""retries"" value=""5""/>
     </configuration>
 </root>";
+
+    private static string? _xmlWithDuplicateValuesCached;
+    private string GetXmlWithDuplicateValues()
+    {
+        if (_xmlWithDuplicateValuesCached is not null)
+        {
+            return _xmlWithDuplicateValuesCached;
+        }
+
+        try
+        {
+            // AppContext.BaseDirectory points to bin/.../netX.Y/
+            var baseDir = AppContext.BaseDirectory;
+            var relativePath = Path.Combine("TestData", "TestXPathPositions");
+            var unixPath = Path.Combine(baseDir, relativePath, "XmlWithDuplicateValues_unix.xml");
+            var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithDuplicateValues_windows.xml");
+
+            string? pathToUse = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
+            }
+            else
+            {
+                if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
+            }
+
+            if (pathToUse is not null)
+            {
+                _xmlWithDuplicateValuesCached = File.ReadAllText(pathToUse);
+                return _xmlWithDuplicateValuesCached;
+            }
+        }
+        catch
+        {
+            // Ignore and fall back to constant
+        }
+
+        _xmlWithDuplicateValuesCached = XmlWithDuplicateValues;
+        return _xmlWithDuplicateValuesCached;
+    }
 
     /// <summary>
     /// XML with nested elements and attributes containing similar values - NON-NAMESPACED version for local-name() tests
@@ -89,6 +132,37 @@ public class XPathPositionTests
         </plugins>
     </build>
 </project>";
+
+    private static string? _xmlWithNestedDuplicatesCached;
+    private string GetXmlWithNestedDuplicates()
+    {
+        if (_xmlWithNestedDuplicatesCached is not null)
+            return _xmlWithNestedDuplicatesCached;
+        try
+        {
+            var baseDir = AppContext.BaseDirectory;
+            var relativePath = Path.Combine("TestData", "TestXPathPositions");
+            var unixPath = Path.Combine(baseDir, relativePath, "XmlWithNestedDuplicates_unix.xml");
+            var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithNestedDuplicates_windows.xml");
+            string? pathToUse = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
+            }
+            else
+            {
+                if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
+            }
+            if (pathToUse is not null)
+            {
+                _xmlWithNestedDuplicatesCached = File.ReadAllText(pathToUse);
+                return _xmlWithNestedDuplicatesCached;
+            }
+        }
+        catch { }
+        _xmlWithNestedDuplicatesCached = XmlWithNestedDuplicates;
+        return _xmlWithNestedDuplicatesCached;
+    }
 
     /// <summary>
     /// XML with Maven namespace for proper namespace handling tests
@@ -139,6 +213,37 @@ public class XPathPositionTests
     </build>
 </project>";
 
+    private static string? _xmlWithMavenNamespaceCached;
+    private string GetXmlWithMavenNamespace()
+    {
+        if (_xmlWithMavenNamespaceCached is not null)
+            return _xmlWithMavenNamespaceCached;
+        try
+        {
+            var baseDir = AppContext.BaseDirectory;
+            var relativePath = Path.Combine("TestData", "TestXPathPositions");
+            var unixPath = Path.Combine(baseDir, relativePath, "XmlWithMavenNamespace_unix.xml");
+            var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithMavenNamespace_windows.xml");
+            string? pathToUse = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
+            }
+            else
+            {
+                if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
+            }
+            if (pathToUse is not null)
+            {
+                _xmlWithMavenNamespaceCached = File.ReadAllText(pathToUse);
+                return _xmlWithMavenNamespaceCached;
+            }
+        }
+        catch { }
+        _xmlWithMavenNamespaceCached = XmlWithMavenNamespace;
+        return _xmlWithMavenNamespaceCached;
+    }
+
     /// <summary>
     /// XML with attributes that have the same values as element text
     /// </summary>
@@ -161,6 +266,37 @@ public class XPathPositionTests
         <category>non-fiction</category>
     </metadata>
 </catalog>";
+
+    private static string? _xmlWithAttributeAndElementDuplicatesCached;
+    private string GetXmlWithAttributeAndElementDuplicates()
+    {
+        if (_xmlWithAttributeAndElementDuplicatesCached is not null)
+            return _xmlWithAttributeAndElementDuplicatesCached;
+        try
+        {
+            var baseDir = AppContext.BaseDirectory;
+            var relativePath = Path.Combine("TestData", "TestXPathPositions");
+            var unixPath = Path.Combine(baseDir, relativePath, "XmlWithAttributeAndElementDuplicates_unix.xml");
+            var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithAttributeAndElementDuplicates_windows.xml");
+            string? pathToUse = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
+            }
+            else
+            {
+                if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
+            }
+            if (pathToUse is not null)
+            {
+                _xmlWithAttributeAndElementDuplicatesCached = File.ReadAllText(pathToUse);
+                return _xmlWithAttributeAndElementDuplicatesCached;
+            }
+        }
+        catch { }
+        _xmlWithAttributeAndElementDuplicatesCached = XmlWithAttributeAndElementDuplicates;
+        return _xmlWithAttributeAndElementDuplicatesCached;
+    }
 
     /// <summary>
     /// XML with namespace declarations
@@ -191,6 +327,37 @@ public class XPathPositionTests
     <uses-permission android:name=""android.permission.INTERNET"" />
     <uses-permission android:name=""android.permission.ACCESS_NETWORK_STATE"" />
 </manifest>";
+
+    private static string? _xmlWithNamespacesCached;
+    private string GetXmlWithNamespaces()
+    {
+        if (_xmlWithNamespacesCached is not null)
+            return _xmlWithNamespacesCached;
+        try
+        {
+            var baseDir = AppContext.BaseDirectory;
+            var relativePath = Path.Combine("TestData", "TestXPathPositions");
+            var unixPath = Path.Combine(baseDir, relativePath, "XmlWithNamespaces_unix.xml");
+            var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithNamespaces_windows.xml");
+            string? pathToUse = null;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (File.Exists(windowsPath)) pathToUse = windowsPath; else if (File.Exists(unixPath)) pathToUse = unixPath;
+            }
+            else
+            {
+                if (File.Exists(unixPath)) pathToUse = unixPath; else if (File.Exists(windowsPath)) pathToUse = windowsPath;
+            }
+            if (pathToUse is not null)
+            {
+                _xmlWithNamespacesCached = File.ReadAllText(pathToUse);
+                return _xmlWithNamespacesCached;
+            }
+        }
+        catch { }
+        _xmlWithNamespacesCached = XmlWithNamespaces;
+        return _xmlWithNamespacesCached;
+    }
 
     #endregion
 
@@ -279,31 +446,32 @@ public class XPathPositionTests
     {
         // Test that when multiple elements have the same text content,
         // each match returns the correct position for its specific element
-        
+
         var rule = CreateXPathRule("XPATH_DUPLICATE_001", "//version", "1.0.0");
-        
+
         RuleSet rules = new();
         rules.AddString(rule, "XPathPositionTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
+
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithDuplicateValues, new FileEntry("test.xml", new MemoryStream()), info);
-            
+            var xml = GetXmlWithDuplicateValues();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
+
             // Should find 3 matches for "1.0.0" in different version elements
             Assert.Equal(3, matches.Count);
-            
+
             // Verify each match points to the correct location
             var expectedPositions = new[]
             {
-                XmlWithDuplicateValues.IndexOf("<version>1.0.0</version>") + "<version>".Length, // metadata version
-                XmlWithDuplicateValues.IndexOf("<version>1.0.0</version>", XmlWithDuplicateValues.IndexOf("<dependency>")) + "<version>".Length, // first dependency
-                XmlWithDuplicateValues.LastIndexOf("<version>1.0.0</version>") + "<version>".Length // third dependency
+                xml.IndexOf("<version>1.0.0</version>") + "<version>".Length, // metadata version
+                xml.IndexOf("<version>1.0.0</version>", xml.IndexOf("<dependency>")) + "<version>".Length, // first dependency
+                xml.LastIndexOf("<version>1.0.0</version>") + "<version>".Length // third dependency
             };
-            
+
             var actualPositions = matches.Select(m => m.Boundary.Index).OrderBy(p => p).ToArray();
-            
+
             for (int i = 0; i < expectedPositions.Length; i++)
             {
                 Assert.Equal(expectedPositions[i], actualPositions[i]);
@@ -321,31 +489,32 @@ public class XPathPositionTests
     public void XPath_AttributeWithDuplicateValues_ReturnsCorrectPositions()
     {
         // Test that attribute values are positioned correctly when duplicates exist
-        
+
         var rule = CreateXPathRule("XPATH_ATTR_001", "//@currency", "USD");
-        
+
         RuleSet rules = new();
         rules.AddString(rule, "XPathPositionTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
+
         if (_languages.FromFileNameOut("catalog.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithAttributeAndElementDuplicates, new FileEntry("catalog.xml", new MemoryStream()), info);
-            
+            var xml = GetXmlWithAttributeAndElementDuplicates();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("catalog.xml", new MemoryStream()), info);
+
             // Should find 2 matches for "USD" in currency attributes
             Assert.Equal(2, matches.Count);
-            
+
             // Verify positions are correct for both currency attributes
             foreach (var match in matches)
             {
                 Assert.Equal(3, match.Boundary.Length); // Length of "USD"
                 Assert.Equal("USD", match.Sample);
-                
+
                 // Verify the match is actually within a currency attribute
                 var contextStart = Math.Max(0, match.Boundary.Index - 20);
-                var contextEnd = Math.Min(XmlWithAttributeAndElementDuplicates.Length, match.Boundary.Index + 20);
-                var context = XmlWithAttributeAndElementDuplicates[contextStart..contextEnd];
+                var contextEnd = Math.Min(xml.Length, match.Boundary.Index + 20);
+                var context = xml[contextStart..contextEnd];
                 Assert.Contains("currency=", context);
             }
         }
@@ -359,30 +528,31 @@ public class XPathPositionTests
     public void XPath_ComplexPathWithDuplicates_ReturnsCorrectPosition()
     {
         // Test complex XPath expressions that should match specific elements despite duplicates
-        
+
         var rule = CreateXPathRule("XPATH_COMPLEX_001", 
             "//dependency[name='first-lib']/version", "1.0.0");
-        
+
         RuleSet rules = new();
         rules.AddString(rule, "XPathPositionTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
+
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithDuplicateValues, new FileEntry("test.xml", new MemoryStream()), info);
-            
+            var xml = GetXmlWithDuplicateValues();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
+
             // Should find exactly 1 match for the version of first-lib dependency
             Assert.Single(matches);
-            
+
             var match = matches[0];
             Assert.Equal("1.0.0", match.Sample);
             Assert.Equal(5, match.Boundary.Length);
-            
+
             // Verify this is specifically the first-lib dependency version, not metadata or third-lib
             var contextStart = Math.Max(0, match.Boundary.Index - 100);
-            var contextEnd = Math.Min(XmlWithDuplicateValues.Length, match.Boundary.Index + 50);
-            var context = XmlWithDuplicateValues[contextStart..contextEnd];
+            var contextEnd = Math.Min(xml.Length, match.Boundary.Index + 50);
+            var context = xml[contextStart..contextEnd];
             Assert.Contains("first-lib", context);
         }
         else
@@ -399,30 +569,31 @@ public class XPathPositionTests
     public void XPath_WithNamespaces_ReturnsCorrectPosition()
     {
         // Test XPath with namespace prefixes
-        
+
         var rule = CreateXPathRuleWithNamespaces("XPATH_NS_001", 
             "//application/@android:debuggable", "true");
-        
+
         RuleSet rules = new();
         rules.AddString(rule, "XPathNamespaceTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
+
         if (_languages.FromFileNameOut("AndroidManifest.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithNamespaces, new FileEntry("AndroidManifest.xml", new MemoryStream()), info);
-            
+            var xml = GetXmlWithNamespaces();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("AndroidManifest.xml", new MemoryStream()), info);
+
             // Should find the android:debuggable="true" on application element
             Assert.Single(matches);
-            
+
             var match = matches[0];
             Assert.Equal("true", match.Sample);
             Assert.Equal(4, match.Boundary.Length);
-            
+
             // Verify this is the application-level debuggable, not the activity-level one
             var contextStart = Math.Max(0, match.Boundary.Index - 50);
-            var contextEnd = Math.Min(XmlWithNamespaces.Length, match.Boundary.Index + 30);
-            var context = XmlWithNamespaces[contextStart..contextEnd];
+            var contextEnd = Math.Min(xml.Length, match.Boundary.Index + 30);
+            var context = xml[contextStart..contextEnd];
             Assert.Contains("application", context);
             Assert.DoesNotContain("activity", context);
         }
@@ -436,28 +607,29 @@ public class XPathPositionTests
     public void XPath_WithNamespaces_MultipleDuplicateAttributes_ReturnsCorrectPositions()
     {
         // Test XPath that matches multiple attributes with same name but different values
-        
+
         var rule = CreateXPathRuleWithNamespaces("XPATH_NS_002", 
             "//@android:debuggable", "true|false", "regex");
-        
+
         RuleSet rules = new();
         rules.AddString(rule, "XPathNamespaceTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
+
         if (_languages.FromFileNameOut("AndroidManifest.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithNamespaces, new FileEntry("AndroidManifest.xml", new MemoryStream()), info);
-            
+            var xml = GetXmlWithNamespaces();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("AndroidManifest.xml", new MemoryStream()), info);
+
             // Should find both android:debuggable attributes (true on application, false on activity)
             Assert.Equal(2, matches.Count);
-            
+
             var trueMatch = matches.First(m => m.Sample == "true");
             var falseMatch = matches.First(m => m.Sample == "false");
-            
+
             Assert.Equal(4, trueMatch.Boundary.Length);
             Assert.Equal(5, falseMatch.Boundary.Length);
-            
+
             // Verify positions are correct
             Assert.True(trueMatch.Boundary.Index < falseMatch.Boundary.Index, 
                 "Application debuggable should come before activity debuggable");
@@ -476,29 +648,30 @@ public class XPathPositionTests
     public void XPath_MavenPOM_LocalName_SpecificDependencyVersion_ReturnsCorrectPosition()
     {
         // Test using local-name() to ignore namespaces - uses non-namespaced XML for clarity
-        
+
         var rule = CreateXPathRule("XPATH_MAVEN_001", 
             "//*[local-name()='dependency'][*[local-name()='artifactId']='junit-jupiter']/*[local-name()='version']", "5.8.2");
-        
+
         RuleSet rules = new();
         rules.AddString(rule, "XPathMavenTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
+
         if (_languages.FromFileNameOut("pom.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithNestedDuplicates, new FileEntry("pom.xml", new MemoryStream()), info);
-            
+            var xml = GetXmlWithNestedDuplicates();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("pom.xml", new MemoryStream()), info);
+
             Assert.Single(matches);
-            
+
             var match = matches[0];
             Assert.Equal("5.8.2", match.Sample);
             Assert.Equal(5, match.Boundary.Length);
-            
+
             // Verify this is specifically the JUnit Jupiter dependency version
             var contextStart = Math.Max(0, match.Boundary.Index - 200);
-            var contextEnd = Math.Min(XmlWithNestedDuplicates.Length, match.Boundary.Index + 50);
-            var context = XmlWithNestedDuplicates[contextStart..contextEnd];
+            var contextEnd = Math.Min(xml.Length, match.Boundary.Index + 50);
+            var context = xml[contextStart..contextEnd];
             Assert.Contains("junit-jupiter", context);
             Assert.DoesNotContain("mockito", context);
         }
@@ -512,30 +685,31 @@ public class XPathPositionTests
     public void XPath_MavenPOM_LocalName_AllDependencyVersions_ReturnsCorrectPositions()
     {
         // Test using local-name() to find all dependency versions - uses non-namespaced XML
-        
+
         var rule = CreateXPathRule("XPATH_MAVEN_002", 
             "//*[local-name()='dependencies']//*[local-name()='version']", "\\\\d+\\\\.\\\\d+\\\\.\\\\d+", "regex");
-        
+
         RuleSet rules = new();
         rules.AddString(rule, "XPathMavenTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
+
         if (_languages.FromFileNameOut("pom.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithNestedDuplicates, new FileEntry("pom.xml", new MemoryStream()), info);
-            
+            var xml = GetXmlWithNestedDuplicates();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("pom.xml", new MemoryStream()), info);
+
             // Should find 2 versions under dependencies: junit (5.8.2), mockito (4.6.1)
             Assert.Equal(2, matches.Count);
-            
+
             var versions = matches.Select(m => m.Sample).OrderBy(v => v).ToArray();
             Assert.Contains("4.6.1", versions); // mockito
             Assert.Contains("5.8.2", versions); // junit
-            
+
             // Verify each position is correct
             foreach (var match in matches)
             {
-                var actualText = XmlWithNestedDuplicates.Substring(match.Boundary.Index, match.Boundary.Length);
+                var actualText = xml.Substring(match.Boundary.Index, match.Boundary.Length);
                 Assert.Equal(match.Sample, actualText);
             }
         }
@@ -549,29 +723,30 @@ public class XPathPositionTests
     public void XPath_MavenPOM_WithNamespaces_SpecificDependencyVersion_ReturnsCorrectPosition()
     {
         // Test proper namespace handling for Maven POM with default namespace
-        
+
         var rule = CreateXPathRuleWithMavenNamespaces("XPATH_MAVEN_NS_001", 
             "//mvn:dependency[mvn:artifactId='junit-jupiter']/mvn:version", "5.8.2");
-        
+
         RuleSet rules = new();
         rules.AddString(rule, "XPathMavenNamespaceTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
+
         if (_languages.FromFileNameOut("pom.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithMavenNamespace, new FileEntry("pom.xml", new MemoryStream()), info);
-            
+            var xml = GetXmlWithMavenNamespace();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("pom.xml", new MemoryStream()), info);
+
             Assert.Single(matches);
-            
+
             var match = matches[0];
             Assert.Equal("5.8.2", match.Sample);
             Assert.Equal(5, match.Boundary.Length);
-            
+
             // Verify this is specifically the JUnit Jupiter dependency version
             var contextStart = Math.Max(0, match.Boundary.Index - 200);
-            var contextEnd = Math.Min(XmlWithMavenNamespace.Length, match.Boundary.Index + 50);
-            var context = XmlWithMavenNamespace[contextStart..contextEnd];
+            var contextEnd = Math.Min(xml.Length, match.Boundary.Index + 50);
+            var context = xml[contextStart..contextEnd];
             Assert.Contains("junit-jupiter", context);
             Assert.DoesNotContain("mockito", context);
         }
@@ -585,30 +760,31 @@ public class XPathPositionTests
     public void XPath_MavenPOM_WithNamespaces_AllDependencyVersions_ReturnsCorrectPositions()
     {
         // Test proper namespace handling for all dependency versions
-        
+
         var rule = CreateXPathRuleWithMavenNamespaces("XPATH_MAVEN_NS_002", 
             "//mvn:dependencies//mvn:version", "\\\\d+\\\\.\\\\d+\\\\.\\\\d+", "regex");
-        
+
         RuleSet rules = new();
         rules.AddString(rule, "XPathMavenNamespaceTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
+
         if (_languages.FromFileNameOut("pom.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithMavenNamespace, new FileEntry("pom.xml", new MemoryStream()), info);
-            
+            var xml = GetXmlWithMavenNamespace();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("pom.xml", new MemoryStream()), info);
+
             // Should find 2 versions under dependencies: junit (5.8.2), mockito (4.6.1)
             Assert.Equal(2, matches.Count);
-            
+
             var versions = matches.Select(m => m.Sample).OrderBy(v => v).ToArray();
             Assert.Contains("4.6.1", versions); // mockito
             Assert.Contains("5.8.2", versions); // junit
-            
+
             // Verify each position is correct
             foreach (var match in matches)
             {
-                var actualText = XmlWithMavenNamespace.Substring(match.Boundary.Index, match.Boundary.Length);
+                var actualText = xml.Substring(match.Boundary.Index, match.Boundary.Length);
                 Assert.Equal(match.Sample, actualText);
             }
         }
@@ -751,14 +927,15 @@ public class XPathPositionTests
         
         if (_languages.FromFileNameOut("pom.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithNestedDuplicates, new FileEntry("pom.xml", new MemoryStream()), info);
+            var xml = GetXmlWithNestedDuplicates();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("pom.xml", new MemoryStream()), info);
             
             Assert.Single(matches);
             
             var match = matches[0];
             
             // The key fix: position should point to the actual matched content, not document start
-            var expectedPosition = XmlWithNestedDuplicates.IndexOf("5.8.2");
+            var expectedPosition = xml.IndexOf("5.8.2");
             Assert.True(expectedPosition > 0, "Version should be found in the document");
             
             // These assertions verify the bug fix for issue #621
@@ -768,8 +945,8 @@ public class XPathPositionTests
             
             // Additional verification: ensure the position is actually within the JUnit dependency
             var contextStart = Math.Max(0, match.Boundary.Index - 100);
-            var contextEnd = Math.Min(XmlWithNestedDuplicates.Length, match.Boundary.Index + 100);
-            var context = XmlWithNestedDuplicates[contextStart..contextEnd];
+            var contextEnd = Math.Min(xml.Length, match.Boundary.Index + 100);
+            var context = xml[contextStart..contextEnd];
             Assert.Contains("junit-jupiter", context);
         }
         else
@@ -820,14 +997,15 @@ public class XPathPositionTests
         
         if (_languages.FromFileNameOut("pom.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(XmlWithMavenNamespace, new FileEntry("pom.xml", new MemoryStream()), info);
+            var xml = GetXmlWithMavenNamespace();
+            var matches = processor.AnalyzeFile(xml, new FileEntry("pom.xml", new MemoryStream()), info);
             
             Assert.Single(matches);
             
             var match = matches[0];
             
             // The key fix: position should point to the actual matched content, not document start
-            var expectedPosition = XmlWithMavenNamespace.IndexOf("5.8.2");
+            var expectedPosition = xml.IndexOf("5.8.2");
             Assert.True(expectedPosition > 0, "Version should be found in the document");
             
             // These assertions verify the bug fix for issue #621 with proper namespace handling
@@ -837,8 +1015,8 @@ public class XPathPositionTests
             
             // Additional verification: ensure the position is actually within the JUnit dependency
             var contextStart = Math.Max(0, match.Boundary.Index - 100);
-            var contextEnd = Math.Min(XmlWithMavenNamespace.Length, match.Boundary.Index + 100);
-            var context = XmlWithMavenNamespace[contextStart..contextEnd];
+            var contextEnd = Math.Min(xml.Length, match.Boundary.Index + 100);
+            var context = xml[contextStart..contextEnd];
             Assert.Contains("junit-jupiter", context);
         }
         else
