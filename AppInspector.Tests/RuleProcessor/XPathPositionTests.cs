@@ -67,16 +67,16 @@ public class XPathPositionTests
 
     // Helper to explicitly load both line-ending variants when present (without caching),
     // enabling tests to run against both behaviors regardless of the host platform.
-    private static IEnumerable<(string Variant, string Content)> LoadTestDataVariants(string baseName)
+    private static IEnumerable<string> LoadTestDataVariants(string baseName)
     {
         var baseDir = AppContext.BaseDirectory;
         var relativePath = Path.Combine("TestData", "TestXPathPositions");
         var unixPath = Path.Combine(baseDir, relativePath, baseName + "_unix.xml");
         var windowsPath = Path.Combine(baseDir, relativePath, baseName + "_windows.xml");
 
-        var results = new List<(string, string)>();
-        if (File.Exists(unixPath)) results.Add(("unix", File.ReadAllText(unixPath)));
-        if (File.Exists(windowsPath)) results.Add(("windows", File.ReadAllText(windowsPath)));
+        var results = new List<string>();
+        if (File.Exists(unixPath)) results.Add(File.ReadAllText(unixPath));
+        if (File.Exists(windowsPath)) results.Add(File.ReadAllText(windowsPath));
 
         if (results.Count == 0)
         {
@@ -87,35 +87,61 @@ public class XPathPositionTests
     }
 
     // MemberData providers to always run both LF and CRLF variants
-    public static IEnumerable<object[]> XmlWithDuplicateValuesVariants() =>
-        LoadTestDataVariants("XmlWithDuplicateValues").Select(v => new object[] { v.Variant, v.Content });
+    public static IEnumerable<object[]> XmlWithPartialMatchEarly()
+        => LoadTestDataVariants("XmlWithPartialMatchEarly").Select(x => new object[] { x });
 
-    public static IEnumerable<object[]> XmlWithAttributeAndElementDuplicatesVariants() =>
-        LoadTestDataVariants("XmlWithAttributeAndElementDuplicates").Select(v => new object[] { v.Variant, v.Content });
+    public static IEnumerable<object[]> XmlWithDuplicateValuesVariants()
+        => LoadTestDataVariants("XmlWithDuplicateValues").Select(x => new object[] { x });
 
-    public static IEnumerable<object[]> XmlWithNamespacesVariants() =>
-        LoadTestDataVariants("XmlWithNamespaces").Select(v => new object[] { v.Variant, v.Content });
+    public static IEnumerable<object[]> XmlWithAttributeAndElementDuplicatesVariants()
+        => LoadTestDataVariants("XmlWithAttributeAndElementDuplicates").Select(x => new object[] { x });
 
-    public static IEnumerable<object[]> XmlWithNestedDuplicatesVariants() =>
-        LoadTestDataVariants("XmlWithNestedDuplicates").Select(v => new object[] { v.Variant, v.Content });
+    public static IEnumerable<object[]> XmlWithNamespacesVariants()
+        => LoadTestDataVariants("XmlWithNamespaces").Select(x => new object[] { x });
 
-    public static IEnumerable<object[]> XmlWithMavenNamespaceVariants() =>
-        LoadTestDataVariants("XmlWithMavenNamespace").Select(v => new object[] { v.Variant, v.Content });
+    public static IEnumerable<object[]> XmlWithNestedDuplicatesVariants()
+        => LoadTestDataVariants("XmlWithNestedDuplicates").Select(x => new object[] { x });
 
-    public static IEnumerable<object[]> XmlWithEmptyElementsVariants() =>
-        LoadTestDataVariants("XmlWithEmptyElements").Select(v => new object[] { v.Variant, v.Content });
+    public static IEnumerable<object[]> XmlWithMavenNamespaceVariants()
+        => LoadTestDataVariants("XmlWithMavenNamespace").Select(x => new object[] { x });
 
-    public static IEnumerable<object[]> XmlWithWhitespaceVariants() =>
-        LoadTestDataVariants("XmlWithWhitespace").Select(v => new object[] { v.Variant, v.Content });
+    // New provider that includes an explicit variant label along with the XML content
+    public static IEnumerable<object[]> XmlWithMavenNamespaceVariantsWithLabel()
+    {
+        var baseDir = AppContext.BaseDirectory;
+        var relativePath = Path.Combine("TestData", "TestXPathPositions");
+        var unixPath = Path.Combine(baseDir, relativePath, "XmlWithMavenNamespace_unix.xml");
+        var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithMavenNamespace_windows.xml");
 
-    public static IEnumerable<object[]> XmlWithLongAttributesVariants() =>
-        LoadTestDataVariants("XmlWithLongAttributes").Select(v => new object[] { v.Variant, v.Content });
+        if (File.Exists(unixPath))
+        {
+            yield return new object[] { "unix", File.ReadAllText(unixPath) };
+        }
+        if (File.Exists(windowsPath))
+        {
+            yield return new object[] { "windows", File.ReadAllText(windowsPath) };
+        }
 
-    public static IEnumerable<object[]> XmlWithDuplicateAttributeValuesVariants() =>
-        LoadTestDataVariants("XmlWithDuplicateAttributeValues").Select(v => new object[] { v.Variant, v.Content });
+        if (!File.Exists(unixPath) && !File.Exists(windowsPath))
+        {
+            throw new FileNotFoundException($"Required test data file not found for 'XmlWithMavenNamespace'. Expected at: '{unixPath}' or '{windowsPath}'");
+        }
+    }
 
-    public static IEnumerable<object[]> XmlWithMultiLineAttributesVariants() =>
-        LoadTestDataVariants("XmlWithMultiLineAttributes").Select(v => new object[] { v.Variant, v.Content });
+    public static IEnumerable<object[]> XmlWithEmptyElementsVariants()
+        => LoadTestDataVariants("XmlWithEmptyElements").Select(x => new object[] { x });
+
+    public static IEnumerable<object[]> XmlWithWhitespaceVariants()
+        => LoadTestDataVariants("XmlWithWhitespace").Select(x => new object[] { x });
+
+    public static IEnumerable<object[]> XmlWithLongAttributesVariants()
+        => LoadTestDataVariants("XmlWithLongAttributes").Select(x => new object[] { x });
+
+    public static IEnumerable<object[]> XmlWithDuplicateAttributeValuesVariants()
+        => LoadTestDataVariants("XmlWithDuplicateAttributeValues").Select(x => new object[] { x });
+
+    public static IEnumerable<object[]> XmlWithMultiLineAttributesVariants()
+        => LoadTestDataVariants("XmlWithMultiLineAttributes").Select(x => new object[] { x });
     #endregion
 
     #region Test Rules
@@ -791,8 +817,68 @@ public class XPathPositionTests
         }
     }
 
+    // Checks that even if the regex matches early in the document,
+    // the position is still accurate and points to the correct version element specified by the XPath
     [Theory]
-    [MemberData(nameof(XmlWithMavenNamespaceVariants))]
+    [MemberData(nameof(XmlWithPartialMatchEarly))]
+    public void When_PartialMatchEarlyInDocument_then_PositionAccurate(string xml)
+    {
+        // Test that partial matches early in the document are handled correctly
+        var rule = @"
+[{
+    ""name"": ""TEST xpath"",
+    ""description"": ""Detects the use of 1.x version of the library"",
+    ""id"": ""XPATH000000"",
+    ""applies_to"": [
+      ""pom.xml""
+    ],
+    ""tags"": [
+      ""XPATH.Version""
+    ],
+    ""severity"": ""critical"",
+    ""patterns"": [
+      {
+        ""pattern"": ""1\\..+"",
+        ""type"": ""regex"",
+        ""scopes"": [
+          ""code""
+        ],
+        ""modifiers"": [ ],
+        ""confidence"": ""high"",
+        ""xpaths"": [""//*[local-name(.)='artifactId' and text()='mylibrary']/parent::*/*[local-name(.)='version']""]
+      }
+    ]
+  }]
+";
+
+        RuleSet rules = new();
+        rules.AddString(rule, "XPathPartialMatchTest");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+
+        // Use pom.xml so the applies_to filter in the rule matches
+        if (_languages.FromFileNameOut("pom.xml", out var info))
+        {
+            var matches = processor.AnalyzeFile(xml, new FileEntry("pom.xml", new MemoryStream()), info);
+
+            Assert.Single(matches);
+
+            var match = matches[0];
+            Assert.Equal("1.6.0", match.Sample);
+            Assert.Equal(5, match.Boundary.Length);
+
+            // Verify the position is correct
+            var actualText = xml.Substring(match.Boundary.Index, match.Boundary.Length);
+            Assert.Equal("1.6.0", actualText);
+        }
+        else
+        {
+            Assert.Fail("Failed to get language info for pom.xml");
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(XmlWithMavenNamespaceVariantsWithLabel))]
     public void When_NamespacedComplexVersionQueryUsed_then_PositionAccurate(string variant, string xml)
     {
         // Explicitly use the variant parameter to satisfy analyzers and document the executed variant
@@ -909,7 +995,7 @@ public class XPathPositionTests
 
             if (_languages.FromFileNameOut("test.xml", out var info))
             {
-                foreach (var (_, xml) in LoadTestDataVariants("XmlWithDuplicateValues"))
+                foreach (var xml in LoadTestDataVariants("XmlWithDuplicateValues"))
                 {
                     var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
 

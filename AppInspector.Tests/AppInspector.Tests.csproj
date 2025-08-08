@@ -206,6 +206,13 @@
         <None Update="TestData/TestXPathPositions/XmlWithMultiLineAttributes_windows.xml">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="TestData/TestXPathPositions/XmlWithPartialMatchEarly_unix.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="TestData/TestXPathPositions/XmlWithPartialMatchEarly_windows.xml">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+
     </ItemGroup>
 
     <ItemGroup>
