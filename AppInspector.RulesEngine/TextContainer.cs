@@ -407,6 +407,14 @@ public class TextContainer
         return lineStartIndex + Math.Max(0, linePosition - 1);
     }
 
+    /// <summary>
+    /// Finds the exact position of an attribute value in the document.
+    /// Searches for the pattern "attributeName="value"" accounting for quotes and whitespace.
+    /// </summary>
+    /// <param name="attributeName">The name of the attribute as it appears in the document</param>
+    /// <param name="value">The attribute value to locate</param>
+    /// <param name="approximatePosition">Starting position hint from XDocument line info</param>
+    /// <returns>The exact character index of the attribute value in the document</returns>
     private int FindAttributeValuePosition(string attributeName, string value, int approximatePosition)
     {
         if (string.IsNullOrEmpty(attributeName) || string.IsNullOrEmpty(value))
