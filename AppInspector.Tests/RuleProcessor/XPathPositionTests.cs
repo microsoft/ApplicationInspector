@@ -31,6 +31,19 @@ public class XPathPositionTests
             .Replace("\"", "\\\""); // double quote
     }
 
+    private static string NormalizeToUnix(string content)
+    {
+        if (content is null) return string.Empty;
+        // Normalize any CRLF/CR to LF to create a canonical LF version
+        return content.Replace("\r\n", "\n").Replace("\r", "\n");
+    }
+
+    private static string ToWindowsFromUnix(string unixContent)
+    {
+        // Assumes input has been normalized to LF only
+        return unixContent.Replace("\n", "\r\n");
+    }
+
     private string LoadTestData(string baseName)
     {
         if (_testDataCache.TryGetValue(baseName, out var cached))
@@ -43,105 +56,87 @@ public class XPathPositionTests
         var unixPath = Path.Combine(baseDir, relativePath, baseName + "_unix.xml");
         var windowsPath = Path.Combine(baseDir, relativePath, baseName + "_windows.xml");
 
-        // Do NOT fork test behavior based on platform.
-        // Prefer deterministic selection: use Unix (\n) variant if available, otherwise Windows (\r\n).
-        string? pathToUse = null;
+        // Prefer deterministic selection: use Unix (\n) variant if available. If not, fall back to Windows
+        // and normalize to Unix so tests remain consistent.
+        string? rawContent = null;
         if (File.Exists(unixPath))
         {
-            pathToUse = unixPath;
+            rawContent = File.ReadAllText(unixPath);
         }
         else if (File.Exists(windowsPath))
         {
-            pathToUse = windowsPath;
+            rawContent = File.ReadAllText(windowsPath);
         }
 
-        if (pathToUse is null || !File.Exists(pathToUse))
+        if (rawContent is null)
         {
             throw new FileNotFoundException($"Required test data file not found for '{baseName}'. Expected at: '{unixPath}' or '{windowsPath}'");
         }
 
-        var content = File.ReadAllText(pathToUse);
+        var content = NormalizeToUnix(rawContent); // cache the canonical LF version
         _testDataCache[baseName] = content;
         return content;
     }
 
-    // Helper to explicitly load both line-ending variants when present (without caching),
-    // enabling tests to run against both behaviors regardless of the host platform.
-    private static IEnumerable<string> LoadTestDataVariants(string baseName)
+    // Helper that returns both LF and synthesized CRLF variants from a single LF source.
+    // Falls back to existing _windows.xml only for backward compatibility if LF isn’t present.
+    private static IEnumerable<object[]> LoadTestDataVariants(string baseName)
     {
         var baseDir = AppContext.BaseDirectory;
         var relativePath = Path.Combine("TestData", "TestXPathPositions");
         var unixPath = Path.Combine(baseDir, relativePath, baseName + "_unix.xml");
-        var windowsPath = Path.Combine(baseDir, relativePath, baseName + "_windows.xml");
 
-        var results = new List<string>();
-        if (File.Exists(unixPath)) results.Add(File.ReadAllText(unixPath));
-        if (File.Exists(windowsPath)) results.Add(File.ReadAllText(windowsPath));
-
-        if (results.Count == 0)
+        string? rawContent = null;
+        if (File.Exists(unixPath))
         {
-            throw new FileNotFoundException($"Required test data file not found for '{baseName}'. Expected at: '{unixPath}' or '{windowsPath}'");
+            rawContent = File.ReadAllText(unixPath);
         }
 
-        return results;
+        if (rawContent is null)
+        {
+            throw new FileNotFoundException($"Required test data file not found for '{baseName}'. Expected at: '{unixPath}'");
+        }
+
+        var unix = NormalizeToUnix(rawContent);
+        var windows = ToWindowsFromUnix(unix);
+
+        // Always return two variants (LF and CRLF).
+        return new[] { new object[] { "unix", unix }, new object[] { "windows", windows } };
     }
 
     // MemberData providers to always run both LF and CRLF variants
     public static IEnumerable<object[]> XmlWithPartialMatchEarly()
-        => LoadTestDataVariants("XmlWithPartialMatchEarly").Select(x => new object[] { x });
+        => LoadTestDataVariants("XmlWithPartialMatchEarly");
 
     public static IEnumerable<object[]> XmlWithDuplicateValuesVariants()
-        => LoadTestDataVariants("XmlWithDuplicateValues").Select(x => new object[] { x });
+        => LoadTestDataVariants("XmlWithDuplicateValues");
 
     public static IEnumerable<object[]> XmlWithAttributeAndElementDuplicatesVariants()
-        => LoadTestDataVariants("XmlWithAttributeAndElementDuplicates").Select(x => new object[] { x });
+        => LoadTestDataVariants("XmlWithAttributeAndElementDuplicates");
 
     public static IEnumerable<object[]> XmlWithNamespacesVariants()
-        => LoadTestDataVariants("XmlWithNamespaces").Select(x => new object[] { x });
+        => LoadTestDataVariants("XmlWithNamespaces");
 
     public static IEnumerable<object[]> XmlWithNestedDuplicatesVariants()
-        => LoadTestDataVariants("XmlWithNestedDuplicates").Select(x => new object[] { x });
+        => LoadTestDataVariants("XmlWithNestedDuplicates");
 
     public static IEnumerable<object[]> XmlWithMavenNamespaceVariants()
-        => LoadTestDataVariants("XmlWithMavenNamespace").Select(x => new object[] { x });
-
-    // New provider that includes an explicit variant label along with the XML content
-    public static IEnumerable<object[]> XmlWithMavenNamespaceVariantsWithLabel()
-    {
-        var baseDir = AppContext.BaseDirectory;
-        var relativePath = Path.Combine("TestData", "TestXPathPositions");
-        var unixPath = Path.Combine(baseDir, relativePath, "XmlWithMavenNamespace_unix.xml");
-        var windowsPath = Path.Combine(baseDir, relativePath, "XmlWithMavenNamespace_windows.xml");
-
-        if (File.Exists(unixPath))
-        {
-            yield return new object[] { "unix", File.ReadAllText(unixPath) };
-        }
-        if (File.Exists(windowsPath))
-        {
-            yield return new object[] { "windows", File.ReadAllText(windowsPath) };
-        }
-
-        if (!File.Exists(unixPath) && !File.Exists(windowsPath))
-        {
-            throw new FileNotFoundException($"Required test data file not found for 'XmlWithMavenNamespace'. Expected at: '{unixPath}' or '{windowsPath}'");
-        }
-    }
+        => LoadTestDataVariants("XmlWithMavenNamespace");
 
     public static IEnumerable<object[]> XmlWithEmptyElementsVariants()
-        => LoadTestDataVariants("XmlWithEmptyElements").Select(x => new object[] { x });
+        => LoadTestDataVariants("XmlWithEmptyElements");
 
     public static IEnumerable<object[]> XmlWithWhitespaceVariants()
-        => LoadTestDataVariants("XmlWithWhitespace").Select(x => new object[] { x });
+        => LoadTestDataVariants("XmlWithWhitespace");
 
     public static IEnumerable<object[]> XmlWithLongAttributesVariants()
-        => LoadTestDataVariants("XmlWithLongAttributes").Select(x => new object[] { x });
+        => LoadTestDataVariants("XmlWithLongAttributes");
 
     public static IEnumerable<object[]> XmlWithDuplicateAttributeValuesVariants()
-        => LoadTestDataVariants("XmlWithDuplicateAttributeValues").Select(x => new object[] { x });
+        => LoadTestDataVariants("XmlWithDuplicateAttributeValues");
 
     public static IEnumerable<object[]> XmlWithMultiLineAttributesVariants()
-        => LoadTestDataVariants("XmlWithMultiLineAttributes").Select(x => new object[] { x });
+        => LoadTestDataVariants("XmlWithMultiLineAttributes");
     #endregion
 
     #region Test Rules
@@ -226,7 +221,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithDuplicateValuesVariants))]
-    public void When_ElementValuesAreDuplicated_then_AllPositionsAreAccurate(string xml)
+    public void When_ElementValuesAreDuplicated_then_AllPositionsAreAccurate(string variant, string xml)
     {
         // Test that when multiple elements have the same text content,
         // each match returns the correct position for its specific element
@@ -270,7 +265,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithAttributeAndElementDuplicatesVariants))]
-    public void When_AttributeValuesAreDuplicated_then_AllPositionsAreAccurate(string xml)
+    public void When_AttributeValuesAreDuplicated_then_AllPositionsAreAccurate(string variant, string xml)
     {
         // Test that attribute values are positioned correctly when duplicates exist
 
@@ -309,7 +304,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithDuplicateValuesVariants))]
-    public void When_UsingComplexXPathWithDuplicates_then_CorrectElementPositionIsReturned(string xml)
+    public void When_UsingComplexXPathWithDuplicates_then_CorrectElementPositionIsReturned(string variant, string xml)
     {
         // Test complex XPath expressions that should match specific elements despite duplicates
 
@@ -350,7 +345,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithNamespacesVariants))]
-    public void When_QueryIncludesNamespacedAttribute_then_CorrectPositionIsReturned(string xml)
+    public void When_QueryIncludesNamespacedAttribute_then_CorrectPositionIsReturned(string variant, string xml)
     {
         // Test XPath with namespace prefixes
 
@@ -388,7 +383,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithNamespacesVariants))]
-    public void When_QueryMatchesMultipleNamespacedAttributes_then_AllPositionsAreReturned(string xml)
+    public void When_QueryMatchesMultipleNamespacedAttributes_then_AllPositionsAreReturned(string variant, string xml)
     {
         // Test XPath that matches multiple attributes with same name but different values
 
@@ -429,7 +424,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithNestedDuplicatesVariants))]
-    public void When_LocalNameSelectsSpecificDependencyVersion_then_PositionIsAccurate(string xml)
+    public void When_LocalNameSelectsSpecificDependencyVersion_then_PositionIsAccurate(string variant, string xml)
     {
         // Test using local-name() to ignore namespaces - uses non-namespaced XML for clarity
 
@@ -466,7 +461,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithNestedDuplicatesVariants))]
-    public void When_LocalNameSelectsAllDependencyVersions_then_PositionsAreAccurate(string xml)
+    public void When_LocalNameSelectsAllDependencyVersions_then_PositionsAreAccurate(string variant, string xml)
     {
         // Test using local-name() to find all dependency versions - uses non-namespaced XML
 
@@ -504,7 +499,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithMavenNamespaceVariants))]
-    public void When_NamespacedQuerySelectsSpecificDependencyVersion_then_PositionIsAccurate(string xml)
+    public void When_NamespacedQuerySelectsSpecificDependencyVersion_then_PositionIsAccurate(string variant, string xml)
     {
         // Test proper namespace handling for Maven POM with default namespace
 
@@ -541,7 +536,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithMavenNamespaceVariants))]
-    public void When_NamespacedQuerySelectsAllDependencyVersions_then_PositionsAreAccurate(string xml)
+    public void When_NamespacedQuerySelectsAllDependencyVersions_then_PositionsAreAccurate(string variant, string xml)
     {
         // Test proper namespace handling for all dependency versions
 
@@ -583,8 +578,11 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithEmptyElementsVariants))]
-    public void When_EmptyElementsArePresent_then_ContentElementPositionAccurate(string xmlWithEmptyElements)
+    public void When_EmptyElementsArePresent_then_ContentElementPositionAccurate(string variant, string xmlWithEmptyElements)
     {
+        // Explicitly reference variant to avoid analyzer warnings and to document executed case
+        Assert.True(variant == "unix" || variant == "windows");
+
         var rule = CreateXPathRule("XPATH_EMPTY_001", "//withContent", "actual content");
         
         RuleSet rules = new();
@@ -614,8 +612,10 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithWhitespaceVariants))]
-    public void When_ContentContainsWhitespace_then_PositionPreserved(string xmlWithWhitespace)
+    public void When_ContentContainsWhitespace_then_PositionPreserved(string variant, string xmlWithWhitespace)
     {
+        Assert.True(variant == "unix" || variant == "windows");
+
         var rule = CreateXPathRule("XPATH_WHITESPACE_001", "//item[contains(text(), 'spaces')]", "value with spaces", "string");
         
         RuleSet rules = new();
@@ -658,8 +658,10 @@ public class XPathPositionTests
     /// </summary>
     [Theory]
     [MemberData(nameof(XmlWithLongAttributesVariants))]
-    public void When_LongAttributesExceedOldWindow_then_NewMethodFindsAttribute(string xmlWithLongAttributes)
+    public void When_LongAttributesExceedOldWindow_then_NewMethodFindsAttribute(string variant, string xmlWithLongAttributes)
     {
+        Assert.True(variant == "unix" || variant == "windows");
+
         if (_languages.FromFileNameOut("test.xml", out var langInfo))
         {
             var tc = new TextContainer(xmlWithLongAttributes, langInfo.Name, _languages);
@@ -689,8 +691,10 @@ public class XPathPositionTests
     /// </summary>
     [Theory]
     [MemberData(nameof(XmlWithDuplicateAttributeValuesVariants))]
-    public void When_DuplicateAttributeValuesExist_then_FirstMatchPositionAccurate(string xmlWithDuplicateValues)
+    public void When_DuplicateAttributeValuesExist_then_FirstMatchPositionAccurate(string variant, string xmlWithDuplicateValues)
     {
+        Assert.True(variant == "unix" || variant == "windows");
+
         if (_languages.FromFileNameOut("test.xml", out var langInfo))
         {
             var tc = new TextContainer(xmlWithDuplicateValues, langInfo.Name, _languages);
@@ -722,8 +726,10 @@ public class XPathPositionTests
     /// </summary>
     [Theory]
     [MemberData(nameof(XmlWithMultiLineAttributesVariants))]
-    public void When_MultiLineAttributesPresent_then_LaterAttributePositionAccurate(string xmlWithMultiLineAttr)
+    public void When_MultiLineAttributesPresent_then_LaterAttributePositionAccurate(string variant, string xmlWithMultiLineAttr)
     {
+        Assert.True(variant == "unix" || variant == "windows");
+
         if (_languages.FromFileNameOut("test.xml", out var langInfo))
         {
             var tc = new TextContainer(xmlWithMultiLineAttr, langInfo.Name, _languages);
@@ -753,7 +759,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithNestedDuplicatesVariants))]
-    public void When_LocalNameComplexVersionQueryUsed_then_PositionAccurate(string xml)
+    public void When_LocalNameComplexVersionQueryUsed_then_PositionAccurate(string variant, string xml)
     {
         // Test complex version selection using local-name() with non-namespaced XML
         var complexXPathRule = @"[
@@ -821,7 +827,7 @@ public class XPathPositionTests
     // the position is still accurate and points to the correct version element specified by the XPath
     [Theory]
     [MemberData(nameof(XmlWithPartialMatchEarly))]
-    public void When_PartialMatchEarlyInDocument_then_PositionAccurate(string xml)
+    public void When_PartialMatchEarlyInDocument_then_PositionAccurate(string variant, string xml)
     {
         // Test that partial matches early in the document are handled correctly
         var rule = @"
@@ -878,7 +884,7 @@ public class XPathPositionTests
     }
 
     [Theory]
-    [MemberData(nameof(XmlWithMavenNamespaceVariantsWithLabel))]
+    [MemberData(nameof(XmlWithMavenNamespaceVariants))]
     public void When_NamespacedComplexVersionQueryUsed_then_PositionAccurate(string variant, string xml)
     {
         // Explicitly use the variant parameter to satisfy analyzers and document the executed variant
@@ -982,9 +988,13 @@ public class XPathPositionTests
             Assert.Contains("value", windowsExtraction.First().Item1);
         }
 
-        [Fact]
-        public void When_SameRuleRunsOnBothLineEndingVariants_then_PositionsAndSamplesRemainValid()
+        [Theory]
+        [MemberData(nameof(XmlWithDuplicateValuesVariants))]
+        public void When_SameRuleRunsOnBothLineEndingVariants_then_PositionsAndSamplesRemainValid(string variant, string xml)
         {
+            // Use variant to document executed case
+            Assert.True(variant == "unix" || variant == "windows");
+
             // Use a representative dataset with duplicate values to validate both CRLF and LF inputs.
             var rule = CreateXPathRule("XPATH_DUPLICATE_BOTH_001", "//version", "1.0.0");
 
@@ -995,22 +1005,19 @@ public class XPathPositionTests
 
             if (_languages.FromFileNameOut("test.xml", out var info))
             {
-                foreach (var xml in LoadTestDataVariants("XmlWithDuplicateValues"))
+                var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
+
+                Assert.Equal(3, matches.Count);
+
+                // Verify position points to the correct text for each match in this variant
+                foreach (var m in matches)
                 {
-                    var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
-
-                    Assert.Equal(3, matches.Count);
-
-                    // Verify position points to the correct text for each match in this variant
-                    foreach (var m in matches)
-                    {
-                        var slice = xml.Substring(m.Boundary.Index, m.Boundary.Length);
-                        Assert.Equal(m.Sample, slice);
-                    }
-
-                    // Also ensure we indeed matched the target value
-                    Assert.All(matches, m => Assert.Equal("1.0.0", m.Sample));
+                    var slice = xml.Substring(m.Boundary.Index, m.Boundary.Length);
+                    Assert.Equal(m.Sample, slice);
                 }
+
+                // Also ensure we indeed matched the target value
+                Assert.All(matches, m => Assert.Equal("1.0.0", m.Sample));
             }
             else
             {
