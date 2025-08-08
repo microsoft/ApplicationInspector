@@ -496,7 +496,19 @@ public class TextContainer
             return approximatePosition;
         }
         
-        // For elements, search around the approximate position for the text content
+        // Prefer searching for the element value after the end of the start tag to avoid
+        // accidentally matching earlier occurrences (e.g., in attributes or preceding text).
+        var startTagClose = FullContent.IndexOf('>', approximatePosition);
+        if (startTagClose >= 0 && startTagClose + 1 < FullContent.Length)
+        {
+            var idxAfterTag = FullContent.IndexOf(value, startTagClose + 1, StringComparison.Ordinal);
+            if (idxAfterTag >= 0)
+            {
+                return idxAfterTag;
+            }
+        }
+        
+        // Fallback to proximity-based exact text search around the approximate position
         return FindExactTextPosition(approximatePosition, value);
     }
 

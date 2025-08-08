@@ -573,6 +573,15 @@ public class RuleProcessor
         var excerptEndLine = Math.Min(text.LineEnds.Count - 1, endLineNumber + context);
         var startIndex = text.LineStarts[excerptStartLine];
         var endIndex = text.LineEnds[excerptEndLine] + 1;
+        // If the selected line ended with a CRLF sequence, include the LF as well so that
+        // the excerpt contains a full newline sequence on Windows, matching Linux behavior.
+        if (endIndex < text.FullContent.Length && endIndex - 1 >= 0)
+        {
+            if (text.FullContent[endIndex - 1] == '\r' && text.FullContent[endIndex] == '\n')
+            {
+                endIndex++;
+            }
+        }
         // Maximum number of characters to capture on each side
         var maxCharacterContext = context * 100;
         // If the number of characters captured for context is larger than 100*number of lines,
