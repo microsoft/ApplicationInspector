@@ -506,10 +506,96 @@ public class TextContainer
             {
                 return idxAfterTag;
             }
+
+            // Handle XML value normalization (XDocument normalizes line endings to \n), while the
+            // original document may contain \r\n. Try a CRLF-aware search that ignores \r when matching.
+            var normalizedIdx = IndexOfValueWithCrlfNormalization(startTagClose + 1, value);
+            if (normalizedIdx >= 0)
+            {
+                return normalizedIdx;
+            }
         }
         
-        // Fallback to proximity-based exact text search around the approximate position
-        return FindExactTextPosition(approximatePosition, value);
+        // Fallback to proximity-based exact/normalized text search around the approximate position
+        var exact = FindExactTextPosition(approximatePosition, value);
+        if (exact >= 0)
+        {
+            return exact;
+        }
+        var normalized = IndexOfValueWithCrlfNormalization(Math.Max(0, approximatePosition - 1), value);
+        if (normalized >= 0)
+        {
+            return normalized;
+        }
+        return approximatePosition;
+    }
+
+    // Performs an index search treating "\r\n" in the underlying content as equivalent to "\n" in the value.
+    // Returns the index in FullContent of the first matching character corresponding to value[0],
+    // or -1 if no match is found.
+    private int IndexOfValueWithCrlfNormalization(int startIndex, string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return -1;
+        }
+
+        int contentLen = FullContent.Length;
+        for (int i = Math.Max(0, startIndex); i < contentLen; i++)
+        {
+            int j = 0;
+            int k = i;
+            int firstMatchIndex = -1;
+
+            while (j < value.Length && k < contentLen)
+            {
+                char hc = FullContent[k];
+                if (hc == '\r')
+                {
+                    // Skip carriage returns in the content when matching against a normalized value
+                    k++;
+                    continue;
+                }
+                char vc = value[j];
+                if (hc != vc)
+                {
+                    break;
+                }
+                if (firstMatchIndex == -1)
+                {
+                    firstMatchIndex = k;
+                }
+                j++;
+                k++;
+            }
+
+            if (j == value.Length)
+            {
+                return firstMatchIndex >= 0 ? firstMatchIndex : i;
+            }
+        }
+
+        return -1;
+    }
+
+    private int FindExactTextPosition(int approximatePosition, string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return approximatePosition;
+        }
+
+        // Search for the exact value around the approximate position
+        // For elements, search around the approximate position for the text content
+        var idx = FindValueInProximity(approximatePosition, value);
+        if (idx >= 0)
+        {
+            return idx;
+        }
+
+        // If not found exactly, try CRLF-aware search to account for XML normalization of line endings
+        var normalizedIdx = IndexOfValueWithCrlfNormalization(Math.Max(0, approximatePosition - 1), value);
+        return normalizedIdx >= 0 ? normalizedIdx : approximatePosition;
     }
 
     /// <summary>
@@ -787,17 +873,5 @@ public class TextContainer
             yield return (match.ToString(),
                 new Boundary() { Index = (int)match.Start.Index, Length = (int)match.End.Index - (int)match.Start.Index });
         }
-    }
-
-    private int FindExactTextPosition(int approximatePosition, string value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return approximatePosition;
-        }
-
-        // Search for the exact value around the approximate position
-        // For elements, search around the approximate position for the text content
-        return FindValueInProximity(approximatePosition, value);
     }
 }
