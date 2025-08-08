@@ -453,7 +453,7 @@ public class TextContainer
                 
                 // Verify the value matches what we expect
                 if (valueStart + value.Length <= FullContent.Length &&
-                    FullContent.Substring(valueStart, value.Length) == value)
+                    FullContent.AsSpan(valueStart, value.Length).SequenceEqual(value.AsSpan()))
                 {
                     return valueStart;
                 }
