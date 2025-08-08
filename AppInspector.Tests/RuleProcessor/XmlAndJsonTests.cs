@@ -256,10 +256,10 @@ public class XmlAndJsonTests
             }
         ],
         ""must-match"": [
-            ""<?xml version=\""1.0\"" encoding=\""utf-8\""?><manifest xmlns=\""http://maven.apache.org/POM/4.0.0\"" xmlns:android=\""http://schemas.android.com/apk/res/android\""><application android:debuggable='true' /></manifest>""
+            ""<?xml version='1.0' encoding='utf-8'?><manifest xmlns='http://maven.apache.org/POM/4.0.0' xmlns:android='http://schemas.android.com/apk/res/android'><application android:debuggable='true' /></manifest>""
         ],
         ""must-not-match"": [
-            ""<?xml version=\""1.0\"" encoding=\""utf-8\""?><manifest xmlns=\""http://maven.apache.org/POM/4.0.0\"" xmlns:android=\""http://schemas.android.com/apk/res/android\""><application android:debuggable='false' /></manifest>""
+            ""<?xml version='1.0' encoding='utf-8'?><manifest xmlns='http://maven.apache.org/POM/4.0.0' xmlns:android='http://schemas.android.com/apk/res/android'><application android:debuggable='false' /></manifest>""
         ]
     }
 ]";
@@ -598,7 +598,7 @@ test:
         ""patterns"": [
         {
             ""pattern"": ""ok"",
-            ""ymlpaths"": [""/test/test3/test/tested""],
+            ""ymlpaths"": [""/test/test3/test/tested""] ,
             ""type"": ""string"",
             ""scopes"": [
             ""code""
@@ -626,7 +626,7 @@ test:
         ""patterns"": [
         {
             ""pattern"": ""ok"",
-            ""ymlpaths"": [""/test/test3/test/tested""],
+            ""ymlpaths"": [""/test/test3/test/tested""] ,
             ""type"": ""regex"",
             ""scopes"": [
             ""code""
@@ -700,7 +700,7 @@ test:
         ""patterns"": [
         {
             ""pattern"": ""ok"",
-            ""ymlpaths"": [""/test/test3/test/tested""],
+            ""ymlpaths"": [""/test/test3/test/tested""] ,
             ""type"": ""string"",
             ""scopes"": [
             ""code""
@@ -728,7 +728,7 @@ test:
         ""patterns"": [
         {
             ""pattern"": ""ok"",
-            ""ymlpaths"": [""/test/test3/test/tested""],
+            ""ymlpaths"": [""/test/test3/test/tested""] ,
             ""type"": ""regex"",
             ""scopes"": [
             ""code""
@@ -818,7 +818,7 @@ test:
     ""patterns"": [
       {
         ""pattern"": ""17"",
-        ""xpaths"" : [""/*[local-name(.)='project']/*[local-name(.)='properties']/*[local-name(.)='java.version']""],
+        ""xpaths"" : [""/*[local-name(.)='project']/*[local-name(.)='properties']/*[local-name(.)='java.version']""] ,
         ""type"": ""regex"",
         ""scopes"": [
           ""code""
@@ -841,416 +841,6 @@ test:
             Assert.Single(matches);
             matches = analyzer.AnalyzeFile(noNamespaceContent, new FileEntry("pom.xml", new MemoryStream()), info);
             Assert.Single(matches);
-        }
-    }
-
-    [Fact]
-    public void XPathComplexSampleExtractionBug()
-    {
-        // This test case verifies the fix for the bug reported in https://github.com/microsoft/ApplicationInspector/issues/621
-        // The issue was that when using complex XPath expressions, the sample and excerpt returned were from the beginning 
-        // of the document instead of the matched content. This has been fixed.
-        
-        var complexXPathRule = @"[
-    {
-        ""name"": ""TEST xpath complex"",
-        ""description"": ""Detects the use of 1.x version of mylibrary"",
-        ""id"": ""XPATH000001"",
-        ""applies_to"": [
-            ""pom.xml""
-        ],
-        ""tags"": [
-            ""XPATH.Version""
-        ],
-        ""severity"": ""critical"",
-        ""patterns"": [
-            {
-                ""pattern"": ""1\\..+"",
-                ""type"": ""regex"",
-                ""scopes"": [
-                    ""code""
-                ],
-                ""modifiers"": [],
-                ""confidence"": ""high"",
-                ""xpaths"": [""//*[local-name(.)='artifactId' and text()='mylibrary']/parent::*/*[local-name(.)='version']""]
-            }
-        ]
-    }
-]";
-
-        var complexPomXml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<project xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"">
-  <modelVersion>4.0.0</modelVersion>
-
-  <artifactId>test</artifactId>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>test.com</groupId>
-        <artifactId>mylibrary</artifactId>
-        <version>1.6.0</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-</project>";
-
-        RuleSet rules = new();
-        rules.AddString(complexXPathRule, "XPathTestRules");
-        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
-            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
-        if (_languages.FromFileNameOut("pom.xml", out var info))
-        {
-            var matches = processor.AnalyzeFile(complexPomXml, new FileEntry("pom.xml", new MemoryStream()), info);
-            Assert.Single(matches);
-            
-            var match = matches[0];
-            
-            // Test for correct behavior - verifies the bug fix
-            // FIXED: https://github.com/microsoft/ApplicationInspector/issues/621
-            // When using complex XPath expressions, the sample now correctly contains the actual matched content
-            // instead of content from the beginning of the document
-            
-            var expectedVersionPosition = complexPomXml.IndexOf("1.6.0");
-            Assert.True(expectedVersionPosition > 0, "Version should be found in the document");
-            
-            // These assertions verify the correct behavior after the bug was fixed
-            Assert.Equal(expectedVersionPosition, match.Boundary.Index);
-            Assert.Equal(5, match.Boundary.Length); // Length of "1.6.0"
-            Assert.Equal("1.6.0", match.Sample);
-        }
-        else
-        {
-            Assert.Fail("Failed to get language info for pom.xml");
-        }
-    }
-
-    [Fact]
-    public void XPathComplexSampleExtractionBugStringPattern()
-    {
-        // This test case verifies the fix for the bug reported in issue #621 using string patterns
-        // Testing with string pattern type instead of regex
-        
-        var complexXPathRuleString = @"[
-    {
-        ""name"": ""TEST xpath complex string"",
-        ""description"": ""Detects the use of 2.6.0 version of mylibrary"",
-        ""id"": ""XPATH000002"",
-        ""applies_to"": [
-            ""pom.xml""
-        ],
-        ""tags"": [
-            ""XPATH.Version""
-        ],
-        ""severity"": ""critical"",
-        ""patterns"": [
-            {
-                ""pattern"": ""2.6.0"",
-                ""type"": ""string"",
-                ""scopes"": [
-                    ""code""
-                ],
-                ""modifiers"": [],
-                ""confidence"": ""high"",
-                ""xpaths"": [""//*[local-name(.)='artifactId' and text()='mylibrary']/parent::*/*[local-name(.)='version']""]
-            }
-        ]
-    }
-]";
-
-        var complexPomXmlVersion2 = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<project xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"">
-  <modelVersion>4.0.0</modelVersion>
-
-  <artifactId>test</artifactId>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>test.com</groupId>
-        <artifactId>mylibrary</artifactId>
-        <version>2.6.0</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-</project>";
-
-        RuleSet rules = new();
-        rules.AddString(complexXPathRuleString, "XPathTestRules");
-        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
-            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
-        if (_languages.FromFileNameOut("pom.xml", out var info))
-        {
-            var matches = processor.AnalyzeFile(complexPomXmlVersion2, new FileEntry("pom.xml", new MemoryStream()), info);
-            Assert.Single(matches);
-            
-            var match = matches[0];
-            
-            // Test for correct behavior - verifies the bug fix for string patterns
-            // FIXED: https://github.com/microsoft/ApplicationInspector/issues/621
-            // When using complex XPath expressions, the sample now correctly contains the actual matched content
-            // instead of content from the beginning of the document
-            
-            var expectedVersionPosition = complexPomXmlVersion2.IndexOf("2.6.0");
-            Assert.True(expectedVersionPosition > 0, "Version should be found in the document");
-            
-            // These assertions verify the correct behavior after the bug was fixed
-            Assert.Equal(expectedVersionPosition, match.Boundary.Index);
-            Assert.Equal(5, match.Boundary.Length); // Length of "2.6.0"
-            Assert.Equal("2.6.0", match.Sample);
-        }
-        else
-        {
-            Assert.Fail("Failed to get language info for pom.xml");
-        }
-    }
-
-    [Fact]
-    public void XPathComplexVersionsStartingWith2RegexPattern()
-    {
-        // This test verifies that regex patterns work correctly for versions starting with "2"
-        // Related to the user's follow-up comment in GitHub issue #621
-        
-        var regexRuleFor2x = @"[
-    {
-        ""name"": ""TEST xpath 2.x versions regex"",
-        ""description"": ""Detects the use of 2.x version of mylibrary using regex"",
-        ""id"": ""XPATH000003"",
-        ""applies_to"": [
-            ""pom.xml""
-        ],
-        ""tags"": [
-            ""XPATH.Version""
-        ],
-        ""severity"": ""critical"",
-        ""patterns"": [
-            {
-                ""pattern"": ""2\\..+"",
-                ""type"": ""regex"",
-                ""scopes"": [
-                    ""code""
-                ],
-                ""modifiers"": [],
-                ""confidence"": ""high"",
-                ""xpaths"": [""//*[local-name(.)='artifactId' and text()='mylibrary']/parent::*/*[local-name(.)='version']""]
-            }
-        ]
-    }
-]";
-
-        var pomXmlWith2x = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<project xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"">
-  <modelVersion>4.0.0</modelVersion>
-
-  <artifactId>test</artifactId>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>test.com</groupId>
-        <artifactId>mylibrary</artifactId>
-        <version>2.1.0</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-</project>";
-
-        RuleSet rules = new();
-        rules.AddString(regexRuleFor2x, "XPathTestRules");
-        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
-            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
-        if (_languages.FromFileNameOut("pom.xml", out var info))
-        {
-            var matches = processor.AnalyzeFile(pomXmlWith2x, new FileEntry("pom.xml", new MemoryStream()), info);
-            Assert.Single(matches);
-            
-            var match = matches[0];
-            
-            var expectedVersionPosition = pomXmlWith2x.IndexOf("2.1.0");
-            Assert.True(expectedVersionPosition > 0, "Version should be found in the document");
-            
-            // Verify that the regex pattern correctly matches versions starting with "2"
-            Assert.Equal(expectedVersionPosition, match.Boundary.Index);
-            Assert.Equal(5, match.Boundary.Length); // Length of "2.1.0"
-            Assert.Equal("2.1.0", match.Sample);
-        }
-        else
-        {
-            Assert.Fail("Failed to get language info for pom.xml");
-        }
-    }
-
-    [Fact]
-    public void XPathComplexVersionsStartingWith2StringPattern()
-    {
-        // This test verifies that string patterns work correctly for versions starting with "2"
-        // Related to the user's follow-up comment in GitHub issue #621
-        
-        var stringRuleFor2x = @"[
-    {
-        ""name"": ""TEST xpath 2.x versions string"",
-        ""description"": ""Detects the use of specific 2.x version of mylibrary using string"",
-        ""id"": ""XPATH000004"",
-        ""applies_to"": [
-            ""pom.xml""
-        ],
-        ""tags"": [
-            ""XPATH.Version""
-        ],
-        ""severity"": ""critical"",
-        ""patterns"": [
-            {
-                ""pattern"": ""2.1.0"",
-                ""type"": ""string"",
-                ""scopes"": [
-                    ""code""
-                ],
-                ""modifiers"": [],
-                ""confidence"": ""high"",
-                ""xpaths"": [""//*[local-name(.)='artifactId' and text()='mylibrary']/parent::*/*[local-name(.)='version']""]
-            }
-        ]
-    }
-]";
-
-        var pomXmlWith2x = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<project xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"">
-  <modelVersion>4.0.0</modelVersion>
-
-  <artifactId>test</artifactId>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>test.com</groupId>
-        <artifactId>mylibrary</artifactId>
-        <version>2.1.0</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-</project>";
-
-        RuleSet rules = new();
-        rules.AddString(stringRuleFor2x, "XPathTestRules");
-        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
-            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
-        if (_languages.FromFileNameOut("pom.xml", out var info))
-        {
-            var matches = processor.AnalyzeFile(pomXmlWith2x, new FileEntry("pom.xml", new MemoryStream()), info);
-            Assert.Single(matches);
-            
-            var match = matches[0];
-            
-            var expectedVersionPosition = pomXmlWith2x.IndexOf("2.1.0");
-            Assert.True(expectedVersionPosition > 0, "Version should be found in the document");
-            
-            // Verify that the string pattern correctly matches versions starting with "2"
-            Assert.Equal(expectedVersionPosition, match.Boundary.Index);
-            Assert.Equal(5, match.Boundary.Length); // Length of "2.1.0"
-            Assert.Equal("2.1.0", match.Sample);
-        }
-        else
-        {
-            Assert.Fail("Failed to get language info for pom.xml");
-        }
-    }
-
-    [Fact]
-    public void XPathMultipleVersionsComparison()
-    {
-        // This test verifies that the fix works correctly for multiple different version patterns
-        // and that regex correctly distinguishes between different version ranges
-        
-        var multiVersionRule = @"[
-    {
-        ""name"": ""TEST xpath multiple versions"",
-        ""description"": ""Detects various version patterns"",
-        ""id"": ""XPATH000005"",
-        ""applies_to"": [
-            ""pom.xml""
-        ],
-        ""tags"": [
-            ""XPATH.Version""
-        ],
-        ""severity"": ""critical"",
-        ""patterns"": [
-            {
-                ""pattern"": ""[2-9]\\..+"",
-                ""type"": ""regex"",
-                ""scopes"": [
-                    ""code""
-                ],
-                ""modifiers"": [],
-                ""confidence"": ""high"",
-                ""xpaths"": [""//*[local-name(.)='artifactId' and text()='mylibrary']/parent::*/*[local-name(.)='version']""]
-            }
-        ]
-    }
-]";
-
-        var pomXmlWithMultipleVersions = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<project xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"">
-  <modelVersion>4.0.0</modelVersion>
-
-  <artifactId>test</artifactId>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>test.com</groupId>
-        <artifactId>otherlibrary</artifactId>
-        <version>1.5.0</version>
-      </dependency>
-      <dependency>
-        <groupId>test.com</groupId>
-        <artifactId>mylibrary</artifactId>
-        <version>2.3.1</version>
-      </dependency>
-      <dependency>
-        <groupId>test.com</groupId>
-        <artifactId>anotherlibrary</artifactId>
-        <version>3.0.0</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-</project>";
-
-        RuleSet rules = new();
-        rules.AddString(multiVersionRule, "XPathTestRules");
-        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
-            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
-        
-        if (_languages.FromFileNameOut("pom.xml", out var info))
-        {
-            var matches = processor.AnalyzeFile(pomXmlWithMultipleVersions, new FileEntry("pom.xml", new MemoryStream()), info);
-            Assert.Single(matches); // Should only match mylibrary with version 2.3.1, not otherlibrary with 1.5.0
-            
-            var match = matches[0];
-            
-            var expectedVersionPosition = pomXmlWithMultipleVersions.IndexOf("2.3.1");
-            Assert.True(expectedVersionPosition > 0, "Version should be found in the document");
-            
-            // Verify that the regex correctly matches only mylibrary version 2.3.1
-            Assert.Equal(expectedVersionPosition, match.Boundary.Index);
-            Assert.Equal(5, match.Boundary.Length); // Length of "2.3.1"
-            Assert.Equal("2.3.1", match.Sample);
-            
-            // Verify that 1.5.0 (otherlibrary) was not matched by ensuring our position is not at that location
-            var otherLibraryVersionPosition = pomXmlWithMultipleVersions.IndexOf("1.5.0");
-            Assert.NotEqual(otherLibraryVersionPosition, match.Boundary.Index);
-        }
-        else
-        {
-            Assert.Fail("Failed to get language info for pom.xml");
         }
     }
 }
