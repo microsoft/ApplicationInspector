@@ -11,7 +11,7 @@ namespace AppInspector.Tests.RuleProcessor;
 
 /// <summary>
 /// Comprehensive tests for XPath position accuracy in GetStringFromXPath method.
-/// These tests address issue #621 - inconsistencies with XPath query position detection.
+/// Tests ensure consistent XPath query position detection across scenarios.
 /// </summary>
 public class XPathPositionTests
 {
@@ -148,7 +148,7 @@ public class XPathPositionTests
     #region Duplicate Value Tests
 
     [Fact]
-    public void XPath_ElementWithDuplicateValues_ReturnsCorrectPositions()
+    public void When_ElementValuesAreDuplicated_then_AllPositionsAreAccurate()
     {
         // Test that when multiple elements have the same text content,
         // each match returns the correct position for its specific element
@@ -192,7 +192,7 @@ public class XPathPositionTests
     }
 
     [Fact]
-    public void XPath_AttributeWithDuplicateValues_ReturnsCorrectPositions()
+    public void When_AttributeValuesAreDuplicated_then_AllPositionsAreAccurate()
     {
         // Test that attribute values are positioned correctly when duplicates exist
 
@@ -231,7 +231,7 @@ public class XPathPositionTests
     }
 
     [Fact]
-    public void XPath_ComplexPathWithDuplicates_ReturnsCorrectPosition()
+    public void When_UsingComplexXPathWithDuplicates_then_CorrectElementPositionIsReturned()
     {
         // Test complex XPath expressions that should match specific elements despite duplicates
 
@@ -272,7 +272,7 @@ public class XPathPositionTests
     #region Namespace Tests
 
     [Fact]
-    public void XPath_WithNamespaces_ReturnsCorrectPosition()
+    public void When_QueryIncludesNamespacedAttribute_then_CorrectPositionIsReturned()
     {
         // Test XPath with namespace prefixes
 
@@ -310,7 +310,7 @@ public class XPathPositionTests
     }
 
     [Fact]
-    public void XPath_WithNamespaces_MultipleDuplicateAttributes_ReturnsCorrectPositions()
+    public void When_QueryMatchesMultipleNamespacedAttributes_then_AllPositionsAreReturned()
     {
         // Test XPath that matches multiple attributes with same name but different values
 
@@ -351,7 +351,7 @@ public class XPathPositionTests
     #region Complex Maven POM Tests
 
     [Fact]
-    public void XPath_MavenPOM_LocalName_SpecificDependencyVersion_ReturnsCorrectPosition()
+    public void When_LocalNameSelectsSpecificDependencyVersion_then_PositionIsAccurate()
     {
         // Test using local-name() to ignore namespaces - uses non-namespaced XML for clarity
 
@@ -388,7 +388,7 @@ public class XPathPositionTests
     }
 
     [Fact]
-    public void XPath_MavenPOM_LocalName_AllDependencyVersions_ReturnsCorrectPositions()
+    public void When_LocalNameSelectsAllDependencyVersions_then_PositionsAreAccurate()
     {
         // Test using local-name() to find all dependency versions - uses non-namespaced XML
 
@@ -426,7 +426,7 @@ public class XPathPositionTests
     }
 
     [Fact]
-    public void XPath_MavenPOM_WithNamespaces_SpecificDependencyVersion_ReturnsCorrectPosition()
+    public void When_NamespacedQuerySelectsSpecificDependencyVersion_then_PositionIsAccurate()
     {
         // Test proper namespace handling for Maven POM with default namespace
 
@@ -463,7 +463,7 @@ public class XPathPositionTests
     }
 
     [Fact]
-    public void XPath_MavenPOM_WithNamespaces_AllDependencyVersions_ReturnsCorrectPositions()
+    public void When_NamespacedQuerySelectsAllDependencyVersions_then_PositionsAreAccurate()
     {
         // Test proper namespace handling for all dependency versions
 
@@ -505,7 +505,7 @@ public class XPathPositionTests
     #region Edge Cases
 
     [Fact]
-    public void XPath_EmptyElements_HandledCorrectly()
+    public void When_EmptyElementsArePresent_then_ContentElementPositionAccurate()
     {
         var xmlWithEmptyElements = GetXmlWithEmptyElements();
 
@@ -537,7 +537,7 @@ public class XPathPositionTests
     }
 
     [Fact]
-    public void XPath_WhitespaceInContent_PreservesCorrectPosition()
+    public void When_ContentContainsWhitespace_then_PositionPreserved()
     {
         var xmlWithWhitespace = GetXmlWithWhitespace();
         
@@ -583,20 +583,19 @@ public class XPathPositionTests
     #region Regression Tests for Issue #621
 
     [Fact]
-    public void XPath_Issue621_LocalName_ComplexVersionQuery_ReturnsCorrectPosition()
+    public void When_LocalNameComplexVersionQueryUsed_then_PositionAccurate()
     {
-        // Direct test for the issue reported in #621 - using local-name() with non-namespaced XML
-        
+        // Test complex version selection using local-name() with non-namespaced XML
         var complexXPathRule = @"[
     {
-        ""name"": ""TEST xpath complex issue 621 - local-name()"",
-        ""description"": ""Detects the use of specific version patterns using local-name() to ignore namespaces"",
-        ""id"": ""XPATH621001"",
+        ""name"": ""TEST xpath complex local-name() version selection"",
+        ""description"": ""Detect specific dependency version using local-name() to ignore namespaces"",
+        ""id"": ""XPATH_VERSION_LOCALNAME_001"",
         ""applies_to"": [
             ""pom.xml""
         ],
         ""tags"": [
-            ""XPATH.Issue621.LocalName""
+            ""XPATH.Version.LocalName""
         ],
         ""severity"": ""critical"",
         ""patterns"": [
@@ -615,7 +614,7 @@ public class XPathPositionTests
 ]";
 
         RuleSet rules = new();
-        rules.AddString(complexXPathRule, "XPathIssue621Test");
+        rules.AddString(complexXPathRule, "XPathVersionLocalNameTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
         
@@ -650,20 +649,19 @@ public class XPathPositionTests
     }
 
     [Fact]
-    public void XPath_Issue621_WithNamespaces_ComplexVersionQuery_ReturnsCorrectPosition()
+    public void When_NamespacedComplexVersionQueryUsed_then_PositionAccurate()
     {
-        // Test the same Issue #621 scenario but with proper namespace handling
-        
+        // Test complex version selection with proper namespace handling
         var complexNamespacedXPathRule = @"[
     {
-        ""name"": ""TEST xpath complex issue 621 - with namespaces"",
-        ""description"": ""Detects the use of specific version patterns using proper namespace handling"",
-        ""id"": ""XPATH621002"",
+        ""name"": ""TEST xpath complex namespaced version selection"",
+        ""description"": ""Detect specific dependency version using namespace-aware XPath"",
+        ""id"": ""XPATH_VERSION_NAMESPACE_001"",
         ""applies_to"": [
             ""pom.xml""
         ],
         ""tags"": [
-            ""XPATH.Issue621.Namespaced""
+            ""XPATH.Version.Namespaced""
         ],
         ""severity"": ""critical"",
         ""patterns"": [
@@ -685,7 +683,7 @@ public class XPathPositionTests
 ]";
 
         RuleSet rules = new();
-        rules.AddString(complexNamespacedXPathRule, "XPathIssue621NamespaceTest");
+        rules.AddString(complexNamespacedXPathRule, "XPathVersionNamespacedTest");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
         
@@ -727,7 +725,7 @@ public class XPathPositionTests
     /// Test edge cases that would fail with hardcoded 50/200 search windows
     /// </summary>
     [Fact]
-    public void XPath_EdgeCases_RefactoredMethodHandlesBetter()
+    public void When_LongAttributesExceedOldWindow_then_NewMethodFindsAttribute()
     {
         var xmlWithLongAttributes = GetXmlWithLongAttributes();
 
@@ -759,7 +757,7 @@ public class XPathPositionTests
     /// Test attributes with values that appear multiple times in the document
     /// </summary>
     [Fact]
-    public void XPath_AttributeValueDuplicates_ReturnsCorrectPosition()
+    public void When_DuplicateAttributeValuesExist_then_FirstMatchPositionAccurate()
     {
         var xmlWithDuplicateValues = GetXmlWithDuplicateAttributeValues();
 
@@ -793,7 +791,7 @@ public class XPathPositionTests
     /// Test multi-line attributes that would fail with the old fixed search window
     /// </summary>
     [Fact]
-    public void XPath_MultiLineAttributes_HandledCorrectly()
+    public void When_MultiLineAttributesPresent_then_LaterAttributePositionAccurate()
     {
         var xmlWithMultiLineAttr = GetXmlWithMultiLineAttributes();
 
@@ -824,7 +822,7 @@ public class XPathPositionTests
 
     #region Cross-Platform Tests        
         [Fact]
-        public void XPath_CrossPlatformLineEndings_BothUnixAndWindows()
+        public void When_DifferentLineEndingsUsed_then_LineBoundaryAndExtractionAreCorrect()
         {
             // Test Unix line endings (\n)
             var unixXml = "<root>\n  <item>value</item>\n</root>";
