@@ -200,7 +200,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithDuplicateValuesVariants))]
-    public void When_ElementValuesAreDuplicated_then_AllPositionsAreAccurate(string variant, string xml)
+    public void When_ElementValuesAreDuplicated_then_AllPositionsAreAccurate(string xml)
     {
         // Test that when multiple elements have the same text content,
         // each match returns the correct position for its specific element
@@ -244,7 +244,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithAttributeAndElementDuplicatesVariants))]
-    public void When_AttributeValuesAreDuplicated_then_AllPositionsAreAccurate(string variant, string xml)
+    public void When_AttributeValuesAreDuplicated_then_AllPositionsAreAccurate(string xml)
     {
         // Test that attribute values are positioned correctly when duplicates exist
 
@@ -283,7 +283,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithDuplicateValuesVariants))]
-    public void When_UsingComplexXPathWithDuplicates_then_CorrectElementPositionIsReturned(string variant, string xml)
+    public void When_UsingComplexXPathWithDuplicates_then_CorrectElementPositionIsReturned(string xml)
     {
         // Test complex XPath expressions that should match specific elements despite duplicates
 
@@ -324,7 +324,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithNamespacesVariants))]
-    public void When_QueryIncludesNamespacedAttribute_then_CorrectPositionIsReturned(string variant, string xml)
+    public void When_QueryIncludesNamespacedAttribute_then_CorrectPositionIsReturned(string xml)
     {
         // Test XPath with namespace prefixes
 
@@ -362,7 +362,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithNamespacesVariants))]
-    public void When_QueryMatchesMultipleNamespacedAttributes_then_AllPositionsAreReturned(string variant, string xml)
+    public void When_QueryMatchesMultipleNamespacedAttributes_then_AllPositionsAreReturned(string xml)
     {
         // Test XPath that matches multiple attributes with same name but different values
 
@@ -403,7 +403,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithNestedDuplicatesVariants))]
-    public void When_LocalNameSelectsSpecificDependencyVersion_then_PositionIsAccurate(string variant, string xml)
+    public void When_LocalNameSelectsSpecificDependencyVersion_then_PositionIsAccurate(string xml)
     {
         // Test using local-name() to ignore namespaces - uses non-namespaced XML for clarity
 
@@ -440,7 +440,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithNestedDuplicatesVariants))]
-    public void When_LocalNameSelectsAllDependencyVersions_then_PositionsAreAccurate(string variant, string xml)
+    public void When_LocalNameSelectsAllDependencyVersions_then_PositionsAreAccurate(string xml)
     {
         // Test using local-name() to find all dependency versions - uses non-namespaced XML
 
@@ -478,7 +478,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithMavenNamespaceVariants))]
-    public void When_NamespacedQuerySelectsSpecificDependencyVersion_then_PositionIsAccurate(string variant, string xml)
+    public void When_NamespacedQuerySelectsSpecificDependencyVersion_then_PositionIsAccurate(string xml)
     {
         // Test proper namespace handling for Maven POM with default namespace
 
@@ -515,7 +515,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithMavenNamespaceVariants))]
-    public void When_NamespacedQuerySelectsAllDependencyVersions_then_PositionsAreAccurate(string variant, string xml)
+    public void When_NamespacedQuerySelectsAllDependencyVersions_then_PositionsAreAccurate(string xml)
     {
         // Test proper namespace handling for all dependency versions
 
@@ -557,7 +557,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithEmptyElementsVariants))]
-    public void When_EmptyElementsArePresent_then_ContentElementPositionAccurate(string variant, string xmlWithEmptyElements)
+    public void When_EmptyElementsArePresent_then_ContentElementPositionAccurate(string xmlWithEmptyElements)
     {
         var rule = CreateXPathRule("XPATH_EMPTY_001", "//withContent", "actual content");
         
@@ -588,7 +588,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithWhitespaceVariants))]
-    public void When_ContentContainsWhitespace_then_PositionPreserved(string variant, string xmlWithWhitespace)
+    public void When_ContentContainsWhitespace_then_PositionPreserved(string xmlWithWhitespace)
     {
         var rule = CreateXPathRule("XPATH_WHITESPACE_001", "//item[contains(text(), 'spaces')]", "value with spaces", "string");
         
@@ -632,7 +632,7 @@ public class XPathPositionTests
     /// </summary>
     [Theory]
     [MemberData(nameof(XmlWithLongAttributesVariants))]
-    public void When_LongAttributesExceedOldWindow_then_NewMethodFindsAttribute(string variant, string xmlWithLongAttributes)
+    public void When_LongAttributesExceedOldWindow_then_NewMethodFindsAttribute(string xmlWithLongAttributes)
     {
         if (_languages.FromFileNameOut("test.xml", out var langInfo))
         {
@@ -663,7 +663,7 @@ public class XPathPositionTests
     /// </summary>
     [Theory]
     [MemberData(nameof(XmlWithDuplicateAttributeValuesVariants))]
-    public void When_DuplicateAttributeValuesExist_then_FirstMatchPositionAccurate(string variant, string xmlWithDuplicateValues)
+    public void When_DuplicateAttributeValuesExist_then_FirstMatchPositionAccurate(string xmlWithDuplicateValues)
     {
         if (_languages.FromFileNameOut("test.xml", out var langInfo))
         {
@@ -696,7 +696,7 @@ public class XPathPositionTests
     /// </summary>
     [Theory]
     [MemberData(nameof(XmlWithMultiLineAttributesVariants))]
-    public void When_MultiLineAttributesPresent_then_LaterAttributePositionAccurate(string variant, string xmlWithMultiLineAttr)
+    public void When_MultiLineAttributesPresent_then_LaterAttributePositionAccurate(string xmlWithMultiLineAttr)
     {
         if (_languages.FromFileNameOut("test.xml", out var langInfo))
         {
@@ -727,7 +727,7 @@ public class XPathPositionTests
 
     [Theory]
     [MemberData(nameof(XmlWithNestedDuplicatesVariants))]
-    public void When_LocalNameComplexVersionQueryUsed_then_PositionAccurate(string variant, string xml)
+    public void When_LocalNameComplexVersionQueryUsed_then_PositionAccurate(string xml)
     {
         // Test complex version selection using local-name() with non-namespaced XML
         var complexXPathRule = @"[
