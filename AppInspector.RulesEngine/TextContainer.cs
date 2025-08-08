@@ -9,14 +9,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using YamlDotNet.RepresentationModel;
+using Microsoft.ApplicationInspector.RulesEngine.Processors;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
 
@@ -25,13 +23,8 @@ namespace Microsoft.ApplicationInspector.RulesEngine;
 /// </summary>
 public class TextContainer
 {
-    /// <summary>
-    /// Maximum search distance forward from approximate position when searching for XML attributes.
-    /// This provides a reasonable buffer for long attribute lists without searching the entire document.
-    /// </summary>
-    private const int MaxAttributeSearchDistance = 500;
-    
     private readonly ILogger _logger;
+    private readonly ILoggerFactory? _loggerFactory; // store factory for processors
 
     private readonly string inline;
     private readonly string prefix;
@@ -41,14 +34,13 @@ public class TextContainer
     private JsonDocument? _jsonDocument;
     private object _jsonLock = new();
 
-    private bool _triedToConstructXPathDocument;
-    private XDocument? _xmlDocument;
-    private object _xpathLock = new();
-
     private bool _triedToConstructYmlDocument;
     private YamlStream? _ymlDocument;
     private object _yamlLock = new();
     private readonly string? _filePath;
+
+    private CommentProcessor? _commentProcessor;
+    private XPathProcessor? _xPathProcessor; // new processor for XML/XPath
 
     /// <summary>
     ///     Creates new instance
@@ -64,6 +56,7 @@ public class TextContainer
     public TextContainer(string content, string language, Languages languages, ILoggerFactory? loggerFactory = null, string? filePath = null)
     {
         _filePath = filePath;
+        _loggerFactory = loggerFactory; // save for processors
         _logger = loggerFactory?.CreateLogger<TextContainer>() ?? NullLogger<TextContainer>.Instance;
         Language = language;
         FullContent = content;
@@ -187,681 +180,50 @@ public class TextContainer
         }
     }
 
-    /// <summary>
-    ///     If this file is XML, attempts to return the the string contents of the specified XPath applied to the file.
-    ///     Method contains some heuristic behavior and may not cover all cases. 
-    /// </summary>
-    /// <param name="Path">XPath to query document with</param>
-    /// <returns>Enumeration of string and Boundary tuples for the XPath matches. Boundary locations refer to the locations in the original document on disk.</returns>
-    internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path, Dictionary<string, string> xpathNameSpaces)
+    private void EnsureCommentProcessor()
     {
-        lock (_xpathLock)
-        {
-            if (!_triedToConstructXPathDocument)
-            {
-                try
-                {
-                    _triedToConstructXPathDocument = true;
-                    
-                    _xmlDocument = XDocument.Parse(FullContent, LoadOptions.SetLineInfo | LoadOptions.PreserveWhitespace);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError("Failed to parse {1} as a XML document: {0}", e.Message, _filePath);
-                    _xmlDocument = null;
-                }
-            }
-        }
-
-        if (_xmlDocument is null)
-        {
-            yield break;
-        }
-
-        // Prepare namespace resolver if needed
-        IXmlNamespaceResolver? nsResolver = null;
-        if (xpathNameSpaces != null && xpathNameSpaces.Any())
-        {
-            var nt = new NameTable();
-            var nsmgr = new XmlNamespaceManager(nt);
-            foreach (var pair in xpathNameSpaces)
-            {
-                try
-                {
-                    nsmgr.AddNamespace(pair.Key, pair.Value);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning("Failed to add namespace prefix '{0}' for '{1}': {2}", pair.Key, pair.Value, ex.Message);
-                }
-            }
-            nsResolver = nsmgr;
-        }
-
-        object evalResult;
-        try
-        {
-            evalResult = nsResolver is null
-                ? _xmlDocument.XPathEvaluate(Path)
-                : _xmlDocument.XPathEvaluate(Path, nsResolver);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Failed to evaluate XPath '{0}' against file {1}: {2}", Path, _filePath ?? "unknown", e.Message);
-            yield break;
-        }
-
-        // Helper local to calculate position from XObject
-        int PosFromXObject(XObject xobj)
-        {
-            if (xobj is IXmlLineInfo li && li.HasLineInfo())
-            {
-                return CalculatePositionFromLineInfo(li.LineNumber, li.LinePosition);
-            }
-            return 0;
-        }
-
-        // Iterate node-set results
-        if (evalResult is IEnumerable enumerable && evalResult is not string)
-        {
-            foreach (var item in enumerable)
-            {
-                if (item is null) continue;
-
-                switch (item)
-                {
-                    case XAttribute attr:
-                    {
-                        var value = attr.Value ?? string.Empty;
-                        if (value.Length == 0) { break; }
-
-                        var basePos = PosFromXObject(attr);
-
-                        // Build the qualified attribute name as it appears in the document (with prefix if any)
-                        var attrName = attr.Name.LocalName;
-                        var prefix = attr.Parent?.GetPrefixOfNamespace(attr.Name.Namespace);
-                        if (!string.IsNullOrEmpty(prefix))
-                        {
-                            attrName = prefix + ":" + attrName;
-                        }
-
-                        var valueStart = FindAttributeValuePosition(attrName, value, basePos);
-                        var res = CreateResultBoundary(value, valueStart);
-                        if (res.HasValue) yield return res.Value;
-                        break;
-                    }
-                    case XElement el:
-                    {
-                        var value = el.Value ?? string.Empty;
-                        if (value.Length == 0) { break; }
-
-                        var basePos = PosFromXObject(el);
-                        var textStart = FindElementTextPosition(value, basePos);
-                        var res = CreateResultBoundary(value, textStart);
-                        if (res.HasValue) yield return res.Value;
-                        break;
-                    }
-                    case XCData cdata:
-                    {
-                        var value = cdata.Value ?? string.Empty;
-                        if (value.Length == 0) { break; }
-
-                        var basePos = PosFromXObject(cdata);
-                        var start = FindValueInProximity(basePos, value);
-                        var res = CreateResultBoundary(value, start);
-                        if (res.HasValue) yield return res.Value;
-                        break;
-                    }
-                    case XText xt:
-                    {
-                        var value = xt.Value ?? string.Empty;
-                        if (value.Length == 0) { break; }
-
-                        var basePos = PosFromXObject(xt);
-                        var start = FindValueInProximity(basePos, value);
-                        var res = CreateResultBoundary(value, start);
-                        if (res.HasValue) yield return res.Value;
-                        break;
-                    }
-                    case XComment comment:
-                    {
-                        var value = comment.Value ?? string.Empty;
-                        if (value.Length == 0) { break; }
-
-                        var basePos = PosFromXObject(comment);
-                        var start = FindValueInProximity(basePos, value);
-                        var res = CreateResultBoundary(value, start);
-                        if (res.HasValue) yield return res.Value;
-                        break;
-                    }
-                    case XProcessingInstruction pi:
-                    {
-                        var value = pi.Data ?? string.Empty;
-                        if (value.Length == 0) { break; }
-
-                        var basePos = PosFromXObject(pi);
-                        var start = FindValueInProximity(basePos, value);
-                        var res = CreateResultBoundary(value, start);
-                        if (res.HasValue) yield return res.Value;
-                        break;
-                    }
-                    case XObject xobj:
-                    {
-                        // Generic fallback for other XObject types (prefer XNode for formatted value)
-                        string s = xobj is XNode xn
-                            ? xn.ToString(SaveOptions.DisableFormatting)
-                            : (xobj.ToString() ?? string.Empty);
-                        if (!string.IsNullOrEmpty(s))
-                        {
-                            var basePos = PosFromXObject(xobj);
-                            var start = FindValueInProximity(basePos, s);
-                            var res = CreateResultBoundary(s, start);
-                            if (res.HasValue) yield return res.Value;
-                        }
-                        break;
-                    }
-                    default:
-                    {
-                        // Unexpected type; attempt string conversion and proximity search
-                        var s = item.ToString();
-                        if (!string.IsNullOrEmpty(s))
-                        {
-                            var start = FindValueInProximity(0, s);
-                            var res = CreateResultBoundary(s, start);
-                            if (res.HasValue) yield return res.Value;
-                        }
-                        else
-                        {
-                            _logger.LogDebug("Unsupported XPath result type {0} in file {1}.", item.GetType().FullName, _filePath ?? "unknown");
-                        }
-                        break;
-                    }
-                }
-            }
-            yield break;
-        }
-
-        // Scalar results (string, bool, number)
-        string? scalar = evalResult switch
-        {
-            null => null,
-            string s => s,
-            bool b => b ? "true" : "false",
-            double d => d.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            _ => evalResult.ToString()
-        };
-
-        if (!string.IsNullOrEmpty(scalar))
-        {
-            var idx = FullContent.IndexOf(scalar, StringComparison.Ordinal);
-            if (idx < 0)
-            {
-                // If not found, best-effort proximity search from start
-                idx = FindValueInProximity(0, scalar);
-            }
-            var res = CreateResultBoundary(scalar, idx);
-            if (res.HasValue) yield return res.Value;
-        }
+        _commentProcessor ??= new CommentProcessor(FullContent, Language, Languages, LineStarts, LineEnds);
     }
 
-    private int CalculatePositionFromLineInfo(int lineNumber, int linePosition)
+    private void EnsureXPathProcessor()
     {
-        // Line numbers and positions are 1-based, but our arrays are 0-based
-        if (lineNumber <= 0 || lineNumber > LineStarts.Count)
+        if (_xPathProcessor is null)
         {
-            return 0;
+            _xPathProcessor = new XPathProcessor(FullContent, _loggerFactory, _filePath, LineStarts);
         }
-        
-        var lineStartIndex = LineStarts[lineNumber - 1];
-        return lineStartIndex + Math.Max(0, linePosition - 1);
-    }
-
-    /// <summary>
-    /// Finds the exact position of an attribute value in the document.
-    /// Searches for the pattern "attributeName="value"" accounting for quotes and whitespace.
-    /// </summary>
-    /// <param name="attributeName">The name of the attribute as it appears in the document</param>
-    /// <param name="value">The attribute value to locate</param>
-    /// <param name="approximatePosition">Starting position hint from XDocument line info</param>
-    /// <returns>The exact character index of the attribute value in the document</returns>
-    private int FindAttributeValuePosition(string attributeName, string value, int approximatePosition)
-    {
-        if (string.IsNullOrEmpty(attributeName) || string.IsNullOrEmpty(value))
-        {
-            return approximatePosition;
-        }
-        
-        // Start from the approximate position and search forward for the attribute pattern
-        // This is more reliable than using arbitrary search windows
-        var searchPattern = $"{attributeName}=";
-        
-        // First, try to find the attribute pattern starting from the approximate position
-        // The line info should point close to where the attribute name starts
-        var patternIndex = FullContent.IndexOf(searchPattern, approximatePosition, StringComparison.Ordinal);
-        
-        // If not found forward, try searching backward from the approximate position
-        // This handles cases where the line info points slightly past the attribute name
-        if (patternIndex == -1)
-        {
-            // Search backward from approximate position to start of current line
-            var lineStart = GetLineBoundary(approximatePosition).Index;
-            var searchStart = Math.Max(0, lineStart);
-            
-            // Search in the current line and a reasonable distance forward
-            var searchLength = Math.Min(FullContent.Length - searchStart, approximatePosition - searchStart + MaxAttributeSearchDistance);
-            patternIndex = FullContent.IndexOf(searchPattern, searchStart, searchLength, StringComparison.Ordinal);
-        }
-        
-        if (patternIndex >= 0)
-        {
-            var quoteIndex = patternIndex + searchPattern.Length;
-            
-            // Skip any whitespace between = and the quote
-            while (quoteIndex < FullContent.Length && char.IsWhiteSpace(FullContent[quoteIndex]))
-            {
-                quoteIndex++;
-            }
-            
-            if (quoteIndex < FullContent.Length && (FullContent[quoteIndex] == '"' || FullContent[quoteIndex] == '\''))
-            {
-                // Position after the opening quote
-                var valueStart = quoteIndex + 1;
-                
-                // Verify the value matches what we expect
-                if (valueStart + value.Length <= FullContent.Length &&
-                    FullContent.AsSpan(valueStart, value.Length).SequenceEqual(value.AsSpan()))
-                {
-                    return valueStart;
-                }
-            }
-        }
-        
-        // Fallback: search for the value directly using a more targeted approach
-        return FindValueInProximity(approximatePosition, value);
-    }
-
-    private int FindValueInProximity(int approximatePosition, string value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return approximatePosition;
-        }
-        
-        // First try searching for the exact value
-        var forwardIndex = FullContent.IndexOf(value, approximatePosition, StringComparison.Ordinal);
-        var backwardIndex = FullContent.LastIndexOf(value, approximatePosition, StringComparison.Ordinal);
-        
-        // Choose the closest match to the approximate position
-        if (forwardIndex >= 0 && backwardIndex >= 0)
-        {
-            var forwardDistance = forwardIndex - approximatePosition;
-            var backwardDistance = approximatePosition - backwardIndex;
-            return forwardDistance <= backwardDistance ? forwardIndex : backwardIndex;
-        }
-        
-        if (forwardIndex >= 0) return forwardIndex;
-        if (backwardIndex >= 0) return backwardIndex;
-        
-        return approximatePosition;
-    }
-
-    private int FindElementTextPosition(string value, int approximatePosition)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return approximatePosition;
-        }
-        
-        // Prefer searching for the element value after the end of the start tag to avoid
-        // accidentally matching earlier occurrences (e.g., in attributes or preceding text).
-        var startTagClose = FullContent.IndexOf('>', approximatePosition);
-        if (startTagClose >= 0 && startTagClose + 1 < FullContent.Length)
-        {
-            var idxAfterTag = FullContent.IndexOf(value, startTagClose + 1, StringComparison.Ordinal);
-            if (idxAfterTag >= 0)
-            {
-                return idxAfterTag;
-            }
-
-            // Handle XML value normalization (XDocument normalizes line endings to \n), while the
-            // original document may contain \r\n. Try a CRLF-aware search that ignores \r when matching.
-            var normalizedIdx = IndexOfValueWithCrlfNormalization(startTagClose + 1, value);
-            if (normalizedIdx >= 0)
-            {
-                return normalizedIdx;
-            }
-        }
-        
-        // Fallback to proximity-based exact/normalized text search around the approximate position
-        var exact = FindExactTextPosition(approximatePosition, value);
-        if (exact >= 0)
-        {
-            return exact;
-        }
-        var normalized = IndexOfValueWithCrlfNormalization(Math.Max(0, approximatePosition - 1), value);
-        if (normalized >= 0)
-        {
-            return normalized;
-        }
-        return approximatePosition;
-    }
-
-    /// <summary>
-    /// Performs a search that treats "\r\n" in the document as equivalent to "\n" in the search value.
-    /// This handles XML normalization where XDocument converts all line endings to \n, 
-    /// but the original document may contain \r\n.
-    /// 
-    /// Example: Document contains "foo\r\nbar", XPath returns "foo\nbar"
-    /// This method will correctly find "foo\nbar" in the document at the position of "foo\r\nbar"
-    /// </summary>
-    private int IndexOfValueWithCrlfNormalization(int startIndex, string value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return -1;
-        }
-
-        int contentLen = FullContent.Length;
-        for (int i = Math.Max(0, startIndex); i < contentLen; i++)
-        {
-            int j = 0;
-            int k = i;
-            int firstMatchIndex = -1;
-
-            while (j < value.Length && k < contentLen)
-            {
-                char hc = FullContent[k];
-                if (hc == '\r')
-                {
-                    // Skip carriage returns in the content when matching against a normalized value
-                    k++;
-                    continue;
-                }
-                char vc = value[j];
-                if (hc != vc)
-                {
-                    break;
-                }
-                if (firstMatchIndex == -1)
-                {
-                    firstMatchIndex = k;
-                }
-                j++;
-                k++;
-            }
-
-            if (j == value.Length)
-            {
-                return firstMatchIndex >= 0 ? firstMatchIndex : i;
-            }
-        }
-
-        return -1;
-    }
-
-    private int FindExactTextPosition(int approximatePosition, string value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return approximatePosition;
-        }
-
-        // Search for the exact value around the approximate position
-        // For elements, search around the approximate position for the text content
-        var idx = FindValueInProximity(approximatePosition, value);
-        if (idx >= 0)
-        {
-            return idx;
-        }
-
-        // If not found exactly, try CRLF-aware search to account for XML normalization of line endings
-        var normalizedIdx = IndexOfValueWithCrlfNormalization(Math.Max(0, approximatePosition - 1), value);
-        return normalizedIdx >= 0 ? normalizedIdx : approximatePosition;
-    }
-
-    /// <summary>
-    /// Find the location of the provided prefix string if any in the text container between the provided start of line index and the current index
-    /// </summary>
-    /// <param name="startOfLineIndex">Minimum Character index in FullContent to locate Prefix</param>
-    /// <param name="currentIndex">Maximal Chracter index in FullContent to locate Prefix</param>
-    /// <param name="prefix">Prefix string to attempt to locate</param>
-    /// <param name="multiline">If multi-line comments should be detected</param>
-    /// <returns>The index of the specified prefix string in the FullContent if found, otherwise -1</returns>
-    private int GetPrefixLocation(int startOfLineIndex, int currentIndex, string prefix, bool multiline)
-    {
-        // Find the first potential index of the prefix
-        var prefixLoc = FullContent.LastIndexOf(prefix, currentIndex, StringComparison.Ordinal);
-        if (prefixLoc != -1)
-        {
-            // TODO: Possibly support quoted multiline comment markers
-            if (multiline)
-            {
-                return prefixLoc;
-            }
-            if (prefixLoc < startOfLineIndex)
-            {
-                return -1;
-            }
-            // Check how many quote marks occur on the line before the prefix location
-            // TODO: This doesn't account for multi-line strings
-            var numDoubleQuotes = FullContent[startOfLineIndex..prefixLoc].Count(x => x == '"');
-            var numSingleQuotes = FullContent[startOfLineIndex..prefixLoc].Count(x => x == '\'');
-
-            // If the number of quotes is odd, this is in a string, so not actually a comment prefix
-            // It might be like var address = "http://contoso.com";
-            if (numDoubleQuotes % 2 == 1 || numSingleQuotes % 2 == 1)
-            {
-                // The second argument is the maximal index to return since this calls LastIndexOf, subtract 1 to exclude this instance
-                if ((prefixLoc -1) >= startOfLineIndex)
-                {
-                    return GetPrefixLocation(startOfLineIndex, prefixLoc - 1, prefix, multiline);
-                }
-                return -1;
-            }
-        }
-
-        return prefixLoc;
-    }
-
-    /// <summary>
-    ///     Populates the CommentedStates Dictionary based on the index and the provided comment prefix and suffix
-    /// </summary>
-    /// <param name="index">The character index in FullContent</param>
-    /// <param name="prefix">The comment prefix</param>
-    /// <param name="suffix">The comment suffix</param>
-    private void PopulateCommentedStatesInternal(int index, string prefix, string suffix, bool multiline)
-    {
-        // Get the line boundary for the prefix location
-        var startOfLine = GetLineBoundary(index);
-        // Get the index of the prefix
-        var prefixLoc = GetPrefixLocation(startOfLine.Index, index, prefix, multiline);
-
-        if (prefixLoc != -1)
-        {
-            if (!CommentedStates.ContainsKey(prefixLoc))
-            {
-                var suffixLoc = FullContent.IndexOf(suffix, prefixLoc, StringComparison.Ordinal);
-                if (suffixLoc == -1)
-                {
-                    suffixLoc = FullContent.Length - 1;
-                }
-
-                for (var i = prefixLoc; i <= suffixLoc; i++) CommentedStates[i] = true;
-            }
-        }
-    }
-
-    /// <summary>
-    ///     Populate the CommentedStates Dictionary based on the provided index.
-    /// </summary>
-    /// <param name="index">The character index in FullContent to work based on.</param>
-    public void PopulateCommentedState(int index)
-    {
-        var inIndex = index;
-        if (index >= FullContent.Length)
-        {
-            index = FullContent.Length - 1;
-        }
-
-        if (index < 0)
-        {
-            index = 0;
-        }
-
-        // Populate true for the indexes of the most immediately preceding instance of the multiline comment type if found
-        if (!string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(suffix))
-        {
-            PopulateCommentedStatesInternal(index, prefix, suffix, true);
-        }
-
-        // Populate true for indexes of the most immediately preceding instance of the single-line comment type if found
-        if (!CommentedStates.ContainsKey(index) && !string.IsNullOrEmpty(inline))
-        {
-            PopulateCommentedStatesInternal(index, inline, "\n", false);
-        }
-
-        var i = index;
-        // Everything preceding this, including this, which doesn't have a commented state is
-        // therefore not commented so we backfill
-        while (!CommentedStates.ContainsKey(i) && i >= 0)
-        {
-            CommentedStates[i--] = false;
-        }
-
-        if (inIndex != index)
-        {
-            CommentedStates[inIndex] = CommentedStates[index];
-        }
-    }
-
-    /// <summary>
-    ///     Gets the text for a given boundary
-    /// </summary>
-    /// <param name="boundary">The boundary to get text for.</param>
-    /// <returns></returns>
-    public string GetBoundaryText(Boundary boundary)
-    {
-        if (boundary is null)
-        {
-            return string.Empty;
-        }
-
-        var start = Math.Max(boundary.Index, 0);
-        var end = start + boundary.Length;
-        start = Math.Min(FullContent.Length, start);
-        end = Math.Min(FullContent.Length, end);
-        return FullContent[start..end];
-    }
-
-    /// <summary>
-    ///     Returns boundary for a given index in text
-    /// </summary>
-    /// <param name="index"> Position in text </param>
-    /// <returns> Boundary </returns>
-    public Boundary GetLineBoundary(int index)
-    {
-        Boundary result = new();
-
-        for (var i = 0; i < LineEnds.Count; i++)
-            if (LineEnds[i] >= index)
-            {
-                result.Index = LineStarts[i];
-                result.Length = LineEnds[i] - LineStarts[i] + 1;
-                break;
-            }
-
-        return result;
-    }
-
-    /// <summary>
-    ///     Return content of the line
-    /// </summary>
-    /// <param name="line"> Line number (one-indexed) </param>
-    /// <returns> Text </returns>
-    public string GetLineContent(int line)
-    {
-        if (line >= LineEnds.Count)
-        {
-            line = LineEnds.Count - 1;
-        }
-
-        var index = LineEnds[line];
-        var bound = GetLineBoundary(index);
-        return FullContent.Substring(bound.Index, bound.Length);
-    }
-
-    /// <summary>
-    ///     Returns location (Line, Column) for given index in text
-    ///     If the index is beyond the end of the file, clamps to the end
-    /// </summary>
-    /// <param name="index"> Position in text (line is one-indexed)</param>
-    /// <returns> Location </returns>
-    public Location GetLocation(int index)
-    {
-        for (var i = 1; i < LineEnds.Count; i++)
-        {
-            if (LineEnds[i] >= index)
-            {
-                return new Location
-                {
-                    Column = index - LineStarts[i],
-                    Line = i
-                };
-            }
-        }
-
-        // If the index is beyond the end of the file, clamp to the end of the file
-        if (index > LineEnds[^1])
-        {
-            return new Location()
-            {
-                Column = LineEnds[^1] - LineStarts[^1],
-                Line = LineEnds.Count
-            };
-        }
-
-        return new Location();
     }
 
     public bool IsCommented(int index)
     {
-        if (!CommentedStates.ContainsKey(index))
-        {
-            PopulateCommentedState(index);
-        }
-
-        return CommentedStates[index];
+        EnsureCommentProcessor();
+        return _commentProcessor!.IsCommented(index);
     }
 
-    /// <summary>
-    ///     Check whether the boundary in a text matches the scope of a search pattern (code, comment etc.)
-    /// </summary>
-    /// <param name="scopes"> The scopes to check </param>
-    /// <param name="boundary"> Boundary in the text </param>
-    /// <returns> True if boundary is in a provided scope </returns>
     public bool ScopeMatch(IList<PatternScope> scopes, Boundary boundary)
     {
         if (scopes is null || !scopes.Any() || scopes.Contains(PatternScope.All))
         {
             return true;
         }
-
         if (Languages.IsAlwaysCommented(Language))
         {
             return scopes.Contains(PatternScope.Comment);
         }
-        
-        if (scopes.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
+        EnsureCommentProcessor();
+        if (scopes.Contains(PatternScope.All) || !_commentProcessor!.HasCommentMarkers)
         {
             return true;
         }
-
-        var isInComment = IsCommented(boundary.Index);
-
-        return (!isInComment && scopes.Contains(PatternScope.Code)) ||
-               (isInComment && scopes.Contains(PatternScope.Comment));
+        var isInComment = _commentProcessor.IsCommented(boundary.Index);
+        return (!isInComment && scopes.Contains(PatternScope.Code)) || (isInComment && scopes.Contains(PatternScope.Comment));
     }
 
+    /// <summary>
+    ///     If this file is YAML, attempts to return the the string contents of the specified YamlPath applied to the file.
+    ///     Method contains some heuristic behavior and may not cover all cases. 
+    /// </summary>
+    /// <param name="Path">YamlPath to query document with</param>
+    /// <returns>Enumeration of string and Boundary tuples for the YamlPath matches. Boundary locations refer to the locations in the original document on disk.</returns>
     internal IEnumerable<(string, Boundary)> GetStringFromYmlPath(string Path)
     {
         lock (_yamlLock)
@@ -896,10 +258,73 @@ public class TextContainer
         }
     }
 
-    // Consider extracting a helper method for common boundary creation:
-    private (string, Boundary)? CreateResultBoundary(string value, int position)
+    // Re-introduced helper methods required by other components (WithinOperation, RuleProcessor, Oat* operations)
+    public string GetBoundaryText(Boundary boundary)
     {
-        if (string.IsNullOrEmpty(value)) return null;
-        return (value, new Boundary { Index = position, Length = value.Length });
+        if (boundary is null)
+        {
+            return string.Empty;
+        }
+        var start = Math.Max(boundary.Index, 0);
+        var end = start + boundary.Length;
+        start = Math.Min(FullContent.Length, start);
+        end = Math.Min(FullContent.Length, end);
+        return FullContent[start..end];
+    }
+
+    public Boundary GetLineBoundary(int index)
+    {
+        Boundary result = new();
+        for (var i = 0; i < LineEnds.Count; i++)
+        {
+            if (LineEnds[i] >= index)
+            {
+                result.Index = LineStarts[i];
+                result.Length = LineEnds[i] - LineStarts[i] + 1;
+                break;
+            }
+        }
+        return result;
+    }
+
+    public string GetLineContent(int line)
+    {
+        if (line >= LineEnds.Count)
+        {
+            line = LineEnds.Count - 1;
+        }
+        var index = LineEnds[line];
+        var bound = GetLineBoundary(index);
+        return FullContent.Substring(bound.Index, bound.Length);
+    }
+
+    public Location GetLocation(int index)
+    {
+        for (var i = 1; i < LineEnds.Count; i++)
+        {
+            if (LineEnds[i] >= index)
+            {
+                return new Location
+                {
+                    Column = index - LineStarts[i],
+                    Line = i
+                };
+            }
+        }
+        if (index > LineEnds[^1])
+        {
+            return new Location
+            {
+                Column = LineEnds[^1] - LineStarts[^1],
+                Line = LineEnds.Count
+            };
+        }
+        return new Location();
+    }
+
+    internal IEnumerable<(string, Boundary)> GetStringFromXPath(string path, Dictionary<string, string>? namespaces = null)
+    {
+        EnsureXPathProcessor();
+        return _xPathProcessor!.GetMatches(path, namespaces);
     }
 }
