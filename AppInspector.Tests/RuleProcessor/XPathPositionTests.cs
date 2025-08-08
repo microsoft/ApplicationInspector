@@ -675,7 +675,8 @@ public class XPathPositionTests
             var tc = new TextContainer(xmlWithLongAttributes, langInfo.Name, _languages);
             
             // Test finding attributes with very long names that would exceed the old 50-char backward search
-            var results = tc.GetStringFromXPath("//@someVeryLongAttributeNameThatWouldHaveBeenMissedByTheOldSearchWindow", new()).ToArray();
+            var longAttributeXPath = "//@someVeryLongAttributeNameThatWouldHaveBeenMissedByTheOldSearchWindow";
+            var results = tc.GetStringFromXPath(longAttributeXPath, new()).ToArray();
             
             Assert.Single(results);
             var (value, boundary) = results[0];
