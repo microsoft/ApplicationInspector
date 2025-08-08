@@ -286,7 +286,8 @@ public class TextContainer
                         }
 
                         var valueStart = FindAttributeValuePosition(attrName, value, basePos);
-                        yield return (value, new Boundary { Index = valueStart, Length = value.Length });
+                        var res = CreateResultBoundary(value, valueStart);
+                        if (res.HasValue) yield return res.Value;
                         break;
                     }
                     case XElement el:
@@ -296,7 +297,8 @@ public class TextContainer
 
                         var basePos = PosFromXObject(el);
                         var textStart = FindElementTextPosition(value, basePos);
-                        yield return (value, new Boundary { Index = textStart, Length = value.Length });
+                        var res = CreateResultBoundary(value, textStart);
+                        if (res.HasValue) yield return res.Value;
                         break;
                     }
                     case XCData cdata:
@@ -306,7 +308,8 @@ public class TextContainer
 
                         var basePos = PosFromXObject(cdata);
                         var start = FindValueInProximity(basePos, value);
-                        yield return (value, new Boundary { Index = start, Length = value.Length });
+                        var res = CreateResultBoundary(value, start);
+                        if (res.HasValue) yield return res.Value;
                         break;
                     }
                     case XText xt:
@@ -316,7 +319,8 @@ public class TextContainer
 
                         var basePos = PosFromXObject(xt);
                         var start = FindValueInProximity(basePos, value);
-                        yield return (value, new Boundary { Index = start, Length = value.Length });
+                        var res = CreateResultBoundary(value, start);
+                        if (res.HasValue) yield return res.Value;
                         break;
                     }
                     case XComment comment:
@@ -326,7 +330,8 @@ public class TextContainer
 
                         var basePos = PosFromXObject(comment);
                         var start = FindValueInProximity(basePos, value);
-                        yield return (value, new Boundary { Index = start, Length = value.Length });
+                        var res = CreateResultBoundary(value, start);
+                        if (res.HasValue) yield return res.Value;
                         break;
                     }
                     case XProcessingInstruction pi:
@@ -336,7 +341,8 @@ public class TextContainer
 
                         var basePos = PosFromXObject(pi);
                         var start = FindValueInProximity(basePos, value);
-                        yield return (value, new Boundary { Index = start, Length = value.Length });
+                        var res = CreateResultBoundary(value, start);
+                        if (res.HasValue) yield return res.Value;
                         break;
                     }
                     case XObject xobj:
@@ -349,7 +355,8 @@ public class TextContainer
                         {
                             var basePos = PosFromXObject(xobj);
                             var start = FindValueInProximity(basePos, s);
-                            yield return (s, new Boundary { Index = start, Length = s.Length });
+                            var res = CreateResultBoundary(s, start);
+                            if (res.HasValue) yield return res.Value;
                         }
                         break;
                     }
@@ -360,7 +367,8 @@ public class TextContainer
                         if (!string.IsNullOrEmpty(s))
                         {
                             var start = FindValueInProximity(0, s);
-                            yield return (s, new Boundary { Index = start, Length = s.Length });
+                            var res = CreateResultBoundary(s, start);
+                            if (res.HasValue) yield return res.Value;
                         }
                         else
                         {
@@ -391,7 +399,8 @@ public class TextContainer
                 // If not found, best-effort proximity search from start
                 idx = FindValueInProximity(0, scalar);
             }
-            yield return (scalar, new Boundary { Index = idx, Length = scalar.Length });
+            var res = CreateResultBoundary(scalar, idx);
+            if (res.HasValue) yield return res.Value;
         }
     }
 
@@ -537,9 +546,14 @@ public class TextContainer
         return approximatePosition;
     }
 
-    // Performs an index search treating "\r\n" in the underlying content as equivalent to "\n" in the value.
-    // Returns the index in FullContent of the first matching character corresponding to value[0],
-    // or -1 if no match is found.
+    /// <summary>
+    /// Performs a search that treats "\r\n" in the document as equivalent to "\n" in the search value.
+    /// This handles XML normalization where XDocument converts all line endings to \n, 
+    /// but the original document may contain \r\n.
+    /// 
+    /// Example: Document contains "foo\r\nbar", XPath returns "foo\nbar"
+    /// This method will correctly find "foo\nbar" in the document at the position of "foo\r\nbar"
+    /// </summary>
     private int IndexOfValueWithCrlfNormalization(int startIndex, string value)
     {
         if (string.IsNullOrEmpty(value))
@@ -880,5 +894,12 @@ public class TextContainer
             yield return (match.ToString(),
                 new Boundary() { Index = (int)match.Start.Index, Length = (int)match.End.Index - (int)match.Start.Index });
         }
+    }
+
+    // Consider extracting a helper method for common boundary creation:
+    private (string, Boundary)? CreateResultBoundary(string value, int position)
+    {
+        if (string.IsNullOrEmpty(value)) return null;
+        return (value, new Boundary { Index = position, Length = value.Length });
     }
 }
