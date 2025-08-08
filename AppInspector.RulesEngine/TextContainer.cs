@@ -188,9 +188,7 @@ public class TextContainer
 
     /// <summary>
     ///     If this file is XML, attempts to return the the string contents of the specified XPath applied to the file.
-    ///     If the path does not exist, or the file is not JSON, XML or YML returns null.
     ///     Method contains some heuristic behavior and may not cover all cases. 
-    ///     Please report any issues with a sample XML and XPATH to reproduce.
     /// </summary>
     /// <param name="Path">XPath to query document with</param>
     /// <returns>Enumeration of string and Boundary tuples for the XPath matches. Boundary locations refer to the locations in the original document on disk.</returns>
