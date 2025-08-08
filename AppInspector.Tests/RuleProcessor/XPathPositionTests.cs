@@ -225,6 +225,7 @@ public class XPathPositionTests
     {
         // Test that when multiple elements have the same text content,
         // each match returns the correct position for its specific element
+        Assert.True(variant == "unix" || variant == "windows");
 
         var rule = CreateXPathRule("XPATH_DUPLICATE_001", "//version", "1.0.0");
 
@@ -268,6 +269,7 @@ public class XPathPositionTests
     public void When_AttributeValuesAreDuplicated_then_AllPositionsAreAccurate(string variant, string xml)
     {
         // Test that attribute values are positioned correctly when duplicates exist
+        Assert.True(variant == "unix" || variant == "windows");
 
         var rule = CreateXPathRule("XPATH_ATTR_001", "//@currency", "USD");
 
@@ -307,6 +309,7 @@ public class XPathPositionTests
     public void When_UsingComplexXPathWithDuplicates_then_CorrectElementPositionIsReturned(string variant, string xml)
     {
         // Test complex XPath expressions that should match specific elements despite duplicates
+        Assert.True(variant == "unix" || variant == "windows");
 
         var rule = CreateXPathRule("XPATH_COMPLEX_001", 
             "//dependency[name='first-lib']/version", "1.0.0");
@@ -348,6 +351,7 @@ public class XPathPositionTests
     public void When_QueryIncludesNamespacedAttribute_then_CorrectPositionIsReturned(string variant, string xml)
     {
         // Test XPath with namespace prefixes
+        Assert.True(variant == "unix" || variant == "windows");
 
         var rule = CreateXPathRuleWithNamespaces("XPATH_NS_001", 
             "//application/@android:debuggable", "true");
@@ -386,6 +390,7 @@ public class XPathPositionTests
     public void When_QueryMatchesMultipleNamespacedAttributes_then_AllPositionsAreReturned(string variant, string xml)
     {
         // Test XPath that matches multiple attributes with same name but different values
+        Assert.True(variant == "unix" || variant == "windows");
 
         var rule = CreateXPathRuleWithNamespaces("XPATH_NS_002", 
             "//@android:debuggable", "true|false", "regex");
@@ -427,6 +432,7 @@ public class XPathPositionTests
     public void When_LocalNameSelectsSpecificDependencyVersion_then_PositionIsAccurate(string variant, string xml)
     {
         // Test using local-name() to ignore namespaces - uses non-namespaced XML for clarity
+        Assert.True(variant == "unix" || variant == "windows");
 
         var rule = CreateXPathRule("XPATH_MAVEN_001", 
             "//*[local-name()='dependency'][*[local-name()='artifactId']='junit-jupiter']/*[local-name()='version']", "5.8.2");
@@ -464,6 +470,7 @@ public class XPathPositionTests
     public void When_LocalNameSelectsAllDependencyVersions_then_PositionsAreAccurate(string variant, string xml)
     {
         // Test using local-name() to find all dependency versions - uses non-namespaced XML
+        Assert.True(variant == "unix" || variant == "windows");
 
         var rule = CreateXPathRule("XPATH_MAVEN_002", 
             "//*[local-name()='dependencies']//*[local-name()='version']", "\\d+\\.\\d+\\.\\d+", "regex");
@@ -502,6 +509,7 @@ public class XPathPositionTests
     public void When_NamespacedQuerySelectsSpecificDependencyVersion_then_PositionIsAccurate(string variant, string xml)
     {
         // Test proper namespace handling for Maven POM with default namespace
+        Assert.True(variant == "unix" || variant == "windows");
 
         var rule = CreateXPathRuleWithMavenNamespaces("XPATH_MAVEN_NS_001", 
             "//mvn:dependency[mvn:artifactId='junit-jupiter']/mvn:version", "5.8.2");
@@ -539,6 +547,7 @@ public class XPathPositionTests
     public void When_NamespacedQuerySelectsAllDependencyVersions_then_PositionsAreAccurate(string variant, string xml)
     {
         // Test proper namespace handling for all dependency versions
+        Assert.True(variant == "unix" || variant == "windows");
 
         var rule = CreateXPathRuleWithMavenNamespaces("XPATH_MAVEN_NS_002", 
             "//mvn:dependencies//mvn:version", "\\d+\\.\\d+\\.\\d+", "regex");
@@ -580,7 +589,6 @@ public class XPathPositionTests
     [MemberData(nameof(XmlWithEmptyElementsVariants))]
     public void When_EmptyElementsArePresent_then_ContentElementPositionAccurate(string variant, string xmlWithEmptyElements)
     {
-        // Explicitly reference variant to avoid analyzer warnings and to document executed case
         Assert.True(variant == "unix" || variant == "windows");
 
         var rule = CreateXPathRule("XPATH_EMPTY_001", "//withContent", "actual content");
@@ -761,6 +769,8 @@ public class XPathPositionTests
     [MemberData(nameof(XmlWithNestedDuplicatesVariants))]
     public void When_LocalNameComplexVersionQueryUsed_then_PositionAccurate(string variant, string xml)
     {
+        Assert.True(variant == "unix" || variant == "windows");
+
         // Test complex version selection using local-name() with non-namespaced XML
         var complexXPathRule = @"[
     {
@@ -829,6 +839,7 @@ public class XPathPositionTests
     [MemberData(nameof(XmlWithPartialMatchEarly))]
     public void When_PartialMatchEarlyInDocument_then_PositionAccurate(string variant, string xml)
     {
+        Assert.True(variant == "unix" || variant == "windows");
         // Test that partial matches early in the document are handled correctly
         var rule = @"
 [{
