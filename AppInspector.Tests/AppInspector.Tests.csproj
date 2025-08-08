@@ -149,7 +149,6 @@
         <None Update="TestData/TestXPathPositions/XmlWithDuplicateValues_unix.xml">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <!-- Removed Windows-specific TestXPathPositions entries: files are now synthesized at runtime from LF sources. -->
         <None Update="TestData/TestXPathPositions/XmlWithNestedDuplicates_unix.xml">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
