@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -261,7 +262,7 @@ public class TextContainer
         }
 
         // Iterate node-set results
-        if (evalResult is System.Collections.IEnumerable enumerable && evalResult is not string)
+        if (evalResult is IEnumerable enumerable && evalResult is not string)
         {
             foreach (var item in enumerable)
             {
