@@ -36,7 +36,6 @@ public class TextContainer
 
     private bool _triedToConstructXDocument;
     private XDocument? _xDocument;
-    private Dictionary<XObject, (int Index, int Length)>? _xObjectPositions;
     private object _xdocumentLock = new();
 
     private bool _triedToConstructYmlDocument;
@@ -181,6 +180,7 @@ public class TextContainer
     /// <returns>Enumeration of string and Boundary tuples for the XPath matches. Boundary locations refer to the locations in the original document on disk.</returns>
     internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path, Dictionary<string, string> xpathNameSpaces)
     {
+        // Lazy parse
         lock (_xdocumentLock)
         {
             if (!_triedToConstructXDocument)
@@ -188,37 +188,36 @@ public class TextContainer
                 try
                 {
                     _triedToConstructXDocument = true;
-                    (_xDocument, _xObjectPositions) = ParseXmlWithPositions(FullContent);
+                    _xDocument = XDocument.Parse(FullContent, LoadOptions.SetLineInfo | LoadOptions.PreserveWhitespace);
                 }
                 catch (Exception e)
                 {
                     _logger.LogError("Failed to parse {1} as a XML document: {0}", e.Message, _filePath);
                     _xDocument = null;
-                    _xObjectPositions = null;
                 }
             }
         }
 
-        if (_xDocument is null || _xObjectPositions is null)
+        if (_xDocument is null)
         {
             yield break;
         }
-        var nameTable = new NameTable();
-        var namespaceManager = new XmlNamespaceManager(nameTable);
-        foreach (var ns in xpathNameSpaces)
+
+        // Namespace manager
+        var nt = new NameTable();
+        var nsMgr = new XmlNamespaceManager(nt);
+        foreach (var kvp in xpathNameSpaces)
         {
-            // Avoid duplicate prefix exception
-            if (namespaceManager.LookupNamespace(ns.Key) is null)
+            if (nsMgr.LookupNamespace(kvp.Key) is null)
             {
-                namespaceManager.AddNamespace(ns.Key, ns.Value);
+                nsMgr.AddNamespace(kvp.Key, kvp.Value);
             }
         }
 
-        // Unified evaluation using XPathEvaluate so we get native engine support
         object? evalResult;
         try
         {
-            evalResult = _xDocument.XPathEvaluate(Path, namespaceManager);
+            evalResult = _xDocument.XPathEvaluate(Path, nsMgr);
         }
         catch (Exception ex)
         {
@@ -226,269 +225,89 @@ public class TextContainer
             yield break;
         }
 
-        if (evalResult is IEnumerable<object?> seq)
+        IEnumerable<XObject> resultObjects = evalResult switch
         {
-            foreach (var node in seq)
-            {
-                foreach (var tup in ConvertXPathNodeToValue(node))
-                {
-                    yield return tup;
-                }
-            }
-        }
-        else if (evalResult is XElement singleElem)
-        {
-            foreach (var tup in ConvertXPathNodeToValue(singleElem)) yield return tup;
-        }
-        else if (evalResult is XAttribute singleAttr)
-        {
-            foreach (var tup in ConvertXPathNodeToValue(singleAttr)) yield return tup;
-        }
-        else if (evalResult is string s)
-        {
-            foreach (var tup in ValueToBoundaryFallback(s)) yield return tup;
-        }
+            IEnumerable<object?> seq => seq.OfType<XObject>(),
+            XObject single => new[] { single },
+            _ => Enumerable.Empty<XObject>()
+        };
 
-        IEnumerable<(string, Boundary)> ConvertXPathNodeToValue(object? node)
+        foreach (var obj in resultObjects)
         {
-            if (node is null) yield break;
+            string? value = obj switch
+            {
+                XElement e => e.Value,
+                XAttribute a => a.Value,
+                XText t => t.Value,
+                _ => obj.ToString()
+            };
 
-            if (node is XElement element)
+            if (string.IsNullOrEmpty(value))
             {
-                if (_xObjectPositions.TryGetValue(element, out var pos))
-                {
-                    yield return (element.Value, new Boundary { Index = pos.Index, Length = pos.Length });
-                }
-                else
-                {
-                    foreach (var fb in ValueToBoundaryFallback(element.Value)) yield return fb;
-                }
+                continue;
             }
-            else if (node is XAttribute attr)
+
+            // Attempt line-info based boundary first
+            if (obj is IXmlLineInfo li && li.HasLineInfo())
             {
-                if (_xObjectPositions.TryGetValue(attr, out var pos))
+                var line = li.LineNumber; // 1-based
+                var col = li.LinePosition; // 1-based
+                if (line < LineStarts.Count)
                 {
-                    yield return (attr.Value, new Boundary { Index = pos.Index, Length = pos.Length });
-                }
-                else
-                {
-                    // Fallback: try locate attribute value near parent element position
-                    var parent = attr.Parent;
-                    int searchStart = 0;
-                    if (parent != null && _xObjectPositions.TryGetValue(parent, out var parentPos))
+                    var baseIdx = LineStarts[line] + (col - 1);
+                    int mappedIndex = baseIdx;
+
+                    if (obj is XAttribute attr)
                     {
-                        searchStart = Math.Max(parentPos.Index - 50, 0); // small backtrack
+                        // Attribute line position points to start of name. Find value within a local window.
+                        var window = FullContent.AsSpan(baseIdx, Math.Min(400, FullContent.Length - baseIdx));
+                        var possible = attr.Name.ToString() + "=";
+                        var rel = window.IndexOf(possible, StringComparison.Ordinal);
+                        if (rel >= 0)
+                        {
+                            var afterEq = baseIdx + rel + possible.Length;
+                            if (afterEq < FullContent.Length)
+                            {
+                                var quote = FullContent[afterEq];
+                                if (quote == '"' || quote == '\'')
+                                {
+                                    var valStart = afterEq + 1;
+                                    if (valStart + value.Length <= FullContent.Length && FullContent.AsSpan(valStart, value.Length).SequenceEqual(value.AsSpan()))
+                                    {
+                                        mappedIndex = valStart;
+                                        yield return (value, new Boundary { Index = mappedIndex, Length = value.Length });
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
                     }
-                    var pattern1 = attr.Name.LocalName + "=\"" + attr.Value + "\"";
-                    var pattern2 = attr.Name.LocalName + "='" + attr.Value + "'";
-                    var idx = FullContent.IndexOf(pattern1, searchStart, StringComparison.Ordinal);
-                    if (idx < 0) idx = FullContent.IndexOf(pattern2, searchStart, StringComparison.Ordinal);
-                    if (idx >= 0)
+                    else if (obj is XElement el && !el.HasElements)
                     {
-                        // attribute value start index inside quotes
-                        var valueIdx = idx + attr.Name.LocalName.Length + 2; // skip name="
-                        yield return (attr.Value, new Boundary { Index = valueIdx, Length = attr.Value.Length });
-                    }
-                    else
-                    {
-                        foreach (var fb in ValueToBoundaryFallback(attr.Value)) yield return fb;
-                    }
-                }
-            }
-            else if (node is string str)
-            {
-                foreach (var fb in ValueToBoundaryFallback(str)) yield return fb;
-            }
-            // Ignore numeric / boolean scalars returned from functions – not relevant for current rule extraction
-        }
-
-        IEnumerable<(string, Boundary)> ValueToBoundaryFallback(string value)
-        {
-            if (string.IsNullOrEmpty(value)) yield break;
-            var idx = FullContent.IndexOf(value, StringComparison.Ordinal);
-            if (idx >= 0)
-            {
-                yield return (value, new Boundary { Index = idx, Length = value.Length });
-            }
-        }
-    }
-
-    /// <summary>
-    /// Parses XML content while preserving position information for each node
-    /// </summary>
-    /// <param name="xml">The XML content to parse</param>
-    /// <returns>A tuple containing the parsed XDocument and a dictionary mapping nodes to their positions</returns>
-    private (XDocument doc, Dictionary<XObject, (int Index, int Length)> positions) ParseXmlWithPositions(string xml)
-    {
-        var doc = XDocument.Parse(xml, LoadOptions.SetLineInfo);
-        var positions = new Dictionary<XObject, (int Index, int Length)>();
-        
-        // Map positions for all elements and attributes
-        MapPositions(doc.Root, positions, xml);
-        
-        return (doc, positions);
-    }
-
-    /// <summary>
-    /// Recursively maps XML nodes to their positions in the original text
-    /// </summary>
-    /// <param name="element">The XML element to process</param>
-    /// <param name="positions">Dictionary to store position mappings</param>
-    /// <param name="xml">The original XML text</param>
-    private void MapPositions(XElement? element, Dictionary<XObject, (int Index, int Length)> positions, string xml)
-    {
-        if (element == null) return;
-
-        var lineInfo = (IXmlLineInfo)element;
-        if (lineInfo.HasLineInfo())
-        {
-            // Map attributes first
-            foreach (var attr in element.Attributes())
-            {
-                var attrLineInfo = (IXmlLineInfo)attr;
-                if (attrLineInfo.HasLineInfo())
-                {
-                    // Find the attribute value in the original text
-                    var attrName = attr.Name.LocalName;
-                    var attrValue = attr.Value;
-                    
-                    // Simple search approach: find the attribute pattern in the text
-                    var searchPattern = $"{attrName}='{attrValue}'";
-                    var searchPattern2 = $"{attrName}=\"{attrValue}\"";
-                    
-                    var pos1 = xml.IndexOf(searchPattern, StringComparison.Ordinal);
-                    var pos2 = xml.IndexOf(searchPattern2, StringComparison.Ordinal);
-                    
-                    var foundPos = pos1 >= 0 ? pos1 : pos2;
-                    if (foundPos >= 0)
-                    {
-                        var valueStart = foundPos + attrName.Length + 2; // +2 for =" or ='
-                        positions[attr] = (valueStart, attrValue.Length);
+                        // For a leaf element value, search forward a limited window for exact value
+                        var searchWindow = Math.Min(800, FullContent.Length - baseIdx);
+                        if (searchWindow > 0)
+                        {
+                            var span = FullContent.AsSpan(baseIdx, searchWindow);
+                            var rel = span.IndexOf(value, StringComparison.Ordinal);
+                            if (rel >= 0)
+                            {
+                                mappedIndex = baseIdx + rel;
+                                yield return (value, new Boundary { Index = mappedIndex, Length = value.Length });
+                                continue;
+                            }
+                        }
                     }
                 }
             }
-            
-            // Map element content
-            if (!string.IsNullOrEmpty(element.Value) && !element.HasElements)
+
+            // Fallback: global search
+            var globalIdx = FullContent.IndexOf(value, StringComparison.Ordinal);
+            if (globalIdx >= 0)
             {
-                var elementValue = element.Value.Trim();
-                if (!string.IsNullOrEmpty(elementValue))
-                {
-                    // Find where this value appears in the original XML
-                    var elementPos = xml.IndexOf(elementValue, StringComparison.Ordinal);
-                    if (elementPos >= 0)
-                    {
-                        positions[element] = (elementPos, elementValue.Length);
-                    }
-                }
+                yield return (value, new Boundary { Index = globalIdx, Length = value.Length });
             }
         }
-        
-        // Process child elements recursively
-        foreach (var child in element.Elements())
-        {
-            MapPositions(child, positions, xml);
-        }
-    }
-
-    /// <summary>
-    /// Safely try to select XPath elements
-    /// </summary>
-    private IEnumerable<XElement> TryXPathSelectElements(string path, XmlNamespaceManager manager)
-    {
-        try
-        {
-            return _xDocument?.XPathSelectElements(path, manager) ?? Enumerable.Empty<XElement>();
-        }
-        catch
-        {
-            return Enumerable.Empty<XElement>();
-        }
-    }
-
-    /// <summary>
-    /// Try to select attributes from XPath that contains @
-    /// </summary>
-    private IEnumerable<XAttribute> TryXPathSelectAttributes(string path, XmlNamespaceManager manager)
-    {
-        if (!path.Contains("@") || _xDocument == null)
-        {
-            yield break;
-        }
-
-        var pathParts = path.Split('@');
-        if (pathParts.Length != 2)
-        {
-            yield break;
-        }
-
-        var elementPath = pathParts[0].TrimEnd('/');
-        var attributeName = pathParts[1];
-        
-        IEnumerable<XElement> parentElements;
-        try
-        {
-            parentElements = _xDocument.XPathSelectElements(elementPath, manager);
-        }
-        catch
-        {
-            yield break;
-        }
-        
-        // Handle wildcards and special attribute names
-        if (attributeName.Contains("*") || attributeName.Contains(":"))
-        {
-            // For wildcards or namespace-prefixed attributes, iterate through all attributes
-            foreach (var parentElem in parentElements)
-            {
-                foreach (var attr in parentElem.Attributes())
-                {
-                    // Check if the attribute matches the pattern
-                    if (attributeName == "*" || 
-                        (attributeName.Contains("*") && MatchesWildcard(attr.Name.LocalName, attributeName)) ||
-                        (attributeName.Contains(":") && attr.Name.ToString() == attributeName) ||
-                        attr.Name.LocalName == attributeName)
-                    {
-                        yield return attr;
-                    }
-                }
-            }
-        }
-        else
-        {
-            // Simple attribute name - use direct lookup
-            foreach (var parentElem in parentElements)
-            {
-                var attr = parentElem.Attribute(attributeName);
-                if (attr != null)
-                {
-                    yield return attr;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// Simple wildcard matching for attribute names
-    /// </summary>
-    private bool MatchesWildcard(string name, string pattern)
-    {
-        if (pattern == "*") return true;
-        
-        // Simple pattern matching - could be made more sophisticated
-        if (pattern.EndsWith("*"))
-        {
-            var prefix = pattern.Substring(0, pattern.Length - 1);
-            return name.StartsWith(prefix);
-        }
-        
-        if (pattern.StartsWith("*"))
-        {
-            var suffix = pattern.Substring(1);
-            return name.EndsWith(suffix);
-        }
-        
-        return name == pattern;
     }
 
     /// <summary>
