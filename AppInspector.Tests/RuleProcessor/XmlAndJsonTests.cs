@@ -12,7 +12,7 @@ public class XmlAndJsonTests
     private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
 
     [Fact]
-    public void XPathBugFix621_VersionExtraction()
+    public void XPathVersionElementSampleBoundary()
     {
         // Test case for GitHub issue #621 - sample and excerpt not working when using xpath
         var pomXml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
