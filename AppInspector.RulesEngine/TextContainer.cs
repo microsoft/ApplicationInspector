@@ -203,50 +203,113 @@ public class TextContainer
         {
             yield break;
         }
-
-        IEnumerable<(string, Boundary)> EvaluateXPath()
+        var nameTable = new NameTable();
+        var namespaceManager = new XmlNamespaceManager(nameTable);
+        foreach (var ns in xpathNameSpaces)
         {
-            var manager = new XmlNamespaceManager(new NameTable());
-            
-            if (xpathNameSpaces.Any())
+            // Avoid duplicate prefix exception
+            if (namespaceManager.LookupNamespace(ns.Key) is null)
             {
-                foreach (var pair in xpathNameSpaces)
-                {
-                    manager.AddNamespace(pair.Key, pair.Value);
-                }
-            }
-
-            // Instead of using XPathEvaluate which has tricky return types, 
-            // use a more direct approach for attributes and elements
-            if (Path.Contains("@"))
-            {
-                // This is an attribute selection
-                var attributes = TryXPathSelectAttributes(Path, manager);
-                foreach (var attr in attributes)
-                {
-                    if (_xObjectPositions.TryGetValue(attr, out var position))
-                    {
-                        yield return (attr.Value, new Boundary { Index = position.Index, Length = position.Length });
-                    }
-                }
-            }
-            else
-            {
-                // This is an element selection
-                var elements = TryXPathSelectElements(Path, manager);
-                foreach (var elem in elements)
-                {
-                    if (_xObjectPositions.TryGetValue(elem, out var position))
-                    {
-                        yield return (elem.Value, new Boundary { Index = position.Index, Length = position.Length });
-                    }
-                }
+                namespaceManager.AddNamespace(ns.Key, ns.Value);
             }
         }
 
-        foreach (var result in EvaluateXPath())
+        // Unified evaluation using XPathEvaluate so we get native engine support
+        object? evalResult;
+        try
         {
-            yield return result;
+            evalResult = _xDocument.XPathEvaluate(Path, namespaceManager);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug("XPath evaluation failed for '{xpath}' on '{file}': {msg}", Path, _filePath, ex.Message);
+            yield break;
+        }
+
+        if (evalResult is IEnumerable<object?> seq)
+        {
+            foreach (var node in seq)
+            {
+                foreach (var tup in ConvertXPathNodeToValue(node))
+                {
+                    yield return tup;
+                }
+            }
+        }
+        else if (evalResult is XElement singleElem)
+        {
+            foreach (var tup in ConvertXPathNodeToValue(singleElem)) yield return tup;
+        }
+        else if (evalResult is XAttribute singleAttr)
+        {
+            foreach (var tup in ConvertXPathNodeToValue(singleAttr)) yield return tup;
+        }
+        else if (evalResult is string s)
+        {
+            foreach (var tup in ValueToBoundaryFallback(s)) yield return tup;
+        }
+
+        IEnumerable<(string, Boundary)> ConvertXPathNodeToValue(object? node)
+        {
+            if (node is null) yield break;
+
+            if (node is XElement element)
+            {
+                if (_xObjectPositions.TryGetValue(element, out var pos))
+                {
+                    yield return (element.Value, new Boundary { Index = pos.Index, Length = pos.Length });
+                }
+                else
+                {
+                    foreach (var fb in ValueToBoundaryFallback(element.Value)) yield return fb;
+                }
+            }
+            else if (node is XAttribute attr)
+            {
+                if (_xObjectPositions.TryGetValue(attr, out var pos))
+                {
+                    yield return (attr.Value, new Boundary { Index = pos.Index, Length = pos.Length });
+                }
+                else
+                {
+                    // Fallback: try locate attribute value near parent element position
+                    var parent = attr.Parent;
+                    int searchStart = 0;
+                    if (parent != null && _xObjectPositions.TryGetValue(parent, out var parentPos))
+                    {
+                        searchStart = Math.Max(parentPos.Index - 50, 0); // small backtrack
+                    }
+                    var pattern1 = attr.Name.LocalName + "=\"" + attr.Value + "\"";
+                    var pattern2 = attr.Name.LocalName + "='" + attr.Value + "'";
+                    var idx = FullContent.IndexOf(pattern1, searchStart, StringComparison.Ordinal);
+                    if (idx < 0) idx = FullContent.IndexOf(pattern2, searchStart, StringComparison.Ordinal);
+                    if (idx >= 0)
+                    {
+                        // attribute value start index inside quotes
+                        var valueIdx = idx + attr.Name.LocalName.Length + 2; // skip name="
+                        yield return (attr.Value, new Boundary { Index = valueIdx, Length = attr.Value.Length });
+                    }
+                    else
+                    {
+                        foreach (var fb in ValueToBoundaryFallback(attr.Value)) yield return fb;
+                    }
+                }
+            }
+            else if (node is string str)
+            {
+                foreach (var fb in ValueToBoundaryFallback(str)) yield return fb;
+            }
+            // Ignore numeric / boolean scalars returned from functions – not relevant for current rule extraction
+        }
+
+        IEnumerable<(string, Boundary)> ValueToBoundaryFallback(string value)
+        {
+            if (string.IsNullOrEmpty(value)) yield break;
+            var idx = FullContent.IndexOf(value, StringComparison.Ordinal);
+            if (idx >= 0)
+            {
+                yield return (value, new Boundary { Index = idx, Length = value.Length });
+            }
         }
     }
 
