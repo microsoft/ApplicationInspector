@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.XPath;
 using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
@@ -33,9 +34,10 @@ public class TextContainer
     private JsonDocument? _jsonDocument;
     private object _jsonLock = new();
 
-    private bool _triedToConstructXPathDocument;
-    private XPathDocument? _xmlDoc;
-    private object _xpathLock = new();
+    private bool _triedToConstructXDocument;
+    private XDocument? _xDocument;
+    private Dictionary<XObject, (int Index, int Length)>? _xObjectPositions;
+    private object _xdocumentLock = new();
 
     private bool _triedToConstructYmlDocument;
     private YamlStream? _ymlDocument;
@@ -173,107 +175,257 @@ public class TextContainer
 
     /// <summary>
     ///     If this file is XML, attempts to return the the string contents of the specified XPath applied to the file.
-    ///     If the path does not exist, or the file is not JSON, XML or YML returns null.
-    ///     Method contains some heuristic behavior and may not cover all cases. 
-    ///     Please report any issues with a sample XML and XPATH to reproduce.
+    ///     If the path does not exist, or the file is not XML returns empty enumeration.
     /// </summary>
     /// <param name="Path">XPath to query document with</param>
     /// <returns>Enumeration of string and Boundary tuples for the XPath matches. Boundary locations refer to the locations in the original document on disk.</returns>
     internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path, Dictionary<string, string> xpathNameSpaces)
     {
-        lock (_xpathLock)
+        lock (_xdocumentLock)
         {
-            if (!_triedToConstructXPathDocument)
+            if (!_triedToConstructXDocument)
             {
                 try
                 {
-                    _triedToConstructXPathDocument = true;
-                    _xmlDoc = new XPathDocument(new StringReader(FullContent));
+                    _triedToConstructXDocument = true;
+                    (_xDocument, _xObjectPositions) = ParseXmlWithPositions(FullContent);
                 }
                 catch (Exception e)
                 {
                     _logger.LogError("Failed to parse {1} as a XML document: {0}", e.Message, _filePath);
-                    _xmlDoc = null;
+                    _xDocument = null;
+                    _xObjectPositions = null;
                 }
             }
         }
 
-        if (_xmlDoc is null)
+        if (_xDocument is null || _xObjectPositions is null)
         {
             yield break;
         }
 
-        var navigator = _xmlDoc.CreateNavigator();
-        var query = navigator.Compile(Path);
-        if (xpathNameSpaces.Any())
+        IEnumerable<(string, Boundary)> EvaluateXPath()
         {
-            var manager = new XmlNamespaceManager(navigator.NameTable);
-            foreach (var pair in xpathNameSpaces)
+            var manager = new XmlNamespaceManager(new NameTable());
+            
+            if (xpathNameSpaces.Any())
             {
-                manager.AddNamespace(pair.Key, pair.Value);
-            }
-            query.SetContext(manager);
-        }
-        var nodeIter = navigator.Select(query);
-        var minIndex = 0;
-        while (nodeIter.MoveNext())
-        {
-            if (nodeIter.Current is null)
-            {
-                continue;
-            }
-
-            // We have to heuristically calculate the original indexes of the locations in the original document because the internal representation differs
-            // For example it will convert <Tag Prop="Val"/> to <Tag Prop=\"Val\"/>
-
-            // First we find the name, absolute position index
-            var nameIndex = FullContent[minIndex..].IndexOf(nodeIter.Current.Name, StringComparison.Ordinal) + minIndex;
-            // Then we calculate the absolute index of the end of the tag.
-            // We can't use OuterXML property because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
-            var endTagIndex = FullContent[nameIndex..].IndexOf('>', StringComparison.Ordinal) + nameIndex;
-            // If we are matching a tag itself, the previous char should be the open tag
-            //  |
-            //  v
-            // <Tag>
-            // If its a property it won't be
-            //      |
-            //      v
-            // <Tag Prop="Value">
-            var isProp = FullContent[(nameIndex - 1)] != '<';
-            // Check for self-closing tag
-            var selfClosedTag = FullContent[endTagIndex - 1] == '/';
-
-            // This is for when we're capturing the value of a property of the tag rather than the tag itself
-            if (isProp)
-            {
-                // Find the index of character after the next end tag index after the name
-                var nextClosingIndexAfterName = endTagIndex+1;
-                // If we have a self closing tag, we can use that index, otherwise we need the closure of this tag
-                var offset = selfClosedTag ? endTagIndex : FullContent[nextClosingIndexAfterName..].IndexOf('>') + nextClosingIndexAfterName + 1;
-                // Move the minimum index up to the end of the closing tag to avoid additioanl matches of the same values
-                minIndex = selfClosedTag ? offset : FullContent[offset..].IndexOf('>') + offset + 1;
-                var location = new Boundary
+                foreach (var pair in xpathNameSpaces)
                 {
-                    // +2 for the \" before the value for the property
-                    Index = nameIndex + nodeIter.Current.Name.Length + 2,
-                    Length = nodeIter.Current.InnerXml.Length
-                };
-                yield return (nodeIter.Current.Value, location);
+                    manager.AddNamespace(pair.Key, pair.Value);
+                }
+            }
+
+            // Instead of using XPathEvaluate which has tricky return types, 
+            // use a more direct approach for attributes and elements
+            if (Path.Contains("@"))
+            {
+                // This is an attribute selection
+                var attributes = TryXPathSelectAttributes(Path, manager);
+                foreach (var attr in attributes)
+                {
+                    if (_xObjectPositions.TryGetValue(attr, out var position))
+                    {
+                        yield return (attr.Value, new Boundary { Index = position.Index, Length = position.Length });
+                    }
+                }
             }
             else
             {
-                // Move the offset to the end of the opening tag
-                var offset = selfClosedTag ? endTagIndex : FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
-                // Move the minimum index up to the end of the closing tag
-                minIndex = selfClosedTag ? offset : FullContent[offset..].IndexOf('>') + offset + 1;
-                var location = new Boundary
+                // This is an element selection
+                var elements = TryXPathSelectElements(Path, manager);
+                foreach (var elem in elements)
                 {
-                    Index = offset,
-                    Length = nodeIter.Current.InnerXml.Length
-                };
-                yield return (nodeIter.Current.Value, location);
+                    if (_xObjectPositions.TryGetValue(elem, out var position))
+                    {
+                        yield return (elem.Value, new Boundary { Index = position.Index, Length = position.Length });
+                    }
+                }
             }
         }
+
+        foreach (var result in EvaluateXPath())
+        {
+            yield return result;
+        }
+    }
+
+    /// <summary>
+    /// Parses XML content while preserving position information for each node
+    /// </summary>
+    /// <param name="xml">The XML content to parse</param>
+    /// <returns>A tuple containing the parsed XDocument and a dictionary mapping nodes to their positions</returns>
+    private (XDocument doc, Dictionary<XObject, (int Index, int Length)> positions) ParseXmlWithPositions(string xml)
+    {
+        var doc = XDocument.Parse(xml, LoadOptions.SetLineInfo);
+        var positions = new Dictionary<XObject, (int Index, int Length)>();
+        
+        // Map positions for all elements and attributes
+        MapPositions(doc.Root, positions, xml);
+        
+        return (doc, positions);
+    }
+
+    /// <summary>
+    /// Recursively maps XML nodes to their positions in the original text
+    /// </summary>
+    /// <param name="element">The XML element to process</param>
+    /// <param name="positions">Dictionary to store position mappings</param>
+    /// <param name="xml">The original XML text</param>
+    private void MapPositions(XElement? element, Dictionary<XObject, (int Index, int Length)> positions, string xml)
+    {
+        if (element == null) return;
+
+        var lineInfo = (IXmlLineInfo)element;
+        if (lineInfo.HasLineInfo())
+        {
+            // Map attributes first
+            foreach (var attr in element.Attributes())
+            {
+                var attrLineInfo = (IXmlLineInfo)attr;
+                if (attrLineInfo.HasLineInfo())
+                {
+                    // Find the attribute value in the original text
+                    var attrName = attr.Name.LocalName;
+                    var attrValue = attr.Value;
+                    
+                    // Simple search approach: find the attribute pattern in the text
+                    var searchPattern = $"{attrName}='{attrValue}'";
+                    var searchPattern2 = $"{attrName}=\"{attrValue}\"";
+                    
+                    var pos1 = xml.IndexOf(searchPattern, StringComparison.Ordinal);
+                    var pos2 = xml.IndexOf(searchPattern2, StringComparison.Ordinal);
+                    
+                    var foundPos = pos1 >= 0 ? pos1 : pos2;
+                    if (foundPos >= 0)
+                    {
+                        var valueStart = foundPos + attrName.Length + 2; // +2 for =" or ='
+                        positions[attr] = (valueStart, attrValue.Length);
+                    }
+                }
+            }
+            
+            // Map element content
+            if (!string.IsNullOrEmpty(element.Value) && !element.HasElements)
+            {
+                var elementValue = element.Value.Trim();
+                if (!string.IsNullOrEmpty(elementValue))
+                {
+                    // Find where this value appears in the original XML
+                    var elementPos = xml.IndexOf(elementValue, StringComparison.Ordinal);
+                    if (elementPos >= 0)
+                    {
+                        positions[element] = (elementPos, elementValue.Length);
+                    }
+                }
+            }
+        }
+        
+        // Process child elements recursively
+        foreach (var child in element.Elements())
+        {
+            MapPositions(child, positions, xml);
+        }
+    }
+
+    /// <summary>
+    /// Safely try to select XPath elements
+    /// </summary>
+    private IEnumerable<XElement> TryXPathSelectElements(string path, XmlNamespaceManager manager)
+    {
+        try
+        {
+            return _xDocument?.XPathSelectElements(path, manager) ?? Enumerable.Empty<XElement>();
+        }
+        catch
+        {
+            return Enumerable.Empty<XElement>();
+        }
+    }
+
+    /// <summary>
+    /// Try to select attributes from XPath that contains @
+    /// </summary>
+    private IEnumerable<XAttribute> TryXPathSelectAttributes(string path, XmlNamespaceManager manager)
+    {
+        if (!path.Contains("@") || _xDocument == null)
+        {
+            yield break;
+        }
+
+        var pathParts = path.Split('@');
+        if (pathParts.Length != 2)
+        {
+            yield break;
+        }
+
+        var elementPath = pathParts[0].TrimEnd('/');
+        var attributeName = pathParts[1];
+        
+        IEnumerable<XElement> parentElements;
+        try
+        {
+            parentElements = _xDocument.XPathSelectElements(elementPath, manager);
+        }
+        catch
+        {
+            yield break;
+        }
+        
+        // Handle wildcards and special attribute names
+        if (attributeName.Contains("*") || attributeName.Contains(":"))
+        {
+            // For wildcards or namespace-prefixed attributes, iterate through all attributes
+            foreach (var parentElem in parentElements)
+            {
+                foreach (var attr in parentElem.Attributes())
+                {
+                    // Check if the attribute matches the pattern
+                    if (attributeName == "*" || 
+                        (attributeName.Contains("*") && MatchesWildcard(attr.Name.LocalName, attributeName)) ||
+                        (attributeName.Contains(":") && attr.Name.ToString() == attributeName) ||
+                        attr.Name.LocalName == attributeName)
+                    {
+                        yield return attr;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Simple attribute name - use direct lookup
+            foreach (var parentElem in parentElements)
+            {
+                var attr = parentElem.Attribute(attributeName);
+                if (attr != null)
+                {
+                    yield return attr;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Simple wildcard matching for attribute names
+    /// </summary>
+    private bool MatchesWildcard(string name, string pattern)
+    {
+        if (pattern == "*") return true;
+        
+        // Simple pattern matching - could be made more sophisticated
+        if (pattern.EndsWith("*"))
+        {
+            var prefix = pattern.Substring(0, pattern.Length - 1);
+            return name.StartsWith(prefix);
+        }
+        
+        if (pattern.StartsWith("*"))
+        {
+            var suffix = pattern.Substring(1);
+            return name.EndsWith(suffix);
+        }
+        
+        return name == pattern;
     }
 
     /// <summary>
