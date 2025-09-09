@@ -196,14 +196,32 @@ public class TextContainer
             yield break;
         }
 
-        var line = li.LineNumber; // 1-based
-        var col = li.LinePosition; // 1-based
-        if (line >= LineStarts.Count)
+        var line = li.LineNumber; // 1-based per IXmlLineInfo
+        var col = li.LinePosition; // 1-based per IXmlLineInfo
+        // Defensive: ensure line index is within our sentinel-based one-indexed arrays
+        if (line <= 0 || line >= LineStarts.Count)
         {
-            yield break;
+            yield break; // Invalid line info
         }
 
-        var baseIdx = LineStarts[line] + (col - 1);
+        // Clamp column to at least 1 to avoid negative offset; XML producers should give >=1 but be robust
+        if (col < 1)
+        {
+            col = 1;
+        }
+
+        // Compute base index; guard against overflow beyond content length
+        var startOfLineIdx = LineStarts[line];
+        var baseIdx = startOfLineIdx + (col - 1);
+        if (baseIdx < 0)
+        {
+            baseIdx = 0;
+        }
+        else if (baseIdx >= FullContent.Length)
+        {
+            // If column points past end of file/line, bail early; no reliable mapping
+            yield break;
+        }
         int mappedIndex = baseIdx;
 
         if (obj is XAttribute attrObj)
