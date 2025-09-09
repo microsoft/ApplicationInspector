@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.ApplicationInspector.RulesEngine;
@@ -23,19 +24,48 @@ public class XPathBoundaryTests
 
     private static RuleSet BuildRule(string id, string pattern, string type, string xpath, string? namespacesJson = null)
     {
-        var nsFragment = string.IsNullOrWhiteSpace(namespacesJson) ? string.Empty : ",\n                \"xpathnamespaces\": " + namespacesJson;
-        var ruleJson = "[{" +
-                       "\n    \"id\": \"" + id + "\"," +
-                       "\n    \"name\": \"" + id + " Test\"," +
-                       "\n    \"patterns\": [{" +
-                       "\n        \"pattern\": \"" + pattern + "\"," +
-                       "\n        \"type\": \"" + type + "\"," +
-                       "\n        \"xpaths\": [\"" + xpath + "\"]" +
-                       nsFragment +
-                       "\n    }]" +
-                       "\n}]";
-        RuleSet rs = new();
-        rs.AddString(ruleJson, "TestRules");
+        var xpathNamespaces = new Dictionary<string, string>();
+        if (!string.IsNullOrWhiteSpace(namespacesJson))
+        {
+            // Parse simple namespace JSON if provided (for backward compatibility)
+            // This is a simplified parser for the test scenarios
+            try
+            {
+                var namespaces = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(namespacesJson);
+                if (namespaces != null)
+                {
+                    xpathNamespaces = namespaces;
+                }
+            }
+            catch
+            {
+                // If parsing fails, use empty dictionary
+            }
+        }
+
+        // Parse the pattern type from string to enum
+        if (!Enum.TryParse<PatternType>(type, true, out var patternType))
+        {
+            throw new ArgumentException($"Invalid pattern type: {type}");
+        }
+
+        var searchPattern = new SearchPattern
+        {
+            Pattern = pattern,
+            PatternType = patternType,
+            XPaths = new[] { xpath },
+            XPathNamespaces = xpathNamespaces
+        };
+
+        var rule = new Rule
+        {
+            Id = id,
+            Name = id + " Test",
+            Patterns = new[] { searchPattern }
+        };
+
+        var rs = new RuleSet();
+        rs.AddRule(rule);
         return rs;
     }
 
