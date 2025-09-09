@@ -206,12 +206,50 @@ public class TextContainer
         // Namespace manager
         var nt = new NameTable();
         var nsMgr = new XmlNamespaceManager(nt);
+        
+        // First, add namespaces from the document root element
+        if (_xDocument.Root is not null)
+        {
+            foreach (var attr in _xDocument.Root.Attributes())
+            {
+                if (!attr.IsNamespaceDeclaration) continue;
+                
+                var prefix = attr.Name.LocalName;
+                var namespaceUri = attr.Value;
+                
+                // Handle default namespace declaration (xmlns="...")
+                if (attr.Name.Namespace == XNamespace.None && prefix == "xmlns")
+                {
+                    // This is a default namespace declaration
+                    // Check if caller wants to map this to a specific prefix
+                    var defaultMapping = xpathNameSpaces.FirstOrDefault(kvp => kvp.Value == namespaceUri);
+                    if (defaultMapping.Key != null)
+                    {
+                        // Caller provided a mapping for this namespace URI, use their prefix
+                        try { nsMgr.AddNamespace(defaultMapping.Key, namespaceUri); } catch { }
+                    }
+                    else
+                    {
+                        // Add as empty prefix for default namespace
+                        try { nsMgr.AddNamespace(string.Empty, namespaceUri); } catch { }
+                    }
+                }
+                else
+                {
+                    // Regular prefixed namespace declaration (xmlns:prefix="...")
+                    // Only add if not already specified by caller
+                    if (!xpathNameSpaces.ContainsKey(prefix))
+                    {
+                        try { nsMgr.AddNamespace(prefix, namespaceUri); } catch { }
+                    }
+                }
+            }
+        }
+        
+        // Then add caller supplied mappings (these can override document namespaces)
         foreach (var kvp in xpathNameSpaces)
         {
-            if (nsMgr.LookupNamespace(kvp.Key) is null)
-            {
-                nsMgr.AddNamespace(kvp.Key, kvp.Value);
-            }
+            try { nsMgr.AddNamespace(kvp.Key, kvp.Value); } catch { }
         }
 
         object? evalResult;

@@ -315,15 +315,15 @@ public class XmlAndJsonTests
         ""severity"": ""BestPractice"",
         ""rule_info"": ""DS180000.md"",
         ""patterns"": [
-            {
-                ""xpaths"": [""//default:application/@android:debuggable""],
-                ""pattern"": ""true"",
+                {
+                    ""xpaths"": [""//default:manifest/default:application/@android:debuggable""],
+                    ""pattern"": ""true"",
                 ""type"": ""regex"",
                 ""scopes"": [
                     ""code""
                 ],
                 ""modifiers"" : [""i""],
-                ""xpathnamespaces"": {
+                    ""xpathnamespaces"": {
                     ""default"": ""http://maven.apache.org/POM/4.0.0"",
                     ""android"": ""http://schemas.android.com/apk/res/android""
                 }
@@ -350,7 +350,7 @@ public class XmlAndJsonTests
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("AndroidManifest.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(@"<?xml version=""1.0"" encoding=""utf-8""?><manifest xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:android=""http://schemas.android.com/apk/res/android""><application android:debuggable='true' /></manifest>", new FileEntry("AndroidManifest.xml", new MemoryStream()), info);
+            var matches = processor.AnalyzeFile(@"<?xml version=""1.0"" encoding=""utf-8""?><manifest xmlns:android=""http://schemas.android.com/apk/res/android"" xmlns=""http://maven.apache.org/POM/4.0.0""><application android:debuggable='true' /></manifest>", new FileEntry("AndroidManifest.xml", new MemoryStream()), info);
             Assert.Single(matches);
         }
     }
