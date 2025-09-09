@@ -11,14 +11,11 @@ namespace AppInspector.Tests.RuleProcessor;
 /// Tests focused specifically on validating Boundary.Index/Length correctness for XPath-driven matches.
 /// These are intended to catch off-by-one or misaligned index mapping regressions.
 /// 
-/// Special attention is paid to duplicate value scenarios that can cause boundary mapping ambiguities.
-/// 
-/// NOTE: Some tests currently document known boundary mapping limitations where duplicate values 
-/// in XML content can result in:
-/// 1. Multiple XPath matches mapping to the same boundary position  
-/// 2. Element inner text falling back to global search and colliding with attribute boundaries
-/// 
-/// These tests will pass once the boundary disambiguation logic is improved.
+/// Special attention is paid to duplicate value scenarios to ensure accurate boundary mapping
+/// for complex XML content including:
+/// 1. Multiple XPath matches with identical content values
+/// 2. Element inner text and attribute values with the same content
+/// 3. Namespace handling in XPath queries
 /// </summary>
 public class XPathBoundaryTests
 {
@@ -137,22 +134,10 @@ public class XPathBoundaryTests
             Assert.Equal("SameValue", extracted);
         }
 
-        // Test for duplicate boundary issue: 
-        // KNOWN LIMITATION: Some elements with identical inner text may map to the same boundary
-        // This test documents the current behavior and will pass when the issue is fixed
+        // Verify all boundaries are distinct for different element positions
         var boundaryStarts = matches.Select(m => m.Boundary.Index).OrderBy(i => i).ToArray();
         var distinctBoundaries = boundaryStarts.Distinct().Count();
         
-        if (distinctBoundaries < boundaryStarts.Length)
-        {
-            // Document the known issue for future reference
-            var duplicates = boundaryStarts.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key);
-            Assert.Fail($"KNOWN BOUNDARY MAPPING ISSUE: Found {boundaryStarts.Length - distinctBoundaries} duplicate boundaries at positions: [{string.Join(", ", duplicates)}]. " +
-                              $"All boundaries: [{string.Join(", ", boundaryStarts)}]. " +
-                              $"This test documents the need for improved duplicate value boundary disambiguation.");
-        }
-        
-        // This assertion will pass once the boundary logic is improved
         Assert.True(distinctBoundaries == boundaryStarts.Length, "All boundaries should be distinct for different element positions");
     }
 
@@ -206,21 +191,10 @@ public class XPathBoundaryTests
             Assert.Equal("DupVal", extracted);
         }
 
-        // Test for boundary collision between element and attribute values
-        // KNOWN LIMITATION: Element inner text may collide with attribute value boundary  
+        // Verify all boundaries are distinct for different XPath matches  
         var allBoundaries = matches.Select(m => m.Boundary.Index).ToArray();
         var distinctBoundaries = allBoundaries.Distinct().Count();
         
-        if (distinctBoundaries < allBoundaries.Length)
-        {
-            var ruleIds = matches.Select(m => m.RuleId).ToArray();
-            var boundaryInfo = matches.Select(m => $"{m.RuleId}@{m.Boundary.Index}").ToArray();
-            Assert.Fail($"KNOWN BOUNDARY COLLISION ISSUE: Expected 4 distinct boundaries but found {distinctBoundaries}. " +
-                       $"Boundary details: [{string.Join(", ", boundaryInfo)}]. " +
-                       $"This indicates element XPath fallback is conflicting with attribute boundaries.");
-        }
-        
-        // This assertion will pass once the element/attribute boundary separation is improved
         Assert.True(distinctBoundaries == allBoundaries.Length, "All boundaries should be distinct for different XPath matches");
     }
 }
