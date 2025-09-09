@@ -145,10 +145,6 @@ public class XPathBoundaryTests
         // Expect 4 matches: 3 attributes + element text
         Assert.Equal(4, matches.Count);
 
-        // Remove debug output and fix the test properly by accepting that the boundary logic 
-        // currently has this limitation and focusing on demonstrating the issue exists
-        
-        // Let's check the actual boundaries to understand the current behavior 
         var attrAIndex = xml.IndexOf("a=\"DupVal\"") + "a=\"".Length;  // Should be around 44
         var attrBIndex = xml.IndexOf("b=\"DupVal\"") + "b=\"".Length;  // Should be around 55  
         var attrCIndex = xml.IndexOf("c=\"DupVal\"") + "c=\"".Length;  // Should be around 66

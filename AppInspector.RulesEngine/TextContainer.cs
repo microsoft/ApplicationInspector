@@ -371,12 +371,24 @@ public class TextContainer
                     if (defaultMapping.Key != null)
                     {
                         // Caller provided a mapping for this namespace URI, use their prefix
-                        try { nsMgr.AddNamespace(defaultMapping.Key, namespaceUri); } catch { }
+                        try { nsMgr.AddNamespace(defaultMapping.Key, namespaceUri); }
+                        catch (Exception ex)
+                        {
+                            _logger.LogTrace(ex,
+                                "Failed to add XML default namespace mapping using caller prefix '{prefix}' -> '{uri}' for file {file}",
+                                defaultMapping.Key, namespaceUri, _filePath);
+                        }
                     }
                     else
                     {
                         // Add as empty prefix for default namespace
-                        try { nsMgr.AddNamespace(string.Empty, namespaceUri); } catch { }
+                        try { nsMgr.AddNamespace(string.Empty, namespaceUri); }
+                        catch (Exception ex)
+                        {
+                            _logger.LogTrace(ex,
+                                "Failed to add XML default namespace mapping (empty prefix) -> '{uri}' for file {file}",
+                                namespaceUri, _filePath);
+                        }
                     }
                 }
                 else
@@ -385,7 +397,13 @@ public class TextContainer
                     // Only add if not already specified by caller
                     if (!xpathNameSpaces.ContainsKey(prefix))
                     {
-                        try { nsMgr.AddNamespace(prefix, namespaceUri); } catch { }
+                        try { nsMgr.AddNamespace(prefix, namespaceUri); }
+                        catch (Exception ex)
+                        {
+                            _logger.LogTrace(ex,
+                                "Failed to add XML namespace mapping '{prefix}' -> '{uri}' from document root for file {file}",
+                                prefix, namespaceUri, _filePath);
+                        }
                     }
                 }
             }
@@ -394,7 +412,13 @@ public class TextContainer
         // Then add caller supplied mappings (these can override document namespaces)
         foreach (var kvp in xpathNameSpaces)
         {
-            try { nsMgr.AddNamespace(kvp.Key, kvp.Value); } catch { }
+            try { nsMgr.AddNamespace(kvp.Key, kvp.Value); }
+            catch (Exception ex)
+            {
+                _logger.LogTrace(ex,
+                    "Failed to add caller-supplied XML namespace mapping '{prefix}' -> '{uri}' for file {file}",
+                    kvp.Key, kvp.Value, _filePath);
+            }
         }
 
         object? evalResult;
