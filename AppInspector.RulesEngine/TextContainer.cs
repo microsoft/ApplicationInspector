@@ -30,6 +30,16 @@ public class TextContainer
     private readonly string prefix;
     private readonly string suffix;
 
+    // Window/offset constants used for XML/XPath boundary reconstruction.
+    // These constrain local searches to avoid scanning entire large documents while
+    // remaining generous enough for typical formatting (attributes spread across a tag line,
+    // element content near reported line info, and a broader fallback when line info is
+    // imperfect). Adjust cautiously as they directly impact performance and match accuracy.
+    private const int XmlAttributeSearchWindow = 400;     // Max chars to scan forward for an attribute value on the same line
+    private const int XmlElementSearchLookBehind = 100;   // Chars to look back from reported line position when locating element start
+    private const int XmlElementSearchLookAhead = 500;    // Chars to look forward from reported line position for element content
+    private const int XmlElementFallbackWindow = 800;     // Fallback scan window when precise line-info based match fails
+
     private bool _triedToConstructJsonDocument;
     private JsonDocument? _jsonDocument;
     private object _jsonLock = new();
@@ -199,7 +209,7 @@ public class TextContainer
         if (obj is XAttribute attrObj)
         {
             // Attribute line position points to start of name. Find value within a local window.
-            var window = FullContent.AsSpan(baseIdx, Math.Min(400, FullContent.Length - baseIdx));
+            var window = FullContent.AsSpan(baseIdx, Math.Min(XmlAttributeSearchWindow, FullContent.Length - baseIdx));
             
             // For namespaced attributes, we need to check both the full name and just the local name
             // because the XML might use namespace prefixes differently than the XPath
@@ -239,8 +249,8 @@ public class TextContainer
             var tagName = el.Name.LocalName;
             
             // Start searching from the line info position or a reasonable fallback
-            var searchStart = Math.Max(0, baseIdx - 100);
-            var searchEnd = Math.Min(FullContent.Length, baseIdx + 500);
+            var searchStart = Math.Max(0, baseIdx - XmlElementSearchLookBehind);
+            var searchEnd = Math.Min(FullContent.Length, baseIdx + XmlElementSearchLookAhead);
             
             // Look for this specific element's opening tag
             var currentPos = searchStart;
@@ -293,7 +303,7 @@ public class TextContainer
             }
             
             // Fallback: search forward a limited window for exact value
-            var fallbackWindow = Math.Min(800, FullContent.Length - baseIdx);
+            var fallbackWindow = Math.Min(XmlElementFallbackWindow, FullContent.Length - baseIdx);
             if (fallbackWindow > 0)
             {
                 var span = FullContent.AsSpan(baseIdx, fallbackWindow);
