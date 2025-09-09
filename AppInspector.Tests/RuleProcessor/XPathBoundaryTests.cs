@@ -22,59 +22,13 @@ public class XPathBoundaryTests
 {
     private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
 
-    private static RuleSet BuildRule(string id, string pattern, string type, string xpath, string? namespacesJson = null)
-    {
-        var xpathNamespaces = new Dictionary<string, string>();
-        if (!string.IsNullOrWhiteSpace(namespacesJson))
-        {
-            // Parse simple namespace JSON if provided (for backward compatibility)
-            // This is a simplified parser for the test scenarios
-            try
-            {
-                var namespaces = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(namespacesJson);
-                if (namespaces != null)
-                {
-                    xpathNamespaces = namespaces;
-                }
-            }
-            catch
-            {
-                // If parsing fails, use empty dictionary
-            }
-        }
 
-        // Parse the pattern type from string to enum
-        if (!Enum.TryParse<PatternType>(type, true, out var patternType))
-        {
-            throw new ArgumentException($"Invalid pattern type: {type}");
-        }
-
-        var searchPattern = new SearchPattern
-        {
-            Pattern = pattern,
-            PatternType = patternType,
-            XPaths = new[] { xpath },
-            XPathNamespaces = xpathNamespaces
-        };
-
-        var rule = new Rule
-        {
-            Id = id,
-            Name = id + " Test",
-            Patterns = new[] { searchPattern }
-        };
-
-        var rs = new RuleSet();
-        rs.AddRule(rule);
-        return rs;
-    }
 
     [Fact]
     public void Boundary_Element_ExactMatch()
     {
         var xml = "<?xml version=\"1.0\"?>\n<root>\n    <item>ExactValue</item>\n</root>";
-        var rules = BuildRule("BOUND_ELEM", "ExactValue", "string", "//item");
-        var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("BOUND_ELEM", "ExactValue", "string", "//item");
 
         Assert.True(_languages.FromFileNameOut("test.xml", out var info));
         var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
@@ -91,8 +45,7 @@ public class XPathBoundaryTests
     public void Boundary_Attribute_ExactMatch()
     {
         var xml = "<?xml version=\"1.0\"?>\n<root>\n  <item attr=\"AttrValue\">X</item>\n</root>";
-        var rules = BuildRule("BOUND_ATTR", "AttrValue", "string", "//item/@attr");
-        var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("BOUND_ATTR", "AttrValue", "string", "//item/@attr");
 
         Assert.True(_languages.FromFileNameOut("test.xml", out var info));
         var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
@@ -112,8 +65,7 @@ public class XPathBoundaryTests
     public void Boundary_Element_SubstringPattern()
     {
         var xml = "<?xml version=\"1.0\"?>\n<root>\n  <data>Prefix-TargetValue-Suffix</data>\n</root>";
-        var rules = BuildRule("BOUND_SUB", "TargetValue", "substring", "//data");
-        var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("BOUND_SUB", "TargetValue", "substring", "//data");
 
         Assert.True(_languages.FromFileNameOut("test.xml", out var info));
         var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
@@ -135,8 +87,7 @@ public class XPathBoundaryTests
         }
         xml += "</root>";
 
-        var rules = BuildRule("BOUND_LAST", "Val49", "string", "//item[@id='49']");
-        var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("BOUND_LAST", "Val49", "string", "//item[@id='49']");
 
         Assert.True(_languages.FromFileNameOut("test.xml", out var info));
         var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
@@ -150,8 +101,7 @@ public class XPathBoundaryTests
     public void Boundaries_DuplicateElementText_AllDistinct()
     {
         var xml = "<?xml version=\"1.0\"?>\n<root>\n  <item>SameValue</item>\n  <item>SameValue</item>\n  <item>SameValue</item>\n</root>";
-        var rules = BuildRule("BOUND_DUP_ELEM", "SameValue", "string", "//item");
-        var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("BOUND_DUP_ELEM", "SameValue", "string", "//item");
 
         Assert.True(_languages.FromFileNameOut("test.xml", out var info));
         var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info).ToList();
@@ -187,7 +137,7 @@ public class XPathBoundaryTests
 
         RuleSet rs = new();
         rs.AddString(rulesJson, "TestRules");
-        var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rs, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.CreateProcessor(rs);
 
         Assert.True(_languages.FromFileNameOut("test.xml", out var info));
         var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info).ToList();

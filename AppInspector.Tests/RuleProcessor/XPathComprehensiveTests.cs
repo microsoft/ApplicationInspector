@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.ApplicationInspector.RulesEngine;
@@ -29,19 +30,7 @@ public class XPathComprehensiveTests
     </book>
 </books>";
 
-        var rule = @"[{
-            ""id"": ""TEST001"",
-            ""name"": ""XPath Predicate Test"",
-            ""patterns"": [{
-                ""pattern"": ""Learning"",
-                ""type"": ""substring"",
-                ""xpaths"": [""//book[@price > 25]/title[@lang='en']""]
-            }]
-        }]";
-
-        RuleSet rules = new();
-        rules.AddString(rule, "TestRules");
-    var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("TEST001", "Learning", "substring", "//book[@price > 25]/title[@lang='en']");
 
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
@@ -78,19 +67,7 @@ public class XPathComprehensiveTests
 
         foreach (var (xpath, expectedValue) in testCases)
         {
-            var rule = $@"[{{
-                ""id"": ""TEST_AXIS"",
-                ""name"": ""XPath Axis Test"",
-                ""patterns"": [{{
-                    ""pattern"": ""{expectedValue}"",
-                    ""type"": ""string"",
-                    ""xpaths"": [""{xpath}""]
-                }}]
-            }}]";
-
-            RuleSet rules = new();
-            rules.AddString(rule, "TestRules");
-            var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+            var processor = RuleTestHelpers.BuildRuleAndProcessor("TEST_AXIS", expectedValue, "string", xpath);
 
             if (_languages.FromFileNameOut("test.xml", out var info))
             {
@@ -117,19 +94,7 @@ public class XPathComprehensiveTests
     <elem attr5=""special&amp;chars"" />
 </root>";
 
-        var rule = @"[{
-            ""id"": ""ATTR_TEST"",
-            ""name"": ""Attribute Format Test"",
-            ""patterns"": [{
-                ""pattern"": ""quoted"",
-                ""type"": ""substring"",
-                ""xpaths"": [""//elem/@*""]
-            }]
-        }]";
-
-        RuleSet rules = new();
-        rules.AddString(rule, "TestRules");
-    var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("ATTR_TEST", "quoted", "substring", "//elem/@*");
 
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
@@ -152,22 +117,8 @@ public class XPathComprehensiveTests
     <ns2:element>Value2</ns2:element>
 </root>";
 
-        var rule = @"[{
-            ""id"": ""NS_TEST"",
-            ""name"": ""Namespace Prefix Test"",
-            ""patterns"": [{
-                ""pattern"": ""Value1"",
-                ""type"": ""string"",
-                ""xpaths"": [""//ns1:element""],
-                ""xpathnamespaces"": {
-                    ""ns1"": ""http://example.com/ns1""
-                }
-            }]
-        }]";
-
-        RuleSet rules = new();
-        rules.AddString(rule, "TestRules");
-    var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("NS_TEST", "Value1", "string", "//ns1:element", 
+            new Dictionary<string, string> { { "ns1", "http://example.com/ns1" } });
 
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
@@ -190,19 +141,7 @@ public class XPathComprehensiveTests
     <simple>Plain text</simple>
 </root>";
 
-        var rule = @"[{
-            ""id"": ""TEXT_TEST"",
-            ""name"": ""Text Node Test"",
-            ""patterns"": [{
-                ""pattern"": ""Plain"",
-                ""type"": ""substring"",
-                ""xpaths"": [""//simple""]
-            }]
-        }]"; // Select element due to current engine node handling
-
-        RuleSet rules = new();
-        rules.AddString(rule, "TestRules");
-    var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("TEXT_TEST", "Plain", "substring", "//simple");
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
             var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
@@ -229,19 +168,7 @@ public class XPathComprehensiveTests
 
         foreach (var invalidXPath in invalidXPaths)
         {
-            var rule = $@"[{{
-                ""id"": ""INVALID_TEST"",
-                ""name"": ""Invalid XPath Test"",
-                ""patterns"": [{{
-                    ""pattern"": ""Test"",
-                    ""type"": ""string"",
-                    ""xpaths"": [""{invalidXPath}""]
-                }}]
-            }}]";
-
-            RuleSet rules = new();
-            rules.AddString(rule, "TestRules");
-            var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+            var processor = RuleTestHelpers.BuildRuleAndProcessor("INVALID_TEST", "Test", "string", invalidXPath);
             if (_languages.FromFileNameOut("test.xml", out var info))
             {
                 var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
@@ -267,19 +194,7 @@ public class XPathComprehensiveTests
     <content>actual content</content>
 </root>";
 
-        var rule = @"[{
-            ""id"": ""EMPTY_TEST"",
-            ""name"": ""Empty Node Test"",
-            ""patterns"": [{
-                ""pattern"": ""actual"",
-                ""type"": ""substring"",
-                ""xpaths"": [""/root/*""]
-            }]
-        }]";
-
-        RuleSet rules = new();
-        rules.AddString(rule, "TestRules");
-    var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("EMPTY_TEST", "actual", "substring", "/root/*");
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
             var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
@@ -301,19 +216,7 @@ public class XPathComprehensiveTests
     <normal>Normal text</normal>
 </root>";
 
-        var rule = @"[{
-            ""id"": ""CDATA_TEST"",
-            ""name"": ""CDATA Test"",
-            ""patterns"": [{
-                ""pattern"": ""<characters>"",
-                ""type"": ""substring"",
-                ""xpaths"": [""//data""]
-            }]
-        }]";
-
-        RuleSet rules = new();
-        rules.AddString(rule, "TestRules");
-    var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("CDATA_TEST", "<characters>", "substring", "//data");
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
             var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
@@ -335,19 +238,7 @@ public class XPathComprehensiveTests
         }
         xml += "</root>";
 
-        var rule = @"[{
-            ""id"": ""PERF_TEST"",
-            ""name"": ""Performance Test"",
-            ""patterns"": [{
-                ""pattern"": ""Content 999"",
-                ""type"": ""string"",
-                ""xpaths"": [""//item[@type='test9']""]
-            }]
-        }]";
-
-        RuleSet rules = new();
-        rules.AddString(rule, "TestRules");
-    var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("PERF_TEST", "Content 999", "string", "//item[@type='test9']");
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
             var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
@@ -371,19 +262,7 @@ public class XPathComprehensiveTests
     <abcd>ABCD</abcd>
 </root>";
 
-        var rule = @"[{
-            ""id"": ""BOUNDARY_TEST"",
-            ""name"": ""Boundary Test"",
-            ""patterns"": [{
-                ""pattern"": ""AB"",
-                ""type"": ""substring"",
-                ""xpaths"": [""/root/*[contains(., 'AB')]""]
-            }]
-        }]";
-
-        RuleSet rules = new();
-        rules.AddString(rule, "TestRules");
-    var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(rules, new Microsoft.ApplicationInspector.RulesEngine.RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        var processor = RuleTestHelpers.BuildRuleAndProcessor("BOUNDARY_TEST", "AB", "substring", "/root/*[contains(., 'AB')]");
         if (_languages.FromFileNameOut("test.xml", out var info))
         {
             var matches = processor.AnalyzeFile(xml, new FileEntry("test.xml", new MemoryStream()), info);
