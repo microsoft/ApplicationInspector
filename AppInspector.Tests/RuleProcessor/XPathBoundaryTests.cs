@@ -144,13 +144,6 @@ public class XPathBoundaryTests
 
         // Expect 4 matches: 3 attributes + element text
         Assert.Equal(4, matches.Count);
-
-        var attrAIndex = xml.IndexOf("a=\"DupVal\"") + "a=\"".Length;  // Should be around 44
-        var attrBIndex = xml.IndexOf("b=\"DupVal\"") + "b=\"".Length;  // Should be around 55  
-        var attrCIndex = xml.IndexOf("c=\"DupVal\"") + "c=\"".Length;  // Should be around 66
-        var elemIndex = xml.IndexOf(">DupVal<") + 1;                    // Should be around 73
-        
-        Assert.True(matches.Count >= 3, $"Expected at least 3 matches but got {matches.Count}");
         
         // For now, let's verify that we get distinct boundaries for the attributes that work correctly
         var attrMatches = matches.Where(m => m.RuleId.StartsWith("ATTR_")).ToArray();
