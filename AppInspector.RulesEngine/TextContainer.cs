@@ -218,7 +218,8 @@ public class TextContainer
                 attrObj.Name.ToString() + "=",  // Full name (e.g., "android:debuggable=")
                 attrObj.Name.LocalName + "="    // Local name only (e.g., "debuggable=")
             };
-            
+
+            var targetVal = value.AsSpan();
             foreach (var possible in possiblePatterns)
             {
                 var rel = window.IndexOf(possible, StringComparison.Ordinal);
@@ -231,7 +232,7 @@ public class TextContainer
                         if (quote == '"' || quote == '\'')
                         {
                             var valStart = afterEq + 1;
-                            if (valStart + value.Length <= FullContent.Length && FullContent.AsSpan(valStart, value.Length).SequenceEqual(value.AsSpan()))
+                            if (valStart + value.Length <= FullContent.Length && FullContent.AsSpan(valStart, value.Length).SequenceEqual(targetVal))
                             {
                                 mappedIndex = valStart;
                                 yield return (value, new Boundary { Index = mappedIndex, Length = value.Length });
