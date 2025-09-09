@@ -200,21 +200,33 @@ public class TextContainer
         {
             // Attribute line position points to start of name. Find value within a local window.
             var window = FullContent.AsSpan(baseIdx, Math.Min(400, FullContent.Length - baseIdx));
-            var possible = attrObj.Name.ToString() + "=";
-            var rel = window.IndexOf(possible, StringComparison.Ordinal);
-            if (rel >= 0)
+            
+            // For namespaced attributes, we need to check both the full name and just the local name
+            // because the XML might use namespace prefixes differently than the XPath
+            var possiblePatterns = new[] 
             {
-                var afterEq = baseIdx + rel + possible.Length;
-                if (afterEq < FullContent.Length)
+                attrObj.Name.ToString() + "=",  // Full name (e.g., "android:debuggable=")
+                attrObj.Name.LocalName + "="    // Local name only (e.g., "debuggable=")
+            };
+            
+            foreach (var possible in possiblePatterns)
+            {
+                var rel = window.IndexOf(possible, StringComparison.Ordinal);
+                if (rel >= 0)
                 {
-                    var quote = FullContent[afterEq];
-                    if (quote == '"' || quote == '\'')
+                    var afterEq = baseIdx + rel + possible.Length;
+                    if (afterEq < FullContent.Length)
                     {
-                        var valStart = afterEq + 1;
-                        if (valStart + value.Length <= FullContent.Length && FullContent.AsSpan(valStart, value.Length).SequenceEqual(value.AsSpan()))
+                        var quote = FullContent[afterEq];
+                        if (quote == '"' || quote == '\'')
                         {
-                            mappedIndex = valStart;
-                            yield return (value, new Boundary { Index = mappedIndex, Length = value.Length });
+                            var valStart = afterEq + 1;
+                            if (valStart + value.Length <= FullContent.Length && FullContent.AsSpan(valStart, value.Length).SequenceEqual(value.AsSpan()))
+                            {
+                                mappedIndex = valStart;
+                                yield return (value, new Boundary { Index = mappedIndex, Length = value.Length });
+                                yield break; // Found it, stop trying other patterns
+                            }
                         }
                     }
                 }
@@ -291,122 +303,6 @@ public class TextContainer
                     mappedIndex = baseIdx + rel;
                     yield return (value, new Boundary { Index = mappedIndex, Length = value.Length });
                 }
-            }
-        }
-    }
-
-    /// <summary>
-    ///     Try to process an XObject using fallback methods for boundary detection.
-    /// </summary>
-    /// <param name="obj">The XObject to process</param>
-    /// <param name="value">The string value of the object</param>
-    /// <param name="usedElementPositions">Set of already used element positions</param>
-    /// <returns>True if the object was successfully processed and a boundary was yielded</returns>
-    private IEnumerable<(string, Boundary)> TryProcessFallbackMethods(XObject obj, string value, HashSet<int> usedElementPositions)
-    {
-        if (obj is XAttribute attr)
-        {
-            // For attributes, do a more careful search for attr="value" pattern
-            var attrName = attr.Name.LocalName;
-            var attrPattern = attrName + "=\"" + value + "\"";
-            var attrPatternSingle = attrName + "='" + value + "'";
-            
-            var idx1 = FullContent.IndexOf(attrPattern, StringComparison.Ordinal);
-            var idx2 = FullContent.IndexOf(attrPatternSingle, StringComparison.Ordinal);
-            
-            int bestIdx = -1;
-            if (idx1 >= 0 && idx2 >= 0)
-                bestIdx = Math.Min(idx1, idx2);
-            else if (idx1 >= 0)
-                bestIdx = idx1;
-            else if (idx2 >= 0)
-                bestIdx = idx2;
-            
-            if (bestIdx >= 0)
-            {
-                var valueStart = bestIdx + attrName.Length + 2; // account for =" or ='
-                yield return (value, new Boundary { Index = valueStart, Length = value.Length });
-            }
-        }
-        else if (obj is XElement elementObj)
-        {
-            // For elements, search for this specific element instance by looking at its position in the document
-            var tagName = elementObj.Name.LocalName;
-            
-            // Find all instances of this element tag and try to match this specific one
-            var allInstances = new List<int>();
-            var searchPattern = "<" + tagName + ">";
-            var pos = 0;
-            
-            while (pos < FullContent.Length)
-            {
-                var idx = FullContent.IndexOf(searchPattern, pos, StringComparison.Ordinal);
-                if (idx < 0) break;
-                
-                var contentStart = idx + searchPattern.Length;
-                
-                // Skip whitespace
-                while (contentStart < FullContent.Length && char.IsWhiteSpace(FullContent[contentStart]))
-                    contentStart++;
-                
-                // Check if the value matches at this position
-                if (contentStart + value.Length <= FullContent.Length &&
-                    FullContent.AsSpan(contentStart, value.Length).SequenceEqual(value.AsSpan()))
-                {
-                    // Verify the closing tag follows
-                    var afterContent = contentStart + value.Length;
-                    while (afterContent < FullContent.Length && char.IsWhiteSpace(FullContent[afterContent]))
-                        afterContent++;
-                    
-                    var expectedCloseTag = "</" + tagName + ">";
-                    if (afterContent + expectedCloseTag.Length <= FullContent.Length &&
-                        FullContent.AsSpan(afterContent, expectedCloseTag.Length).SequenceEqual(expectedCloseTag.AsSpan()))
-                    {
-                        allInstances.Add(contentStart);
-                    }
-                }
-                
-                pos = idx + 1;
-            }
-            
-            // Try to find which instance this XElement corresponds to by using any available context
-            // Use the first unused instance to ensure distinct boundaries
-            if (allInstances.Count > 0)
-            {
-                foreach (var instancePos in allInstances)
-                {
-                    if (!usedElementPositions.Contains(instancePos))
-                    {
-                        usedElementPositions.Add(instancePos);
-                        yield return (value, new Boundary { Index = instancePos, Length = value.Length });
-                        yield break; // Found an instance, stop processing
-                    }
-                }
-                
-                // If all instances are used, fall back to the first one
-                yield return (value, new Boundary { Index = allInstances[0], Length = value.Length });
-                yield break;
-            }
-            
-            // Fallback to the original pattern-based search
-            var openPattern = ">" + value + "<";
-            var wsPattern = ">" + value.Trim() + "<"; // Also try trimmed version
-            
-            var idx1 = FullContent.IndexOf(openPattern, StringComparison.Ordinal);
-            var idx2 = FullContent.IndexOf(wsPattern, StringComparison.Ordinal);
-            
-            int bestIdx = -1;
-            if (idx1 >= 0 && idx2 >= 0)
-                bestIdx = Math.Min(idx1, idx2);
-            else if (idx1 >= 0)
-                bestIdx = idx1;
-            else if (idx2 >= 0)
-                bestIdx = idx2;
-            
-            if (bestIdx >= 0)
-            {
-                var valueStart = bestIdx + 1; // after the >
-                yield return (value, new Boundary { Index = valueStart, Length = value.Length });
             }
         }
     }
@@ -508,7 +404,6 @@ public class TextContainer
             XObject single => new[] { single },
             _ => Enumerable.Empty<XObject>()
         };
-
         // Track which element instances we've already mapped to avoid duplicate boundaries
         var usedElementPositions = new HashSet<int>();
         
@@ -538,17 +433,6 @@ public class TextContainer
                 continue;
             }
 
-            // Try fallback processing methods
-            var fallbackResults = TryProcessFallbackMethods(obj, value, usedElementPositions).ToList();
-            if (fallbackResults.Any())
-            {
-                foreach (var result in fallbackResults)
-                {
-                    yield return result;
-                }
-                continue;
-            }
-            
             // Last resort: basic global search
             var globalIdx = FullContent.IndexOf(value, StringComparison.Ordinal);
             if (globalIdx >= 0)
