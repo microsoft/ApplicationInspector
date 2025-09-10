@@ -417,7 +417,7 @@ extends:
             AuthCertName: 'oss-appinspector-auth-cert'
             AuthSignCertName: 'oss-appinspector-signing-cert'
             FolderPath: '$(Build.BinariesDirectory)/linux/ApplicationInspector_linux_$(ReleaseVersion)'
-            Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+            Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
             signConfigType: 'inlineSignParams'
             inlineOperation: |
               [
@@ -455,7 +455,7 @@ extends:
             AuthCertName: 'oss-appinspector-auth-cert'
             AuthSignCertName: 'oss-appinspector-signing-cert'
             FolderPath: '$(Build.BinariesDirectory)/macos/ApplicationInspector_macos_$(ReleaseVersion)'
-            Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+            Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
             signConfigType: 'inlineSignParams'
             inlineOperation: |
               [
@@ -493,7 +493,7 @@ extends:
             AuthCertName: 'oss-appinspector-auth-cert'
             AuthSignCertName: 'oss-appinspector-signing-cert'
             FolderPath: '$(Build.BinariesDirectory)/win/ApplicationInspector_win_$(ReleaseVersion)'
-            Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, git2-e632535.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+            Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, git2-e632535.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
             signConfigType: 'inlineSignParams'
             inlineOperation: |
               [
@@ -531,7 +531,7 @@ extends:
             AuthCertName: 'oss-appinspector-auth-cert'
             AuthSignCertName: 'oss-appinspector-signing-cert'
             FolderPath: '$(Build.BinariesDirectory)/netcoreapp/ApplicationInspector_netcoreapp_$(ReleaseVersion)'
-            Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, gfs.YamlDotNet.YamlPath.dll, git2-e632535.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
+            Pattern: 'CommandLine.dll, DiscUtils.*.dll, DotLiquid.dll, git2-e632535.dll, Glob.dll, ICSharpCode.*.dll, JsonCons.*.dll, KellermanSoftware.Compare-NET-Objects.dll, LibGit2Sharp.dll, lzo.net.dll, Newtonsoft.Json.dll, NLog.dll, Serilog.dll, Serilog.*.dll, SharpCompress.dll, ShellProgressBar.dll, YamlDotNet.dll'
             signConfigType: 'inlineSignParams'
             inlineOperation: |
               [
