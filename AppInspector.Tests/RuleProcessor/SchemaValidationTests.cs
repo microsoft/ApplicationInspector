@@ -48,19 +48,12 @@ namespace Microsoft.ApplicationInspector.Tests.RuleProcessor
                 }
             };
 
-            // Debug: Check what JSON is generated
-            var json = System.Text.Json.JsonSerializer.Serialize(new[] { rule }, new System.Text.Json.JsonSerializerOptions 
-            { 
-                WriteIndented = true
-            });
             
             var result = provider.ValidateRule(rule);
             
-            // Debug: Show what errors we're getting
             if (!result.IsValid)
             {
                 var errorMessages = string.Join("; ", result.Errors.Select(e => $"'{e.Message}' at '{e.Path}' (Type: {e.ErrorType})"));
-                throw new Exception($"Schema validation failed. JSON: {json}\n\nErrors: {errorMessages}");
             }
             Assert.Empty(result.Errors);
         }
