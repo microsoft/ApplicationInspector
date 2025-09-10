@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
+using Microsoft.ApplicationInspector.RulesEngine.Schema;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -15,12 +17,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine;
 /// <typeparam name="T">The Type of the Rule this set holds. It must inherit from <see cref="Rule" /></typeparam>
 public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
 {
+    private readonly RuleSchemaProvider? _schemaProvider;
+    
     /// <summary>
     ///     Creates instance of TypedRuleSet
     /// </summary>
-    public TypedRuleSet(ILoggerFactory? loggerFactory = null)
+    public TypedRuleSet(ILoggerFactory? loggerFactory = null, RuleSchemaProvider? schemaProvider = null)
     {
         _logger = loggerFactory?.CreateLogger<TypedRuleSet<T>>() ?? NullLogger<TypedRuleSet<T>>.Instance;
+        _schemaProvider = schemaProvider;
     }
 
     /// <summary>
@@ -175,6 +180,39 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
     /// <returns></returns>
     internal IEnumerable<T> StringToRules(string jsonString, string sourceName, string? tag = null)
     {
+        // Validate original JSON with schema if schema provider is available
+        SchemaValidationResult? schemaResult = null;
+        if (_schemaProvider != null)
+        {
+            try
+            {
+                schemaResult = _schemaProvider.ValidateJson(jsonString);
+                if (!schemaResult.IsValid)
+                {
+                    _logger.LogWarning("Schema validation failed for '{0}': {1}", 
+                        sourceName, 
+                        string.Join("; ", schemaResult.Errors.Select(e => $"{e.ErrorType}: {e.Message} at {e.Path}")));
+                }
+            }
+            catch (Exception ex)
+            {
+                schemaResult = new SchemaValidationResult
+                {
+                    IsValid = false,
+                    Errors = new List<SchemaValidationError>
+                    {
+                        new SchemaValidationError
+                        {
+                            Message = $"Schema validation error: {ex.Message}",
+                            Path = "",
+                            ErrorType = "SchemaValidationException"
+                        }
+                    }
+                };
+                _logger.LogWarning("Schema validation error for '{0}': {1}", sourceName, ex.Message);
+            }
+        }
+
         List<T>? ruleList;
         try
         {
@@ -198,6 +236,8 @@ public class TypedRuleSet<T> : AbstractRuleSet, IEnumerable<T> where T : Rule
             {
                 r.Source = sourceName;
                 r.RuntimeTag = tag;
+                // Store the schema validation result from the original JSON
+                r.SchemaValidationResult = schemaResult;
                 yield return r;
             }
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.CST.OAT;
+﻿using Microsoft.ApplicationInspector.RulesEngine.Schema;
+using Microsoft.CST.OAT;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
@@ -38,4 +39,24 @@ public class RulesVerifierOptions
     public bool RequireMustNotMatch { get; set; }
 
     public bool EnableNonBacktrackingRegex { get; set; }
+
+    /// <summary>
+    ///     Enable JSON schema validation for rules
+    /// </summary>
+    public bool EnableSchemaValidation { get; set; } = false;
+
+    /// <summary>
+    ///     Custom schema provider for validation
+    /// </summary>
+    public RuleSchemaProvider? SchemaProvider { get; set; }
+
+    /// <summary>
+    ///     How to handle schema validation failures
+    /// </summary>
+    public SchemaValidationLevel SchemaValidationLevel { get; set; } = SchemaValidationLevel.Warning;
+
+    /// <summary>
+    ///     Path to custom JSON schema file (optional)
+    /// </summary>
+    public string? CustomSchemaPath { get; set; }
 }

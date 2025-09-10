@@ -11,6 +11,7 @@ using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
+using Microsoft.ApplicationInspector.RulesEngine.Schema;
 using Microsoft.CST.OAT;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -25,12 +26,18 @@ public class RulesVerifier
     private readonly Analyzer _analyzer;
     private readonly ILogger _logger;
     private readonly RulesVerifierOptions _options;
+    private readonly RuleSchemaProvider? _schemaProvider;
 
     public RulesVerifier(RulesVerifierOptions options)
     {
         _options = options;
         _logger = _options.LoggerFactory?.CreateLogger<RulesVerifier>() ?? NullLogger<RulesVerifier>.Instance;
         _analyzer = _options.Analyzer ?? new ApplicationInspectorAnalyzer(_options.LoggerFactory);
+        
+        if (_options.EnableSchemaValidation)
+        {
+            _schemaProvider = _options.SchemaProvider ?? new RuleSchemaProvider(_options.CustomSchemaPath);
+        }
     }
 
     private ILoggerFactory? _loggerFactory => _options.LoggerFactory;
@@ -43,7 +50,7 @@ public class RulesVerifier
     /// <exception cref="OpException"></exception>
     public RulesVerifierResult Verify(string rulesPath)
     {
-        RuleSet CompiledRuleset = new(_loggerFactory);
+        RuleSet CompiledRuleset = new(_loggerFactory, _schemaProvider);
 
         if (!string.IsNullOrEmpty(rulesPath))
         {
@@ -140,9 +147,53 @@ public class RulesVerifier
     public RuleStatus CheckIntegrity(ConvertedOatRule convertedOatRule)
     {
         List<string> errors = new();
+        List<SchemaValidationError> schemaErrors = new();
+        bool passedSchemaValidation = true;
 
         // App Inspector checks
         var rule = convertedOatRule.AppInspectorRule;
+
+        // Schema validation step (use stored result from rule loading if available)
+        if (_options.EnableSchemaValidation && _schemaProvider != null)
+        {
+            SchemaValidationResult validationResult;
+            
+            // Use the stored schema validation result from rule loading if available
+            if (rule.SchemaValidationResult != null)
+            {
+                validationResult = rule.SchemaValidationResult;
+            }
+            else
+            {
+                // Fallback to individual rule validation (inefficient)
+                _logger.LogDebug("No stored schema validation result for rule {RuleId}, performing re-validation", rule.Id);
+                validationResult = _schemaProvider.ValidateRule(rule);
+            }
+            
+            schemaErrors.AddRange(validationResult.Errors);
+            passedSchemaValidation = validationResult.IsValid;
+
+            if (!validationResult.IsValid)
+            {
+                if (_options.SchemaValidationLevel == SchemaValidationLevel.Error)
+                {
+                    foreach (var error in validationResult.Errors)
+                    {
+                        var errorMessage = $"Schema validation error at {error.Path}: {error.Message}";
+                        errors.Add(errorMessage);
+                        _logger.LogError("Schema validation error for rule {RuleId}: {Error}", rule.Id ?? "Unknown", errorMessage);
+                    }
+                }
+                else if (_options.SchemaValidationLevel == SchemaValidationLevel.Warning)
+                {
+                    foreach (var error in validationResult.Errors)
+                    {
+                        var errorMessage = $"Schema validation warning at {error.Path}: {error.Message}";
+                        _logger.LogWarning("Schema validation warning for rule {RuleId}: {Error}", rule.Id ?? "Unknown", errorMessage);
+                    }
+                }
+            }
+        }
         // Check for null Id
         if (string.IsNullOrEmpty(rule.Id))
         {
@@ -384,7 +435,9 @@ public class RulesVerifier
             Errors = errors,
             OatIssues = _analyzer.EnumerateRuleIssues(convertedOatRule),
             HasPositiveSelfTests = rule.MustMatch?.Count > 0,
-            HasNegativeSelfTests = rule.MustNotMatch?.Count > 0
+            HasNegativeSelfTests = rule.MustNotMatch?.Count > 0,
+            SchemaValidationErrors = schemaErrors,
+            PassedSchemaValidation = passedSchemaValidation
         };
     }
 }
