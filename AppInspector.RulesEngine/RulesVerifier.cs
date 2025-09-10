@@ -50,7 +50,7 @@ public class RulesVerifier
     /// <exception cref="OpException"></exception>
     public RulesVerifierResult Verify(string rulesPath)
     {
-        RuleSet CompiledRuleset = new(_loggerFactory);
+        RuleSet CompiledRuleset = new(_loggerFactory, _schemaProvider);
 
         if (!string.IsNullOrEmpty(rulesPath))
         {
@@ -153,10 +153,23 @@ public class RulesVerifier
         // App Inspector checks
         var rule = convertedOatRule.AppInspectorRule;
 
-        // Schema validation step (at the beginning)
+        // Schema validation step (use stored result from rule loading if available)
         if (_options.EnableSchemaValidation && _schemaProvider != null)
         {
-            var validationResult = _schemaProvider.ValidateRule(rule);
+            SchemaValidationResult validationResult;
+            
+            // Use the stored schema validation result from rule loading if available
+            if (rule.SchemaValidationResult != null)
+            {
+                validationResult = rule.SchemaValidationResult;
+            }
+            else
+            {
+                // Fallback to individual rule validation (inefficient)
+                _logger.LogDebug("No stored schema validation result for rule {RuleId}, performing re-validation", rule.Id);
+                validationResult = _schemaProvider.ValidateRule(rule);
+            }
+            
             schemaErrors.AddRange(validationResult.Errors);
             passedSchemaValidation = validationResult.IsValid;
 

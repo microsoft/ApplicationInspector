@@ -42,6 +42,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public bool Disabled { get; set; }
 
         /// <summary>
+        ///     Schema validation result from when the rule was loaded from JSON
+        /// </summary>
+        [JsonIgnore]
+        public Schema.SchemaValidationResult? SchemaValidationResult { get; set; }
+
+        /// <summary>
         /// Tags that are required to be present in the total result set - even from other rules matched against other files - for this match to be valid
         /// Does not work with `TagsOnly` option.
         /// </summary>

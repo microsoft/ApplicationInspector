@@ -1,6 +1,7 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
 
+using Microsoft.ApplicationInspector.RulesEngine.Schema;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.ApplicationInspector.RulesEngine;
@@ -11,11 +12,12 @@ namespace Microsoft.ApplicationInspector.RulesEngine;
 public class RuleSet : TypedRuleSet<Rule>
 {
     /// <summary>
-    ///     Create a ruleset using the given (optional) logger.
+    ///     Create a ruleset using the given (optional) logger and schema provider.
     /// </summary>
     /// <param name="loggerFactory"></param>
-    public RuleSet(ILoggerFactory? loggerFactory = null) 
-        : base(loggerFactory)
+    /// <param name="schemaProvider"></param>
+    public RuleSet(ILoggerFactory? loggerFactory = null, RuleSchemaProvider? schemaProvider = null) 
+        : base(loggerFactory, schemaProvider)
     {    
     }
 }

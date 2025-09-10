@@ -152,11 +152,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.Schema
         /// <returns>Schema validation result</returns>
         public SchemaValidationResult ValidateRules(IEnumerable<Rule> rules)
         {
-            var json = JsonSerializer.Serialize(rules, new JsonSerializerOptions 
-            { 
-                WriteIndented = true
-                // Do not use any naming policy - the Rule class already has JsonPropertyName attributes
-            });
+            var json = JsonSerializer.Serialize(rules);
             return ValidateJson(json);
         }
 
