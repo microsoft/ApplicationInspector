@@ -145,31 +145,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine.Schema
             }
         }
 
-        private void CollectErrors(EvaluationResults result, List<SchemaValidationError> errors)
-        {
-            if (!result.IsValid)
-            {
-                if (result.HasErrors && result.Errors != null)
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        errors.Add(new SchemaValidationError
-                        {
-                            Message = error.Value,
-                            Path = error.Key,
-                            ErrorType = "SchemaValidation"
-                        });
-                    }
-                }
-                
-                // Collect errors from nested results
-                foreach (var nestedResult in result.Details)
-                {
-                    CollectErrors(nestedResult, errors);
-                }
-            }
-        }
-
         /// <summary>
         /// Validate a collection of rules against the schema
         /// </summary>
