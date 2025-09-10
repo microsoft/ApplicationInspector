@@ -121,25 +121,37 @@ namespace Microsoft.ApplicationInspector.RulesEngine.Schema
 
         private void CollectErrorsFromResult(EvaluationResults result, List<SchemaValidationError> errors, string currentPath)
         {
-            // Check if there are any details with errors
-            if (result.Details != null)
+            // Use a stack to avoid deep recursion and potential stack overflow
+            var processingStack = new Stack<(EvaluationResults result, string path)>();
+            processingStack.Push((result, currentPath));
+            
+            while (processingStack.Count > 0)
             {
-                foreach (var detail in result.Details)
+                var (currentResult, currentResultPath) = processingStack.Pop();
+                
+                // Check if there are any details with errors
+                if (currentResult.Details != null)
                 {
-                    if (!detail.IsValid)
+                    foreach (var detail in currentResult.Details)
                     {
-                        var path = detail.InstanceLocation?.ToString() ?? currentPath;
-                        var schemaPath = detail.SchemaLocation?.ToString() ?? "";
-                        
-                        errors.Add(new SchemaValidationError
+                        if (!detail.IsValid)
                         {
-                            Message = $"Validation failed at schema location '{schemaPath}'",
-                            Path = path,
-                            ErrorType = "SchemaViolation"
-                        });
-                        
-                        // Recursively collect errors from nested details
-                        CollectErrorsFromResult(detail, errors, path);
+                            var path = detail.InstanceLocation?.ToString() ?? currentResultPath;
+                            var schemaPath = detail.SchemaLocation?.ToString() ?? "";
+                            
+                            errors.Add(new SchemaValidationError
+                            {
+                                Message = $"Validation failed at schema location '{schemaPath}'",
+                                Path = path,
+                                ErrorType = "SchemaViolation"
+                            });
+                            
+                            // Push nested details onto the stack for processing
+                            if (detail.Details != null && detail.Details.Any())
+                            {
+                                processingStack.Push((detail, path));
+                            }
+                        }
                     }
                 }
             }
