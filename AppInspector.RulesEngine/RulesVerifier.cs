@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.XPath;
-using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
