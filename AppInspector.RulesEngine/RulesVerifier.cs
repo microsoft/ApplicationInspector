@@ -179,7 +179,7 @@ public class RulesVerifier
                 {
                     foreach (var error in validationResult.Errors)
                     {
-                        var errorMessage = $"Schema validation error at {error.Path}: {error.Message} (Line: {error.LineNumber}, Position: {error.LinePosition})";
+                        var errorMessage = $"Schema validation error at {error.Path}: {error.Message}";
                         errors.Add(errorMessage);
                         _logger.LogError("Schema validation error for rule {RuleId}: {Error}", rule.Id ?? "Unknown", errorMessage);
                     }
@@ -188,7 +188,7 @@ public class RulesVerifier
                 {
                     foreach (var error in validationResult.Errors)
                     {
-                        var errorMessage = $"Schema validation warning at {error.Path}: {error.Message} (Line: {error.LineNumber}, Position: {error.LinePosition})";
+                        var errorMessage = $"Schema validation warning at {error.Path}: {error.Message}";
                         _logger.LogWarning("Schema validation warning for rule {RuleId}: {Error}", rule.Id ?? "Unknown", errorMessage);
                     }
                 }

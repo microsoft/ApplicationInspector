@@ -199,16 +199,6 @@ namespace Microsoft.ApplicationInspector.RulesEngine.Schema
         public string Path { get; set; } = string.Empty;
         
         /// <summary>
-        /// Line number where the error occurred
-        /// </summary>
-        public int LineNumber { get; set; }
-        
-        /// <summary>
-        /// Line position where the error occurred
-        /// </summary>
-        public int LinePosition { get; set; }
-        
-        /// <summary>
         /// Type of error
         /// </summary>
         public string ErrorType { get; set; } = string.Empty;
