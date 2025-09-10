@@ -1,9 +1,11 @@
 // Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT License. See LICENSE.txt in the project root for license information.
 
+using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.ApplicationInspector.RulesEngine.Schema;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -186,25 +188,28 @@ namespace Microsoft.ApplicationInspector.Tests.RuleProcessor
         {
             var provider = new RuleSchemaProvider();
             
-            // Load one of the actual default rule files
-            var ruleFilePath = Path.Combine("AppInspector", "rules", "default", "components", "load_dll.json");
+            // Load the embedded default rules using RuleSetUtils
+            var defaultRuleSet = RuleSetUtils.GetDefaultRuleSet();
+            var rules = defaultRuleSet.GetAppInspectorRules().ToArray();
             
-            if (File.Exists(ruleFilePath))
+            Assert.NotNull(rules);
+            Assert.NotEmpty(rules);
+            
+            var failedRules = new List<string>();
+            
+            foreach (var rule in rules)
             {
-                var rulesJson = File.ReadAllText(ruleFilePath);
-                var rules = JsonSerializer.Deserialize<Rule[]>(rulesJson);
+                var result = provider.ValidateRule(rule);
                 
-                Assert.NotNull(rules);
-                Assert.NotEmpty(rules);
-                
-                foreach (var rule in rules)
+                if (!result.IsValid)
                 {
-                    var result = provider.ValidateRule(rule);
-                    
-                    Assert.True(result.IsValid, 
-                        $"Rule {rule.Id} failed schema validation: {string.Join("; ", result.Errors?.Select(e => e.ToString()) ?? new string[0])}");
+                    var errors = string.Join("; ", result.Errors.Select(e => $"{e.ErrorType}: {e.Message} at {e.Path}"));
+                    failedRules.Add($"Rule {rule.Id} ({rule.Name}): {errors}");
                 }
             }
+            
+            Assert.True(failedRules.Count == 0, 
+                $"All built-in rules should pass schema validation. Failed rules:\n{string.Join("\n", failedRules)}");
         }
     }
 }

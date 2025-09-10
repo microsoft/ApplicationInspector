@@ -124,21 +124,21 @@
           "oneOf": [
             {
               "type": "array",
-              "items": { "$ref": "#/definitions/searchCondition" }
+              "items": { "type": "string" }
             },
             { "type": "null" }
           ],
-          "description": "Conditions that must match"
+          "description": "Self-test sample texts that the rule must match to be considered valid"
         },
         "must-not-match": {
           "oneOf": [
             {
               "type": "array",
-              "items": { "$ref": "#/definitions/searchCondition" }
+              "items": { "type": "string" }
             },
             { "type": "null" }
           ],
-          "description": "Conditions that must not match"
+          "description": "Self-test sample texts that the rule must not match to be considered valid"
         },
         "_comment": {
           "type": "string",
