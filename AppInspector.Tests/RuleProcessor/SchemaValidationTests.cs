@@ -54,7 +54,7 @@ namespace Microsoft.ApplicationInspector.Tests.RuleProcessor
             if (!result.IsValid)
             {
                 var errorMessages = string.Join("; ", result.Errors.Select(e => $"'{e.Message}' at '{e.Path}' (Type: {e.ErrorType})"));
-                Assert.Empty(result.Errors, $"Schema validation failed: {errorMessages}");
+                Assert.Fail($"Schema validation failed: {errorMessages}");
             }
         }
 
@@ -492,12 +492,12 @@ namespace Microsoft.ApplicationInspector.Tests.RuleProcessor
             };
 
             // Simulate a schema validation failure by setting the result directly
-            invalidRule.SchemaValidationResult = new Microsoft.ApplicationInspector.RulesEngine.Schema.SchemaValidationResult
+            invalidRule.SchemaValidationResult = new SchemaValidationResult
             {
                 IsValid = false,
-                Errors = new List<Microsoft.ApplicationInspector.RulesEngine.Schema.SchemaValidationError>
+                Errors = new List<SchemaValidationError>
                 {
-                    new Microsoft.ApplicationInspector.RulesEngine.Schema.SchemaValidationError
+                    new SchemaValidationError
                     {
                         Message = "Test schema validation error",
                         Path = "/0/patterns/0/type",
@@ -551,12 +551,12 @@ namespace Microsoft.ApplicationInspector.Tests.RuleProcessor
             };
 
             // Simulate a schema validation failure by setting the result directly
-            invalidRule.SchemaValidationResult = new Microsoft.ApplicationInspector.RulesEngine.Schema.SchemaValidationResult
+            invalidRule.SchemaValidationResult = new SchemaValidationResult
             {
                 IsValid = false,
-                Errors = new List<Microsoft.ApplicationInspector.RulesEngine.Schema.SchemaValidationError>
+                Errors = new List<SchemaValidationError>
                 {
-                    new Microsoft.ApplicationInspector.RulesEngine.Schema.SchemaValidationError
+                    new SchemaValidationError
                     {
                         Message = "Test schema validation warning",
                         Path = "/0/patterns/0/type",
