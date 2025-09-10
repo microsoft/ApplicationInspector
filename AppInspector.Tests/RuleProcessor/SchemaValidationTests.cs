@@ -54,8 +54,8 @@ namespace Microsoft.ApplicationInspector.Tests.RuleProcessor
             if (!result.IsValid)
             {
                 var errorMessages = string.Join("; ", result.Errors.Select(e => $"'{e.Message}' at '{e.Path}' (Type: {e.ErrorType})"));
+                Assert.Empty(result.Errors, $"Schema validation failed: {errorMessages}");
             }
-            Assert.Empty(result.Errors);
         }
 
         [Fact]
