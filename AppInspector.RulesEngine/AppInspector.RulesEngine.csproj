@@ -47,7 +47,7 @@
     <ItemGroup>
         <EmbeddedResource Include="Resources\comments.json" />
         <EmbeddedResource Include="Resources\languages.json" />
-        <EmbeddedResource Include="Schema\rule-schema.json" />
+        <EmbeddedResource Include="..\rule-schema-v1.json" />
     </ItemGroup>
 
     <ItemGroup>

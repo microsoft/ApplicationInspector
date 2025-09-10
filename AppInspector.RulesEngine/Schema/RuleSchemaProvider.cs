@@ -17,7 +17,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.Schema
     public class RuleSchemaProvider
     {
         private readonly JsonSchema _schema;
-        private const string SCHEMA_RESOURCE_NAME = "Microsoft.ApplicationInspector.RulesEngine.Schema.rule-schema.json";
+        private const string SCHEMA_RESOURCE_NAME = "Microsoft.ApplicationInspector.RulesEngine.rule-schema-v1.json";
 
         /// <summary>
         /// Initialize the schema provider

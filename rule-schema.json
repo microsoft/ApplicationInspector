@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://github.com/microsoft/applicationinspector/rule-schema.json",
+  "$id": "https://raw.githubusercontent.com/microsoft/applicationinspector/main/rule-schema.json",
   "title": "Application Inspector Rule Schema",
   "description": "Schema for Application Inspector rule definitions",
   "type": "array",
