@@ -2,12 +2,86 @@
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Xunit;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AppInspector.Tests.RuleProcessor;
 
 public class XmlAndJsonTests
 {
     private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
+
+    [Fact]
+    public void XPathVersionElementSampleBoundary()
+    {
+        // Test case for GitHub issue #621 - sample and excerpt not working when using xpath
+        var pomXml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+<project xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>xxx</groupId>
+  <artifactId>test</artifactId>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>test.com</groupId>
+        <artifactId>mylibrary</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>";
+
+        var rule = @"[{
+    ""name"": ""TEST xpath"",
+    ""description"": ""Detects the use of 1.x version of the library"",
+    ""id"": ""XPATH000000"",
+    ""applies_to"": [
+      ""pom.xml""
+    ],
+    ""tags"": [
+      ""XPATH.Version""
+    ],
+    ""severity"": ""critical"",
+    ""patterns"": [
+      {
+        ""pattern"": ""1\\..+"",
+        ""type"": ""regex"",
+        ""scopes"": [
+          ""code""
+        ],
+        ""modifiers"": [ ],
+        ""confidence"": ""high"",
+        ""xpaths"": [""//*[local-name(.)='artifactId' and text()='mylibrary']/parent::*/*[local-name(.)='version']""]
+      }
+    ]
+  }]";
+
+        RuleSet rules = new();
+        rules.AddString(rule, "TestRules");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+        
+        if (_languages.FromFileNameOut("pom.xml", out var info))
+        {
+            var matches = processor.AnalyzeFile(pomXml, new FileEntry("pom.xml", new MemoryStream()), info);
+            Assert.Single(matches);
+            
+            var match = matches[0];
+            // This is the key fix for issue #621: 
+            // The sample should contain the actual matched content "1.6.0" instead of content from the beginning of the document
+            Assert.Equal("1.6.0", match.Sample);
+            
+            // And the boundary should point to the correct location
+            Assert.True(match.Boundary.Index > 200); // Should be well into the document, not at the beginning
+        }
+        else
+        {
+            Assert.Fail("Failed to get language info for pom.xml");
+        }
+    }
 
     private const string jsonAndXmlStringRule = @"[
         {
@@ -241,15 +315,15 @@ public class XmlAndJsonTests
         ""severity"": ""BestPractice"",
         ""rule_info"": ""DS180000.md"",
         ""patterns"": [
-            {
-                ""xpaths"": [""//default:application/@android:debuggable""],
-                ""pattern"": ""true"",
+                {
+                    ""xpaths"": [""//default:manifest/default:application/@android:debuggable""],
+                    ""pattern"": ""true"",
                 ""type"": ""regex"",
                 ""scopes"": [
                     ""code""
                 ],
                 ""modifiers"" : [""i""],
-                ""xpathnamespaces"": {
+                    ""xpathnamespaces"": {
                     ""default"": ""http://maven.apache.org/POM/4.0.0"",
                     ""android"": ""http://schemas.android.com/apk/res/android""
                 }
@@ -276,7 +350,7 @@ public class XmlAndJsonTests
             new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
         if (_languages.FromFileNameOut("AndroidManifest.xml", out var info))
         {
-            var matches = processor.AnalyzeFile(@"<?xml version=""1.0"" encoding=""utf-8""?><manifest xmlns=""http://maven.apache.org/POM/4.0.0"" xmlns:android=""http://schemas.android.com/apk/res/android""><application android:debuggable='true' /></manifest>", new FileEntry("AndroidManifest.xml", new MemoryStream()), info);
+            var matches = processor.AnalyzeFile(@"<?xml version=""1.0"" encoding=""utf-8""?><manifest xmlns:android=""http://schemas.android.com/apk/res/android"" xmlns=""http://maven.apache.org/POM/4.0.0""><application android:debuggable='true' /></manifest>", new FileEntry("AndroidManifest.xml", new MemoryStream()), info);
             Assert.Single(matches);
         }
     }

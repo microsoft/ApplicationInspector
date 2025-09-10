@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.XPath;
 using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
@@ -29,13 +30,23 @@ public class TextContainer
     private readonly string prefix;
     private readonly string suffix;
 
+    // Window/offset constants used for XML/XPath boundary reconstruction.
+    // These constrain local searches to avoid scanning entire large documents while
+    // remaining generous enough for typical formatting (attributes spread across a tag line,
+    // element content near reported line info, and a broader fallback when line info is
+    // imperfect). Adjust cautiously as they directly impact performance and match accuracy.
+    private const int XmlAttributeSearchWindow = 400;     // Max chars to scan forward for an attribute value on the same line
+    private const int XmlElementSearchLookBehind = 100;   // Chars to look back from reported line position when locating element start
+    private const int XmlElementSearchLookAhead = 500;    // Chars to look forward from reported line position for element content
+    private const int XmlElementFallbackWindow = 800;     // Fallback scan window when precise line-info based match fails
+
     private bool _triedToConstructJsonDocument;
     private JsonDocument? _jsonDocument;
     private object _jsonLock = new();
 
-    private bool _triedToConstructXPathDocument;
-    private XPathDocument? _xmlDoc;
-    private object _xpathLock = new();
+    private bool _triedToConstructXDocument;
+    private XDocument? _xDocument;
+    private object _xdocumentLock = new();
 
     private bool _triedToConstructYmlDocument;
     private YamlStream? _ymlDocument;
@@ -172,106 +183,314 @@ public class TextContainer
     }
 
     /// <summary>
+    ///     Try to process an XObject using line info for precise boundary detection.
+    /// </summary>
+    /// <param name="obj">The XObject to process</param>
+    /// <param name="value">The string value of the object</param>
+    /// <param name="usedElementPositions">Set of already used element positions</param>
+    /// <returns>True if the object was successfully processed and a boundary was yielded</returns>
+    private IEnumerable<(string, Boundary)> TryProcessWithLineInfo(XObject obj, string value, HashSet<int> usedElementPositions)
+    {
+        if (!(obj is IXmlLineInfo li && li.HasLineInfo()))
+        {
+            yield break;
+        }
+
+        var line = li.LineNumber; // 1-based per IXmlLineInfo
+        var col = li.LinePosition; // 1-based per IXmlLineInfo
+        // Defensive: ensure line index is within our sentinel-based one-indexed arrays
+        if (line <= 0 || line >= LineStarts.Count)
+        {
+            yield break; // Invalid line info
+        }
+
+        // Clamp column to at least 1 to avoid negative offset; XML producers should give >=1 but be robust
+        if (col < 1)
+        {
+            col = 1;
+        }
+
+        // Compute base index; guard against overflow beyond content length
+        var startOfLineIdx = LineStarts[line];
+        var baseIdx = startOfLineIdx + (col - 1);
+        if (baseIdx < 0)
+        {
+            baseIdx = 0;
+        }
+        else if (baseIdx >= FullContent.Length)
+        {
+            // If column points past end of file/line, bail early; no reliable mapping
+            yield break;
+        }
+        int mappedIndex = baseIdx;
+
+        if (obj is XAttribute attrObj)
+        {
+            // Attribute line position points to start of name. Find value within a local window.
+            var window = FullContent.AsSpan(baseIdx, Math.Min(XmlAttributeSearchWindow, FullContent.Length - baseIdx));
+            
+            // For namespaced attributes, we need to check both the full name and just the local name
+            // because the XML might use namespace prefixes differently than the XPath
+            var possiblePatterns = new[] 
+            {
+                attrObj.Name.ToString() + "=",  // Full name (e.g., "android:debuggable=")
+                attrObj.Name.LocalName + "="    // Local name only (e.g., "debuggable=")
+            };
+
+            var targetVal = value.AsSpan();
+            foreach (var possible in possiblePatterns)
+            {
+                var rel = window.IndexOf(possible, StringComparison.Ordinal);
+                if (rel >= 0)
+                {
+                    var afterEq = baseIdx + rel + possible.Length;
+                    if (afterEq < FullContent.Length)
+                    {
+                        var quote = FullContent[afterEq];
+                        if (quote == '"' || quote == '\'')
+                        {
+                            var valStart = afterEq + 1;
+                            if (valStart + value.Length <= FullContent.Length && FullContent.AsSpan(valStart, value.Length).SequenceEqual(targetVal))
+                            {
+                                mappedIndex = valStart;
+                                yield return (value, new Boundary { Index = mappedIndex, Length = value.Length });
+                                yield break; // Found it, stop trying other patterns
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (obj is XElement el && !el.HasElements)
+        {
+            // For a leaf element value, find the actual content between tags
+            // Use line info to get close to the right element, then find its specific content
+            var tagName = el.Name.LocalName;
+            
+            // Start searching from the line info position or a reasonable fallback
+            var searchStart = Math.Max(0, baseIdx - XmlElementSearchLookBehind);
+            var searchEnd = Math.Min(FullContent.Length, baseIdx + XmlElementSearchLookAhead);
+            
+            // Look for this specific element's opening tag
+            var currentPos = searchStart;
+            while (currentPos < searchEnd)
+            {
+                var tagPattern = "<" + tagName;
+                var tagIdx = FullContent.IndexOf(tagPattern, currentPos, StringComparison.Ordinal);
+                if (tagIdx < 0 || tagIdx >= searchEnd) break;
+                
+                // Find the end of the opening tag
+                var tagCloseIdx = FullContent.IndexOf('>', tagIdx);
+                if (tagCloseIdx >= 0 && tagCloseIdx + 1 < FullContent.Length)
+                {
+                    var contentStart = tagCloseIdx + 1;
+                    
+                    // Skip any whitespace after the opening tag
+                    while (contentStart < FullContent.Length && char.IsWhiteSpace(FullContent[contentStart]))
+                        contentStart++;
+                    
+                    // Check if the value is at this position
+                    if (contentStart + value.Length <= FullContent.Length && 
+                        FullContent.AsSpan(contentStart, value.Length).SequenceEqual(value.AsSpan()))
+                    {
+                        // Verify this is the right element by checking the closing tag follows
+                        var expectedCloseTag = "</" + tagName + ">";
+                        var afterContent = contentStart + value.Length;
+                        
+                        // Skip whitespace after content
+                        while (afterContent < FullContent.Length && char.IsWhiteSpace(FullContent[afterContent]))
+                            afterContent++;
+                        
+                        if (afterContent + expectedCloseTag.Length <= FullContent.Length &&
+                            FullContent.AsSpan(afterContent, expectedCloseTag.Length).SequenceEqual(expectedCloseTag.AsSpan()))
+                        {
+                            // Check if this position has been used already for duplicate element handling
+                            if (!usedElementPositions.Contains(contentStart))
+                            {
+                                usedElementPositions.Add(contentStart);
+                                mappedIndex = contentStart;
+                                yield return (value, new Boundary { Index = mappedIndex, Length = value.Length });
+                                yield break; // Found this element, stop processing
+                            }
+                            // If this position was already used, continue searching for the next instance
+                        }
+                    }
+                }
+                
+                // Move past this tag to look for the next one
+                currentPos = tagIdx + tagPattern.Length;
+            }
+            
+            // Fallback: search forward a limited window for exact value
+            var fallbackWindow = Math.Min(XmlElementFallbackWindow, FullContent.Length - baseIdx);
+            if (fallbackWindow > 0)
+            {
+                var span = FullContent.AsSpan(baseIdx, fallbackWindow);
+                var rel = span.IndexOf(value, StringComparison.Ordinal);
+                if (rel >= 0)
+                {
+                    mappedIndex = baseIdx + rel;
+                    yield return (value, new Boundary { Index = mappedIndex, Length = value.Length });
+                }
+            }
+        }
+    }
+
+    /// <summary>
     ///     If this file is XML, attempts to return the the string contents of the specified XPath applied to the file.
-    ///     If the path does not exist, or the file is not JSON, XML or YML returns null.
-    ///     Method contains some heuristic behavior and may not cover all cases. 
-    ///     Please report any issues with a sample XML and XPATH to reproduce.
+    ///     If the path does not exist, or the file is not XML returns empty enumeration.
     /// </summary>
     /// <param name="Path">XPath to query document with</param>
     /// <returns>Enumeration of string and Boundary tuples for the XPath matches. Boundary locations refer to the locations in the original document on disk.</returns>
     internal IEnumerable<(string, Boundary)> GetStringFromXPath(string Path, Dictionary<string, string> xpathNameSpaces)
     {
-        lock (_xpathLock)
+        // Lazy parse
+        lock (_xdocumentLock)
         {
-            if (!_triedToConstructXPathDocument)
+            if (!_triedToConstructXDocument)
             {
                 try
                 {
-                    _triedToConstructXPathDocument = true;
-                    _xmlDoc = new XPathDocument(new StringReader(FullContent));
+                    _triedToConstructXDocument = true;
+                    _xDocument = XDocument.Parse(FullContent, LoadOptions.SetLineInfo | LoadOptions.PreserveWhitespace);
                 }
                 catch (Exception e)
                 {
                     _logger.LogError("Failed to parse {1} as a XML document: {0}", e.Message, _filePath);
-                    _xmlDoc = null;
+                    _xDocument = null;
                 }
             }
         }
 
-        if (_xmlDoc is null)
+        if (_xDocument is null)
         {
             yield break;
         }
 
-        var navigator = _xmlDoc.CreateNavigator();
-        var query = navigator.Compile(Path);
-        if (xpathNameSpaces.Any())
+        // Namespace manager
+        var nt = new NameTable();
+        var nsMgr = new XmlNamespaceManager(nt);
+        
+        // First, add namespaces from the document root element
+        if (_xDocument.Root is not null)
         {
-            var manager = new XmlNamespaceManager(navigator.NameTable);
-            foreach (var pair in xpathNameSpaces)
+            foreach (var attr in _xDocument.Root.Attributes())
             {
-                manager.AddNamespace(pair.Key, pair.Value);
+                if (!attr.IsNamespaceDeclaration) continue;
+                
+                var prefix = attr.Name.LocalName;
+                var namespaceUri = attr.Value;
+                
+                // Handle default namespace declaration (xmlns="...")
+                if (attr.Name.Namespace == XNamespace.None && prefix == "xmlns")
+                {
+                    // This is a default namespace declaration
+                    // Check if caller wants to map this to a specific prefix
+                    var defaultMapping = xpathNameSpaces.FirstOrDefault(kvp => kvp.Value == namespaceUri);
+                    if (defaultMapping.Key != null)
+                    {
+                        // Caller provided a mapping for this namespace URI, use their prefix
+                        try { nsMgr.AddNamespace(defaultMapping.Key, namespaceUri); }
+                        catch (Exception ex)
+                        {
+                            _logger.LogTrace(ex,
+                                "Failed to add XML default namespace mapping using caller prefix '{prefix}' -> '{uri}' for file {file}",
+                                defaultMapping.Key, namespaceUri, _filePath);
+                        }
+                    }
+                    else
+                    {
+                        // Add as empty prefix for default namespace
+                        try { nsMgr.AddNamespace(string.Empty, namespaceUri); }
+                        catch (Exception ex)
+                        {
+                            _logger.LogTrace(ex,
+                                "Failed to add XML default namespace mapping (empty prefix) -> '{uri}' for file {file}",
+                                namespaceUri, _filePath);
+                        }
+                    }
+                }
+                else
+                {
+                    // Regular prefixed namespace declaration (xmlns:prefix="...")
+                    // Only add if not already specified by caller
+                    if (!xpathNameSpaces.ContainsKey(prefix))
+                    {
+                        try { nsMgr.AddNamespace(prefix, namespaceUri); }
+                        catch (Exception ex)
+                        {
+                            _logger.LogTrace(ex,
+                                "Failed to add XML namespace mapping '{prefix}' -> '{uri}' from document root for file {file}",
+                                prefix, namespaceUri, _filePath);
+                        }
+                    }
+                }
             }
-            query.SetContext(manager);
         }
-        var nodeIter = navigator.Select(query);
-        var minIndex = 0;
-        while (nodeIter.MoveNext())
+        
+        // Then add caller supplied mappings (these can override document namespaces)
+        foreach (var kvp in xpathNameSpaces)
         {
-            if (nodeIter.Current is null)
+            try { nsMgr.AddNamespace(kvp.Key, kvp.Value); }
+            catch (Exception ex)
+            {
+                _logger.LogTrace(ex,
+                    "Failed to add caller-supplied XML namespace mapping '{prefix}' -> '{uri}' for file {file}",
+                    kvp.Key, kvp.Value, _filePath);
+            }
+        }
+
+        object? evalResult;
+        try
+        {
+            evalResult = _xDocument.XPathEvaluate(Path, nsMgr);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug("XPath evaluation failed for '{xpath}' on '{file}': {msg}", Path, _filePath, ex.Message);
+            yield break;
+        }
+
+        IEnumerable<XObject> resultObjects = evalResult switch
+        {
+            IEnumerable<object?> seq => seq.OfType<XObject>(),
+            XObject single => new[] { single },
+            _ => Enumerable.Empty<XObject>()
+        };
+        // Track which element instances we've already mapped to avoid duplicate boundaries
+        var usedElementPositions = new HashSet<int>();
+        
+        foreach (var obj in resultObjects)
+        {
+            string? value = obj switch
+            {
+                XElement e => e.Value,
+                XAttribute a => a.Value,
+                XText t => t.Value,
+                _ => obj.ToString()
+            };
+
+            if (string.IsNullOrEmpty(value))
             {
                 continue;
             }
 
-            // We have to heuristically calculate the original indexes of the locations in the original document because the internal representation differs
-            // For example it will convert <Tag Prop="Val"/> to <Tag Prop=\"Val\"/>
-
-            // First we find the name, absolute position index
-            var nameIndex = FullContent[minIndex..].IndexOf(nodeIter.Current.Name, StringComparison.Ordinal) + minIndex;
-            // Then we calculate the absolute index of the end of the tag.
-            // We can't use OuterXML property because the parser will inject the namespace if present into the OuterXML so it doesn't match the original text.
-            var endTagIndex = FullContent[nameIndex..].IndexOf('>', StringComparison.Ordinal) + nameIndex;
-            // If we are matching a tag itself, the previous char should be the open tag
-            //  |
-            //  v
-            // <Tag>
-            // If its a property it won't be
-            //      |
-            //      v
-            // <Tag Prop="Value">
-            var isProp = FullContent[(nameIndex - 1)] != '<';
-            // Check for self-closing tag
-            var selfClosedTag = FullContent[endTagIndex - 1] == '/';
-
-            // This is for when we're capturing the value of a property of the tag rather than the tag itself
-            if (isProp)
+            // Try line-info based boundary processing first
+            var lineInfoResults = TryProcessWithLineInfo(obj, value, usedElementPositions).ToList();
+            if (lineInfoResults.Any())
             {
-                // Find the index of character after the next end tag index after the name
-                var nextClosingIndexAfterName = endTagIndex+1;
-                // If we have a self closing tag, we can use that index, otherwise we need the closure of this tag
-                var offset = selfClosedTag ? endTagIndex : FullContent[nextClosingIndexAfterName..].IndexOf('>') + nextClosingIndexAfterName + 1;
-                // Move the minimum index up to the end of the closing tag to avoid additioanl matches of the same values
-                minIndex = selfClosedTag ? offset : FullContent[offset..].IndexOf('>') + offset + 1;
-                var location = new Boundary
+                foreach (var result in lineInfoResults)
                 {
-                    // +2 for the \" before the value for the property
-                    Index = nameIndex + nodeIter.Current.Name.Length + 2,
-                    Length = nodeIter.Current.InnerXml.Length
-                };
-                yield return (nodeIter.Current.Value, location);
+                    yield return result;
+                }
+                continue;
             }
-            else
+
+            // Last resort: basic global search
+            var globalIdx = FullContent.IndexOf(value, StringComparison.Ordinal);
+            if (globalIdx >= 0)
             {
-                // Move the offset to the end of the opening tag
-                var offset = selfClosedTag ? endTagIndex : FullContent[nameIndex..].IndexOf(nodeIter.Current.InnerXml, StringComparison.Ordinal) + nameIndex;
-                // Move the minimum index up to the end of the closing tag
-                minIndex = selfClosedTag ? offset : FullContent[offset..].IndexOf('>') + offset + 1;
-                var location = new Boundary
-                {
-                    Index = offset,
-                    Length = nodeIter.Current.InnerXml.Length
-                };
-                yield return (nodeIter.Current.Value, location);
+                yield return (value, new Boundary { Index = globalIdx, Length = value.Length });
             }
         }
     }
