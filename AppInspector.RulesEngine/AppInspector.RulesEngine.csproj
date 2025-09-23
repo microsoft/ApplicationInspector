@@ -30,7 +30,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="gstocco.YamlDotNet.YamlPath" Version="1.0.26" />
         <PackageReference Include="JsonCons.JsonPath" Version="1.1.0" />
         <PackageReference Include="Microsoft.CST.OAT" Version="1.2.87" />
         <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.45" />
