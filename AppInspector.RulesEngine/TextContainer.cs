@@ -11,7 +11,6 @@ using System.Text.Json;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using gfs.YamlDotNet.YamlPath;
 using JsonCons.JsonPath;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
