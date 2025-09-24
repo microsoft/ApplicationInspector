@@ -31,6 +31,7 @@
 
     <ItemGroup>
         <PackageReference Include="JsonCons.JsonPath" Version="1.1.0" />
+        <PackageReference Include="JsonSchema.Net" Version="7.2.3" />
         <PackageReference Include="Microsoft.CST.OAT" Version="1.2.87" />
         <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.45" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
@@ -45,6 +46,7 @@
     <ItemGroup>
         <EmbeddedResource Include="Resources\comments.json" />
         <EmbeddedResource Include="Resources\languages.json" />
+        <EmbeddedResource Include="..\rule-schema-v1.json" />
     </ItemGroup>
 
     <ItemGroup>
