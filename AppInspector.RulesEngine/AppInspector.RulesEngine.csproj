@@ -31,10 +31,10 @@
 
     <ItemGroup>
         <PackageReference Include="JsonCons.JsonPath" Version="1.1.0" />
-        <PackageReference Include="JsonSchema.Net" Version="7.2.3" />
+        <PackageReference Include="JsonSchema.Net" Version="7.4.0" />
         <PackageReference Include="Microsoft.CST.OAT" Version="1.2.87" />
         <PackageReference Include="Microsoft.CST.RecursiveExtractor" Version="1.2.45" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
         <PackageReference Include="YamlDotNet" Version="16.3.0" />
     </ItemGroup>
 
