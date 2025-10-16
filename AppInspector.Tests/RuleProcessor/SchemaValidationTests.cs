@@ -27,6 +27,92 @@ namespace Microsoft.ApplicationInspector.Tests.RuleProcessor
         }
 
         [Fact]
+        public void SchemaProvider_FromSchemaContent_LoadsSchema()
+        {
+            // Load embedded schema content first to use as test data
+            var defaultProvider = new RuleSchemaProvider();
+            var schemaJson = JsonSerializer.Serialize(defaultProvider.GetSchema());
+            
+            // Create provider from schema content
+            var provider = RuleSchemaProvider.FromSchemaContent(schemaJson);
+            var schema = provider.GetSchema();
+            
+            Assert.NotNull(schema);
+        }
+
+        [Fact]
+        public void SchemaProvider_FromSchemaContent_WithNullContent_ThrowsException()
+        {
+            Assert.Throws<ArgumentException>(() => RuleSchemaProvider.FromSchemaContent(null));
+        }
+
+        [Fact]
+        public void SchemaProvider_FromSchemaContent_WithEmptyContent_ThrowsException()
+        {
+            Assert.Throws<ArgumentException>(() => RuleSchemaProvider.FromSchemaContent(string.Empty));
+        }
+
+        [Fact]
+        public void SchemaProvider_FromSchemaContent_ValidatesRules()
+        {
+            // Use a minimal schema that requires id and name
+            var minimalSchema = @"{
+                ""$schema"": ""http://json-schema.org/draft-07/schema#"",
+                ""type"": ""array"",
+                ""items"": {
+                    ""type"": ""object"",
+                    ""required"": [""id"", ""name"", ""tags"", ""patterns""],
+                    ""properties"": {
+                        ""id"": { ""type"": ""string"", ""minLength"": 1 },
+                        ""name"": { ""type"": ""string"" },
+                        ""description"": { ""type"": ""string"" },
+                        ""tags"": { 
+                            ""type"": ""array"",
+                            ""minItems"": 1,
+                            ""items"": { ""type"": ""string"" }
+                        },
+                        ""patterns"": {
+                            ""type"": ""array"",
+                            ""minItems"": 1,
+                            ""items"": {
+                                ""type"": ""object"",
+                                ""required"": [""pattern"", ""type""],
+                                ""properties"": {
+                                    ""pattern"": { ""type"": ""string"" },
+                                    ""type"": { ""type"": ""string"" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }";
+
+            var provider = RuleSchemaProvider.FromSchemaContent(minimalSchema);
+            
+            var validRule = new Rule
+            {
+                Id = "TEST001",
+                Name = "Test Rule",
+                Description = "A test rule",
+                Tags = new[] { "Test.Tag" },
+                Patterns = new[]
+                {
+                    new SearchPattern
+                    {
+                        Pattern = "test",
+                        PatternType = PatternType.String,
+                        Scopes = new[] { PatternScope.Code },
+                        Confidence = Confidence.High
+                    }
+                }
+            };
+
+            var result = provider.ValidateRule(validRule);
+            
+            Assert.True(result.IsValid);
+        }
+
+        [Fact]
         public void ValidRule_PassesSchemaValidation()
         {
             var provider = new RuleSchemaProvider();
