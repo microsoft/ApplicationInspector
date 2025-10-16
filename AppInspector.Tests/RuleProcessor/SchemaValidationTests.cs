@@ -43,7 +43,7 @@ namespace Microsoft.ApplicationInspector.Tests.RuleProcessor
         [Fact]
         public void SchemaProvider_FromSchemaContent_WithNullContent_ThrowsException()
         {
-            Assert.Throws<ArgumentException>(() => RuleSchemaProvider.FromSchemaContent(null));
+            Assert.Throws<ArgumentNullException>(() => RuleSchemaProvider.FromSchemaContent(null));
         }
 
         [Fact]
