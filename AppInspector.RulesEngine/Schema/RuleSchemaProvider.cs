@@ -50,9 +50,13 @@ namespace Microsoft.ApplicationInspector.RulesEngine.Schema
         /// <returns>A new RuleSchemaProvider instance</returns>
         public static RuleSchemaProvider FromSchemaContent(string schemaContent)
         {
-            if (string.IsNullOrEmpty(schemaContent))
+            if (schemaContent is null)
             {
-                throw new ArgumentException("Schema content cannot be null or empty", nameof(schemaContent));
+                throw new ArgumentNullException(nameof(schemaContent));
+            }
+            if (string.IsNullOrWhiteSpace(schemaContent))
+            {
+                throw new ArgumentException("Schema content cannot be empty or whitespace.", nameof(schemaContent));
             }
             
             var schema = LoadSchemaFromContent(schemaContent);
