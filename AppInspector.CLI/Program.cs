@@ -142,7 +142,8 @@ public static class Program
             "html",
             "text",
             "json",
-            "sarif"
+            "sarif",
+            "markdown"
         };
         var logger = loggerFactory.CreateLogger("Program");
         string[] checkFormats;
