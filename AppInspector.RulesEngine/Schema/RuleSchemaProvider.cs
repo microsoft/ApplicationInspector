@@ -35,6 +35,34 @@ namespace Microsoft.ApplicationInspector.RulesEngine.Schema
             }
         }
 
+        /// <summary>
+        /// Private constructor for factory methods
+        /// </summary>
+        private RuleSchemaProvider(JsonSchema schema)
+        {
+            _schema = schema;
+        }
+
+        /// <summary>
+        /// Create a schema provider from schema content string
+        /// </summary>
+        /// <param name="schemaContent">The JSON schema content as a string</param>
+        /// <returns>A new RuleSchemaProvider instance</returns>
+        public static RuleSchemaProvider FromSchemaContent(string schemaContent)
+        {
+            if (schemaContent is null)
+            {
+                throw new ArgumentNullException(nameof(schemaContent));
+            }
+            if (string.IsNullOrWhiteSpace(schemaContent))
+            {
+                throw new ArgumentException("Schema content cannot be empty or whitespace.", nameof(schemaContent));
+            }
+            
+            var schema = LoadSchemaFromContent(schemaContent);
+            return new RuleSchemaProvider(schema);
+        }
+
         private JsonSchema LoadEmbeddedSchema()
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -42,13 +70,18 @@ namespace Microsoft.ApplicationInspector.RulesEngine.Schema
                 ?? throw new InvalidOperationException($"Could not find embedded schema resource: {SCHEMA_RESOURCE_NAME}");
             using var reader = new StreamReader(stream);
             var schemaJson = reader.ReadToEnd();
-            return JsonSchema.FromText(schemaJson);
+            return LoadSchemaFromContent(schemaJson);
         }
 
         private JsonSchema LoadSchemaFromFile(string path)
         {
             var schemaJson = File.ReadAllText(path);
-            return JsonSchema.FromText(schemaJson);
+            return LoadSchemaFromContent(schemaJson);
+        }
+
+        private static JsonSchema LoadSchemaFromContent(string schemaContent)
+        {
+            return JsonSchema.FromText(schemaContent);
         }
 
         /// <summary>
