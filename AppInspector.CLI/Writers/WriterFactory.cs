@@ -57,6 +57,7 @@ public class WriterFactory
             "text" => new AnalyzeTextWriter(streamWriter, options.TextOutputFormat, _loggerFactory),
             "html" => new AnalyzeHtmlWriter(streamWriter, _loggerFactory),
             "sarif" => new AnalyzeSarifWriter(streamWriter, _loggerFactory),
+            "markdown" => new AnalyzeMarkdownWriter(streamWriter, _loggerFactory),
             _ => throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_ARG_VALUE, "-f"))
         };
     }

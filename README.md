@@ -149,6 +149,14 @@ appinspector analyze -s path/to/files
 appinspector analyze -s path/to/files -f sarif -o output.sarif
 ```
 
+#### Output Markdown
+
+This will create a markdown output suitable for CI environments with a summary of key features.
+
+```
+appinspector analyze -s path/to/files -f markdown -o report.md
+```
+
 #### Excluding Files using Globs
 
 This will create a json output named data.json of the analysis in the current directory, excluding all files in `test`

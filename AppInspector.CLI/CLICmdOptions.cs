@@ -130,7 +130,7 @@ public record CLIAnalyzeCmdOptions : CLIAnalysisSharedCommandOptions
         Separator = ',')]
     public IEnumerable<string> SourcePath { get; set; } = Array.Empty<string>();
 
-    [Option('f', "output-file-format", Required = false, HelpText = "Output format [html|json|text]", Default = "html")]
+    [Option('f', "output-file-format", Required = false, HelpText = "Output format [html|json|text|markdown|sarif]", Default = "html")]
     public new string OutputFileFormat { get; set; } = "html";
 
     [Option('e', "text-format", Required = false, HelpText = "Match text format specifiers",
