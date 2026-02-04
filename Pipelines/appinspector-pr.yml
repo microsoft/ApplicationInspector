@@ -9,7 +9,7 @@ resources:
   repositories:
     - repository: templates
       type: git
-      name: SecurityEngineering/OSS-Tools-Pipeline-Templates
+      name: General/OSS-Tools-Pipeline-Templates
       ref: refs/tags/v2.0.4
     - repository: 1esPipelines
       type: git
@@ -45,7 +45,7 @@ extends:
           projectPath: 'AppInspector.Tests/AppInspector.Tests.csproj'
           includeNuGetOrg: false
           nugetFeedsToUse: 'config'
-          nugetConfigPath: 'nuget.config.azure'
+          nugetConfigPath: 'nuget.config'
           onInit:
             - task: NuGetAuthenticate@1
 
@@ -64,7 +64,7 @@ extends:
           artifactName: 'linux-mac-archive'
           includeNuGetOrg: false
           nugetFeedsToUse: 'config'
-          nugetConfigPath: 'nuget.config.azure'
+          nugetConfigPath: 'nuget.config'
           onInit:
             - task: NuGetAuthenticate@1
           preBuild:
@@ -79,7 +79,7 @@ extends:
           artifactName: 'win-netcore-archive'
           includeNuGetOrg: false
           nugetFeedsToUse: 'config'
-          nugetConfigPath: 'nuget.config.azure'
+          nugetConfigPath: 'nuget.config'
           onInit:
             - task: NuGetAuthenticate@1
           preBuild:
@@ -94,7 +94,7 @@ extends:
           artifactName: 'nuget-lib-archive'
           includeNuGetOrg: false
           nugetFeedsToUse: 'config'
-          nugetConfigPath: 'nuget.config.azure'
+          nugetConfigPath: 'nuget.config'
           onInit:
             - task: NuGetAuthenticate@1
           preBuild:
@@ -109,7 +109,7 @@ extends:
           artifactName: 'nuget-engine-archive'
           includeNuGetOrg: false
           nugetFeedsToUse: 'config'
-          nugetConfigPath: 'nuget.config.azure'
+          nugetConfigPath: 'nuget.config'
           onInit:
             - task: NuGetAuthenticate@1
           preBuild:
@@ -124,7 +124,7 @@ extends:
           artifactName: 'nuget-common-archive'
           includeNuGetOrg: false
           nugetFeedsToUse: 'config'
-          nugetConfigPath: 'nuget.config.azure'
+          nugetConfigPath: 'nuget.config'
           onInit:
             - task: NuGetAuthenticate@1
           preBuild:
@@ -139,7 +139,7 @@ extends:
           artifactName: 'nuget-logging-archive'
           includeNuGetOrg: false
           nugetFeedsToUse: 'config'
-          nugetConfigPath: 'nuget.config.azure'
+          nugetConfigPath: 'nuget.config'
           onInit:
             - task: NuGetAuthenticate@1
           preBuild:
@@ -154,7 +154,7 @@ extends:
           artifactName: 'nuget-cli-archive'
           includeNuGetOrg: false
           nugetFeedsToUse: 'config'
-          nugetConfigPath: 'nuget.config.azure'
+          nugetConfigPath: 'nuget.config'
           onInit:
             - task: NuGetAuthenticate@1
           preBuild:
