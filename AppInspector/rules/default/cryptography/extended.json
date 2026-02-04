@@ -3,7 +3,6 @@
     "name": "Cryptography: Encryption (General)",
     "id": "AI007900",
     "description": "Detect use of cryptography",
-    "recommendation": "",
     "applies_to": [
       "csharp",
       "vb"

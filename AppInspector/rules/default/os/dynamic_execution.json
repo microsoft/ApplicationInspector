@@ -96,7 +96,6 @@
     "name": "OS: Dynamic Execution",
     "id": "AI035000",
     "description": "OS: Dynamic Execution",
-    "recommendation": "",
     "applies_to": [
       "csharp"
     ],
@@ -122,7 +121,6 @@
     "name": "OS: Dynamic Execution",
     "id": "AI035010",
     "description": "OS: Dynamic Execution",
-    "recommendation": "",
     "applies_to": [
       "rust"
     ],

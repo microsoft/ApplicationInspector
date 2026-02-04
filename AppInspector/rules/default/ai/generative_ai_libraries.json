@@ -130,7 +130,7 @@
             "scopes": [
               "code"
             ]
-          },
+          }
         ],
         "must-match": [
           "import semantic_kernel.connectors.ai.open_ai as sk_oai",
