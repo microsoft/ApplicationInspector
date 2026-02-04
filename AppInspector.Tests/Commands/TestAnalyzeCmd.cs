@@ -906,6 +906,114 @@ buy@tacos.com
     }
 
     /// <summary>
+    ///     Test that the depends_on rule parameter works correctly in TagsOnly mode
+    /// </summary>
+    [Fact]
+    public void TestDependsOnWithTagsOnly()
+    {
+        // Test with both dependee and dependant present - should have both tags
+        AnalyzeOptions options = new()
+        {
+            SourcePath = new string[] { testFilePath, fourWindowsOne2000Path },
+            CustomRulesPath = dependsOnOneWayRulePath,
+            IgnoreDefaultRules = true,
+            TagsOnly = true
+        };
+
+        AnalyzeCommand command = new(options, factory);
+        var result = command.GetResult();
+        Assert.Equal(AnalyzeResult.ExitCode.Success, result.ResultCode);
+        // In TagsOnly mode, no matches should be returned
+        Assert.Empty(result.Metadata.Matches);
+        // But the tags should be present since both conditions are met
+        Assert.Contains("Dependee", result.Metadata.UniqueTags);
+        Assert.Contains("Dependant", result.Metadata.UniqueTags);
+    }
+
+    /// <summary>
+    ///     Test that depends_on filtering works in TagsOnly mode when dependency is not satisfied
+    /// </summary>
+    [Fact]
+    public void TestDependsOnWithTagsOnlyWithoutDependee()
+    {
+        // Test without the dependee - should only have Dependee tag (the dependant tag should be filtered out)
+        AnalyzeOptions options = new()
+        {
+            SourcePath = new string[] { testFilePath },
+            CustomRulesPath = dependsOnOneWayRulePath,
+            IgnoreDefaultRules = true,
+            TagsOnly = true
+        };
+
+        AnalyzeCommand command = new(options, factory);
+        var result = command.GetResult();
+        Assert.Equal(AnalyzeResult.ExitCode.Success, result.ResultCode);
+        // In TagsOnly mode, no matches should be returned
+        Assert.Empty(result.Metadata.Matches);
+        // Only Dependee should be present, Dependant should be filtered out since its dependency isn't satisfied
+        Assert.Contains("Dependee", result.Metadata.UniqueTags);
+        Assert.DoesNotContain("Dependant", result.Metadata.UniqueTags);
+    }
+
+    /// <summary>
+    ///     Test depends_on chain filtering works correctly in TagsOnly mode
+    /// </summary>
+    [Fact]
+    public void TestDependsOnChainWithTagsOnly()
+    {
+        // Test with all files - should have all tags
+        AnalyzeOptions options = new()
+        {
+            SourcePath = new string[] { justAPath, justBPath, justCPath },
+            CustomRulesPath = dependsOnChainRulePath,
+            IgnoreDefaultRules = true,
+            TagsOnly = true
+        };
+
+        AnalyzeCommand command = new(options, factory);
+        var result = command.GetResult();
+        Assert.Equal(AnalyzeResult.ExitCode.Success, result.ResultCode);
+        Assert.Empty(result.Metadata.Matches);
+        Assert.Contains("Category.A", result.Metadata.UniqueTags);
+        Assert.Contains("Category.B", result.Metadata.UniqueTags);
+        Assert.Contains("Category.C", result.Metadata.UniqueTags);
+
+        // Test without A - should have no tags since B depends on A and C depends on B
+        options = new()
+        {
+            SourcePath = new string[] { justBPath, justCPath },
+            CustomRulesPath = dependsOnChainRulePath,
+            IgnoreDefaultRules = true,
+            TagsOnly = true
+        };
+
+        command = new(options, factory);
+        result = command.GetResult();
+        Assert.Equal(AnalyzeResult.ExitCode.NoMatches, result.ResultCode);
+        Assert.Empty(result.Metadata.Matches);
+        Assert.DoesNotContain("Category.A", result.Metadata.UniqueTags);
+        Assert.DoesNotContain("Category.B", result.Metadata.UniqueTags);
+        Assert.DoesNotContain("Category.C", result.Metadata.UniqueTags);
+
+        // Test with A and C but not B - should only have A since C depends on B which isn't present
+        options = new()
+        {
+            SourcePath = new string[] { justAPath, justCPath },
+            CustomRulesPath = dependsOnChainRulePath,
+            IgnoreDefaultRules = true,
+            TagsOnly = true
+        };
+
+        command = new(options, factory);
+        result = command.GetResult();
+        Assert.Equal(AnalyzeResult.ExitCode.Success, result.ResultCode);
+        Assert.Empty(result.Metadata.Matches);
+        Assert.Contains("Category.A", result.Metadata.UniqueTags);
+        Assert.DoesNotContain("Category.B", result.Metadata.UniqueTags);
+        Assert.DoesNotContain("Category.C", result.Metadata.UniqueTags);
+    }
+
+    /// <summary>
     ///     Test that the does_not_apply_to parameter excludes the specified types
     /// </summary>
     [Fact]
