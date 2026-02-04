@@ -40,7 +40,7 @@ To use these samples:
 ### Optional Fields
 
 - `description`: Detailed description of what the rule detects
-- `severity`: One of: critical, important, moderate, bestpractice, manualreview, unspecified (default: moderate)
+- `severity`: One of: critical, important, moderate, bestpractice, manualreview, unspecified (lowercase preferred; default: moderate)
 - `applies_to`: Array of file extensions or language identifiers
 - `does_not_apply_to`: Array of file extensions or language identifiers to exclude
 - `applies_to_file_regex`: Array of regex patterns for files to include
