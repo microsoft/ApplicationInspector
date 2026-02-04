@@ -18,8 +18,8 @@ resources:
 
 variables:
   BuildConfiguration: 'Release'
-  DotnetVersion: '9.0.x'
-  DotnetTargetFramework: 'net9.0'
+  DotnetVersion: '10.0.x'
+  DotnetTargetFramework: 'net10.0'
 
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
