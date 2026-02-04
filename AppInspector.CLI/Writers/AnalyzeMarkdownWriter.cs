@@ -21,7 +21,7 @@ public class AnalyzeMarkdownWriter : CommandResultsWriter
 {
     private readonly ILogger<AnalyzeMarkdownWriter> _logger;
 
-    public AnalyzeMarkdownWriter(TextWriter textWriter, ILoggerFactory? loggerFactory = null) : base(textWriter)
+    public AnalyzeMarkdownWriter(StreamWriter streamWriter, ILoggerFactory? loggerFactory = null) : base(streamWriter)
     {
         _logger = loggerFactory?.CreateLogger<AnalyzeMarkdownWriter>() ?? NullLogger<AnalyzeMarkdownWriter>.Instance;
     }
