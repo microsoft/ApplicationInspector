@@ -30,3 +30,18 @@ pipelines:
           lastModifiedDate: 2024-10-30
         armory:
           lastModifiedDate: 2024-10-30
+  144:
+    usedNonDefaultBranch: true
+    retail:
+      source:
+        eslint:
+          lastModifiedDate: 2026-02-04
+        psscriptanalyzer:
+          lastModifiedDate: 2026-02-04
+        armory:
+          lastModifiedDate: 2026-02-04
+      binary:
+        binskim:
+          lastModifiedDate: 2026-02-04
+        spotbugs:
+          lastModifiedDate: 2026-02-04
