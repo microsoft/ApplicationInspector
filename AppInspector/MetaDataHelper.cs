@@ -345,15 +345,6 @@ public class MetaDataHelper
         };
     }
 
-    /// <summary>
-    /// Clears the Matches collection while preserving tags.
-    /// Used in TagsOnly mode after DependsOn processing to discard match details.
-    /// </summary>
-    internal void ClearMatches()
-    {
-        Matches = new ConcurrentBag<MatchRecord>();
-    }
-
     internal void AddGitInformation(GitInformation? information)
     {
         Metadata.RepositoryUri = information?.RepositoryUri;

@@ -394,12 +394,9 @@ public class AnalyzeCommand
             }
         }
 
-        RemoveDependsOnNotPresent();
-
-        // In TagsOnly mode, clear the matches after DependsOn processing since we only need the tags
-        if (_options.TagsOnly)
+        if (!_options.TagsOnly)
         {
-            _metaDataHelper.ClearMatches();
+            RemoveDependsOnNotPresent();
         }
 
         _metaDataHelper.AddGitInformation(GenerateGitInformation(Path.GetFullPath(_options.SourcePath.FirstOrDefault())));
@@ -515,9 +512,11 @@ public class AnalyzeCommand
 
                     foreach (var matchRecord in results)
                     {
-                        // Always add match records to support DependsOn processing in all modes
-                        // In TagsOnly mode, matches will be cleared after DependsOn processing
-                        if (_options.MaxNumMatchesPerTag > 0)
+                        if (_options.TagsOnly)
+                        {
+                            _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                        }
+                        else if (_options.MaxNumMatchesPerTag > 0)
                         {
                             if (matchRecord.Tags?.Any(x =>
                                     _metaDataHelper.UniqueTags.TryGetValue(x, out var value) is bool foundValue &&
@@ -638,12 +637,9 @@ public class AnalyzeCommand
             await ProcessAndAddToMetadata(entry, cancellationToken);
         }
 
-        RemoveDependsOnNotPresent();
-
-        // In TagsOnly mode, clear the matches after DependsOn processing since we only need the tags
-        if (_options.TagsOnly)
+        if (!_options.TagsOnly)
         {
-            _metaDataHelper.ClearMatches();
+            RemoveDependsOnNotPresent();
         }
 
         _metaDataHelper.AddGitInformation(GenerateGitInformation(Path.GetFullPath(_options.SourcePath.FirstOrDefault())));
@@ -713,9 +709,11 @@ public class AnalyzeCommand
 
                         foreach (var matchRecord in results)
                         {
-                            // Always add match records to support DependsOn processing in all modes
-                            // In TagsOnly mode, matches will be cleared after DependsOn processing
-                            if (_options.MaxNumMatchesPerTag > 0)
+                            if (_options.TagsOnly)
+                            {
+                                _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                            }
+                            else if (_options.MaxNumMatchesPerTag > 0)
                             {
                                 if (matchRecord.Tags?.Any(x =>
                                         _metaDataHelper.UniqueTags.TryGetValue(x, out var value) is bool foundValue &&
