@@ -159,7 +159,6 @@
     "name": "Development: Build Tool (TeamCity)",
     "id": "AI017400",
     "description": "Development: Build Tool (TeamCity)",
-    "recommendation": "",
     "tags": [
       "Development.Build.TeamCity"
     ],

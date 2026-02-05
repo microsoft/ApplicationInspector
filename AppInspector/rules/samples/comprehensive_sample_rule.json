@@ -1,0 +1,209 @@
+[
+  {
+    "name": "Comprehensive Sample Rule: All Fields Demonstrated",
+    "id": "SAMPLE001",
+    "description": "This is a maximally specified sample rule that demonstrates all available fields. It shows how to detect example API usage with various pattern types, conditions, and file filters.",
+    "tags": [
+      "Sample.Category.Subcategory",
+      "Example.Tag"
+    ],
+    "severity": "moderate",
+    "applies_to": [
+      "javascript",
+      "typescript",
+      "python"
+    ],
+    "does_not_apply_to": [
+      "json",
+      "xml"
+    ],
+    "applies_to_file_regex": [
+      ".*\\.config\\.js$",
+      ".*\\.spec\\.ts$"
+    ],
+    "exclude_file_regex": [
+      ".*\\.min\\.js$",
+      ".*node_modules.*"
+    ],
+    "depends_on_tags": [
+      "Prerequisite.Tag.Example"
+    ],
+    "overrides": [
+      "OLDER_RULE_ID_001"
+    ],
+    "patterns": [
+      {
+        "pattern": "exampleApiCall\\s*\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high",
+        "_comment": "This pattern matches calls to exampleApiCall with optional whitespace before the opening parenthesis"
+      },
+      {
+        "pattern": "ExampleClass",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": "RegexWord ensures the pattern matches as a complete word, not as a substring"
+      },
+      {
+        "pattern": "example_string_match",
+        "type": "string",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "confidence": "low",
+        "_comment": "String type performs exact literal matching"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "import.*exampleModule",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "confidence": "high"
+        },
+        "search_in": "same-file",
+        "negate_finding": false,
+        "_comment": "This condition requires an import statement in the same file"
+      },
+      {
+        "pattern": {
+          "pattern": "DO_NOT_USE_FLAG",
+          "type": "string",
+          "scopes": [
+            "code"
+          ],
+          "confidence": "high"
+        },
+        "search_in": "same-file",
+        "negate_finding": true,
+        "_comment": "This condition is negated - the finding is invalid if DO_NOT_USE_FLAG is present"
+      }
+    ],
+    "must-match": [
+      "exampleApiCall(param1, param2);",
+      "const obj = new ExampleClass();",
+      "// This is example_string_match in a comment",
+      "import { something } from 'exampleModule';"
+    ],
+    "must-not-match": [
+      "differentApiCall()",
+      "NotExampleClass",
+      "partial_match_string"
+    ],
+    "_comment": "This comprehensive rule demonstrates all standard fields. The patterns use different matching types (regex, regexword, string), conditions show same-file matching with negation, and file filters demonstrate inclusion/exclusion patterns."
+  },
+  {
+    "name": "Sample Rule: XML with XPath",
+    "id": "SAMPLE002",
+    "description": "Example showing XPath pattern matching for XML files",
+    "tags": [
+      "Sample.XML.XPath"
+    ],
+    "severity": "moderate",
+    "applies_to": [
+      ".xml",
+      ".config"
+    ],
+    "patterns": [
+      {
+        "pattern": "configuration",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "xpaths": [
+          "//configuration/appSettings/add[@key='ApiKey']",
+          "//connectionStrings/add[@name='Database']"
+        ],
+        "_comment": "XPath expressions allow precise matching within XML structure"
+      }
+    ],
+    "must-match": [
+      "<configuration><appSettings><add key='ApiKey' value='secret'/></appSettings></configuration>"
+    ],
+    "must-not-match": [
+      "<configuration><appSettings><add key='OtherKey' value='value'/></appSettings></configuration>"
+    ]
+  },
+  {
+    "name": "Sample Rule: JSON with JSONPath",
+    "id": "SAMPLE003",
+    "description": "Example showing JSONPath pattern matching for JSON files",
+    "tags": [
+      "Sample.JSON.JSONPath"
+    ],
+    "severity": "moderate",
+    "applies_to": [
+      ".json"
+    ],
+    "patterns": [
+      {
+        "pattern": "dependencies",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "jsonpaths": [
+          "$.dependencies.vulnerablePackage",
+          "$.devDependencies.oldPackage"
+        ],
+        "_comment": "JSONPath expressions enable querying specific locations in JSON documents"
+      }
+    ],
+    "must-match": [
+      "{\"dependencies\": {\"vulnerablePackage\": \"1.0.0\"}}"
+    ],
+    "must-not-match": [
+      "{\"dependencies\": {\"safePackage\": \"2.0.0\"}}"
+    ]
+  },
+  {
+    "name": "Sample Rule: YAML with YAMLPath",
+    "id": "SAMPLE004",
+    "description": "Example showing YAMLPath pattern matching for YAML files",
+    "tags": [
+      "Sample.YAML.YAMLPath"
+    ],
+    "severity": "moderate",
+    "applies_to": [
+      ".yml",
+      ".yaml"
+    ],
+    "patterns": [
+      {
+        "pattern": "services",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "ymlpaths": [
+          "$.services.database.image",
+          "$.services.*.environment.SECRET_KEY"
+        ],
+        "_comment": "YAMLPath expressions allow querying YAML document structure"
+      }
+    ],
+    "must-match": [
+      "services:\n  database:\n    image: postgres:latest"
+    ],
+    "must-not-match": [
+      "services:\n  webapp:\n    image: nginx:latest"
+    ]
+  }
+]
