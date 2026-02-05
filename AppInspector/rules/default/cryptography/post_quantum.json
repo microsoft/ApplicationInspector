@@ -85,7 +85,7 @@
       "encrypted_message = pqc.kyber_encrypt(public_key, message)",
       "KYBER_INDCPA_PUBLICKEYBYTES",
       "1785, 516, 3321, 3009, 2663, 1711, 2167, 126, 1469, 2476, 3239, 3058, 830,"
-    ],
+    ]
   },
   {
     "name": "Cryptography: Quantum-Resistant: Module-Lattice DSA",
@@ -235,7 +235,6 @@
     "patterns": [
       {
         "pattern": "slh-dsa|fips[ -]205|hdd|xmss",
-        "_comment": "",
         "type": "regexword",
         "scopes": [
           "code"
@@ -258,7 +257,6 @@
     "patterns": [
       {
         "pattern": "sphincx|haraka",
-        "_comment": "",
         "type": "regexword",
         "scopes": [
           "code"
@@ -281,7 +279,6 @@
     "patterns": [
       {
         "pattern": "falcon[-]?(512|1024)",
-        "_comment": "",
         "type": "regexword",
         "scopes": [
           "code"
@@ -304,7 +301,6 @@
     "patterns": [
       {
         "pattern": "mbedtls_(lmots|lms)_[a-z0-9]+",
-        "_comment": "",
         "type": "regex",
         "scopes": [
           "code"
@@ -327,7 +323,6 @@
     "patterns": [
       {
         "pattern": "ntru[_]?(encrypt|decrypt|sign)",
-        "_comment": "",
         "type": "regexword",
         "scopes": [
           "code"
@@ -356,7 +351,6 @@
     "patterns": [
       {
         "pattern": "^import org\\.bouncycastle\\.pqc\\.(crypto|jcajce)\\..*;",
-        "_comment": "",
         "type": "regex",
         "scopes": [
           "code"
@@ -386,7 +380,6 @@
     "patterns": [
       {
         "pattern": "^using Org\\.BouncyCastle\\.Pqc\\.Crypto",
-        "_comment": "",
         "type": "regex",
         "scopes": [
           "code"
