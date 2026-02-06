@@ -15,8 +15,8 @@ resources:
 
 variables:
   BuildConfiguration: 'Release'
-  DotnetVersion: '9.0.x'
-  DotnetTargetFramework: 'net9.0'
+  DotnetVersion: '10.0.x'
+  DotnetTargetFramework: 'net10.0'
 
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1esPipelines
@@ -39,7 +39,7 @@ extends:
       - template: dotnet-test-job.yml@templates
         parameters:
           jobName: 'dotnet_test_windows'
-          dotnetVersions: ['8.0.x','9.0.x']
+          dotnetVersions: ['8.0.x','9.0.x','10.0.x']
           poolName: MSSecurity-1ES-Build-Agents-Pool
           poolImage: MSSecurity-1ES-Windows-2022
           poolOs: windows
