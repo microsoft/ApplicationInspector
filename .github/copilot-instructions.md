@@ -243,10 +243,10 @@ dotnet clean
 - [Understanding Rules](https://github.com/microsoft/ApplicationInspector/wiki/3.-Understanding-Rules)
 - [CLI Usage](https://github.com/microsoft/ApplicationInspector/wiki/1.-CLI-Usage)
 - [NuGet Support](https://github.com/microsoft/ApplicationInspector/wiki/2.-NuGet-Support)
-- [Rule Schema](../rule-schema-v1.json)
+- [Rule Schema](https://github.com/microsoft/ApplicationInspector/blob/main/rule-schema-v1.json)
 
 ## Getting Help
 
-- Review the [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines
-- Check [BUILD.md](../BUILD.md) for detailed build instructions
-- See [SECURITY.md](../SECURITY.md) for security reporting procedures
+- Review the [CONTRIBUTING.md](https://github.com/microsoft/ApplicationInspector/blob/main/CONTRIBUTING.md) for contribution guidelines
+- Check [BUILD.md](https://github.com/microsoft/ApplicationInspector/blob/main/BUILD.md) for detailed build instructions
+- See [SECURITY.md](https://github.com/microsoft/ApplicationInspector/blob/main/SECURITY.md) for security reporting procedures
