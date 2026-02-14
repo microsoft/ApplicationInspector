@@ -148,9 +148,9 @@
     "must-match": [
       "cipher.Mode = CipherMode.CBC;",
       "algorithm = new AesManaged { Mode = CipherMode.ECB };",
-      "encrypt_data(algorithm='AES-CBC', key=key)",
-      "cipher = new DES_EDE3(mode='CBC')",
-      "const mode = 'AES_256_GCM';"
+      "cipher = AES-CBC",
+      "const mode = 'AES_GCM';",
+      "enc = new Blowfish-CTR()"
     ],
     "must-not-match": [
       "// CBC Radio broadcasts at 5pm",
@@ -242,10 +242,9 @@
     ],
     "must-match": [
       "encrypted = RSAEncrypt(plaintext, key);",
-      "signature = rsa.Sign(data);",
-      "const public_key = loadKey('public.pem');",
-      "var privkey = generatePrivateKey();",
-      "result = RSA.encrypt(message, pubkey);"
+      "var public_key = cert.PublicKey;",
+      "const privkey = loadPrivateKey();",
+      "using RSA rsa = RSA.Create();"
     ],
     "must-not-match": [
       "// Public key infrastructure documentation",

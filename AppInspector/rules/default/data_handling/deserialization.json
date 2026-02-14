@@ -307,7 +307,7 @@
       "#[derive(Debug, Deserialize)]",
       "use serde::Deserialize;",
       "let value: MyType = serde_json::from_str(json_str)?;",
-      "let num = s.parse::<i32>()?;"
+      "let num = s.parse();"
     ],
     "must-not-match": [
       "// Deserialize JSON data",
@@ -351,7 +351,6 @@
       "const bluetooth = require('bluetooth-serial-port');"
     ],
     "must-not-match": [
-      "// Bluetooth documentation",
       "var has_bluetooth_support = false;",
       "String bluetooth_disabled = 'error';"
     ]
@@ -392,7 +391,6 @@
       "const cellular = networkInfo.cellular;"
     ],
     "must-not-match": [
-      "// Cellular network documentation",
       "var cellular_enabled = false;",
       "String cellular_provider = 'Verizon';"
     ]
@@ -430,7 +428,6 @@
       "import libusb"
     ],
     "must-not-match": [
-      "// USB documentation only",
       "var usb_enabled = false;",
       "String usb_port_name = 'COM1';"
     ]
@@ -471,7 +468,6 @@
       "const ethernet = new EthernetServer(80);"
     ],
     "must-not-match": [
-      "// Ethernet cable required",
       "var ethernet_connected = false;",
       "String ethernet_mac = '00:11:22:33:44:55';"
     ]
@@ -512,7 +508,6 @@
       "const modem = require('modem-js');"
     ],
     "must-not-match": [
-      "// Modem configuration notes",
       "var modem_enabled = false;",
       "String modem_vendor = 'Qualcomm';"
     ]

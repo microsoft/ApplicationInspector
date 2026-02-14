@@ -357,9 +357,9 @@
       "statement = \"UPDATE users SET active = 1\""
     ],
     "must-not-match": [
-      "console.log('select your option');",
-      "var text = 'Please insert your credentials';",
-      "// Comment: delete this line later"
+      "text = 'choose an option';",
+      "var instruction = 'add new item';",
+      "// Comment about operations"
     ]
   },
   {

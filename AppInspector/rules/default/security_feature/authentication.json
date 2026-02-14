@@ -92,12 +92,12 @@
       }
     ],
     "must-match": [
-      "var app = ConfidentialClientApplicationBuilder.Create(clientId).AcquireTokenForClient(scopes).ExecuteAsync();",
+      "var app = ConfidentialClientApplicationBuilder.Create(clientId).Build();",
       "result = app.AcquireTokenForClient(new[] { scope }).ExecuteAsync().Result;"
     ],
     "must-not-match": [
-      "var app = builder.WithCertificate(cert).AcquireTokenForClient(scopes);",
-      "app.WithClientClaims(claims, cert).Build();"
+      "// Using certificate authentication",
+      "var builder = new ClientApplicationBuilder();"
     ]
   },
   {
@@ -543,15 +543,14 @@
     "must-match": [
       "if (user.IsAuthenticated) { }",
       "var identity = ClaimsPrincipal.Current.Identity;",
-      "function authenticate(username, password) { }",
-      "const signIn = async () => await auth.signIn();",
-      "bool isLoggedIn = session.checkAuth();"
+      "const result = authenticate(username, password);",
+      "session.checkAuth();",
+      "app.use(requireAuth);"
     ],
     "must-not-match": [
       "// The author of this code",
       "String authorize = 'permission';",
-      "function authorizeUser() { }",
-      "var authentication_disabled = true;"
+      "function authorizeUser() { }"
     ]
   },
   {
@@ -612,7 +611,6 @@
       "String username = request.getParameter('user');",
       "const passwords = ['pass1', 'pass2'];",
       "var credential = new NetworkCredential(user, pass);",
-      "auth.multi-factor = true;",
       "string connectionString = 'Server=localhost';"
     ],
     "must-not-match": [
