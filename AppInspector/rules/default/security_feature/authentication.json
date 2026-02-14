@@ -499,7 +499,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "\\b(principal|identity|authenticated|authentication|signin|sign-in|signout|sign-out|networkcredential|isauthenticated|isloggedin)\\b",
+        "pattern": "\\b(principal|identity|authenticated|authentication|sign-?in|sign-?out|networkcredential|isauthenticated|isloggedin)\\b",
         "type": "regex",
         "scopes": [
           "code"
@@ -554,7 +554,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "\\b(usernames?|userids?|passwords?|passphrases?|multi-factors?|credentials?|accts?)\\b",
+        "pattern": "\\b(usernames?|userids?|passwords?|passphrases?|multi-?factors?|credentials?|accts?)\\b",
         "type": "regex",
         "scopes": [
           "code"

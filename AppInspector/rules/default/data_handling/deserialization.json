@@ -35,7 +35,7 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "^\\s*import\\s+(?:c)?pickle|^\\s*from\\s+(?:c)?pickle\\s+import",
+        "pattern": "^\\s*import\\s+(?:c)?pickle\\s*$|^\\s*from\\s+(?:c)?pickle\\s+import",
         "type": "regex",
         "scopes": [
           "code"
