@@ -481,8 +481,7 @@
         "pattern": "GetSessionToken|AssumeRole|AssumeRoleWithSAML|AssumeRoleWithWebIdentity|GetFederationToken",
         "type": "regexword",
         "scopes": [
-          "code",
-          "comment"
+          "code"
         ],
         "modifiers": [
           "i"
@@ -493,8 +492,7 @@
         "pattern": "GetClusterCredentials|GetAuthorizationToken",
         "type": "regexword",
         "scopes": [
-          "code",
-          "comment"
+          "code"
         ],
         "modifiers": [
           "i"
@@ -505,8 +503,7 @@
         "pattern": "CreateAccessKey|GetCredentialsForIdentity|GetInstanceAccessDetails",
         "type": "regexword",
         "scopes": [
-          "code",
-          "comment"
+          "code"
         ],
         "modifiers": [
           "i"
@@ -517,8 +514,7 @@
         "pattern": "GetOpenIdToken|GetOpenIdTokenForDeveloperIdentity|GetRoleCredentials",
         "type": "regexword",
         "scopes": [
-          "code",
-          "comment"
+          "code"
         ],
         "modifiers": [
           "i"
@@ -529,8 +525,7 @@
         "pattern": "CreateServiceSpecificCredential|ResetServiceSpecificCredential",
         "type": "regexword",
         "scopes": [
-          "code",
-          "comment"
+          "code"
         ],
         "modifiers": [
           "i"
