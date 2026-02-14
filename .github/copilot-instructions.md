@@ -6,11 +6,11 @@ Microsoft Application Inspector is a source code characterization tool that iden
 
 ## Tech Stack
 
-- **Language**: C# (.NET 6.0+)
+- **Language**: C# (supports netstandard2.1; .NET 8.0+ for executables; aims to support all currently supported .NET versions)
 - **Build System**: dotnet CLI
 - **Test Framework**: xUnit
 - **Solution Structure**: Multi-project .NET solution with 7 projects
-- **Rule Format**: JSON files following rule-schema-v1.json
+- **Rule Format**: JSON files following rule-schema-v1.json schema definition in repository root
 
 ## Project Structure
 
@@ -96,6 +96,8 @@ Rules are JSON files located in `AppInspector/rules/default/` organized by categ
 - And more...
 
 ### Rule Schema Requirements
+
+The rule schema is defined in `rule-schema-v1.json` in the repository root.
 
 Each rule must include:
 - `id` - Unique identifier (format: AI######, e.g., AI038900)
