@@ -190,8 +190,8 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "OpenID",
-        "type": "string",
+        "pattern": "\\bOpenID\\b|OpenID\\s+Connect|openid-configuration|\\.openid\\.",
+        "type": "regex",
         "scopes": [
           "code",
           "comment"
@@ -499,8 +499,19 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "principal|identity|auth|authenticated|authentication|signin|sign-?in|signout|sign-?out|networkcredential|isauthenticated|isloggedin",
-        "type": "regexword",
+        "pattern": "\\b(principal|identity|authenticated|authentication|signin|sign-in|signout|sign-out|networkcredential|isauthenticated|isloggedin)\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "authenticate\\(|checkAuth|requireAuth|verifyAuth",
+        "type": "regex",
         "scopes": [
           "code"
         ],
@@ -543,8 +554,8 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "(username|userid|password|passphrase|multi-factor|credential|acct)s?",
-        "type": "regexword",
+        "pattern": "\\b(usernames?|userids?|passwords?|passphrases?|multi-factors?|credentials?|accts?)\\b",
+        "type": "regex",
         "scopes": [
           "code"
         ],

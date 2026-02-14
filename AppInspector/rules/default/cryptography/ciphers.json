@@ -194,12 +194,23 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "RSA.*encrypt|RSA.*decrypt|public.?key|private.?key|privkey|pubkey",
+        "pattern": "RSA(?:Encrypt|Decrypt|Sign|Verify)\\(|RSA[_\\.](?:encrypt|decrypt)",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "confidence": "high",
+        "modifiers": [
+          "i"
+        ]
+      },
+      {
+        "pattern": "\\b(?:public|private)[_\\.-]?key\\b|\\bprivkey\\b|\\bpubkey\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
         "modifiers": [
           "i"
         ]
