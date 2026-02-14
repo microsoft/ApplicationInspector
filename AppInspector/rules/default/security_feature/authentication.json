@@ -6,55 +6,55 @@
     "tags": [
       "Authentication.Microsoft.Online"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "login\\.microsoftonline(-p)*\\.com|SAS.*Token|login\\.live.com|Shared *Access *Signature",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "System\\.IdentityModel|AzureADB2C|SingleAccountPublicClientApplication|MultipleAccountPublicClientApplication",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "microsoft\\.aad|microsoft\\.adal|microsoft\\.msal|AADClient|Microsoft\\.IdentityModel|passport\\.net|ServicePrincipalCredentials",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "AuthenticationResult|MsalServiceException",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -65,25 +65,25 @@
     "tags": [
       "Authentication.Microsoft.Online"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "AcquireTokenForClient|ConfidentialClientApplicationBuilder",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ],
     "conditions": [
       {
         "pattern": {
           "pattern": "\\.WithClientClaims\\([^)]*cert[^)]*\\)|\\.WithCertificate\\(",
-          "type": "regex",
+          "type": "Regex",
           "scopes": [
-            "code"
+            "Code"
           ],
           "_comment": "negate cases for certificate rule identifying client TLS auth"
         },
@@ -107,29 +107,29 @@
     "tags": [
       "Authentication.Google"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "using Google\\.Apis\\.Auth|GoogleCredential|AppIdentityCredential|oauth2/google|apis\\.google\\.com/js/api\\.js",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "OIDAuthorizationRequest|accounts\\.google\\.com/o/oauth2|googleapis\\.com/oauth2|GTMAppAuth",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -140,51 +140,51 @@
     "tags": [
       "Authentication.Oauth"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "oauth",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "auth.?token|access.?token|client.?credentials|client.?id|client.?secret|api.?key",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "low"
+        "confidence": "Low"
       },
       {
         "pattern": "Authorization: Bearer",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "bearer",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "low"
+        "confidence": "Low"
       }
     ]
   },
@@ -195,19 +195,19 @@
     "tags": [
       "Authentication.OpenIDConnect"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "\\bOpenID\\b|OpenID\\s+Connect|openid-configuration|\\.openid\\.",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ],
     "must-match": [
@@ -230,62 +230,62 @@
       "Authentication.Microsoft.Windows.ActiveDirectory",
       "Authentication.Microsoft.Windows.Entra"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "active.?directory|ADFS|entra",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "ADsOpenObject|ADObject|ADComputer|ADGroup|ADUser|ADContainer|ADDomain",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "Microsoft\\.IdentityModel\\.ActiveDirectory",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "ManagedIdentityClient|UsernamePasswordCredentialOptions|SharedTokenCacheCredential|EnvironmentalCredential|DeviceCodeCredential|InteractiveBrowserCredential|ClientSecretCredential|ClientCertificateCredential|AuthorizationCodeCredential|DefaultAzureCredential|AzureCliCredential",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "System\\.DirectoryServices|IDirectoryObject|IDirectorySearch",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       },
       {
         "pattern": "AddMicrosoftIdentityUI",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ],
     "must-match": [
@@ -299,19 +299,19 @@
     "tags": [
       "Authentication.LDAP"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "LDAP|ldaps",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -322,34 +322,34 @@
     "tags": [
       "Authentication.Microsoft.Windows.NTLM"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "WWW-Authenticate: NTLM|windowsAuthentication|CredentialCache\\.DefaultCredentials|HTTPNtlmAuthHandler",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "LogonUserA|LogonUserEx|LogonUserW",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "NTLM",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ]
   },
@@ -367,18 +367,18 @@
     "tags": [
       "Authentication.Microsoft.Windows.Kerberos"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "WindowsIdentity|WindowsPrincipal|Kerberos",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high",
+        "confidence": "High",
         "_comment": "possible use for NTLM but default is Kerberos"
       }
     ]
@@ -390,19 +390,19 @@
     "tags": [
       "Authentication.JWT"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "jwt|RFC 7519|System\\.IdentityModel\\.Tokens\\.Jwt|JwtSecurityToken|JsonWebToken",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -413,18 +413,18 @@
     "tags": [
       "Authentication.HTMLForm"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": " type=['\\\"]password['\\\"] ",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -438,18 +438,18 @@
     "tags": [
       "Authentication.SAML"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "AuthenticationHeaderValue\\(\"SAML\"",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -460,29 +460,29 @@
     "tags": [
       "Authentication.SAML"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "SAML|saml2",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "federation|sso",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ]
   },
@@ -493,18 +493,18 @@
     "tags": [
       "Authentication.General"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "\"Authorization: Basic|WWW-Authenticate|AuthenticationHeaderValue\\(\"Basic\"",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -515,29 +515,29 @@
     "tags": [
       "Authentication.General"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "\\b(principal|identity|authenticated|authentication|sign-?in|sign-?out|networkcredential|isauthenticated|isloggedin)\\b",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "authenticate\\(|checkAuth|requireAuth|verifyAuth",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ],
     "must-match": [
@@ -560,18 +560,18 @@
     "tags": [
       "Authentication.General"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "log(in|on)|log(off|out)",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "low"
+        "confidence": "Low"
       }
     ]
   },
@@ -582,29 +582,29 @@
     "tags": [
       "Authentication.General"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "\\b(usernames?|userids?|passwords?|passphrases?|multi-?factors?|credentials?|accts?)\\b",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "connection.?string|conn.?string|DefaultNetworkCredentials",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ],
     "must-match": [

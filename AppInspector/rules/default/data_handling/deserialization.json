@@ -10,15 +10,15 @@
     "tags": [
       "Data.Serialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "#\\[derive\\(.*Serialize.*\\)]|serde::Serialize",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ],
     "must-match": [
@@ -42,15 +42,15 @@
     "tags": [
       "Data.Serialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "^\\s*import\\s+(?:c)?pickle\\s*$|^\\s*from\\s+(?:c)?pickle\\s+import",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ],
     "must-match": [
@@ -75,15 +75,15 @@
     "tags": [
       "Data.Serialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "c?pickle\\.dump",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -97,15 +97,15 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "c?pickle\\.load",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -119,15 +119,15 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": ".readObject",
-        "type": "substring",
+        "type": "Substring",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -141,15 +141,15 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "unserialize\\(",
-        "type": "substring",
+        "type": "Substring",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -163,15 +163,15 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "(YAML|Syck|Marshal)\\.load",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -185,15 +185,15 @@
     "tags": [
       "Data.Serialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "SerializeObject|JavaScriptSerializer|Newtonsoft|json\\.net|Utf8Json|MessagePack",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -207,39 +207,39 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "DeserializeObject",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "PopulateObject",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "TypeNameHandling",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "(De)?[Ss]erialize",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -253,31 +253,31 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "System.Runtime.Serialization",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "BinaryFormatter",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "TypeNameHandling",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -292,15 +292,15 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "#\\[derive\\(.*Deserialize.*\\)]|serde::Deserialize|from_str\\(|parse\\(",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ],
     "must-match": [
@@ -322,26 +322,26 @@
     "tags": [
       "Data.Deserialization.Signal.Bluetooth"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "BluetoothAdapter|BluetoothDevice|BluetoothGatt|BluetoothSocket|CBCentralManager|CBPeripheral",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "\\bbluetooth\\b",
-        "type": "regex",
+        "type": "Regex",
         "modifiers": [
           "i"
         ],
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ],
     "must-match": [
@@ -362,26 +362,26 @@
     "tags": [
       "Data.Deserialization.Signal.Cellular"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "CTTelephonyNetworkInfo|CTCarrier|TelephonyManager|CellInfo",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "\\bcellular\\b",
-        "type": "regex",
+        "type": "Regex",
         "modifiers": [
           "i"
         ],
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ],
     "must-match": [
@@ -402,23 +402,23 @@
     "tags": [
       "Data.Deserialization.Signal.USB"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "USBDevice|UsbManager|UsbAccessory|IOUSBDeviceInterface|libusb",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "\\bUSB\\b",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ],
     "must-match": [
@@ -439,26 +439,26 @@
     "tags": [
       "Data.Deserialization.Signal.Ethernet"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "EthernetClient|EthernetServer|NetworkInterface|getifaddrs|pcap",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "\\bethernet\\b",
-        "type": "regex",
+        "type": "Regex",
         "modifiers": [
           "i"
         ],
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ],
     "must-match": [
@@ -479,26 +479,26 @@
     "tags": [
       "Data.Deserialization.Signal.Modem"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "ModemManager|ATCommand|SerialPort|TAPI",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "\\bmodem\\b",
-        "type": "regex",
+        "type": "Regex",
         "modifiers": [
           "i"
         ],
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ],
     "must-match": [
