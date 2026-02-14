@@ -29,6 +29,13 @@ public class WithinOperation : OatOperation
     {
         if (c is WithinClause wc && state1 is TextContainer tc)
         {
+            // Skip condition evaluation if it doesn't apply to current language
+            if (!ConditionAppliesToLanguage(wc, tc.Language))
+            {
+                // Pass through the captures unchanged since condition is not applicable
+                return new OperationResult(true, captures?.FirstOrDefault());
+            }
+
             var passed =
                 new List<(int, Boundary)>();
             var failed =
@@ -229,5 +236,31 @@ public class WithinOperation : OatOperation
                 $"Rule {rule.Name} clause {clause.Label ?? rule.Clauses.IndexOf(clause).ToString(CultureInfo.InvariantCulture)} is not a WithinClause",
                 rule, clause);
         }
+    }
+
+    /// <summary>
+    /// Check if a WithinClause's language filters allow it to apply to the given language.
+    /// </summary>
+    private static bool ConditionAppliesToLanguage(WithinClause clause, string currentLanguage)
+    {
+        // If applies_to is specified and doesn't include current language, condition doesn't apply
+        if (clause.LanguageAppliesTo is { Count: > 0 })
+        {
+            if (!clause.LanguageAppliesTo.Contains(currentLanguage, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        // If does_not_apply_to includes current language, condition doesn't apply
+        if (clause.LanguageDoesNotApplyTo is { Count: > 0 })
+        {
+            if (clause.LanguageDoesNotApplyTo.Contains(currentLanguage, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

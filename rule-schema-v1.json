@@ -240,6 +240,16 @@
             { "type": "null" }
           ],
           "description": "YAMLPath expressions for YAML matching"
+        },
+        "conditions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": { "$ref": "#/definitions/searchCondition" }
+            },
+            { "type": "null" }
+          ],
+          "description": "Pattern-specific conditions that must be met when this pattern matches"
         }
       }
     },
@@ -260,6 +270,26 @@
           "type": "boolean",
           "default": false,
           "description": "Whether to negate the condition"
+        },
+        "applies_to": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            { "type": "null" }
+          ],
+          "description": "Languages this condition applies to"
+        },
+        "does_not_apply_to": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            { "type": "null" }
+          ],
+          "description": "Languages this condition does not apply to"
         }
       }
     }
