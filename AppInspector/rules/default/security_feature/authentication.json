@@ -468,9 +468,9 @@
     ]
   },
   {
-    "name": "Authentication: AWS (STS API Calls Returning Credentials)",
+    "name": "Authentication: AWS (API Calls Returning Credentials)",
     "id": "AI039850",
-    "description": "AWS STS API calls that return temporary security credentials",
+    "description": "AWS API calls that return credentials (temporary or permanent)",
     "tags": [
       "Authentication.AWS.STS",
       "Authentication.AWS.Credentials"
@@ -502,6 +502,42 @@
         "confidence": "high"
       },
       {
+        "pattern": "CreateAccessKey|GetCredentialsForIdentity|GetInstanceAccessDetails",
+        "type": "regexword",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "GetOpenIdToken|GetOpenIdTokenForDeveloperIdentity|GetRoleCredentials",
+        "type": "regexword",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "CreateServiceSpecificCredential|ResetServiceSpecificCredential",
+        "type": "regexword",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
         "pattern": "sts\\.amazonaws\\.com",
         "type": "regex",
         "scopes": [
@@ -521,6 +557,12 @@
       "result = client.GetFederationToken(federationParams)",
       "credentials = redshift.GetClusterCredentials(params)",
       "token = ecrClient.GetAuthorizationToken()",
+      "iamClient.CreateAccessKey(request)",
+      "cognitoClient.GetCredentialsForIdentity(params)",
+      "lightsail.GetInstanceAccessDetails(instanceName)",
+      "cognitoClient.GetOpenIdToken(identityId)",
+      "ssoClient.GetRoleCredentials(params)",
+      "iam.CreateServiceSpecificCredential(userName)",
       "https://sts.amazonaws.com/"
     ],
     "must-not-match": [
