@@ -566,9 +566,11 @@
       "https://sts.amazonaws.com/"
     ],
     "must-not-match": [
-      "// This is a comment about assume role",
+      "the user will assume role as admin",
       "const role = 'user-role'",
-      "getRoleDescription()"
+      "getRoleDescription()",
+      "assumeRoleArn",
+      "getSessionTimeout()"
     ]
   },
   {
