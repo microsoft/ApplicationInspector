@@ -121,16 +121,15 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "hash",
-        "type": "string",
+        "pattern": "HashAlgorithm|HashFunction|HashCode|Hashing|Hasher|\\.hash\\(|computeHash|getHash",
+        "type": "regex",
         "scopes": [
-          "code",
-          "comment"
+          "code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "low"
+        "confidence": "medium"
       }
     ]
   },

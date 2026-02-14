@@ -323,7 +323,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "['\\\"](select|insert|delete|update)\\s.*",
+        "pattern": "['\\\"](select|insert|delete|update)\\s+[a-zA-Z0-9_*]+",
         "type": "regex",
         "scopes": [
           "code"
@@ -337,7 +337,7 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "from|where",
+          "pattern": "from|where|into|values|set",
           "type": "regexword",
           "scopes": [
             "code"

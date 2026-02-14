@@ -129,12 +129,20 @@
     "severity": "critical",
     "patterns": [
       {
-        "pattern": "CBC|CTR|ECB|OFB|CFB|CTS|PCBC|GMAC|XCBC|IACBC|IAPM|EAX|OCB|CWC|AEAD|LRW|XEX|XTS|CMC|EME|CBCMAC|OMAC|PMAC",
-        "type": "regexword",
+        "pattern": "CipherMode\\.|Mode\\s*[=:]\\s*(CBC|CTR|ECB|OFB|CFB|CTS|PCBC|GMAC|XCBC|IACBC|IAPM|EAX|OCB|CWC|AEAD|LRW|XEX|XTS|CMC|EME|CBCMAC|OMAC|PMAC)",
+        "type": "regex",
         "scopes": [
           "code"
         ],
-        "confidence": "low"
+        "confidence": "high"
+      },
+      {
+        "pattern": "(AES|DES|3DES|Blowfish|Twofish)[-_](CBC|CTR|ECB|OFB|CFB|GCM)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high"
       }
     ]
   },
