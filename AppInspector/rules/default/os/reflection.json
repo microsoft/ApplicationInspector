@@ -1,0 +1,212 @@
+[
+  {
+    "name": "OS: Reflection - Method Invocation",
+    "id": "AI036000",
+    "description": "Detects dynamic method invocation via reflection which can enable runtime behavior not visible at static analysis time",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.MethodInvocation"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "MethodInfo|MethodBase",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": "Detects MethodInfo and MethodBase usage for reflection"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "\\.Invoke\\(",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ]
+        },
+        "search_in": "same-line",
+        "_comment": "Ensures .Invoke( is on the same line to confirm method invocation"
+      }
+    ]
+  },
+  {
+    "name": "OS: Reflection - Constructor Invocation",
+    "id": "AI036100",
+    "description": "Detects dynamic object creation via reflection using ConstructorInfo",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.ConstructorInvocation"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ConstructorInfo",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": "Detects ConstructorInfo usage for reflection"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "\\.Invoke\\(",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ]
+        },
+        "search_in": "same-line",
+        "_comment": "Ensures .Invoke( is on the same line to confirm constructor invocation"
+      }
+    ]
+  },
+  {
+    "name": "OS: Reflection - Dynamic Assembly Loading",
+    "id": "AI036200",
+    "description": "Detects dynamic assembly loading at runtime using Assembly.Load which can introduce code not visible at static analysis time",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.AssemblyLoading"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Assembly\\.Load\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Detects Assembly.Load - note LoadFile and LoadFrom are already in load_dll.json"
+      }
+    ]
+  },
+  {
+    "name": "OS: Reflection - InvokeMember",
+    "id": "AI036300",
+    "description": "Detects Type.InvokeMember which enables dynamic member access via reflection",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.InvokeMember"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.InvokeMember\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Detects .InvokeMember( for dynamic member access"
+      }
+    ]
+  },
+  {
+    "name": "OS: Reflection - Activator.CreateInstance",
+    "id": "AI036400",
+    "description": "Detects dynamic object creation using Activator.CreateInstance",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.CreateInstance"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Activator\\.CreateInstance",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Detects Activator.CreateInstance for dynamic object instantiation"
+      }
+    ]
+  },
+  {
+    "name": "OS: Reflection - GetMethod",
+    "id": "AI036500",
+    "description": "Detects retrieval of method information via reflection",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.GetMethod"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.GetMethod\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": "Detects .GetMethod( which is often used before dynamic invocation"
+      }
+    ]
+  },
+  {
+    "name": "OS: Reflection - GetConstructor",
+    "id": "AI036600",
+    "description": "Detects retrieval of constructor information via reflection",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.GetConstructor"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.GetConstructor\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": "Detects .GetConstructor( which is often used before dynamic object creation"
+      }
+    ]
+  },
+  {
+    "name": "OS: Reflection - Dynamic Type Loading",
+    "id": "AI036700",
+    "description": "Detects dynamic type loading using Type.GetType",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.GetType"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Type\\.GetType\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "medium",
+        "_comment": "Detects Type.GetType( for dynamic type loading from string"
+      }
+    ]
+  }
+]
