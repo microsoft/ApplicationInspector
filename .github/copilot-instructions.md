@@ -135,7 +135,13 @@ Each rule must include:
   "severity": "critical",
   "patterns": [
     {
-      "pattern": "microsoft\\.msal|AcquireTokenForClient",
+      "pattern": "microsoft\\.msal",
+      "type": "regexword",
+      "scopes": ["code"],
+      "confidence": "high"
+    },
+    {
+      "pattern": "AcquireTokenForClient",
       "type": "regexword",
       "scopes": ["code"],
       "confidence": "high"
@@ -143,6 +149,8 @@ Each rule must include:
   ]
 }
 ```
+
+Note: This is a simplified example. Real rules may use alternation (e.g., `pattern1|pattern2`) to match multiple alternatives in a single pattern.
 
 ### Rule ID Conventions
 
@@ -235,7 +243,7 @@ dotnet clean
 - [Understanding Rules](https://github.com/microsoft/ApplicationInspector/wiki/3.-Understanding-Rules)
 - [CLI Usage](https://github.com/microsoft/ApplicationInspector/wiki/1.-CLI-Usage)
 - [NuGet Support](https://github.com/microsoft/ApplicationInspector/wiki/2.-NuGet-Support)
-- [Rule Schema](rule-schema-v1.json)
+- [Rule Schema](../rule-schema-v1.json)
 
 ## Getting Help
 
