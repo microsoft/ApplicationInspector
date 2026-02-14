@@ -2,13 +2,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.CST.RecursiveExtractor;
 using Xunit;
 
 namespace AppInspector.Tests.RuleProcessor;
 
 public class ReflectionTests
 {
-    private readonly Languages _languages = new();
+    private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
 
     [Fact]
     public void DetectMethodInfoInvoke()
