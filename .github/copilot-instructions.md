@@ -25,6 +25,19 @@ Microsoft Application Inspector is a source code characterization tool that iden
 
 ## Build and Test Commands
 
+### Important Build Notes
+
+**Version Tracking**: This project uses Nerdbank.GitVersioning (nbgv) for version tracking, which requires a **deep clone** of the repository. Shallow clones will not work correctly with version generation.
+
+**NuGet Packages**: The repository uses a custom `nuget.config` that points to a private Azure DevOps feed. If you need to restore packages and don't have access to the private feed, you may need to temporarily modify `nuget.config` to pull from nuget.org instead:
+```xml
+<packageSources>
+  <clear />
+  <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+</packageSources>
+```
+**IMPORTANT**: Never check in changes to `nuget.config`. The private feed configuration should remain in the repository.
+
 ### Building
 ```bash
 # Build debug version
