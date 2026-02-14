@@ -263,7 +263,7 @@
         },
         "search_in": {
           "type": "string",
-          "pattern": "^(file|finding-region\\(-?\\d+,\\d+\\)|finding-only|same-line|same-file)$",
+          "pattern": "^(finding-region\\(-?\\d+,\\d+\\)|finding-only|same-line|same-file|only-before|only-after)$",
           "description": "Where to search for the condition"
         },
         "negate_finding": {

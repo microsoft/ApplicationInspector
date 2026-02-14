@@ -78,7 +78,8 @@ public abstract class AbstractRuleSet
         var clauses = new List<Clause>();
         var clauseNumber = 0;
         var expression = new StringBuilder("(");
-        var patternExprs = new List<string>();  // Track pattern expressions separately
+        var patternExprs = new List<string>();
+        var patternLabelCounter = 0;  // Stable pattern label, independent of clause numbering
 
         foreach (var pattern in rule.Patterns)
         {
@@ -110,11 +111,12 @@ public abstract class AbstractRuleSet
                 // "b" is a default option for regex engine, so no need to add "b" explicitly
             }            
 
-            // Generate expression for pattern including its specific conditions
-            var patternExpression = ProcessPatternWithConditions(pattern, clauses, ref clauseNumber);
+            // Pass stable pattern label (for pattern indexing) and running clause counter (for OAT expression) separately
+            var patternExpression = ProcessPatternWithConditions(pattern, clauses, patternLabelCounter, ref clauseNumber);
             if (patternExpression != null)
             {
                 patternExprs.Add(patternExpression);
+                patternLabelCounter++;
             }
             else
             {
@@ -310,17 +312,22 @@ public abstract class AbstractRuleSet
     /// <summary>
     ///     Process a single pattern and its associated conditions, building the expression and clauses.
     /// </summary>
-    private string? ProcessPatternWithConditions(SearchPattern pattern, List<Clause> clauses, ref int currentClauseNumber)
+    /// <param name="pattern">The search pattern to process</param>
+    /// <param name="clauses">List of clauses to append to</param>
+    /// <param name="patternLabel">Stable label for the pattern clause (used for pattern indexing)</param>
+    /// <param name="currentClauseNumber">Running counter for OAT expression clause numbering</param>
+    /// <returns>Expression string for this pattern and its conditions</returns>
+    private string? ProcessPatternWithConditions(SearchPattern pattern, List<Clause> clauses, int patternLabel, ref int currentClauseNumber)
     {
-        if (GenerateClause(pattern, currentClauseNumber) is not { } primaryClause)
+        // Generate the pattern clause with stable pattern label
+        if (GenerateClause(pattern, patternLabel) is not { } primaryClause)
         {
             return null;
         }
 
         clauses.Add(primaryClause);
-        var primaryNum = currentClauseNumber;
         var expressionText = new StringBuilder();
-        expressionText.Append(primaryNum);
+        expressionText.Append(currentClauseNumber);
         currentClauseNumber++;
 
         // Apply pattern-specific conditions if they exist

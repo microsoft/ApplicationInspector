@@ -33,8 +33,27 @@ public class WithinOperation : OatOperation
             // Returning true allows the pattern match to succeed since the condition is not applicable.
             if (!ConditionAppliesToLanguage(wc, tc.Language))
             {
-                // Pass through the captures unchanged since condition is not applicable
-                return new OperationResult(true, captures?.FirstOrDefault());
+                // Build a no-op within-filter capture that preserves all incoming tuples
+                if (captures is null)
+                {
+                    return new OperationResult(true);
+                }
+
+                var allTuples = new List<(int, Boundary)>();
+                foreach (var capture in captures)
+                {
+                    if (capture is TypedClauseCapture<List<(int, Boundary)>> tcc && tcc.Result is not null)
+                    {
+                        allTuples.AddRange(tcc.Result);
+                    }
+                }
+
+                ClauseCapture? withinCapture =
+                    allTuples.Any()
+                        ? new TypedClauseCapture<List<(int, Boundary)>>(wc, allTuples)
+                        : null;
+
+                return new OperationResult(true, withinCapture);
             }
 
             var passed =
