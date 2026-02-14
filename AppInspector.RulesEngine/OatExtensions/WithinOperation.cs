@@ -29,7 +29,8 @@ public class WithinOperation : OatOperation
     {
         if (c is WithinClause wc && state1 is TextContainer tc)
         {
-            // Skip condition evaluation if it doesn't apply to current language
+            // Skip condition evaluation if it doesn't apply to current language.
+            // Returning true allows the pattern match to succeed since the condition is not applicable.
             if (!ConditionAppliesToLanguage(wc, tc.Language))
             {
                 // Pass through the captures unchanged since condition is not applicable

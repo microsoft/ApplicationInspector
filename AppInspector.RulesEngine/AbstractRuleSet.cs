@@ -111,10 +111,10 @@ public abstract class AbstractRuleSet
             }            
 
             // Generate expression for pattern including its specific conditions
-            var pattern_expr = ProcessPatternWithConditions(pattern, clauses, ref clauseNumber);
-            if (pattern_expr != null)
+            var patternExpression = ProcessPatternWithConditions(pattern, clauses, ref clauseNumber);
+            if (patternExpression != null)
             {
-                patternExprs.Add(pattern_expr);
+                patternExprs.Add(patternExpression);
             }
             else
             {
@@ -310,39 +310,39 @@ public abstract class AbstractRuleSet
     /// <summary>
     ///     Process a single pattern and its associated conditions, building the expression and clauses.
     /// </summary>
-    private string? ProcessPatternWithConditions(SearchPattern patt, List<Clause> clausesList, ref int currClauseNum)
+    private string? ProcessPatternWithConditions(SearchPattern pattern, List<Clause> clauses, ref int currentClauseNumber)
     {
-        if (GenerateClause(patt, currClauseNum) is not { } primaryClause)
+        if (GenerateClause(pattern, currentClauseNumber) is not { } primaryClause)
         {
             return null;
         }
 
-        clausesList.Add(primaryClause);
-        var primaryNum = currClauseNum;
-        var exprText = new StringBuilder();
-        exprText.Append(primaryNum);
-        currClauseNum++;
+        clauses.Add(primaryClause);
+        var primaryNum = currentClauseNumber;
+        var expressionText = new StringBuilder();
+        expressionText.Append(primaryNum);
+        currentClauseNumber++;
 
         // Apply pattern-specific conditions if they exist
-        var specificConds = patt.Conditions;
-        if (specificConds is { Length: > 0 })
+        var specificConditions = pattern.Conditions;
+        if (specificConditions is { Length: > 0 })
         {
-            foreach (var specificCond in specificConds)
+            foreach (var specificCondition in specificConditions)
             {
-                var specificCondClause = GenerateCondition(specificCond, currClauseNum);
+                var specificCondClause = GenerateCondition(specificCondition, currentClauseNumber);
                 if (specificCondClause is not null)
                 {
-                    clausesList.Add(specificCondClause);
-                    exprText.Append(" AND ");
-                    exprText.Append(currClauseNum);
-                    currClauseNum++;
+                    clauses.Add(specificCondClause);
+                    expressionText.Append(" AND ");
+                    expressionText.Append(currentClauseNumber);
+                    currentClauseNumber++;
                 }
             }
             // Parenthesize when conditions are present
-            return $"({exprText})";
+            return $"({expressionText})";
         }
 
-        return exprText.ToString();
+        return expressionText.ToString();
     }
 
     /// <summary>
