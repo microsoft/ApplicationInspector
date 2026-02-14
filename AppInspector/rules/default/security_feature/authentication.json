@@ -468,6 +468,68 @@
     ]
   },
   {
+    "name": "Authentication: AWS (STS API Calls Returning Credentials)",
+    "id": "AI039850",
+    "description": "AWS STS API calls that return temporary security credentials",
+    "tags": [
+      "Authentication.AWS.STS",
+      "Authentication.AWS.Credentials"
+    ],
+    "severity": "critical",
+    "patterns": [
+      {
+        "pattern": "GetSessionToken|AssumeRole|AssumeRoleWithSAML|AssumeRoleWithWebIdentity|GetFederationToken",
+        "type": "regexword",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "GetClusterCredentials|GetAuthorizationToken",
+        "type": "regexword",
+        "scopes": [
+          "code",
+          "comment"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "sts\\.amazonaws\\.com",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "must-match": [
+      "client.GetSessionToken()",
+      "stsClient.AssumeRole(params)",
+      "sts.AssumeRoleWithSAML(request)",
+      "await stsClient.AssumeRoleWithWebIdentity(params);",
+      "result = client.GetFederationToken(federationParams)",
+      "credentials = redshift.GetClusterCredentials(params)",
+      "token = ecrClient.GetAuthorizationToken()",
+      "https://sts.amazonaws.com/"
+    ],
+    "must-not-match": [
+      "// This is a comment about assume role",
+      "const role = 'user-role'",
+      "getRoleDescription()"
+    ]
+  },
+  {
     "name": "Authentication: Basic-Auth",
     "id": "AI039900",
     "description": "Authentication: Basic-Auth",
