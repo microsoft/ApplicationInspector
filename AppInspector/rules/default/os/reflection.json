@@ -9,15 +9,15 @@
     "tags": [
       "OS.Reflection.MethodInvocation"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "MethodInfo|MethodBase",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium",
+        "confidence": "Medium",
         "_comment": "Detects MethodInfo and MethodBase usage for reflection"
       }
     ],
@@ -25,9 +25,9 @@
       {
         "pattern": {
           "pattern": "\\.Invoke\\(",
-          "type": "regex",
+          "type": "Regex",
           "scopes": [
-            "code"
+            "Code"
           ]
         },
         "search_in": "same-line",
@@ -56,15 +56,15 @@
     "tags": [
       "OS.Reflection.ConstructorInvocation"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "ConstructorInfo",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium",
+        "confidence": "Medium",
         "_comment": "Detects ConstructorInfo usage for reflection"
       }
     ],
@@ -72,9 +72,9 @@
       {
         "pattern": {
           "pattern": "\\.Invoke\\(",
-          "type": "regex",
+          "type": "Regex",
           "scopes": [
-            "code"
+            "Code"
           ]
         },
         "search_in": "same-line",
@@ -103,15 +103,15 @@
     "tags": [
       "OS.Reflection.AssemblyLoading"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "Assembly\\.Load\\(",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high",
+        "confidence": "High",
         "_comment": "Detects Assembly.Load( - note LoadFile and LoadFrom are already in load_dll.json"
       }
     ],
@@ -137,15 +137,15 @@
     "tags": [
       "OS.Reflection.InvokeMember"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "\\.InvokeMember\\(",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high",
+        "confidence": "High",
         "_comment": "Detects .InvokeMember( for dynamic member access"
       }
     ],
@@ -171,15 +171,15 @@
     "tags": [
       "OS.Reflection.CreateInstance"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "Activator\\.CreateInstance",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high",
+        "confidence": "High",
         "_comment": "Detects Activator.CreateInstance for dynamic object instantiation"
       }
     ],
@@ -206,15 +206,15 @@
     "tags": [
       "OS.Reflection.GetMethod"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "\\.GetMethod\\(",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium",
+        "confidence": "Medium",
         "_comment": "Detects .GetMethod( which is often used before dynamic invocation"
       }
     ],
@@ -240,15 +240,15 @@
     "tags": [
       "OS.Reflection.GetConstructor"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "\\.GetConstructor\\(",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium",
+        "confidence": "Medium",
         "_comment": "Detects .GetConstructor( which is often used before dynamic object creation"
       }
     ],
@@ -274,15 +274,15 @@
     "tags": [
       "OS.Reflection.GetType"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "Type\\.GetType\\(",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium",
+        "confidence": "Medium",
         "_comment": "Detects Type.GetType( for dynamic type loading from string"
       }
     ],
