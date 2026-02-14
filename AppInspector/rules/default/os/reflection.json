@@ -33,6 +33,17 @@
         "search_in": "same-line",
         "_comment": "Ensures .Invoke( is on the same line to confirm method invocation"
       }
+    ],
+    "must-match": [
+      "MethodInfo method = type.GetMethod(\"Execute\"); method.Invoke(instance, null);",
+      "MethodBase baseMethod = typeof(MyClass).GetMethod(\"Test\"); var result = baseMethod.Invoke(obj, new object[] { });",
+      "MethodInfo mi = GetMethodInfo(); mi.Invoke(target, args);"
+    ],
+    "must-not-match": [
+      "MethodInfo method = type.GetMethod(\"Execute\");",
+      "var info = typeof(String).GetMethod(\"ToUpper\");",
+      "public void MyMethod() { }",
+      "method.InvokeAsync(args);"
     ]
   },
   {
@@ -69,6 +80,17 @@
         "search_in": "same-line",
         "_comment": "Ensures .Invoke( is on the same line to confirm constructor invocation"
       }
+    ],
+    "must-match": [
+      "ConstructorInfo ctor = type.GetConstructor(Type.EmptyTypes); var instance = ctor.Invoke(null);",
+      "var constructor = typeof(MyClass).GetConstructor(new[] { typeof(string) }); object obj = constructor.Invoke(new object[] { \"test\" });",
+      "ConstructorInfo ci = t.GetConstructor(paramTypes); ci.Invoke(parameters);"
+    ],
+    "must-not-match": [
+      "ConstructorInfo ctor = type.GetConstructor(Type.EmptyTypes);",
+      "var info = typeof(MyClass).GetConstructors();",
+      "public MyClass() { }",
+      "new MyClass();"
     ]
   },
   {
@@ -92,6 +114,17 @@
         "confidence": "high",
         "_comment": "Detects Assembly.Load( - note LoadFile and LoadFrom are already in load_dll.json"
       }
+    ],
+    "must-match": [
+      "Assembly assembly = Assembly.Load(\"MyAssembly\");",
+      "var asm = Assembly.Load(assemblyName);",
+      "Assembly.Load(new AssemblyName(\"Plugin.Core\"));"
+    ],
+    "must-not-match": [
+      "Assembly assembly = Assembly.GetExecutingAssembly();",
+      "var asm = Assembly.GetCallingAssembly();",
+      "Assembly.LoadFrom(\"path/to/assembly.dll\");",
+      "Assembly.LoadFile(@\"C:\\assemblies\\mylib.dll\");"
     ]
   },
   {
@@ -115,6 +148,17 @@
         "confidence": "high",
         "_comment": "Detects .InvokeMember( for dynamic member access"
       }
+    ],
+    "must-match": [
+      "type.InvokeMember(\"MyMethod\", BindingFlags.InvokeMethod, null, obj, args);",
+      "var result = typeof(MyClass).InvokeMember(\"Execute\", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, instance, null);",
+      "t.InvokeMember(methodName, flags, binder, target, parameters);"
+    ],
+    "must-not-match": [
+      "var members = type.GetMembers();",
+      "type.GetMethod(\"MyMethod\");",
+      "obj.MyMethod();",
+      "InvokeMemberAsync(name, args);"
     ]
   },
   {
@@ -138,6 +182,18 @@
         "confidence": "high",
         "_comment": "Detects Activator.CreateInstance for dynamic object instantiation"
       }
+    ],
+    "must-match": [
+      "object instance = Activator.CreateInstance(typeof(MyClass));",
+      "var obj = Activator.CreateInstance(\"MyAssembly\", \"MyNamespace.MyClass\");",
+      "T instance = (T)Activator.CreateInstance(type);",
+      "Activator.CreateInstance<MyPlugin>();"
+    ],
+    "must-not-match": [
+      "new MyClass();",
+      "var instance = new MyClass();",
+      "MyClass.Create();",
+      "CreateInstance();"
     ]
   },
   {
@@ -161,6 +217,17 @@
         "confidence": "medium",
         "_comment": "Detects .GetMethod( which is often used before dynamic invocation"
       }
+    ],
+    "must-match": [
+      "MethodInfo method = type.GetMethod(\"Execute\");",
+      "var methodInfo = typeof(MyClass).GetMethod(\"Test\", BindingFlags.Public | BindingFlags.Instance);",
+      "Type t = typeof(string); t.GetMethod(\"ToUpper\");"
+    ],
+    "must-not-match": [
+      "var methods = type.GetMethods();",
+      "public void MyMethod() { }",
+      "GetMethodAsync(name);",
+      "CustomGetMethod();"
     ]
   },
   {
@@ -184,6 +251,17 @@
         "confidence": "medium",
         "_comment": "Detects .GetConstructor( which is often used before dynamic object creation"
       }
+    ],
+    "must-match": [
+      "ConstructorInfo ctor = type.GetConstructor(Type.EmptyTypes);",
+      "var constructor = typeof(MyClass).GetConstructor(new[] { typeof(string), typeof(int) });",
+      "Type t = GetType(); t.GetConstructor(parameterTypes);"
+    ],
+    "must-not-match": [
+      "var constructors = type.GetConstructors();",
+      "public MyClass() { }",
+      "GetConstructorAsync();",
+      "CustomGetConstructor();"
     ]
   },
   {
@@ -207,6 +285,17 @@
         "confidence": "medium",
         "_comment": "Detects Type.GetType( for dynamic type loading from string"
       }
+    ],
+    "must-match": [
+      "Type type = Type.GetType(\"System.String\");",
+      "var t = Type.GetType(\"MyNamespace.MyClass, MyAssembly\");",
+      "Type.GetType(typeName, true);"
+    ],
+    "must-not-match": [
+      "var type = typeof(MyClass);",
+      "Type t = obj.GetType();",
+      "GetType();",
+      "myObject.GetType();"
     ]
   }
 ]
