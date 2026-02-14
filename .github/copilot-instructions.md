@@ -155,7 +155,7 @@ Note: This is a simplified example. Real rules may use alternation (e.g., `patte
 ### Rule ID Conventions
 
 - Rule IDs follow consistent patterns within categories
-- Authentication rules: AI038900 - AI041XX range
+- Authentication rules: AI038900 - AI041999 range
 - Ensure new rule IDs don't conflict with existing ones
 - Sequential numbering within a category
 
@@ -215,7 +215,7 @@ Before submitting changes:
 - [ ] Code builds without errors (`dotnet build`)
 - [ ] All tests pass (`dotnet test`)
 - [ ] New rules include test cases (must-match and must-not-match)
-- [ ] New rules validate successfully (`appinspector verifyrules`)
+- [ ] New rules validate successfully (`dotnet run --project AppInspector.CLI -- verifyrules`)
 - [ ] XML documentation added for public APIs
 - [ ] No hardcoded secrets or sensitive data
 - [ ] Changes are backward compatible
