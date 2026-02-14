@@ -20,6 +20,16 @@
         ],
         "confidence": "high"
       }
+    ],
+    "must-match": [
+      "#[derive(Debug, Serialize, Deserialize)]",
+      "use serde::Serialize;",
+      "#[derive(Serialize)]"
+    ],
+    "must-not-match": [
+      "// Serialize the data to JSON",
+      "def serialize_data(obj):",
+      "class MySerializer: pass"
     ]
   },
   {
@@ -42,6 +52,17 @@
         ],
         "confidence": "high"
       }
+    ],
+    "must-match": [
+      "import pickle",
+      "import cpickle",
+      "from pickle import dumps, loads",
+      "from cpickle import dump"
+    ],
+    "must-not-match": [
+      "import my_pickle_wrapper",
+      "# import pickle for serialization",
+      "from utils.pickle_helper import serialize"
     ]
   },
   {
@@ -281,6 +302,17 @@
         ],
         "confidence": "medium"
       }
+    ],
+    "must-match": [
+      "#[derive(Debug, Deserialize)]",
+      "use serde::Deserialize;",
+      "let value: MyType = serde_json::from_str(json_str)?;",
+      "let num = s.parse::<i32>()?;"
+    ],
+    "must-not-match": [
+      "// Deserialize JSON data",
+      "def deserialize(data):",
+      "class MyDeserializer: pass"
     ]
   },
   {
@@ -311,6 +343,17 @@
         ],
         "confidence": "medium"
       }
+    ],
+    "must-match": [
+      "BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();",
+      "var device = new BluetoothDevice();",
+      "CBCentralManager *manager = [[CBCentralManager alloc] init];",
+      "const bluetooth = require('bluetooth-serial-port');"
+    ],
+    "must-not-match": [
+      "// Bluetooth documentation",
+      "var has_bluetooth_support = false;",
+      "String bluetooth_disabled = 'error';"
     ]
   },
   {
@@ -341,6 +384,17 @@
         ],
         "confidence": "medium"
       }
+    ],
+    "must-match": [
+      "TelephonyManager telMgr = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);",
+      "CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];",
+      "List<CellInfo> cellInfos = telephonyManager.getAllCellInfo();",
+      "const cellular = networkInfo.cellular;"
+    ],
+    "must-not-match": [
+      "// Cellular network documentation",
+      "var cellular_enabled = false;",
+      "String cellular_provider = 'Verizon';"
     ]
   },
   {
@@ -368,6 +422,17 @@
         ],
         "confidence": "medium"
       }
+    ],
+    "must-match": [
+      "UsbManager manager = (UsbManager)getSystemService(Context.USB_SERVICE);",
+      "const device = new USBDevice();",
+      "IOUSBDeviceInterface **deviceInterface;",
+      "import libusb"
+    ],
+    "must-not-match": [
+      "// USB documentation only",
+      "var usb_enabled = false;",
+      "String usb_port_name = 'COM1';"
     ]
   },
   {
@@ -398,6 +463,17 @@
         ],
         "confidence": "medium"
       }
+    ],
+    "must-match": [
+      "EthernetClient client;",
+      "NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();",
+      "if (getifaddrs(&ifaddr) == -1) { }",
+      "const ethernet = new EthernetServer(80);"
+    ],
+    "must-not-match": [
+      "// Ethernet cable required",
+      "var ethernet_connected = false;",
+      "String ethernet_mac = '00:11:22:33:44:55';"
     ]
   },
   {
@@ -428,6 +504,17 @@
         ],
         "confidence": "medium"
       }
+    ],
+    "must-match": [
+      "ModemManager *manager = modem_manager_new();",
+      "SerialPort port = new SerialPort(\"COM1\");",
+      "sendATCommand(\"AT+CGMI\");",
+      "const modem = require('modem-js');"
+    ],
+    "must-not-match": [
+      "// Modem configuration notes",
+      "var modem_enabled = false;",
+      "String modem_vendor = 'Qualcomm';"
     ]
   }
 ]

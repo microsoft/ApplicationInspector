@@ -131,6 +131,19 @@
         ],
         "confidence": "medium"
       }
+    ],
+    "must-match": [
+      "using System.Security.Cryptography.HashAlgorithm;",
+      "def hash_data(): return hashlib.sha256().hash(data)",
+      "hasher = new Hasher();",
+      "result = computeHash(input);",
+      "let hashCode = obj.GetHashCode();"
+    ],
+    "must-not-match": [
+      "var hashtable = new Dictionary();",
+      "# Use a hash (#) to comment",
+      "String hashbrown = 'food';",
+      "Follow us on social media #hashtag"
     ]
   },
   {

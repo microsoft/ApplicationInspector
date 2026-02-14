@@ -144,6 +144,19 @@
         ],
         "confidence": "high"
       }
+    ],
+    "must-match": [
+      "cipher.Mode = CipherMode.CBC;",
+      "algorithm = new AesManaged { Mode = CipherMode.ECB };",
+      "encrypt_data(algorithm='AES-CBC', key=key)",
+      "cipher = new DES_EDE3(mode='CBC')",
+      "const mode = 'AES_256_GCM';"
+    ],
+    "must-not-match": [
+      "// CBC Radio broadcasts at 5pm",
+      "String cbc_variable = 'test';",
+      "ecb_module = load_module('ecb');",
+      "medical_term = 'ECG not ECB';"
     ]
   },
   {
@@ -226,6 +239,18 @@
           "i"
         ]
       }
+    ],
+    "must-match": [
+      "encrypted = RSAEncrypt(plaintext, key);",
+      "signature = rsa.Sign(data);",
+      "const public_key = loadKey('public.pem');",
+      "var privkey = generatePrivateKey();",
+      "result = RSA.encrypt(message, pubkey);"
+    ],
+    "must-not-match": [
+      "// Public key infrastructure documentation",
+      "var publicly_available = true;",
+      "String private_method_key = 'test';"
     ]
   },
   {

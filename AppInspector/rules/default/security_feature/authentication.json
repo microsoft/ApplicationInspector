@@ -90,6 +90,14 @@
         "search_in": "finding-region(-10,10)",
         "negate_finding": true
       }
+    ],
+    "must-match": [
+      "var app = ConfidentialClientApplicationBuilder.Create(clientId).AcquireTokenForClient(scopes).ExecuteAsync();",
+      "result = app.AcquireTokenForClient(new[] { scope }).ExecuteAsync().Result;"
+    ],
+    "must-not-match": [
+      "var app = builder.WithCertificate(cert).AcquireTokenForClient(scopes);",
+      "app.WithClientClaims(claims, cert).Build();"
     ]
   },
   {
@@ -201,6 +209,17 @@
         ],
         "confidence": "high"
       }
+    ],
+    "must-match": [
+      "const provider = new OpenID.Client();",
+      "url = 'https://auth.example.com/.well-known/openid-configuration'",
+      "// Uses OpenID Connect for authentication",
+      "import openid from '@openid/appauth';"
+    ],
+    "must-not-match": [
+      "var open_id_variable = 123;",
+      "function openIdDialog() { }",
+      "const isOpenIdEnabled = false;"
     ]
   },
   {
@@ -520,6 +539,19 @@
         ],
         "confidence": "high"
       }
+    ],
+    "must-match": [
+      "if (user.IsAuthenticated) { }",
+      "var identity = ClaimsPrincipal.Current.Identity;",
+      "function authenticate(username, password) { }",
+      "const signIn = async () => await auth.signIn();",
+      "bool isLoggedIn = session.checkAuth();"
+    ],
+    "must-not-match": [
+      "// The author of this code",
+      "String authorize = 'permission';",
+      "function authorizeUser() { }",
+      "var authentication_disabled = true;"
     ]
   },
   {
@@ -575,6 +607,18 @@
         ],
         "confidence": "medium"
       }
+    ],
+    "must-match": [
+      "String username = request.getParameter('user');",
+      "const passwords = ['pass1', 'pass2'];",
+      "var credential = new NetworkCredential(user, pass);",
+      "auth.multi-factor = true;",
+      "string connectionString = 'Server=localhost';"
+    ],
+    "must-not-match": [
+      "// username_old is deprecated",
+      "var use_credentials = false;",
+      "function getPasswordStrength() { }"
     ]
   }
 ]

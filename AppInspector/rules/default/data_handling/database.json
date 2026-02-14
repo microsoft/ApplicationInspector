@@ -349,6 +349,17 @@
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
       }
+    ],
+    "must-match": [
+      "query = \"SELECT * FROM users WHERE id = 1\"",
+      "sql = 'INSERT INTO table VALUES (1, 2, 3)'",
+      "cmd = \"DELETE FROM logs WHERE date < '2020-01-01'\"",
+      "statement = \"UPDATE users SET active = 1\""
+    ],
+    "must-not-match": [
+      "console.log('select your option');",
+      "var text = 'Please insert your credentials';",
+      "// Comment: delete this line later"
     ]
   },
   {
