@@ -561,11 +561,11 @@
       "https://sts.amazonaws.com/"
     ],
     "must-not-match": [
-      "the user will assume role as admin",
-      "const role = 'user-role'",
+      "function assumeRoleValidator() {}",
+      "const roleArn = 'arn:aws:iam::123456789012:role/MyRole'",
       "getRoleDescription()",
-      "assumeRoleArn",
-      "getSessionTimeout()"
+      "var assumeRolePolicy = policy",
+      "getSessionManager().start()"
     ]
   },
   {
