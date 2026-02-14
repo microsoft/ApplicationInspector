@@ -84,13 +84,13 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "Assembly\\.Load\\b",
+        "pattern": "Assembly\\.Load\\(",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "confidence": "high",
-        "_comment": "Detects Assembly.Load - note LoadFile and LoadFrom are already in load_dll.json"
+        "_comment": "Detects Assembly.Load( - note LoadFile and LoadFrom are already in load_dll.json"
       }
     ]
   },

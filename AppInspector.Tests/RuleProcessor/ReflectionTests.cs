@@ -98,9 +98,8 @@ class Program
         {
             var matches = processor.AnalyzeFile(testCode, new FileEntry("test.cs", new MemoryStream()), info);
             var assemblyLoadMatches = matches.Where(m => m.Tags?.Contains("OS.Reflection.AssemblyLoading") ?? false).ToList();
+            // Should detect Assembly.Load (LoadFrom and LoadFile are in load_dll.json)
             Assert.NotEmpty(assemblyLoadMatches);
-            // Should detect all three: Load, LoadFrom, LoadFile
-            Assert.True(assemblyLoadMatches.Count >= 1);
         }
         else
         {
