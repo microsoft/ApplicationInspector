@@ -6,18 +6,18 @@
     "tags": [
       "Cryptography.HashAlgorithm.SHA2"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "SHA-?(2|224|256|384|512)",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -28,19 +28,19 @@
     "tags": [
       "Cryptography.HashAlgorithm.Legacy"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "MD2|MD4|MD5|SHA-?(0|1)",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -51,18 +51,18 @@
     "tags": [
       "Cryptography.HashAlgorithm.SHA3"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "SHA-?3|Keccak",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -73,19 +73,19 @@
     "tags": [
       "Cryptography.HashAlgorithm.Misc"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "RIPEMD|Blowfish|Twofish|Threefish|Serpent|HMAC|KeyedHashAlgorithm|Blake2|Blake3",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -96,18 +96,18 @@
     "tags": [
       "Cryptography.HashAlgorithm.Other"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "HashAlgorithm|MessageDigest|DigestUtils",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -118,20 +118,32 @@
     "tags": [
       "Cryptography.HashAlgorithm.General"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
-        "pattern": "hash",
-        "type": "string",
+        "pattern": "HashAlgorithm|HashFunction|HashCode|Hashing|Hasher|\\.hash\\(|computeHash|getHash",
+        "type": "Regex",
         "scopes": [
-          "code",
-          "comment"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "low"
+        "confidence": "Medium"
       }
+    ],
+    "must-match": [
+      "using System.Security.Cryptography.HashAlgorithm;",
+      "def hash_data(): return hashlib.sha256().hash(data)",
+      "hasher = new Hasher();",
+      "result = computeHash(input);",
+      "let hashCode = obj.GetHashCode();"
+    ],
+    "must-not-match": [
+      "var hashtable = new Dictionary();",
+      "# Use a hash (#) to comment",
+      "String hashbrown = 'food';",
+      "Follow us on social media #hashtag"
     ]
   },
   {
@@ -141,19 +153,19 @@
     "tags": [
       "Cryptography.HashAlgorithm.SHAKE"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "SHAKE(_?)(128|256)",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   }

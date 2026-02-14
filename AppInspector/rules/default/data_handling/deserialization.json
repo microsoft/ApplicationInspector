@@ -10,19 +10,26 @@
     "tags": [
       "Data.Serialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
-        "pattern": "Serialize",
-        "type": "regex",
+        "pattern": "#\\[derive\\(.*Serialize.*\\)]|serde::Serialize",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "modifiers": [
-          "i"
-        ],
-        "confidence": "medium"
+        "confidence": "High"
       }
+    ],
+    "must-match": [
+      "#[derive(Debug, Serialize, Deserialize)]",
+      "use serde::Serialize;",
+      "#[derive(Serialize)]"
+    ],
+    "must-not-match": [
+      "// Serialize the data to JSON",
+      "def serialize_data(obj):",
+      "class MySerializer: pass"
     ]
   },
   {
@@ -35,16 +42,27 @@
     "tags": [
       "Data.Serialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
-        "pattern": "import .*c?pickle",
-        "type": "regex",
+        "pattern": "^\\s*import\\s+(?:c)?pickle\\s*$|^\\s*from\\s+(?:c)?pickle\\s+import",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
+    ],
+    "must-match": [
+      "import pickle",
+      "import cpickle",
+      "from pickle import dumps, loads",
+      "from cpickle import dump"
+    ],
+    "must-not-match": [
+      "import my_pickle_wrapper",
+      "# import pickle for serialization",
+      "from utils.pickle_helper import serialize"
     ]
   },
   {
@@ -57,15 +75,15 @@
     "tags": [
       "Data.Serialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "c?pickle\\.dump",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -79,15 +97,15 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "c?pickle\\.load",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -101,15 +119,15 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": ".readObject",
-        "type": "substring",
+        "type": "Substring",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -123,15 +141,15 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "unserialize\\(",
-        "type": "substring",
+        "type": "Substring",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -145,15 +163,15 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "(YAML|Syck|Marshal)\\.load",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -167,15 +185,15 @@
     "tags": [
       "Data.Serialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "SerializeObject|JavaScriptSerializer|Newtonsoft|json\\.net|Utf8Json|MessagePack",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -189,39 +207,39 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "DeserializeObject",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "PopulateObject",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "TypeNameHandling",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "(De)?[Ss]erialize",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -235,31 +253,31 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "System.Runtime.Serialization",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "BinaryFormatter",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "TypeNameHandling",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -274,19 +292,27 @@
     "tags": [
       "Data.Deserialization"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
-        "pattern": "Deserialize",
-        "type": "regex",
+        "pattern": "#\\[derive\\(.*Deserialize.*\\)]|serde::Deserialize|from_str\\(|parse\\(",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "modifiers": [
-          "i"
-        ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
+    ],
+    "must-match": [
+      "#[derive(Debug, Deserialize)]",
+      "use serde::Deserialize;",
+      "let value: MyType = serde_json::from_str(json_str)?;",
+      "let num = s.parse();"
+    ],
+    "must-not-match": [
+      "// Deserialize JSON data",
+      "def deserialize(data):",
+      "class MyDeserializer: pass"
     ]
   },
   {
@@ -296,19 +322,37 @@
     "tags": [
       "Data.Deserialization.Signal.Bluetooth"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
-        "pattern": "Bluetooth",
-        "type": "string",
+        "pattern": "BluetoothAdapter|BluetoothDevice|BluetoothGatt|BluetoothSocket|CBCentralManager|CBPeripheral",
+        "type": "RegexWord",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "High"
+      },
+      {
+        "pattern": "\\bbluetooth\\b",
+        "type": "Regex",
         "modifiers": [
           "i"
         ],
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "Medium"
       }
+    ],
+    "must-match": [
+      "BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();",
+      "var device = new BluetoothDevice();",
+      "CBCentralManager *manager = [[CBCentralManager alloc] init];",
+      "const bluetooth = require('bluetooth-serial-port');"
+    ],
+    "must-not-match": [
+      "var has_bluetooth_support = false;",
+      "String bluetooth_disabled = 'error';"
     ]
   },
   {
@@ -318,19 +362,37 @@
     "tags": [
       "Data.Deserialization.Signal.Cellular"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
-        "pattern": "Cellular",
-        "type": "string",
+        "pattern": "CTTelephonyNetworkInfo|CTCarrier|TelephonyManager|CellInfo",
+        "type": "RegexWord",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "High"
+      },
+      {
+        "pattern": "\\bcellular\\b",
+        "type": "Regex",
         "modifiers": [
           "i"
         ],
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "Medium"
       }
+    ],
+    "must-match": [
+      "TelephonyManager telMgr = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);",
+      "CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];",
+      "List<CellInfo> cellInfos = telephonyManager.getAllCellInfo();",
+      "const cellular = networkInfo.cellular;"
+    ],
+    "must-not-match": [
+      "var cellular_enabled = false;",
+      "String cellular_provider = 'Verizon';"
     ]
   },
   {
@@ -340,19 +402,34 @@
     "tags": [
       "Data.Deserialization.Signal.USB"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
-        "pattern": "USB",
-        "type": "string",
-        "modifiers": [
-          "i"
-        ],
+        "pattern": "USBDevice|UsbManager|UsbAccessory|IOUSBDeviceInterface|libusb",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
+      },
+      {
+        "pattern": "\\bUSB\\b",
+        "type": "Regex",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "Medium"
       }
+    ],
+    "must-match": [
+      "UsbManager manager = (UsbManager)getSystemService(Context.USB_SERVICE);",
+      "const device = new USBDevice();",
+      "IOUSBDeviceInterface **deviceInterface;",
+      "import libusb"
+    ],
+    "must-not-match": [
+      "var usb_enabled = false;",
+      "String usb_port_name = 'COM1';"
     ]
   },
   {
@@ -362,19 +439,37 @@
     "tags": [
       "Data.Deserialization.Signal.Ethernet"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
-        "pattern": "Ethernet",
-        "type": "string",
+        "pattern": "EthernetClient|EthernetServer|NetworkInterface|getifaddrs|pcap",
+        "type": "RegexWord",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "High"
+      },
+      {
+        "pattern": "\\bethernet\\b",
+        "type": "Regex",
         "modifiers": [
           "i"
         ],
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "Medium"
       }
+    ],
+    "must-match": [
+      "EthernetClient client;",
+      "NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();",
+      "if (getifaddrs(&ifaddr) == -1) { }",
+      "const ethernet = new EthernetServer(80);"
+    ],
+    "must-not-match": [
+      "var ethernet_connected = false;",
+      "String ethernet_mac = '00:11:22:33:44:55';"
     ]
   },
   {
@@ -384,19 +479,37 @@
     "tags": [
       "Data.Deserialization.Signal.Modem"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
-        "pattern": "Modem",
-        "type": "string",
+        "pattern": "ModemManager|ATCommand|SerialPort|TAPI",
+        "type": "RegexWord",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "High"
+      },
+      {
+        "pattern": "\\bmodem\\b",
+        "type": "Regex",
         "modifiers": [
           "i"
         ],
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "Medium"
       }
+    ],
+    "must-match": [
+      "ModemManager *manager = modem_manager_new();",
+      "SerialPort port = new SerialPort(\"COM1\");",
+      "sendATCommand(\"AT+CGMI\");",
+      "const modem = require('modem-js');"
+    ],
+    "must-not-match": [
+      "var modem_enabled = false;",
+      "String modem_vendor = 'Qualcomm';"
     ]
   }
 ]
