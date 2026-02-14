@@ -247,6 +247,6 @@ dotnet clean
 
 ## Getting Help
 
-- Review the [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
-- Check [BUILD.md](BUILD.md) for detailed build instructions
-- See [SECURITY.md](SECURITY.md) for security reporting procedures
+- Review the [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines
+- Check [BUILD.md](../BUILD.md) for detailed build instructions
+- See [SECURITY.md](../SECURITY.md) for security reporting procedures
