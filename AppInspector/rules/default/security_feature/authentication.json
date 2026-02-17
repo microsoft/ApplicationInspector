@@ -6,7 +6,7 @@
     "tags": [
       "Authentication.Microsoft.Online"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "login\\.microsoftonline(-p)*\\.com|SAS.*Token|login\\.live.com|Shared *Access *Signature",
@@ -65,7 +65,7 @@
     "tags": [
       "Authentication.Microsoft.Online"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "AcquireTokenForClient|ConfidentialClientApplicationBuilder",
@@ -99,7 +99,7 @@
     "tags": [
       "Authentication.Google"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "using Google\\.Apis\\.Auth|GoogleCredential|AppIdentityCredential|oauth2/google|apis\\.google\\.com/js/api\\.js",
@@ -132,7 +132,7 @@
     "tags": [
       "Authentication.Oauth"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "oauth",
@@ -187,7 +187,7 @@
     "tags": [
       "Authentication.OpenIDConnect"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "OpenID",
@@ -211,7 +211,7 @@
       "Authentication.Microsoft.Windows.ActiveDirectory",
       "Authentication.Microsoft.Windows.Entra"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "active.?directory|ADFS|entra",
@@ -280,7 +280,7 @@
     "tags": [
       "Authentication.LDAP"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "LDAP|ldaps",
@@ -303,7 +303,7 @@
     "tags": [
       "Authentication.Microsoft.Windows.NTLM"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "WWW-Authenticate: NTLM|windowsAuthentication|CredentialCache\\.DefaultCredentials|HTTPNtlmAuthHandler",
@@ -348,7 +348,7 @@
     "tags": [
       "Authentication.Microsoft.Windows.Kerberos"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "WindowsIdentity|WindowsPrincipal|Kerberos",
@@ -371,7 +371,7 @@
     "tags": [
       "Authentication.JWT"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "jwt|RFC 7519|System\\.IdentityModel\\.Tokens\\.Jwt|JwtSecurityToken|JsonWebToken",
@@ -394,7 +394,7 @@
     "tags": [
       "Authentication.HTMLForm"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": " type=['\\\"]password['\\\"] ",
@@ -419,7 +419,7 @@
     "tags": [
       "Authentication.SAML"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "AuthenticationHeaderValue\\(\"SAML\"",
@@ -441,7 +441,7 @@
     "tags": [
       "Authentication.SAML"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "SAML|saml2",
@@ -468,13 +468,114 @@
     ]
   },
   {
+    "name": "Authentication: AWS (API Calls Returning Credentials)",
+    "id": "AI039850",
+    "description": "AWS API calls that return credentials (temporary or permanent)",
+    "tags": [
+      "Authentication.AWS.STS",
+      "Authentication.AWS.Credentials"
+    ],
+    "severity": "Critical",
+    "patterns": [
+      {
+        "pattern": "GetSessionToken|AssumeRole|AssumeRoleWithSAML|AssumeRoleWithWebIdentity|GetFederationToken",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "GetClusterCredentials|GetAuthorizationToken",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "CreateAccessKey|GetCredentialsForIdentity|GetInstanceAccessDetails",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "GetOpenIdToken|GetOpenIdTokenForDeveloperIdentity|GetRoleCredentials",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "CreateServiceSpecificCredential|ResetServiceSpecificCredential",
+        "type": "regexword",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "high"
+      },
+      {
+        "pattern": "sts\\.amazonaws\\.com",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "i"
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "must-match": [
+      "client.GetSessionToken()",
+      "stsClient.AssumeRole(params)",
+      "sts.AssumeRoleWithSAML(request)",
+      "await stsClient.AssumeRoleWithWebIdentity(params);",
+      "result = client.GetFederationToken(federationParams)",
+      "credentials = redshift.GetClusterCredentials(params)",
+      "token = ecrClient.GetAuthorizationToken()",
+      "iamClient.CreateAccessKey(request)",
+      "cognitoClient.GetCredentialsForIdentity(params)",
+      "lightsail.GetInstanceAccessDetails(instanceName)",
+      "cognitoClient.GetOpenIdToken(identityId)",
+      "ssoClient.GetRoleCredentials(params)",
+      "iam.CreateServiceSpecificCredential(userName)",
+      "endpoint = sts.amazonaws.com"
+    ],
+    "must-not-match": [
+      "function assumeRoleValidator() {}",
+      "const roleArn = 'arn:aws:iam::123456789012:role/MyRole'",
+      "getRoleDescription()",
+      "var assumeRolePolicy = policy",
+      "getSessionManager().start()"
+    ]
+  },
+  {
     "name": "Authentication: Basic-Auth",
     "id": "AI039900",
     "description": "Authentication: Basic-Auth",
     "tags": [
       "Authentication.General"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "\"Authorization: Basic|WWW-Authenticate|AuthenticationHeaderValue\\(\"Basic\"",
@@ -496,7 +597,7 @@
     "tags": [
       "Authentication.General"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "principal|identity|auth|authenticated|authentication|signin|sign-?in|signout|sign-?out|networkcredential|isauthenticated|isloggedin",
@@ -518,7 +619,7 @@
     "tags": [
       "Authentication.General"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "log(in|on)|log(off|out)",
@@ -540,7 +641,7 @@
     "tags": [
       "Authentication.General"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
         "pattern": "(username|userid|password|passphrase|multi-factor|credential|acct)s?",
