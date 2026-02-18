@@ -59,4 +59,41 @@ public class TestExportTagsCmd
         };
         Assert.Throws<OpException>(() => new ExportTagsCommand(options));
     }
+
+    [Fact]
+    public void ExportJsonSerialization()
+    {
+        ExportTagsOptions options = new()
+        {
+            IgnoreDefaultRules = true,
+            CustomRulesPath = testRulesPath
+        };
+        ExportTagsCommand command = new(options, factory);
+        var result = command.GetResult();
+        
+        // Test JSON serialization via the production JsonWriter to ensure tags are included
+        using var memoryStream = new MemoryStream();
+        using var streamWriter = new StreamWriter(memoryStream);
+        
+        // Use the JsonWriter that production code uses
+        var jsonWriter = new Microsoft.ApplicationInspector.CLI.Writers.JsonWriter(streamWriter, factory);
+        var cliOptions = new Microsoft.ApplicationInspector.CLI.CLIExportTagsCmdOptions
+        {
+            IgnoreDefaultRules = true,
+            CustomRulesPath = testRulesPath
+        };
+        
+        jsonWriter.WriteResults(result, cliOptions, autoClose: false);
+        streamWriter.Flush();
+        
+        memoryStream.Position = 0;
+        using var reader = new StreamReader(memoryStream);
+        string json = reader.ReadToEnd();
+        
+        // Verify tags are present in JSON output from JsonWriter
+        Assert.Contains("Test.Tags.Linux", json);
+        Assert.Contains("Test.Tags.Windows", json);
+        Assert.Contains("tagsList", json);
+        Assert.Contains("appVersion", json);
+    }
 }
