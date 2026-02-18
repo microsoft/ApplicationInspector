@@ -78,6 +78,8 @@ public abstract class AbstractRuleSet
         var clauses = new List<Clause>();
         var clauseNumber = 0;
         var expression = new StringBuilder("(");
+        var patternExprs = new List<string>();
+        var patternLabelCounter = 0;  // Stable pattern label, independent of clause numbering
 
         foreach (var pattern in rule.Patterns)
         {
@@ -109,16 +111,12 @@ public abstract class AbstractRuleSet
                 // "b" is a default option for regex engine, so no need to add "b" explicitly
             }            
 
-            if (GenerateClause(pattern, clauseNumber) is { } clause)
+            // Pass stable pattern label (for pattern indexing) and running clause counter (for OAT expression) separately
+            var patternExpression = ProcessPatternWithConditions(pattern, clauses, patternLabelCounter, ref clauseNumber);
+            if (patternExpression != null)
             {
-                clauses.Add(clause);
-                if (clauseNumber > 0)
-                {
-                    expression.Append(" OR ");
-                }
-
-                expression.Append(clauseNumber);
-                clauseNumber++;
+                patternExprs.Add(patternExpression);
+                patternLabelCounter++;
             }
             else
             {
@@ -128,6 +126,7 @@ public abstract class AbstractRuleSet
 
         if (clauses.Count > 0)
         {
+            expression.Append(string.Join(" OR ", patternExprs));
             expression.Append(')');
         }
         else
@@ -171,7 +170,9 @@ public abstract class AbstractRuleSet
                     {
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         FindingOnly = true,
-                        Invert = condition.NegateFinding
+                        Invert = condition.NegateFinding,
+                        LanguageAppliesTo = condition.AppliesTo,
+                        LanguageDoesNotApplyTo = condition.DoesNotApplyTo
                     };
                 }
 
@@ -200,7 +201,9 @@ public abstract class AbstractRuleSet
                             FindingRegion = true,
                             Before = argList[0],
                             After = argList[1],
-                            Invert = condition.NegateFinding
+                            Invert = condition.NegateFinding,
+                            LanguageAppliesTo = condition.AppliesTo,
+                            LanguageDoesNotApplyTo = condition.DoesNotApplyTo
                         };
                     }
                 }
@@ -210,7 +213,9 @@ public abstract class AbstractRuleSet
                     {
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         SameLineOnly = true,
-                        Invert = condition.NegateFinding
+                        Invert = condition.NegateFinding,
+                        LanguageAppliesTo = condition.AppliesTo,
+                        LanguageDoesNotApplyTo = condition.DoesNotApplyTo
                     };
                 }
                 else if (condition.SearchIn.Equals("same-file", StringComparison.InvariantCultureIgnoreCase))
@@ -219,7 +224,9 @@ public abstract class AbstractRuleSet
                     {
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         SameFile = true,
-                        Invert = condition.NegateFinding
+                        Invert = condition.NegateFinding,
+                        LanguageAppliesTo = condition.AppliesTo,
+                        LanguageDoesNotApplyTo = condition.DoesNotApplyTo
                     };
                 }
                 else if (condition.SearchIn.Equals("only-before", StringComparison.InvariantCultureIgnoreCase))
@@ -228,7 +235,9 @@ public abstract class AbstractRuleSet
                     {
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         OnlyBefore = true,
-                        Invert = condition.NegateFinding
+                        Invert = condition.NegateFinding,
+                        LanguageAppliesTo = condition.AppliesTo,
+                        LanguageDoesNotApplyTo = condition.DoesNotApplyTo
                     };
                 }
                 else if (condition.SearchIn.Equals("only-after", StringComparison.InvariantCultureIgnoreCase))
@@ -237,7 +246,9 @@ public abstract class AbstractRuleSet
                     {
                         Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
                         OnlyAfter = true,
-                        Invert = condition.NegateFinding
+                        Invert = condition.NegateFinding,
+                        LanguageAppliesTo = condition.AppliesTo,
+                        LanguageDoesNotApplyTo = condition.DoesNotApplyTo
                     };
                 }
                 else
@@ -296,6 +307,49 @@ public abstract class AbstractRuleSet
         }
 
         return null;
+    }
+
+    /// <summary>
+    ///     Process a single pattern and its associated conditions, building the expression and clauses.
+    /// </summary>
+    /// <param name="pattern">The search pattern to process</param>
+    /// <param name="clauses">List of clauses to append to</param>
+    /// <param name="patternLabel">Stable label for the pattern clause (used for pattern indexing)</param>
+    /// <param name="currentClauseNumber">Running counter for OAT expression clause numbering</param>
+    /// <returns>Expression string for this pattern and its conditions</returns>
+    private string? ProcessPatternWithConditions(SearchPattern pattern, List<Clause> clauses, int patternLabel, ref int currentClauseNumber)
+    {
+        // Generate the pattern clause with stable pattern label
+        if (GenerateClause(pattern, patternLabel) is not { } primaryClause)
+        {
+            return null;
+        }
+
+        clauses.Add(primaryClause);
+        var expressionText = new StringBuilder();
+        expressionText.Append(currentClauseNumber);
+        currentClauseNumber++;
+
+        // Apply pattern-specific conditions if they exist
+        var specificConditions = pattern.Conditions;
+        if (specificConditions is { Length: > 0 })
+        {
+            foreach (var specificCondition in specificConditions)
+            {
+                var specificCondClause = GenerateCondition(specificCondition, currentClauseNumber);
+                if (specificCondClause is not null)
+                {
+                    clauses.Add(specificCondClause);
+                    expressionText.Append(" AND ");
+                    expressionText.Append(currentClauseNumber);
+                    currentClauseNumber++;
+                }
+            }
+            // Parenthesize when conditions are present
+            return $"({expressionText})";
+        }
+
+        return expressionText.ToString();
     }
 
     /// <summary>
