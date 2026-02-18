@@ -39,7 +39,7 @@ internal class JsonWriter : CommandResultsWriter
                 case TagDiffResult:
                 case ExportTagsResult:
                 case VerifyRulesResult:
-                    JsonSerializer.Serialize(StreamWriter.BaseStream, result, options);
+                    JsonSerializer.Serialize(StreamWriter.BaseStream, result, result.GetType(), options);
                     break;
                 case PackRulesResult prr:
                     JsonSerializer.Serialize(StreamWriter.BaseStream, prr.Rules, options);          
