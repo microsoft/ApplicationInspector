@@ -9,19 +9,19 @@
     "tags": [
       "Data.DBMS.ORM.SQLAlchemy"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "sqlalchemy",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -35,14 +35,14 @@
     "tags": [
       "Data.DBMS.ORM.Django"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "django",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
         "modifiers": [
           "i"
@@ -60,26 +60,26 @@
     "tags": [
       "Data.DBMS.SQLite"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "sqlite|python3-apsw",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high",
+        "confidence": "High",
         "modifiers": [
           "i"
         ]
       },
       {
         "pattern": "apsw",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "medium",
+        "confidence": "Medium",
         "modifiers": [
           "i"
         ]
@@ -96,15 +96,15 @@
     "tags": [
       "Data.DBMS.SQLite"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "SqliteCommand|SqliteConnection|System\\.Data\\.SQLite|Microsoft\\.Data\\.SQLite",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -122,15 +122,15 @@
     "tags": [
       "Data.DBMS.SQLite"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "sqlite",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high",
+        "confidence": "High",
         "modifiers": [
           "i"
         ]
@@ -148,26 +148,26 @@
     "tags": [
       "Data.DBMS.PostgreSQL"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "(pgsql|PG)\\.connect|PG::Connection",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "require(['\"]pg['\"]);",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -181,18 +181,18 @@
     "tags": [
       "Data.DBMS.PostgreSQL"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "require 'pg'|(pgsql|PG)\\.connect|PG::Connection",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -206,18 +206,18 @@
     "tags": [
       "Data.DBMS.PostgreSQL"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "psycopg2",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -231,18 +231,18 @@
     "tags": [
       "Data.DBMS.PostgreSQL"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "npgsql",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -253,18 +253,18 @@
     "tags": [
       "Data.DBMS.NoSQL"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "mongodb|mongoose|mongoclient|pymongo|redis|hbase|neo4j|cassandra|couchbase|memcached|couchdb|litedb|LiteDatabase|tinydb",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -278,15 +278,15 @@
     "tags": [
       "Data.DBMS.SQL"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "import java.sql",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -300,15 +300,15 @@
     "tags": [
       "Data.DBMS.SQL"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "using system.data.sqlclient",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -320,27 +320,27 @@
     "tags": [
       "Data.DBMS.SQL"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
-        "pattern": "['\\\"](select|insert|delete|update)\\s.*",
-        "type": "regex",
+        "pattern": "['\\\"](select|insert|delete|update)\\s+[a-zA-Z0-9_*]+",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ],
     "conditions": [
       {
         "pattern": {
-          "pattern": "from|where",
-          "type": "regexword",
+          "pattern": "from|where|into|values|set",
+          "type": "RegexWord",
           "scopes": [
-            "code"
+            "Code"
           ],
           "modifiers": [
             "i"
@@ -349,6 +349,17 @@
         "search_in": "finding-region(-5,5)",
         "negate_finding": false
       }
+    ],
+    "must-match": [
+      "query = \"SELECT * FROM users WHERE id = 1\"",
+      "sql = 'INSERT INTO table VALUES (1, 2, 3)'",
+      "cmd = \"DELETE FROM logs WHERE date < '2020-01-01'\"",
+      "statement = \"UPDATE users SET active = 1\""
+    ],
+    "must-not-match": [
+      "text = 'choose an option';",
+      "var instruction = 'add new item';",
+      "// Comment about operations"
     ]
   },
   {
@@ -359,18 +370,18 @@
     "tags": [
       "Data.DBMS.SQL"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "mysql",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -385,26 +396,26 @@
     "tags": [
       "Data.DBMS.SQL.Oracle"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "oracle\\.jdbc|oracledriver|com.oracle",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "oracle",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "medium"
+        "confidence": "Medium"
       }
     ]
   },
@@ -418,29 +429,29 @@
     "tags": [
       "Data.DBMS.SQL.Oracle"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "import cx_Oracle",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "oracle",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
         "modifiers": [
           "i"
         ],
-        "confidence": "low"
+        "confidence": "Low"
       }
     ]
   },
@@ -459,16 +470,16 @@
     "tags": [
       "Data.DBMS.General"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "database",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -482,15 +493,15 @@
     "tags": [
       "Data.DBMS.Connection.ODBC"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "OdbcConnection|OdbcCommand|OdbcDataReader",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -509,15 +520,15 @@
     "tags": [
       "Data.DBMS.Connection.ODBC"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "Odbc",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   }
