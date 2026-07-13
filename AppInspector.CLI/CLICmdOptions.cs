@@ -104,6 +104,10 @@ public record CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions
     [Option('u', "scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
     public bool ScanUnknownTypes { get; set; }
 
+    [Option("follow-symlinks", Required = false,
+        HelpText = "Follow symbolic links while enumerating source files.")]
+    public bool FollowSymlinks { get; set; }
+
     [Option('c', "confidence-filters", Required = false, Separator = ',',
         HelpText =
             "Output only matches with specified confidence <value>,<value>. Default: Medium,High. [High|Medium|Low]",
