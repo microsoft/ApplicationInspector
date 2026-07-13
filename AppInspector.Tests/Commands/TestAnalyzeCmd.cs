@@ -179,6 +179,37 @@ buy@tacos.com
     }
 
     [Fact]
+    public void SkipsDanglingSymlinksByDefault()
+    {
+        var testRoot = Path.Combine("TestOutput", $"DanglingSymlinkTest-{Guid.NewGuid()}");
+        Directory.CreateDirectory(testRoot);
+
+        try
+        {
+            var regularFile = Path.Combine(testRoot, "regular.js");
+            File.WriteAllText(regularFile, "windows");
+            var danglingLink = Path.Combine(testRoot, "dangling.js");
+            File.CreateSymbolicLink(danglingLink, Path.Combine(testRoot, "missing.js"));
+
+            AnalyzeCommand command = new(new AnalyzeOptions
+            {
+                SourcePath = new[] { regularFile, danglingLink },
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true
+            }, factory);
+
+            var result = command.GetResult();
+
+            Assert.Equal(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.Equal(1, result.Metadata.TotalFiles);
+        }
+        finally
+        {
+            Directory.Delete(testRoot, true);
+        }
+    }
+
+    [Fact]
     public async Task OverridesAsync()
     {
         AnalyzeOptions options = new()
