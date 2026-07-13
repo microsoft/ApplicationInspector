@@ -242,21 +242,25 @@ public class AnalyzeCommand
         {
             // Turn any relative paths into absolute paths for consistent behavior with file name regexes in rules
             var entryFullPath = Path.GetFullPath(entry);
-            if (!_options.FollowSymlinks &&
+            var directoryExists = Directory.Exists(entryFullPath);
+            var fileExists = File.Exists(entryFullPath);
+            if ((directoryExists || fileExists) && !_options.FollowSymlinks &&
                 (File.GetAttributes(entryFullPath) & FileAttributes.ReparsePoint) != 0)
             {
                 continue;
             }
 
-            if (Directory.Exists(entryFullPath))
+            if (directoryExists)
             {
                 _srcfileList.AddRange(Directory.EnumerateFiles(entryFullPath, "*.*", new EnumerationOptions
                 {
                     RecurseSubdirectories = true,
+                    IgnoreInaccessible = false,
+                    MatchType = MatchType.Win32,
                     AttributesToSkip = _options.FollowSymlinks ? 0 : FileAttributes.ReparsePoint
                 }));
             }
-            else if (File.Exists(entryFullPath))
+            else if (fileExists)
             {
                 _srcfileList.Add(entryFullPath);
             }
