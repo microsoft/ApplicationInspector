@@ -56,6 +56,10 @@ public class AnalyzeOptions
     /// </summary>
     public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
     /// <summary>
+    ///     Follow symbolic links while enumerating source files.
+    /// </summary>
+    public bool FollowSymlinks { get; set; }
+    /// <summary>
     ///     If enabled, processing will be performed on one file at a time.
     /// </summary>
     public bool SingleThread { get; set; }
@@ -238,9 +242,19 @@ public class AnalyzeCommand
         {
             // Turn any relative paths into absolute paths for consistent behavior with file name regexes in rules
             var entryFullPath = Path.GetFullPath(entry);
+            if (!_options.FollowSymlinks &&
+                (File.GetAttributes(entryFullPath) & FileAttributes.ReparsePoint) != 0)
+            {
+                continue;
+            }
+
             if (Directory.Exists(entryFullPath))
             {
-                _srcfileList.AddRange(Directory.EnumerateFiles(entryFullPath, "*.*", SearchOption.AllDirectories));
+                _srcfileList.AddRange(Directory.EnumerateFiles(entryFullPath, "*.*", new EnumerationOptions
+                {
+                    RecurseSubdirectories = true,
+                    AttributesToSkip = _options.FollowSymlinks ? 0 : FileAttributes.ReparsePoint
+                }));
             }
             else if (File.Exists(entryFullPath))
             {

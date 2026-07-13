@@ -134,6 +134,46 @@ buy@tacos.com
         Assert.Equal(2, result.Metadata.UniqueMatchesCount);
     }
 
+    [Theory]
+    [InlineData(false, 1)]
+    [InlineData(true, 3)]
+    public void FollowSymlinks(bool followSymlinks, int expectedFiles)
+    {
+        var testRoot = Path.Combine("TestOutput", $"SymlinkTest-{Guid.NewGuid()}");
+        var sourcePath = Path.Combine(testRoot, "source");
+        var linkedDirectoryTarget = Path.Combine(testRoot, "linked-directory-target");
+        Directory.CreateDirectory(sourcePath);
+        Directory.CreateDirectory(linkedDirectoryTarget);
+
+        try
+        {
+            File.WriteAllText(Path.Combine(sourcePath, "regular.js"), "windows");
+            var linkedFileTarget = Path.Combine(testRoot, "linked-file-target.js");
+            File.WriteAllText(linkedFileTarget, "windows");
+            File.WriteAllText(Path.Combine(linkedDirectoryTarget, "linked-directory-file.js"), "windows");
+            File.CreateSymbolicLink(Path.Combine(sourcePath, "linked-file.js"), Path.GetFullPath(linkedFileTarget));
+            Directory.CreateSymbolicLink(Path.Combine(sourcePath, "linked-directory"),
+                Path.GetFullPath(linkedDirectoryTarget));
+
+            AnalyzeCommand command = new(new AnalyzeOptions
+            {
+                SourcePath = new[] { sourcePath },
+                CustomRulesPath = testRulesPath,
+                IgnoreDefaultRules = true,
+                FollowSymlinks = followSymlinks
+            }, factory);
+
+            var result = command.GetResult();
+
+            Assert.Equal(AnalyzeResult.ExitCode.Success, result.ResultCode);
+            Assert.Equal(expectedFiles, result.Metadata.TotalFiles);
+        }
+        finally
+        {
+            Directory.Delete(testRoot, true);
+        }
+    }
+
     [Fact]
     public async Task OverridesAsync()
     {

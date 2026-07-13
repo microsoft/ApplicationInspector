@@ -24,6 +24,7 @@ public class TagDiffOptions
     public int ProcessingTimeOut { get; set; }
     public bool ScanUnknownTypes { get; set; }
     public bool SingleThread { get; set; }
+    public bool FollowSymlinks { get; set; }
     public IEnumerable<Confidence> ConfidenceFilters { get; set; } = new[] { Confidence.High, Confidence.Medium };
 
     public IEnumerable<Severity> SeverityFilters { get; set; } = new[]
@@ -173,6 +174,7 @@ public class TagDiffCommand
                 NoShowProgress = true,
                 ScanUnknownTypes = _options.ScanUnknownTypes,
                 SingleThread = _options.SingleThread,
+                FollowSymlinks = _options.FollowSymlinks,
                 CustomCommentsPath = _options.CustomCommentsPath,
                 CustomLanguagesPath = _options.CustomLanguagesPath,
                 DisableCustomRuleVerification = _options.DisableCustomRuleValidation,
@@ -197,6 +199,7 @@ public class TagDiffCommand
                 NoShowProgress = true,
                 ScanUnknownTypes = _options.ScanUnknownTypes,
                 SingleThread = _options.SingleThread,
+                FollowSymlinks = _options.FollowSymlinks,
                 CustomCommentsPath = _options.CustomCommentsPath,
                 CustomLanguagesPath = _options.CustomLanguagesPath,
                 DisableCustomRuleVerification = true, // Rules are already validated by the first command
