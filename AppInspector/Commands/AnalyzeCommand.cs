@@ -244,8 +244,7 @@ public class AnalyzeCommand
             var entryFullPath = Path.GetFullPath(entry);
             var directoryExists = Directory.Exists(entryFullPath);
             var fileExists = File.Exists(entryFullPath);
-            if ((directoryExists || fileExists) && !_options.FollowSymlinks &&
-                (File.GetAttributes(entryFullPath) & FileAttributes.ReparsePoint) != 0)
+            if (!_options.FollowSymlinks && IsReparsePoint(entryFullPath))
             {
                 continue;
             }
@@ -267,6 +266,22 @@ public class AnalyzeCommand
             else
             {
                 throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_INVALID_FILE_OR_DIR, entryFullPath));
+            }
+        }
+
+        static bool IsReparsePoint(string path)
+        {
+            try
+            {
+                return (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0;
+            }
+            catch (IOException)
+            {
+                return false;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return false;
             }
         }
 
