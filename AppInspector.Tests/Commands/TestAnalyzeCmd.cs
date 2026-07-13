@@ -136,7 +136,7 @@ buy@tacos.com
 
     [Theory]
     [InlineData(false, 1)]
-    [InlineData(true, 3)]
+    [InlineData(true, 5)]
     public void FollowSymlinks(bool followSymlinks, int expectedFiles)
     {
         var testRoot = Path.Combine("TestOutput", $"SymlinkTest-{Guid.NewGuid()}");
@@ -154,10 +154,14 @@ buy@tacos.com
             File.CreateSymbolicLink(Path.Combine(sourcePath, "linked-file.js"), Path.GetFullPath(linkedFileTarget));
             Directory.CreateSymbolicLink(Path.Combine(sourcePath, "linked-directory"),
                 Path.GetFullPath(linkedDirectoryTarget));
+            var directLinkedFile = Path.Combine(testRoot, "direct-linked-file.js");
+            var directLinkedDirectory = Path.Combine(testRoot, "direct-linked-directory");
+            File.CreateSymbolicLink(directLinkedFile, Path.GetFullPath(linkedFileTarget));
+            Directory.CreateSymbolicLink(directLinkedDirectory, Path.GetFullPath(linkedDirectoryTarget));
 
             AnalyzeCommand command = new(new AnalyzeOptions
             {
-                SourcePath = new[] { sourcePath },
+                SourcePath = new[] { sourcePath, directLinkedFile, directLinkedDirectory },
                 CustomRulesPath = testRulesPath,
                 IgnoreDefaultRules = true,
                 FollowSymlinks = followSymlinks
