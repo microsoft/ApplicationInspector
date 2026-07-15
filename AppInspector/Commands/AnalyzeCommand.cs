@@ -256,7 +256,7 @@ public class AnalyzeCommand
                     RecurseSubdirectories = true,
                     IgnoreInaccessible = false,
                     MatchType = MatchType.Win32,
-                    AttributesToSkip = _options.FollowSymlinks ? 0 : FileAttributes.ReparsePoint
+                    AttributesToSkip = _options.FollowSymlinks ? FileAttributes.None : FileAttributes.ReparsePoint
                 }));
             }
             else if (fileExists)
