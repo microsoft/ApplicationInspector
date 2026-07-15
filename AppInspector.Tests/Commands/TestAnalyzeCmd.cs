@@ -151,9 +151,20 @@ buy@tacos.com
             var linkedFileTarget = Path.Combine(testRoot, "linked-file-target.js");
             File.WriteAllText(linkedFileTarget, "windows");
             File.WriteAllText(Path.Combine(linkedDirectoryTarget, "linked-directory-file.js"), "windows");
-            File.CreateSymbolicLink(Path.Combine(sourcePath, "linked-file.js"), Path.GetFullPath(linkedFileTarget));
-            Directory.CreateSymbolicLink(Path.Combine(sourcePath, "linked-directory"),
-                Path.GetFullPath(linkedDirectoryTarget));
+            try
+            {
+                File.CreateSymbolicLink(Path.Combine(sourcePath, "linked-file.js"), Path.GetFullPath(linkedFileTarget));
+                Directory.CreateSymbolicLink(Path.Combine(sourcePath, "linked-directory"),
+                    Path.GetFullPath(linkedDirectoryTarget));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw new Xunit.Sdk.SkipException("Symlink creation is not permitted on this machine.");
+            }
+            catch (PlatformNotSupportedException)
+            {
+                throw new Xunit.Sdk.SkipException("Symlinks are not supported on this platform.");
+            }
             var directLinkedFile = Path.Combine(testRoot, "direct-linked-file.js");
             var directLinkedDirectory = Path.Combine(testRoot, "direct-linked-directory");
             File.CreateSymbolicLink(directLinkedFile, Path.GetFullPath(linkedFileTarget));
