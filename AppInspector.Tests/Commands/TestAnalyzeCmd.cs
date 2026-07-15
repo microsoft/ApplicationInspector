@@ -189,8 +189,18 @@ buy@tacos.com
             var regularFile = Path.Combine(testRoot, "regular.js");
             File.WriteAllText(regularFile, "windows");
             var danglingLink = Path.Combine(testRoot, "dangling.js");
-            File.CreateSymbolicLink(danglingLink, Path.Combine(testRoot, "missing.js"));
-
+            try
+            {
+                File.CreateSymbolicLink(danglingLink, Path.Combine(testRoot, "missing.js"));
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw new Xunit.Sdk.SkipException("Symlink creation is not permitted on this machine.");
+            }
+            catch (PlatformNotSupportedException)
+            {
+                throw new Xunit.Sdk.SkipException("Symlinks are not supported on this platform.");
+            }
             AnalyzeCommand command = new(new AnalyzeOptions
             {
                 SourcePath = new[] { regularFile, danglingLink },
