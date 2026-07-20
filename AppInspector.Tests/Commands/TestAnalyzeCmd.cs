@@ -159,11 +159,11 @@ buy@tacos.com
             }
             catch (UnauthorizedAccessException)
             {
-                throw new Xunit.Sdk.SkipException("Symlink creation is not permitted on this machine.");
+                throw Xunit.Sdk.SkipException.ForSkip("Symlink creation is not permitted on this machine.");
             }
             catch (PlatformNotSupportedException)
             {
-                throw new Xunit.Sdk.SkipException("Symlinks are not supported on this platform.");
+                throw Xunit.Sdk.SkipException.ForSkip("Symlinks are not supported on this platform.");
             }
             var directLinkedFile = Path.Combine(testRoot, "direct-linked-file.js");
             var directLinkedDirectory = Path.Combine(testRoot, "direct-linked-directory");
@@ -206,11 +206,11 @@ buy@tacos.com
             }
             catch (UnauthorizedAccessException)
             {
-                throw new Xunit.Sdk.SkipException("Symlink creation is not permitted on this machine.");
+                throw Xunit.Sdk.SkipException.ForSkip("Symlink creation is not permitted on this machine.");
             }
             catch (PlatformNotSupportedException)
             {
-                throw new Xunit.Sdk.SkipException("Symlinks are not supported on this platform.");
+                throw Xunit.Sdk.SkipException.ForSkip("Symlinks are not supported on this platform.");
             }
             AnalyzeCommand command = new(new AnalyzeOptions
             {
