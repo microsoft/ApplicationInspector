@@ -16,6 +16,65 @@ using Assert = Xunit.Assert;
 
 namespace AppInspector.Tests.Commands;
 
+internal static class SymlinkTestSupport
+{
+    public static string? SkipReason { get; } = GetSkipReason();
+
+    private static string? GetSkipReason()
+    {
+        var testRoot = Path.Combine(Path.GetTempPath(), $"ApplicationInspector-SymlinkTest-{Guid.NewGuid()}");
+
+        try
+        {
+            Directory.CreateDirectory(testRoot);
+            var fileTarget = Path.Combine(testRoot, "target.txt");
+            var directoryTarget = Path.Combine(testRoot, "target-directory");
+            File.WriteAllText(fileTarget, string.Empty);
+            Directory.CreateDirectory(directoryTarget);
+            File.CreateSymbolicLink(Path.Combine(testRoot, "file-link"), fileTarget);
+            Directory.CreateSymbolicLink(Path.Combine(testRoot, "directory-link"), directoryTarget);
+            return null;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return "Symlink creation is not permitted on this machine.";
+        }
+        catch (PlatformNotSupportedException)
+        {
+            return "Symlinks are not supported on this platform.";
+        }
+        catch (IOException ex)
+        {
+            return $"Symlink creation is not supported by the test file system: {ex.Message}";
+        }
+        finally
+        {
+            if (Directory.Exists(testRoot))
+            {
+                Directory.Delete(testRoot, true);
+            }
+        }
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+internal sealed class SymlinkFactAttribute : FactAttribute
+{
+    public SymlinkFactAttribute()
+    {
+        Skip = SymlinkTestSupport.SkipReason;
+    }
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+internal sealed class SymlinkTheoryAttribute : TheoryAttribute
+{
+    public SymlinkTheoryAttribute()
+    {
+        Skip = SymlinkTestSupport.SkipReason;
+    }
+}
+
 public class TestAnalyzeCmdFixture : IDisposable
 {
     public TestAnalyzeCmdFixture()
@@ -134,9 +193,9 @@ buy@tacos.com
         Assert.Equal(2, result.Metadata.UniqueMatchesCount);
     }
 
-    [Theory]
-    [InlineData(false, 1)]
-    [InlineData(true, 5)]
+    [SymlinkTheory]
+    [InlineData(false, 4)]
+    [InlineData(true, 6)]
     public void FollowSymlinks(bool followSymlinks, int expectedFiles)
     {
         var testRoot = Path.Combine("TestOutput", $"SymlinkTest-{Guid.NewGuid()}");
@@ -151,28 +210,23 @@ buy@tacos.com
             var linkedFileTarget = Path.Combine(testRoot, "linked-file-target.js");
             File.WriteAllText(linkedFileTarget, "windows");
             File.WriteAllText(Path.Combine(linkedDirectoryTarget, "linked-directory-file.js"), "windows");
-            try
-            {
-                File.CreateSymbolicLink(Path.Combine(sourcePath, "linked-file.js"), Path.GetFullPath(linkedFileTarget));
-                Directory.CreateSymbolicLink(Path.Combine(sourcePath, "linked-directory"),
-                    Path.GetFullPath(linkedDirectoryTarget));
-            }
-            catch (UnauthorizedAccessException)
-            {
-                throw Xunit.Sdk.SkipException.ForSkip("Symlink creation is not permitted on this machine.");
-            }
-            catch (PlatformNotSupportedException)
-            {
-                throw Xunit.Sdk.SkipException.ForSkip("Symlinks are not supported on this platform.");
-            }
+            File.CreateSymbolicLink(Path.Combine(sourcePath, "linked-file.js"), Path.GetFullPath(linkedFileTarget));
+            Directory.CreateSymbolicLink(Path.Combine(sourcePath, "linked-directory"),
+                Path.GetFullPath(linkedDirectoryTarget));
             var directLinkedFile = Path.Combine(testRoot, "direct-linked-file.js");
             var directLinkedDirectory = Path.Combine(testRoot, "direct-linked-directory");
             File.CreateSymbolicLink(directLinkedFile, Path.GetFullPath(linkedFileTarget));
             Directory.CreateSymbolicLink(directLinkedDirectory, Path.GetFullPath(linkedDirectoryTarget));
+            var linkedAncestorTarget = Path.Combine(testRoot, "linked-ancestor-target");
+            var sourceThroughLinkedAncestor = Path.Combine(testRoot, "linked-ancestor", "source");
+            Directory.CreateDirectory(Path.Combine(linkedAncestorTarget, "source"));
+            File.WriteAllText(Path.Combine(linkedAncestorTarget, "source", "linked-ancestor-file.js"), "windows");
+            Directory.CreateSymbolicLink(Path.Combine(testRoot, "linked-ancestor"),
+                Path.GetFullPath(linkedAncestorTarget));
 
             AnalyzeCommand command = new(new AnalyzeOptions
             {
-                SourcePath = new[] { sourcePath, directLinkedFile, directLinkedDirectory },
+                SourcePath = new[] { sourcePath, directLinkedFile, directLinkedDirectory, sourceThroughLinkedAncestor },
                 CustomRulesPath = testRulesPath,
                 IgnoreDefaultRules = true,
                 FollowSymlinks = followSymlinks
@@ -189,7 +243,7 @@ buy@tacos.com
         }
     }
 
-    [Fact]
+    [SymlinkFact]
     public void SkipsDanglingSymlinksByDefault()
     {
         var testRoot = Path.Combine("TestOutput", $"DanglingSymlinkTest-{Guid.NewGuid()}");
@@ -197,24 +251,12 @@ buy@tacos.com
 
         try
         {
-            var regularFile = Path.Combine(testRoot, "regular.js");
-            File.WriteAllText(regularFile, "windows");
+            File.WriteAllText(Path.Combine(testRoot, "regular.js"), "windows");
             var danglingLink = Path.Combine(testRoot, "dangling.js");
-            try
-            {
-                File.CreateSymbolicLink(danglingLink, Path.Combine(testRoot, "missing.js"));
-            }
-            catch (UnauthorizedAccessException)
-            {
-                throw Xunit.Sdk.SkipException.ForSkip("Symlink creation is not permitted on this machine.");
-            }
-            catch (PlatformNotSupportedException)
-            {
-                throw Xunit.Sdk.SkipException.ForSkip("Symlinks are not supported on this platform.");
-            }
+            File.CreateSymbolicLink(danglingLink, Path.Combine(testRoot, "missing.js"));
             AnalyzeCommand command = new(new AnalyzeOptions
             {
-                SourcePath = new[] { regularFile, danglingLink },
+                SourcePath = new[] { testRoot },
                 CustomRulesPath = testRulesPath,
                 IgnoreDefaultRules = true
             }, factory);
