@@ -85,8 +85,10 @@ public class TagDiffResult : Result
     /// <summary>
     ///     List of tags which differ between src1 and src2
     /// </summary>
+    // Declared as a property, not a field: System.Text.Json ignores public fields unless
+    // JsonSerializerOptions.IncludeFields is set, which silently dropped this from the json report.
     [JsonPropertyName("tagDiffList")]
-    public List<TagDiff> TagDiffList;
+    public List<TagDiff> TagDiffList { get; set; }
 
     public TagDiffResult()
     {
