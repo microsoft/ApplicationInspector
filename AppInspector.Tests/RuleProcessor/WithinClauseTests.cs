@@ -602,6 +602,102 @@ http://
         }
     }
 
+    /// <summary>
+    ///     A rule with several patterns and a rule level condition must report the findings of every
+    ///     pattern that satisfies the condition, not just those of the first pattern.
+    /// </summary>
+    [Fact]
+    public void MultiplePatternsWithConditionReportAllMatchingPatterns()
+    {
+        const string multiPatternRule = @"[
+    {
+        ""id"": ""SA000010"",
+        ""name"": ""Testing.Rules.MultiPatternWithin"",
+        ""description"": ""multiple patterns gated by a single same-line condition"",
+        ""tags"": [ ""Testing.Rules.MultiPatternWithin"" ],
+        ""severity"": ""Critical"",
+        ""patterns"": [
+            { ""pattern"": ""alpha"", ""type"": ""regex"", ""confidence"": ""High"", ""scopes"": [ ""code"" ] },
+            { ""pattern"": ""beta"", ""type"": ""regex"", ""confidence"": ""High"", ""scopes"": [ ""code"" ] },
+            { ""pattern"": ""gamma"", ""type"": ""regex"", ""confidence"": ""High"", ""scopes"": [ ""code"" ] }
+        ],
+        ""conditions"": [
+            {
+                ""pattern"": { ""pattern"": ""gate"", ""type"": ""regex"", ""scopes"": [ ""code"" ] },
+                ""search_in"": ""same-line""
+            }
+        ]
+    }
+]";
+
+        RuleSet rules = new(_loggerFactory);
+        rules.AddString(multiPatternRule, "multi-pattern-tests");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+            new RuleProcessorOptions { Parallel = false });
+
+        Assert.True(_languages.FromFileNameOut("test.c", out var info));
+
+        // Every pattern is on a line that satisfies the condition, so all three must be reported.
+        var allGated = processor.AnalyzeFile("alpha gate\nbeta gate\ngamma gate",
+            new FileEntry("test.c", new MemoryStream()), info);
+        Assert.Equal(new[] { "alpha", "beta", "gamma" },
+            allGated.Select(x => x.MatchingPattern?.Pattern).OrderBy(x => x));
+
+        // Only the patterns on a gated line are reported; the others are filtered out.
+        var partiallyGated = processor.AnalyzeFile("alpha gate\nbeta\ngamma gate",
+            new FileEntry("test.c", new MemoryStream()), info);
+        Assert.Equal(new[] { "alpha", "gamma" },
+            partiallyGated.Select(x => x.MatchingPattern?.Pattern).OrderBy(x => x));
+
+        // The condition is not satisfied anywhere, so nothing is reported.
+        var ungated = processor.AnalyzeFile("alpha\nbeta\ngamma",
+            new FileEntry("test.c", new MemoryStream()), info);
+        Assert.Empty(ungated);
+    }
+
+    /// <summary>
+    ///     Pattern ordering must not change which findings a multi-pattern rule reports.
+    /// </summary>
+    [Fact]
+    public void MultiplePatternsWithConditionAreOrderIndependent()
+    {
+        const string ruleTemplate = @"[
+    {{
+        ""id"": ""SA000011"",
+        ""name"": ""Testing.Rules.MultiPatternWithinOrder"",
+        ""description"": ""pattern order must not affect reported findings"",
+        ""tags"": [ ""Testing.Rules.MultiPatternWithinOrder"" ],
+        ""severity"": ""Critical"",
+        ""patterns"": [
+            {{ ""pattern"": ""{0}"", ""type"": ""regex"", ""confidence"": ""High"", ""scopes"": [ ""code"" ] }},
+            {{ ""pattern"": ""{1}"", ""type"": ""regex"", ""confidence"": ""High"", ""scopes"": [ ""code"" ] }}
+        ],
+        ""conditions"": [
+            {{
+                ""pattern"": {{ ""pattern"": ""gate"", ""type"": ""regex"", ""scopes"": [ ""code"" ] }},
+                ""search_in"": ""same-file""
+            }}
+        ]
+    }}
+]";
+
+        Assert.True(_languages.FromFileNameOut("test.c", out var info));
+
+        string[] MatchesFor(string firstPattern, string secondPattern)
+        {
+            RuleSet rules = new(_loggerFactory);
+            rules.AddString(string.Format(ruleTemplate, firstPattern, secondPattern), "order-tests");
+            Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
+                new RuleProcessorOptions { Parallel = false });
+            return processor
+                .AnalyzeFile("alpha beta gate", new FileEntry("test.c", new MemoryStream()), info)
+                .Select(x => x.MatchingPattern?.Pattern ?? string.Empty).OrderBy(x => x).ToArray();
+        }
+
+        Assert.Equal(new[] { "alpha", "beta" }, MatchesFor("alpha", "beta"));
+        Assert.Equal(new[] { "alpha", "beta" }, MatchesFor("beta", "alpha"));
+    }
+
     public WithinClauseTests()
     {
         _logger = _loggerFactory.CreateLogger<WithinClauseTests>();

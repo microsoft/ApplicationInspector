@@ -432,7 +432,9 @@ public class RulesVerifier
             RulesId = rule.Id,
             RulesName = rule.Name,
             Errors = errors,
-            OatIssues = _analyzer.EnumerateRuleIssues(convertedOatRule),
+            // Materialized because RuleStatus.Verified and any consumer reporting the issues each
+            // enumerate this, and EnumerateRuleIssues re-runs the whole check on every enumeration.
+            OatIssues = _analyzer.EnumerateRuleIssues(convertedOatRule).ToList(),
             HasPositiveSelfTests = rule.MustMatch?.Count > 0,
             HasNegativeSelfTests = rule.MustNotMatch?.Count > 0,
             SchemaValidationErrors = schemaErrors,

@@ -36,6 +36,15 @@ public class WithinOperation : OatOperation
 
             foreach (var capture in captures ?? Array.Empty<ClauseCapture>())
             {
+                // Each condition filters the raw pattern matches independently; RuleProcessor then
+                // intersects the surviving matches to AND the conditions together. Consuming another
+                // condition's already-filtered capture here would double count matches and break that
+                // intersection.
+                if (capture.Clause is WithinClause)
+                {
+                    continue;
+                }
+
                 if (capture is TypedClauseCapture<List<(int, Boundary)>> tcc)
                 {
                     foreach ((var clauseNum, var boundary) in tcc.Result)
@@ -122,13 +131,17 @@ public class WithinOperation : OatOperation
                         }
                     }
                 }
-
-                var passedOrFailed = wc.Invert ? failed : passed;
-                return new OperationResult(passedOrFailed.Any(),
-                    passedOrFailed.Any()
-                        ? new TypedClauseCapture<List<(int, Boundary)>>(wc, passedOrFailed.ToList())
-                        : null);
             }
+
+            // Each pattern clause in the rule contributes its own capture, so every capture must be
+            // evaluated before returning. Returning inside the loop would discard the matches of every
+            // pattern clause after the first, causing multi-pattern rules with a condition to report
+            // only the findings of their first pattern.
+            var passedOrFailed = wc.Invert ? failed : passed;
+            return new OperationResult(passedOrFailed.Any(),
+                passedOrFailed.Any()
+                    ? new TypedClauseCapture<List<(int, Boundary)>>(wc, passedOrFailed.ToList())
+                    : null);
 
             OperationResult ProcessLambda(Boundary target)
             {

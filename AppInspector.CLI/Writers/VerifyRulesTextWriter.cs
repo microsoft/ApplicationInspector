@@ -40,8 +40,30 @@ internal class VerifyRulesTextWriter : CommandResultsWriter
         {
             TextWriter.WriteLine("Rule status");
             foreach (var ruleStatus in verifyRulesResult.RuleStatusList)
+            {
                 TextWriter.WriteLine("Ruleid: {0}, Rulename: {1}, Status: {2}", ruleStatus.RulesId,
                     ruleStatus.RulesName, ruleStatus.Verified);
+
+                if (ruleStatus.Verified)
+                {
+                    continue;
+                }
+
+                foreach (var error in ruleStatus.Errors)
+                {
+                    TextWriter.WriteLine("    Error: {0}", error);
+                }
+
+                foreach (var oatIssue in ruleStatus.OatIssues)
+                {
+                    TextWriter.WriteLine("    OAT issue: {0}", oatIssue.Description);
+                }
+
+                foreach (var schemaError in ruleStatus.SchemaValidationErrors)
+                {
+                    TextWriter.WriteLine("    Schema error: {0}", schemaError.Message);
+                }
+            }
         }
 
         if (autoClose)
