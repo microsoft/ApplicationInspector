@@ -96,6 +96,14 @@ namespace Microsoft.ApplicationInspector.RulesEngine
                 _updateCompiledFileRegex = true;
             }
         }
+
+        /// <summary>
+        ///     Gets whether the rule applies universally instead of declaring a target language or file name.
+        /// </summary>
+        [JsonIgnore]
+        public bool IsUniversal =>
+            (FileRegexes is null || FileRegexes.Count == 0) &&
+            (AppliesTo is null || AppliesTo.Count == 0);
         
         /// <summary>
         ///     Internal API to cache construction of <see cref="FileRegexes"/>

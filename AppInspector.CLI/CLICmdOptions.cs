@@ -154,7 +154,7 @@ public record CLIAnalyzeCmdOptions : CLIAnalysisSharedCommandOptions
     public bool NoFileMetadata { get; set; }
 
     [Option('A', "allow-all-tags-in-build-files", Required = false,
-        HelpText = "Allow all tags (not just Metadata tags) in files of type Build.")]
+        HelpText = "Allow non-Metadata tags from universal rules in Build files. Rules declaring applies_to or applies_to_file_regex are always eligible.")]
     public bool AllowAllTagsInBuildFiles { get; set; }
 
     [Option('M', "max-num-matches-per-tag", Required = false,

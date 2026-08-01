@@ -61,8 +61,8 @@ public class AnalyzeOptions
     public bool SingleThread { get; set; }
 
     /// <summary>
-    ///     Treat <see cref="LanguageInfo.LangFileType.Build" /> files as if they were
-    ///     <see cref="LanguageInfo.LangFileType.Code" /> when determining if tags should apply.
+    ///     Allow universal rules to emit non-Metadata tags in <see cref="LanguageInfo.LangFileType.Build" /> files.
+    ///     Rules declaring applies_to or applies_to_file_regex are always eligible.
     /// </summary>
     public bool AllowAllTagsInBuildFiles { get; set; }
 

@@ -157,8 +157,10 @@ public class RuleProcessor
             {
                 var patternIndex = match.Item1;
                 var boundary = match.Item2;
-                //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
-                if (!_opts.AllowAllTagsInBuildFiles && languageInfo.Type == LanguageInfo.LangFileType.Build &&
+                // Universal rules can reach build files incidentally, so suppress their non-Metadata tags by default.
+                if (!_opts.AllowAllTagsInBuildFiles &&
+                    languageInfo.Type == LanguageInfo.LangFileType.Build &&
+                    oatRule.AppInspectorRule.IsUniversal &&
                     (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
                 {
                     continue;
@@ -366,9 +368,10 @@ public class RuleProcessor
                                 var patternIndex = match.Item1;
                                 var boundary = match.Item2;
 
-                                //restrict adds from build files to tags with "metadata" only to avoid false feature positives that are not part of executable code
+                                // Universal rules can reach build files incidentally, so suppress their non-Metadata tags by default.
                                 if (!_opts.AllowAllTagsInBuildFiles &&
                                     languageInfo.Type == LanguageInfo.LangFileType.Build &&
+                                    oatRule.AppInspectorRule.IsUniversal &&
                                     (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
                                 {
                                     continue;

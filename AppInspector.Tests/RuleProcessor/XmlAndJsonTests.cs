@@ -62,7 +62,7 @@ public class XmlAndJsonTests
         RuleSet rules = new();
         rules.AddString(rule, "TestRules");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
-            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+            new RuleProcessorOptions());
         
         if (_languages.FromFileNameOut("pom.xml", out var info))
         {
@@ -347,7 +347,7 @@ public class XmlAndJsonTests
         //var verification= verifier.Verify(rules);
         //Assert.Equal(true,verification.Verified);
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
-            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+            new RuleProcessorOptions());
         if (_languages.FromFileNameOut("AndroidManifest.xml", out var info))
         {
             var matches = processor.AnalyzeFile(@"<?xml version=""1.0"" encoding=""utf-8""?><manifest xmlns:android=""http://schemas.android.com/apk/res/android"" xmlns=""http://maven.apache.org/POM/4.0.0""><application android:debuggable='true' /></manifest>", new FileEntry("AndroidManifest.xml", new MemoryStream()), info);
@@ -390,7 +390,7 @@ public class XmlAndJsonTests
         RuleSet rules = new();
         rules.AddString(attributeRule, "JsonTestRules");
         Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor = new(rules,
-            new RuleProcessorOptions { AllowAllTagsInBuildFiles = true });
+            new RuleProcessorOptions());
         if (_languages.FromFileNameOut("test.config", out var info))
         {
             var matches = processor.AnalyzeFile(attributeContent, new FileEntry("test.config", new MemoryStream()), info);
