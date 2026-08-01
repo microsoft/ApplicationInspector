@@ -108,6 +108,7 @@
   {
     "name": "kotlin",
     "extensions": [
+      ".kt",
       ".kts"
     ],
     "type": "code"
