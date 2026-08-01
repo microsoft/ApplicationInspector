@@ -240,6 +240,16 @@
             { "type": "null" }
           ],
           "description": "YAMLPath expressions for YAML matching"
+        },
+        "conditions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": { "$ref": "#/definitions/searchCondition" }
+            },
+            { "type": "null" }
+          ],
+          "description": "Pattern-specific conditions that must be met when this pattern matches"
         }
       }
     },
@@ -253,13 +263,33 @@
         },
         "search_in": {
           "type": "string",
-          "pattern": "^(file|finding-region\\(-?\\d+,\\d+\\)|finding-only|same-line|same-file)$",
+          "pattern": "^(finding-region\\(-?\\d+,\\d+\\)|finding-only|same-line|same-file|only-before|only-after)$",
           "description": "Where to search for the condition"
         },
         "negate_finding": {
           "type": "boolean",
           "default": false,
           "description": "Whether to negate the condition"
+        },
+        "applies_to": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            { "type": "null" }
+          ],
+          "description": "Languages this condition applies to"
+        },
+        "does_not_apply_to": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            { "type": "null" }
+          ],
+          "description": "Languages this condition does not apply to"
         }
       }
     }
