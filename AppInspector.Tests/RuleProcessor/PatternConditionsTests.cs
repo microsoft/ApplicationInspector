@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 using Microsoft.CST.RecursiveExtractor;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
@@ -145,8 +146,9 @@ public class PatternConditionsTests
         var rule = rules.First();
         Assert.NotNull(rule.Conditions);
         Assert.Single(rule.Conditions);
-        Assert.NotNull(rule.Conditions[0].AppliesTo);
-        Assert.Contains("javascript", rule.Conditions[0].AppliesTo);
+        var appliesTo = rule.Conditions[0].AppliesTo;
+        Assert.NotNull(appliesTo);
+        Assert.Contains("javascript", appliesTo);
     }
 
     /// <summary>
@@ -186,9 +188,10 @@ public class PatternConditionsTests
         var rule = rules.First();
         Assert.NotNull(rule.Conditions);
         Assert.Single(rule.Conditions);
-        Assert.NotNull(rule.Conditions[0].DoesNotApplyTo);
-        Assert.Contains("python", rule.Conditions[0].DoesNotApplyTo);
-        Assert.Contains("ruby", rule.Conditions[0].DoesNotApplyTo);
+        var doesNotApplyTo = rule.Conditions[0].DoesNotApplyTo;
+        Assert.NotNull(doesNotApplyTo);
+        Assert.Contains("python", doesNotApplyTo);
+        Assert.Contains("ruby", doesNotApplyTo);
     }
 
     /// <summary>
@@ -226,13 +229,11 @@ public class PatternConditionsTests
         var ruleSet = new RuleSet(NullLoggerFactory.Instance);
         ruleSet.AddString(ruleJson, "test");
 
-        // Use RuleProcessor to analyze content that only contains "baz".
-        // The first pattern ("foo") has a condition requiring "bar" in the same file,
-        // so it should not match, while the second pattern ("baz") should match.
+        // "foo" is present but its condition requires "bar" in the same file, so only "baz" is reported.
         var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(ruleSet, new RuleProcessorOptions());
 
         const string fileName = "test.js";
-        const string fileContent = "this line contains baz but not the other tokens";
+        const string fileContent = "this line contains foo and baz but not the other token";
 
         // Derive a language from the file name; JavaScript is a reasonable choice here.
         if (_languages.FromFileNameOut(fileName, out var languageInfo))
@@ -319,5 +320,291 @@ public class PatternConditionsTests
         {
             Assert.Fail("Failed to get Python language info");
         }
+    }
+
+    private string[] Analyze(string ruleJson, string fileName, string content)
+    {
+        var ruleSet = new RuleSet(NullLoggerFactory.Instance);
+        ruleSet.AddString(ruleJson, "test");
+        var processor = new Microsoft.ApplicationInspector.RulesEngine.RuleProcessor(ruleSet,
+            new RuleProcessorOptions { Parallel = false });
+
+        Assert.True(_languages.FromFileNameOut(fileName, out var languageInfo), $"No language for {fileName}");
+
+        return processor
+            .AnalyzeFile(content, new FileEntry(fileName, new System.IO.MemoryStream()), languageInfo)
+            .Select(x => x.MatchingPattern?.Pattern ?? string.Empty)
+            .OrderBy(x => x)
+            .ToArray();
+    }
+
+    /// <summary>
+    ///     A pattern carrying a condition must still match when that condition is satisfied. Without this the
+    ///     negative-direction tests above would pass for the wrong reason, because a conditioned pattern that can
+    ///     never match also never produces a false positive.
+    /// </summary>
+    [Fact]
+    public void PatternLevelCondition_MatchesWhenConditionIsSatisfied()
+    {
+        const string ruleJson = @"[
+    {
+        ""id"": ""TEST100"",
+        ""name"": ""Conditioned pattern positive case"",
+        ""tags"": [""Test.PatternLevelCondition.Positive""],
+        ""severity"": ""Important"",
+        ""patterns"": [
+            {
+                ""pattern"": ""foo"",
+                ""type"": ""regex"",
+                ""conditions"": [
+                    {
+                        ""pattern"": { ""pattern"": ""bar"", ""type"": ""regex"" },
+                        ""search_in"": ""same-file""
+                    }
+                ]
+            },
+            { ""pattern"": ""baz"", ""type"": ""regex"" }
+        ]
+    }
+]";
+
+        Assert.Equal(new[] { "baz", "foo" }, Analyze(ruleJson, "test.js", "foo bar baz"));
+        Assert.Equal(new[] { "baz" }, Analyze(ruleJson, "test.js", "foo baz"));
+        Assert.Equal(new[] { "foo" }, Analyze(ruleJson, "test.js", "foo bar"));
+    }
+
+    /// <summary>
+    ///     A condition attached to one pattern must not gate the rule's other patterns.
+    /// </summary>
+    [Fact]
+    public void PatternLevelCondition_DoesNotGateSiblingPatterns()
+    {
+        const string ruleJson = @"[
+    {
+        ""id"": ""TEST101"",
+        ""name"": ""Conditioned middle pattern"",
+        ""tags"": [""Test.PatternLevelCondition.Siblings""],
+        ""severity"": ""Important"",
+        ""patterns"": [
+            { ""pattern"": ""alpha"", ""type"": ""regex"" },
+            {
+                ""pattern"": ""beta"",
+                ""type"": ""regex"",
+                ""conditions"": [
+                    {
+                        ""pattern"": { ""pattern"": ""gate"", ""type"": ""regex"" },
+                        ""search_in"": ""same-line""
+                    }
+                ]
+            },
+            { ""pattern"": ""gamma"", ""type"": ""regex"" }
+        ]
+    }
+]";
+
+        // The condition is satisfied, so all three patterns report.
+        Assert.Equal(new[] { "alpha", "beta", "gamma" },
+            Analyze(ruleJson, "test.js", "alpha\nbeta gate\ngamma"));
+
+        // The condition is not satisfied, so only the unconditioned siblings report.
+        Assert.Equal(new[] { "alpha", "gamma" },
+            Analyze(ruleJson, "test.js", "alpha\nbeta\ngamma"));
+    }
+
+    /// <summary>
+    ///     A rule level condition gates every pattern, including patterns that carry their own conditions.
+    /// </summary>
+    [Fact]
+    public void RuleLevelAndPatternLevelConditionsCombine()
+    {
+        const string ruleJson = @"[
+    {
+        ""id"": ""TEST102"",
+        ""name"": ""Rule and pattern level conditions"",
+        ""tags"": [""Test.PatternLevelCondition.Combined""],
+        ""severity"": ""Important"",
+        ""patterns"": [
+            {
+                ""pattern"": ""alpha"",
+                ""type"": ""regex"",
+                ""conditions"": [
+                    {
+                        ""pattern"": { ""pattern"": ""gate"", ""type"": ""regex"" },
+                        ""search_in"": ""same-line""
+                    }
+                ]
+            },
+            { ""pattern"": ""beta"", ""type"": ""regex"" }
+        ],
+        ""conditions"": [
+            {
+                ""pattern"": { ""pattern"": ""enabled"", ""type"": ""regex"" },
+                ""search_in"": ""same-file""
+            }
+        ]
+    }
+]";
+
+        // Rule level condition satisfied, pattern level condition satisfied.
+        Assert.Equal(new[] { "alpha", "beta" }, Analyze(ruleJson, "test.js", "enabled\nalpha gate\nbeta"));
+
+        // Rule level condition satisfied, pattern level condition not; beta is unaffected.
+        Assert.Equal(new[] { "beta" }, Analyze(ruleJson, "test.js", "enabled\nalpha\nbeta"));
+
+        // Rule level condition not satisfied, so nothing reports regardless of the pattern level condition.
+        Assert.Empty(Analyze(ruleJson, "test.js", "alpha gate\nbeta"));
+    }
+
+    /// <summary>
+    ///     When every pattern carries its own condition, each pattern is gated independently: one pattern failing its
+    ///     condition must not suppress another whose condition was satisfied.
+    /// </summary>
+    [Fact]
+    public void PatternLevelConditions_GateEachPatternIndependently()
+    {
+        const string ruleJson = @"[
+    {
+        ""id"": ""TEST105"",
+        ""name"": ""Both patterns conditioned"",
+        ""tags"": [""Test.PatternLevelCondition.Independent""],
+        ""severity"": ""Important"",
+        ""patterns"": [
+            {
+                ""pattern"": ""alpha"",
+                ""type"": ""regex"",
+                ""conditions"": [
+                    {
+                        ""pattern"": { ""pattern"": ""gateA"", ""type"": ""regex"" },
+                        ""search_in"": ""same-line""
+                    }
+                ]
+            },
+            {
+                ""pattern"": ""beta"",
+                ""type"": ""regex"",
+                ""conditions"": [
+                    {
+                        ""pattern"": { ""pattern"": ""gateB"", ""type"": ""regex"" },
+                        ""search_in"": ""same-line""
+                    }
+                ]
+            }
+        ]
+    }
+]";
+
+        Assert.Equal(new[] { "alpha", "beta" }, Analyze(ruleJson, "test.js", "alpha gateA\nbeta gateB"));
+        Assert.Equal(new[] { "alpha" }, Analyze(ruleJson, "test.js", "alpha gateA\nbeta"));
+        Assert.Equal(new[] { "beta" }, Analyze(ruleJson, "test.js", "alpha\nbeta gateB"));
+        Assert.Empty(Analyze(ruleJson, "test.js", "alpha\nbeta"));
+
+        // Each pattern is gated by its own condition, not by the other pattern's.
+        Assert.Empty(Analyze(ruleJson, "test.js", "alpha gateB\nbeta gateA"));
+    }
+
+    /// <summary>
+    ///     A condition that is skipped for the file's language must not change the outcome of the conditions
+    ///     declared alongside it, whichever order they appear in.
+    /// </summary>
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void LanguageSkippedCondition_IsOrderIndependent(bool skippedConditionFirst)
+    {
+        const string realCondition = @"{
+                        ""pattern"": { ""pattern"": ""gate"", ""type"": ""regex"" },
+                        ""search_in"": ""same-line""
+                    }";
+        const string skippedCondition = @"{
+                        ""pattern"": { ""pattern"": ""never"", ""type"": ""regex"" },
+                        ""search_in"": ""same-line"",
+                        ""applies_to"": [ ""python"" ]
+                    }";
+
+        var conditions = skippedConditionFirst
+            ? $"{skippedCondition}, {realCondition}"
+            : $"{realCondition}, {skippedCondition}";
+
+        var ruleJson = $@"[
+    {{
+        ""id"": ""TEST103"",
+        ""name"": ""Skipped condition ordering"",
+        ""tags"": [""Test.PatternLevelCondition.SkipOrder""],
+        ""severity"": ""Important"",
+        ""patterns"": [
+            {{
+                ""pattern"": ""alpha"",
+                ""type"": ""regex"",
+                ""conditions"": [ {conditions} ]
+            }}
+        ]
+    }}
+]";
+
+        // The skipped condition filters nothing, so the real condition alone decides the outcome.
+        Assert.Equal(new[] { "alpha" }, Analyze(ruleJson, "test.js", "alpha gate"));
+        Assert.Empty(Analyze(ruleJson, "test.js", "alpha"));
+    }
+
+    /// <summary>
+    ///     The OAT rules generated for conditions must be well formed. OAT silently refuses to evaluate an
+    ///     expression whose label matches more than one clause, so a malformed rule fails by never matching rather
+    ///     than by raising an error.
+    /// </summary>
+    [Theory]
+    [InlineData("first pattern conditioned", true, false, false, "(0 AND c0) OR 1")]
+    [InlineData("second pattern conditioned", false, true, false, "(0 OR (1 AND c0))")]
+    [InlineData("both patterns conditioned", true, true, false, "(0 AND c0) OR (1 AND c1)")]
+    [InlineData("no conditions", false, false, false, "(0 OR 1)")]
+    [InlineData("rule level only", false, false, true, "(0 OR 1) AND c0")]
+    [InlineData("pattern and rule level", true, false, true, "(0 AND c0) OR 1 AND c1")]
+    public void GeneratedOatRulesAreWellFormed(string because, bool conditionOnFirst, bool conditionOnSecond,
+        bool ruleLevelCondition, string expectedExpression)
+    {
+        const string condition = @",
+                ""conditions"": [
+                    {
+                        ""pattern"": { ""pattern"": ""gate"", ""type"": ""regex"" },
+                        ""search_in"": ""same-line""
+                    }
+                ]";
+
+        var ruleLevel = ruleLevelCondition
+            ? @",
+        ""conditions"": [
+            {
+                ""pattern"": { ""pattern"": ""enabled"", ""type"": ""regex"" },
+                ""search_in"": ""same-file""
+            }
+        ]"
+            : string.Empty;
+
+        var ruleJson = $@"[
+    {{
+        ""id"": ""TEST104"",
+        ""name"": ""Well formed generated rule"",
+        ""tags"": [""Test.PatternLevelCondition.WellFormed""],
+        ""severity"": ""Important"",
+        ""patterns"": [
+            {{ ""pattern"": ""alpha"", ""type"": ""regex""{(conditionOnFirst ? condition : string.Empty)} }},
+            {{ ""pattern"": ""beta"", ""type"": ""regex""{(conditionOnSecond ? condition : string.Empty)} }}
+        ]{ruleLevel}
+    }}
+]";
+
+        var ruleSet = new RuleSet(NullLoggerFactory.Instance);
+        ruleSet.AddString(ruleJson, "test");
+        var oatRule = Assert.Single(ruleSet.GetOatRules());
+
+        Assert.Equal(expectedExpression, oatRule.Expression);
+
+        // Clause labels must be unique, and every label in the expression must resolve to a clause.
+        var analyzer = new ApplicationInspectorAnalyzer();
+        var violations = analyzer.EnumerateRuleIssues(oatRule).Select(x => x.Description).ToList();
+        Assert.True(violations.Count == 0, $"{because}: {string.Join("; ", violations)}");
+
+        // Pattern clauses keep the bare numeric labels the pattern index is recovered from.
+        var patternLabels = oatRule.Clauses.Where(x => x is not WithinClause).Select(x => x.Label).ToArray();
+        Assert.Equal(new[] { "0", "1" }, patternLabels);
     }
 }

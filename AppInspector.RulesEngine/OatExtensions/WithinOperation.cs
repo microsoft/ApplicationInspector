@@ -29,31 +29,17 @@ public class WithinOperation : OatOperation
     {
         if (c is WithinClause wc && state1 is TextContainer tc)
         {
-            // Skip condition evaluation if it doesn't apply to current language.
-            // Returning true allows the pattern match to succeed since the condition is not applicable.
+            var governed = GovernedMatches(wc, captures);
+
+            // A condition that does not apply to this file's language still has to produce a capture, because
+            // RuleProcessor needs one gate per declared condition to know which matches have been vetted. This gate
+            // passes through everything the condition governs, so it filters nothing. Building it from the governed
+            // matches rather than from whatever captures happen to have accumulated keeps the result independent of
+            // the order the conditions are declared in.
             if (!ConditionAppliesToLanguage(wc, tc.Language))
             {
-                // Build a no-op within-filter capture that preserves all incoming tuples
-                if (captures is null)
-                {
-                    return new OperationResult(true);
-                }
-
-                var allTuples = new List<(int, Boundary)>();
-                foreach (var capture in captures)
-                {
-                    if (capture is TypedClauseCapture<List<(int, Boundary)>> tcc && tcc.Result is not null)
-                    {
-                        allTuples.AddRange(tcc.Result);
-                    }
-                }
-
-                ClauseCapture? withinCapture =
-                    allTuples.Any()
-                        ? new TypedClauseCapture<List<(int, Boundary)>>(wc, allTuples)
-                        : null;
-
-                return new OperationResult(true, withinCapture);
+                return new OperationResult(true,
+                    governed.Count > 0 ? new TypedClauseCapture<List<(int, Boundary)>>(wc, governed) : null);
             }
 
             var passed =
@@ -61,109 +47,92 @@ public class WithinOperation : OatOperation
             var failed =
                 new List<(int, Boundary)>();
 
-            foreach (var capture in captures ?? Array.Empty<ClauseCapture>())
+            foreach ((var clauseNum, var boundary) in governed)
             {
-                // Each condition filters the raw pattern matches independently; RuleProcessor then
-                // intersects the surviving matches to AND the conditions together. Consuming another
-                // condition's already-filtered capture here would double count matches and break that
-                // intersection.
-                if (capture.Clause is WithinClause)
+                var boundaryToCheck = GetBoundaryToCheck();
+                if (boundaryToCheck is not null)
                 {
-                    continue;
+                    var operationResult = ProcessLambda(boundaryToCheck);
+                    if (operationResult.Result)
+                    {
+                        passed.Add((clauseNum, boundary));
+                    }
+                    else
+                    {
+                        failed.Add((clauseNum, boundary));
+                    }
                 }
 
-                if (capture is TypedClauseCapture<List<(int, Boundary)>> tcc)
+                Boundary? GetBoundaryToCheck()
                 {
-                    foreach ((var clauseNum, var boundary) in tcc.Result)
+                    if (wc.FindingOnly)
                     {
-                        var boundaryToCheck = GetBoundaryToCheck();
-                        if (boundaryToCheck is not null)
-                        {
-                            var operationResult = ProcessLambda(boundaryToCheck);
-                            if (operationResult.Result)
-                            {
-                                passed.Add((clauseNum, boundary));
-                            }
-                            else
-                            {
-                                failed.Add((clauseNum, boundary));
-                            }
-                        }
-
-                        Boundary? GetBoundaryToCheck()
-                        {
-                            if (wc.FindingOnly)
-                            {
-                                return boundary;
-                            }
-
-                            if (wc.SameLineOnly)
-                            {
-                                var startInner = tc.LineStarts[tc.GetLocation(boundary.Index).Line];
-                                var endInner = tc.LineEnds[tc.GetLocation(startInner + (boundary.Length - 1)).Line];
-                                return new Boundary
-                                {
-                                    Index = startInner,
-                                    Length = endInner - startInner + 1
-                                };
-                            }
-
-                            if (wc.FindingRegion)
-                            {
-                                var startLine = tc.GetLocation(boundary.Index).Line;
-                                // Before is already a negative number
-                                var startInner = tc.LineStarts[Math.Max(1, startLine + wc.Before)];
-                                var endInner = tc.LineEnds[Math.Min(tc.LineEnds.Count - 1, startLine + wc.After)];
-                                return new Boundary
-                                {
-                                    Index = startInner,
-                                    Length = endInner - startInner + 1
-                                };
-                            }
-
-                            if (wc.SameFile)
-                            {
-                                var startInner = tc.LineStarts[0];
-                                var endInner = tc.LineEnds[^1];
-                                return new Boundary
-                                {
-                                    Index = startInner,
-                                    Length = endInner - startInner + 1
-                                };
-                            }
-
-                            if (wc.OnlyBefore)
-                            {
-                                var startInner = tc.LineStarts[0];
-                                var endInner = boundary.Index;
-                                return new Boundary
-                                {
-                                    Index = startInner,
-                                    Length = endInner - startInner + 1
-                                };
-                            }
-
-                            if (wc.OnlyAfter)
-                            {
-                                var startInner = boundary.Index + boundary.Length;
-                                var endInner = tc.LineEnds[^1];
-                                return new Boundary
-                                {
-                                    Index = startInner,
-                                    Length = endInner - startInner + 1
-                                };
-                            }
-
-                            return null;
-                        }
+                        return boundary;
                     }
+
+                    if (wc.SameLineOnly)
+                    {
+                        var startInner = tc.LineStarts[tc.GetLocation(boundary.Index).Line];
+                        var endInner = tc.LineEnds[tc.GetLocation(startInner + (boundary.Length - 1)).Line];
+                        return new Boundary
+                        {
+                            Index = startInner,
+                            Length = endInner - startInner + 1
+                        };
+                    }
+
+                    if (wc.FindingRegion)
+                    {
+                        var startLine = tc.GetLocation(boundary.Index).Line;
+                        // Before is already a negative number
+                        var startInner = tc.LineStarts[Math.Max(1, startLine + wc.Before)];
+                        var endInner = tc.LineEnds[Math.Min(tc.LineEnds.Count - 1, startLine + wc.After)];
+                        return new Boundary
+                        {
+                            Index = startInner,
+                            Length = endInner - startInner + 1
+                        };
+                    }
+
+                    if (wc.SameFile)
+                    {
+                        var startInner = tc.LineStarts[0];
+                        var endInner = tc.LineEnds[^1];
+                        return new Boundary
+                        {
+                            Index = startInner,
+                            Length = endInner - startInner + 1
+                        };
+                    }
+
+                    if (wc.OnlyBefore)
+                    {
+                        var startInner = tc.LineStarts[0];
+                        var endInner = boundary.Index;
+                        return new Boundary
+                        {
+                            Index = startInner,
+                            Length = endInner - startInner + 1
+                        };
+                    }
+
+                    if (wc.OnlyAfter)
+                    {
+                        var startInner = boundary.Index + boundary.Length;
+                        var endInner = tc.LineEnds[^1];
+                        return new Boundary
+                        {
+                            Index = startInner,
+                            Length = endInner - startInner + 1
+                        };
+                    }
+
+                    return null;
                 }
             }
 
-            // Each pattern clause in the rule contributes its own capture, so every capture must be
-            // evaluated before returning. Returning inside the loop would discard the matches of every
-            // pattern clause after the first, causing multi-pattern rules with a condition to report
-            // only the findings of their first pattern.
+            // The governed list is built from every pattern capture the clause was handed, so all of a rule's
+            // patterns are filtered rather than only the first one.
             var passedOrFailed = wc.Invert ? failed : passed;
             return new OperationResult(passedOrFailed.Any(),
                 passedOrFailed.Any()
@@ -177,6 +146,47 @@ public class WithinOperation : OatOperation
         }
 
         return new OperationResult(false);
+    }
+
+    /// <summary>
+    ///     The pattern matches this condition is responsible for filtering.
+    /// </summary>
+    /// <remarks>
+    ///     Two kinds of capture are excluded. Captures produced by another <see cref="WithinClause" /> are skipped
+    ///     because each condition filters the raw pattern matches independently and <c>RuleProcessor</c> intersects the
+    ///     survivors to AND the conditions together; consuming an already filtered capture would double count matches
+    ///     and break that intersection. Matches belonging to another pattern are skipped for a pattern level condition,
+    ///     because OAT hands a clause every capture accumulated so far, which for a later pattern in the rule includes
+    ///     the captures of the patterns before it.
+    /// </remarks>
+    private static List<(int, Boundary)> GovernedMatches(WithinClause wc, IEnumerable<ClauseCapture>? captures)
+    {
+        var governed = new List<(int, Boundary)>();
+        var seen = new HashSet<(int, Boundary)>();
+
+        foreach (var capture in captures ?? Array.Empty<ClauseCapture>())
+        {
+            if (capture.Clause is WithinClause || capture is not TypedClauseCapture<List<(int, Boundary)>> tcc ||
+                tcc.Result is null)
+            {
+                continue;
+            }
+
+            foreach (var match in tcc.Result)
+            {
+                if (wc.OwnerPatternIndex is { } owner && match.Item1 != owner)
+                {
+                    continue;
+                }
+
+                if (seen.Add(match))
+                {
+                    governed.Add(match);
+                }
+            }
+        }
+
+        return governed;
     }
 
     public IEnumerable<Violation> WithinValidationDelegate(CST.OAT.Rule rule, Clause clause)
