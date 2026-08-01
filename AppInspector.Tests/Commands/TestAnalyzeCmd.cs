@@ -16,65 +16,6 @@ using Assert = Xunit.Assert;
 
 namespace AppInspector.Tests.Commands;
 
-internal static class SymlinkTestSupport
-{
-    public static string? SkipReason { get; } = GetSkipReason();
-
-    private static string? GetSkipReason()
-    {
-        var testRoot = Path.Combine(Path.GetTempPath(), $"ApplicationInspector-SymlinkTest-{Guid.NewGuid()}");
-
-        try
-        {
-            Directory.CreateDirectory(testRoot);
-            var fileTarget = Path.Combine(testRoot, "target.txt");
-            var directoryTarget = Path.Combine(testRoot, "target-directory");
-            File.WriteAllText(fileTarget, string.Empty);
-            Directory.CreateDirectory(directoryTarget);
-            File.CreateSymbolicLink(Path.Combine(testRoot, "file-link"), fileTarget);
-            Directory.CreateSymbolicLink(Path.Combine(testRoot, "directory-link"), directoryTarget);
-            return null;
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return "Symlink creation is not permitted on this machine.";
-        }
-        catch (PlatformNotSupportedException)
-        {
-            return "Symlinks are not supported on this platform.";
-        }
-        catch (IOException ex)
-        {
-            return $"Symlink creation is not supported by the test file system: {ex.Message}";
-        }
-        finally
-        {
-            if (Directory.Exists(testRoot))
-            {
-                Directory.Delete(testRoot, true);
-            }
-        }
-    }
-}
-
-[AttributeUsage(AttributeTargets.Method)]
-internal sealed class SymlinkFactAttribute : FactAttribute
-{
-    public SymlinkFactAttribute()
-    {
-        Skip = SymlinkTestSupport.SkipReason;
-    }
-}
-
-[AttributeUsage(AttributeTargets.Method)]
-internal sealed class SymlinkTheoryAttribute : TheoryAttribute
-{
-    public SymlinkTheoryAttribute()
-    {
-        Skip = SymlinkTestSupport.SkipReason;
-    }
-}
-
 public class TestAnalyzeCmdFixture : IDisposable
 {
     public TestAnalyzeCmdFixture()
@@ -194,11 +135,11 @@ buy@tacos.com
     }
 
     [SymlinkTheory]
-    [InlineData(false, 4)]
-    [InlineData(true, 6)]
-    public void FollowSymlinks(bool followSymlinks, int expectedFiles)
+    [InlineData(false)]
+    [InlineData(true)]
+    public void FollowSymlinks(bool followSymlinks)
     {
-        var testRoot = Path.Combine("TestOutput", $"SymlinkTest-{Guid.NewGuid()}");
+        var testRoot = SymlinkTestSupport.CreateTestRoot("SymlinkTest");
         var sourcePath = Path.Combine(testRoot, "source");
         var linkedDirectoryTarget = Path.Combine(testRoot, "linked-directory-target");
         Directory.CreateDirectory(sourcePath);
@@ -206,17 +147,27 @@ buy@tacos.com
 
         try
         {
+            // A plain file that is always scanned.
             File.WriteAllText(Path.Combine(sourcePath, "regular.js"), "windows");
+
+            // Link targets, deliberately outside the scanned source directory.
             var linkedFileTarget = Path.Combine(testRoot, "linked-file-target.js");
             File.WriteAllText(linkedFileTarget, "windows");
             File.WriteAllText(Path.Combine(linkedDirectoryTarget, "linked-directory-file.js"), "windows");
+
+            // Links reached by traversing the source directory. These are the ones the default skips.
             File.CreateSymbolicLink(Path.Combine(sourcePath, "linked-file.js"), Path.GetFullPath(linkedFileTarget));
             Directory.CreateSymbolicLink(Path.Combine(sourcePath, "linked-directory"),
                 Path.GetFullPath(linkedDirectoryTarget));
+
+            // Links named directly in SourcePath. These are always scanned, because refusing a path the caller
+            // asked for by name would be more surprising than following it.
             var directLinkedFile = Path.Combine(testRoot, "direct-linked-file.js");
             var directLinkedDirectory = Path.Combine(testRoot, "direct-linked-directory");
             File.CreateSymbolicLink(directLinkedFile, Path.GetFullPath(linkedFileTarget));
             Directory.CreateSymbolicLink(directLinkedDirectory, Path.GetFullPath(linkedDirectoryTarget));
+
+            // A source path that reaches its directory through a linked ancestor. Also always scanned.
             var linkedAncestorTarget = Path.Combine(testRoot, "linked-ancestor-target");
             var sourceThroughLinkedAncestor = Path.Combine(testRoot, "linked-ancestor", "source");
             Directory.CreateDirectory(Path.Combine(linkedAncestorTarget, "source"));
@@ -235,25 +186,55 @@ buy@tacos.com
             var result = command.GetResult();
 
             Assert.Equal(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.Equal(expectedFiles, result.Metadata.TotalFiles);
+
+            var analyzed = FileNamesWithStatus(result, ScanState.Analyzed)
+                .Concat(FileNamesWithStatus(result, ScanState.Affected)).OrderBy(x => x).ToArray();
+            var skipped = FileNamesWithStatus(result, ScanState.Skipped).OrderBy(x => x).ToArray();
+
+            if (followSymlinks)
+            {
+                Assert.Equal(new[]
+                {
+                    "direct-linked-file.js",
+                    "linked-ancestor-file.js",
+                    // Reached twice: once through the directly named link and once through the traversed link.
+                    "linked-directory-file.js",
+                    "linked-directory-file.js",
+                    "linked-file.js",
+                    "regular.js"
+                }, analyzed);
+                Assert.Empty(skipped);
+            }
+            else
+            {
+                Assert.Equal(new[]
+                {
+                    "direct-linked-file.js",
+                    "linked-ancestor-file.js",
+                    "linked-directory-file.js",
+                    "regular.js"
+                }, analyzed);
+
+                // The traversed file link is reported rather than silently dropped. The traversed directory link
+                // is not recursed into, so linked-directory-file.js is reached only via the directly named link.
+                Assert.Equal(new[] { "linked-file.js" }, skipped);
+            }
         }
         finally
         {
-            Directory.Delete(testRoot, true);
+            SymlinkTestSupport.TryDeleteTestRoot(testRoot);
         }
     }
 
     [SymlinkFact]
     public void SkipsDanglingSymlinksByDefault()
     {
-        var testRoot = Path.Combine("TestOutput", $"DanglingSymlinkTest-{Guid.NewGuid()}");
-        Directory.CreateDirectory(testRoot);
+        var testRoot = SymlinkTestSupport.CreateTestRoot("DanglingSymlinkTest");
 
         try
         {
             File.WriteAllText(Path.Combine(testRoot, "regular.js"), "windows");
-            var danglingLink = Path.Combine(testRoot, "dangling.js");
-            File.CreateSymbolicLink(danglingLink, Path.Combine(testRoot, "missing.js"));
+            File.CreateSymbolicLink(Path.Combine(testRoot, "dangling.js"), Path.Combine(testRoot, "missing.js"));
             AnalyzeCommand command = new(new AnalyzeOptions
             {
                 SourcePath = new[] { testRoot },
@@ -264,12 +245,23 @@ buy@tacos.com
             var result = command.GetResult();
 
             Assert.Equal(AnalyzeResult.ExitCode.Success, result.ResultCode);
-            Assert.Equal(1, result.Metadata.TotalFiles);
+            Assert.Equal(new[] { "regular.js" },
+                FileNamesWithStatus(result, ScanState.Analyzed)
+                    .Concat(FileNamesWithStatus(result, ScanState.Affected)).OrderBy(x => x).ToArray());
+
+            // A dangling link cannot be opened, so skipping it keeps it out of the error count.
+            Assert.Equal(new[] { "dangling.js" }, FileNamesWithStatus(result, ScanState.Skipped).ToArray());
+            Assert.Empty(FileNamesWithStatus(result, ScanState.Error));
         }
         finally
         {
-            Directory.Delete(testRoot, true);
+            SymlinkTestSupport.TryDeleteTestRoot(testRoot);
         }
+    }
+
+    private static IEnumerable<string> FileNamesWithStatus(AnalyzeResult result, ScanState status)
+    {
+        return result.Metadata.Files.Where(x => x.Status == status).Select(x => Path.GetFileName(x.FileName));
     }
 
     [Fact]

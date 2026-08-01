@@ -107,4 +107,52 @@ public class TestTagDiffCmd
         var command = new TagDiffCommand(options, loggerFactory);
         Assert.Throws<OpException>(() => command.GetResult());
     }
+
+    /// <summary>
+    ///     TagDiff builds two AnalyzeOptions internally, so FollowSymlinks has to reach both of them. With the
+    ///     option off, the linked copy of the source is not traversed and the two sides differ.
+    /// </summary>
+    [SymlinkTheory]
+    [InlineData(false, TagDiffResult.ExitCode.TestFailed)]
+    [InlineData(true, TagDiffResult.ExitCode.TestPassed)]
+    public void FollowSymlinksIsPassedToBothScans(bool followSymlinks, TagDiffResult.ExitCode expectedExitCode)
+    {
+        var testRoot = SymlinkTestSupport.CreateTestRoot("TagDiffSymlinkTest");
+
+        try
+        {
+            // Side 1 contains the Windows sample directly.
+            var sideOne = Path.Combine(testRoot, "side-one");
+            Directory.CreateDirectory(sideOne);
+            File.Copy(testFileFourWindowsOneLinuxPath, Path.Combine(sideOne, "FourWindowsOneLinux.js"));
+
+            // Side 2 reaches the same content only through a symbolic link.
+            var sideTwo = Path.Combine(testRoot, "side-two");
+            var linkTarget = Path.Combine(testRoot, "link-target");
+            Directory.CreateDirectory(sideTwo);
+            Directory.CreateDirectory(linkTarget);
+            File.Copy(testFileFourWindowsOneLinuxPath, Path.Combine(linkTarget, "FourWindowsOneLinux.js"));
+            File.WriteAllText(Path.Combine(sideTwo, "placeholder.txt"), string.Empty);
+            Directory.CreateSymbolicLink(Path.Combine(sideTwo, "linked"), Path.GetFullPath(linkTarget));
+
+            TagDiffOptions options = new()
+            {
+                SourcePath1 = new[] { sideOne },
+                SourcePath2 = new[] { sideTwo },
+                FilePathExclusions = Array.Empty<string>(), //allow source under unittest path
+                IgnoreDefaultRules = true,
+                TestType = TagTestType.Equality,
+                CustomRulesPath = testRulesPath,
+                FollowSymlinks = followSymlinks
+            };
+
+            TagDiffCommand command = new(options, loggerFactory);
+
+            Assert.Equal(expectedExitCode, command.GetResult().ResultCode);
+        }
+        finally
+        {
+            SymlinkTestSupport.TryDeleteTestRoot(testRoot);
+        }
+    }
 }
