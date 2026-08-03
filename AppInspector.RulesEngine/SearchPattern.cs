@@ -55,4 +55,10 @@ public class SearchPattern
     /// </summary>
     [JsonPropertyName("ymlpaths")]
     public string[]? YamlPaths { get; set; }
+
+    /// <summary>
+    ///     Per-pattern conditions. When pattern matches and conditions are present, conditions must be satisfied.
+    /// </summary>
+    [JsonPropertyName("conditions")]
+    public SearchCondition[]? Conditions { get; set; }
 }
