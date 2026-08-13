@@ -166,29 +166,40 @@ public class RuleProcessor
             }
         }
 
+        RemoveOverriddenMatches(resultsList);
+
+        return resultsList;
+    }
+
+    /// <summary>
+    ///     Drops findings that a matched overriding rule supersedes. A finding is only superseded when it
+    ///     lies entirely within the overriding finding, so an overlapping but wider finding is kept.
+    /// </summary>
+    private static void RemoveOverriddenMatches(List<MatchRecord> matches,
+        CancellationToken? cancellationToken = null)
+    {
         List<MatchRecord> removes = new();
 
-        foreach (var m in resultsList.Where(x => x.Rule?.Overrides?.Count > 0))
+        foreach (var overridingMatch in matches.Where(x => x.Rule?.Overrides?.Count > 0))
         {
-            foreach (var idsToOverride in m.Rule?.Overrides ?? Array.Empty<string>())
+            if (cancellationToken?.IsCancellationRequested is true)
             {
-                // Find all overriden rules and mark them for removal from issues list
-                foreach (var om in resultsList.FindAll(x => x.Rule?.Id == idsToOverride))
+                return;
+            }
+
+            foreach (var idToOverride in overridingMatch.Rule?.Overrides ?? Array.Empty<string>())
+            foreach (var overriddenMatch in matches.FindAll(x => x.Rule?.Id == idToOverride))
+            {
+                if (overriddenMatch.Boundary.Index >= overridingMatch.Boundary.Index &&
+                    overriddenMatch.Boundary.Index + overriddenMatch.Boundary.Length <=
+                    overridingMatch.Boundary.Index + overridingMatch.Boundary.Length)
                 {
-                    // If the overridden match is a subset of the overriding match
-                    if (om.Boundary.Index >= m.Boundary.Index &&
-                        om.Boundary.Index <= m.Boundary.Index + m.Boundary.Length)
-                    {
-                        removes.Add(om);
-                    }
+                    removes.Add(overriddenMatch);
                 }
             }
         }
 
-        // Remove overriden rules
-        resultsList.RemoveAll(x => removes.Contains(x));
-
-        return resultsList;
+        matches.RemoveAll(x => removes.Contains(x));
     }
 
     /// <summary>
@@ -487,35 +498,7 @@ public class RuleProcessor
             }
         }
 
-        List<MatchRecord> removes = new();
-
-        foreach (var matchRecord in resultsList.Where(x => x.Rule?.Overrides?.Count > 0))
-        {
-            if (cancellationToken?.IsCancellationRequested is true)
-            {
-                return resultsList;
-            }
-
-            foreach (var idToOverride in matchRecord.Rule?.Overrides ?? Array.Empty<string>())
-            {
-                // Find all overriden rules and mark them for removal from issues list
-                foreach (var potentialOverriddenMatch in resultsList.FindAll(x => x.Rule?.Id == idToOverride))
-                {
-                    // Start after or matching start
-                    if (potentialOverriddenMatch.Boundary.Index >= matchRecord.Boundary.Index &&
-                        // End before or matching end
-                        (potentialOverriddenMatch.Boundary.Index + potentialOverriddenMatch.Boundary.Length)
-                            <= (matchRecord.Boundary.Index + matchRecord.Boundary.Length))
-                    {
-                        removes.Add(potentialOverriddenMatch);
-                    }
-                }
-            }
-           
-        }
-
-        // Remove overriden rules
-        resultsList.RemoveAll(x => removes.Contains(x));
+        RemoveOverriddenMatches(resultsList, cancellationToken);
 
         return resultsList;
     }
