@@ -151,133 +151,17 @@ public class RuleProcessor
         var caps = _analyzer.GetCaptures(rules, textContainer);
         foreach (var ruleCapture in caps)
         {
-            var oatRule = ruleCapture.Rule as ConvertedOatRule;
-            var netCaptures = FilterCaptures(ruleCapture.Captures);
-            foreach (var match in netCaptures)
+            if (ruleCapture.Rule is not ConvertedOatRule oatRule)
             {
-                var patternIndex = match.Item1;
-                var boundary = match.Item2;
-                // Universal rules can reach build files incidentally, so suppress their non-Metadata tags by default.
-                if (!_opts.AllowAllTagsInBuildFiles &&
-                    languageInfo.Type == LanguageInfo.LangFileType.Build &&
-                    oatRule.AppInspectorRule.IsUniversal &&
-                    (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
-                {
-                    continue;
-                }
-
-                if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
-                {
-                    continue;
-                }
-
-                var startLocation = textContainer.GetLocation(boundary.Index);
-                var endLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
-                MatchRecord newMatch = new(oatRule.AppInspectorRule)
-                {
-                    FileName = fileEntry.FullPath,
-                    FullTextContainer = textContainer,
-                    LanguageInfo = languageInfo,
-                    Boundary = boundary,
-                    StartLocationLine = startLocation.Line,
-                    StartLocationColumn = startLocation.Column,
-                    EndLocationLine =
-                        endLocation.Line != 0 ? endLocation.Line : startLocation.Line + 1, //match is on last line
-                    EndLocationColumn = endLocation.Column,
-                    MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                    Excerpt = numLinesContext > 0
-                        ? ExtractExcerpt(textContainer, startLocation, endLocation, boundary, numLinesContext)
-                        : string.Empty,
-                    Sample = numLinesContext > -1
-                        ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
-                        : string.Empty
-                };
-
-                if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
-                {
-                    newMatch.Sample = ExtractDependency(newMatch.FullTextContainer, newMatch.Boundary.Index,
-                        newMatch.Pattern, newMatch.LanguageInfo.Name);
-                }
-
-                resultsList.Add(newMatch);
+                continue;
             }
 
-            // Conditions produce "gates": the subset of pattern matches that satisfied that condition. A rule level
-            // condition gates every match; a pattern level condition gates only the matches of its own pattern. A
-            // match survives if it is in every gate that applies to it.
-            List<(int, Boundary)> FilterCaptures(List<ClauseCapture> captures)
+            foreach (var (patternIndex, boundary) in FilterCaptures(oatRule, ruleCapture.Captures))
             {
-                var ruleGates = new List<HashSet<(int, Boundary)>>();
-                var patternGates = new Dictionary<int, List<HashSet<(int, Boundary)>>>();
-                var allMatches = new List<(int, Boundary)>();
-                var seen = new HashSet<(int, Boundary)>();
-
-                foreach (var capture in captures)
+                if (BuildMatchRecord(oatRule, patternIndex, boundary, textContainer, fileEntry, languageInfo,
+                        numLinesContext) is { } newMatch)
                 {
-                    if (capture is not TypedClauseCapture<List<(int, Boundary)>> tcc || tcc.Result is null)
-                    {
-                        continue;
-                    }
-
-                    if (capture.Clause is WithinClause withinClause)
-                    {
-                        var gate = new HashSet<(int, Boundary)>(tcc.Result);
-                        if (withinClause.OwnerPatternIndex is { } owner)
-                        {
-                            if (!patternGates.TryGetValue(owner, out var gatesForPattern))
-                            {
-                                gatesForPattern = new List<HashSet<(int, Boundary)>>();
-                                patternGates[owner] = gatesForPattern;
-                            }
-
-                            gatesForPattern.Add(gate);
-                        }
-                        else
-                        {
-                            ruleGates.Add(gate);
-                        }
-                    }
-                    else
-                    {
-                        foreach (var match in tcc.Result)
-                            if (seen.Add(match))
-                            {
-                                allMatches.Add(match);
-                            }
-                    }
-                }
-
-                if (ruleGates.Count == 0 && patternGates.Count == 0)
-                {
-                    return allMatches;
-                }
-
-                // A condition that failed outright contributes no gate. Its pattern's matches must still be dropped,
-                // so compare against the conditions the rule declares rather than only the gates that materialized.
-                var declaredGates = ruleCapture.Rule.Clauses.OfType<WithinClause>().ToList();
-                if (ruleGates.Count != declaredGates.Count(x => x.OwnerPatternIndex is null))
-                {
-                    return new List<(int, Boundary)>();
-                }
-
-                return allMatches.Where(Survives).ToList();
-
-                bool Survives((int, Boundary) match)
-                {
-                    if (!ruleGates.All(gate => gate.Contains(match)))
-                    {
-                        return false;
-                    }
-
-                    var declaredForPattern = declaredGates.Count(x => x.OwnerPatternIndex == match.Item1);
-                    if (declaredForPattern == 0)
-                    {
-                        return true;
-                    }
-
-                    return patternGates.TryGetValue(match.Item1, out var gatesForPattern) &&
-                           gatesForPattern.Count == declaredForPattern &&
-                           gatesForPattern.All(gate => gate.Contains(match));
+                    resultsList.Add(newMatch);
                 }
             }
         }
@@ -305,6 +189,145 @@ public class RuleProcessor
         resultsList.RemoveAll(x => removes.Contains(x));
 
         return resultsList;
+    }
+
+    /// <summary>
+    ///     Reduces a rule's captures to the findings that should be reported.
+    ///     Conditions produce "gates": the subset of pattern matches that satisfied that condition. A rule level
+    ///     condition gates every match; a pattern level condition gates only the matches of its own pattern. A
+    ///     match survives if it is in every gate that applies to it.
+    /// </summary>
+    private static List<(int, Boundary)> FilterCaptures(ConvertedOatRule oatRule, List<ClauseCapture> captures)
+    {
+        var ruleGates = new List<HashSet<(int, Boundary)>>();
+        var patternGates = new Dictionary<int, List<HashSet<(int, Boundary)>>>();
+        var allMatches = new List<(int, Boundary)>();
+        var seen = new HashSet<(int, Boundary)>();
+
+        foreach (var capture in captures)
+        {
+            if (capture is not TypedClauseCapture<List<(int, Boundary)>> tcc || tcc.Result is null)
+            {
+                continue;
+            }
+
+            if (capture.Clause is WithinClause withinClause)
+            {
+                var gate = new HashSet<(int, Boundary)>(tcc.Result);
+                if (withinClause.OwnerPatternIndex is { } owner)
+                {
+                    if (!patternGates.TryGetValue(owner, out var gatesForPattern))
+                    {
+                        gatesForPattern = new List<HashSet<(int, Boundary)>>();
+                        patternGates[owner] = gatesForPattern;
+                    }
+
+                    gatesForPattern.Add(gate);
+                }
+                else
+                {
+                    ruleGates.Add(gate);
+                }
+            }
+            else
+            {
+                foreach (var match in tcc.Result)
+                    if (seen.Add(match))
+                    {
+                        allMatches.Add(match);
+                    }
+            }
+        }
+
+        if (ruleGates.Count == 0 && patternGates.Count == 0)
+        {
+            return allMatches;
+        }
+
+        // A condition that failed outright contributes no gate. Its pattern's matches must still be dropped,
+        // so compare against the conditions the rule declares rather than only the gates that materialized.
+        var declaredGates = oatRule.Clauses.OfType<WithinClause>().ToList();
+        if (ruleGates.Count != declaredGates.Count(x => x.OwnerPatternIndex is null))
+        {
+            return new List<(int, Boundary)>();
+        }
+
+        return allMatches.Where(Survives).ToList();
+
+        bool Survives((int, Boundary) match)
+        {
+            if (!ruleGates.All(gate => gate.Contains(match)))
+            {
+                return false;
+            }
+
+            var declaredForPattern = declaredGates.Count(x => x.OwnerPatternIndex == match.Item1);
+            if (declaredForPattern == 0)
+            {
+                return true;
+            }
+
+            return patternGates.TryGetValue(match.Item1, out var gatesForPattern) &&
+                   gatesForPattern.Count == declaredForPattern &&
+                   gatesForPattern.All(gate => gate.Contains(match));
+        }
+    }
+
+    /// <summary>
+    ///     Builds the <see cref="MatchRecord" /> for one finding, or returns null if the finding is filtered out.
+    /// </summary>
+    private MatchRecord? BuildMatchRecord(ConvertedOatRule oatRule, int patternIndex, Boundary boundary,
+        TextContainer textContainer, FileEntry fileEntry, LanguageInfo languageInfo, int numLinesContext)
+    {
+        // Universal rules can reach build files incidentally, so suppress their non-Metadata tags by default.
+        if (!_opts.AllowAllTagsInBuildFiles &&
+            languageInfo.Type == LanguageInfo.LangFileType.Build &&
+            oatRule.AppInspectorRule.IsUniversal &&
+            (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+        {
+            return null;
+        }
+
+        if (patternIndex < 0 || patternIndex >= oatRule.AppInspectorRule.Patterns.Length)
+        {
+            _logger.LogError("Index out of range for patterns for rule: {ruleName}", oatRule.AppInspectorRule.Name);
+            return null;
+        }
+
+        if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex].Confidence))
+        {
+            return null;
+        }
+
+        var startLocation = textContainer.GetLocation(boundary.Index);
+        var endLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
+        MatchRecord newMatch = new(oatRule.AppInspectorRule)
+        {
+            FileName = fileEntry.FullPath,
+            FullTextContainer = textContainer,
+            LanguageInfo = languageInfo,
+            Boundary = boundary,
+            StartLocationLine = startLocation.Line,
+            StartLocationColumn = startLocation.Column,
+            EndLocationLine =
+                endLocation.Line != 0 ? endLocation.Line : startLocation.Line + 1, //match is on last line
+            EndLocationColumn = endLocation.Column,
+            MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
+            Excerpt = numLinesContext > 0
+                ? ExtractExcerpt(textContainer, startLocation, endLocation, boundary, numLinesContext)
+                : string.Empty,
+            Sample = numLinesContext > -1
+                ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
+                : string.Empty
+        };
+
+        if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
+        {
+            newMatch.Sample = ExtractDependency(newMatch.FullTextContainer, newMatch.Boundary.Index,
+                newMatch.Pattern, newMatch.LanguageInfo.Name);
+        }
+
+        return newMatch;
     }
 
     /// <summary>
@@ -390,89 +413,23 @@ public class RuleProcessor
             _languages, _opts.LoggerFactory ?? NullLoggerFactory.Instance, fileEntry.FullPath);
         foreach (var ruleCapture in _analyzer.GetCaptures(rules, textContainer))
         {
-            // If we had a WithinClause we only want the captures that passed the within filter.
-            var filteredCaptures = ruleCapture.Captures.Any(x => x.Clause is WithinClause)
-                ? ruleCapture.Captures.Where(x => x.Clause is WithinClause)
-                : ruleCapture.Captures;
             if (cancellationToken?.IsCancellationRequested is true)
             {
                 return resultsList;
             }
 
-            foreach (var cap in filteredCaptures) resultsList.AddRange(ProcessBoundary(cap));
-
-            List<MatchRecord> ProcessBoundary(ClauseCapture cap)
+            if (ruleCapture.Rule is not ConvertedOatRule oatRule)
             {
-                List<MatchRecord> newMatches = new(); //matches for this rule clause only
+                continue;
+            }
 
-                if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
+            foreach (var (patternIndex, boundary) in FilterCaptures(oatRule, ruleCapture.Captures))
+            {
+                if (BuildMatchRecord(oatRule, patternIndex, boundary, textContainer, fileEntry, languageInfo,
+                        numLinesContext) is { } newMatch)
                 {
-                    if (ruleCapture.Rule is ConvertedOatRule oatRule)
-                    {
-                        if (tcc.Result is { } captureResults)
-                        {
-                            foreach (var match in captureResults)
-                            {
-                                var patternIndex = match.Item1;
-                                var boundary = match.Item2;
-
-                                // Universal rules can reach build files incidentally, so suppress their non-Metadata tags by default.
-                                if (!_opts.AllowAllTagsInBuildFiles &&
-                                    languageInfo.Type == LanguageInfo.LangFileType.Build &&
-                                    oatRule.AppInspectorRule.IsUniversal &&
-                                    (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
-                                {
-                                    continue;
-                                }
-
-                                if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
-                                {
-                                    _logger.LogError("Index out of range for patterns for rule: {ruleName}",
-                                        oatRule.AppInspectorRule.Name);
-                                    continue;
-                                }
-
-                                if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex]
-                                        .Confidence))
-                                {
-                                    continue;
-                                }
-
-                                var startLocation = textContainer.GetLocation(boundary.Index);
-                                var endLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
-                                MatchRecord newMatch = new(oatRule.AppInspectorRule)
-                                {
-                                    FileName = fileEntry.FullPath,
-                                    FullTextContainer = textContainer,
-                                    LanguageInfo = languageInfo,
-                                    Boundary = boundary,
-                                    StartLocationLine = startLocation.Line,
-                                    EndLocationLine =
-                                        endLocation.Line != 0
-                                            ? endLocation.Line
-                                            : startLocation.Line + 1, //match is on last line
-                                    MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
-                                    Excerpt = numLinesContext > 0
-                                        ? ExtractExcerpt(textContainer, startLocation, endLocation, boundary, numLinesContext)
-                                        : string.Empty,
-                                    Sample = numLinesContext > -1
-                                        ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
-                                        : string.Empty
-                                };
-
-                                if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
-                                {
-                                    newMatch.Sample = ExtractDependency(newMatch.FullTextContainer,
-                                        newMatch.Boundary.Index, newMatch.Pattern, newMatch.LanguageInfo.Name);
-                                }
-
-                                newMatches.Add(newMatch);
-                            }
-                        }
-                    }
+                    resultsList.Add(newMatch);
                 }
-
-                return newMatches;
             }
         }
 
