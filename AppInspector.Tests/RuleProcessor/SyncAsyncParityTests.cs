@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
@@ -93,5 +94,17 @@ http://
 
         Assert.Equal(new[] { 2, 6 }, syncMatches.Select(x => x.StartLocationLine).OrderBy(x => x));
         Assert.Equal(new[] { 2, 6 }, asyncMatches.Select(x => x.StartLocationLine).OrderBy(x => x));
+    }
+
+    [Fact]
+    public async Task CancelledAnalysis_ReturnsWithoutThrowing()
+    {
+        var processor = ProcessorFor(multipleNegatedConditions);
+        Assert.True(_languages.FromFileNameOut("test.c", out var info));
+
+        using CancellationTokenSource cts = new();
+        cts.Cancel();
+
+        Assert.Empty(await processor.AnalyzeFileAsync(EntryWith(testData), info, cts.Token));
     }
 }

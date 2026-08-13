@@ -145,12 +145,27 @@ public class RuleProcessor
     public List<MatchRecord> AnalyzeFile(TextContainer textContainer, FileEntry fileEntry,
         LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
     {
+        return AnalyzeTextContainer(textContainer, fileEntry, languageInfo, tagsToIgnore, numLinesContext, null);
+    }
+
+    /// <summary>
+    ///     The single implementation behind every analysis entry point, so the synchronous and asynchronous
+    ///     APIs cannot report different results for the same input.
+    /// </summary>
+    private List<MatchRecord> AnalyzeTextContainer(TextContainer textContainer, FileEntry fileEntry,
+        LanguageInfo languageInfo, IEnumerable<string>? tagsToIgnore, int numLinesContext,
+        CancellationToken? cancellationToken)
+    {
         var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
         List<MatchRecord> resultsList = new();
 
-        var caps = _analyzer.GetCaptures(rules, textContainer);
-        foreach (var ruleCapture in caps)
+        foreach (var ruleCapture in _analyzer.GetCaptures(rules, textContainer))
         {
+            if (cancellationToken?.IsCancellationRequested is true)
+            {
+                return resultsList;
+            }
+
             if (ruleCapture.Rule is not ConvertedOatRule oatRule)
             {
                 continue;
@@ -166,7 +181,7 @@ public class RuleProcessor
             }
         }
 
-        RemoveOverriddenMatches(resultsList);
+        RemoveOverriddenMatches(resultsList, cancellationToken);
 
         return resultsList;
     }
@@ -458,49 +473,48 @@ public class RuleProcessor
         }
         catch (Exception e)
         {
-            _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace}), fileRecord.FileName",
+            _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace})",
                 fileEntry.FullPath, e.GetType(), e.Message, e.StackTrace);
         }
 
         return AnalyzeFile(contents, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
     }
 
+    /// <summary>
+    ///     Analyzes a file and returns a list of <see cref="MatchRecord" />
+    /// </summary>
+    /// <param name="fileEntry">
+    ///     FileEntry which holds the name of the file being analyzed as well as a Stream containing the
+    ///     contents to analyze
+    /// </param>
+    /// <param name="languageInfo">The LanguageInfo for the file</param>
+    /// <param name="cancellationToken">Token to abort the analysis</param>
+    /// <param name="tagsToIgnore">Ignore rules that match tags that are only in the tags to ignore list</param>
+    /// <param name="numLinesContext">
+    ///     Number of lines of text to extract for the sample. Set to 0 to disable context gathering.
+    ///     Set to -1 to also disable sampling the match.
+    /// </param>
+    /// <returns>A List of the matches against the Rules the processor is configured with.</returns>
     public async Task<List<MatchRecord>> AnalyzeFileAsync(FileEntry fileEntry, LanguageInfo languageInfo,
         CancellationToken? cancellationToken = null, IEnumerable<string>? tagsToIgnore = null, int numLinesContext = 3)
     {
-        var rules = GetRulesForFile(languageInfo, fileEntry, tagsToIgnore);
-
-        List<MatchRecord> resultsList = new();
-
         using var sr = new StreamReader(fileEntry.Content);
-
-        TextContainer textContainer = new(await sr.ReadToEndAsync().ConfigureAwait(false), languageInfo.Name,
-            _languages, _opts.LoggerFactory ?? NullLoggerFactory.Instance, fileEntry.FullPath);
-        foreach (var ruleCapture in _analyzer.GetCaptures(rules, textContainer))
+        var contents = string.Empty;
+        try
         {
-            if (cancellationToken?.IsCancellationRequested is true)
-            {
-                return resultsList;
-            }
-
-            if (ruleCapture.Rule is not ConvertedOatRule oatRule)
-            {
-                continue;
-            }
-
-            foreach (var (patternIndex, boundary) in FilterCaptures(oatRule, ruleCapture.Captures))
-            {
-                if (BuildMatchRecord(oatRule, patternIndex, boundary, textContainer, fileEntry, languageInfo,
-                        numLinesContext) is { } newMatch)
-                {
-                    resultsList.Add(newMatch);
-                }
-            }
+            contents = await sr.ReadToEndAsync().ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace})",
+                fileEntry.FullPath, e.GetType(), e.Message, e.StackTrace);
         }
 
-        RemoveOverriddenMatches(resultsList, cancellationToken);
+        TextContainer textContainer = new(contents, languageInfo.Name, _languages,
+            _opts.LoggerFactory ?? NullLoggerFactory.Instance, fileEntry.FullPath);
 
-        return resultsList;
+        return AnalyzeTextContainer(textContainer, fileEntry, languageInfo, tagsToIgnore, numLinesContext,
+            cancellationToken);
     }
 
 
