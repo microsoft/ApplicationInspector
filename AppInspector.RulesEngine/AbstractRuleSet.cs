@@ -277,8 +277,8 @@ public abstract class AbstractRuleSet
                 return new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String,
                     xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths: pattern.YamlPaths, xPathNameSpaces: pattern.XPathNamespaces)
                 {
-                    Label = clauseNumber.ToString(CultureInfo
-                        .InvariantCulture), //important to pattern index identification
+                    Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                    PatternIndex = clauseNumber,
                     Data = new List<string> { pattern.Pattern },
                     Capture = true,
                     Arguments = pattern.Modifiers,
@@ -289,8 +289,8 @@ public abstract class AbstractRuleSet
             {
                 return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths, pattern.XPathNamespaces)
                 {
-                    Label = clauseNumber.ToString(CultureInfo
-                        .InvariantCulture), //important to pattern index identification
+                    Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                    PatternIndex = clauseNumber,
                     Data = new List<string> { pattern.Pattern },
                     Capture = true,
                     Arguments = pattern.Modifiers,
@@ -301,8 +301,8 @@ public abstract class AbstractRuleSet
             {
                 return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths, pattern.XPathNamespaces)
                 {
-                    Label = clauseNumber.ToString(CultureInfo
-                        .InvariantCulture), //important to pattern index identification
+                    Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                    PatternIndex = clauseNumber,
                     Data = new List<string> { $"\\b({pattern.Pattern})\\b" },
                     Capture = true,
                     Arguments = pattern.Modifiers,
