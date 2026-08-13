@@ -3,6 +3,7 @@
   "$id": "https://raw.githubusercontent.com/microsoft/applicationinspector/main/rule-schema-v1.json",
   "title": "Application Inspector Rule Schema",
   "description": "Schema for Application Inspector rule definitions",
+  "version": "1.1.0",
   "type": "array",
   "items": {
     "$ref": "#/definitions/rule"
@@ -59,6 +60,13 @@
             { "type": "null" }
           ],
           "description": "Additional conditions that must be met"
+        },
+        "expression": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "null" }
+          ],
+          "description": "Boolean expression over pattern and condition labels, for example '(curl AND NOT tls13) OR wget'. When omitted, any pattern may match and all conditions must hold. Evaluated left to right with no operator precedence, so grouping requires parentheses."
         },
         "applies_to": {
           "oneOf": [
@@ -153,6 +161,16 @@
         "pattern": {
           "type": "string",
           "description": "The pattern to search for"
+        },
+        "label": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[^\\s()]+$"
+            },
+            { "type": "null" }
+          ],
+          "description": "Name for this pattern for use in the rule's expression. Defaults to the pattern index. May not contain spaces or parentheses."
         },
         "type": {
           "oneOf": [
@@ -270,6 +288,16 @@
           "type": "boolean",
           "default": false,
           "description": "Whether to negate the condition"
+        },
+        "label": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[^\\s()]+$"
+            },
+            { "type": "null" }
+          ],
+          "description": "Name for this condition for use in the rule's expression. Defaults to the condition's clause index. May not contain spaces or parentheses."
         },
         "applies_to": {
           "oneOf": [

@@ -27,4 +27,11 @@ public class SearchCondition
     /// </summary>
     [JsonPropertyName("does_not_apply_to")]
     public IList<string>? DoesNotApplyTo { get; set; }
+
+    /// <summary>
+    ///     Optional name for this condition, for use in the rule's <c>expression</c>. Defaults to the
+    ///     condition's clause index. May not contain spaces or parentheses, and must be unique within the rule.
+    /// </summary>
+    [JsonPropertyName("label")]
+    public string? Label { get; set; }
 }
