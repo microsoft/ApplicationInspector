@@ -1,0 +1,229 @@
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Linq;
+using Microsoft.ApplicationInspector.RulesEngine;
+using Microsoft.CST.RecursiveExtractor;
+using Xunit;
+
+namespace AppInspector.Tests.RuleProcessor;
+
+/// <summary>
+///     The detections that the fixed pattern-OR-conditions-AND shape could not express.
+/// </summary>
+[ExcludeFromCodeCoverage]
+public class RuleExpressionBehaviourTests
+{
+    /// <summary>
+    ///     One condition guards one pattern: `(curl AND NOT tls13) OR wget`.
+    /// </summary>
+    private const string perPatternCondition = @"[
+    {
+        ""id"": ""SA500001"",
+        ""name"": ""Testing.Rules.PerPatternCondition"",
+        ""tags"": [ ""Testing.Rules.PerPatternCondition"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""curl is excused by an explicit tls1.3 flag, wget is not"",
+        ""expression"": ""(curl AND NOT tls13) OR wget"",
+        ""patterns"": [
+            { ""pattern"": ""curl"", ""type"": ""substring"", ""label"": ""curl"", ""scopes"": [ ""code"" ] },
+            { ""pattern"": ""wget"", ""type"": ""substring"", ""label"": ""wget"", ""scopes"": [ ""code"" ] }
+        ],
+        ""conditions"": [
+            {
+                ""pattern"": { ""pattern"": ""--tlsv1.3"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+                ""search_in"": ""same-line"",
+                ""label"": ""tls13""
+            }
+        ]
+    }
+]";
+
+    /// <summary>
+    ///     Condition disjunction: `p AND (near OR sameline)`.
+    /// </summary>
+    private const string conditionDisjunction = @"[
+    {
+        ""id"": ""SA500002"",
+        ""name"": ""Testing.Rules.ConditionDisjunction"",
+        ""tags"": [ ""Testing.Rules.ConditionDisjunction"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""either context is enough"",
+        ""expression"": ""p AND (near OR sameline)"",
+        ""patterns"": [
+            { ""pattern"": ""deserialize"", ""type"": ""substring"", ""label"": ""p"", ""scopes"": [ ""code"" ] }
+        ],
+        ""conditions"": [
+            {
+                ""pattern"": { ""pattern"": ""TypeNameHandling"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+                ""search_in"": ""finding-region(-3, 0)"",
+                ""label"": ""near""
+            },
+            {
+                ""pattern"": { ""pattern"": ""JsonSerializerSettings"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+                ""search_in"": ""same-line"",
+                ""label"": ""sameline""
+            }
+        ]
+    }
+]";
+
+    /// <summary>
+    ///     Negated conjunction: `p AND NOT (secure AND httponly)` fires when any required flag is missing.
+    /// </summary>
+    private const string negatedConjunction = @"[
+    {
+        ""id"": ""SA500003"",
+        ""name"": ""Testing.Rules.NegatedConjunction"",
+        ""tags"": [ ""Testing.Rules.NegatedConjunction"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""cookie must set both flags"",
+        ""expression"": ""p AND NOT (secure AND httponly)"",
+        ""patterns"": [
+            { ""pattern"": ""Set-Cookie"", ""type"": ""substring"", ""label"": ""p"", ""scopes"": [ ""code"" ] }
+        ],
+        ""conditions"": [
+            {
+                ""pattern"": { ""pattern"": ""Secure"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+                ""search_in"": ""same-line"",
+                ""label"": ""secure""
+            },
+            {
+                ""pattern"": { ""pattern"": ""HttpOnly"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+                ""search_in"": ""same-line"",
+                ""label"": ""httponly""
+            }
+        ]
+    }
+]";
+
+    /// <summary>
+    ///     Exactly one of two mutually exclusive settings: `p AND (a XOR b)`.
+    /// </summary>
+    private const string exclusiveOr = @"[
+    {
+        ""id"": ""SA500004"",
+        ""name"": ""Testing.Rules.ExclusiveOr"",
+        ""tags"": [ ""Testing.Rules.ExclusiveOr"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""exactly one mode may be set"",
+        ""expression"": ""p AND (a XOR b)"",
+        ""patterns"": [
+            { ""pattern"": ""configure"", ""type"": ""substring"", ""label"": ""p"", ""scopes"": [ ""code"" ] }
+        ],
+        ""conditions"": [
+            {
+                ""pattern"": { ""pattern"": ""modeA"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+                ""search_in"": ""same-line"",
+                ""label"": ""a""
+            },
+            {
+                ""pattern"": { ""pattern"": ""modeB"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+                ""search_in"": ""same-line"",
+                ""label"": ""b""
+            }
+        ]
+    }
+]";
+
+    /// <summary>
+    ///     The same per-pattern scoping without an expression, by declaring the condition on the pattern it
+    ///     guards.
+    /// </summary>
+    private const string scopedConditionNoExpression = @"[
+    {
+        ""id"": ""SA500005"",
+        ""name"": ""Testing.Rules.ScopedCondition"",
+        ""tags"": [ ""Testing.Rules.ScopedCondition"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""condition guards only the curl pattern"",
+        ""patterns"": [
+            {
+                ""pattern"": ""curl"", ""type"": ""substring"", ""label"": ""curl"", ""scopes"": [ ""code"" ],
+                ""conditions"": [
+                    {
+                        ""pattern"": { ""pattern"": ""--tlsv1.3"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+                        ""search_in"": ""same-line"",
+                        ""negate_finding"": true
+                    }
+                ]
+            },
+            { ""pattern"": ""wget"", ""type"": ""substring"", ""label"": ""wget"", ""scopes"": [ ""code"" ] }
+        ]
+    }
+]";
+
+    private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
+
+    private string[] MatchedPatterns(string ruleJson, string content)
+    {
+        RuleSet rules = new();
+        rules.AddString(ruleJson, "TestRules");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor =
+            new(rules, new RuleProcessorOptions { Parallel = false });
+
+        Assert.True(_languages.FromFileNameOut("test.c", out var info));
+
+        return processor.AnalyzeFile(content, new FileEntry("test.c", new MemoryStream()), info)
+            .Select(x => x.MatchingPattern?.Pattern ?? string.Empty).OrderBy(x => x).ToArray();
+    }
+
+    [Fact]
+    public void PerPatternCondition_GuardedPatternIsExcused()
+    {
+        Assert.Equal(new[] { "curl" }, MatchedPatterns(perPatternCondition, "curl http://x\n"));
+        Assert.Empty(MatchedPatterns(perPatternCondition, "curl --tlsv1.3 http://x\n"));
+    }
+
+    /// <summary>
+    ///     The case the historical shape could not express: the unguarded pattern must still report even
+    ///     though the guarded pattern was excused on the same file.
+    /// </summary>
+    [Fact]
+    public void PerPatternCondition_UnguardedPatternStillReports()
+    {
+        Assert.Equal(new[] { "wget" }, MatchedPatterns(perPatternCondition, "curl --tlsv1.3 http://x\nwget http://y\n"));
+    }
+
+    [Fact]
+    public void ConditionDisjunction_EitherContextSuffices()
+    {
+        Assert.Equal(new[] { "deserialize" },
+            MatchedPatterns(conditionDisjunction, "TypeNameHandling.All\nvar x = deserialize(y)\n"));
+        Assert.Equal(new[] { "deserialize" },
+            MatchedPatterns(conditionDisjunction, "var x = deserialize(new JsonSerializerSettings())\n"));
+        Assert.Empty(MatchedPatterns(conditionDisjunction, "var x = deserialize(y)\n"));
+    }
+
+    /// <summary>
+    ///     Partially hardened code is the common real world defect and is exactly what a conjunction of
+    ///     negated conditions cannot detect.
+    /// </summary>
+    [Fact]
+    public void NegatedConjunction_FiresWhenOnlyOneRequirementIsMet()
+    {
+        Assert.Equal(new[] { "Set-Cookie" }, MatchedPatterns(negatedConjunction, "Set-Cookie: a=b; Secure\n"));
+        Assert.Equal(new[] { "Set-Cookie" }, MatchedPatterns(negatedConjunction, "Set-Cookie: a=b; HttpOnly\n"));
+        Assert.Equal(new[] { "Set-Cookie" }, MatchedPatterns(negatedConjunction, "Set-Cookie: a=b\n"));
+        Assert.Empty(MatchedPatterns(negatedConjunction, "Set-Cookie: a=b; Secure; HttpOnly\n"));
+    }
+
+    [Fact]
+    public void ExclusiveOr_RequiresExactlyOne()
+    {
+        Assert.Equal(new[] { "configure" }, MatchedPatterns(exclusiveOr, "configure modeA\n"));
+        Assert.Equal(new[] { "configure" }, MatchedPatterns(exclusiveOr, "configure modeB\n"));
+        Assert.Empty(MatchedPatterns(exclusiveOr, "configure modeA modeB\n"));
+        Assert.Empty(MatchedPatterns(exclusiveOr, "configure\n"));
+    }
+
+    [Fact]
+    public void PatternLevelCondition_ScopesConditionWithoutAnExpression()
+    {
+        Assert.Equal(new[] { "curl" }, MatchedPatterns(scopedConditionNoExpression, "curl http://x\n"));
+        Assert.Empty(MatchedPatterns(scopedConditionNoExpression, "curl --tlsv1.3 http://x\n"));
+
+        // wget is not guarded by the condition, so it reports even on a line the condition would exclude.
+        Assert.Equal(new[] { "wget" },
+            MatchedPatterns(scopedConditionNoExpression, "curl --tlsv1.3 http://x\nwget http://y\n"));
+    }
+}

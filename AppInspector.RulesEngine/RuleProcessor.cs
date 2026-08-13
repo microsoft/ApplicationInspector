@@ -199,6 +199,12 @@ public class RuleProcessor
     /// </summary>
     private static List<(int, Boundary)> FilterCaptures(ConvertedOatRule oatRule, List<ClauseCapture> captures)
     {
+        // Gate membership assumes conditions are ANDed, which an authored expression need not be.
+        if (!string.IsNullOrWhiteSpace(oatRule.AppInspectorRule.Expression))
+        {
+            return FilterCapturesByExpression(oatRule, captures);
+        }
+
         var ruleGates = new List<HashSet<(int, Boundary)>>();
         var patternGates = new Dictionary<int, List<HashSet<(int, Boundary)>>>();
         var allMatches = new List<(int, Boundary)>();
@@ -271,6 +277,54 @@ public class RuleProcessor
                    gatesForPattern.Count == declaredForPattern &&
                    gatesForPattern.All(gate => gate.Contains(match));
         }
+    }
+
+    /// <summary>
+    ///     Reports the findings that individually satisfy the rule's expression. The engine only tells us
+    ///     that the rule matched, so each candidate finding is re-evaluated against the expression using
+    ///     which clauses reported it.
+    /// </summary>
+    private static List<(int, Boundary)> FilterCapturesByExpression(ConvertedOatRule oatRule,
+        List<ClauseCapture> captures)
+    {
+        if (oatRule.Expression is null || RuleExpression.TryParse(oatRule.Expression) is not { } expression)
+        {
+            return new List<(int, Boundary)>();
+        }
+
+        Dictionary<string, HashSet<(int, Boundary)>> reportedByLabel = new();
+        List<(int, Boundary)> candidates = new();
+        HashSet<(int, Boundary)> seenCandidates = new();
+
+        foreach (var capture in captures)
+        {
+            if (capture is not TypedClauseCapture<List<(int, Boundary)>> tcc || capture.Clause?.Label is not { } label)
+            {
+                continue;
+            }
+
+            if (!reportedByLabel.TryGetValue(label, out var reported))
+            {
+                reported = new HashSet<(int, Boundary)>();
+                reportedByLabel[label] = reported;
+            }
+
+            foreach (var finding in tcc.Result)
+            {
+                reported.Add(finding);
+
+                // Only patterns originate findings; conditions merely retain them.
+                if (capture.Clause is not WithinClause && seenCandidates.Add(finding))
+                {
+                    candidates.Add(finding);
+                }
+            }
+        }
+
+        return candidates
+            .Where(candidate => expression.Evaluate(label =>
+                reportedByLabel.TryGetValue(label, out var reported) && reported.Contains(candidate)))
+            .ToList();
     }
 
     /// <summary>
