@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -357,6 +358,8 @@ public class RulesVerifier
         }
 
 
+        errors.AddRange(ValidateExpression(rule, convertedOatRule));
+
         var singleList = new[] { convertedOatRule };
 
         // We need to provide a language for the TextContainer, which will later be referenced by the Rule when executed.
@@ -440,5 +443,91 @@ public class RulesVerifier
             SchemaValidationErrors = schemaErrors,
             PassedSchemaValidation = passedSchemaValidation
         };
+    }
+
+    private static readonly string[] BinaryOperators = { "AND", "OR", "XOR", "NAND", "NOR" };
+
+    /// <summary>
+    ///     Validates labels, <see cref="Rule.Expression" /> and condition scoping.
+    /// </summary>
+    private IEnumerable<string> ValidateExpression(Rule rule, ConvertedOatRule convertedOatRule)
+    {
+        List<string> errors = new();
+
+        void Error(string message)
+        {
+            _logger?.LogError("{Message}", message);
+            errors.Add(message);
+        }
+
+        foreach (var label in convertedOatRule.Clauses.Select(x => x.Label))
+        {
+            if (label is not null && (label.Any(char.IsWhiteSpace) || label.Contains('(') || label.Contains(')')))
+            {
+                Error(
+                    $"Label '{label}' in rule {rule.Id} may not contain whitespace or parentheses because expressions are split on spaces.");
+            }
+        }
+
+        // A duplicated label makes OAT abandon the expression, so the rule would silently never match.
+        foreach (var duplicate in convertedOatRule.Clauses.Select(x => x.Label).Where(x => x is not null)
+                     .GroupBy(x => x).Where(x => x.Count() > 1).Select(x => x.Key))
+        {
+            Error($"Label '{duplicate}' is used by more than one pattern or condition in rule {rule.Id}.");
+        }
+
+        var patternLabels = rule.Patterns
+            .Select((pattern, index) => pattern.Label ?? index.ToString(CultureInfo.InvariantCulture)).ToList();
+
+        if (string.IsNullOrWhiteSpace(rule.Expression))
+        {
+            return errors;
+        }
+
+        var expression = rule.Expression!;
+
+        if (rule.Conditions?.Any(x => x.NegateFinding) ?? false)
+        {
+            Error(
+                $"Rule {rule.Id} supplies an expression, so negation must be expressed with NOT in the expression rather than negate_finding.");
+        }
+
+        var tokens = expression.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        var depth = 0;
+        var operatorsSeenAtDepth = new Dictionary<int, HashSet<string>>();
+
+        foreach (var token in tokens)
+        {
+            depth += token.Count(x => x == '(');
+
+            var bare = token.Trim('(', ')');
+            if (BinaryOperators.Contains(bare, StringComparer.OrdinalIgnoreCase))
+            {
+                if (!operatorsSeenAtDepth.TryGetValue(depth, out var seen))
+                {
+                    seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    operatorsSeenAtDepth[depth] = seen;
+                }
+
+                seen.Add(bare);
+            }
+
+            depth -= token.Count(x => x == ')');
+        }
+
+        if (depth != 0)
+        {
+            Error($"Expression '{expression}' in rule {rule.Id} has unbalanced parentheses.");
+        }
+
+        // Expressions are folded left to right with no operator precedence, so mixing operators without
+        // parentheses almost never means what the author intended.
+        foreach (var level in operatorsSeenAtDepth.Where(x => x.Value.Count > 1))
+        {
+            Error(
+                $"Expression '{expression}' in rule {rule.Id} mixes the operators {string.Join(", ", level.Value.OrderBy(x => x))} without parentheses. Expressions are evaluated left to right with no operator precedence, so add parentheses to make the grouping explicit.");
+        }
+
+        return errors;
     }
 }
