@@ -48,6 +48,7 @@ To use these samples:
 - `depends_on_tags`: Array of tags that must be present for this rule to apply
 - `overrides`: Array of rule IDs that this rule supersedes
 - `conditions`: Array of additional matching conditions
+- `expression`: Boolean expression combining pattern and condition labels (see [Expressions](#expressions))
 - `must-match`: Array of test strings that should match (for validation)
 - `must-not-match`: Array of test strings that should not match (for validation)
 - `_comment`: Optional comment for documentation
@@ -56,6 +57,7 @@ To use these samples:
 
 - `pattern`: The regex/string pattern to search for (required)
 - `type`: One of: regex (default), regexword, string, substring
+- `label`: Name for this pattern, for use in `expression` (default: the pattern's index)
 - `scopes`: Array of: code, comment, all, html
 - `confidence`: One of: high, medium, low, unspecified
 - `modifiers`: Array of regex modifiers: i, m, s, x (or full names)
@@ -67,9 +69,68 @@ To use these samples:
 ### Condition Fields
 
 - `pattern`: A pattern object (same structure as patterns array)
-- `search_in`: Where to search - "file", "finding-region(-offset,length)", "finding-only", "same-line", "same-file"
+- `search_in`: Where to search - "file", "finding-region(-offset,length)", "finding-only", "same-line", "same-file", "only-before", "only-after"
 - `negate_finding`: Boolean - if true, the finding is invalid if this condition matches
+- `label`: Name for this condition, for use in `expression` (default: the condition's clause index)
+- `applies_to_patterns`: Array of pattern labels this condition guards (default: every pattern)
 - `_comment`: Optional comment for documentation
+
+## Expressions
+
+By default a rule matches when **any** pattern matches and **every** condition holds:
+
+```text
+(pattern0 OR pattern1 OR ...) AND condition0 AND condition1 ...
+```
+
+Two optional fields let you go beyond that shape.
+
+### Scoping a condition to some patterns
+
+Give the patterns labels and list them in the condition's `applies_to_patterns`. Patterns that are not
+listed are unaffected by the condition, so they still report even when the condition excludes another
+pattern's finding.
+
+```json
+"patterns": [
+  { "pattern": "curl", "type": "substring", "label": "curl" },
+  { "pattern": "wget", "type": "substring", "label": "wget" }
+],
+"conditions": [
+  {
+    "pattern": { "pattern": "--tlsv1.3", "type": "substring" },
+    "search_in": "same-line",
+    "negate_finding": true,
+    "applies_to_patterns": [ "curl" ]
+  }
+]
+```
+
+### Writing the expression yourself
+
+Set `expression` to combine labels with `AND`, `OR`, `XOR`, `NAND`, `NOR` and `NOT`. This makes
+otherwise inexpressible rules possible, such as a disjunction of conditions or a negated conjunction:
+
+```json
+"expression": "cookie AND NOT (secure AND httponly)"
+```
+
+That rule fires when *either* required flag is missing. Writing it as two negated conditions would
+instead mean "neither flag is present", which stays silent on partially hardened code.
+
+> **Expressions have no operator precedence.** They are evaluated strictly left to right, so
+> `a OR b AND c` means `(a OR b) AND c`, **not** `a OR (b AND c)`. Always use parentheses to make
+> grouping explicit; rule verification rejects an expression that mixes operators at the same level
+> without them.
+
+Other rules for expressions:
+
+- Labels may not contain spaces or parentheses, and must be unique within the rule.
+- Attach parentheses to labels: `(a OR b)` is valid, `( a OR b )` is not.
+- Parentheses must be balanced.
+- A rule that sets `expression` must express negation with `NOT` rather than `negate_finding`.
+- A condition can only test findings produced by patterns evaluated before it, so place at least one
+  pattern label ahead of any condition label.
 
 ## Best Practices
 
@@ -79,6 +140,7 @@ To use these samples:
 4. **Use appropriate severity**: Choose severity levels that reflect the actual impact
 5. **Use specific patterns**: Make patterns as specific as possible to reduce false positives
 6. **Document with comments**: Use `_comment` fields to explain complex patterns or conditions
+7. **Parenthesise expressions**: Expressions fold left to right with no precedence, so group explicitly
 
 ## Related Documentation
 
