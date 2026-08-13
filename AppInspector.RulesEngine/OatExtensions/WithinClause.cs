@@ -21,6 +21,7 @@ public class WithinClause : Clause
     public bool FindingOnly { get; set; }
     public bool SameLineOnly { get; set; }
     public bool FindingRegion { get; set; }
+
     public Clause SubClause { get; }
 
     /// <summary>
@@ -28,14 +29,14 @@ public class WithinClause : Clause
     ///     A rule level condition gates every pattern in the rule; a pattern level condition gates only its own pattern.
     /// </summary>
     public int? OwnerPatternIndex { get; set; }
-    
+
     /// <summary>
-    /// Languages where this condition applies. Empty means applies to all (except those in LanguageDoesNotApplyTo).
+    ///     Languages where this condition applies. Empty means applies to all (except those in LanguageDoesNotApplyTo).
     /// </summary>
     public IList<string>? LanguageAppliesTo { get; set; }
-    
+
     /// <summary>
-    /// Languages where this condition does not apply.
+    ///     Languages where this condition does not apply.
     /// </summary>
     public IList<string>? LanguageDoesNotApplyTo { get; set; }
 }

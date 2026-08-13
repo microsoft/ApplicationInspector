@@ -131,25 +131,28 @@ public abstract class AbstractRuleSet
         // only wrapped when it does not already begin with one. That is safe because OAT evaluates expressions
         // strictly left to right with no operator precedence, so the rule level conditions appended below still
         // apply to the whole pattern group either way.
-        var expression = new StringBuilder(patternBody.StartsWith('(') ? patternBody : $"({patternBody})");
+        var generatedExpression = new StringBuilder(patternBody.StartsWith('(') ? patternBody : $"({patternBody})");
 
         foreach (var condition in rule.Conditions ?? Array.Empty<SearchCondition>())
         {
-            var conditionLabel = ConditionLabel(conditionNumber);
+            var conditionLabel = condition.Label ?? ConditionLabel(conditionNumber);
             var clause = GenerateCondition(condition, conditionLabel, null);
             if (clause is { })
             {
                 clauses.Add(clause);
-                expression.Append(" AND ");
-                expression.Append(conditionLabel);
+                generatedExpression.Append(" AND ");
+                generatedExpression.Append(conditionLabel);
                 conditionNumber++;
             }
         }
 
+        // An authored expression replaces the generated pattern-OR, condition-AND shape.
         return new ConvertedOatRule(rule.Id, rule)
         {
             Clauses = clauses,
-            Expression = expression.ToString()
+            Expression = string.IsNullOrWhiteSpace(rule.Expression)
+                ? generatedExpression.ToString()
+                : rule.Expression
         };
     }
 
@@ -267,17 +270,18 @@ public abstract class AbstractRuleSet
         return "c" + conditionNumber.ToString(CultureInfo.InvariantCulture);
     }
 
-    private Clause? GenerateClause(SearchPattern pattern, int clauseNumber = -1)
+    private Clause? GenerateClause(SearchPattern pattern, int clauseNumber = -1, string? label = null)
     {
         if (pattern.Pattern != null)
         {
             var scopes = pattern.Scopes ?? new[] { PatternScope.All };
+            var clauseLabel = label ?? clauseNumber.ToString(CultureInfo.InvariantCulture);
             if (pattern.PatternType is PatternType.String or PatternType.Substring)
             {
                 return new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String,
                     xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths: pattern.YamlPaths, xPathNameSpaces: pattern.XPathNamespaces)
                 {
-                    Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                    Label = clauseLabel,
                     PatternIndex = clauseNumber,
                     Data = new List<string> { pattern.Pattern },
                     Capture = true,
@@ -323,15 +327,18 @@ public abstract class AbstractRuleSet
     /// <returns>Expression string for this pattern and its conditions</returns>
     private string? ProcessPatternWithConditions(SearchPattern pattern, List<Clause> clauses, int patternLabel, ref int conditionNumber)
     {
-        // Generate the pattern clause with stable pattern label
-        if (GenerateClause(pattern, patternLabel) is not { } primaryClause)
+        // An author supplied label replaces the numeric one in the expression; the pattern index is carried
+        // separately on the clause, so naming a pattern cannot disturb which pattern a finding is reported against.
+        var label = pattern.Label ?? patternLabel.ToString(CultureInfo.InvariantCulture);
+
+        if (GenerateClause(pattern, patternLabel, label) is not { } primaryClause)
         {
             return null;
         }
 
         clauses.Add(primaryClause);
         var expressionText = new StringBuilder();
-        expressionText.Append(patternLabel);
+        expressionText.Append(label);
 
         // Apply pattern-specific conditions if they exist
         var addedCondition = false;
