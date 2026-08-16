@@ -156,6 +156,8 @@ public class OatExpressionSemanticsTests
     [InlineData("0 BOGUS 1")]
     [InlineData("0 OR 1)")]
     [InlineData("(0 OR 1))")]
+    [InlineData("(0 OR 1")]
+    [InlineData("(0 OR (1 AND 2)")]
     public void EnumerateRuleIssues_RejectsMalformedExpressions(string expression)
     {
         var rule = RuleFrom(threePatternRule);
@@ -167,9 +169,8 @@ public class OatExpressionSemanticsTests
     }
 
     /// <summary>
-    ///     An unclosed group throws during analysis rather than simply failing the rule, which is why
-    ///     AppInspector rejects unbalanced expressions at verification time. OAT 1.2.87 also does not flag
-    ///     these, because its balance check only fires when closing parentheses outnumber opening ones.
+    ///     Validation reports an unclosed group, but evaluating one still throws, so a rule set must be
+    ///     verified before it is run rather than relying on analysis to fail gracefully.
     /// </summary>
     [Theory]
     [InlineData("(0 OR 1")]
