@@ -35,13 +35,13 @@ pipelines:
     retail:
       source:
         eslint:
-          lastModifiedDate: 2026-02-04
+          lastModifiedDate: 2026-08-16
         psscriptanalyzer:
-          lastModifiedDate: 2026-02-04
+          lastModifiedDate: 2026-08-16
         armory:
-          lastModifiedDate: 2026-02-04
+          lastModifiedDate: 2026-08-16
       binary:
         binskim:
-          lastModifiedDate: 2026-02-04
+          lastModifiedDate: 2026-08-16
         spotbugs:
-          lastModifiedDate: 2026-02-04
+          lastModifiedDate: 2026-08-16
