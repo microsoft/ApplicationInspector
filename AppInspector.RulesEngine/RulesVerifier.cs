@@ -358,7 +358,10 @@ public class RulesVerifier
         }
 
 
-        errors.AddRange(ValidateExpression(rule, convertedOatRule));
+        var expressionErrors = ValidateExpression(rule, convertedOatRule).ToList();
+        errors.AddRange(expressionErrors);
+
+        var oatIssues = _analyzer.EnumerateRuleIssues(convertedOatRule).ToList();
 
         var singleList = new[] { convertedOatRule };
 
@@ -371,11 +374,19 @@ public class RulesVerifier
                            !convertedOatRule.AppInspectorRule.DoesNotApplyTo?.Contains(x,
                                StringComparer.InvariantCultureIgnoreCase) ?? true) ?? "Rule Verifier Default Value";
 
+        // Self tests run the rule, and a rule already known to be malformed can fail hard rather than
+        // simply not matching, so only run them once the rule is structurally sound.
+        var ruleIsSound = expressionErrors.Count == 0 && oatIssues.Count == 0;
+
         // validate all must match samples are matched
         foreach (var mustMatchElement in (IList<string>?)rule.MustMatch ?? Array.Empty<string>())
         {
-            var tc = new TextContainer(mustMatchElement, language, _options.LanguageSpecs);
-            if (!_analyzer.Analyze(singleList, tc).Any())
+            if (!ruleIsSound)
+            {
+                break;
+            }
+
+            if (!SelfTestMatches(singleList, mustMatchElement, language, rule, errors))
             {
                 _logger?.LogError("Rule {ID} does not match the 'MustMatch' test {MustMatch}. ", rule.Id,
                     mustMatchElement);
@@ -386,8 +397,12 @@ public class RulesVerifier
         // validate no must not match conditions are matched
         foreach (var mustNotMatchElement in (IList<string>?)rule.MustNotMatch ?? Array.Empty<string>())
         {
-            var tc = new TextContainer(mustNotMatchElement, language, _options.LanguageSpecs);
-            if (_analyzer.Analyze(singleList, tc).Any())
+            if (!ruleIsSound)
+            {
+                break;
+            }
+
+            if (SelfTestMatches(singleList, mustNotMatchElement, language, rule, errors))
             {
                 _logger?.LogError("Rule {ID} matches the 'MustNotMatch' test '{MustNotMatch}'. ", rule.Id,
                     mustNotMatchElement);
@@ -437,7 +452,7 @@ public class RulesVerifier
             Errors = errors,
             // Materialized because RuleStatus.Verified and any consumer reporting the issues each
             // enumerate this, and EnumerateRuleIssues re-runs the whole check on every enumeration.
-            OatIssues = _analyzer.EnumerateRuleIssues(convertedOatRule).ToList(),
+            OatIssues = oatIssues,
             HasPositiveSelfTests = rule.MustMatch?.Count > 0,
             HasNegativeSelfTests = rule.MustNotMatch?.Count > 0,
             SchemaValidationErrors = schemaErrors,
@@ -446,6 +461,27 @@ public class RulesVerifier
     }
 
     private static readonly string[] BinaryOperators = { "AND", "OR", "XOR", "NAND", "NOR" };
+
+    /// <summary>
+    ///     Runs one self-test sample. A rule can fail hard rather than simply not matching, and a bad rule
+    ///     must not take verification down with it, so failures are reported as verification errors.
+    /// </summary>
+    private bool SelfTestMatches(ConvertedOatRule[] rules, string sample, string language, Rule rule,
+        List<string> errors)
+    {
+        try
+        {
+            var tc = new TextContainer(sample, language, _options.LanguageSpecs);
+            return _analyzer.Analyze(rules, tc).Any();
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError("Rule {ID} failed to run against its self-test sample. {Type}: {Message}", rule.Id,
+                e.GetType(), e.Message);
+            errors.Add($"Rule {rule.Id} failed to run against its self-test sample. {e.GetType()}: {e.Message}");
+            return false;
+        }
+    }
 
     /// <summary>
     ///     Validates labels, <see cref="Rule.Expression" /> and condition scoping.
@@ -494,25 +530,41 @@ public class RulesVerifier
 
         var tokens = expression.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         var depth = 0;
-        var operatorsSeenAtDepth = new Dictionary<int, HashSet<string>>();
+        var nextGroup = 0;
+        // Sibling groups at the same nesting level are independent, so operators are tracked per group
+        // rather than per depth.
+        var openGroups = new Stack<int>();
+        openGroups.Push(nextGroup++);
+        var operatorsByGroup = new Dictionary<int, HashSet<string>>();
 
         foreach (var token in tokens)
         {
-            depth += token.Count(x => x == '(');
+            foreach (var _ in token.Where(x => x == '('))
+            {
+                depth++;
+                openGroups.Push(nextGroup++);
+            }
 
             var bare = token.Trim('(', ')');
             if (BinaryOperators.Contains(bare, StringComparer.OrdinalIgnoreCase))
             {
-                if (!operatorsSeenAtDepth.TryGetValue(depth, out var seen))
+                if (!operatorsByGroup.TryGetValue(openGroups.Peek(), out var seen))
                 {
                     seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                    operatorsSeenAtDepth[depth] = seen;
+                    operatorsByGroup[openGroups.Peek()] = seen;
                 }
 
                 seen.Add(bare);
             }
 
-            depth -= token.Count(x => x == ')');
+            foreach (var _ in token.Where(x => x == ')'))
+            {
+                depth--;
+                if (openGroups.Count > 1)
+                {
+                    openGroups.Pop();
+                }
+            }
         }
 
         if (depth != 0)
@@ -526,14 +578,69 @@ public class RulesVerifier
                 $"Expression in rule {rule.Id} nests parentheses more than {RuleExpression.MaxNestingDepth} deep. Evaluation recurses once per level, so this would exhaust the stack.");
         }
 
-        // Expressions are folded left to right with no operator precedence, so mixing operators without
-        // parentheses almost never means what the author intended.
-        foreach (var level in operatorsSeenAtDepth.Where(x => x.Value.Count > 1))
+        // Expressions are folded left to right with no operator precedence, so mixing operators within one
+        // group almost never means what the author intended.
+        foreach (var group in operatorsByGroup.Where(x => x.Value.Count > 1))
         {
             Error(
-                $"Expression '{expression}' in rule {rule.Id} mixes the operators {string.Join(", ", level.Value.OrderBy(x => x))} without parentheses. Expressions are evaluated left to right with no operator precedence, so add parentheses to make the grouping explicit.");
+                $"Expression '{expression}' in rule {rule.Id} mixes the operators {string.Join(", ", group.Value.OrderBy(x => x))} without parentheses. Expressions are evaluated left to right with no operator precedence, so add parentheses to make the grouping explicit.");
         }
 
+        errors.AddRange(CheckExpressionCanReportAFinding(rule, expression, patternLabels));
+
         return errors;
+    }
+
+    /// <summary>
+    ///     A finding originates from exactly one pattern, so a term naming a different pattern is false
+    ///     while that finding is being judged. An expression that therefore has no satisfying assignment
+    ///     will match at the rule level and then report nothing, which looks like the rule silently
+    ///     failing. Conditions are treated as free, since their value depends on the file being scanned.
+    /// </summary>
+    private IEnumerable<string> CheckExpressionCanReportAFinding(Rule rule, string expression,
+        IReadOnlyList<string> patternLabels)
+    {
+        const int maxConditionsToEnumerate = 16;
+
+        if (RuleExpression.TryParse(expression) is not { } parsed || patternLabels.Count == 0)
+        {
+            yield break;
+        }
+
+        var conditionLabels = (rule.Conditions ?? Array.Empty<SearchCondition>())
+            .Select((condition, index) =>
+                condition.Label ?? (patternLabels.Count + index).ToString(CultureInfo.InvariantCulture))
+            .ToList();
+
+        if (conditionLabels.Count > maxConditionsToEnumerate)
+        {
+            yield break;
+        }
+
+        var combinations = 1 << conditionLabels.Count;
+
+        foreach (var originatingPattern in patternLabels)
+        for (var conditionValues = 0; conditionValues < combinations; conditionValues++)
+        {
+            var assignment = conditionValues;
+            if (parsed.Evaluate(label =>
+                {
+                    var conditionIndex = conditionLabels.IndexOf(label);
+                    if (conditionIndex >= 0)
+                    {
+                        return (assignment & (1 << conditionIndex)) != 0;
+                    }
+
+                    return label == originatingPattern;
+                }))
+            {
+                yield break;
+            }
+        }
+
+        var message =
+            $"Expression '{expression}' in rule {rule.Id} can never report a finding, because it requires more than one pattern to be true at once and a finding comes from a single pattern. Split the patterns into separate rules, or express the extra requirement as a condition.";
+        _logger?.LogError("{Message}", message);
+        yield return message;
     }
 }

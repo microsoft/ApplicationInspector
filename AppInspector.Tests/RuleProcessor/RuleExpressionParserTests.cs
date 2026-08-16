@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Xunit;
 
@@ -90,5 +91,37 @@ public class RuleExpressionParserTests
     public void MalformedExpressionsDoNotParse(string expression)
     {
         Assert.Null(RuleExpression.TryParse(expression));
+    }
+
+    /// <summary>
+    ///     Operands are folded iteratively rather than through a left leaning tree, so a long flat
+    ///     expression must evaluate without recursing once per operator and exhausting the stack.
+    ///     A left leaning tree survives 50,000 operands here but dies at 1,000,000, so the count is chosen
+    ///     to actually catch a reversion.
+    /// </summary>
+    [Fact]
+    public void LongFlatExpressionEvaluatesWithoutRecursingPerOperator()
+    {
+        const int operands = 1000000;
+
+        var expression = string.Join(" OR ", Enumerable.Repeat("b", operands - 1).Prepend("a"));
+        var parsed = RuleExpression.TryParse(expression);
+
+        Assert.NotNull(parsed);
+        Assert.True(parsed!.Evaluate(label => label == "a"));
+        Assert.False(parsed.Evaluate(label => label == "z"));
+    }
+
+    [Fact]
+    public void LongFlatConjunctionEvaluatesWithoutRecursingPerOperator()
+    {
+        const int operands = 1000000;
+
+        var expression = string.Join(" AND ", Enumerable.Repeat("a", operands));
+        var parsed = RuleExpression.TryParse(expression);
+
+        Assert.NotNull(parsed);
+        Assert.True(parsed!.Evaluate(label => label == "a"));
+        Assert.False(parsed.Evaluate(_ => false));
     }
 }

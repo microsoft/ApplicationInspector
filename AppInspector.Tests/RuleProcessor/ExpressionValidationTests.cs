@@ -98,6 +98,62 @@ public class ExpressionValidationTests
         Assert.True(status.Verified);
     }
 
+    /// <summary>
+    ///     Sibling groups are independent, so different operators in each are explicitly grouped and must
+    ///     not be treated as mixed.
+    /// </summary>
+    [Fact]
+    public void DifferentOperatorsInSiblingGroups_Verify()
+    {
+        var status = Verify(RuleWith(@"""expression"": ""(a AND c) OR (b XOR c)"",", twoPatterns, oneCondition));
+
+        Assert.Empty(status.Errors);
+        Assert.True(status.Verified);
+    }
+
+    /// <summary>
+    ///     A finding comes from one pattern, so an expression requiring two patterns at once matches at the
+    ///     rule level and then reports nothing. That must fail verification rather than look like a rule
+    ///     that simply never fires.
+    /// </summary>
+    [Fact]
+    public void ExpressionRequiringTwoPatternsAtOnce_FailsVerification()
+    {
+        var status = Verify(RuleWith(@"""expression"": ""a AND b"",", twoPatterns, oneCondition));
+
+        Assert.Contains(status.Errors, x => x.Contains("can never report a finding"));
+        Assert.False(status.Verified);
+    }
+
+    /// <summary>
+    ///     Self-tests execute the rule, and a malformed expression throws rather than simply not matching,
+    ///     so verification must report the problem rather than take the process down with it.
+    /// </summary>
+    [Fact]
+    public void MalformedExpressionWithSelfTest_FailsVerificationWithoutThrowing()
+    {
+        const string withSelfTests = @"[
+    {
+        ""id"": ""SA600002"",
+        ""name"": ""Testing.Rules.SelfTested"",
+        ""tags"": [ ""Testing.Rules.SelfTested"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""unbalanced expression with self tests"",
+        ""expression"": ""(a OR b"",
+        ""patterns"": [
+            { ""pattern"": ""alpha"", ""type"": ""substring"", ""label"": ""a"", ""scopes"": [ ""code"" ] },
+            { ""pattern"": ""beta"",  ""type"": ""substring"", ""label"": ""b"", ""scopes"": [ ""code"" ] }
+        ],
+        ""must-match"": [ ""alpha"" ],
+        ""must-not-match"": [ ""gamma"" ]
+    }
+]";
+        var status = Verify(withSelfTests);
+
+        Assert.Contains(status.Errors, x => x.Contains("unbalanced parentheses"));
+        Assert.False(status.Verified);
+    }
+
     [Fact]
     public void ExpressionWithNegateFinding_FailsVerification()
     {

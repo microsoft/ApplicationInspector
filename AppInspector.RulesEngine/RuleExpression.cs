@@ -123,27 +123,30 @@ internal sealed class RuleExpression
 
     private static Node? ParseSequence(List<Token> tokens, ref int index, int depth)
     {
-        var left = ParseTerm(tokens, ref index, depth);
-        if (left is null)
+        var first = ParseTerm(tokens, ref index, depth);
+        if (first is null)
         {
             return null;
         }
+
+        List<(string Operator, Node Operand)>? rest = null;
 
         while (index < tokens.Count && tokens[index].Kind == TokenKind.Operator)
         {
             var op = tokens[index].Text;
             index++;
 
-            var right = ParseTerm(tokens, ref index, depth);
-            if (right is null)
+            var operand = ParseTerm(tokens, ref index, depth);
+            if (operand is null)
             {
                 return null;
             }
 
-            left = new BinaryNode(op, left, right);
+            rest ??= new List<(string, Node)>();
+            rest.Add((op, operand));
         }
 
-        return left;
+        return rest is null ? first : new SequenceNode(first, rest);
     }
 
     private static Node? ParseTerm(List<Token> tokens, ref int index, int depth)
@@ -247,25 +250,33 @@ internal sealed class RuleExpression
         }
     }
 
-    private sealed class BinaryNode : Node
+    /// <summary>
+    ///     A run of operands folded left to right. Held flat rather than as a left leaning tree so that
+    ///     evaluating a long expression does not recurse once per operator.
+    /// </summary>
+    private sealed class SequenceNode : Node
     {
-        private readonly Node _left;
-        private readonly string _operator;
-        private readonly Node _right;
+        private readonly Node _first;
+        private readonly List<(string Operator, Node Operand)> _rest;
 
-        public BinaryNode(string op, Node left, Node right)
+        public SequenceNode(Node first, List<(string Operator, Node Operand)> rest)
         {
-            _operator = op;
-            _left = left;
-            _right = right;
+            _first = first;
+            _rest = rest;
         }
 
         public override bool Evaluate(Func<string, bool> labelValue)
         {
-            var left = _left.Evaluate(labelValue);
-            var right = _right.Evaluate(labelValue);
+            var current = _first.Evaluate(labelValue);
 
-            return _operator switch
+            foreach (var (op, operand) in _rest) current = Apply(op, current, operand.Evaluate(labelValue));
+
+            return current;
+        }
+
+        private static bool Apply(string op, bool left, bool right)
+        {
+            return op switch
             {
                 "AND" => left && right,
                 "OR" => left || right,
