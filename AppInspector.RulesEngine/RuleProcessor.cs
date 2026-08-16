@@ -193,7 +193,7 @@ public class RuleProcessor
     private static void RemoveOverriddenMatches(List<MatchRecord> matches,
         CancellationToken? cancellationToken = null)
     {
-        List<MatchRecord> removes = new();
+        HashSet<MatchRecord> removes = new();
 
         foreach (var overridingMatch in matches.Where(x => x.Rule?.Overrides?.Count > 0))
         {

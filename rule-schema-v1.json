@@ -281,7 +281,7 @@
         },
         "search_in": {
           "type": "string",
-          "pattern": "^(finding-region\\(-?\\d+,\\d+\\)|finding-only|same-line|same-file|only-before|only-after)$",
+          "pattern": "^(finding-region\\(-?\\d+,\\s*\\d+\\)|finding-only|same-line|same-file|only-before|only-after)$",
           "description": "Where to search for the condition"
         },
         "negate_finding": {
