@@ -63,10 +63,13 @@
         },
         "expression": {
           "oneOf": [
-            { "type": "string" },
+            {
+              "type": "string",
+              "maxLength": 4096
+            },
             { "type": "null" }
           ],
-          "description": "Boolean expression over pattern and condition labels, for example '(curl AND NOT tls13) OR wget'. When omitted, any pattern may match and all conditions must hold. Evaluated left to right with no operator precedence, so grouping requires parentheses."
+          "description": "Boolean expression over pattern and condition labels, for example '(curl AND NOT tls13) OR wget'. When omitted, any pattern may match and all conditions must hold. Evaluated left to right with no operator precedence, so grouping requires parentheses. Parentheses may not nest more than 64 deep."
         },
         "applies_to": {
           "oneOf": [

@@ -223,7 +223,7 @@ public class RuleProcessor
     ///     condition gates every match; a pattern level condition gates only the matches of its own pattern. A
     ///     match survives if it is in every gate that applies to it.
     /// </summary>
-    private static List<(int, Boundary)> FilterCaptures(ConvertedOatRule oatRule, List<ClauseCapture> captures)
+    private List<(int, Boundary)> FilterCaptures(ConvertedOatRule oatRule, List<ClauseCapture> captures)
     {
         // Gate membership assumes conditions are ANDed, which an authored expression need not be.
         if (!string.IsNullOrWhiteSpace(oatRule.AppInspectorRule.Expression))
@@ -310,11 +310,15 @@ public class RuleProcessor
     ///     that the rule matched, so each candidate finding is re-evaluated against the expression using
     ///     which clauses reported it.
     /// </summary>
-    private static List<(int, Boundary)> FilterCapturesByExpression(ConvertedOatRule oatRule,
+    private List<(int, Boundary)> FilterCapturesByExpression(ConvertedOatRule oatRule,
         List<ClauseCapture> captures)
     {
-        if (oatRule.Expression is null || RuleExpression.TryParse(oatRule.Expression) is not { } expression)
+        if (oatRule.ParsedExpression is not { } expression)
         {
+            // Verification rejects these, so reaching here means the rule set was not verified.
+            _logger.LogError(
+                "Expression '{expression}' in rule {id} could not be parsed, so no findings will be reported for it.",
+                oatRule.Expression, oatRule.AppInspectorRule.Id);
             return new List<(int, Boundary)>();
         }
 

@@ -1,7 +1,6 @@
 // Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,9 +14,15 @@ namespace Microsoft.ApplicationInspector.RulesEngine;
 /// </summary>
 internal sealed class RuleExpression
 {
-    private static readonly string[] Operators = { "AND", "OR", "XOR", "NAND", "NOR" };
+    /// <summary>
+    ///     Parsing recurses once per level of parenthesis nesting, as does the underlying engine's own
+    ///     evaluator, so nesting is capped well above anything an author would write by hand. Deeply
+    ///     nested input would otherwise exhaust the stack, which cannot be caught and takes the process
+    ///     down with it.
+    /// </summary>
+    internal const int MaxNestingDepth = 64;
 
-    private static readonly ConcurrentDictionary<string, RuleExpression?> Cache = new();
+    private static readonly string[] Operators = { "AND", "OR", "XOR", "NAND", "NOR" };
 
     private readonly Node _root;
 
@@ -27,22 +32,45 @@ internal sealed class RuleExpression
     }
 
     /// <summary>
-    ///     Parses an expression, returning null if it is malformed.
+    ///     Counts the deepest parenthesis nesting in an expression without parsing it, so callers can
+    ///     reject one before it reaches a recursive evaluator.
+    /// </summary>
+    internal static int MaxNestingOf(string expression)
+    {
+        var depth = 0;
+        var deepest = 0;
+
+        foreach (var character in expression)
+            if (character == '(')
+            {
+                depth++;
+                if (depth > deepest)
+                {
+                    deepest = depth;
+                }
+            }
+            else if (character == ')')
+            {
+                depth--;
+            }
+
+        return deepest;
+    }
+
+    /// <summary>
+    ///     Parses an expression, returning null if it is malformed or nested past <see cref="MaxNestingDepth" />.
     /// </summary>
     public static RuleExpression? TryParse(string expression)
     {
-        return Cache.GetOrAdd(expression, static toParse =>
+        var tokens = Tokenize(expression);
+        if (tokens.Count == 0)
         {
-            var tokens = Tokenize(toParse);
-            if (tokens.Count == 0)
-            {
-                return null;
-            }
+            return null;
+        }
 
-            var index = 0;
-            var root = ParseSequence(tokens, ref index);
-            return root is null || index != tokens.Count ? null : new RuleExpression(root);
-        });
+        var index = 0;
+        var root = ParseSequence(tokens, ref index, 0);
+        return root is null || index != tokens.Count ? null : new RuleExpression(root);
     }
 
     public bool Evaluate(Func<string, bool> labelValue)
@@ -93,9 +121,9 @@ internal sealed class RuleExpression
         return tokens;
     }
 
-    private static Node? ParseSequence(List<Token> tokens, ref int index)
+    private static Node? ParseSequence(List<Token> tokens, ref int index, int depth)
     {
-        var left = ParseTerm(tokens, ref index);
+        var left = ParseTerm(tokens, ref index, depth);
         if (left is null)
         {
             return null;
@@ -106,7 +134,7 @@ internal sealed class RuleExpression
             var op = tokens[index].Text;
             index++;
 
-            var right = ParseTerm(tokens, ref index);
+            var right = ParseTerm(tokens, ref index, depth);
             if (right is null)
             {
                 return null;
@@ -118,7 +146,7 @@ internal sealed class RuleExpression
         return left;
     }
 
-    private static Node? ParseTerm(List<Token> tokens, ref int index)
+    private static Node? ParseTerm(List<Token> tokens, ref int index, int depth)
     {
         var negate = false;
         while (index < tokens.Count && tokens[index].Kind == TokenKind.Not)
@@ -136,8 +164,13 @@ internal sealed class RuleExpression
 
         if (tokens[index].Kind == TokenKind.OpenParen)
         {
+            if (depth >= MaxNestingDepth)
+            {
+                return null;
+            }
+
             index++;
-            inner = ParseSequence(tokens, ref index);
+            inner = ParseSequence(tokens, ref index, depth + 1);
             if (inner is null || index >= tokens.Count || tokens[index].Kind != TokenKind.CloseParen)
             {
                 return null;

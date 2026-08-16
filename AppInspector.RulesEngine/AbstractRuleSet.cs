@@ -146,6 +146,16 @@ public abstract class AbstractRuleSet
             }
         }
 
+        // Evaluating an expression recurses once per level of parenthesis nesting, so a deeply nested one
+        // would exhaust the stack before any rule could be reported. Refuse the rule instead.
+        if (rule.Expression is { } authored && RuleExpression.MaxNestingOf(authored) > RuleExpression.MaxNestingDepth)
+        {
+            _logger.LogError(
+                "Expression in rule {id} nests parentheses more than {max} deep and will not be used. This rule will not match anything.",
+                rule.Id, RuleExpression.MaxNestingDepth);
+            return new ConvertedOatRule(rule.Id, rule);
+        }
+
         // An authored expression replaces the generated pattern-OR, condition-AND shape.
         return new ConvertedOatRule(rule.Id, rule)
         {

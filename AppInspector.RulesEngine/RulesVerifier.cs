@@ -520,6 +520,12 @@ public class RulesVerifier
             Error($"Expression '{expression}' in rule {rule.Id} has unbalanced parentheses.");
         }
 
+        if (RuleExpression.MaxNestingOf(expression) > RuleExpression.MaxNestingDepth)
+        {
+            Error(
+                $"Expression in rule {rule.Id} nests parentheses more than {RuleExpression.MaxNestingDepth} deep. Evaluation recurses once per level, so this would exhaust the stack.");
+        }
+
         // Expressions are folded left to right with no operator precedence, so mixing operators without
         // parentheses almost never means what the author intended.
         foreach (var level in operatorsSeenAtDepth.Where(x => x.Value.Count > 1))
