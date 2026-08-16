@@ -281,8 +281,8 @@
         },
         "search_in": {
           "type": "string",
-          "pattern": "^(finding-region\\(-?\\d+,\\s*\\d+\\)|finding-only|same-line|same-file|only-before|only-after)$",
-          "description": "Where to search for the condition"
+          "pattern": "^(finding-region\\((0,\\s*[1-9]\\d*|-\\d+,\\s*\\d+)\\)|finding-only|same-line|same-file|only-before|only-after)$",
+          "description": "Where to search for the condition. For finding-region, lines before must be 0 or negative, lines after must be 0 or positive, and they may not both be 0 (use same-line instead)."
         },
         "negate_finding": {
           "type": "boolean",

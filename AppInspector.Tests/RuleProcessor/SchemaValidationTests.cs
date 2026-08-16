@@ -146,17 +146,20 @@ namespace Microsoft.ApplicationInspector.Tests.RuleProcessor
 
         /// <summary>
         ///     The schema's search_in pattern must agree with what the engine accepts, otherwise a rule can
-        ///     pass schema validation and still fail verification. Lines before may be negative, lines after
-        ///     may not.
+        ///     pass schema validation and still fail verification. For finding-region the engine requires
+        ///     lines before to be 0 or negative, lines after to be 0 or positive, and rejects both being 0.
         /// </summary>
         [Theory]
         [InlineData("finding-region(-1,0)", true)]
         [InlineData("finding-region(-1, 0)", true)]
         [InlineData("finding-region(0,5)", true)]
+        [InlineData("finding-region(-3,3)", true)]
         [InlineData("only-before", true)]
         [InlineData("only-after", true)]
         [InlineData("finding-region(-1,-2)", false)]
         [InlineData("finding-region(-1, -2)", false)]
+        [InlineData("finding-region(1,5)", false)]
+        [InlineData("finding-region(0,0)", false)]
         [InlineData("nonsense", false)]
         public void SearchInValues_MatchWhatTheEngineAccepts(string searchIn, bool expectedValid)
         {
