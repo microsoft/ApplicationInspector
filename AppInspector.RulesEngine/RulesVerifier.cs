@@ -515,6 +515,11 @@ public class RulesVerifier
         var patternLabels = rule.Patterns
             .Select((pattern, index) => pattern.Label ?? index.ToString(CultureInfo.InvariantCulture)).ToList();
 
+        // Taken from the generated clauses rather than recomputed, so pattern level and rule level
+        // conditions are both covered however they were numbered.
+        var conditionLabels = convertedOatRule.Clauses.OfType<WithinClause>()
+            .Select(x => x.Label).Where(x => x is not null).Select(x => x!).ToList();
+
         if (string.IsNullOrWhiteSpace(rule.Expression))
         {
             return errors;
@@ -586,7 +591,30 @@ public class RulesVerifier
                 $"Expression '{expression}' in rule {rule.Id} mixes the operators {string.Join(", ", group.Value.OrderBy(x => x))} without parentheses. Expressions are evaluated left to right with no operator precedence, so add parentheses to make the grouping explicit.");
         }
 
-        errors.AddRange(CheckExpressionCanReportAFinding(rule, expression, patternLabels));
+        errors.AddRange(CheckExpressionCanReportAFinding(rule, expression, patternLabels, conditionLabels));
+
+        // Clauses are evaluated in the order they appear and captures accumulate as they go, so a condition
+        // reached before any pattern has nothing to test and is always false.
+        var seenAPattern = false;
+        string? conditionBeforeAnyPattern = null;
+
+        foreach (var bare in tokens.Select(token => token.Trim('(', ')')))
+        {
+            if (patternLabels.Contains(bare))
+            {
+                seenAPattern = true;
+            }
+            else if (!seenAPattern && conditionLabels.Contains(bare))
+            {
+                conditionBeforeAnyPattern ??= bare;
+            }
+        }
+
+        if (conditionBeforeAnyPattern is not null)
+        {
+            Error(
+                $"Expression '{expression}' in rule {rule.Id} uses the condition '{conditionBeforeAnyPattern}' before any pattern. Conditions test findings that earlier clauses produced, so one evaluated first is always false and the rule can never report. Put a pattern label ahead of it.");
+        }
 
         return errors;
     }
@@ -598,7 +626,7 @@ public class RulesVerifier
     ///     failing. Conditions are treated as free, since their value depends on the file being scanned.
     /// </summary>
     private IEnumerable<string> CheckExpressionCanReportAFinding(Rule rule, string expression,
-        IReadOnlyList<string> patternLabels)
+        IReadOnlyList<string> patternLabels, IReadOnlyList<string> conditionLabels)
     {
         const int maxConditionsToEnumerate = 16;
 
@@ -606,11 +634,6 @@ public class RulesVerifier
         {
             yield break;
         }
-
-        var conditionLabels = (rule.Conditions ?? Array.Empty<SearchCondition>())
-            .Select((condition, index) =>
-                condition.Label ?? (patternLabels.Count + index).ToString(CultureInfo.InvariantCulture))
-            .ToList();
 
         if (conditionLabels.Count > maxConditionsToEnumerate)
         {
@@ -625,11 +648,11 @@ public class RulesVerifier
             var assignment = conditionValues;
             if (parsed.Evaluate(label =>
                 {
-                    var conditionIndex = conditionLabels.IndexOf(label);
-                    if (conditionIndex >= 0)
-                    {
-                        return (assignment & (1 << conditionIndex)) != 0;
-                    }
+                    for (var conditionIndex = 0; conditionIndex < conditionLabels.Count; conditionIndex++)
+                        if (conditionLabels[conditionIndex] == label)
+                        {
+                            return (assignment & (1 << conditionIndex)) != 0;
+                        }
 
                     return label == originatingPattern;
                 }))

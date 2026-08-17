@@ -477,8 +477,9 @@ public class RuleProcessor
         }
         catch (Exception e)
         {
-            _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace})",
-                fileEntry.FullPath, e.GetType(), e.Message, e.StackTrace);
+            // Analysis continues on empty content, so this must not be silent.
+            _logger.LogError("Failed to read {path} for analysis, it will be treated as empty. {type}:{message}",
+                fileEntry.FullPath, e.GetType(), e.Message);
         }
 
         return AnalyzeFile(contents, fileEntry, languageInfo, tagsToIgnore, numLinesContext);
@@ -510,8 +511,9 @@ public class RuleProcessor
         }
         catch (Exception e)
         {
-            _logger.LogDebug("Failed to analyze file {path}. {type}:{message}. ({stackTrace})",
-                fileEntry.FullPath, e.GetType(), e.Message, e.StackTrace);
+            // Analysis continues on empty content, so this must not be silent.
+            _logger.LogError("Failed to read {path} for analysis, it will be treated as empty. {type}:{message}",
+                fileEntry.FullPath, e.GetType(), e.Message);
         }
 
         TextContainer textContainer = new(contents, languageInfo.Name, _languages,

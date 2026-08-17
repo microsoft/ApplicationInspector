@@ -154,6 +154,28 @@ public class ExpressionValidationTests
         Assert.False(status.Verified);
     }
 
+    /// <summary>
+    ///     Captures accumulate in evaluation order, so a condition reached before any pattern has nothing
+    ///     to test and is always false. Such a rule verifies clean today and then never reports.
+    /// </summary>
+    [Fact]
+    public void ConditionBeforeAnyPattern_FailsVerification()
+    {
+        var status = Verify(RuleWith(@"""expression"": ""c AND a"",", twoPatterns, oneCondition));
+
+        Assert.Contains(status.Errors, x => x.Contains("before any pattern"));
+        Assert.False(status.Verified);
+    }
+
+    [Fact]
+    public void ConditionAfterAPattern_Verifies()
+    {
+        var status = Verify(RuleWith(@"""expression"": ""a AND c"",", twoPatterns, oneCondition));
+
+        Assert.Empty(status.Errors);
+        Assert.True(status.Verified);
+    }
+
     [Fact]
     public void ExpressionWithNegateFinding_FailsVerification()
     {
