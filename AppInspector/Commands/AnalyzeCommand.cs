@@ -500,8 +500,17 @@ public class AnalyzeCommand
                     }
                     else
                     {
-                        ProcessLambda();
-                        fileRecord.Status = ScanState.Analyzed;
+                        try
+                        {
+                            ProcessLambda();
+                            fileRecord.Status = ScanState.Analyzed;
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogError("Failed to analyze {Path}. {Type}:{Message}", file.FullPath,
+                                e.GetType(), e.Message);
+                            fileRecord.Status = ScanState.Error;
+                        }
                     }
 
                     if (results.Any())
@@ -697,36 +706,47 @@ public class AnalyzeCommand
                         var ignoredTags = _options.TagsOnly ? _metaDataHelper.UniqueTags.Keys :
                             _options.MaxNumMatchesPerTag > 0 ? _metaDataHelper.UniqueTags
                                 .Where(x => x.Value < _options.MaxNumMatchesPerTag).Select(x => x.Key) : null;
-                        var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken,
-                            ignoredTags, contextLines);
-                        fileRecord.Status = ScanState.Analyzed;
 
-                        if (results.Any())
+                        // One file failing must not abandon the rest of the scan.
+                        try
                         {
-                            fileRecord.Status = ScanState.Affected;
-                            fileRecord.NumFindings = results.Count;
-                        }
+                            var results = await _rulesProcessor.AnalyzeFileAsync(file, languageInfo, cancellationToken,
+                                ignoredTags, contextLines);
+                            fileRecord.Status = ScanState.Analyzed;
 
-                        foreach (var matchRecord in results)
-                        {
-                            if (_options.TagsOnly)
+                            if (results.Any())
                             {
-                                _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                                fileRecord.Status = ScanState.Affected;
+                                fileRecord.NumFindings = results.Count;
                             }
-                            else if (_options.MaxNumMatchesPerTag > 0)
+
+                            foreach (var matchRecord in results)
                             {
-                                if (matchRecord.Tags?.Any(x =>
-                                        _metaDataHelper.UniqueTags.TryGetValue(x, out var value) is bool foundValue &&
-                                        (!foundValue || (foundValue && value < _options.MaxNumMatchesPerTag))) ??
-                                    true)
+                                if (_options.TagsOnly)
+                                {
+                                    _metaDataHelper.AddTagsFromMatchRecord(matchRecord);
+                                }
+                                else if (_options.MaxNumMatchesPerTag > 0)
+                                {
+                                    if (matchRecord.Tags?.Any(x =>
+                                            _metaDataHelper.UniqueTags.TryGetValue(x, out var value) is bool foundValue &&
+                                            (!foundValue || (foundValue && value < _options.MaxNumMatchesPerTag))) ??
+                                        true)
+                                    {
+                                        _metaDataHelper.AddMatchRecord(matchRecord);
+                                    }
+                                }
+                                else
                                 {
                                     _metaDataHelper.AddMatchRecord(matchRecord);
                                 }
                             }
-                            else
-                            {
-                                _metaDataHelper.AddMatchRecord(matchRecord);
-                            }
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogError("Failed to analyze {Path}. {Type}:{Message}", file.FullPath,
+                                e.GetType(), e.Message);
+                            fileRecord.Status = ScanState.Error;
                         }
                     }
                 }
