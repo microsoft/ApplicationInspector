@@ -151,8 +151,8 @@ public class RuleProcessor
         var caps = _analyzer.GetCaptures(rules, textContainer);
         foreach (var ruleCapture in caps)
         {
-            var netCaptures = FilterCaptures(ruleCapture.Captures);
             var oatRule = ruleCapture.Rule as ConvertedOatRule;
+            var netCaptures = FilterCaptures(ruleCapture.Captures);
             foreach (var match in netCaptures)
             {
                 var patternIndex = match.Item1;
@@ -202,35 +202,83 @@ public class RuleProcessor
                 resultsList.Add(newMatch);
             }
 
-            // If a WithinClause capture is present, use only within captures, otherwise just flattens the list of results from the non-within clause.
+            // Conditions produce "gates": the subset of pattern matches that satisfied that condition. A rule level
+            // condition gates every match; a pattern level condition gates only the matches of its own pattern. A
+            // match survives if it is in every gate that applies to it.
             List<(int, Boundary)> FilterCaptures(List<ClauseCapture> captures)
             {
-                // If we had a WithinClause we only want the captures that passed the within filter.
-                if (captures.Any(x => x.Clause is WithinClause))
+                var ruleGates = new List<HashSet<(int, Boundary)>>();
+                var patternGates = new Dictionary<int, List<HashSet<(int, Boundary)>>>();
+                var allMatches = new List<(int, Boundary)>();
+                var seen = new HashSet<(int, Boundary)>();
+
+                foreach (var capture in captures)
                 {
-                    var onlyWithinCaptures = captures.Where(x => x.Clause is WithinClause)
-                        .Cast<TypedClauseCapture<List<(int, Boundary)>>>().ToList();
-                    var allCaptured = onlyWithinCaptures.SelectMany(x => x.Result);
-                    ConcurrentDictionary<(int, Boundary), int> numberOfInstances = new();
-                    // If there are multiple within clauses ensure that we only return matches which passed all clauses
-                    // WithinClauses are always ANDed, but each contains all the captures that passed *that* clause.
-                    // We need the captures that passed every clause.
-                    foreach (var aCapture in allCaptured)
+                    if (capture is not TypedClauseCapture<List<(int, Boundary)>> tcc || tcc.Result is null)
                     {
-                        numberOfInstances.AddOrUpdate(aCapture, 1, (tuple, i) => i + 1);
+                        continue;
                     }
-                    return numberOfInstances.Where(x => x.Value == onlyWithinCaptures.Count).Select(x => x.Key)
-                        .ToList();
+
+                    if (capture.Clause is WithinClause withinClause)
+                    {
+                        var gate = new HashSet<(int, Boundary)>(tcc.Result);
+                        if (withinClause.OwnerPatternIndex is { } owner)
+                        {
+                            if (!patternGates.TryGetValue(owner, out var gatesForPattern))
+                            {
+                                gatesForPattern = new List<HashSet<(int, Boundary)>>();
+                                patternGates[owner] = gatesForPattern;
+                            }
+
+                            gatesForPattern.Add(gate);
+                        }
+                        else
+                        {
+                            ruleGates.Add(gate);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var match in tcc.Result)
+                            if (seen.Add(match))
+                            {
+                                allMatches.Add(match);
+                            }
+                    }
                 }
 
-                var outList = new List<(int, Boundary)>();
-                foreach (var cap in captures)
-                    if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
+                if (ruleGates.Count == 0 && patternGates.Count == 0)
+                {
+                    return allMatches;
+                }
+
+                // A condition that failed outright contributes no gate. Its pattern's matches must still be dropped,
+                // so compare against the conditions the rule declares rather than only the gates that materialized.
+                var declaredGates = ruleCapture.Rule.Clauses.OfType<WithinClause>().ToList();
+                if (ruleGates.Count != declaredGates.Count(x => x.OwnerPatternIndex is null))
+                {
+                    return new List<(int, Boundary)>();
+                }
+
+                return allMatches.Where(Survives).ToList();
+
+                bool Survives((int, Boundary) match)
+                {
+                    if (!ruleGates.All(gate => gate.Contains(match)))
                     {
-                        outList.AddRange(tcc.Result);
+                        return false;
                     }
 
-                return outList;
+                    var declaredForPattern = declaredGates.Count(x => x.OwnerPatternIndex == match.Item1);
+                    if (declaredForPattern == 0)
+                    {
+                        return true;
+                    }
+
+                    return patternGates.TryGetValue(match.Item1, out var gatesForPattern) &&
+                           gatesForPattern.Count == declaredForPattern &&
+                           gatesForPattern.All(gate => gate.Contains(match));
+                }
             }
         }
 

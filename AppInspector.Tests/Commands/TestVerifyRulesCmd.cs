@@ -1,6 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using Microsoft.ApplicationInspector.CLI;
 using Microsoft.ApplicationInspector.Commands;
 using Microsoft.ApplicationInspector.Common;
 using Microsoft.ApplicationInspector.Logging;
@@ -242,5 +244,42 @@ public class TestVerifyRulesCmd
         VerifyRulesCommand command = new(options, _factory);
         var result = command.GetResult();
         Assert.Equal(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+    }
+
+    /// <summary>
+    ///     A rule that fails verification must have the reason surfaced in the text output, not just a
+    ///     `Status: False`.
+    /// </summary>
+    [Fact]
+    public void TextWriterReportsWhyARuleFailedVerification()
+    {
+        VerifyRulesOptions options = new()
+        {
+            CustomRulesPath = _mustMatchRuleFailPath
+        };
+
+        VerifyRulesCommand command = new(options, _factory);
+        var result = command.GetResult();
+        Assert.Equal(VerifyRulesResult.ExitCode.NotVerified, result.ResultCode);
+
+        var outputPath = Path.Combine(Path.GetTempPath(), $"test_verifyrules_{Guid.NewGuid()}.txt");
+        try
+        {
+            var cliOptions = new CLIVerifyRulesCmdOptions
+                { OutputFilePath = outputPath, OutputFileFormat = "text" };
+            new WriterFactory(_factory).GetWriter(cliOptions).WriteResults(result, cliOptions);
+
+            var content = File.ReadAllText(outputPath);
+            Assert.Contains("Status: False", content);
+            Assert.Contains("Error: ", content);
+            Assert.Contains("does not match the 'MustMatch' test", content);
+        }
+        finally
+        {
+            if (File.Exists(outputPath))
+            {
+                File.Delete(outputPath);
+            }
+        }
     }
 }
