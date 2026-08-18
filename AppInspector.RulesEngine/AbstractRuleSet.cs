@@ -156,13 +156,24 @@ public abstract class AbstractRuleSet
             return new ConvertedOatRule(rule.Id, rule);
         }
 
-        // An authored expression replaces the generated pattern-OR, condition-AND shape.
+        // An authored expression is a per-finding predicate, applied by the RuleProcessor. The engine is only asked
+        // whether the file is worth examining, so it gets a plain disjunction of every clause: a superset of the
+        // authored expression that still forces each clause to run and contribute its captures. Handing the engine
+        // the authored expression instead would evaluate NOT file-wide, letting one compliant finding suppress
+        // sibling findings that individually satisfy the rule.
+        if (!string.IsNullOrWhiteSpace(rule.Expression))
+        {
+            return new ConvertedOatRule(rule.Id, rule)
+            {
+                Clauses = clauses,
+                Expression = string.Join(" OR ", clauses.Select(clause => clause.Label))
+            };
+        }
+
         return new ConvertedOatRule(rule.Id, rule)
         {
             Clauses = clauses,
-            Expression = string.IsNullOrWhiteSpace(rule.Expression)
-                ? generatedExpression.ToString()
-                : rule.Expression
+            Expression = generatedExpression.ToString()
         };
     }
 

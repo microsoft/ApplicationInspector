@@ -274,6 +274,73 @@ public class RuleExpressionBehaviourTests
     }
 
     /// <summary>
+    ///     A NOT judged across the whole file is satisfied by any one compliant finding, which would let a single
+    ///     hardened call site hide every vulnerable one beside it. The negation has to be judged per finding.
+    /// </summary>
+    private const string negatedCondition = @"[
+    {
+        ""id"": ""SA500005"",
+        ""name"": ""Testing.Rules.NegatedCondition"",
+        ""tags"": [ ""Testing.Rules.NegatedCondition"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""a cookie without the Secure flag"",
+        ""expression"": ""cookie AND NOT secure"",
+        ""patterns"": [
+            { ""pattern"": ""setcookie"", ""type"": ""substring"", ""label"": ""cookie"", ""scopes"": [ ""code"" ] }
+        ],
+        ""conditions"": [
+            { ""pattern"": { ""pattern"": ""Secure"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+              ""search_in"": ""same-line"", ""label"": ""secure"" }
+        ]
+    }
+]";
+
+    [Theory]
+    [InlineData("setcookie a\n", 1)]
+    [InlineData("setcookie a Secure\n", 0)]
+    [InlineData("setcookie a Secure\nsetcookie b\n", 1)]
+    [InlineData("setcookie a\nsetcookie b\n", 2)]
+    public void NegationIsJudgedPerFinding_NotAcrossTheFile(string content, int expected)
+    {
+        Assert.Equal(expected, MatchedPatterns(negatedCondition, content).Length);
+    }
+
+    /// <summary>
+    ///     The worked example from the rule authoring documentation: fire when either flag is missing, including
+    ///     on a file that also contains a fully hardened cookie.
+    /// </summary>
+    private const string partiallyHardened = @"[
+    {
+        ""id"": ""SA500008"",
+        ""name"": ""Testing.Rules.PartiallyHardened"",
+        ""tags"": [ ""Testing.Rules.PartiallyHardened"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""a cookie missing either hardening flag"",
+        ""expression"": ""cookie AND NOT (secure AND httponly)"",
+        ""patterns"": [
+            { ""pattern"": ""setcookie"", ""type"": ""substring"", ""label"": ""cookie"", ""scopes"": [ ""code"" ] }
+        ],
+        ""conditions"": [
+            { ""pattern"": { ""pattern"": ""Secure"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+              ""search_in"": ""same-line"", ""label"": ""secure"" },
+            { ""pattern"": { ""pattern"": ""HttpOnly"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+              ""search_in"": ""same-line"", ""label"": ""httponly"" }
+        ]
+    }
+]";
+
+    [Theory]
+    [InlineData("setcookie a Secure HttpOnly\n", 0)]
+    [InlineData("setcookie a Secure\n", 1)]
+    [InlineData("setcookie a HttpOnly\n", 1)]
+    [InlineData("setcookie a\n", 1)]
+    [InlineData("setcookie a Secure HttpOnly\nsetcookie b Secure\n", 1)]
+    public void PartiallyHardenedFinding_IsReportedBesideAHardenedOne(string content, int expected)
+    {
+        Assert.Equal(expected, MatchedPatterns(partiallyHardened, content).Length);
+    }
+
+    /// <summary>
     ///     Regex patterns carry the pattern they belong to on the clause rather than in the label, so an author
     ///     supplied label must survive on them exactly as it does on string patterns.
     /// </summary>

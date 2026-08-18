@@ -17,7 +17,9 @@ namespace AppInspector.Tests.Commands;
 [ExcludeFromCodeCoverage]
 public class AnalyzeResilienceTests : IDisposable
 {
-    // Unbalanced parentheses make the engine throw during evaluation rather than simply not matching.
+    // A label containing an unmatched parenthesis corrupts the expression handed to the engine, which throws
+    // while evaluating rather than simply not matching. Verification rejects such a label, so the scan below
+    // disables it; the point here is what the scan does when evaluation throws, not how the rule got that way.
     private const string throwingRule = @"[
     {
         ""id"": ""SA900001"",
@@ -25,9 +27,8 @@ public class AnalyzeResilienceTests : IDisposable
         ""tags"": [ ""Testing.Rules.Throws"" ],
         ""severity"": ""Critical"",
         ""description"": ""expression that fails at evaluation time"",
-        ""expression"": ""(a OR b"",
         ""patterns"": [
-            { ""pattern"": ""alpha"", ""type"": ""substring"", ""label"": ""a"", ""scopes"": [ ""code"" ] },
+            { ""pattern"": ""alpha"", ""type"": ""substring"", ""label"": ""a)"", ""scopes"": [ ""code"" ] },
             { ""pattern"": ""beta"",  ""type"": ""substring"", ""label"": ""b"", ""scopes"": [ ""code"" ] }
         ]
     }

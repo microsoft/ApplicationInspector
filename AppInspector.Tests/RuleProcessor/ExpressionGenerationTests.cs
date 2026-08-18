@@ -74,8 +74,13 @@ public class ExpressionGenerationTests
         }
     }
 
+    /// <summary>
+    ///     The engine decides only whether a file is worth examining, so it gets a disjunction of every clause.
+    ///     The authored expression stays on the rule and is applied per finding, which is what keeps a file-wide
+    ///     NOT from suppressing findings that individually satisfy it.
+    /// </summary>
     [Fact]
-    public void AuthorSuppliedExpression_IsPassedThroughVerbatim()
+    public void AuthorSuppliedExpression_IsAppliedPerFindingNotByTheEngine()
     {
         const string ruleJson = @"[
     {
@@ -102,7 +107,8 @@ public class ExpressionGenerationTests
         rules.AddString(ruleJson, "TestRules");
         var oatRule = rules.GetOatRules().Single();
 
-        Assert.Equal("(curl AND NOT tls13) OR wget", oatRule.Expression);
+        Assert.Equal("curl OR wget OR tls13", oatRule.Expression);
+        Assert.Equal("(curl AND NOT tls13) OR wget", oatRule.AppInspectorRule.Expression);
         Assert.Equal(new[] { "curl", "wget", "tls13" }, oatRule.Clauses.Select(x => x.Label));
     }
 

@@ -230,4 +230,33 @@ public class ExpressionValidationTests
         Assert.Contains(status.Errors, x => x.Contains("whitespace or parentheses"));
         Assert.False(status.Verified);
     }
+
+    /// <summary>
+    ///     Counting parentheses to zero is not enough on its own, because a group can be closed before it was
+    ///     ever opened. Such an expression balances on a naive count but still throws when evaluated.
+    /// </summary>
+    [Fact]
+    public void ParenthesisClosedBeforeItOpens_FailsVerification()
+    {
+        var status = Verify(RuleWith(@"""expression"": ""a) AND (b"",", twoPatterns, oneCondition));
+
+        Assert.Contains(status.Errors, x => x.Contains("unbalanced parentheses"));
+        Assert.False(status.Verified);
+    }
+
+    /// <summary>
+    ///     The engine is handed a weaker expression than the authored one, so it never sees these operands and
+    ///     cannot flag them. An unresolved operand is simply false when findings are judged, so verification has
+    ///     to be what catches it.
+    /// </summary>
+    [Theory]
+    [InlineData("a OR nosuchlabel")]
+    [InlineData("a OR 0")]
+    public void ExpressionNamingAnUnknownLabel_FailsVerification(string expression)
+    {
+        var status = Verify(RuleWith($@"""expression"": ""{expression}"",", twoPatterns, oneCondition));
+
+        Assert.Contains(status.Errors, x => x.Contains("is not a pattern or condition label"));
+        Assert.False(status.Verified);
+    }
 }

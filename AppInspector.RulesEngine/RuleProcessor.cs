@@ -322,7 +322,7 @@ public class RuleProcessor
             // Verification rejects these, so reaching here means the rule set was not verified.
             _logger.LogError(
                 "Expression '{expression}' in rule {id} could not be parsed, so no findings will be reported for it.",
-                oatRule.Expression, oatRule.AppInspectorRule.Id);
+                oatRule.AppInspectorRule.Expression, oatRule.AppInspectorRule.Id);
             return new List<(int, Boundary)>();
         }
 

@@ -120,6 +120,10 @@ otherwise inexpressible rules possible, such as a disjunction of conditions or a
 That rule fires when *either* required flag is missing. Writing it as two negated conditions would
 instead mean "neither flag is present", which stays silent on partially hardened code.
 
+Every finding is judged against the expression on its own. A file containing one correctly hardened
+cookie and one missing a flag reports the second, because the first satisfying `secure AND httponly`
+says nothing about the second.
+
 > **Expressions have no operator precedence.** They are evaluated strictly left to right, so
 > `a OR b AND c` means `(a OR b) AND c`, **not** `a OR (b AND c)`. Always use parentheses to make
 > grouping explicit; rule verification rejects an expression that mixes operators at the same level
@@ -128,6 +132,7 @@ instead mean "neither flag is present", which stays silent on partially hardened
 Other rules for expressions:
 
 - Labels may not contain spaces or parentheses, and must be unique within the rule.
+- Every label named in the expression must belong to a pattern or condition in the same rule.
 - Attach parentheses to labels: `(a OR b)` is valid, `( a OR b )` is not.
 - Parentheses must be balanced.
 - A rule that sets `expression` must express negation with `NOT` rather than `negate_finding`.

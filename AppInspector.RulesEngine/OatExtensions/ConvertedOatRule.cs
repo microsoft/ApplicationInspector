@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 
@@ -7,8 +8,7 @@ namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
 /// </summary>
 public class ConvertedOatRule : CST.OAT.Rule
 {
-    private RuleExpression? _parsedExpression;
-    private string? _parsedExpressionSource;
+    private ParsedExpressionCache? _parsedExpressionCache;
 
     public ConvertedOatRule(string name, Rule rule) : base(name)
     {
@@ -21,25 +21,42 @@ public class ConvertedOatRule : CST.OAT.Rule
     public Rule AppInspectorRule { get; }
 
     /// <summary>
-    ///     The rule's expression parsed for per finding evaluation, or null if it cannot be parsed.
-    ///     Cached against the rule so it is not reparsed per file, and reparsed if the expression changes.
+    ///     The rule's authored expression parsed for per finding evaluation, or null if there is none or it cannot be
+    ///     parsed. This is the expression the rule author wrote, not <see cref="CST.OAT.Rule.Expression" />, which is
+    ///     the weaker one handed to the engine. Cached against the rule so it is not reparsed per file.
     /// </summary>
     internal RuleExpression? ParsedExpression
     {
         get
         {
-            if (Expression is not { } expression)
+            if (AppInspectorRule.Expression is not { } expression || string.IsNullOrWhiteSpace(expression))
             {
                 return null;
             }
 
-            if (!string.Equals(_parsedExpressionSource, expression, StringComparison.Ordinal))
+            // Files are scanned in parallel, so the source and the parse result are published together behind a
+            // single reference. Caching them in two fields would let another thread see a new source paired with a
+            // stale or null parse and silently drop that rule's findings.
+            var cache = Volatile.Read(ref _parsedExpressionCache);
+            if (cache is null || !string.Equals(cache.Source, expression, StringComparison.Ordinal))
             {
-                _parsedExpression = RuleExpression.TryParse(expression);
-                _parsedExpressionSource = expression;
+                cache = new ParsedExpressionCache(expression, RuleExpression.TryParse(expression));
+                Volatile.Write(ref _parsedExpressionCache, cache);
             }
 
-            return _parsedExpression;
+            return cache.Parsed;
         }
+    }
+
+    private sealed class ParsedExpressionCache
+    {
+        internal ParsedExpressionCache(string source, RuleExpression? parsed)
+        {
+            Source = source;
+            Parsed = parsed;
+        }
+
+        internal string Source { get; }
+        internal RuleExpression? Parsed { get; }
     }
 }

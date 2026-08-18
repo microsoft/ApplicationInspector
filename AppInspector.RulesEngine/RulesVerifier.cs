@@ -550,6 +550,7 @@ public class RulesVerifier
 
         var tokens = expression.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         var depth = 0;
+        var closedTooEarly = false;
         var nextGroup = 0;
         // Sibling groups at the same nesting level are independent, so operators are tracked per group
         // rather than per depth.
@@ -580,6 +581,11 @@ public class RulesVerifier
             foreach (var _ in token.Where(x => x == ')'))
             {
                 depth--;
+                if (depth < 0)
+                {
+                    closedTooEarly = true;
+                }
+
                 if (openGroups.Count > 1)
                 {
                     openGroups.Pop();
@@ -587,9 +593,29 @@ public class RulesVerifier
             }
         }
 
-        if (depth != 0)
+        // A running count that ends at zero is not enough: 'a) AND (b' balances overall while closing a group
+        // that was never opened.
+        if (depth != 0 || closedTooEarly)
         {
             Error($"Expression '{expression}' in rule {rule.Id} has unbalanced parentheses.");
+        }
+
+        // The engine is handed a weaker expression than the authored one, so it never sees these operands and
+        // cannot report them. An operand naming nothing is silently false when findings are judged, which reads
+        // as the rule mysteriously matching less than it should.
+        var knownLabels = new HashSet<string>(patternLabels.Concat(conditionLabels), StringComparer.Ordinal);
+        var unresolved = tokens
+            .Select(token => token.Trim('(', ')'))
+            .Where(bare => bare.Length > 0)
+            .Where(bare => !ReservedLabels.Contains(bare, StringComparer.OrdinalIgnoreCase))
+            .Where(bare => !knownLabels.Contains(bare))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+
+        foreach (var bare in unresolved)
+        {
+            Error(
+                $"Expression '{expression}' in rule {rule.Id} refers to '{bare}', which is not a pattern or condition label in this rule. Known labels are {string.Join(", ", knownLabels.OrderBy(x => x, StringComparer.Ordinal))}.");
         }
 
         if (RuleExpression.MaxNestingOf(expression) > RuleExpression.MaxNestingDepth)
@@ -643,30 +669,39 @@ public class RulesVerifier
     private IEnumerable<string> CheckExpressionCanReportAFinding(Rule rule, string expression,
         IReadOnlyList<string> patternLabels, IReadOnlyList<string> conditionLabels)
     {
-        const int maxConditionsToEnumerate = 16;
+        // The search is exponential in the number of conditions, so it runs on a fixed budget of evaluations.
+        // Exhausting it means no satisfying assignment was found within the budget, which is not evidence that
+        // none exists, so the rule is left alone rather than reported.
+        const int maxEvaluations = 4096;
 
         if (RuleExpression.TryParse(expression) is not { } parsed || patternLabels.Count == 0)
         {
             yield break;
         }
 
-        if (conditionLabels.Count > maxConditionsToEnumerate)
+        if (conditionLabels.Count >= 31)
         {
             yield break;
         }
 
-        var combinations = 1 << conditionLabels.Count;
+        var combinations = 1L << conditionLabels.Count;
+        var evaluations = 0;
 
         foreach (var originatingPattern in patternLabels)
-        for (var conditionValues = 0; conditionValues < combinations; conditionValues++)
+        for (var conditionValues = 0L; conditionValues < combinations; conditionValues++)
         {
+            if (++evaluations > maxEvaluations)
+            {
+                yield break;
+            }
+
             var assignment = conditionValues;
             if (parsed.Evaluate(label =>
                 {
                     for (var conditionIndex = 0; conditionIndex < conditionLabels.Count; conditionIndex++)
                         if (conditionLabels[conditionIndex] == label)
                         {
-                            return (assignment & (1 << conditionIndex)) != 0;
+                            return (assignment & (1L << conditionIndex)) != 0;
                         }
 
                     return label == originatingPattern;
