@@ -197,6 +197,28 @@ public class ExpressionValidationTests
         Assert.False(status.Verified);
     }
 
+    /// <summary>
+    ///     An operator used as a label is read as an operator by the per-finding parser and as an operand
+    ///     by the engine, so the rule would match and then report nothing.
+    /// </summary>
+    [Theory]
+    [InlineData("AND")]
+    [InlineData("or")]
+    [InlineData("Not")]
+    [InlineData("XOR")]
+    [InlineData("nand")]
+    [InlineData("NOR")]
+    public void OperatorShapedLabel_FailsVerification(string label)
+    {
+        var patterns =
+            $@"{{ ""pattern"": ""alpha"", ""type"": ""substring"", ""label"": ""{label}"", ""scopes"": [ ""code"" ] }}";
+
+        var status = Verify(RuleWith(string.Empty, patterns, oneCondition));
+
+        Assert.Contains(status.Errors, x => x.Contains("is an expression operator"));
+        Assert.False(status.Verified);
+    }
+
     [Fact]
     public void LabelContainingWhitespace_FailsVerification()
     {

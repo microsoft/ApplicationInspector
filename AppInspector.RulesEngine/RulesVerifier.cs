@@ -462,6 +462,8 @@ public class RulesVerifier
 
     private static readonly string[] BinaryOperators = { "AND", "OR", "XOR", "NAND", "NOR" };
 
+    private static readonly string[] ReservedLabels = { "AND", "OR", "XOR", "NAND", "NOR", "NOT" };
+
     /// <summary>
     ///     Runs one self-test sample. A rule can fail hard rather than simply not matching, and a bad rule
     ///     must not take verification down with it, so failures are reported as verification errors.
@@ -498,10 +500,23 @@ public class RulesVerifier
 
         foreach (var label in convertedOatRule.Clauses.Select(x => x.Label))
         {
-            if (label is not null && (label.Any(char.IsWhiteSpace) || label.Contains('(') || label.Contains(')')))
+            if (label is null)
+            {
+                continue;
+            }
+
+            if (label.Any(char.IsWhiteSpace) || label.Contains('(') || label.Contains(')'))
             {
                 Error(
                     $"Label '{label}' in rule {rule.Id} may not contain whitespace or parentheses because expressions are split on spaces.");
+            }
+
+            // An operator named as a label reads as an operator to one evaluator and as an operand to the
+            // other, so the rule would match and then report nothing.
+            if (ReservedLabels.Contains(label, StringComparer.OrdinalIgnoreCase))
+            {
+                Error(
+                    $"Label '{label}' in rule {rule.Id} is an expression operator and may not be used as a label. Reserved names are {string.Join(", ", ReservedLabels)}.");
             }
         }
 
