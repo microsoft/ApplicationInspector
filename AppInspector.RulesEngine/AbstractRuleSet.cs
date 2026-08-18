@@ -271,9 +271,10 @@ public abstract class AbstractRuleSet
     }
 
     /// <summary>
-    ///     Conditions are labelled in their own namespace. Pattern clauses must keep bare numeric labels because
-    ///     <see cref="OatExtensions.OatRegexWithIndexOperation" /> parses the label back into an index into the rule's
-    ///     patterns, so sharing a single counter between the two would both collide and shift pattern indexes.
+    ///     Conditions are labelled in their own namespace so that an automatically numbered condition cannot collide
+    ///     with an automatically numbered pattern. The pattern a finding belongs to travels on the clause's
+    ///     <see cref="OatExtensions.OatRegexWithIndexClause.PatternIndex" />, not its label, so labels are free to be
+    ///     anything the author chooses.
     /// </summary>
     private static string ConditionLabel(int conditionNumber)
     {
@@ -303,7 +304,7 @@ public abstract class AbstractRuleSet
             {
                 return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths, pattern.XPathNamespaces)
                 {
-                    Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                    Label = clauseLabel,
                     PatternIndex = clauseNumber,
                     Data = new List<string> { pattern.Pattern },
                     Capture = true,
@@ -315,7 +316,7 @@ public abstract class AbstractRuleSet
             {
                 return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths, pattern.XPathNamespaces)
                 {
-                    Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
+                    Label = clauseLabel,
                     PatternIndex = clauseNumber,
                     Data = new List<string> { $"\\b({pattern.Pattern})\\b" },
                     Capture = true,
@@ -354,7 +355,7 @@ public abstract class AbstractRuleSet
         var addedCondition = false;
         foreach (var specificCondition in pattern.Conditions ?? Array.Empty<SearchCondition>())
         {
-            var conditionLabel = ConditionLabel(conditionNumber);
+            var conditionLabel = specificCondition.Label ?? ConditionLabel(conditionNumber);
             if (GenerateCondition(specificCondition, conditionLabel, patternLabel) is not { } specificCondClause)
             {
                 continue;

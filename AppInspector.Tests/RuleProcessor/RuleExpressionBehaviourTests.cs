@@ -272,4 +272,60 @@ public class RuleExpressionBehaviourTests
 
         Assert.Equal(new[] { 1, 2 }, matches.Select(x => x.StartLocationLine).OrderBy(x => x));
     }
+
+    /// <summary>
+    ///     Regex patterns carry the pattern they belong to on the clause rather than in the label, so an author
+    ///     supplied label must survive on them exactly as it does on string patterns.
+    /// </summary>
+    [Theory]
+    [InlineData("regex")]
+    [InlineData("regexword")]
+    public void AuthorSuppliedLabel_IsHonouredOnRegexPatterns(string patternType)
+    {
+        var ruleJson = $@"[
+    {{
+        ""id"": ""SA500006"",
+        ""name"": ""Testing.Rules.RegexLabel"",
+        ""tags"": [ ""Testing.Rules.RegexLabel"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""labelled regex patterns"",
+        ""expression"": ""alpha OR beta"",
+        ""patterns"": [
+            {{ ""pattern"": ""alpha"", ""type"": ""{patternType}"", ""label"": ""alpha"", ""scopes"": [ ""code"" ] }},
+            {{ ""pattern"": ""beta"", ""type"": ""{patternType}"", ""label"": ""beta"", ""scopes"": [ ""code"" ] }}
+        ]
+    }}
+]";
+
+        Assert.Equal(new[] { "alpha", "beta" }, MatchedPatterns(ruleJson, "alpha here\nbeta there\n"));
+    }
+
+    /// <summary>
+    ///     A condition declared on a pattern is labelled in the same namespace as a rule level one, so naming it
+    ///     must work the same way in an expression.
+    /// </summary>
+    [Fact]
+    public void AuthorSuppliedLabel_IsHonouredOnPatternLevelConditions()
+    {
+        const string ruleJson = @"[
+    {
+        ""id"": ""SA500007"",
+        ""name"": ""Testing.Rules.PatternConditionLabel"",
+        ""tags"": [ ""Testing.Rules.PatternConditionLabel"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""labelled pattern level condition"",
+        ""expression"": ""p AND NOT g"",
+        ""patterns"": [
+            { ""pattern"": ""curl"", ""type"": ""substring"", ""label"": ""p"", ""scopes"": [ ""code"" ],
+              ""conditions"": [
+                { ""pattern"": { ""pattern"": ""--tlsv1.3"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+                  ""search_in"": ""same-line"", ""label"": ""g"" }
+              ] }
+        ]
+    }
+]";
+
+        Assert.Equal(new[] { "curl" }, MatchedPatterns(ruleJson, "curl http://x\n"));
+        Assert.Empty(MatchedPatterns(ruleJson, "curl --tlsv1.3 http://x\n"));
+    }
 }
