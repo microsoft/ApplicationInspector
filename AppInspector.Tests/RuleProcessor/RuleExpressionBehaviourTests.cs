@@ -152,6 +152,32 @@ public class RuleExpressionBehaviourTests
     }
 ]";
 
+    /// <summary>
+    ///     Two conditions guarded by an OR, each satisfied by a different finding. Both sub-expressions
+    ///     succeed, so the engine propagates both condition captures, and intersecting them would demand a
+    ///     finding that passed both and report nothing. This is the case that per-finding evaluation of the
+    ///     expression exists for.
+    /// </summary>
+    private const string conditionsSatisfiedByDifferentFindings = @"[
+    {
+        ""id"": ""SA500006"",
+        ""name"": ""Testing.Rules.SplitDisjunction"",
+        ""tags"": [ ""Testing.Rules.SplitDisjunction"" ],
+        ""severity"": ""Critical"",
+        ""description"": ""either guard is enough, and each is met by a different finding"",
+        ""expression"": ""p AND (g1 OR g2)"",
+        ""patterns"": [
+            { ""pattern"": ""deserialize"", ""type"": ""substring"", ""label"": ""p"", ""scopes"": [ ""code"" ] }
+        ],
+        ""conditions"": [
+            { ""pattern"": { ""pattern"": ""GUARD1"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+              ""search_in"": ""same-line"", ""label"": ""g1"" },
+            { ""pattern"": { ""pattern"": ""GUARD2"", ""type"": ""substring"", ""scopes"": [ ""code"" ] },
+              ""search_in"": ""same-line"", ""label"": ""g2"" }
+        ]
+    }
+]";
+
     private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
 
     private string[] MatchedPatterns(string ruleJson, string content)
@@ -225,5 +251,25 @@ public class RuleExpressionBehaviourTests
         // wget is not guarded by the condition, so it reports even on a line the condition would exclude.
         Assert.Equal(new[] { "wget" },
             MatchedPatterns(scopedConditionNoExpression, "curl --tlsv1.3 http://x\nwget http://y\n"));
+    }
+
+    /// <summary>
+    ///     Both findings satisfy the expression, each through a different half of the disjunction, so both
+    ///     must be reported. Intersecting the condition captures instead reports neither.
+    /// </summary>
+    [Fact]
+    public void ConditionsSatisfiedByDifferentFindings_ReportBoth()
+    {
+        RuleSet rules = new();
+        rules.AddString(conditionsSatisfiedByDifferentFindings, "TestRules");
+        Microsoft.ApplicationInspector.RulesEngine.RuleProcessor processor =
+            new(rules, new RuleProcessorOptions { Parallel = false });
+
+        Assert.True(_languages.FromFileNameOut("test.c", out var info));
+
+        var matches = processor.AnalyzeFile("deserialize GUARD1\ndeserialize GUARD2\n",
+            new FileEntry("test.c", new MemoryStream()), info);
+
+        Assert.Equal(new[] { 1, 2 }, matches.Select(x => x.StartLocationLine).OrderBy(x => x));
     }
 }

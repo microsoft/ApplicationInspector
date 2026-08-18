@@ -306,9 +306,13 @@ public class RuleProcessor
     }
 
     /// <summary>
-    ///     Reports the findings that individually satisfy the rule's expression. The engine only tells us
-    ///     that the rule matched, so each candidate finding is re-evaluated against the expression using
-    ///     which clauses reported it.
+    ///     Reports the findings that individually satisfy the rule's expression.
+    ///     The engine evaluates the same expression, but only to decide whether the rule matched at all; it
+    ///     has no notion of which findings satisfied it. Its captures approximate that, because a
+    ///     sub-expression that evaluated false contributes none, which is why most shapes report correctly
+    ///     without this. It breaks down when sibling conditions each succeed for a different finding: both
+    ///     contribute captures, and intersecting them then demands one finding that passed every condition
+    ///     and reports nothing. Re-evaluating per finding is what makes those report correctly.
     /// </summary>
     private List<(int, Boundary)> FilterCapturesByExpression(ConvertedOatRule oatRule,
         List<ClauseCapture> captures)
