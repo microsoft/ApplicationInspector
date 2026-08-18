@@ -58,6 +58,7 @@ To use these samples:
 - `pattern`: The regex/string pattern to search for (required)
 - `type`: One of: regex (default), regexword, string, substring
 - `label`: Name for this pattern, for use in `expression` (default: the pattern's index)
+- `conditions`: Array of conditions that gate only this pattern's findings
 - `scopes`: Array of: code, comment, all, html
 - `confidence`: One of: high, medium, low, unspecified
 - `modifiers`: Array of regex modifiers: i, m, s, x (or full names)
@@ -69,40 +70,41 @@ To use these samples:
 ### Condition Fields
 
 - `pattern`: A pattern object (same structure as patterns array)
-- `search_in`: Where to search - "file", "finding-region(-offset,length)", "finding-only", "same-line", "same-file", "only-before", "only-after"
+- `search_in`: Where to search - "finding-region(-offset,length)", "finding-only", "same-line", "same-file", "only-before", "only-after"
 - `negate_finding`: Boolean - if true, the finding is invalid if this condition matches
 - `label`: Name for this condition, for use in `expression` (default: the condition's clause index)
-- `applies_to_patterns`: Array of pattern labels this condition guards (default: every pattern)
+- `applies_to`: Array of languages this condition applies to (default: all)
+- `does_not_apply_to`: Array of languages this condition does not apply to
 - `_comment`: Optional comment for documentation
 
 ## Expressions
 
-By default a rule matches when **any** pattern matches and **every** condition holds:
+By default a rule matches when **any** pattern matches and **every** rule level condition holds:
 
 ```text
 (pattern0 OR pattern1 OR ...) AND condition0 AND condition1 ...
 ```
 
-Two optional fields let you go beyond that shape.
+Two optional features let you go beyond that shape.
 
-### Scoping a condition to some patterns
+### Scoping a condition to one pattern
 
-Give the patterns labels and list them in the condition's `applies_to_patterns`. Patterns that are not
-listed are unaffected by the condition, so they still report even when the condition excludes another
-pattern's finding.
+Declare the condition on the pattern it guards rather than at rule level. Other patterns are unaffected,
+so they still report even when the condition excludes this pattern's finding.
 
 ```json
 "patterns": [
-  { "pattern": "curl", "type": "substring", "label": "curl" },
-  { "pattern": "wget", "type": "substring", "label": "wget" }
-],
-"conditions": [
   {
-    "pattern": { "pattern": "--tlsv1.3", "type": "substring" },
-    "search_in": "same-line",
-    "negate_finding": true,
-    "applies_to_patterns": [ "curl" ]
-  }
+    "pattern": "curl", "type": "substring", "label": "curl",
+    "conditions": [
+      {
+        "pattern": { "pattern": "--tlsv1.3", "type": "substring" },
+        "search_in": "same-line",
+        "negate_finding": true
+      }
+    ]
+  },
+  { "pattern": "wget", "type": "substring", "label": "wget" }
 ]
 ```
 
