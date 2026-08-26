@@ -124,6 +124,12 @@ Every finding is judged against the expression on its own. A file containing one
 cookie and one missing a flag reports the second, because the first satisfying `secure AND httponly`
 says nothing about the second.
 
+Because a finding originates from exactly one pattern, every *other* pattern label is false while
+that finding is judged. An expression over pattern labels alone therefore cannot say more than the
+implicit `OR` already does: `a AND NOT b` reports exactly what `a` reports. The added expressiveness
+comes from combining patterns with conditions, which are evaluated against the finding and can be
+true or false independently of it.
+
 > **Expressions have no operator precedence.** They are evaluated strictly left to right, so
 > `a OR b AND c` means `(a OR b) AND c`, **not** `a OR (b AND c)`. Always use parentheses to make
 > grouping explicit; rule verification rejects an expression that mixes operators at the same level

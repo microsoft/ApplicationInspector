@@ -474,7 +474,15 @@ public class RulesVerifier
         try
         {
             var tc = new TextContainer(sample, language, _options.LanguageSpecs);
-            return _analyzer.Analyze(rules, tc).Any();
+
+            // Asking the engine whether the rule matched is not the same question as whether the rule reports
+            // a finding. A rule with an authored expression is handed the engine a plain disjunction of its
+            // clauses, because the authored expression is applied per finding afterwards, so engine level
+            // satisfaction is true as soon as any single pattern or condition matched. Reducing the captures
+            // the way the analyzer does is what makes a self-test assert the behaviour a user will observe.
+            return _analyzer.GetCaptures(rules, tc).Any(ruleCapture =>
+                ruleCapture.Rule is ConvertedOatRule oatRule &&
+                CaptureFilter.FilterCaptures(oatRule, ruleCapture.Captures, _logger).Count > 0);
         }
         catch (Exception e)
         {
