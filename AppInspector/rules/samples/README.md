@@ -130,6 +130,36 @@ implicit `OR` already does: `a AND NOT b` reports exactly what `a` reports. The 
 comes from combining patterns with conditions, which are evaluated against the finding and can be
 true or false independently of it.
 
+### Requiring that two patterns both appear
+
+This is why verification rejects an expression that needs two pattern labels true at once, such as
+`a AND b`. That is a normal-form requirement rather than a restriction on `AND`: a condition is a
+pattern plus a search window, so a term that only has to co-occur is written as a `same-file`
+condition instead.
+
+```json
+"expression": "p AND ois",
+"patterns": [
+    { "pattern": "readObject", "type": "substring", "label": "p", "scopes": [ "code" ] }
+],
+"conditions": [
+    { "pattern": { "pattern": "ObjectInputStream", "type": "substring", "scopes": [ "code" ] },
+      "search_in": "same-file", "label": "ois" }
+]
+```
+
+That reports each `readObject`, but only in a file that also contains `ObjectInputStream`.
+
+To report the locations of *both* terms, declare each one twice, once as a pattern so it can
+originate a finding and once as a `same-file` condition so it can constrain the other:
+
+```json
+"expression": "(a OR b) AND ca AND cb"
+```
+
+with patterns `a` and `b`, and same-file conditions `ca` and `cb` carrying those same two patterns.
+Every `a` and every `b` is then reported, but only in files that contain both.
+
 > **Expressions have no operator precedence.** They are evaluated strictly left to right, so
 > `a OR b AND c` means `(a OR b) AND c`, **not** `a OR (b AND c)`. Always use parentheses to make
 > grouping explicit; rule verification rejects an expression that mixes operators at the same level
