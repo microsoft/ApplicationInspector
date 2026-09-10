@@ -326,8 +326,8 @@
         ]
       },
       {
-        "title": "Miscellenous",
-        "dataRef": "Miscellenous",
+        "title": "Miscellaneous",
+        "dataRef": "Miscellaneous",
         "patterns": [
           {
             "searchPattern": "^Data.Media.*",

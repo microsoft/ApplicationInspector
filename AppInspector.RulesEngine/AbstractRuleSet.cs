@@ -74,8 +74,9 @@ public abstract class AbstractRuleSet
     public ConvertedOatRule? AppInspectorRuleToOatRule(Rule rule)
     {
         var clauses = new List<Clause>();
-        var clauseNumber = 0;
-        var expression = new StringBuilder("(");
+        var conditionNumber = 0;
+        var patternExprs = new List<string>();
+        var patternLabelCounter = 0;  // Stable pattern label, independent of clause numbering
 
         foreach (var pattern in rule.Patterns)
         {
@@ -107,16 +108,12 @@ public abstract class AbstractRuleSet
                 // "b" is a default option for regex engine, so no need to add "b" explicitly
             }            
 
-            if (GenerateClause(pattern, clauseNumber) is { } clause)
+            // Pass the stable pattern label (used for pattern indexing) and the running condition counter separately
+            var patternExpression = ProcessPatternWithConditions(pattern, clauses, patternLabelCounter, ref conditionNumber);
+            if (patternExpression != null)
             {
-                clauses.Add(clause);
-                if (clauseNumber > 0)
-                {
-                    expression.Append(" OR ");
-                }
-
-                expression.Append(clauseNumber);
-                clauseNumber++;
+                patternExprs.Add(patternExpression);
+                patternLabelCounter++;
             }
             else
             {
@@ -124,35 +121,75 @@ public abstract class AbstractRuleSet
             }
         }
 
-        if (clauses.Count > 0)
-        {
-            expression.Append(')');
-        }
-        else
+        if (clauses.Count == 0)
         {
             return new ConvertedOatRule(rule.Id, rule);
         }
 
+        var patternBody = string.Join(" OR ", patternExprs);
+        // OAT rejects any expression token that begins with more than one open parenthesis, so the pattern group is
+        // only wrapped when it does not already begin with one. That is safe because OAT evaluates expressions
+        // strictly left to right with no operator precedence, so the rule level conditions appended below still
+        // apply to the whole pattern group either way.
+        var generatedExpression = new StringBuilder(patternBody.StartsWith('(') ? patternBody : $"({patternBody})");
+
         foreach (var condition in rule.Conditions ?? Array.Empty<SearchCondition>())
         {
-            var clause = GenerateCondition(condition, clauseNumber);
+            var conditionLabel = condition.Label ?? ConditionLabel(conditionNumber);
+            var clause = GenerateCondition(condition, conditionLabel, null);
             if (clause is { })
             {
                 clauses.Add(clause);
-                expression.Append(" AND ");
-                expression.Append(clauseNumber);
-                clauseNumber++;
+                generatedExpression.Append(" AND ");
+                generatedExpression.Append(conditionLabel);
+                conditionNumber++;
             }
+        }
+
+        // Evaluating an expression recurses once per level of parenthesis nesting, so a deeply nested one
+        // would exhaust the stack before any rule could be reported. Refuse the rule instead.
+        if (rule.Expression is { } authored && RuleExpression.MaxNestingOf(authored) > RuleExpression.MaxNestingDepth)
+        {
+            _logger.LogError(
+                "Expression in rule {id} nests parentheses more than {max} deep and will not be used. This rule will not match anything.",
+                rule.Id, RuleExpression.MaxNestingDepth);
+            return new ConvertedOatRule(rule.Id, rule);
+        }
+
+        // An authored expression is a per-finding predicate, applied by the RuleProcessor. The engine is only asked
+        // whether the file is worth examining, so it gets a plain disjunction of every clause: a superset of the
+        // authored expression that still forces each clause to run and contribute its captures. Handing the engine
+        // the authored expression instead would evaluate NOT file-wide, letting one compliant finding suppress
+        // sibling findings that individually satisfy the rule.
+        if (!string.IsNullOrWhiteSpace(rule.Expression))
+        {
+            return new ConvertedOatRule(rule.Id, rule)
+            {
+                Clauses = clauses,
+                Expression = string.Join(" OR ", clauses.Select(clause => clause.Label))
+            };
         }
 
         return new ConvertedOatRule(rule.Id, rule)
         {
             Clauses = clauses,
-            Expression = expression.ToString()
+            Expression = generatedExpression.ToString()
         };
     }
 
-    private Clause? GenerateCondition(SearchCondition condition, int clauseNumber)
+    /// <summary>
+    ///     Builds the OAT clause for a condition.
+    /// </summary>
+    /// <param name="condition">The condition to convert.</param>
+    /// <param name="clauseLabel">
+    ///     The label to give the clause. Conditions use their own label namespace so that they cannot collide with the
+    ///     numeric labels pattern clauses require.
+    /// </param>
+    /// <param name="ownerPatternIndex">
+    ///     The index of the pattern that declared this condition, or null when the condition is declared at rule level and
+    ///     therefore gates every pattern.
+    /// </param>
+    private Clause? GenerateCondition(SearchCondition condition, string clauseLabel, int? ownerPatternIndex)
     {
         if (condition.Pattern is { } conditionPattern)
         {
@@ -165,12 +202,9 @@ public abstract class AbstractRuleSet
             {
                 if (condition.SearchIn?.Equals("finding-only", StringComparison.InvariantCultureIgnoreCase) != false)
                 {
-                    return new WithinClause(subClause)
-                    {
-                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                        FindingOnly = true,
-                        Invert = condition.NegateFinding
-                    };
+                    var clause = NewWithinClause();
+                    clause.FindingOnly = true;
+                    return clause;
                 }
 
                 if (condition.SearchIn.StartsWith("finding-region", StringComparison.InvariantCultureIgnoreCase))
@@ -192,51 +226,36 @@ public abstract class AbstractRuleSet
 
                     if (argList.Count == 2)
                     {
-                        return new WithinClause(subClause)
-                        {
-                            Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                            FindingRegion = true,
-                            Before = argList[0],
-                            After = argList[1],
-                            Invert = condition.NegateFinding
-                        };
+                        var clause = NewWithinClause();
+                        clause.FindingRegion = true;
+                        clause.Before = argList[0];
+                        clause.After = argList[1];
+                        return clause;
                     }
                 }
                 else if (condition.SearchIn.Equals("same-line", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return new WithinClause(subClause)
-                    {
-                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                        SameLineOnly = true,
-                        Invert = condition.NegateFinding
-                    };
+                    var clause = NewWithinClause();
+                    clause.SameLineOnly = true;
+                    return clause;
                 }
                 else if (condition.SearchIn.Equals("same-file", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return new WithinClause(subClause)
-                    {
-                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                        SameFile = true,
-                        Invert = condition.NegateFinding
-                    };
+                    var clause = NewWithinClause();
+                    clause.SameFile = true;
+                    return clause;
                 }
                 else if (condition.SearchIn.Equals("only-before", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return new WithinClause(subClause)
-                    {
-                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                        OnlyBefore = true,
-                        Invert = condition.NegateFinding
-                    };
+                    var clause = NewWithinClause();
+                    clause.OnlyBefore = true;
+                    return clause;
                 }
                 else if (condition.SearchIn.Equals("only-after", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return new WithinClause(subClause)
-                    {
-                        Label = clauseNumber.ToString(CultureInfo.InvariantCulture),
-                        OnlyAfter = true,
-                        Invert = condition.NegateFinding
-                    };
+                    var clause = NewWithinClause();
+                    clause.OnlyAfter = true;
+                    return clause;
                 }
                 else
                 {
@@ -244,24 +263,48 @@ public abstract class AbstractRuleSet
                         "Search condition {Condition} is not one of the accepted values and this condition will be ignored",
                         condition.SearchIn);
                 }
+
+                WithinClause NewWithinClause()
+                {
+                    return new WithinClause(subClause)
+                    {
+                        Label = clauseLabel,
+                        Invert = condition.NegateFinding,
+                        LanguageAppliesTo = condition.AppliesTo,
+                        LanguageDoesNotApplyTo = condition.DoesNotApplyTo,
+                        OwnerPatternIndex = ownerPatternIndex
+                    };
+                }
             }
         }
 
         return null;
     }
 
-    private Clause? GenerateClause(SearchPattern pattern, int clauseNumber = -1)
+    /// <summary>
+    ///     Conditions are labelled in their own namespace so that an automatically numbered condition cannot collide
+    ///     with an automatically numbered pattern. The pattern a finding belongs to travels on the clause's
+    ///     <see cref="OatExtensions.OatRegexWithIndexClause.PatternIndex" />, not its label, so labels are free to be
+    ///     anything the author chooses.
+    /// </summary>
+    private static string ConditionLabel(int conditionNumber)
+    {
+        return "c" + conditionNumber.ToString(CultureInfo.InvariantCulture);
+    }
+
+    private Clause? GenerateClause(SearchPattern pattern, int clauseNumber = -1, string? label = null)
     {
         if (pattern.Pattern != null)
         {
             var scopes = pattern.Scopes ?? new[] { PatternScope.All };
+            var clauseLabel = label ?? clauseNumber.ToString(CultureInfo.InvariantCulture);
             if (pattern.PatternType is PatternType.String or PatternType.Substring)
             {
                 return new OatSubstringIndexClause(scopes, useWordBoundaries: pattern.PatternType == PatternType.String,
                     xPaths: pattern.XPaths, jsonPaths: pattern.JsonPaths, yamlPaths: pattern.YamlPaths, xPathNameSpaces: pattern.XPathNamespaces)
                 {
-                    Label = clauseNumber.ToString(CultureInfo
-                        .InvariantCulture), //important to pattern index identification
+                    Label = clauseLabel,
+                    PatternIndex = clauseNumber,
                     Data = new List<string> { pattern.Pattern },
                     Capture = true,
                     Arguments = pattern.Modifiers,
@@ -272,8 +315,8 @@ public abstract class AbstractRuleSet
             {
                 return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths, pattern.XPathNamespaces)
                 {
-                    Label = clauseNumber.ToString(CultureInfo
-                        .InvariantCulture), //important to pattern index identification
+                    Label = clauseLabel,
+                    PatternIndex = clauseNumber,
                     Data = new List<string> { pattern.Pattern },
                     Capture = true,
                     Arguments = pattern.Modifiers,
@@ -284,8 +327,8 @@ public abstract class AbstractRuleSet
             {
                 return new OatRegexWithIndexClause(scopes, null, pattern.XPaths, pattern.JsonPaths, pattern.YamlPaths, pattern.XPathNamespaces)
                 {
-                    Label = clauseNumber.ToString(CultureInfo
-                        .InvariantCulture), //important to pattern index identification
+                    Label = clauseLabel,
+                    PatternIndex = clauseNumber,
                     Data = new List<string> { $"\\b({pattern.Pattern})\\b" },
                     Capture = true,
                     Arguments = pattern.Modifiers,
@@ -294,6 +337,51 @@ public abstract class AbstractRuleSet
         }
 
         return null;
+    }
+
+    /// <summary>
+    ///     Process a single pattern and its associated conditions, building the expression and clauses.
+    /// </summary>
+    /// <param name="pattern">The search pattern to process</param>
+    /// <param name="clauses">List of clauses to append to</param>
+    /// <param name="patternLabel">Stable label for the pattern clause (used for pattern indexing)</param>
+    /// <param name="conditionNumber">Running counter used to label condition clauses</param>
+    /// <returns>Expression string for this pattern and its conditions</returns>
+    private string? ProcessPatternWithConditions(SearchPattern pattern, List<Clause> clauses, int patternLabel, ref int conditionNumber)
+    {
+        // An author supplied label replaces the numeric one in the expression; the pattern index is carried
+        // separately on the clause, so naming a pattern cannot disturb which pattern a finding is reported against.
+        var label = pattern.Label ?? patternLabel.ToString(CultureInfo.InvariantCulture);
+
+        if (GenerateClause(pattern, patternLabel, label) is not { } primaryClause)
+        {
+            return null;
+        }
+
+        clauses.Add(primaryClause);
+        var expressionText = new StringBuilder();
+        expressionText.Append(label);
+
+        // Apply pattern-specific conditions if they exist
+        var addedCondition = false;
+        foreach (var specificCondition in pattern.Conditions ?? Array.Empty<SearchCondition>())
+        {
+            var conditionLabel = specificCondition.Label ?? ConditionLabel(conditionNumber);
+            if (GenerateCondition(specificCondition, conditionLabel, patternLabel) is not { } specificCondClause)
+            {
+                continue;
+            }
+
+            clauses.Add(specificCondClause);
+            expressionText.Append(" AND ");
+            expressionText.Append(conditionLabel);
+            conditionNumber++;
+            addedCondition = true;
+        }
+
+        // Parenthesize only when conditions were actually added, so that a pattern whose conditions all failed to
+        // generate does not produce a redundant group.
+        return addedCondition ? $"({expressionText})" : expressionText.ToString();
     }
 
     /// <summary>

@@ -72,6 +72,7 @@ public class OatSubstringIndexOperation : OatOperation
             if (clause.Data is { Count: > 0 } stringList)
             {
                 var outmatches = new List<(int, Boundary)>(); //tuple results i.e. pattern index and where
+                var patternIndex = src.PatternIndex;
 
                 for (var i = 0; i < stringList.Count; i++)
                 {
@@ -86,7 +87,7 @@ public class OatSubstringIndexOperation : OatOperation
                                 foreach (var match in matches)
                                 {
                                     match.Index += target.Item2.Index;
-                                    outmatches.Add((i, match));
+                                    outmatches.Add((patternIndex, match));
                                 }
                             }
                         }
@@ -103,7 +104,7 @@ public class OatSubstringIndexOperation : OatOperation
                                 foreach (var match in matches)
                                 {
                                     match.Index += target.Item2.Index;
-                                    outmatches.Add((i, match));
+                                    outmatches.Add((patternIndex, match));
                                 }
                             }
                         }
@@ -120,7 +121,7 @@ public class OatSubstringIndexOperation : OatOperation
                                 foreach (var match in matches)
                                 {
                                     match.Index += target.Item2.Index;
-                                    outmatches.Add((i, match));
+                                    outmatches.Add((patternIndex, match));
                                 }
                             }
                         }
@@ -133,12 +134,12 @@ public class OatSubstringIndexOperation : OatOperation
                         {
                             var matches = GetMatches(tc.GetBoundaryText(boundary), stringList[i], comparisonType, tc,
                                 src);
-                            outmatches.AddRange(matches.Select(x => (i, x)));
+                            outmatches.AddRange(matches.Select(x => (patternIndex, x)));
                         }
                         else
                         {
                             var matches = GetMatches(tc.FullContent, stringList[i], comparisonType, tc, src);
-                            outmatches.AddRange(matches.Select(x => (i, x)));
+                            outmatches.AddRange(matches.Select(x => (patternIndex, x)));
                         }
                     }
                 }

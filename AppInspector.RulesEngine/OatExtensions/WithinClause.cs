@@ -1,5 +1,6 @@
 ﻿// Copyright (C) Microsoft. All rights reserved. Licensed under the MIT License.
 
+using System.Collections.Generic;
 using Microsoft.CST.OAT;
 
 namespace Microsoft.ApplicationInspector.RulesEngine.OatExtensions;
@@ -20,5 +21,22 @@ public class WithinClause : Clause
     public bool FindingOnly { get; set; }
     public bool SameLineOnly { get; set; }
     public bool FindingRegion { get; set; }
+
     public Clause SubClause { get; }
+
+    /// <summary>
+    ///     Index of the pattern that declared this condition, or null when the condition was declared at rule level.
+    ///     A rule level condition gates every pattern in the rule; a pattern level condition gates only its own pattern.
+    /// </summary>
+    public int? OwnerPatternIndex { get; set; }
+
+    /// <summary>
+    ///     Languages where this condition applies. Empty means applies to all (except those in LanguageDoesNotApplyTo).
+    /// </summary>
+    public IList<string>? LanguageAppliesTo { get; set; }
+
+    /// <summary>
+    ///     Languages where this condition does not apply.
+    /// </summary>
+    public IList<string>? LanguageDoesNotApplyTo { get; set; }
 }

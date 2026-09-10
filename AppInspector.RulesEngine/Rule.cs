@@ -188,6 +188,16 @@ namespace Microsoft.ApplicationInspector.RulesEngine
         public SearchCondition[]? Conditions { get; set; }
 
         /// <summary>
+        ///     Optional boolean expression combining pattern and condition labels, for example
+        ///     <c>(curl AND NOT tls13) OR wget</c>. When unset, any pattern matching satisfies the rule and
+        ///     every condition must then hold.
+        ///     Evaluated strictly left to right with no operator precedence, so grouping requires parentheses:
+        ///     <c>a OR b AND c</c> means <c>(a OR b) AND c</c>.
+        /// </summary>
+        [JsonPropertyName("expression")]
+        public string? Expression { get; set; }
+
+        /// <summary>
         ///     Optional list of self-test sample texts that the rule must match to be considered valid.
         /// </summary>
         [JsonPropertyName("must-match")]

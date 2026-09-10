@@ -14,6 +14,13 @@ public class SearchPattern
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public Confidence Confidence { get; set; }
 
+    /// <summary>
+    ///     Optional name for this pattern, for use in the rule's <c>expression</c>. Defaults to the
+    ///     pattern's index. May not contain spaces or parentheses, and must be unique within the rule.
+    /// </summary>
+    [JsonPropertyName("label")]
+    public string? Label { get; set; }
+
     [JsonPropertyName("modifiers")]
     public List<string> Modifiers { get; set; } = new List<string>();
 
@@ -55,4 +62,10 @@ public class SearchPattern
     /// </summary>
     [JsonPropertyName("ymlpaths")]
     public string[]? YamlPaths { get; set; }
+
+    /// <summary>
+    ///     Per-pattern conditions. When pattern matches and conditions are present, conditions must be satisfied.
+    /// </summary>
+    [JsonPropertyName("conditions")]
+    public SearchCondition[]? Conditions { get; set; }
 }

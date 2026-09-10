@@ -172,8 +172,7 @@ public class OatRegexWithIndexOperation : OatOperation
                     Index = m.Index + (boundary?.Index ?? 0)
                 };
 
-                //regex patterns will be indexed off data while string patterns result in N clauses
-                var patternIndex = Convert.ToInt32(clause.Label);
+                var patternIndex = clause is OatRegexWithIndexClause src ? src.PatternIndex : -1;
 
                 // Should return only scoped matches
                 if (tc.ScopeMatch(scopes, translatedBoundary))

@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.ApplicationInspector.Commands;
 
-//Miscellenous common methods needed from several places throughout
+//Miscellaneous common methods needed from several places throughout
 public static class RuleSetUtils
 {
     /// <summary>

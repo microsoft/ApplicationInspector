@@ -24,6 +24,12 @@ public class OatRegexWithIndexClause : Clause
 
     public Dictionary<string, string> XPathNameSpaces { get; }
 
+    /// <summary>
+    ///     Index of the <see cref="SearchPattern" /> in the originating rule that this clause was built from.
+    ///     Used to report which pattern matched; -1 when the clause is a condition subclause.
+    /// </summary>
+    public int PatternIndex { get; set; } = -1;
+
     public PatternScope[] Scopes { get; }
     public string[]? YmlPaths { get; }
 }
