@@ -203,15 +203,6 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "rest_framework",
-        "type": "regexword",
-        "scopes": [
-          "code"
-        ],
-        "confidence": "high",
-        "_comment": "Django REST Framework import"
-      },
-      {
         "pattern": "@api_view(",
         "type": "substring",
         "scopes": [
@@ -219,14 +210,25 @@
         ],
         "confidence": "high",
         "_comment": "Django REST Framework function view decorator"
+      },
+      {
+        "pattern": "from\\s+rest_framework(?:\\.\\w+)*\\s+import\\s+[^\\r\\n]*(APIView|ViewSet|ModelViewSet|ReadOnlyModelViewSet|GenericViewSet|DefaultRouter|SimpleRouter)\\b|class\\s+\\w+\\([^\\r\\n)]*(APIView|ViewSet|ModelViewSet|ReadOnlyModelViewSet|GenericViewSet)[^\\r\\n)]*\\)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Django REST Framework API views, viewsets, and router registrations"
       }
     ],
     "must-match": [
-      "from rest_framework import serializers",
-      "@api_view(['GET', 'POST'])"
+      "@api_view(['GET', 'POST'])",
+      "from rest_framework.views import APIView\n\nclass UserView(APIView):\n    pass",
+      "from rest_framework.routers import DefaultRouter\n\nrouter = DefaultRouter()\nrouter.register(r'users', UserViewSet)"
     ],
     "must-not-match": [
-      "from django.db import models"
+      "from django.db import models",
+      "from rest_framework import serializers\n\nclass UserSerializer(serializers.Serializer):\n    name = serializers.CharField()"
     ]
   },
   {
@@ -483,17 +485,8 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "@nestjs/common",
-        "type": "substring",
-        "scopes": [
-          "code"
-        ],
-        "confidence": "high",
-        "_comment": "NestJS import"
-      },
-      {
-        "pattern": "@Controller(",
-        "type": "substring",
+        "pattern": "@Controller\\b",
+        "type": "regex",
         "scopes": [
           "code"
         ],
@@ -502,11 +495,12 @@
       }
     ],
     "must-match": [
-      "import { Controller, Get } from '@nestjs/common';",
-      "@Controller('cats')"
+      "import { Controller, Get } from '@nestjs/common';\n\n@Controller('cats')\nexport class CatsController {\n  @Get()\n  findAll() { return []; }\n}",
+      "@Controller()\nexport class HealthController {}"
     ],
     "must-not-match": [
-      "const controller = new AbortController();"
+      "const controller = new AbortController();",
+      "import { Injectable, OnModuleInit } from '@nestjs/common';\n\n@Injectable()\nexport class CatsService implements OnModuleInit {\n  onModuleInit() {}\n}"
     ]
   },
   {
@@ -896,16 +890,31 @@
           "code"
         ],
         "confidence": "high",
-        "_comment": "Spring request mapping annotation"
+        "_comment": "Spring request mapping annotation",
+        "conditions": [
+          {
+            "pattern": {
+              "pattern": "@(RestController|Controller)\\b",
+              "type": "regex",
+              "scopes": [
+                "code"
+              ]
+            },
+            "search_in": "same-file",
+            "negate_finding": false
+          }
+        ]
       }
     ],
     "must-match": [
       "@RestController",
-      "@GetMapping(\"/users\")"
+      "@RestController\nclass UserController {\n    @GetMapping(\"/users\")\n    List<User> users() { return List.of(); }\n}",
+      "@Controller\nclass PageController {\n    @RequestMapping(\"/home\")\n    String home() { return \"home\"; }\n}"
     ],
     "must-not-match": [
       "import java.util.Map;",
-      "@Component"
+      "@Component",
+      "import org.springframework.cloud.openfeign.FeignClient;\n\n@FeignClient(name = \"users\")\ninterface UserClient {\n    @GetMapping(\"/users\")\n    List<User> users();\n}"
     ]
   },
   {
@@ -922,22 +931,25 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "(javax|jakarta)\\.ws\\.rs\\.(ApplicationPath|Path|GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS|Produces|Consumes|BeanParam|PathParam|QueryParam|FormParam|HeaderParam|Context)\\b|ResourceConfig\\s*\\(",
+        "pattern": "@(ApplicationPath|Path)\\s*\\([^\\r\\n)]*\\)(?:\\s*@[A-Za-z_][\\w.]*\\s*(?:\\([^\\r\\n)]*\\))?){0,8}\\s*(?:(?:public|final|abstract|open|data)\\s+)*class\\s+\\w+|ResourceConfig\\s*\\(",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "confidence": "high",
-        "_comment": "JAX-RS import"
+        "_comment": "JAX-RS resource classes or server resource registration"
       }
     ],
     "must-match": [
-      "import javax.ws.rs.GET;",
-      "import jakarta.ws.rs.Path;"
+      "import javax.ws.rs.GET;\nimport javax.ws.rs.Path;\n\n@Path(\"/users\")\npublic class UsersResource {\n    @GET\n    public String users() { return \"[]\"; }\n}",
+      "import jakarta.ws.rs.ApplicationPath;\n\n@ApplicationPath(\"/api\")\npublic class ApiApplication extends Application {}",
+      "import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;\nimport jakarta.ws.rs.GET;\nimport jakarta.ws.rs.Path;\n\n@RegisterRestClient\n@Path(\"/remote\")\npublic interface RemoteClient {\n    @GET\n    String get();\n}\n\n@Path(\"/local\")\npublic class LocalResource {\n    @GET\n    public String get() { return \"ok\"; }\n}"
     ],
     "must-not-match": [
       "import java.nio.file.Path;",
-      "import jakarta.ws.rs.client.Client;"
+      "import jakarta.ws.rs.client.Client;",
+      "import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;\nimport jakarta.ws.rs.GET;\nimport jakarta.ws.rs.Path;\n\n@RegisterRestClient\n@Path(\"/remote\")\npublic interface RemoteClient {\n    @GET\n    String get();\n}",
+      "import org.eclipse.microprofile.rest.client.RestClientBuilder;\nimport jakarta.ws.rs.GET;\nimport jakarta.ws.rs.Path;\n\n@Path(\"/remote\")\npublic interface RemoteClient {\n    @GET\n    String get();\n}\n\nclass Caller {\n    RemoteClient client = RestClientBuilder.newBuilder().build(RemoteClient.class);\n}"
     ]
   },
   {
