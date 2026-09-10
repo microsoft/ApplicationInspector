@@ -1,0 +1,301 @@
+[
+  {
+    "name": "OS: Reflection - Method Invocation",
+    "id": "AI036000",
+    "description": "Detects dynamic method invocation via reflection which can enable runtime behavior not visible at static analysis time",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.MethodInvocation"
+    ],
+    "severity": "Moderate",
+    "patterns": [
+      {
+        "pattern": "MethodInfo|MethodBase",
+        "type": "RegexWord",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "Medium",
+        "_comment": "Detects MethodInfo and MethodBase usage for reflection"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "\\.Invoke\\(",
+          "type": "Regex",
+          "scopes": [
+            "Code"
+          ]
+        },
+        "search_in": "same-line",
+        "_comment": "Ensures .Invoke( is on the same line to confirm method invocation"
+      }
+    ],
+    "must-match": [
+      "MethodInfo method = type.GetMethod(\"Execute\"); method.Invoke(instance, null);",
+      "MethodBase baseMethod = typeof(MyClass).GetMethod(\"Test\"); var result = baseMethod.Invoke(obj, new object[] { });",
+      "MethodInfo mi = GetMethodInfo(); mi.Invoke(target, args);"
+    ],
+    "must-not-match": [
+      "MethodInfo method = type.GetMethod(\"Execute\");",
+      "var info = typeof(String).GetMethod(\"ToUpper\");",
+      "public void MyMethod() { }",
+      "method.InvokeAsync(args);"
+    ]
+  },
+  {
+    "name": "OS: Reflection - Constructor Invocation",
+    "id": "AI036100",
+    "description": "Detects dynamic object creation via reflection using ConstructorInfo",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.ConstructorInvocation"
+    ],
+    "severity": "Moderate",
+    "patterns": [
+      {
+        "pattern": "ConstructorInfo",
+        "type": "RegexWord",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "Medium",
+        "_comment": "Detects ConstructorInfo usage for reflection"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "\\.Invoke\\(",
+          "type": "Regex",
+          "scopes": [
+            "Code"
+          ]
+        },
+        "search_in": "same-line",
+        "_comment": "Ensures .Invoke( is on the same line to confirm constructor invocation"
+      }
+    ],
+    "must-match": [
+      "ConstructorInfo ctor = type.GetConstructor(Type.EmptyTypes); var instance = ctor.Invoke(null);",
+      "var constructor = typeof(MyClass).GetConstructor(new[] { typeof(string) }); object obj = constructor.Invoke(new object[] { \"test\" });",
+      "ConstructorInfo ci = t.GetConstructor(paramTypes); ci.Invoke(parameters);"
+    ],
+    "must-not-match": [
+      "ConstructorInfo ctor = type.GetConstructor(Type.EmptyTypes);",
+      "var info = typeof(MyClass).GetConstructors();",
+      "public MyClass() { }",
+      "new MyClass();"
+    ]
+  },
+  {
+    "name": "OS: Reflection - Dynamic Assembly Loading",
+    "id": "AI036200",
+    "description": "Detects dynamic assembly loading at runtime using Assembly.Load which can introduce code not visible at static analysis time",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.AssemblyLoading"
+    ],
+    "severity": "Moderate",
+    "patterns": [
+      {
+        "pattern": "Assembly\\.Load\\(",
+        "type": "Regex",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "High",
+        "_comment": "Detects Assembly.Load( - note LoadFile and LoadFrom are already in load_dll.json"
+      }
+    ],
+    "must-match": [
+      "Assembly assembly = Assembly.Load(\"MyAssembly\");",
+      "var asm = Assembly.Load(assemblyName);",
+      "Assembly.Load(new AssemblyName(\"Plugin.Core\"));"
+    ],
+    "must-not-match": [
+      "Assembly assembly = Assembly.GetExecutingAssembly();",
+      "var asm = Assembly.GetCallingAssembly();",
+      "Assembly.LoadFrom(\"path/to/assembly.dll\");",
+      "Assembly.LoadFile(@\"C:\\assemblies\\mylib.dll\");"
+    ]
+  },
+  {
+    "name": "OS: Reflection - InvokeMember",
+    "id": "AI036300",
+    "description": "Detects Type.InvokeMember which enables dynamic member access via reflection",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.InvokeMember"
+    ],
+    "severity": "Moderate",
+    "patterns": [
+      {
+        "pattern": "\\.InvokeMember\\(",
+        "type": "Regex",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "High",
+        "_comment": "Detects .InvokeMember( for dynamic member access"
+      }
+    ],
+    "must-match": [
+      "type.InvokeMember(\"MyMethod\", BindingFlags.InvokeMethod, null, obj, args);",
+      "var result = typeof(MyClass).InvokeMember(\"Execute\", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, instance, null);",
+      "t.InvokeMember(methodName, flags, binder, target, parameters);"
+    ],
+    "must-not-match": [
+      "var members = type.GetMembers();",
+      "type.GetMethod(\"MyMethod\");",
+      "obj.MyMethod();",
+      "InvokeMemberAsync(name, args);"
+    ]
+  },
+  {
+    "name": "OS: Reflection - Activator.CreateInstance",
+    "id": "AI036400",
+    "description": "Detects dynamic object creation using Activator.CreateInstance",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.CreateInstance"
+    ],
+    "severity": "Moderate",
+    "patterns": [
+      {
+        "pattern": "Activator\\.CreateInstance",
+        "type": "RegexWord",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "High",
+        "_comment": "Detects Activator.CreateInstance for dynamic object instantiation"
+      }
+    ],
+    "must-match": [
+      "object instance = Activator.CreateInstance(typeof(MyClass));",
+      "var obj = Activator.CreateInstance(\"MyAssembly\", \"MyNamespace.MyClass\");",
+      "T instance = (T)Activator.CreateInstance(type);",
+      "Activator.CreateInstance<MyPlugin>();"
+    ],
+    "must-not-match": [
+      "new MyClass();",
+      "var instance = new MyClass();",
+      "MyClass.Create();",
+      "CreateInstance();"
+    ]
+  },
+  {
+    "name": "OS: Reflection - GetMethod",
+    "id": "AI036500",
+    "description": "Detects retrieval of method information via reflection",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.GetMethod"
+    ],
+    "severity": "Moderate",
+    "patterns": [
+      {
+        "pattern": "\\.GetMethod\\(",
+        "type": "Regex",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "Medium",
+        "_comment": "Detects .GetMethod( which is often used before dynamic invocation"
+      }
+    ],
+    "must-match": [
+      "MethodInfo method = type.GetMethod(\"Execute\");",
+      "var methodInfo = typeof(MyClass).GetMethod(\"Test\", BindingFlags.Public | BindingFlags.Instance);",
+      "Type t = typeof(string); t.GetMethod(\"ToUpper\");"
+    ],
+    "must-not-match": [
+      "var methods = type.GetMethods();",
+      "public void MyMethod() { }",
+      "GetMethodAsync(name);",
+      "CustomGetMethod();"
+    ]
+  },
+  {
+    "name": "OS: Reflection - GetConstructor",
+    "id": "AI036600",
+    "description": "Detects retrieval of constructor information via reflection",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.GetConstructor"
+    ],
+    "severity": "Moderate",
+    "patterns": [
+      {
+        "pattern": "\\.GetConstructor\\(",
+        "type": "Regex",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "Medium",
+        "_comment": "Detects .GetConstructor( which is often used before dynamic object creation"
+      }
+    ],
+    "must-match": [
+      "ConstructorInfo ctor = type.GetConstructor(Type.EmptyTypes);",
+      "var constructor = typeof(MyClass).GetConstructor(new[] { typeof(string), typeof(int) });",
+      "Type t = GetType(); t.GetConstructor(parameterTypes);"
+    ],
+    "must-not-match": [
+      "var constructors = type.GetConstructors();",
+      "public MyClass() { }",
+      "GetConstructorAsync();",
+      "CustomGetConstructor();"
+    ]
+  },
+  {
+    "name": "OS: Reflection - Dynamic Type Loading",
+    "id": "AI036700",
+    "description": "Detects dynamic type loading using Type.GetType",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "OS.Reflection.GetType"
+    ],
+    "severity": "Moderate",
+    "patterns": [
+      {
+        "pattern": "Type\\.GetType\\(",
+        "type": "Regex",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "Medium",
+        "_comment": "Detects Type.GetType( for dynamic type loading from string"
+      }
+    ],
+    "must-match": [
+      "Type type = Type.GetType(\"System.String\");",
+      "var t = Type.GetType(\"MyNamespace.MyClass, MyAssembly\");",
+      "Type.GetType(typeName, true);"
+    ],
+    "must-not-match": [
+      "var type = typeof(MyClass);",
+      "Type t = obj.GetType();",
+      "GetType();",
+      "myObject.GetType();"
+    ]
+  }
+]
