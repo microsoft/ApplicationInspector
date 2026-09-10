@@ -104,6 +104,11 @@ public record CLIAnalysisSharedCommandOptions : CLICustomRulesCommandOptions
     [Option('u', "scan-unknown-filetypes", Required = false, HelpText = "Scan files of unknown types.")]
     public bool ScanUnknownTypes { get; set; }
 
+    [Option("follow-symlinks", Required = false,
+        HelpText =
+            "Follow symbolic links found while traversing a source directory. Skipped links are reported as skipped files. A link named directly on the command line is always scanned. On Windows this option also applies to other reparse points, including NTFS junctions and cloud placeholder files such as OneDrive Files On-Demand.")]
+    public bool FollowSymlinks { get; set; }
+
     [Option('c', "confidence-filters", Required = false, Separator = ',',
         HelpText =
             "Output only matches with specified confidence <value>,<value>. Default: Medium,High. [High|Medium|Low]",
