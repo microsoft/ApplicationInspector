@@ -474,7 +474,15 @@ public class RulesVerifier
         try
         {
             var tc = new TextContainer(sample, language, _options.LanguageSpecs);
-            return _analyzer.Analyze(rules, tc).Any();
+
+            // Asking the engine whether the rule matched is not the same question as whether the rule reports
+            // a finding. A rule with an authored expression is handed the engine a plain disjunction of its
+            // clauses, because the authored expression is applied per finding afterwards, so engine level
+            // satisfaction is true as soon as any single pattern or condition matched. Reducing the captures
+            // the way the analyzer does is what makes a self-test assert the behaviour a user will observe.
+            return _analyzer.GetCaptures(rules, tc).Any(ruleCapture =>
+                ruleCapture.Rule is ConvertedOatRule oatRule &&
+                CaptureFilter.FilterCaptures(oatRule, ruleCapture.Captures, _logger).Count > 0);
         }
         catch (Exception e)
         {
@@ -632,29 +640,13 @@ public class RulesVerifier
                 $"Expression '{expression}' in rule {rule.Id} mixes the operators {string.Join(", ", group.Value.OrderBy(x => x))} without parentheses. Expressions are evaluated left to right with no operator precedence, so add parentheses to make the grouping explicit.");
         }
 
-        errors.AddRange(CheckExpressionCanReportAFinding(rule, expression, patternLabels, conditionLabels));
-
-        // Clauses are evaluated in the order they appear and captures accumulate as they go, so a condition
-        // reached before any pattern has nothing to test and is always false.
-        var seenAPattern = false;
-        string? conditionBeforeAnyPattern = null;
-
-        foreach (var bare in tokens.Select(token => token.Trim('(', ')')))
+        if (convertedOatRule.ParsedExpression is { } parsedExpression)
         {
-            if (patternLabels.Contains(bare))
-            {
-                seenAPattern = true;
-            }
-            else if (!seenAPattern && conditionLabels.Contains(bare))
-            {
-                conditionBeforeAnyPattern ??= bare;
-            }
+            errors.AddRange(CheckExpressionCanReportAFinding(rule, parsedExpression, patternLabels, conditionLabels));
         }
-
-        if (conditionBeforeAnyPattern is not null)
+        else
         {
-            Error(
-                $"Expression '{expression}' in rule {rule.Id} uses the condition '{conditionBeforeAnyPattern}' before any pattern. Conditions test findings that earlier clauses produced, so one evaluated first is always false and the rule can never report. Put a pattern label ahead of it.");
+            Error($"Expression '{expression}' in rule {rule.Id} could not be parsed.");
         }
 
         return errors;
@@ -666,7 +658,7 @@ public class RulesVerifier
     ///     will match at the rule level and then report nothing, which looks like the rule silently
     ///     failing. Conditions are treated as free, since their value depends on the file being scanned.
     /// </summary>
-    private IEnumerable<string> CheckExpressionCanReportAFinding(Rule rule, string expression,
+    private IEnumerable<string> CheckExpressionCanReportAFinding(Rule rule, RuleExpression expression,
         IReadOnlyList<string> patternLabels, IReadOnlyList<string> conditionLabels)
     {
         // The search is exponential in the number of conditions, so it runs on a fixed budget of evaluations.
@@ -674,7 +666,7 @@ public class RulesVerifier
         // none exists, so the rule is left alone rather than reported.
         const int maxEvaluations = 4096;
 
-        if (RuleExpression.TryParse(expression) is not { } parsed || patternLabels.Count == 0)
+        if (patternLabels.Count == 0)
         {
             yield break;
         }
@@ -696,7 +688,7 @@ public class RulesVerifier
             }
 
             var assignment = conditionValues;
-            if (parsed.Evaluate(label =>
+            if (expression.Evaluate(label =>
                 {
                     for (var conditionIndex = 0; conditionIndex < conditionLabels.Count; conditionIndex++)
                         if (conditionLabels[conditionIndex] == label)
@@ -712,7 +704,7 @@ public class RulesVerifier
         }
 
         var message =
-            $"Expression '{expression}' in rule {rule.Id} can never report a finding, because it requires more than one pattern to be true at once and a finding comes from a single pattern. Split the patterns into separate rules, or express the extra requirement as a condition.";
+            $"Expression '{rule.Expression}' in rule {rule.Id} can never report a finding, because it requires more than one pattern to be true at once and a finding comes from a single pattern. Split the patterns into separate rules, or express the extra requirement as a condition.";
         _logger?.LogError("{Message}", message);
         yield return message;
     }

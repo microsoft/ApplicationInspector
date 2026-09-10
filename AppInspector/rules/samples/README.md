@@ -124,6 +124,42 @@ Every finding is judged against the expression on its own. A file containing one
 cookie and one missing a flag reports the second, because the first satisfying `secure AND httponly`
 says nothing about the second.
 
+Because a finding originates from exactly one pattern, every *other* pattern label is false while
+that finding is judged. An expression over pattern labels alone can therefore select which patterns
+originate findings, but it cannot require sibling patterns to co-occur: `a AND NOT b` reports exactly
+what `a` reports. Conditions add co-occurrence tests because they are evaluated against each finding
+and can be true or false independently of it.
+
+### Requiring that two patterns both appear
+
+This is why verification rejects an expression that needs two pattern labels true at once, such as
+`a AND b`. That is a normal-form requirement rather than a restriction on `AND`: a condition is a
+pattern plus a search window, so a term that only has to co-occur is written as a `same-file`
+condition instead.
+
+```json
+"expression": "p AND ois",
+"patterns": [
+    { "pattern": "readObject", "type": "substring", "label": "p", "scopes": [ "code" ] }
+],
+"conditions": [
+    { "pattern": { "pattern": "ObjectInputStream", "type": "substring", "scopes": [ "code" ] },
+      "search_in": "same-file", "label": "ois" }
+]
+```
+
+That reports each `readObject`, but only in a file that also contains `ObjectInputStream`.
+
+To report the locations of *both* terms, declare each one twice, once as a pattern so it can
+originate a finding and once as a `same-file` condition so it can constrain the other:
+
+```json
+"expression": "(a OR b) AND ca AND cb"
+```
+
+with patterns `a` and `b`, and same-file conditions `ca` and `cb` carrying those same two patterns.
+Every `a` and every `b` is then reported, but only in files that contain both.
+
 > **Expressions have no operator precedence.** They are evaluated strictly left to right, so
 > `a OR b AND c` means `(a OR b) AND c`, **not** `a OR (b AND c)`. Always use parentheses to make
 > grouping explicit; rule verification rejects an expression that mixes operators at the same level
@@ -136,8 +172,8 @@ Other rules for expressions:
 - Attach parentheses to labels: `(a OR b)` is valid, `( a OR b )` is not.
 - Parentheses must be balanced.
 - A rule that sets `expression` must express negation with `NOT` rather than `negate_finding`.
-- A condition can only test findings produced by patterns evaluated before it, so place at least one
-  pattern label ahead of any condition label.
+- Conditions test captured pattern findings independently of label order in the expression. For example,
+  `c AND a` and `a AND c` are equivalent when `c` is a condition and `a` is a pattern.
 
 ## Best Practices
 
