@@ -163,8 +163,16 @@ public class RuleProcessor
         {
             if (cancellationToken?.IsCancellationRequested is true)
             {
-                return resultsList;
-            }
+                var patternIndex = match.Item1;
+                var boundary = match.Item2;
+                // Universal rules can reach build files incidentally, so suppress their non-Metadata tags by default.
+                if (!_opts.AllowAllTagsInBuildFiles &&
+                    languageInfo.Type == LanguageInfo.LangFileType.Build &&
+                    oatRule.AppInspectorRule.IsUniversal &&
+                    (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+                {
+                    continue;
+                }
 
             if (ruleCapture.Rule is not ConvertedOatRule oatRule)
             {
@@ -368,7 +376,90 @@ public class RuleProcessor
         var contents = string.Empty;
         try
         {
-            contents = await sr.ReadToEndAsync().ConfigureAwait(false);
+            // If we had a WithinClause we only want the captures that passed the within filter.
+            var filteredCaptures = ruleCapture.Captures.Any(x => x.Clause is WithinClause)
+                ? ruleCapture.Captures.Where(x => x.Clause is WithinClause)
+                : ruleCapture.Captures;
+            if (cancellationToken?.IsCancellationRequested is true)
+            {
+                return resultsList;
+            }
+
+            foreach (var cap in filteredCaptures) resultsList.AddRange(ProcessBoundary(cap));
+
+            List<MatchRecord> ProcessBoundary(ClauseCapture cap)
+            {
+                List<MatchRecord> newMatches = new(); //matches for this rule clause only
+
+                if (cap is TypedClauseCapture<List<(int, Boundary)>> tcc)
+                {
+                    if (ruleCapture.Rule is ConvertedOatRule oatRule)
+                    {
+                        if (tcc.Result is { } captureResults)
+                        {
+                            foreach (var match in captureResults)
+                            {
+                                var patternIndex = match.Item1;
+                                var boundary = match.Item2;
+
+                                // Universal rules can reach build files incidentally, so suppress their non-Metadata tags by default.
+                                if (!_opts.AllowAllTagsInBuildFiles &&
+                                    languageInfo.Type == LanguageInfo.LangFileType.Build &&
+                                    oatRule.AppInspectorRule.IsUniversal &&
+                                    (oatRule.AppInspectorRule.Tags?.Any(v => !v.Contains("Metadata")) ?? false))
+                                {
+                                    continue;
+                                }
+
+                                if (patternIndex < 0 || patternIndex > oatRule.AppInspectorRule.Patterns.Length)
+                                {
+                                    _logger.LogError("Index out of range for patterns for rule: {ruleName}",
+                                        oatRule.AppInspectorRule.Name);
+                                    continue;
+                                }
+
+                                if (!_opts.ConfidenceFilter.HasFlag(oatRule.AppInspectorRule.Patterns[patternIndex]
+                                        .Confidence))
+                                {
+                                    continue;
+                                }
+
+                                var startLocation = textContainer.GetLocation(boundary.Index);
+                                var endLocation = textContainer.GetLocation(boundary.Index + boundary.Length);
+                                MatchRecord newMatch = new(oatRule.AppInspectorRule)
+                                {
+                                    FileName = fileEntry.FullPath,
+                                    FullTextContainer = textContainer,
+                                    LanguageInfo = languageInfo,
+                                    Boundary = boundary,
+                                    StartLocationLine = startLocation.Line,
+                                    EndLocationLine =
+                                        endLocation.Line != 0
+                                            ? endLocation.Line
+                                            : startLocation.Line + 1, //match is on last line
+                                    MatchingPattern = oatRule.AppInspectorRule.Patterns[patternIndex],
+                                    Excerpt = numLinesContext > 0
+                                        ? ExtractExcerpt(textContainer, startLocation, endLocation, boundary, numLinesContext)
+                                        : string.Empty,
+                                    Sample = numLinesContext > -1
+                                        ? ExtractTextSample(textContainer.FullContent, boundary.Index, boundary.Length)
+                                        : string.Empty
+                                };
+
+                                if (oatRule.AppInspectorRule.Tags?.Contains("Dependency.SourceInclude") ?? false)
+                                {
+                                    newMatch.Sample = ExtractDependency(newMatch.FullTextContainer,
+                                        newMatch.Boundary.Index, newMatch.Pattern, newMatch.LanguageInfo.Name);
+                                }
+
+                                newMatches.Add(newMatch);
+                            }
+                        }
+                    }
+                }
+
+                return newMatches;
+            }
         }
         catch (Exception e)
         {

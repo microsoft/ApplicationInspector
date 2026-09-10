@@ -41,6 +41,11 @@
             "searchPattern": "^AI\\..*$",
             "displayName": "AI",
             "detectedIcon": "fa-solid fa-robot"
+          },
+          {
+            "searchPattern": "^WebApp\\.API\\..*$",
+            "displayName": "Exposed web API",
+            "detectedIcon": "fas fa-plug"
           }
         ]
       },
