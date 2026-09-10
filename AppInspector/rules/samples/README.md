@@ -172,8 +172,8 @@ Other rules for expressions:
 - Attach parentheses to labels: `(a OR b)` is valid, `( a OR b )` is not.
 - Parentheses must be balanced.
 - A rule that sets `expression` must express negation with `NOT` rather than `negate_finding`.
-- A condition can only test findings produced by patterns evaluated before it, so place at least one
-  pattern label ahead of any condition label.
+- Conditions test captured pattern findings independently of label order in the expression. For example,
+  `c AND a` and `a AND c` are equivalent when `c` is a condition and `a` is a pattern.
 
 ## Best Practices
 

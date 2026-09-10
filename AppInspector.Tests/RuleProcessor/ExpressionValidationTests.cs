@@ -63,6 +63,30 @@ public class ExpressionValidationTests
         Assert.False(status.Verified);
     }
 
+    [Theory]
+    [CombinatorialData]
+    public void MalformedExpression_FailsVerificationRegardlessOfSelfTests(
+        [CombinatorialValues("a AND", "a OR OR a", "a a", "a AND ()", "a AND NOT")] string expression,
+        bool positiveSelfTest, bool negativeSelfTest)
+    {
+        var selfTests = string.Empty;
+        if (positiveSelfTest)
+        {
+            selfTests += @"""must-match"": [ ""alpha"" ],";
+        }
+
+        if (negativeSelfTest)
+        {
+            selfTests += @"""must-not-match"": [ ""alpha"" ],";
+        }
+
+        var status = Verify(RuleWith($@"""expression"": ""{expression}"", {selfTests}", twoPatterns, oneCondition));
+
+        Assert.False(status.Verified);
+        Assert.Empty(status.OatIssues);
+        Assert.Contains("could not be parsed", Assert.Single(status.Errors));
+    }
+
     [Fact]
     public void DuplicateLabels_FailVerification()
     {
@@ -154,17 +178,17 @@ public class ExpressionValidationTests
         Assert.False(status.Verified);
     }
 
-    /// <summary>
-    ///     Captures accumulate in evaluation order, so a condition reached before any pattern has nothing
-    ///     to test and is always false. Such a rule verifies clean today and then never reports.
-    /// </summary>
-    [Fact]
-    public void ConditionBeforeAnyPattern_FailsVerification()
+    [Theory]
+    [InlineData("c AND a")]
+    [InlineData("NOT c AND a")]
+    [InlineData("(c AND a) OR b")]
+    public void ConditionBeforeAnyPattern_Verifies(string expression)
     {
-        var status = Verify(RuleWith(@"""expression"": ""c AND a"",", twoPatterns, oneCondition));
+        var status = Verify(RuleWith($@"""expression"": ""{expression}"",", twoPatterns, oneCondition));
 
-        Assert.Contains(status.Errors, x => x.Contains("before any pattern"));
-        Assert.False(status.Verified);
+        Assert.Empty(status.Errors);
+        Assert.Empty(status.OatIssues);
+        Assert.True(status.Verified);
     }
 
     [Fact]

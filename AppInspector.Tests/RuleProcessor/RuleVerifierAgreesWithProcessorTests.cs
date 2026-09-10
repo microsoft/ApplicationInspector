@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.ApplicationInspector.RulesEngine;
 using Microsoft.CST.RecursiveExtractor;
 using Xunit;
@@ -259,6 +260,23 @@ public class RuleVerifierAgreesWithProcessorTests
         Assert.Equal(expectedToReport, VerifierAccepts(WithSelfTest(ruleJson, "must-match", content)));
 
         // A must-not-match self-test asserts the opposite.
+        Assert.Equal(!expectedToReport, VerifierAccepts(WithSelfTest(ruleJson, "must-not-match", content)));
+    }
+
+    [Theory]
+    [InlineData("ois AND p", "ObjectInputStream i;\ni.readObject();\n", true)]
+    [InlineData("ois AND p", "cache.readObject();\n", false)]
+    [InlineData("NOT ois AND p", "ObjectInputStream i;\ni.readObject();\n", false)]
+    [InlineData("NOT ois AND p", "cache.readObject();\n", true)]
+    public void ConditionBeforePattern_VerifierReachesTheSameVerdictAsTheAnalyzer(
+        string expression, string content, bool expectedToReport)
+    {
+        var rules = JsonNode.Parse(sameFileCondition)!;
+        rules[0]!["expression"] = expression;
+        var ruleJson = rules.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
+
+        Assert.Equal(expectedToReport, AnalyzerReportsAFinding(ruleJson, content));
+        Assert.Equal(expectedToReport, VerifierAccepts(WithSelfTest(ruleJson, "must-match", content)));
         Assert.Equal(!expectedToReport, VerifierAccepts(WithSelfTest(ruleJson, "must-not-match", content)));
     }
 
