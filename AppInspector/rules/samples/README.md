@@ -125,10 +125,10 @@ cookie and one missing a flag reports the second, because the first satisfying `
 says nothing about the second.
 
 Because a finding originates from exactly one pattern, every *other* pattern label is false while
-that finding is judged. An expression over pattern labels alone therefore cannot say more than the
-implicit `OR` already does: `a AND NOT b` reports exactly what `a` reports. The added expressiveness
-comes from combining patterns with conditions, which are evaluated against the finding and can be
-true or false independently of it.
+that finding is judged. An expression over pattern labels alone can therefore select which patterns
+originate findings, but it cannot require sibling patterns to co-occur: `a AND NOT b` reports exactly
+what `a` reports. Conditions add co-occurrence tests because they are evaluated against each finding
+and can be true or false independently of it.
 
 ### Requiring that two patterns both appear
 
