@@ -449,7 +449,7 @@
     "conditions": [
       {
         "pattern": {
-          "pattern": "(require\\(|from )['\"](express|koa|fastify|restify|@hapi/hapi|hono)['\"]",
+          "pattern": "(require\\(|from )['\"]express['\"]",
           "type": "regex",
           "scopes": [
             "code"
@@ -464,7 +464,8 @@
     ],
     "must-not-match": [
       "const app = document.getElementById('app');\nrouter.get('key');",
-      "const cache = new Map();\napp.delete('entry');"
+      "const cache = new Map();\napp.delete('entry');",
+      "const fastify = require('fastify');\nconst app = fastify();\napp.get('/users', async () => []);"
     ]
   },
   {
@@ -608,7 +609,7 @@
     "id": "AI090105",
     "description": "Exposes an HTTP API implemented as a Next.js route handler or API route",
     "applies_to_file_regex": [
-      "[/\\\\]app[/\\\\].*[/\\\\]route\\.(js|jsx|ts|tsx)$",
+      "[/\\\\]app[/\\\\](?:.*[/\\\\])?route\\.(js|jsx|ts|tsx)$",
       "[/\\\\]pages[/\\\\]api[/\\\\]"
     ],
     "tags": [
@@ -626,7 +627,7 @@
         "_comment": "Next.js App Router route handler export"
       },
       {
-        "pattern": "export\\s+default\\s+(async\\s+)?function\\s+handler\\b",
+        "pattern": "export\\s+default\\s+(async\\s+)?function(\\s+\\w+)?\\s*\\(",
         "type": "regex",
         "scopes": [
           "code"
@@ -637,7 +638,8 @@
     ],
     "must-match": [
       "export async function GET(request: Request) {\n  return Response.json({});\n}",
-      "export default async function handler(req, res) {\n  res.status(200).json({});\n}"
+      "export default async function handler(req, res) {\n  res.status(200).json({});\n}",
+      "export default function users(req, res) {\n  res.status(200).json({});\n}"
     ],
     "must-not-match": [
       "export function getServerSideProps() {\n  return { props: {} };\n}"
@@ -920,7 +922,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "(javax|jakarta)\\.ws\\.rs",
+        "pattern": "(javax|jakarta)\\.ws\\.rs\\.(ApplicationPath|Path|GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS|Produces|Consumes|BeanParam|PathParam|QueryParam|FormParam|HeaderParam|Context)\\b|ResourceConfig\\s*\\(",
         "type": "regex",
         "scopes": [
           "code"
@@ -934,7 +936,8 @@
       "import jakarta.ws.rs.Path;"
     ],
     "must-not-match": [
-      "import java.nio.file.Path;"
+      "import java.nio.file.Path;",
+      "import jakarta.ws.rs.client.Client;"
     ]
   },
   {
@@ -991,7 +994,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "io\\.micronaut\\.http",
+        "pattern": "io\\.micronaut\\.http\\.annotation",
         "type": "regex",
         "scopes": [
           "code"
@@ -1000,7 +1003,7 @@
         "_comment": "Micronaut HTTP import"
       },
       {
-        "pattern": "io\\.vertx\\.ext\\.web",
+        "pattern": "io\\.vertx\\.ext\\.web\\.(Router|RoutingContext|handler)",
         "type": "regex",
         "scopes": [
           "code"
@@ -1045,7 +1048,9 @@
     ],
     "must-not-match": [
       "import java.util.Map;",
-      "import org.apache.spark.sql.SparkSession;"
+      "import org.apache.spark.sql.SparkSession;",
+      "import io.micronaut.http.client.HttpClient;",
+      "import io.vertx.ext.web.client.WebClient;"
     ]
   },
   {
@@ -1558,31 +1563,34 @@
         "_comment": "GraphQL server package import"
       },
       {
-        "pattern": "graphene\\.Schema\\(",
+        "pattern": "GraphQLView\\.as_view\\(",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "confidence": "high",
-        "_comment": "Graphene schema construction"
+        "_comment": "GraphQL view registration"
       },
       {
-        "pattern": "strawberry\\.Schema\\(",
+        "pattern": "GraphQLRouter\\(|strawberry\\.asgi\\.GraphQL\\(",
         "type": "regex",
         "scopes": [
           "code"
         ],
         "confidence": "high",
-        "_comment": "Strawberry schema construction"
+        "_comment": "Strawberry server integration"
       }
     ],
     "must-match": [
       "const server = new ApolloServer({ typeDefs, resolvers });",
       "import { createYoga } from 'graphql-yoga';",
-      "schema = graphene.Schema(query=Query)"
+      "app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql', schema=schema));",
+      "graphql_app = GraphQLRouter(schema)"
     ],
     "must-not-match": [
-      "import { gql } from '@apollo/client';"
+      "import { gql } from '@apollo/client';",
+      "schema = graphene.Schema(query=Query)",
+      "schema = strawberry.Schema(query=Query)"
     ]
   }
 ]
