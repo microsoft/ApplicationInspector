@@ -1,0 +1,565 @@
+[
+    {
+        "name": "Web API: FastAPI (Python)",
+        "id": "AI090000",
+        "description": "Software exposes an HTTP/REST API implemented with the Python FastAPI framework",
+        "applies_to": [
+            "python"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.Python.FastAPI"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "FastAPI(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "FastAPI application instantiation"
+            },
+            {
+                "pattern": "APIRouter(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "FastAPI router instantiation"
+            },
+            {
+                "pattern": "@\\w+\\.(get|post|put|delete|patch|head|options)\\(",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "medium",
+                "_comment": "FastAPI path operation decorator"
+            }
+        ],
+        "must-match": [
+            "app = FastAPI()",
+            "router = APIRouter()",
+            "@app.get(\"/items/{item_id}\")"
+        ],
+        "must-not-match": [
+            "value = config.getValue(item_id)"
+        ]
+    },
+    {
+        "name": "Web API: Flask (Python)",
+        "id": "AI090001",
+        "description": "Software exposes an HTTP/REST API implemented with the Python Flask framework",
+        "applies_to": [
+            "python"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.Python.Flask"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "Flask(__name__",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Flask application instantiation"
+            },
+            {
+                "pattern": "@\\w+\\.route\\(",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Flask/Blueprint route decorator"
+            },
+            {
+                "pattern": "flask_restful|flask_restx|flask_smorest",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Flask REST extension import"
+            }
+        ],
+        "must-match": [
+            "app = Flask(__name__)",
+            "@app.route(\"/\")",
+            "from flask_restful import Api, Resource"
+        ],
+        "must-not-match": [
+            "result = trip.route(start, end)"
+        ]
+    },
+    {
+        "name": "Web API: Django REST Framework (Python)",
+        "id": "AI090002",
+        "description": "Software exposes an HTTP/REST API implemented with the Django REST Framework",
+        "applies_to": [
+            "python"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.Python.DjangoRest"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "rest_framework",
+                "type": "regexword",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Django REST Framework import"
+            },
+            {
+                "pattern": "@api_view(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Django REST Framework function view decorator"
+            }
+        ],
+        "must-match": [
+            "from rest_framework import serializers",
+            "@api_view(['GET', 'POST'])"
+        ],
+        "must-not-match": [
+            "import os"
+        ]
+    },
+    {
+        "name": "Web API: Express / Node Server (JavaScript)",
+        "id": "AI090100",
+        "description": "Software exposes an HTTP/REST API implemented with Express or a similar Node.js web framework",
+        "applies_to": [
+            "javascript",
+            "javascriptreact",
+            "typescript",
+            "typescriptreact"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.JavaScript.Express"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "require\\(['\"](express|@hapi/hapi|koa|fastify|restify)['\"]\\)",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Node.js web framework require"
+            },
+            {
+                "pattern": "from ['\"](express|@hapi/hapi|koa|fastify|restify)['\"]",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Node.js web framework import"
+            },
+            {
+                "pattern": "\\b(app|router)\\.(get|post|put|delete|patch|all)\\(",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "medium",
+                "_comment": "Express style route registration"
+            }
+        ],
+        "must-match": [
+            "const express = require('express');",
+            "import express from 'express';",
+            "app.get('/', (req, res) => res.send('ok'));"
+        ],
+        "must-not-match": [
+            "const value = store.getItem('key');"
+        ]
+    },
+    {
+        "name": "Web API: NestJS (TypeScript)",
+        "id": "AI090101",
+        "description": "Software exposes an HTTP/REST API implemented with the NestJS framework",
+        "applies_to": [
+            "javascript",
+            "typescript",
+            "typescriptreact"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.JavaScript.NestJS"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "@nestjs/common",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "NestJS import"
+            },
+            {
+                "pattern": "@Controller(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "NestJS controller decorator"
+            }
+        ],
+        "must-match": [
+            "import { Controller, Get } from '@nestjs/common';",
+            "@Controller('cats')"
+        ],
+        "must-not-match": [
+            "const controller = new AbortController();"
+        ]
+    },
+    {
+        "name": "Web API: ASP.NET (C#)",
+        "id": "AI090200",
+        "description": "Software exposes an HTTP/REST API implemented with ASP.NET (MVC, Web API, or Minimal APIs)",
+        "applies_to": [
+            "csharp"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.DotNet.AspNet"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "[ApiController]",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "ASP.NET API controller attribute"
+            },
+            {
+                "pattern": "\\[Http(Get|Post|Put|Delete|Patch|Head)\\b",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "ASP.NET HTTP verb attribute"
+            },
+            {
+                "pattern": "\\.Map(Get|Post|Put|Delete|Patch|Controllers)\\(",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "ASP.NET Minimal API endpoint mapping"
+            },
+            {
+                "pattern": ":\\s*ControllerBase\\b",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "medium",
+                "_comment": "ASP.NET API controller base class"
+            }
+        ],
+        "must-match": [
+            "[ApiController]",
+            "[HttpGet(\"{id}\")]",
+            "app.MapGet(\"/\", () => \"Hello World!\");",
+            "public class UsersController : ControllerBase"
+        ],
+        "must-not-match": [
+            "var result = dictionary.MapValues();"
+        ]
+    },
+    {
+        "name": "Web API: Spring (Java)",
+        "id": "AI090300",
+        "description": "Software exposes an HTTP/REST API implemented with the Spring framework",
+        "applies_to": [
+            "java",
+            "kotlin"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.Java.Spring"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "@RestController\\b",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Spring REST controller annotation"
+            },
+            {
+                "pattern": "@(Get|Post|Put|Delete|Patch|Request)Mapping\\b",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Spring request mapping annotation"
+            }
+        ],
+        "must-match": [
+            "@RestController",
+            "@GetMapping(\"/users\")"
+        ],
+        "must-not-match": [
+            "import java.util.Map;"
+        ]
+    },
+    {
+        "name": "Web API: JAX-RS (Java)",
+        "id": "AI090301",
+        "description": "Software exposes an HTTP/REST API implemented with JAX-RS (Jersey, RESTEasy)",
+        "applies_to": [
+            "java"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.Java.JaxRs"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "(javax|jakarta)\\.ws\\.rs",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "JAX-RS import"
+            },
+            {
+                "pattern": "@Path(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "medium",
+                "_comment": "JAX-RS resource path annotation"
+            }
+        ],
+        "must-match": [
+            "import javax.ws.rs.GET;",
+            "@Path(\"/users\")"
+        ],
+        "must-not-match": [
+            "import java.nio.file.Path;"
+        ]
+    },
+    {
+        "name": "Web API: Go HTTP Server",
+        "id": "AI090400",
+        "description": "Software exposes an HTTP/REST API implemented with the Go net/http package or a Go web framework",
+        "applies_to": [
+            "go"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.Go"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "http.HandleFunc(",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Go net/http handler registration"
+            },
+            {
+                "pattern": "gin\\.(Default|New)\\(\\)",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Gin web framework router"
+            },
+            {
+                "pattern": "echo.New()",
+                "type": "substring",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Echo web framework router"
+            },
+            {
+                "pattern": "(mux|chi)\\.NewRouter\\(\\)",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "gorilla/mux or chi router"
+            }
+        ],
+        "must-match": [
+            "http.HandleFunc(\"/\", handler)",
+            "r := gin.Default()",
+            "e := echo.New()",
+            "router := mux.NewRouter()"
+        ],
+        "must-not-match": [
+            "result := strings.NewReplacer()"
+        ]
+    },
+    {
+        "name": "Web API: Ruby (Sinatra / Rails)",
+        "id": "AI090500",
+        "description": "Software exposes an HTTP/REST API implemented with Sinatra or Ruby on Rails",
+        "applies_to": [
+            "ruby"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.Ruby"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "Sinatra::Base|ActionController::API",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Sinatra or Rails API base class"
+            },
+            {
+                "pattern": "^\\s*(get|post|put|delete|patch)\\s+['\"]/",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "m"
+                ],
+                "confidence": "medium",
+                "_comment": "Sinatra route definition"
+            }
+        ],
+        "must-match": [
+            "class App < Sinatra::Base",
+            "get '/hello' do"
+        ],
+        "must-not-match": [
+            "user.delete"
+        ]
+    },
+    {
+        "name": "Web API: PHP (Laravel / Slim / Symfony)",
+        "id": "AI090600",
+        "description": "Software exposes an HTTP/REST API implemented with a PHP web framework such as Laravel, Slim, or Symfony",
+        "applies_to": [
+            "php"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.PHP"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "Route::(get|post|put|delete|patch|apiResource)\\(",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "Laravel route registration"
+            },
+            {
+                "pattern": "\\$app->(get|post|put|delete|patch)\\(",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "medium",
+                "_comment": "Slim route registration"
+            }
+        ],
+        "must-match": [
+            "Route::get('/users', 'UserController@index');",
+            "$app->post('/users', function ($request, $response) {});"
+        ],
+        "must-not-match": [
+            "$value = $config->getsetting('key');"
+        ]
+    },
+    {
+        "name": "Web API: OpenAPI / Swagger Specification",
+        "id": "AI090700",
+        "description": "An OpenAPI (Swagger) specification document that describes an exposed HTTP/REST API",
+        "applies_to": [
+            "json",
+            "yaml"
+        ],
+        "tags": [
+            "WebApp.API",
+            "WebApp.API.Specification.OpenAPI"
+        ],
+        "severity": "moderate",
+        "patterns": [
+            {
+                "pattern": "\"(openapi|swagger)\"\\s*:",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "confidence": "high",
+                "_comment": "OpenAPI/Swagger JSON document root key"
+            },
+            {
+                "pattern": "^(openapi|swagger)\\s*:",
+                "type": "regex",
+                "scopes": [
+                    "code"
+                ],
+                "modifiers": [
+                    "m"
+                ],
+                "confidence": "high",
+                "_comment": "OpenAPI/Swagger YAML document root key"
+            }
+        ],
+        "must-match": [
+            "{ \"openapi\": \"3.0.0\" }",
+            "swagger: \"2.0\""
+        ],
+        "must-not-match": [
+            "{ \"name\": \"my-package\" }"
+        ]
+    }
+]
