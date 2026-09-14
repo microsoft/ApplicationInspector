@@ -36,7 +36,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "ml[_-]?kem|PQCgenKAT_kem|pqc_kyber|ccakem|generate_kyber_keys|fips203",
+        "pattern": "ml[_-]?kem|PQCgenKAT_kem|pqc_kyber|ccakem|generate_kyber_keys|fips[ _-]?203|crystals-kyber",
         "type": "regexword",
         "scopes": [
           "code"
@@ -84,7 +84,19 @@
     "must-match": [
       "encrypted_message = pqc.kyber_encrypt(public_key, message)",
       "KYBER_INDCPA_PUBLICKEYBYTES",
-      "1785, 516, 3321, 3009, 2663, 1711, 2167, 126, 1469, 2476, 3239, 3058, 830,"
+      "1785, 516, 3321, 3009, 2663, 1711, 2167, 126, 1469, 2476, 3239, 3058, 830,",
+      "CRYSTALS-Kyber",
+      "ML-KEM",
+      "FIPS 203",
+      "FIPS-203",
+      "FIPS_203",
+      "fips203"
+    ],
+    "must-not-match": [
+      "CRYSTALS-Dilithium",
+      "ML-DSA",
+      "FIPS 204",
+      "FIPS 2030"
     ]
   },
   {
@@ -98,19 +110,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "(ml[_-]?dsa|fips[_]?204|crystals-kyber)",
-        "type": "regexword",
-        "scopes": [
-          "code"
-        ],
-        "modifiers": [
-          "i"
-        ],
-        "confidence": "high"
-      },
-      {
-        "pattern": "516,\\s*3321,\\s*3009",
-        "_comment": "Kyber parameters",
+        "pattern": "(ml[_-]?dsa|fips[ _-]?204|crystals-dilithium)",
         "type": "regexword",
         "scopes": [
           "code"
@@ -120,6 +120,23 @@
         ],
         "confidence": "high"
       }
+    ],
+    "must-match": [
+      "CRYSTALS-Dilithium",
+      "ML-DSA",
+      "ml_dsa",
+      "mldsa",
+      "FIPS 204",
+      "FIPS-204",
+      "FIPS_204",
+      "fips204"
+    ],
+    "must-not-match": [
+      "CRYSTALS-Kyber",
+      "516, 3321, 3009",
+      "ML-KEM",
+      "FIPS 203",
+      "FIPS 2040"
     ]
   },
   {
@@ -234,7 +251,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "slh-dsa|fips[ -]205|hdd|xmss",
+        "pattern": "slh-dsa|fips[ _-]?205",
         "type": "regexword",
         "scopes": [
           "code"
@@ -244,6 +261,20 @@
         ],
         "confidence": "high"
       }
+    ],
+    "must-match": [
+      "SLH-DSA",
+      "FIPS 205",
+      "FIPS-205",
+      "FIPS_205",
+      "fips205"
+    ],
+    "must-not-match": [
+      "HDD",
+      "HSS",
+      "XMSS",
+      "FIPS 204",
+      "FIPS 2050"
     ]
   },
   {
@@ -256,7 +287,7 @@
     "severity": "moderate",
     "patterns": [
       {
-        "pattern": "sphincx|haraka",
+        "pattern": "sphincs|haraka",
         "type": "regexword",
         "scopes": [
           "code"
@@ -266,6 +297,16 @@
         ],
         "confidence": "high"
       }
+    ],
+    "must-match": [
+      "SPHINCS+",
+      "sphincs-sha2-128f-simple",
+      "haraka"
+    ],
+    "must-not-match": [
+      "sphincx",
+      "sphinx",
+      "xsphincs"
     ]
   },
   {
