@@ -63,6 +63,16 @@ public class LanguagesTests
         Assert.Equal("package.json", language.Name);
     }
 
+    [Theory]
+    [InlineData("Application.kt")]
+    [InlineData("build.gradle.kts")]
+    public void DetectKotlinExtensions(string filename)
+    {
+        Microsoft.ApplicationInspector.RulesEngine.Languages languages = new(_factory);
+        Assert.True(languages.FromFileNameOut(filename, out var language));
+        Assert.Equal("kotlin", language.Name);
+    }
+
     [InlineData(null, false)] // No way to determine language
     [InlineData("", false)] // No way to determine language
     [InlineData("validfilename.json", false)] //This test uses the .z test comments and languages from this file.
