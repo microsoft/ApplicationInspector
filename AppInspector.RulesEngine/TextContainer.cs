@@ -514,8 +514,8 @@ public class TextContainer
     /// </summary>
     private bool MatchesAt(string marker, int index)
     {
-        return string.CompareOrdinal(FullContent, index, marker, 0, marker.Length) == 0 &&
-               index + marker.Length <= FullContent.Length;
+        return index + marker.Length <= FullContent.Length &&
+               string.CompareOrdinal(FullContent, index, marker, 0, marker.Length) == 0;
     }
 
     /// <summary>
@@ -546,15 +546,23 @@ public class TextContainer
                 {
                     // Block comments are checked first because their markers may start with the same characters as an
                     // inline comment marker, for example // and /*
-                    var blockComment = _blockComments.FirstOrDefault(x => MatchesAt(x.Prefix, i));
-                    if (blockComment.Prefix is { } blockPrefix)
+                    var blockCommentIndex = -1;
+                    for (var j = 0; j < _blockComments.Count; j++)
+                        if (MatchesAt(_blockComments[j].Prefix, i))
+                        {
+                            blockCommentIndex = j;
+                            break;
+                        }
+
+                    if (blockCommentIndex >= 0)
                     {
+                        var (blockPrefix, blockSuffix) = _blockComments[blockCommentIndex];
                         // A block comment can only be closed by the suffix which pairs with the prefix that opened it
-                        var suffixLocation = FullContent.IndexOf(blockComment.Suffix, i + blockPrefix.Length,
+                        var suffixLocation = FullContent.IndexOf(blockSuffix, i + blockPrefix.Length,
                             StringComparison.Ordinal);
                         var end = suffixLocation == -1
                             ? FullContent.Length - 1
-                            : suffixLocation + blockComment.Suffix.Length - 1;
+                            : suffixLocation + blockSuffix.Length - 1;
                         for (var j = i; j <= end; j++) CommentedStates[j] = true;
                         i = end + 1;
                         ResetQuotedStringState();
