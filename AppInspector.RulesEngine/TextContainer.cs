@@ -25,9 +25,20 @@ public class TextContainer
 {
     private readonly ILogger _logger;
 
-    private readonly string inline;
-    private readonly string prefix;
-    private readonly string suffix;
+    // The single line comment markers for the language, longest first so that the most specific marker is matched
+    private readonly IReadOnlyList<string> _inlineComments;
+
+    // The block comment marker pairs for the language, longest prefix first so that the most specific marker is matched
+    private readonly IReadOnlyList<(string Prefix, string Suffix)> _blockComments;
+
+    // The set of characters any comment marker for this language can start with, used to avoid unnecessary comparisons
+    private readonly HashSet<char> _commentStartCharacters;
+
+    // Commented state is calculated by scanning the content from the start, this is the first index not yet scanned
+    private int _commentScanPosition;
+    private bool _inDoubleQuotedString;
+    private bool _inSingleQuotedString;
+    private readonly object _commentScanLock = new();
 
     // Window/offset constants used for XML/XPath boundary reconstruction.
     // These constrain local searches to avoid scanning entire large documents while
@@ -91,9 +102,13 @@ public class TextContainer
             LineEnds.Add(FullContent.Length - 1);
         }
 
-        prefix = languages.GetCommentPrefix(Language);
-        suffix = languages.GetCommentSuffix(Language);
-        inline = languages.GetCommentInline(Language);
+        _inlineComments = languages.GetCommentInlines(Language).Where(x => !string.IsNullOrEmpty(x))
+            .OrderByDescending(x => x.Length).ToList();
+        _blockComments = languages.GetCommentBlocks(Language)
+            .Where(x => !string.IsNullOrEmpty(x.Prefix) && !string.IsNullOrEmpty(x.Suffix))
+            .OrderByDescending(x => x.Prefix.Length).ToList();
+        _commentStartCharacters =
+            new HashSet<char>(_inlineComments.Concat(_blockComments.Select(x => x.Prefix)).Select(x => x[0]));
         Languages = languages;
     }
 
@@ -495,75 +510,107 @@ public class TextContainer
     }
 
     /// <summary>
-    /// Find the location of the provided prefix string if any in the text container between the provided start of line index and the current index
+    ///     Checks if the comment marker <paramref name="marker" /> is present in FullContent at <paramref name="index" />
     /// </summary>
-    /// <param name="startOfLineIndex">Minimum Character index in FullContent to locate Prefix</param>
-    /// <param name="currentIndex">Maximal Chracter index in FullContent to locate Prefix</param>
-    /// <param name="prefix">Prefix string to attempt to locate</param>
-    /// <param name="multiline">If multi-line comments should be detected</param>
-    /// <returns>The index of the specified prefix string in the FullContent if found, otherwise -1</returns>
-    private int GetPrefixLocation(int startOfLineIndex, int currentIndex, string prefix, bool multiline)
+    private bool MatchesAt(string marker, int index)
     {
-        // Find the first potential index of the prefix
-        var prefixLoc = FullContent.LastIndexOf(prefix, currentIndex, StringComparison.Ordinal);
-        if (prefixLoc != -1)
-        {
-            // TODO: Possibly support quoted multiline comment markers
-            if (multiline)
-            {
-                return prefixLoc;
-            }
-            if (prefixLoc < startOfLineIndex)
-            {
-                return -1;
-            }
-            // Check how many quote marks occur on the line before the prefix location
-            // TODO: This doesn't account for multi-line strings
-            var numDoubleQuotes = FullContent[startOfLineIndex..prefixLoc].Count(x => x == '"');
-            var numSingleQuotes = FullContent[startOfLineIndex..prefixLoc].Count(x => x == '\'');
-
-            // If the number of quotes is odd, this is in a string, so not actually a comment prefix
-            // It might be like var address = "http://contoso.com";
-            if (numDoubleQuotes % 2 == 1 || numSingleQuotes % 2 == 1)
-            {
-                // The second argument is the maximal index to return since this calls LastIndexOf, subtract 1 to exclude this instance
-                if ((prefixLoc -1) >= startOfLineIndex)
-                {
-                    return GetPrefixLocation(startOfLineIndex, prefixLoc - 1, prefix, multiline);
-                }
-                return -1;
-            }
-        }
-
-        return prefixLoc;
+        return string.CompareOrdinal(FullContent, index, marker, 0, marker.Length) == 0 &&
+               index + marker.Length <= FullContent.Length;
     }
 
     /// <summary>
-    ///     Populates the CommentedStates Dictionary based on the index and the provided comment prefix and suffix
+    ///     Scans the content from the last scanned position up to and including <paramref name="index" /> populating the
+    ///     CommentedStates dictionary.
+    ///     The content is scanned in order so that comment markers are paired correctly, for example a block comment
+    ///     started with one style of block comment marker can only be terminated by the suffix of that same style, and
+    ///     comment markers which occur inside another comment do not start a new comment.
     /// </summary>
-    /// <param name="index">The character index in FullContent</param>
-    /// <param name="prefix">The comment prefix</param>
-    /// <param name="suffix">The comment suffix</param>
-    private void PopulateCommentedStatesInternal(int index, string prefix, string suffix, bool multiline)
+    /// <param name="index">The character index in FullContent to scan to.</param>
+    private void ScanCommentedStatesTo(int index)
     {
-        // Get the line boundary for the prefix location
-        var startOfLine = GetLineBoundary(index);
-        // Get the index of the prefix
-        var prefixLoc = GetPrefixLocation(startOfLine.Index, index, prefix, multiline);
-
-        if (prefixLoc != -1)
+        lock (_commentScanLock)
         {
-            if (!CommentedStates.ContainsKey(prefixLoc))
+            var i = _commentScanPosition;
+            while (i < FullContent.Length && i <= index)
             {
-                var suffixLoc = FullContent.IndexOf(suffix, prefixLoc, StringComparison.Ordinal);
-                if (suffixLoc == -1)
+                var currentCharacter = FullContent[i];
+                // Quoted strings are not tracked across lines
+                if (currentCharacter == '\n')
                 {
-                    suffixLoc = FullContent.Length - 1;
+                    ResetQuotedStringState();
+                    CommentedStates[i++] = false;
+                    continue;
                 }
 
-                for (var i = prefixLoc; i <= suffixLoc; i++) CommentedStates[i] = true;
+                if (_commentStartCharacters.Contains(currentCharacter))
+                {
+                    // Block comments are checked first because their markers may start with the same characters as an
+                    // inline comment marker, for example // and /*
+                    var blockComment = _blockComments.FirstOrDefault(x => MatchesAt(x.Prefix, i));
+                    if (blockComment.Prefix is { } blockPrefix)
+                    {
+                        // A block comment can only be closed by the suffix which pairs with the prefix that opened it
+                        var suffixLocation = FullContent.IndexOf(blockComment.Suffix, i + blockPrefix.Length,
+                            StringComparison.Ordinal);
+                        var end = suffixLocation == -1
+                            ? FullContent.Length - 1
+                            : suffixLocation + blockComment.Suffix.Length - 1;
+                        for (var j = i; j <= end; j++) CommentedStates[j] = true;
+                        i = end + 1;
+                        ResetQuotedStringState();
+                        continue;
+                    }
+
+                    // A comment marker inside a quoted string doesn't start a comment,
+                    // it might be like var address = "http://contoso.com";
+                    if (!_inDoubleQuotedString && !_inSingleQuotedString &&
+                        _inlineComments.Any(x => MatchesAt(x, i)))
+                    {
+                        var end = FullContent.IndexOf('\n', i);
+                        if (end == -1)
+                        {
+                            end = FullContent.Length - 1;
+                        }
+
+                        for (var j = i; j <= end; j++) CommentedStates[j] = true;
+                        i = end + 1;
+                        ResetQuotedStringState();
+                        continue;
+                    }
+                }
+
+                if ((_inDoubleQuotedString || _inSingleQuotedString) && currentCharacter == '\\')
+                {
+                    // Skip escaped characters inside strings so that an escaped quote doesn't end the string
+                    CommentedStates[i++] = false;
+                    if (i < FullContent.Length && FullContent[i] != '\n')
+                    {
+                        CommentedStates[i++] = false;
+                    }
+
+                    continue;
+                }
+
+                if (currentCharacter == '"' && !_inSingleQuotedString)
+                {
+                    _inDoubleQuotedString = !_inDoubleQuotedString;
+                }
+                else if (currentCharacter == '\'' && !_inDoubleQuotedString)
+                {
+                    _inSingleQuotedString = !_inSingleQuotedString;
+                }
+
+                CommentedStates[i++] = false;
             }
+
+            _commentScanPosition = Math.Max(_commentScanPosition, i);
         }
+    }
+
+    private void ResetQuotedStringState()
+    {
+        _inDoubleQuotedString = false;
+        _inSingleQuotedString = false;
     }
 
     /// <summary>
@@ -583,24 +630,12 @@ public class TextContainer
             index = 0;
         }
 
-        // Populate true for the indexes of the most immediately preceding instance of the multiline comment type if found
-        if (!string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(suffix))
-        {
-            PopulateCommentedStatesInternal(index, prefix, suffix, true);
-        }
+        ScanCommentedStatesTo(index);
 
-        // Populate true for indexes of the most immediately preceding instance of the single-line comment type if found
-        if (!CommentedStates.ContainsKey(index) && !string.IsNullOrEmpty(inline))
+        // If the content is empty there is nothing to scan, so the state is not commented
+        if (!CommentedStates.ContainsKey(index))
         {
-            PopulateCommentedStatesInternal(index, inline, "\n", false);
-        }
-
-        var i = index;
-        // Everything preceding this, including this, which doesn't have a commented state is
-        // therefore not commented so we backfill
-        while (!CommentedStates.ContainsKey(i) && i >= 0)
-        {
-            CommentedStates[i--] = false;
+            CommentedStates[index] = false;
         }
 
         if (inIndex != index)
@@ -726,7 +761,7 @@ public class TextContainer
             return scopes.Contains(PatternScope.Comment);
         }
         
-        if (scopes.Contains(PatternScope.All) || string.IsNullOrEmpty(prefix))
+        if (scopes.Contains(PatternScope.All) || _blockComments.Count == 0)
         {
             return true;
         }
