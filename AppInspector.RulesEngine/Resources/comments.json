@@ -62,7 +62,39 @@
   },
   {
     "language": [
-      "XML"
+      "terraform"
+    ],
+    "inline": "#",
+    "inlines": [
+      "//"
+    ],
+    "prefix": "/*",
+    "suffix": "*/"
+  },
+  {
+    "language": [
+      "razor"
+    ],
+    "inline": "//",
+    "blocks": [
+      {
+        "prefix": "@*",
+        "suffix": "*@"
+      },
+      {
+        "prefix": "<!--",
+        "suffix": "-->"
+      },
+      {
+        "prefix": "/*",
+        "suffix": "*/"
+      }
+    ]
+  },
+  {
+    "language": [
+      "XML",
+      "html"
     ],
     "prefix": "<!--",
     "suffix": "-->"

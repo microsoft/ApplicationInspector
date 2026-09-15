@@ -364,6 +364,13 @@
     "type": "code"
   },
   {
+    "name": "razor",
+    "extensions": [
+      ".razor"
+    ],
+    "type": "code"
+  },
+  {
     "name": ".config",
     "extensions": [
       ".config"

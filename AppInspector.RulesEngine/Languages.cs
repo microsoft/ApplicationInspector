@@ -145,69 +145,78 @@ public sealed class Languages
     }
 
     /// <summary>
-    ///     Gets comment inline for given language
+    ///     Gets all the comment specifications which apply to the given language.
+    /// </summary>
+    /// <param name="language">Language</param>
+    /// <returns>The matching comment specifications</returns>
+    private IEnumerable<Comment> GetComments(string? language)
+    {
+        if (language is null)
+        {
+            yield break;
+        }
+
+        foreach (var comment in _comments)
+            if (Array.Exists(comment.Languages ?? Array.Empty<string>(),
+                    x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                yield return comment;
+            }
+    }
+
+    /// <summary>
+    ///     Gets every single line comment marker for the given language. Languages may specify more than one style of
+    ///     single line comment with the "inlines" property.
+    /// </summary>
+    /// <param name="language">Language</param>
+    /// <returns>The single line comment markers for the language, may be empty.</returns>
+    public IReadOnlyList<string> GetCommentInlines(string language)
+    {
+        return GetComments(language).SelectMany(x => x.GetInlineComments()).Distinct().ToList();
+    }
+
+    /// <summary>
+    ///     Gets every block comment marker pair for the given language. Languages may specify more than one style of
+    ///     block comment with the "blocks" property.
+    /// </summary>
+    /// <param name="language">Language</param>
+    /// <returns>The block comment marker pairs for the language, may be empty.</returns>
+    public IReadOnlyList<(string Prefix, string Suffix)> GetCommentBlocks(string language)
+    {
+        return GetComments(language).SelectMany(x => x.GetBlockComments()).Distinct().ToList();
+    }
+
+    /// <summary>
+    ///     Gets comment inline for given language. If the language specifies multiple inline comment styles only the
+    ///     first is returned, see <see cref="GetCommentInlines" />.
     /// </summary>
     /// <param name="language">Language</param>
     /// <returns>Commented string</returns>
     public string GetCommentInline(string language)
     {
-        var result = string.Empty;
-
-        if (language != null)
-        {
-            foreach (var comment in _comments)
-                if (Array.Exists(comment.Languages ?? new[] { "" },
-                        x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)) && comment.Inline is { })
-                {
-                    return comment.Inline;
-                }
-        }
-
-        return result;
+        return GetCommentInlines(language).FirstOrDefault() ?? string.Empty;
     }
 
     /// <summary>
-    ///     Gets comment preffix for given language
+    ///     Gets comment preffix for given language. If the language specifies multiple block comment styles only the
+    ///     first is returned, see <see cref="GetCommentBlocks" />.
     /// </summary>
     /// <param name="language">Language</param>
     /// <returns>Commented string</returns>
     public string GetCommentPrefix(string language)
     {
-        var result = string.Empty;
-
-        if (language != null)
-        {
-            foreach (var comment in _comments)
-                if ((comment.Languages?.Contains(language.ToLower(CultureInfo.InvariantCulture)) ?? false) &&
-                    comment.Prefix is { })
-                {
-                    return comment.Prefix;
-                }
-        }
-
-        return result;
+        return GetCommentBlocks(language).Select(x => x.Prefix).FirstOrDefault() ?? string.Empty;
     }
 
     /// <summary>
-    ///     Gets comment suffix for given language
+    ///     Gets comment suffix for given language. If the language specifies multiple block comment styles only the
+    ///     first is returned, see <see cref="GetCommentBlocks" />.
     /// </summary>
     /// <param name="language">Language</param>
     /// <returns>Commented string</returns>
     public string GetCommentSuffix(string language)
     {
-        var result = string.Empty;
-
-        if (language != null)
-        {
-            foreach (var comment in _comments)
-                if (Array.Exists(comment.Languages ?? new[] { "" },
-                        x => x.Equals(language, StringComparison.InvariantCultureIgnoreCase)) && comment.Suffix is { })
-                {
-                    return comment.Suffix;
-                }
-        }
-
-        return result;
+        return GetCommentBlocks(language).Select(x => x.Suffix).FirstOrDefault() ?? string.Empty;
     }
 
     /// <summary>
