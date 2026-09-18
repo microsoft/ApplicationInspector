@@ -8,6 +8,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Enumeration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,6 +56,14 @@ public class AnalyzeOptions
     ///     File paths which should be excluded from scanning.
     /// </summary>
     public IEnumerable<string> FilePathExclusions { get; set; } = Array.Empty<string>();
+    /// <summary>
+    ///     Follow symbolic links while enumerating source files. When false (the default), symbolic links found
+    ///     while traversing a source directory are skipped and recorded as skipped in the scan metadata. A link
+    ///     named directly in <see cref="SourcePath" /> is always scanned regardless of this setting.
+    ///     On Windows this also applies to other reparse points, including NTFS junctions and cloud placeholder
+    ///     files such as OneDrive Files On-Demand, which are skipped rather than rehydrated.
+    /// </summary>
+    public bool FollowSymlinks { get; set; }
     /// <summary>
     ///     If enabled, processing will be performed on one file at a time.
     /// </summary>
@@ -194,6 +203,21 @@ public class AnalyzeResult : Result
 public class AnalyzeCommand
 {
     private const int ProgressBarUpdateDelay = 100;
+
+    /// <summary>
+    ///     Mirrors the behavior of <see cref="SearchOption.AllDirectories" />: recurse everywhere, surface
+    ///     inaccessible entries instead of hiding them, and do not filter on file attributes. Reparse points are
+    ///     handled by the predicates in <see cref="EnumerateSourceFiles" /> rather than by
+    ///     <see cref="EnumerationOptions.AttributesToSkip" />, so that skipped entries can still be reported.
+    /// </summary>
+    private static readonly EnumerationOptions SourceEnumerationOptions = new()
+    {
+        RecurseSubdirectories = true,
+        IgnoreInaccessible = false,
+        MatchType = MatchType.Win32,
+        AttributesToSkip = 0
+    };
+
     private readonly Confidence _confidence = Confidence.Unspecified;
 
     private readonly List<Glob> _fileExclusionList = new();
@@ -203,6 +227,7 @@ public class AnalyzeCommand
     private readonly Severity _severity = Severity.Unspecified;
     private readonly List<string> _srcfileList = new();
     private readonly Languages _languages = new();
+    private int _skippedLinkCount;
     private MetaDataHelper _metaDataHelper; //wrapper containing MetaData object to be assigned to result
     private readonly RuleProcessor _rulesProcessor;
 
@@ -238,9 +263,12 @@ public class AnalyzeCommand
         {
             // Turn any relative paths into absolute paths for consistent behavior with file name regexes in rules
             var entryFullPath = Path.GetFullPath(entry);
+            // Directory.Exists and File.Exists resolve links, so a link named directly in SourcePath is always
+            // scanned, even when FollowSymlinks is false. Refusing to scan a path the caller asked for by name
+            // would be more surprising than following it; only links reached by traversal are skipped.
             if (Directory.Exists(entryFullPath))
             {
-                _srcfileList.AddRange(Directory.EnumerateFiles(entryFullPath, "*.*", SearchOption.AllDirectories));
+                _srcfileList.AddRange(EnumerateSourceFiles(entryFullPath));
             }
             else if (File.Exists(entryFullPath))
             {
@@ -254,6 +282,13 @@ public class AnalyzeCommand
 
         if (_srcfileList.Count == 0)
         {
+            if (_skippedLinkCount > 0)
+            {
+                _logger.LogWarning(
+                    "No files to scan. {Count} symbolic link(s) or reparse point(s) were skipped; enable FollowSymlinks to include them.",
+                    _skippedLinkCount);
+            }
+
             throw new OpException(MsgHelp.FormatString(MsgHelp.ID.CMD_NO_FILES_IN_SOURCE,
                 string.Join(',', _options.SourcePath)));
         }
@@ -348,6 +383,83 @@ public class AnalyzeCommand
         };
 
         _rulesProcessor = new RuleProcessor(rulesSet, rpo);
+    }
+
+    /// <summary>
+    ///     Enumerates every file beneath <paramref name="directoryFullPath" />, skipping reparse points unless
+    ///     <see cref="AnalyzeOptions.FollowSymlinks" /> is set.
+    /// </summary>
+    /// <remarks>
+    ///     Filtering with <see cref="EnumerationOptions.AttributesToSkip" /> would discard the entries inside the
+    ///     runtime, leaving the scan unable to report what it skipped. Enumerating with explicit predicates keeps
+    ///     the skipped entries observable: skipped files are recorded as <see cref="ScanState.Skipped" /> and
+    ///     skipped directories are logged.
+    /// </remarks>
+    /// <param name="directoryFullPath">The absolute path of the directory to enumerate.</param>
+    /// <returns>The absolute paths of the files to scan.</returns>
+    private List<string> EnumerateSourceFiles(string directoryFullPath)
+    {
+        if (_options.FollowSymlinks)
+        {
+            return Directory.EnumerateFiles(directoryFullPath, "*.*", SourceEnumerationOptions).ToList();
+        }
+
+        // A "*.*" Win32 pattern matches every name, including names without a dot, so the enumerable applies no
+        // name filter and relies on the predicates below instead.
+        FileSystemEnumerable<string> enumerable = new(directoryFullPath,
+            static (ref FileSystemEntry entry) => entry.ToFullPath(),
+            SourceEnumerationOptions)
+        {
+            ShouldIncludePredicate = (ref FileSystemEntry entry) =>
+            {
+                if (entry.IsDirectory)
+                {
+                    return false;
+                }
+
+                if (!IsReparsePoint(ref entry))
+                {
+                    return true;
+                }
+
+                var fullPath = entry.ToFullPath();
+                _logger.LogDebug(
+                    "File skipped: symbolic link or other reparse point. Enable FollowSymlinks to scan it. {Path}",
+                    fullPath);
+                // Added to the helper's bag rather than Metadata.Files, because Metadata.Files is replaced from
+                // the bag when the report is prepared.
+                _metaDataHelper.Files.Add(new FileRecord { FileName = fullPath, Status = ScanState.Skipped });
+                _skippedLinkCount++;
+                return false;
+            },
+            ShouldRecursePredicate = (ref FileSystemEntry entry) =>
+            {
+                if (!IsReparsePoint(ref entry))
+                {
+                    return true;
+                }
+
+                _logger.LogDebug(
+                    "Directory not traversed: symbolic link or other reparse point. Enable FollowSymlinks to traverse it. {Path}",
+                    entry.ToFullPath());
+                _skippedLinkCount++;
+                return false;
+            }
+        };
+
+        // Materialized here because the predicates above log and mutate metadata, so the enumerable must not be
+        // walked more than once.
+        return enumerable.ToList();
+    }
+
+    /// <summary>
+    ///     Checks whether an entry is a reparse point. On Windows this covers NTFS junctions and cloud placeholder
+    ///     files (for example OneDrive Files On-Demand) in addition to symbolic links, all of which are skipped by
+    ///     default so that a scan does not traverse outside the source tree or rehydrate remote content.
+    /// </summary>
+    private static bool IsReparsePoint(ref FileSystemEntry entry)
+    {
+        return (entry.Attributes & FileAttributes.ReparsePoint) == FileAttributes.ReparsePoint;
     }
 
     private DateTime DateScanned { get; }
