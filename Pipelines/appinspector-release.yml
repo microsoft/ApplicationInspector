@@ -17,7 +17,7 @@ variables:
   BuildConfiguration: 'Release'
   DotnetVersion: '10.0.x'
   DotnetTargetFramework: 'net10.0'
-  EsrpConnectedServiceName: 'oss-esrp-signing-appinspector-v5-connection'
+  EsrpConnectedServiceName: 'oss-signing-v6-appinspector'
   EsrpAppRegistrationClientId: '5354cccd-3c6d-4ce8-b721-67bd1806171f'
   EsrpAppRegistrationTenantId: '33e01921-4d64-4f8c-a055-5bdaffd5e33d'
   EsrpAuthAKVName: 'oss-signing-vault'
