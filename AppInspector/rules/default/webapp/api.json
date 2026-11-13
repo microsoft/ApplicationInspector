@@ -1,0 +1,1608 @@
+[
+  {
+    "name": "Web API: FastAPI (Python)",
+    "id": "AI090000",
+    "description": "Exposes an HTTP API implemented with the Python FastAPI framework",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "WebApp.API.Python.FastAPI"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\b(from|import)\\s+fastapi\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "FastAPI import"
+      },
+      {
+        "pattern": "FastAPI(",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "FastAPI application instantiation"
+      },
+      {
+        "pattern": "APIRouter(",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "FastAPI router instantiation"
+      }
+    ],
+    "must-match": [
+      "from fastapi import FastAPI",
+      "app = FastAPI()",
+      "router = APIRouter()"
+    ],
+    "must-not-match": [
+      "@mock.patch(\"mypkg.client.send\")",
+      "value = config.getValue(item_id)"
+    ]
+  },
+  {
+    "name": "Web API: FastAPI Endpoint (Python)",
+    "id": "AI090001",
+    "description": "FastAPI path operation decorator, in a file that also references FastAPI",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "WebApp.API.Python.FastAPI"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "@\\w+\\.(get|post|put|delete|patch|head|options)\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "FastAPI path operation decorator"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "fastapi",
+          "type": "regexword",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        "search_in": "same-file",
+        "negate_finding": false
+      }
+    ],
+    "must-match": [
+      "from fastapi import FastAPI\napp = FastAPI()\n\n@app.get(\"/items/{item_id}\")\ndef read_item(item_id: int):\n    return {}"
+    ],
+    "must-not-match": [
+      "from unittest import mock\n\n@mock.patch(\"mypkg.client.send\")\ndef test_send(m):\n    pass",
+      "import responses\n\n@responses.post(\"http://example.com\")\ndef test_post():\n    pass"
+    ]
+  },
+  {
+    "name": "Web API: Flask (Python)",
+    "id": "AI090002",
+    "description": "Exposes an HTTP API implemented with the Python Flask framework",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "WebApp.API.Python.Flask"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\b(from|import)\\s+flask\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Flask import"
+      },
+      {
+        "pattern": "Flask(__name__",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Flask application instantiation"
+      },
+      {
+        "pattern": "flask_restful|flask_restx|flask_smorest",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Flask REST extension import"
+      }
+    ],
+    "must-match": [
+      "from flask import Flask",
+      "app = Flask(__name__)",
+      "from flask_restful import Api, Resource"
+    ],
+    "must-not-match": [
+      "result = trip.route(start, end)",
+      "import flasky_helpers"
+    ]
+  },
+  {
+    "name": "Web API: Flask Endpoint (Python)",
+    "id": "AI090003",
+    "description": "Flask or Blueprint route decorator, in a file that also references Flask",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "WebApp.API.Python.Flask"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "@\\w+\\.route\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Flask/Blueprint route decorator"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "flask",
+          "type": "regexword",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        "search_in": "same-file",
+        "negate_finding": false
+      }
+    ],
+    "must-match": [
+      "from flask import Blueprint\nbp = Blueprint(\"api\", __name__)\n\n@bp.route(\"/health\")\ndef health():\n    return \"ok\""
+    ],
+    "must-not-match": [
+      "import redis\n\n@cache.route(\"/x\")\ndef f():\n    pass"
+    ]
+  },
+  {
+    "name": "Web API: Django REST Framework (Python)",
+    "id": "AI090004",
+    "description": "Exposes an HTTP API implemented with the Django REST Framework",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "WebApp.API.Python.Django"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "@api_view(",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Django REST Framework function view decorator"
+      },
+      {
+        "pattern": "from\\s+rest_framework(?:\\.\\w+)*\\s+import\\s+[^\\r\\n]*(APIView|ViewSet|ModelViewSet|ReadOnlyModelViewSet|GenericViewSet|DefaultRouter|SimpleRouter)\\b|class\\s+\\w+\\([^\\r\\n)]*(APIView|ViewSet|ModelViewSet|ReadOnlyModelViewSet|GenericViewSet)[^\\r\\n)]*\\)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Django REST Framework API views, viewsets, and router registrations"
+      }
+    ],
+    "must-match": [
+      "@api_view(['GET', 'POST'])",
+      "from rest_framework.views import APIView\n\nclass UserView(APIView):\n    pass",
+      "from rest_framework.routers import DefaultRouter\n\nrouter = DefaultRouter()\nrouter.register(r'users', UserViewSet)"
+    ],
+    "must-not-match": [
+      "from django.db import models",
+      "from rest_framework import serializers\n\nclass UserSerializer(serializers.Serializer):\n    name = serializers.CharField()"
+    ]
+  },
+  {
+    "name": "Web API: aiohttp Server (Python)",
+    "id": "AI090005",
+    "description": "Exposes an HTTP API implemented with the Python aiohttp server",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "WebApp.API.Python.Aiohttp"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "aiohttp\\.web",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "aiohttp server module reference"
+      },
+      {
+        "pattern": "from aiohttp import web",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "aiohttp server module import"
+      }
+    ],
+    "must-match": [
+      "from aiohttp import web",
+      "app = aiohttp.web.Application()"
+    ],
+    "must-not-match": [
+      "async with aiohttp.ClientSession() as session:\n    pass"
+    ]
+  },
+  {
+    "name": "Web API: Tornado (Python)",
+    "id": "AI090006",
+    "description": "Exposes an HTTP API implemented with the Python Tornado web framework",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "WebApp.API.Python.Tornado"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "tornado\\.web",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Tornado web module reference"
+      }
+    ],
+    "must-match": [
+      "import tornado.web",
+      "class MainHandler(tornado.web.RequestHandler):\n    pass"
+    ],
+    "must-not-match": [
+      "import tornado.ioloop"
+    ]
+  },
+  {
+    "name": "Web API: Python Web Server (Other)",
+    "id": "AI090007",
+    "description": "Exposes an HTTP API implemented with Sanic, Falcon, Starlette, Bottle, CherryPy, or Pyramid",
+    "applies_to": [
+      "python"
+    ],
+    "tags": [
+      "WebApp.API.Python.Server"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Sanic\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Sanic application instantiation"
+      },
+      {
+        "pattern": "falcon\\.(App|API)\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Falcon application instantiation"
+      },
+      {
+        "pattern": "Starlette\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Starlette application instantiation"
+      },
+      {
+        "pattern": "\\b(from|import)\\s+bottle\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Bottle framework import"
+      },
+      {
+        "pattern": "cherrypy\\.(quickstart|tree)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "CherryPy server startup"
+      },
+      {
+        "pattern": "from pyramid.config import Configurator",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Pyramid application configuration"
+      }
+    ],
+    "must-match": [
+      "app = Sanic(\"MyApp\")",
+      "app = falcon.App()",
+      "app = Starlette(debug=True)",
+      "from bottle import route, run",
+      "cherrypy.quickstart(HelloWorld())",
+      "from pyramid.config import Configurator"
+    ],
+    "must-not-match": [
+      "import bottleneck as bn",
+      "import falcon_helpers"
+    ]
+  },
+  {
+    "name": "Web API: Express (JavaScript)",
+    "id": "AI090100",
+    "description": "Exposes an HTTP API implemented with the Express web framework",
+    "applies_to": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
+    ],
+    "tags": [
+      "WebApp.API.JavaScript.Express"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "require\\(['\"]express['\"]\\)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Express require"
+      },
+      {
+        "pattern": "from ['\"]express['\"]",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Express import"
+      }
+    ],
+    "must-match": [
+      "const express = require('express');",
+      "import express from 'express';"
+    ],
+    "must-not-match": [
+      "const limiter = require('express-rate-limit');",
+      "const value = store.getItem('key');"
+    ]
+  },
+  {
+    "name": "Web API: Express Endpoint (JavaScript)",
+    "id": "AI090101",
+    "description": "Express style route registration, in a file that also imports a Node.js web framework",
+    "applies_to": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
+    ],
+    "tags": [
+      "WebApp.API.JavaScript.Express"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\b(app|router|server|api)\\.(get|post|put|delete|patch|all)\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Express style route registration"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "(require\\(|from )['\"]express['\"]",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ]
+        },
+        "search_in": "same-file",
+        "negate_finding": false
+      }
+    ],
+    "must-match": [
+      "const express = require('express');\nconst app = express();\napp.get('/users', (req, res) => res.json([]));"
+    ],
+    "must-not-match": [
+      "const app = document.getElementById('app');\nrouter.get('key');",
+      "const cache = new Map();\napp.delete('entry');",
+      "const fastify = require('fastify');\nconst app = fastify();\napp.get('/users', async () => []);"
+    ]
+  },
+  {
+    "name": "Web API: NestJS (TypeScript)",
+    "id": "AI090102",
+    "description": "Exposes an HTTP API implemented with the NestJS framework",
+    "applies_to": [
+      "javascript",
+      "typescript",
+      "typescriptreact"
+    ],
+    "tags": [
+      "WebApp.API.JavaScript.NestJS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "@Controller\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "NestJS controller decorator"
+      }
+    ],
+    "must-match": [
+      "import { Controller, Get } from '@nestjs/common';\n\n@Controller('cats')\nexport class CatsController {\n  @Get()\n  findAll() { return []; }\n}",
+      "@Controller()\nexport class HealthController {}"
+    ],
+    "must-not-match": [
+      "const controller = new AbortController();",
+      "import { Injectable, OnModuleInit } from '@nestjs/common';\n\n@Injectable()\nexport class CatsService implements OnModuleInit {\n  onModuleInit() {}\n}"
+    ]
+  },
+  {
+    "name": "Web API: Node.js Web Framework (Other)",
+    "id": "AI090103",
+    "description": "Exposes an HTTP API implemented with Koa, Fastify, Restify, Hapi, or Hono",
+    "applies_to": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
+    ],
+    "tags": [
+      "WebApp.API.JavaScript.Server"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "require\\(['\"](koa|fastify|restify|@hapi/hapi|hono)['\"]\\)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Node.js web framework require"
+      },
+      {
+        "pattern": "from ['\"](koa|fastify|restify|@hapi/hapi|hono)['\"]",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Node.js web framework import"
+      }
+    ],
+    "must-match": [
+      "const Koa = require('koa');",
+      "import Fastify from 'fastify';",
+      "import { Hono } from 'hono';"
+    ],
+    "must-not-match": [
+      "import { koaBody } from 'koa-body';"
+    ]
+  },
+  {
+    "name": "Web API: Node.js HTTP Server",
+    "id": "AI090104",
+    "description": "Exposes an HTTP API implemented directly on a Node.js, Bun, or Deno HTTP server",
+    "applies_to": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
+    ],
+    "tags": [
+      "WebApp.API.JavaScript.Node"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\bhttps?\\.createServer\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Node.js core HTTP server"
+      },
+      {
+        "pattern": "Bun\\.serve\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Bun HTTP server"
+      },
+      {
+        "pattern": "Deno\\.serve\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Deno HTTP server"
+      }
+    ],
+    "must-match": [
+      "const server = http.createServer((req, res) => res.end('ok'));",
+      "Bun.serve({ port: 3000, fetch(req) { return new Response('ok'); } });",
+      "Deno.serve((req) => new Response('ok'));"
+    ],
+    "must-not-match": [
+      "const server = net.createServer();"
+    ]
+  },
+  {
+    "name": "Web API: Next.js Route Handler",
+    "id": "AI090105",
+    "description": "Exposes an HTTP API implemented as a Next.js route handler or API route",
+    "applies_to_file_regex": [
+      "[/\\\\]app[/\\\\](?:.*[/\\\\])?route\\.(js|jsx|ts|tsx)$",
+      "[/\\\\]pages[/\\\\]api[/\\\\]"
+    ],
+    "tags": [
+      "WebApp.API.JavaScript.NextJS"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "export\\s+(async\\s+)?(function|const)\\s+(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Next.js App Router route handler export"
+      },
+      {
+        "pattern": "export\\s+default\\s+(async\\s+)?function(\\s+\\w+)?\\s*\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Next.js Pages Router API route handler export"
+      }
+    ],
+    "must-match": [
+      "export async function GET(request: Request) {\n  return Response.json({});\n}",
+      "export default async function handler(req, res) {\n  res.status(200).json({});\n}",
+      "export default function users(req, res) {\n  res.status(200).json({});\n}"
+    ],
+    "must-not-match": [
+      "export function getServerSideProps() {\n  return { props: {} };\n}"
+    ]
+  },
+  {
+    "name": "Web API: ASP.NET Controller (C#)",
+    "id": "AI090200",
+    "description": "Exposes an HTTP API implemented with an ASP.NET MVC or Web API controller",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "WebApp.API.DotNet.AspNet"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "[ApiController]",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "ASP.NET API controller attribute"
+      },
+      {
+        "pattern": "\\[Http(Get|Post|Put|Delete|Patch|Head|Options)\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "ASP.NET HTTP verb attribute"
+      },
+      {
+        "pattern": "\\[Route\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "ASP.NET route attribute"
+      },
+      {
+        "pattern": ":\\s*(Controller|ControllerBase|ApiController)\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "ASP.NET controller base class"
+      },
+      {
+        "pattern": "\\.MapControllers\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "ASP.NET controller endpoint registration"
+      }
+    ],
+    "must-match": [
+      "[ApiController]",
+      "[HttpGet(\"{id}\")]",
+      "[Route(\"api/[controller]\")]",
+      "public class UsersController : ControllerBase",
+      "app.MapControllers();"
+    ],
+    "must-not-match": [
+      "var result = dictionary.MapValues();",
+      "[Serializable]"
+    ]
+  },
+  {
+    "name": "Web API: ASP.NET Minimal API (C#)",
+    "id": "AI090201",
+    "description": "ASP.NET Minimal API endpoint mapping, in a file that also references ASP.NET hosting types",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "WebApp.API.DotNet.AspNet"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\.Map(Get|Post|Put|Delete|Patch|Group)\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "ASP.NET Minimal API endpoint mapping"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "WebApplication|IEndpointRouteBuilder|IApplicationBuilder|Microsoft\\.AspNetCore|UseEndpoints",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ]
+        },
+        "search_in": "same-file",
+        "negate_finding": false
+      }
+    ],
+    "must-match": [
+      "var app = WebApplication.CreateBuilder(args).Build();\napp.MapGet(\"/\", () => \"Hello World!\");"
+    ],
+    "must-not-match": [
+      "public class Mapper {\n    public void Run() {\n        var x = source.MapPost(y);\n    }\n}"
+    ]
+  },
+  {
+    "name": "Web API: Azure Functions HTTP Trigger",
+    "id": "AI090202",
+    "description": "Exposes an HTTP API implemented as an Azure Functions HTTP trigger",
+    "applies_to": [
+      "csharp",
+      "json"
+    ],
+    "tags": [
+      "WebApp.API.Serverless.AzureFunctions"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\[HttpTrigger\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Azure Functions HTTP trigger attribute"
+      },
+      {
+        "pattern": "\"type\"\\s*:\\s*\"httpTrigger\"",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Azure Functions HTTP trigger binding in function.json"
+      }
+    ],
+    "must-match": [
+      "[HttpTrigger(AuthorizationLevel.Function, \"get\", \"post\", Route = null)] HttpRequest req",
+      "{ \"bindings\": [ { \"type\": \"httpTrigger\", \"direction\": \"in\" } ] }"
+    ],
+    "must-not-match": [
+      "[TimerTrigger(\"0 */5 * * * *\")] TimerInfo timer",
+      "{ \"bindings\": [ { \"type\": \"queueTrigger\", \"direction\": \"in\" } ] }"
+    ]
+  },
+  {
+    "name": "Web API: ASP.NET gRPC Service (C#)",
+    "id": "AI090203",
+    "description": "Exposes a gRPC API hosted by ASP.NET",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "WebApp.API.DotNet.Grpc"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "MapGrpcService<",
+        "type": "substring",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "gRPC service endpoint registration"
+      },
+      {
+        "pattern": "AddGrpc\\(\\)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "gRPC server service registration"
+      }
+    ],
+    "must-match": [
+      "app.MapGrpcService<GreeterService>();",
+      "builder.Services.AddGrpc();"
+    ],
+    "must-not-match": [
+      "services.AddGrpcClient<Greeter.GreeterClient>();"
+    ]
+  },
+  {
+    "name": "Web API: OpenAPI Generation (C#)",
+    "id": "AI090204",
+    "description": "Generates an OpenAPI description of an exposed HTTP API",
+    "applies_to": [
+      "csharp"
+    ],
+    "tags": [
+      "WebApp.API.DotNet.OpenAPI"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "(AddSwaggerGen|UseSwagger|AddOpenApi|MapOpenApi)\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Swashbuckle or Microsoft.AspNetCore.OpenApi registration"
+      }
+    ],
+    "must-match": [
+      "builder.Services.AddSwaggerGen();",
+      "app.MapOpenApi();"
+    ],
+    "must-not-match": [
+      "var doc = new OpenApiDocument();"
+    ]
+  },
+  {
+    "name": "Web API: Spring (Java)",
+    "id": "AI090300",
+    "description": "Exposes an HTTP API implemented with the Spring framework",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "WebApp.API.Java.Spring"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "@RestController\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Spring REST controller annotation"
+      },
+      {
+        "pattern": "@(Get|Post|Put|Delete|Patch|Request)Mapping\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Spring request mapping annotation",
+        "conditions": [
+          {
+            "pattern": {
+              "pattern": "@(RestController|Controller)\\b",
+              "type": "regex",
+              "scopes": [
+                "code"
+              ]
+            },
+            "search_in": "same-file",
+            "negate_finding": false
+          }
+        ]
+      }
+    ],
+    "must-match": [
+      "@RestController",
+      "@RestController\nclass UserController {\n    @GetMapping(\"/users\")\n    List<User> users() { return List.of(); }\n}",
+      "@Controller\nclass PageController {\n    @RequestMapping(\"/home\")\n    String home() { return \"home\"; }\n}"
+    ],
+    "must-not-match": [
+      "import java.util.Map;",
+      "@Component",
+      "import org.springframework.cloud.openfeign.FeignClient;\n\n@FeignClient(name = \"users\")\ninterface UserClient {\n    @GetMapping(\"/users\")\n    List<User> users();\n}"
+    ]
+  },
+  {
+    "name": "Web API: JAX-RS (Java)",
+    "id": "AI090301",
+    "description": "Exposes an HTTP API implemented with JAX-RS (Jersey, RESTEasy, Quarkus)",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "WebApp.API.Java.JaxRs"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "@(ApplicationPath|Path)\\s*\\([^\\r\\n)]*\\)(?:\\s*@[A-Za-z_][\\w.]*\\s*(?:\\([^\\r\\n)]*\\))?){0,8}\\s*(?:(?:public|final|abstract|open|data)\\s+)*class\\s+\\w+|ResourceConfig\\s*\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "JAX-RS resource classes or server resource registration"
+      }
+    ],
+    "must-match": [
+      "import javax.ws.rs.GET;\nimport javax.ws.rs.Path;\n\n@Path(\"/users\")\npublic class UsersResource {\n    @GET\n    public String users() { return \"[]\"; }\n}",
+      "import jakarta.ws.rs.ApplicationPath;\n\n@ApplicationPath(\"/api\")\npublic class ApiApplication extends Application {}",
+      "import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;\nimport jakarta.ws.rs.GET;\nimport jakarta.ws.rs.Path;\n\n@RegisterRestClient\n@Path(\"/remote\")\npublic interface RemoteClient {\n    @GET\n    String get();\n}\n\n@Path(\"/local\")\npublic class LocalResource {\n    @GET\n    public String get() { return \"ok\"; }\n}"
+    ],
+    "must-not-match": [
+      "import java.nio.file.Path;",
+      "import jakarta.ws.rs.client.Client;",
+      "import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;\nimport jakarta.ws.rs.GET;\nimport jakarta.ws.rs.Path;\n\n@RegisterRestClient\n@Path(\"/remote\")\npublic interface RemoteClient {\n    @GET\n    String get();\n}",
+      "import org.eclipse.microprofile.rest.client.RestClientBuilder;\nimport jakarta.ws.rs.GET;\nimport jakarta.ws.rs.Path;\n\n@Path(\"/remote\")\npublic interface RemoteClient {\n    @GET\n    String get();\n}\n\nclass Caller {\n    RemoteClient client = RestClientBuilder.newBuilder().build(RemoteClient.class);\n}"
+    ]
+  },
+  {
+    "name": "Web API: Ktor (Kotlin)",
+    "id": "AI090302",
+    "description": "Exposes an HTTP API implemented with the Ktor server framework",
+    "applies_to": [
+      "kotlin",
+      "java"
+    ],
+    "tags": [
+      "WebApp.API.Java.Ktor"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "io\\.ktor\\.server",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Ktor server import"
+      },
+      {
+        "pattern": "embeddedServer\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Ktor embedded server startup"
+      }
+    ],
+    "must-match": [
+      "import io.ktor.server.application.*",
+      "embeddedServer(Netty, port = 8080) { }"
+    ],
+    "must-not-match": [
+      "import io.ktor.client.HttpClient"
+    ]
+  },
+  {
+    "name": "Web API: JVM Web Server (Other)",
+    "id": "AI090303",
+    "description": "Exposes an HTTP API implemented with Micronaut, Vert.x, Javalin, Spark, or the JDK HTTP server",
+    "applies_to": [
+      "java",
+      "kotlin"
+    ],
+    "tags": [
+      "WebApp.API.Java.Server"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "io\\.micronaut\\.http\\.annotation",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Micronaut HTTP import"
+      },
+      {
+        "pattern": "io\\.vertx\\.ext\\.web\\.(Router|RoutingContext|handler)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Vert.x web router import"
+      },
+      {
+        "pattern": "Javalin\\.create\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Javalin server instantiation"
+      },
+      {
+        "pattern": "com\\.sun\\.net\\.httpserver",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "JDK HTTP server import"
+      },
+      {
+        "pattern": "spark\\.Spark\\b",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Spark Java framework import"
+      }
+    ],
+    "must-match": [
+      "import io.micronaut.http.annotation.Get;",
+      "import io.vertx.ext.web.Router;",
+      "Javalin app = Javalin.create();",
+      "import com.sun.net.httpserver.HttpServer;",
+      "import static spark.Spark.get;"
+    ],
+    "must-not-match": [
+      "import java.util.Map;",
+      "import org.apache.spark.sql.SparkSession;",
+      "import io.micronaut.http.client.HttpClient;",
+      "import io.vertx.ext.web.client.WebClient;"
+    ]
+  },
+  {
+    "name": "Web API: Go net/http Server",
+    "id": "AI090400",
+    "description": "Exposes an HTTP API implemented with the Go net/http package",
+    "applies_to": [
+      "go"
+    ],
+    "tags": [
+      "WebApp.API.Go.NetHttp"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "http\\.HandleFunc\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Go net/http handler registration"
+      },
+      {
+        "pattern": "http\\.Handle\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Go net/http handler registration"
+      },
+      {
+        "pattern": "\\.ListenAndServe(TLS)?\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Go net/http server startup"
+      }
+    ],
+    "must-match": [
+      "http.HandleFunc(\"/\", handler)",
+      "http.Handle(\"/metrics\", promhttp.Handler())",
+      "log.Fatal(http.ListenAndServe(\":8080\", nil))"
+    ],
+    "must-not-match": [
+      "resp, err := http.Get(url)"
+    ]
+  },
+  {
+    "name": "Web API: Go Web Framework",
+    "id": "AI090401",
+    "description": "Exposes an HTTP API implemented with Gin, Echo, gorilla/mux, chi, or Fiber",
+    "applies_to": [
+      "go"
+    ],
+    "tags": [
+      "WebApp.API.Go.Framework"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "gin\\.(Default|New)\\(\\)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Gin web framework router"
+      },
+      {
+        "pattern": "echo\\.New\\(\\)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Echo web framework router"
+      },
+      {
+        "pattern": "(mux|chi)\\.NewRouter\\(\\)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "gorilla/mux or chi router"
+      },
+      {
+        "pattern": "fiber\\.New\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Fiber web framework app"
+      }
+    ],
+    "must-match": [
+      "r := gin.Default()",
+      "e := echo.New()",
+      "router := mux.NewRouter()",
+      "app := fiber.New()"
+    ],
+    "must-not-match": [
+      "result := strings.NewReplacer()"
+    ]
+  },
+  {
+    "name": "Web API: Go gRPC Server",
+    "id": "AI090402",
+    "description": "Exposes a gRPC API implemented in Go",
+    "applies_to": [
+      "go"
+    ],
+    "tags": [
+      "WebApp.API.Go.Grpc"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "grpc\\.NewServer\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Go gRPC server instantiation"
+      }
+    ],
+    "must-match": [
+      "s := grpc.NewServer()"
+    ],
+    "must-not-match": [
+      "conn, err := grpc.Dial(address)"
+    ]
+  },
+  {
+    "name": "Web API: Ruby (Sinatra / Rails / Grape)",
+    "id": "AI090500",
+    "description": "Exposes an HTTP API implemented with Sinatra, Ruby on Rails, or Grape",
+    "applies_to": [
+      "ruby"
+    ],
+    "tags": [
+      "WebApp.API.Ruby.Server"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Sinatra::(Base|Application)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Sinatra application base class"
+      },
+      {
+        "pattern": "ActionController::API",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Rails API controller base class"
+      },
+      {
+        "pattern": "Grape::API",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Grape API base class"
+      }
+    ],
+    "must-match": [
+      "class App < Sinatra::Base",
+      "class ApiController < ActionController::API",
+      "class Users < Grape::API"
+    ],
+    "must-not-match": [
+      "class UsersController < ApplicationController"
+    ]
+  },
+  {
+    "name": "Web API: Sinatra Endpoint (Ruby)",
+    "id": "AI090501",
+    "description": "Sinatra route definition, in a file that also references Sinatra",
+    "applies_to": [
+      "ruby"
+    ],
+    "tags": [
+      "WebApp.API.Ruby.Server"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "^\\s*(get|post|put|delete|patch)\\s+['\"]/",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "m"
+        ],
+        "confidence": "high",
+        "_comment": "Sinatra route definition"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "sinatra",
+          "type": "regexword",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "i"
+          ]
+        },
+        "search_in": "same-file",
+        "negate_finding": false
+      }
+    ],
+    "must-match": [
+      "require 'sinatra'\n\nget '/hello' do\n  'hi'\nend"
+    ],
+    "must-not-match": [
+      "describe 'thing' do\n  get '/spec/fixture' do\n  end\nend"
+    ]
+  },
+  {
+    "name": "Web API: Laravel (PHP)",
+    "id": "AI090600",
+    "description": "Exposes an HTTP API implemented with the Laravel framework",
+    "applies_to": [
+      "php"
+    ],
+    "tags": [
+      "WebApp.API.PHP.Laravel"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "Route::(get|post|put|delete|patch|apiResource|resource)\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Laravel route registration"
+      }
+    ],
+    "must-match": [
+      "Route::get('/users', 'UserController@index');",
+      "Route::apiResource('posts', PostController::class);"
+    ],
+    "must-not-match": [
+      "$value = $config->getsetting('key');"
+    ]
+  },
+  {
+    "name": "Web API: Symfony (PHP)",
+    "id": "AI090601",
+    "description": "Exposes an HTTP API implemented with the Symfony framework",
+    "applies_to": [
+      "php"
+    ],
+    "tags": [
+      "WebApp.API.PHP.Symfony"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "#\\[Route\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Symfony route attribute"
+      },
+      {
+        "pattern": "Symfony\\\\Component\\\\Routing",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Symfony routing import"
+      }
+    ],
+    "must-match": [
+      "#[Route('/api/users', methods: ['GET'])]",
+      "use Symfony\\Component\\Routing\\Annotation\\Route;"
+    ],
+    "must-not-match": [
+      "$route = $this->generateUrl('home');"
+    ]
+  },
+  {
+    "name": "Web API: Slim Endpoint (PHP)",
+    "id": "AI090602",
+    "description": "Slim route registration, in a file that also references Slim",
+    "applies_to": [
+      "php"
+    ],
+    "tags": [
+      "WebApp.API.PHP.Slim"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\$app->(get|post|put|delete|patch)\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Slim route registration"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "Slim",
+          "type": "regexword",
+          "scopes": [
+            "code"
+          ]
+        },
+        "search_in": "same-file",
+        "negate_finding": false
+      }
+    ],
+    "must-match": [
+      "use Slim\\Factory\\AppFactory;\n$app = AppFactory::create();\n$app->get('/users', function ($request, $response) {});"
+    ],
+    "must-not-match": [
+      "$app->get('/config', 'handler');"
+    ]
+  },
+  {
+    "name": "Web API: Rust Web Server",
+    "id": "AI090700",
+    "description": "Exposes an HTTP API implemented with axum, actix-web, Rocket, or warp",
+    "applies_to": [
+      "rust"
+    ],
+    "tags": [
+      "WebApp.API.Rust.Server"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\\baxum::",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "axum web framework import"
+      },
+      {
+        "pattern": "actix_web::",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "actix-web import"
+      },
+      {
+        "pattern": "rocket::(routes|launch|build)",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Rocket route registration"
+      },
+      {
+        "pattern": "warp::serve\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "warp server startup"
+      },
+      {
+        "pattern": "HttpServer::new\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "actix-web server startup"
+      }
+    ],
+    "must-match": [
+      "use axum::{routing::get, Router};",
+      "use actix_web::{web, App, HttpServer};",
+      "HttpServer::new(|| App::new().service(index))",
+      "rocket::build().mount(\"/\", routes![index])",
+      "warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;"
+    ],
+    "must-not-match": [
+      "use std::collections::HashMap;"
+    ]
+  },
+  {
+    "name": "Web API: OpenAPI / Swagger Specification",
+    "id": "AI090800",
+    "description": "An OpenAPI (Swagger) specification document that describes an exposed HTTP API",
+    "applies_to": [
+      "json",
+      "yaml"
+    ],
+    "tags": [
+      "WebApp.API.Specification.OpenAPI"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "\"(openapi|swagger)\"\\s*:\\s*\"[23]\\.",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "OpenAPI/Swagger JSON document version key"
+      },
+      {
+        "pattern": "^(openapi|swagger)\\s*:\\s*[\"']?[23]\\.",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "modifiers": [
+          "m"
+        ],
+        "confidence": "high",
+        "_comment": "OpenAPI/Swagger YAML document version key"
+      }
+    ],
+    "conditions": [
+      {
+        "pattern": {
+          "pattern": "\"info\"\\s*:|^info\\s*:",
+          "type": "regex",
+          "scopes": [
+            "code"
+          ],
+          "modifiers": [
+            "m"
+          ]
+        },
+        "search_in": "same-file",
+        "negate_finding": false,
+        "_comment": "OpenAPI and Swagger documents always declare an info object; requiring it avoids matching package manifests that merely depend on a swagger package"
+      }
+    ],
+    "must-match": [
+      "{ \"openapi\": \"3.0.0\", \"info\": { \"title\": \"Sample\", \"version\": \"1.0\" } }",
+      "swagger: \"2.0\"\ninfo:\n  title: Sample"
+    ],
+    "must-not-match": [
+      "{ \"name\": \"my-package\", \"dependencies\": { \"swagger-ui\": \"1.0.0\" } }",
+      "{ \"name\": \"my-package\", \"dependencies\": { \"swagger\": \"2.0.0\" } }"
+    ]
+  },
+  {
+    "name": "Web API: GraphQL Server",
+    "id": "AI090801",
+    "description": "Exposes a GraphQL API served by Apollo Server, GraphQL Yoga, Graphene, or Strawberry",
+    "applies_to": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact",
+      "python"
+    ],
+    "tags": [
+      "WebApp.API.GraphQL.Server"
+    ],
+    "severity": "moderate",
+    "patterns": [
+      {
+        "pattern": "ApolloServer\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Apollo Server instantiation"
+      },
+      {
+        "pattern": "graphql-yoga|graphql-http|@apollo/server",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "GraphQL server package import"
+      },
+      {
+        "pattern": "GraphQLView\\.as_view\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "GraphQL view registration"
+      },
+      {
+        "pattern": "GraphQLRouter\\(|strawberry\\.asgi\\.GraphQL\\(",
+        "type": "regex",
+        "scopes": [
+          "code"
+        ],
+        "confidence": "high",
+        "_comment": "Strawberry server integration"
+      }
+    ],
+    "must-match": [
+      "const server = new ApolloServer({ typeDefs, resolvers });",
+      "import { createYoga } from 'graphql-yoga';",
+      "app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql', schema=schema));",
+      "graphql_app = GraphQLRouter(schema)"
+    ],
+    "must-not-match": [
+      "import { gql } from '@apollo/client';",
+      "schema = graphene.Schema(query=Query)",
+      "schema = strawberry.Schema(query=Query)"
+    ]
+  }
+]

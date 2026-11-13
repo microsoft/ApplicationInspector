@@ -16,10 +16,28 @@ public class ExpressionGenerationTests
 {
     private readonly Microsoft.ApplicationInspector.RulesEngine.Languages _languages = new();
 
-    private static string GeneratedExpression(int patternClauses, int conditionClauses)
+    private static string GeneratedExpression(ConvertedOatRule oatRule)
     {
-        var expression = "(" + string.Join(" OR ", Enumerable.Range(0, patternClauses)) + ")";
-        for (var i = 0; i < conditionClauses; i++) expression += $" AND c{i}";
+        var patternClauses = oatRule.Clauses.Count(x => x is not WithinClause);
+        var conditions = oatRule.Clauses.OfType<WithinClause>().ToList();
+        var patternExpressions = Enumerable.Range(0, patternClauses)
+            .Select(i =>
+            {
+                var expression = i.ToString();
+                var patternConditions = conditions.Where(x => x.OwnerPatternIndex == i).Select(x => x.Label);
+                foreach (var label in patternConditions) expression += $" AND {label}";
+                return expression.Contains(" AND ") ? $"({expression})" : expression;
+            })
+            .ToList();
+
+        var patternBody = string.Join(" OR ", patternExpressions);
+        var expression = patternBody.StartsWith('(') ? patternBody : $"({patternBody})";
+
+        foreach (var label in conditions.Where(x => x.OwnerPatternIndex is null).Select(x => x.Label))
+        {
+            expression += $" AND {label}";
+        }
+
         return expression;
     }
 
@@ -47,7 +65,7 @@ public class ExpressionGenerationTests
             // Every shipped pattern must produce a clause, otherwise indices and labels would shift.
             Assert.Equal(oatRule.AppInspectorRule.Patterns.Length, patternClauses);
 
-            var expected = GeneratedExpression(patternClauses, conditionClauses);
+            var expected = GeneratedExpression(oatRule);
 
             if (oatRule.Expression != expected)
             {
