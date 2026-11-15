@@ -3,7 +3,7 @@
 ## Pre-requisites
 
 ### .NET:
-- .NET 6.0 (https://dotnet.microsoft.com/download/)
+- .NET 10.0 (https://dotnet.microsoft.com/download/)
 
 ## Commandline 
 
