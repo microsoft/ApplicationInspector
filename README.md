@@ -41,7 +41,7 @@ information and help.
 
 ### .NET Tool (recommended)
 
-- Download and install the .NET 6 [SDK](https://dotnet.microsoft.com/download/)
+- Download and install the .NET 10 [SDK](https://dotnet.microsoft.com/download/)
 - Run `dotnet tool install --global Microsoft.CST.ApplicationInspector.CLI`
 
 See more in the [wiki](https://github.com/microsoft/ApplicationInspector/wiki/2.-NuGet-Support)
@@ -96,7 +96,7 @@ as [Microsoft.CST.ApplicationInspector.Commands](https://www.nuget.org/packages/
 The .NET Global Tool is available on NuGet
 as [Microsoft.CST.ApplicationInspector.CLI](https://www.nuget.org/packages/Microsoft.CST.ApplicationInspector.CLI/).
 
-If you use the .NET Core version, you will need to have .NET 6.0 or later installed. See
+If you use the .NET Core version, you will need to have .NET 8.0 or later installed. See
 the [JustRunIt.md](https://github.com/microsoft/ApplicationInspector/blob/master/JustRunIt.md)
 or [Build.md](https://github.com/microsoft/ApplicationInspector/blob/master/BUILD.md) files for more.
 
