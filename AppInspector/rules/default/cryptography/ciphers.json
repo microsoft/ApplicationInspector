@@ -6,23 +6,23 @@
     "tags": [
       "Cryptography.Cipher.AES"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "AES",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "AES-?(128|192|256)|Rijndael",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -33,15 +33,15 @@
     "tags": [
       "Cryptography.Cipher.3DES"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "3DES|TripleDES",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -52,23 +52,23 @@
     "tags": [
       "Cryptography.Cipher.RC"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "RC([2456])",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "arc4random",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high",
+        "confidence": "High",
         "modifiers": [
           "i"
         ]
@@ -82,15 +82,15 @@
     "tags": [
       "Cryptography.Cipher.Salsa20"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "Salsa20",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high",
+        "confidence": "High",
         "modifiers": [
           "i"
         ]
@@ -104,15 +104,15 @@
     "tags": [
       "Cryptography.Cipher.ChaCha"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "ChaCha",
-        "type": "string",
+        "type": "String",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high",
+        "confidence": "High",
         "modifiers": [
           "i"
         ]
@@ -126,16 +126,37 @@
     "tags": [
       "Cryptography.Cipher.CipherMode"
     ],
-    "severity": "critical",
+    "severity": "Critical",
     "patterns": [
       {
-        "pattern": "CBC|CTR|ECB|OFB|CFB|CTS|PCBC|GMAC|XCBC|IACBC|IAPM|EAX|OCB|CWC|AEAD|LRW|XEX|XTS|CMC|EME|CBCMAC|OMAC|PMAC",
-        "type": "regexword",
+        "pattern": "CipherMode\\.|Mode\\s*[=:]\\s*(CBC|CTR|ECB|OFB|CFB|CTS|PCBC|GMAC|XCBC|IACBC|IAPM|EAX|OCB|CWC|AEAD|LRW|XEX|XTS|CMC|EME|CBCMAC|OMAC|PMAC)",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "low"
+        "confidence": "High"
+      },
+      {
+        "pattern": "(AES|DES|3DES|Blowfish|Twofish)[-_](CBC|CTR|ECB|OFB|CFB|GCM)",
+        "type": "Regex",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "High"
       }
+    ],
+    "must-match": [
+      "cipher.Mode = CipherMode.CBC;",
+      "algorithm = new AesManaged { Mode = CipherMode.ECB };",
+      "cipher = AES-CBC",
+      "const mode = 'AES_GCM';",
+      "enc = new Blowfish-CTR()"
+    ],
+    "must-not-match": [
+      "// CBC Radio broadcasts at 5pm",
+      "String cbc_variable = 'test';",
+      "ecb_module = load_module('ecb');",
+      "medical_term = 'ECG not ECB';"
     ]
   },
   {
@@ -148,31 +169,31 @@
     "tags": [
       "Cryptography.Cipher.RSA"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "RSACng|RSACryptoServiceProvider|RSAEncryptionPadding|RSAOAEPKeyExchangeDeformatter|X509AsymmetricSecurityKey",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "RSAOAEPKeyExchangeFormatter|RSAPKCS1KeyExchangeDeformatter|RSAPKCS1",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       },
       {
         "pattern": "RSASignaturePadding|RsaProtectedConfigurationProvider|RSACertificateExtensions",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high"
+        "confidence": "High"
       }
     ]
   },
@@ -183,30 +204,52 @@
     "tags": [
       "Cryptography.Cipher.RSA"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
-        "pattern": "RSA.*encrypt|RSA.*decrypt|public.?key|private.?key|privkey|pubkey",
-        "type": "regex",
+        "pattern": "RSA(?:Encrypt|Decrypt|Sign|Verify)\\(|RSA[_\\.](?:encrypt|decrypt)",
+        "type": "Regex",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "high",
+        "confidence": "High",
+        "modifiers": [
+          "i"
+        ]
+      },
+      {
+        "pattern": "\\b(?:public|private)[_\\.-]?key\\b|\\bprivkey\\b|\\bpubkey\\b",
+        "type": "Regex",
+        "scopes": [
+          "Code"
+        ],
+        "confidence": "Medium",
         "modifiers": [
           "i"
         ]
       },
       {
         "pattern": "rsa",
-        "type": "regexword",
+        "type": "RegexWord",
         "scopes": [
-          "code"
+          "Code"
         ],
-        "confidence": "low",
+        "confidence": "Low",
         "modifiers": [
           "i"
         ]
       }
+    ],
+    "must-match": [
+      "encrypted = RSAEncrypt(plaintext, key);",
+      "var public_key = cert.PublicKey;",
+      "const privkey = loadPrivateKey();",
+      "using RSA rsa = RSA.Create();"
+    ],
+    "must-not-match": [
+      "// Public key infrastructure documentation",
+      "var publicly_available = true;",
+      "String private_method_key = 'test';"
     ]
   },
   {
@@ -216,16 +259,16 @@
     "tags": [
       "Cryptography.Encryption.General"
     ],
-    "severity": "moderate",
+    "severity": "Moderate",
     "patterns": [
       {
         "pattern": "encrypt|decrypt|cipher|crypt|symmmetric|asymmetric",
-        "type": "regex",
+        "type": "Regex",
         "scopes": [
-          "code",
-          "comment"
+          "Code",
+          "Comment"
         ],
-        "confidence": "medium",
+        "confidence": "Medium",
         "modifiers": [
           "i"
         ]
